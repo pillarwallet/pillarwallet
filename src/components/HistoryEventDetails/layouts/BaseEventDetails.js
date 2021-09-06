@@ -26,7 +26,7 @@ import Icon, { type IconName } from 'components/modern/Icon';
 import Image from 'components/Image';
 import SafeAreaView from 'components/modern/SafeAreaViewWorkaround';
 import SlideModal from 'components/Modals/SlideModal';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // utils
 import { formatDate } from 'utils/date';

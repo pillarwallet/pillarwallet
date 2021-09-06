@@ -30,7 +30,7 @@ import Button from 'components/modern/Button';
 import FeeLabel from 'components/modern/FeeLabel';
 import Image from 'components/Image';
 import LargeFiatTokenValueView from 'components/modern/LargeFiatTokenValueView';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 import TransactionDeploymentWarning from 'components/other/TransactionDeploymentWarning';
 import Icon from 'components/modern/Icon';
 

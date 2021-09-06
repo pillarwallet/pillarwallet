@@ -29,7 +29,7 @@ import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 import { Row, Spacing } from 'components/modern/Layout';
 import Button from 'components/modern/Button';
 import FeeLabel from 'components/modern/FeeLabel';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 import TransactionStatusIcon from 'components/modern/TransactionStatusIcon';
 import TransactionStatusText from 'components/modern/TransactionStatusText';
 

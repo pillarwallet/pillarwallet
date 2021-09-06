@@ -31,7 +31,7 @@ import { fetchEtherspotTransactionsHistoryAction } from 'actions/historyActions'
 import HistoryEventDetails from 'components/HistoryEventDetails';
 import Modal from 'components/Modal';
 import RefreshControl from 'components/RefreshControl';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // Utils
 import { humanizeDateString } from 'utils/date';

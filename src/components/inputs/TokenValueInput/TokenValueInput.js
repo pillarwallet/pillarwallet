@@ -29,7 +29,7 @@ import BigNumberInput from 'components/modern/BigNumberInput';
 import PercentsInputAccessoryHolder, {
   INPUT_ACCESSORY_NATIVE_ID,
 } from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 import TokenIcon from 'components/Icons/TokenIcon';
 
 // Utils

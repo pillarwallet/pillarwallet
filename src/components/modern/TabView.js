@@ -24,7 +24,7 @@ import { TabView as RNTabView, TabBar } from 'react-native-tab-view';
 import styled from 'styled-components/native';
 
 // Components
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // Utils
 import { useThemeColors } from 'utils/themes';

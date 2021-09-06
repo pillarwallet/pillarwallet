@@ -23,7 +23,7 @@ import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 
 // Components
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 import FiatValueView from 'components/modern/FiatValueView';
 import FiatChangeView from 'components/modern/FiatChangeView';
 import TokenIcon from 'components/Icons/TokenIcon';

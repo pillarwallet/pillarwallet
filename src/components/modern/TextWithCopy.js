@@ -24,7 +24,7 @@ import styled from 'styled-components/native';
 
 // components
 import Icon from 'components/modern/Icon';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 import Toast from 'components/Toast';
 
 // utils

@@ -24,7 +24,7 @@ import { SvgCssUri } from 'react-native-svg';
 
 // Components
 import Image from 'components/Image';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // Utils
 import { spacing } from 'utils/variables';

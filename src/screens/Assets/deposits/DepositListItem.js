@@ -26,7 +26,7 @@ import styled from 'styled-components/native';
 import FiatValueView from 'components/modern/FiatValueView';
 import FiatChangeView from 'components/modern/FiatChangeView';
 import Image from 'components/Image';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // Selectors
 import { useFiatCurrency } from 'selectors';

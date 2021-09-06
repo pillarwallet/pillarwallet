@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 
 // Components
 import Icon from 'components/modern/Icon';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // Utils
 import { hitSlop20 } from 'utils/common';

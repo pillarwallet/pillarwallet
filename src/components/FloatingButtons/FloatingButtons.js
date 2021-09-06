@@ -25,7 +25,7 @@ import SafeAreaView from 'react-native-safe-area-view';
 
 // Components
 import Icon from 'components/modern/Icon';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // Utils
 import { spacing } from 'utils/variables';

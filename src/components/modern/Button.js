@@ -23,7 +23,7 @@ import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 
 // Components
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 import Icon, { type IconName } from 'components/modern/Icon';
 
 // Utils

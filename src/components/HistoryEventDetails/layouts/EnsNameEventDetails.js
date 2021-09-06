@@ -30,7 +30,7 @@ import { Spacing } from 'components/modern/Layout';
 import Button from 'components/modern/Button';
 import FeeLabel from 'components/modern/FeeLabel';
 import Icon from 'components/modern/Icon';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // Utils
 import { useThemeColors } from 'utils/themes';

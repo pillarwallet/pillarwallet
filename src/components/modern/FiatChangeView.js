@@ -22,7 +22,7 @@ import * as React from 'react';
 import { BigNumber } from 'bignumber.js';
 
 // Components
-import Text, { type TextVariant } from 'components/modern/Text';
+import Text, { type TextVariant } from 'components/core/Text';
 
 // Utils
 import { formatFiatChangeExtended } from 'utils/format';

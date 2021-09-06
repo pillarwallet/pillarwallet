@@ -25,7 +25,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import Icon from 'components/modern/Icon';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // Hooks
 import { useDeploymentStatus } from 'hooks/deploymentStatus';

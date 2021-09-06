@@ -30,7 +30,7 @@ import { Container } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import FiatIcon from 'components/Icons/FiatIcon';
 import Icon from 'components/modern/Icon';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // Constants
 import { supportedFiatCurrencies } from 'constants/assetsConstants';

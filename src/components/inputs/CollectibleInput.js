@@ -25,7 +25,7 @@ import styled from 'styled-components/native';
 // Components
 import CollectibleImage from 'components/CollectibleImage';
 import Icon from 'components/modern/Icon';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // Utils
 import { useThemedImages } from 'utils/images';

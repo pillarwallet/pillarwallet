@@ -31,7 +31,7 @@ import { chunk } from 'lodash';
 import { Container, Center } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import TabBar from 'components/modern/TabBar';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 import FloatingButtons from 'components/FloatingButtons';
 import Spinner from 'components/Spinner';
 import Toast from 'components/Toast';

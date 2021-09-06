@@ -44,7 +44,7 @@ import Button from 'components/legacy/Button';
 import CheckBox from 'components/modern/CheckBox';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import RefreshControl from 'components/RefreshControl';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 import TextWithCopy from 'components/TextWithCopy';
 
 // utils

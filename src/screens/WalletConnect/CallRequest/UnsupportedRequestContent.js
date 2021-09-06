@@ -25,7 +25,7 @@ import { useTranslation } from 'translations/translate';
 // Components
 import Button from 'components/modern/Button';
 import Image from 'components/Image';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // Utils
 import { chainFromChainId } from 'utils/chains';

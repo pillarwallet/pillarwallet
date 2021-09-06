@@ -24,7 +24,7 @@ import { useTranslation } from 'translations/translate';
 
 // Components
 import Button from 'components/modern/Button';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 import DynamicSizeImage from 'components/DynamicSizeImage';
 
 // Utils

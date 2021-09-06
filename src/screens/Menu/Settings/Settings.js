@@ -28,7 +28,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 import { Container, Content, Spacing } from 'components/modern/Layout';
 import CheckAuth from 'components/CheckAuth';
 import HeaderBlock from 'components/HeaderBlock';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // Selectors
 import { useRootSelector } from 'selectors';

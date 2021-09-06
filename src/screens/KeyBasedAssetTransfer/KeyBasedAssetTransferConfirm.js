@@ -33,7 +33,7 @@ import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import FeeTable from 'components/modern/FeeTable';
 import Image from 'components/Image';
 import Spinner from 'components/Spinner';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // Constants
 import { ETH, ASSET_TYPES } from 'constants/assetsConstants';

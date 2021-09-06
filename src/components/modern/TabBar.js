@@ -22,7 +22,7 @@ import { Platform, ScrollView, TouchableWithoutFeedback } from 'react-native';
 import styled from 'styled-components/native';
 
 // Components
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // Utils
 import { spacing } from 'utils/variables';

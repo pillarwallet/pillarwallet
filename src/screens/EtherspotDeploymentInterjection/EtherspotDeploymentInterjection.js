@@ -31,7 +31,7 @@ import Button from 'components/modern/Button';
 import HeaderBlock from 'components/HeaderBlock';
 import Modal from 'components/Modal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 import Spinner from 'components/Spinner';
 import Tooltip from 'components/Tooltip';
 

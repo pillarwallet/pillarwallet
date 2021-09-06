@@ -23,7 +23,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import BalanceView from 'components/BalanceView';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 import TextWithCopy from 'components/modern/TextWithCopy';
 
 // Utils

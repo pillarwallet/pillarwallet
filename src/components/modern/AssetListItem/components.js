@@ -24,7 +24,7 @@ import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 
 // Components
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 import TokenIcon from 'components/Icons/TokenIcon';
 
 // Selectors

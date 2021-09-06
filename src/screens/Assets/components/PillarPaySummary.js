@@ -28,7 +28,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 import Button from 'components/modern/Button';
 import FiatValueView from 'components/modern/FiatValueView';
 import Icon from 'components/modern/Icon';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 import Tooltip from 'components/Tooltip';
 
 // Contants

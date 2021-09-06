@@ -22,7 +22,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 
 // Components
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 import Icon from 'components/modern/Icon';
 
 // Utils

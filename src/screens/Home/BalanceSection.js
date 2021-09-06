@@ -24,7 +24,7 @@ import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
 import { useNavigation } from 'react-navigation-hooks';
 
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // Selectors
 import { useFiatCurrency } from 'selectors';

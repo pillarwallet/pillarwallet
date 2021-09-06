@@ -32,7 +32,7 @@ import localeConfig from 'configs/localeConfig';
 import { Container } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import Icon from 'components/modern/Icon';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // Selectors
 import { useLanguageCode } from 'selectors/appSettings';

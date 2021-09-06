@@ -27,7 +27,7 @@ import { useTranslation } from 'translations/translate';
 // Components
 import AssetListItem from 'components/modern/AssetListItem';
 import CheckBox from 'components/modern/CheckBox';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';

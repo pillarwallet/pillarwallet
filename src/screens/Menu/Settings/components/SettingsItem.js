@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 
 // Components
 import Icon, { type IconName } from 'components/modern/Icon';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // Utils
 import { fontStyles, spacing } from 'utils/variables';

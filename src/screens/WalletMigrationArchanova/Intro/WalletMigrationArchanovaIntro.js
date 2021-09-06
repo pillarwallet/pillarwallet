@@ -35,7 +35,7 @@ import {
 import { Container } from 'components/modern/Layout';
 import Button from 'components/modern/Button';
 import HeaderBlock from 'components/HeaderBlock';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // Actions
 import { resetAssetsToMigrateAction } from 'actions/walletMigrationArchanovaActions';
