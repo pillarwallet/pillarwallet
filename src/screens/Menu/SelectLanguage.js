@@ -31,7 +31,7 @@ import localeConfig from 'configs/localeConfig';
 // Components
 import { Container } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
-import Icon from 'components/modern/Icon';
+import Icon from 'components/core/Icon';
 import Text from 'components/core/Text';
 
 // Selectors

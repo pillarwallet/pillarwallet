@@ -28,7 +28,7 @@ import { dismissAccountSwitchTooltipAction } from 'actions/appSettingsActions';
 
 // Components
 import ProfileImage from 'components/ProfileImage';
-import Icon from 'components/modern/Icon';
+import Icon from 'components/core/Icon';
 import Text from 'components/core/Text';
 
 // Constants

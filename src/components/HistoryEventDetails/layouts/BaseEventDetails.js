@@ -22,7 +22,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 
 // Components
-import Icon, { type IconName } from 'components/modern/Icon';
+import Icon, { type IconName } from 'components/core/Icon';
 import Image from 'components/Image';
 import SafeAreaView from 'components/modern/SafeAreaViewWorkaround';
 import SlideModal from 'components/Modals/SlideModal';

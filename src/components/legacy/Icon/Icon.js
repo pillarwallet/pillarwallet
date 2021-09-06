@@ -110,7 +110,7 @@ const IconSet = createIconSet(glyphMap, fontName);
 
 /**
  * @Deprecated This components is considered legacy, and should be no longer used for new code.
- * Please use components/modern/Icon which uses SVG icons instead.
+ * Please use components/core/Icon which uses SVG icons instead.
  */
 const Icon = ({ name, style }: IconProps) => {
   return <IconSet name={name} style={style} />;

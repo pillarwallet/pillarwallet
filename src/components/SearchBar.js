@@ -23,7 +23,7 @@ import { TextInput as RNTextInput } from 'react-native';
 import styled from 'styled-components/native';
 
 // Components
-import Icon from 'components/modern/Icon';
+import Icon from 'components/core/Icon';
 import MultilineTextInput from 'components/inputs/MultilineTextInput';
 import Text from 'components/core/Text';
 

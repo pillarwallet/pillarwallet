@@ -29,7 +29,7 @@ import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 import { Spacing } from 'components/modern/Layout';
 import Button from 'components/modern/Button';
 import FeeLabel from 'components/modern/FeeLabel';
-import Icon from 'components/modern/Icon';
+import Icon from 'components/core/Icon';
 import Text from 'components/core/Text';
 
 // Utils

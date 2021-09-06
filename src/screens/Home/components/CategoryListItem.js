@@ -23,13 +23,13 @@ import styled from 'styled-components/native';
 
 // Components
 import Text from 'components/core/Text';
-import Icon from 'components/modern/Icon';
+import Icon from 'components/core/Icon';
 
 // Utils
 import { fontStyles, spacing } from 'utils/variables';
 
 // Type
-import type { IconName } from 'components/modern/Icon';
+import type { IconName } from 'components/core/Icon';
 
 export type Props = {|
   title: string,

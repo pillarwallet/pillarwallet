@@ -21,7 +21,7 @@
 import * as React from 'react';
 
 // Components
-import Icon from 'components/modern/Icon';
+import Icon from 'components/core/Icon';
 
 // Utils
 import { useThemeColors } from 'utils/themes';

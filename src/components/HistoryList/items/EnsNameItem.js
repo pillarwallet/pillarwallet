@@ -22,7 +22,7 @@ import * as React from 'react';
 import { useTranslation } from 'translations/translate';
 
 // Components
-import Icon from 'components/modern/Icon';
+import Icon from 'components/core/Icon';
 import Text from 'components/core/Text';
 
 // Utils

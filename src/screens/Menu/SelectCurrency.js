@@ -29,7 +29,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 import { Container } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import FiatIcon from 'components/Icons/FiatIcon';
-import Icon from 'components/modern/Icon';
+import Icon from 'components/core/Icon';
 import Text from 'components/core/Text';
 
 // Constants

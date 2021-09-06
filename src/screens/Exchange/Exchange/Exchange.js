@@ -34,7 +34,7 @@ import { getPlrAddressForChain } from 'configs/assetsConfig';
 import { Container, Content, Spacing } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import Icon from 'components/modern/Icon';
+import Icon from 'components/core/Icon';
 import Spinner from 'components/Spinner';
 
 // Constants

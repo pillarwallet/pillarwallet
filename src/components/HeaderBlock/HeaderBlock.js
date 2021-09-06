@@ -26,7 +26,7 @@ import SafeAreaView from 'react-native-safe-area-view';
 import type { NavigationScreenProp } from 'react-navigation';
 import { BaseText } from 'components/legacy/Typography';
 import IconButton from 'components/IconButton';
-import SvgIcon from 'components/modern/Icon';
+import SvgIcon from 'components/core/Icon';
 import Image from 'components/Image';
 import { getColorByTheme, getColorByThemeOutsideStyled, getThemeColors } from 'utils/themes';
 import { noop } from 'utils/common';
@@ -34,7 +34,7 @@ import { noop } from 'utils/common';
 // types
 import type { Theme } from 'models/Theme';
 import type { ViewStyleProp } from 'utils/types/react-native';
-import type { IconName as SvgIconName } from 'components/modern/Icon';
+import type { IconName as SvgIconName } from 'components/core/Icon';
 
 // partials
 import HeaderTitleText from './HeaderTitleText';
