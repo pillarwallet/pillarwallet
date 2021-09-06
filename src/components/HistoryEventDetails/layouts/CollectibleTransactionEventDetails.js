@@ -30,8 +30,8 @@ import { Row, Spacing } from 'components/layout/Layout';
 import Button from 'components/core/Button';
 import FeeLabel from 'components/modern/FeeLabel';
 import Text from 'components/core/Text';
-import TransactionStatusIcon from 'components/modern/TransactionStatusIcon';
-import TransactionStatusText from 'components/modern/TransactionStatusText';
+import TransactionStatusIcon from 'components/display/TransactionStatusIcon';
+import TransactionStatusText from 'components/display/TransactionStatusText';
 
 // Selectors
 import { useRootSelector } from 'selectors';

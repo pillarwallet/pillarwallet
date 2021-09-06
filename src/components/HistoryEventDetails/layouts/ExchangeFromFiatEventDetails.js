@@ -31,8 +31,8 @@ import Button from 'components/core/Button';
 import FeeLabel from 'components/modern/FeeLabel';
 import FiatValueView from 'components/display/FiatValueView';
 import TokenValueView from 'components/display/TokenValueView';
-import TransactionStatusIcon from 'components/modern/TransactionStatusIcon';
-import TransactionStatusText from 'components/modern/TransactionStatusText';
+import TransactionStatusIcon from 'components/display/TransactionStatusIcon';
+import TransactionStatusText from 'components/display/TransactionStatusText';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
