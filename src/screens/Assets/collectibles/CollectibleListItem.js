@@ -45,7 +45,7 @@ function CollectibleListItem({ title, iconUrl, onPress, width }: Props) {
       <IconContainer width={width}>
         {!!iconUrl && (
           <>
-            {isSvg && <SvgImage source={{ uri: iconUrl }} style={[{ width: 100, height: 100 }]} />}
+            {isSvg && <SvgImage source={{ uri: iconUrl }} style={[{ width: '100%', height: '100%' }]} />}
             {!isSvg && <Icon source={{ uri: iconUrl }} resizeMode={Image.resizeMode.contain} />}
           </>
         )}
