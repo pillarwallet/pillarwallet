@@ -33,7 +33,7 @@ import Tabs from 'components/Tabs';
 import { BaseText, MediumText } from 'components/legacy/Typography';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ActivityFeedItem from 'components/legacy/ActivityFeed/ActivityFeedItem';
-import EventDetails, { shouldShowEventDetails } from 'components/EventDetails';
+import EventDetails, { shouldShowEventDetails } from 'components/legacy/EventDetails';
 import Modal from 'components/Modal';
 
 // utils

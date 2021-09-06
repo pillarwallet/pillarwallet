@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
-import { EventDetail as EventDetailsClass } from 'components/EventDetails';
+import { EventDetail as EventDetailsClass } from 'components/legacy/EventDetails';
 import { noop } from 'utils/common';
 import { withTheme } from 'styled-components/native';
 

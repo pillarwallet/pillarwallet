@@ -12,7 +12,7 @@ function loadStories() {
 	require('../src/components/CircleButton/CircleButton.stories');
 	require('../src/components/ContactSelector/ContactSelector.stories');
 	require('../src/components/DetailModal/DetailModal.stories');
-	require('../src/components/EventDetails/EventDetails.stories');
+	require('../src/components/legacy/EventDetails/EventDetails.stories');
 	require('../src/components/FeeLabelToggle/FeeLabelToggle.stories');
 	require('../src/components/FloatingBox/FloatingBox.stories');
 	require('../src/components/FloatingButtons/FloatingButtons.stories');
@@ -46,7 +46,7 @@ const stories = [
 	'../src/components/CircleButton/CircleButton.stories',
 	'../src/components/ContactSelector/ContactSelector.stories',
 	'../src/components/DetailModal/DetailModal.stories',
-	'../src/components/EventDetails/EventDetails.stories',
+	'../src/components/legacy/EventDetails/EventDetails.stories',
 	'../src/components/FeeLabelToggle/FeeLabelToggle.stories',
 	'../src/components/FloatingBox/FloatingBox.stories',
 	'../src/components/FloatingButtons/FloatingButtons.stories',
