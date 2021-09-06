@@ -25,7 +25,7 @@ import { useTranslation } from 'translations/translate';
 // Components
 import { Row, Spacing } from 'components/layout/Layout';
 import Button from 'components/core/Button';
-import FeeLabel from 'components/modern/FeeLabel';
+import FeeLabel from 'components/other/FeeLabel';
 import Modal from 'components/Modal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 import Text from 'components/core/Text';

@@ -35,7 +35,7 @@ import Button from 'components/legacy/Button';
 import { Container, Content } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import Text from 'components/core/Text';
-import EmojiCard from 'components/modern/EmojiCard';
+import EmojiCard from 'components/other/EmojiCard';
 
 // Utils
 import { appFont, fontStyles, spacing } from 'utils/variables';

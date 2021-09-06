@@ -27,7 +27,7 @@ import { useTranslation } from 'translations/translate';
 
 // Components
 import Button from 'components/core/Button';
-import FeeLabel from 'components/modern/FeeLabel';
+import FeeLabel from 'components/other/FeeLabel';
 import Image from 'components/Image';
 import LargeFiatTokenValueView from 'components/display/LargeFiatTokenValueView';
 import Text from 'components/core/Text';

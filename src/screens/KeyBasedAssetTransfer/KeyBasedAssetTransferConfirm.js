@@ -26,11 +26,11 @@ import { orderBy } from 'lodash';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import * as Table from 'components/modern/Table';
+import * as Table from 'components/other/Table';
 import BalanceView from 'components/BalanceView';
 import Button from 'components/legacy/Button';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
-import FeeTable from 'components/modern/FeeTable';
+import FeeTable from 'components/other/FeeTable';
 import Image from 'components/Image';
 import Spinner from 'components/Spinner';
 import Text from 'components/core/Text';

@@ -33,7 +33,7 @@ import Button from 'components/legacy/Button';
 import QRCodeWithTheme from 'components/QRCode';
 import Toast from 'components/Toast';
 import ProfileImage from 'components/ProfileImage';
-import TextWithCopy from 'components/modern/TextWithCopy';
+import TextWithCopy from 'components/other/TextWithCopy';
 
 // utils
 import { spacing, fontStyles, fontSizes } from 'utils/variables';

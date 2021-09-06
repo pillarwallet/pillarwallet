@@ -24,7 +24,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 // Components
 import BalanceView from 'components/BalanceView';
 import Text from 'components/core/Text';
-import TextWithCopy from 'components/modern/TextWithCopy';
+import TextWithCopy from 'components/other/TextWithCopy';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
