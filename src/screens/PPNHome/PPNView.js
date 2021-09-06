@@ -37,7 +37,7 @@ import CircleButton from 'components/CircleButton';
 import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 import Tabs from 'components/Tabs';
 import Button from 'components/legacy/Button';
-import ActivityFeed from 'components/ActivityFeed';
+import ActivityFeed from 'components/legacy/ActivityFeed';
 import InsightWithButton from 'components/InsightWithButton';
 import RefreshControl from 'components/RefreshControl';
 import SWActivationModal from 'components/SWActivationModal';

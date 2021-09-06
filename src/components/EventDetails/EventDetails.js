@@ -170,7 +170,7 @@ import type { Transaction } from 'models/Transaction';
 import type { CollectibleTransaction, CollectiblesHistoryStore } from 'models/Collectible';
 import type { TransactionsGroup } from 'utils/feedData';
 import type { NavigationScreenProp } from 'react-navigation';
-import type { EventData as PassedEventData } from 'components/ActivityFeed/ActivityFeedItem';
+import type { EventData as PassedEventData } from 'components/legacy/ActivityFeed/ActivityFeedItem';
 import type { LiquidityPool } from 'models/LiquidityPools';
 import type { Selector } from 'selectors';
 import type { TransactionsStore } from 'models/History';

@@ -5,7 +5,7 @@
 
 function loadStories() {
 	require('../src/components/ActionModal/ActionModal.stories');
-	require('../src/components/ActivityFeed/ActivityFeedItem.stories');
+	require('../src/components/legacy/ActivityFeed/ActivityFeedItem.stories');
 	require('../src/components/Banner/Banner.stories');
 	require('../src/components/legacy/Button/Button.stories');
 	require('../src/components/Checkbox/Checkbox.stories');
@@ -39,7 +39,7 @@ function loadStories() {
 
 const stories = [
 	'../src/components/ActionModal/ActionModal.stories',
-	'../src/components/ActivityFeed/ActivityFeedItem.stories',
+	'../src/components/legacy/ActivityFeed/ActivityFeedItem.stories',
 	'../src/components/Banner/Banner.stories',
 	'../src/components/legacy/Button/Button.stories',
 	'../src/components/Checkbox/Checkbox.stories',

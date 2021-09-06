@@ -28,7 +28,7 @@ import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 import { Container, Content } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import FloatingButtons from 'components/FloatingButtons';
-import ActivityFeed from 'components/ActivityFeed';
+import ActivityFeed from 'components/legacy/ActivityFeed';
 import HistoryList from 'components/HistoryList';
 import AssetPattern from 'components/AssetPattern';
 import { BaseText, MediumText } from 'components/legacy/Typography';

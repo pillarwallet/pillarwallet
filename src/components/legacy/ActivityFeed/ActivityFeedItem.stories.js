@@ -22,7 +22,7 @@ import { storiesOf } from '@storybook/react-native';
 import { withTheme } from 'styled-components/native';
 
 // components
-import { ActivityFeedItem as ActivityFeedItemNoTheme } from 'components/ActivityFeed/ActivityFeedItem';
+import { ActivityFeedItem as ActivityFeedItemNoTheme } from 'components/legacy/ActivityFeed/ActivityFeedItem';
 
 // constants
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
@@ -58,7 +58,7 @@ import { ADDRESS_ZERO } from 'constants/assetsConstants';
 import { EVENT_TYPE } from 'models/History';
 
 // local
-import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
+import WithThemeDecorator from '../../../../storybook/WithThemeDecorator';
 
 
 const placeholderImage = 'https://picsum.photos/200';

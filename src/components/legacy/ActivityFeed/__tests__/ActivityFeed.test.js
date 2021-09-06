@@ -24,7 +24,7 @@ import thunk from 'redux-thunk';
 import configureMockStore from 'redux-mock-store';
 import { ThemeProvider } from 'styled-components/native';
 import { defaultTheme } from 'utils/themes';
-import ActivityFeed from 'components/ActivityFeed/ActivityFeed';
+import ActivityFeed from 'components/legacy/ActivityFeed/ActivityFeed';
 import { I18nextProvider } from 'react-i18next';
 import i18n from 'services/localisation/testing';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
