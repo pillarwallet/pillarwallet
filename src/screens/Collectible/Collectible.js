@@ -33,8 +33,8 @@ import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
 // components
 import ActivityFeed from 'components/ActivityFeed';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ScrollWrapper, Wrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
+import { ScrollWrapper, Wrapper } from 'components/legacy/Layout';
 import { Paragraph } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
 import CollectibleImage from 'components/CollectibleImage';

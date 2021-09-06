@@ -22,7 +22,7 @@ import styled from 'styled-components/native';
 
 // components
 import { BaseText, MediumText } from 'components/Typography';
-import { Spacing } from 'components/Layout';
+import { Spacing } from 'components/legacy/Layout';
 import Image from 'components/Image';
 
 // utils

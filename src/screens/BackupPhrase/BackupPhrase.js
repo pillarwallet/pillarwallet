@@ -28,8 +28,8 @@ import { BACKUP_PHRASE_VALIDATE } from 'constants/navigationConstants';
 
 // components
 import { Paragraph } from 'components/Typography';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ScrollWrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
+import { ScrollWrapper } from 'components/legacy/Layout';
 import MnemonicPhrase from 'components/MnemonicPhrase';
 import Button from 'components/legacy/Button';
 import CheckAuth from 'components/CheckAuth';

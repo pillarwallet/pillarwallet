@@ -4,7 +4,7 @@ import { withTheme } from 'styled-components/native';
 import t from 'translations/translate';
 
 import Loader from 'components/Loader';
-import { Wrapper } from 'components/Layout';
+import { Wrapper } from 'components/legacy/Layout';
 import { getThemeColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 

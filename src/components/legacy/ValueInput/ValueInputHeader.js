@@ -31,7 +31,7 @@ import { useTranslation } from 'translations/translate';
 import Icon from 'components/Icon';
 import Image from 'components/Image';
 import { BaseText, MediumText } from 'components/Typography';
-import { Spacing } from 'components/Layout';
+import { Spacing } from 'components/legacy/Layout';
 
 // types
 import type { AssetOption } from 'models/Asset';

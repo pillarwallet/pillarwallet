@@ -27,7 +27,7 @@ import t from 'translations/translate';
 
 // Components
 import Button from 'components/legacy/Button';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import TokenValueInput from 'components/inputs/TokenValueInput';
 import TokenBalanceAccessory from 'components/inputs/TokenValueInput/TokenBalanceAccessory';
 

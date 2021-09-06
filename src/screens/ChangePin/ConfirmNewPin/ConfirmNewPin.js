@@ -29,7 +29,7 @@ import { changePinAction, resetIncorrectPasswordAction } from 'actions/authActio
 import { MENU } from 'constants/navigationConstants';
 
 // components
-import { Container } from 'components/Layout';
+import { Container } from 'components/legacy/Layout';
 import { BaseText } from 'components/Typography';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';

@@ -25,10 +25,10 @@ import { Platform } from 'react-native';
 import t from 'translations/translate';
 
 // components
-import { ScrollWrapper } from 'components/Layout';
+import { ScrollWrapper } from 'components/legacy/Layout';
 import { Label, MediumText, Paragraph } from 'components/Typography';
 import Button from 'components/legacy/Button';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import Spinner from 'components/Spinner';
 
 import { fontSizes, spacing } from 'utils/variables';

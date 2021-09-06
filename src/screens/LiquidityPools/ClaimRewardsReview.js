@@ -24,10 +24,10 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableFee } from 'components/Table';
-import { Spacing } from 'components/Layout';
+import { Spacing } from 'components/legacy/Layout';
 import Button from 'components/legacy/Button';
 import Toast from 'components/Toast';
 import { BaseText } from 'components/Typography';

@@ -25,7 +25,7 @@ import t from 'translations/translate';
 // Components
 import { Container, Content } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
-import { Wrapper, Spacing } from 'components/Layout';
+import { Wrapper, Spacing } from 'components/legacy/Layout';
 import { BaseText, MediumText, Paragraph } from 'components/Typography';
 import Button from 'components/legacy/Button';
 import ProfileImage from 'components/ProfileImage';

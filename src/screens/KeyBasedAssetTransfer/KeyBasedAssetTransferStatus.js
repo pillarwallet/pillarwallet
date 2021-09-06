@@ -35,8 +35,8 @@ import {
 } from 'actions/keyBasedAssetTransferActions';
 
 // components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { Footer, ScrollWrapper, Wrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
+import { Footer, ScrollWrapper, Wrapper } from 'components/legacy/Layout';
 import Button from 'components/legacy/Button';
 import ActivityFeed from 'components/ActivityFeed';
 import Animation from 'components/Animation';

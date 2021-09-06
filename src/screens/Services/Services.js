@@ -27,7 +27,7 @@ import t from 'translations/translate';
 
 // components
 import { ListCard } from 'components/ListItem/ListCard';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 
 // constants
 import {

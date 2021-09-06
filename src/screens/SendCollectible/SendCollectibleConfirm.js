@@ -32,10 +32,10 @@ import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 
 // components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser, TableFee } from 'components/Table';
 import Button from 'components/legacy/Button';
-import { Spacing, ScrollWrapper } from 'components/Layout';
+import { Spacing, ScrollWrapper } from 'components/legacy/Layout';
 import CollectibleReviewSummary from 'components/ReviewSummary/CollectibleReviewSummary';
 import { Paragraph } from 'components/Typography';
 import Toast from 'components/Toast';

@@ -26,8 +26,8 @@ import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
 // components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { Wrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
+import { Wrapper } from 'components/legacy/Layout';
 import Button from 'components/legacy/Button';
 import { TextLink, Label, BaseText } from 'components/Typography';
 

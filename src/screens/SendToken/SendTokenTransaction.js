@@ -25,7 +25,7 @@ import { TouchableOpacity } from 'react-native';
 import t from 'translations/translate';
 
 // Components
-import { Container, Wrapper } from 'components/Layout';
+import { Container, Wrapper } from 'components/legacy/Layout';
 import { Paragraph, MediumText } from 'components/Typography';
 import Title from 'components/Title';
 import Button from 'components/modern/Button';

@@ -28,8 +28,8 @@ import t from 'translations/translate';
 import { fetchLiquidityPoolsDataAction, setShownStakingEnabledModalAction } from 'actions/liquidityPoolsActions';
 
 // components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ScrollWrapper, Spacing } from 'components/Layout';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
+import { ScrollWrapper, Spacing } from 'components/legacy/Layout';
 import { BaseText, MediumText } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
 import Button from 'components/legacy/Button';

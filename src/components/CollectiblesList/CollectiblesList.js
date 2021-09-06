@@ -29,7 +29,7 @@ import CollectibleImage from 'components/CollectibleImage';
 import Button from 'components/legacy/Button';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
-import { Spacing } from 'components/Layout';
+import { Spacing } from 'components/legacy/Layout';
 import Modal from 'components/Modal';
 
 // Selectors

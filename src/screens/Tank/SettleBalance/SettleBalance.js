@@ -29,7 +29,7 @@ import { createStructuredSelector } from 'reselect';
 import { fetchAvailableTxToSettleAction } from 'actions/smartWalletActions';
 
 // components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import { Label, BaseText, Paragraph } from 'components/Typography';
 import Button from 'components/legacy/Button';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';

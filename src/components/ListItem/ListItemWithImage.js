@@ -29,7 +29,7 @@ import ProfileImage from 'components/ProfileImage';
 import Button from 'components/legacy/Button';
 import Image from 'components/Image';
 import { Shadow } from 'components/Shadow';
-import { Wrapper, Spacing } from 'components/Layout';
+import { Wrapper, Spacing } from 'components/legacy/Layout';
 import TankAssetBalance from 'components/TankAssetBalance';
 import { LabelBadge } from 'components/LabelBadge/LabelBadge';
 import CollectibleImage from 'components/CollectibleImage';

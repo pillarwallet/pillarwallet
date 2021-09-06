@@ -25,10 +25,10 @@ import t from 'translations/translate';
 import { BigNumber } from 'bignumber.js';
 
 // Components
-import { Spacing } from 'components/Layout';
+import { Spacing } from 'components/legacy/Layout';
 import ArrowIcon from 'components/ArrowIcon';
 import Button from 'components/legacy/Button';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import ContactSelector from 'components/ContactSelector';
 import Spinner from 'components/Spinner';
 

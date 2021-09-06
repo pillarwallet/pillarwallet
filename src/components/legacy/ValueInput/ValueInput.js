@@ -35,7 +35,7 @@ import CollectibleImage from 'components/CollectibleImage';
 import { MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Input from 'components/Input';
-import { Spacing } from 'components/Layout';
+import { Spacing } from 'components/legacy/Layout';
 import Modal from 'components/Modal';
 
 // utils

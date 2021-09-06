@@ -59,7 +59,7 @@ import { STAGING } from 'constants/envConstants';
 import { REMOTE_CONFIG, INITIAL_REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // components
-import { Container } from 'components/Layout';
+import { Container } from 'components/legacy/Layout';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
 import Spinner from 'components/Spinner';

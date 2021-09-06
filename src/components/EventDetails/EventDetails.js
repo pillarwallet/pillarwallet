@@ -41,7 +41,7 @@ import ProfileImage from 'components/ProfileImage';
 import Toast from 'components/Toast';
 import Modal from 'components/Modal';
 import DetailModal, { DetailRow, DetailParagraph, FEE_PENDING } from 'components/DetailModal';
-import { Spacing } from 'components/Layout';
+import { Spacing } from 'components/legacy/Layout';
 
 // utils
 import { spacing, fontSizes } from 'utils/variables';

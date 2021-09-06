@@ -28,7 +28,7 @@ import t from 'translations/translate';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 
 // components
-import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
+import { Container, Wrapper, ScrollWrapper } from 'components/legacy/Layout';
 import { Paragraph } from 'components/Typography';
 import MnemonicPhrase from 'components/MnemonicPhrase';
 import CheckAuth from 'components/CheckAuth';

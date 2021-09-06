@@ -29,7 +29,7 @@ import { getPlrAddressForChain } from 'configs/assetsConfig';
 import { switchToGasTokenRelayerAction } from 'actions/smartWalletActions';
 
 // components
-import { Spacing } from 'components/Layout';
+import { Spacing } from 'components/legacy/Layout';
 import { BaseText, MediumText } from 'components/Typography';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/legacy/Button';

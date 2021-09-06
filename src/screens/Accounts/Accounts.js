@@ -26,9 +26,9 @@ import { sortBy } from 'lodash';
 import t from 'translations/translate';
 
 // components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import SettingsItemCarded from 'components/ListItem/SettingsItemCarded';
-import { ScrollWrapper } from 'components/Layout';
+import { ScrollWrapper } from 'components/legacy/Layout';
 import Button from 'components/legacy/Button';
 
 // utils

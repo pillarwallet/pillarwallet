@@ -30,7 +30,7 @@ import t from 'translations/translate';
 import { beginOnboardingAction } from 'actions/onboardingActions';
 
 // components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import { MediumText } from 'components/Typography';
 import Button from 'components/legacy/Button';
 import Image from 'components/Image';

@@ -28,8 +28,8 @@ import t from 'translations/translate';
 import { resetWalletImportErrorAction, importWalletFromMnemonicAction } from 'actions/onboardingActions';
 
 // components
-import { ScrollWrapper, Wrapper } from 'components/Layout';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { ScrollWrapper, Wrapper } from 'components/legacy/Layout';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import { BaseText, MediumText } from 'components/Typography';
 import TextInput from 'components/legacy/TextInput';
 import Tabs from 'components/Tabs';

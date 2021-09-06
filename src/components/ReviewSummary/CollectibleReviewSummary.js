@@ -20,7 +20,7 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import { BaseText, MediumText } from 'components/Typography';
-import { Spacing } from 'components/Layout';
+import { Spacing } from 'components/legacy/Layout';
 import CollectibleImage from 'components/CollectibleImage';
 import type { Collectible } from 'models/Collectible';
 

@@ -26,7 +26,7 @@ import styled, { useTheme } from 'styled-components/native';
 import type { ParsedCmsDocument } from 'models/CMSData';
 import type { ScrollEvent } from 'utils/types/react-native';
 
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import Button from 'components/legacy/Button';
 import Image from 'components/Image';
 

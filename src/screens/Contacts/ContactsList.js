@@ -32,7 +32,7 @@ import { addContactAction, updateContactAction } from 'actions/contactsActions';
 // Components
 import Button from 'components/legacy/Button';
 import ContactDetailsModal from 'components/ContactDetailsModal';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import FloatingButtons from 'components/FloatingButtons';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';

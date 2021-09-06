@@ -21,7 +21,7 @@ import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
-import { Container } from 'components/Layout';
+import { Container } from 'components/legacy/Layout';
 import Header from 'components/Header';
 import PinCode from 'components/PinCode';
 import ErrorMessage from 'components/ErrorMessage';

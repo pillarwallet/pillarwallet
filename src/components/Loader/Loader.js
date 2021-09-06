@@ -22,7 +22,7 @@ import { Animated } from 'react-native';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
-import { Wrapper } from 'components/Layout';
+import { Wrapper } from 'components/legacy/Layout';
 import { MediumText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import { fontStyles } from 'utils/variables';

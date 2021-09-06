@@ -23,7 +23,7 @@ import styled, { withTheme } from 'styled-components/native';
 import { subWeeks, subMonths, subYears, subDays, isBefore, format, getTime } from 'date-fns';
 import t from 'translations/translate';
 import { BaseText } from 'components/Typography';
-import { Spacing } from 'components/Layout';
+import { Spacing } from 'components/legacy/Layout';
 import {
   formatFiat,
   getDeviceWidth,

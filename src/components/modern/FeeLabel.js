@@ -26,7 +26,7 @@ import { useTranslation } from 'translations/translate';
 // components
 import Text from 'components/modern/Text';
 import Spinner from 'components/Spinner';
-import { Spacing } from 'components/Layout';
+import { Spacing } from 'components/legacy/Layout';
 
 // Selectors
 import { useFiatCurrency, useChainRates } from 'selectors';

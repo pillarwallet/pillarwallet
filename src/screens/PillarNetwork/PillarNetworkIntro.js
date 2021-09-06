@@ -24,8 +24,8 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import t from 'translations/translate';
 
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ScrollWrapper } from 'components/Layout';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
+import { ScrollWrapper } from 'components/legacy/Layout';
 import { BoldText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Image from 'components/Image';

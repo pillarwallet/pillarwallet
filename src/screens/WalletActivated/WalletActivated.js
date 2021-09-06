@@ -29,7 +29,7 @@ import { BaseText, MediumText } from 'components/Typography';
 import type { Theme } from 'models/Theme';
 import { ASSETS } from 'constants/navigationConstants';
 import Button from 'components/legacy/Button';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import { images } from 'utils/images';
 import { switchAccountAction } from 'actions/accountsActions';
 import { getActiveAccountType, findFirstArchanovaAccount } from 'utils/accounts';

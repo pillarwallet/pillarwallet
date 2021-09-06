@@ -27,7 +27,7 @@ import t from 'translations/translate';
 import { finishOnboardingAction } from 'actions/onboardingActions';
 
 // components
-import { Container } from 'components/Layout';
+import { Container } from 'components/legacy/Layout';
 import Button from 'components/legacy/Button';
 import Loader from 'components/Loader';
 import { MediumText } from 'components/Typography';

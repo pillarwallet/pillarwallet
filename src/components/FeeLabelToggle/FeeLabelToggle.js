@@ -27,7 +27,7 @@ import t from 'translations/translate';
 // components
 import { Label, BaseText } from 'components/Typography';
 import Spinner from 'components/Spinner';
-import { Spacing } from 'components/Layout';
+import { Spacing } from 'components/legacy/Layout';
 import RelayerMigrationModal from 'components/RelayerMigrationModal';
 import Modal from 'components/Modal';
 

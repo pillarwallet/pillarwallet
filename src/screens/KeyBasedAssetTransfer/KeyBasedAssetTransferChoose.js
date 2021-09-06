@@ -36,8 +36,8 @@ import {
 import { switchToEtherspotAccountIfNeededAction } from 'actions/accountsActions';
 
 // Components
-import { Wrapper } from 'components/Layout';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { Wrapper } from 'components/legacy/Layout';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import AssetListItem from 'components/modern/AssetListItem';
 import BalanceView from 'components/BalanceView';
 import Button from 'components/legacy/Button';

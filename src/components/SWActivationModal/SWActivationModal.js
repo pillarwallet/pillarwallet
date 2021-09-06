@@ -35,7 +35,7 @@ import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/legacy/Button';
 import Image from 'components/Image';
 import { MediumText, BaseText } from 'components/Typography';
-import { Spacing } from 'components/Layout';
+import { Spacing } from 'components/legacy/Layout';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // constants

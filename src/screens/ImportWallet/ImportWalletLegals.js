@@ -24,7 +24,7 @@ import styled from 'styled-components/native';
 import t from 'translations/translate';
 
 // components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import { BaseText } from 'components/Typography';
 import PrismicDocumentModal from 'components/Modals/PrismicDocumentModal';
 import Button from 'components/legacy/Button';
