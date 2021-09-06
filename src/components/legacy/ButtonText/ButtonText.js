@@ -119,7 +119,7 @@ const ButtonContent = (props: ContentProps) => {
 /**
  * @deprecated This compontent is considered legacy and should not be used in new code
  *
- * Use: components/modern/Button `text` variant instead
+ * Use: components/core/Button `text` variant instead
  */
 const ButtonText = (props: Props) => {
   const {

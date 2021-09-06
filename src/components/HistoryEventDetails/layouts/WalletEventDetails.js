@@ -24,7 +24,7 @@ import { useTranslation } from 'translations/translate';
 
 // Components
 import { Row, Spacing } from 'components/modern/Layout';
-import Button from 'components/modern/Button';
+import Button from 'components/core/Button';
 import FeeLabel from 'components/modern/FeeLabel';
 import Modal from 'components/Modal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';

@@ -23,7 +23,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import BottomModal from 'components/modern/BottomModal';
-import Button from 'components/modern/Button';
+import Button from 'components/core/Button';
 import Image from 'components/Image';
 import Toast from 'components/Toast';
 import Text from 'components/core/Text';

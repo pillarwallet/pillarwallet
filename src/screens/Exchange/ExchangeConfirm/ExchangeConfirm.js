@@ -26,7 +26,7 @@ import { useTranslation } from 'translations/translate';
 // Components
 import { Container, Content, Spacing } from 'components/modern/Layout';
 import HeaderBlock from 'components/HeaderBlock';
-import Button from 'components/modern/Button';
+import Button from 'components/core/Button';
 import Text from 'components/core/Text';
 import Toast from 'components/Toast';
 import TransactionDeploymentWarning from 'components/other/TransactionDeploymentWarning';

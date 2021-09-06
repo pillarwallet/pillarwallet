@@ -28,7 +28,7 @@ import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 
 // Components
 import { Row, Spacing } from 'components/modern/Layout';
-import Button from 'components/modern/Button';
+import Button from 'components/core/Button';
 import FeeLabel from 'components/modern/FeeLabel';
 import TokenValueView from 'components/modern/TokenValueView';
 import TransactionStatusIcon from 'components/modern/TransactionStatusIcon';

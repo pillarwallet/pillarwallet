@@ -26,7 +26,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import { Container, Content, Footer } from 'components/modern/Layout';
-import Button from 'components/modern/Button';
+import Button from 'components/core/Button';
 import HeaderBlock from 'components/HeaderBlock';
 import TokenValueInput from 'components/inputs/TokenValueInput';
 import TokenBalanceAccessory from 'components/inputs/TokenValueInput/TokenBalanceAccessory';

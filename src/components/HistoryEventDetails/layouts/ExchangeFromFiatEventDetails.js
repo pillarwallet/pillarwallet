@@ -27,7 +27,7 @@ import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 
 // Components
 import { Row, ColumnRight, Spacing } from 'components/modern/Layout';
-import Button from 'components/modern/Button';
+import Button from 'components/core/Button';
 import FeeLabel from 'components/modern/FeeLabel';
 import FiatValueView from 'components/modern/FiatValueView';
 import TokenValueView from 'components/modern/TokenValueView';

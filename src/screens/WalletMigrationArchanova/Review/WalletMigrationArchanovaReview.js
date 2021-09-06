@@ -24,7 +24,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import { Container, Content, Footer } from 'components/modern/Layout';
-import Button from 'components/modern/Button';
+import Button from 'components/core/Button';
 import CheckAuth from 'components/CheckAuth';
 import HeaderBlock from 'components/HeaderBlock';
 

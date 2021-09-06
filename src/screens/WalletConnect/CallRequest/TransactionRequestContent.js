@@ -26,7 +26,7 @@ import { BigNumber } from 'bignumber.js';
 import { useTranslation } from 'translations/translate';
 
 // Components
-import Button from 'components/modern/Button';
+import Button from 'components/core/Button';
 import FeeLabel from 'components/modern/FeeLabel';
 import Image from 'components/Image';
 import LargeFiatTokenValueView from 'components/modern/LargeFiatTokenValueView';

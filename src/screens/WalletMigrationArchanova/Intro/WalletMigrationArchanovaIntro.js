@@ -33,7 +33,7 @@ import {
 
 // Components
 import { Container } from 'components/modern/Layout';
-import Button from 'components/modern/Button';
+import Button from 'components/core/Button';
 import HeaderBlock from 'components/HeaderBlock';
 import Text from 'components/core/Text';
 

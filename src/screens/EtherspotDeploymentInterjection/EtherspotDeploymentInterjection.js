@@ -27,7 +27,7 @@ import { TouchableOpacity } from 'react-native';
 
 // Components
 import { Container, Content } from 'components/modern/Layout';
-import Button from 'components/modern/Button';
+import Button from 'components/core/Button';
 import HeaderBlock from 'components/HeaderBlock';
 import Modal from 'components/Modal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
