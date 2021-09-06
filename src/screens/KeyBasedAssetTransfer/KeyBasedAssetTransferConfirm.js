@@ -26,7 +26,7 @@ import { orderBy } from 'lodash';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import * as Table from 'components/other/Table';
+import * as Table from 'components/layout/Table';
 import BalanceView from 'components/BalanceView';
 import Button from 'components/legacy/Button';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';

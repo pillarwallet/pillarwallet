@@ -24,7 +24,7 @@ import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import * as Table from 'components/other/Table';
+import * as Table from 'components/layout/Table';
 import BalanceView from 'components/BalanceView';
 import FeeTable from 'components/other/FeeTable';
 import Image from 'components/Image';

@@ -23,7 +23,7 @@ import { View, TouchableOpacity } from 'react-native';
 import { useTranslationWithPrefix, useTranslation } from 'translations/translate';
 
 // Components
-import * as Table from 'components/other/Table';
+import * as Table from 'components/layout/Table';
 import Tooltip from 'components/Tooltip';
 
 // Selectors
