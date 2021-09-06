@@ -26,7 +26,7 @@ import t from 'translations/translate';
 
 // components
 import { Paragraph, MediumText, BaseText } from 'components/legacy/Typography';
-import Checkbox from 'components/Checkbox';
+import Checkbox from 'components/legacy/Checkbox';
 import Icon from 'components/legacy/Icon';
 import CollapsibleListItem from 'components/legacy/ListItem/CollapsibleListItem';
 

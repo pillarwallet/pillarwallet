@@ -8,7 +8,7 @@ function loadStories() {
 	require('../src/components/legacy/ActivityFeed/ActivityFeedItem.stories');
 	require('../src/components/Banner/Banner.stories');
 	require('../src/components/legacy/Button/Button.stories');
-	require('../src/components/Checkbox/Checkbox.stories');
+	require('../src/components/legacy/Checkbox/Checkbox.stories');
 	require('../src/components/CircleButton/CircleButton.stories');
 	require('../src/components/ContactSelector/ContactSelector.stories');
 	require('../src/components/DetailModal/DetailModal.stories');
@@ -42,7 +42,7 @@ const stories = [
 	'../src/components/legacy/ActivityFeed/ActivityFeedItem.stories',
 	'../src/components/Banner/Banner.stories',
 	'../src/components/legacy/Button/Button.stories',
-	'../src/components/Checkbox/Checkbox.stories',
+	'../src/components/legacy/Checkbox/Checkbox.stories',
 	'../src/components/CircleButton/CircleButton.stories',
 	'../src/components/ContactSelector/ContactSelector.stories',
 	'../src/components/DetailModal/DetailModal.stories',

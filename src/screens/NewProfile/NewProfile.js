@@ -29,7 +29,7 @@ import { Wrapper, Spacing } from 'components/legacy/Layout';
 import { BaseText, MediumText, Paragraph } from 'components/legacy/Typography';
 import Button from 'components/legacy/Button';
 import ProfileImage from 'components/ProfileImage';
-import Checkbox from 'components/Checkbox';
+import Checkbox from 'components/legacy/Checkbox';
 import PrismicDocumentModal from 'components/Modals/PrismicDocumentModal';
 import TextInput from 'components/legacy/TextInput';
 import Modal from 'components/Modal';

@@ -34,7 +34,7 @@ import { Label, BaseText, Paragraph } from 'components/legacy/Typography';
 import Button from 'components/legacy/Button';
 import ListItemWithImage from 'components/legacy/ListItem/ListItemWithImage';
 import TankAssetBalance from 'components/TankAssetBalance';
-import Checkbox from 'components/Checkbox';
+import Checkbox from 'components/legacy/Checkbox';
 import RefreshControl from 'components/RefreshControl';
 import Spinner from 'components/Spinner';
 import Toast from 'components/Toast';

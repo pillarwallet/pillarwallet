@@ -22,8 +22,8 @@ import { View } from 'react-native';
 import { storiesOf } from '@storybook/react-native';
 
 import Checkbox from './Checkbox';
-import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
-import CenterViewStretchDecorator from '../../../storybook/CenterViewStretchDecorator';
+import WithThemeDecorator from '../../../../storybook/WithThemeDecorator';
+import CenterViewStretchDecorator from '../../../../storybook/CenterViewStretchDecorator';
 
 const CheckboxesWrapper = (story) => (
   <View style={{
