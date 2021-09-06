@@ -24,7 +24,7 @@ import styled from 'styled-components/native';
 
 // Components
 import FiatValueView from 'components/modern/FiatValueView';
-import FiatChangeView from 'components/modern/FiatChangeView';
+import FiatChangeView from 'components/display/FiatChangeView';
 import Image from 'components/Image';
 import Text from 'components/core/Text';
 

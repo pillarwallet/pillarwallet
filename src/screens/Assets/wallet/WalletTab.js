@@ -30,7 +30,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 import BalanceView from 'components/BalanceView';
 import ChainListHeader from 'components/lists/ChainListHeader';
 import ChainListFooter from 'components/lists/ChainListFooter';
-import FiatChangeView from 'components/modern/FiatChangeView';
+import FiatChangeView from 'components/display/FiatChangeView';
 import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
