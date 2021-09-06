@@ -30,7 +30,7 @@ import Table, { TableRow, TableLabel } from 'components/Table';
 import Image from 'components/Image';
 import { Spacing, ScrollWrapper } from 'components/legacy/Layout';
 import { BaseText } from 'components/legacy/Typography';
-import Tabs from 'components/Tabs';
+import Tabs from 'components/legacy/Tabs';
 import ListItemWithImage from 'components/legacy/ListItem/ListItemWithImage';
 import RefreshControl from 'components/RefreshControl';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';

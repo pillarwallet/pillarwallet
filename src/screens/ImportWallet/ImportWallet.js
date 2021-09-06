@@ -32,7 +32,7 @@ import { ScrollWrapper, Wrapper } from 'components/legacy/Layout';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import { BaseText, MediumText } from 'components/legacy/Typography';
 import TextInput from 'components/legacy/TextInput';
-import Tabs from 'components/Tabs';
+import Tabs from 'components/legacy/Tabs';
 import Button from 'components/legacy/Button';
 
 // constants
