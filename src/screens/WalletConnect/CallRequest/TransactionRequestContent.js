@@ -120,13 +120,15 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
         {t('walletConnect.requests.transactionRequest')}
       </Text>
 
-      <LargeFiatTokenValueView
-        value={value}
-        assetAddress={assetAddress}
-        chain={chain}
-        symbol={symbol}
-        style={styles.tokenValue}
-      />
+      {value?.gt(0) && (
+        <LargeFiatTokenValueView
+          value={value}
+          assetAddress={assetAddress}
+          chain={chain}
+          symbol={symbol}
+          style={styles.tokenValue}
+        />
+      )}
 
       {!isConfirmDisabled && <TransactionDeploymentWarning chain={chain} style={styles.transactionDeploymentWarning} />}
 
@@ -170,13 +172,7 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
       ) : (
         <Button title={confirmTitle} disabled size="large" />
       )}
-      <Button
-        title={t('button.reject')}
-        size="large"
-        onPress={onReject}
-        variant="text"
-        style={styles.buttonStyle}
-      />
+      <Button title={t('button.reject')} size="large" onPress={onReject} variant="text" style={styles.buttonStyle} />
     </>
   );
 }
