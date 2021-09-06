@@ -55,7 +55,7 @@ function LargeFiatTokenValueView({ value, assetAddress, chain, symbol, style }: 
   const fiatCurrency = useFiatCurrency();
   const colors = useThemeColors();
   const rates = useChainRates(chain);
-  if (!value || value.isZero() || !assetAddress) return null;
+  if (!value || !assetAddress) return null;
   const balanceInFiat = getAssetValueInFiat(value, assetAddress, rates, fiatCurrency);
 
   return (
