@@ -28,7 +28,7 @@ import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 // Components
 import { Row, Spacing } from 'components/layout/Layout';
 import Button from 'components/core/Button';
-import FeeLabel from 'components/other/FeeLabel';
+import FeeLabel from 'components/display/FeeLabel';
 import Text from 'components/core/Text';
 import TransactionStatusIcon from 'components/display/TransactionStatusIcon';
 import TransactionStatusText from 'components/display/TransactionStatusText';

@@ -28,7 +28,7 @@ import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 // Components
 import { Spacing } from 'components/layout/Layout';
 import Button from 'components/core/Button';
-import FeeLabel from 'components/other/FeeLabel';
+import FeeLabel from 'components/display/FeeLabel';
 import Icon from 'components/core/Icon';
 import Text from 'components/core/Text';
 
