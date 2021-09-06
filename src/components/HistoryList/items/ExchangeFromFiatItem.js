@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 
 // Components
-import FiatValueView from 'components/modern/FiatValueView';
+import FiatValueView from 'components/display/FiatValueView';
 import TokenValueView from 'components/modern/TokenValueView';
 
 // Types

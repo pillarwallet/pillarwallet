@@ -26,7 +26,7 @@ import { BigNumber } from 'bignumber.js';
 // Components
 import { Spacing } from 'components/layout/Layout';
 import TokenValueView from 'components/modern/TokenValueView';
-import FiatValueView from 'components/modern/FiatValueView';
+import FiatValueView from 'components/display/FiatValueView';
 
 // Utils
 import { appFont, spacing } from 'utils/variables';
