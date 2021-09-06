@@ -45,7 +45,7 @@ import CheckBox from 'components/core/CheckBox';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import RefreshControl from 'components/RefreshControl';
 import Text from 'components/core/Text';
-import TextWithCopy from 'components/TextWithCopy';
+import TextWithCopy from 'components/legacy/TextWithCopy';
 
 // utils
 import { compactFalsy } from 'utils/array';
