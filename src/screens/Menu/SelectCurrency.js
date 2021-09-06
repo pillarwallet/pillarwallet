@@ -28,7 +28,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 // Components
 import { Container } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
-import FiatIcon from 'components/Icons/FiatIcon';
+import FiatIcon from 'components/display/FiatIcon';
 import Icon from 'components/core/Icon';
 import Text from 'components/core/Text';
 

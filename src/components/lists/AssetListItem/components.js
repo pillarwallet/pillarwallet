@@ -25,7 +25,7 @@ import { BigNumber } from 'bignumber.js';
 
 // Components
 import Text from 'components/core/Text';
-import TokenIcon from 'components/Icons/TokenIcon';
+import TokenIcon from 'components/display/TokenIcon';
 
 // Selectors
 import { useChainRates, useFiatCurrency } from 'selectors';

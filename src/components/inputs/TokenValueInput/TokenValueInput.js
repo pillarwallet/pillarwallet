@@ -30,7 +30,7 @@ import PercentsInputAccessoryHolder, {
   INPUT_ACCESSORY_NATIVE_ID,
 } from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
 import Text from 'components/core/Text';
-import TokenIcon from 'components/Icons/TokenIcon';
+import TokenIcon from 'components/display/TokenIcon';
 
 // Utils
 import { truncateDecimalPlaces } from 'utils/bigNumber';

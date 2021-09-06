@@ -25,7 +25,7 @@ import styled from 'styled-components/native';
 
 // Components
 import BigNumberInput from 'components/inputs/BigNumberInput';
-import FiatIcon from 'components/Icons/FiatIcon';
+import FiatIcon from 'components/display/FiatIcon';
 import Text from 'components/core/Text';
 
 // Selectors
