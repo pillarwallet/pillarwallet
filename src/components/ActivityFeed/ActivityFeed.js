@@ -30,7 +30,7 @@ import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 // components
 import Title from 'components/Title';
 import Tabs from 'components/Tabs';
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/legacy/Typography';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ActivityFeedItem from 'components/ActivityFeed/ActivityFeedItem';
 import EventDetails, { shouldShowEventDetails } from 'components/EventDetails';

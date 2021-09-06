@@ -22,7 +22,7 @@ import { SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
 
 import SlideModal from 'components/Modals/SlideModal';
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/legacy/Typography';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 
 import { compactFalsy } from 'utils/array';

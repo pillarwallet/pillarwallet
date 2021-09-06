@@ -55,7 +55,7 @@ import { getMigratedEnsName } from 'utils/accounts';
 // components
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import TankAssetBalance from 'components/TankAssetBalance';
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 
 // constants
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';

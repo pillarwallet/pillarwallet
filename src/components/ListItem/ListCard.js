@@ -24,7 +24,7 @@ import ShadowedCard from 'components/ShadowedCard';
 import { Note } from 'components/Note';
 import Image from 'components/Image';
 import { fontStyles, spacing, fontSizes } from 'utils/variables';
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/legacy/Typography';
 import { LabelBadge } from 'components/LabelBadge';
 
 type Props = {

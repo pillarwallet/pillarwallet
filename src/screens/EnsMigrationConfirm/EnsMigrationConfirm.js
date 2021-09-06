@@ -40,7 +40,7 @@ import { CHAIN } from 'constants/chainConstants';
 // components
 import { ScrollWrapper, Spacing } from 'components/legacy/Layout';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/legacy/Typography';
 import Button from 'components/legacy/Button';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import CheckAuth from 'components/CheckAuth';

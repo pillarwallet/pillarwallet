@@ -30,7 +30,7 @@ import { fetchAvailableTxToSettleAction } from 'actions/smartWalletActions';
 
 // components
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
-import { Label, BaseText, Paragraph } from 'components/Typography';
+import { Label, BaseText, Paragraph } from 'components/legacy/Typography';
 import Button from 'components/legacy/Button';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import TankAssetBalance from 'components/TankAssetBalance';

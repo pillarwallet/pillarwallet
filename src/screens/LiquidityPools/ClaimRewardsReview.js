@@ -30,7 +30,7 @@ import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableFee } from '
 import { Spacing } from 'components/legacy/Layout';
 import Button from 'components/legacy/Button';
 import Toast from 'components/Toast';
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { getPoolStats, getClaimRewardsTransaction } from 'utils/liquidityPools';

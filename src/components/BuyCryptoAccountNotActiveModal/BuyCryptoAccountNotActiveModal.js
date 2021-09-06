@@ -27,7 +27,7 @@ import { useNavigation } from 'react-navigation-hooks';
 // components
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/legacy/Button';
-import { MediumText, BaseText } from 'components/Typography';
+import { MediumText, BaseText } from 'components/legacy/Typography';
 import { Spacing } from 'components/legacy/Layout';
 
 // constants

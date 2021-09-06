@@ -30,7 +30,7 @@ import { beginOnboardingAction, setOnboardingPinCodeAction } from 'actions/onboa
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import PinCode from 'components/PinCode';
 import ErrorMessage from 'components/ErrorMessage';
-import { MediumText } from 'components/Typography';
+import { MediumText } from 'components/legacy/Typography';
 
 // constants
 import { BIOMETRICS_PROMPT } from 'constants/navigationConstants';

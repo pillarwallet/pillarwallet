@@ -30,7 +30,7 @@ import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableFee } from 'components/Table';
 import { Spacing } from 'components/legacy/Layout';
 import Button from 'components/legacy/Button';
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 import Toast from 'components/Toast';
 
 // utils

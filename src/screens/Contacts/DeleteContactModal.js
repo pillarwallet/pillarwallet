@@ -29,7 +29,7 @@ import { deleteContactAction } from 'actions/contactsActions';
 
 // Components
 import { Spacing } from 'components/legacy/Layout';
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/legacy/Typography';
 import Button from 'components/legacy/Button';
 import SlideModal from 'components/Modals/SlideModal';
 import ProfileImage from 'components/ProfileImage';

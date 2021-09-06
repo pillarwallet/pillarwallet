@@ -30,7 +30,7 @@ import { MENU } from 'constants/navigationConstants';
 
 // components
 import { Container } from 'components/legacy/Layout';
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
 import Button from 'components/legacy/Button';

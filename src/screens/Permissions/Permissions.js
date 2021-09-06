@@ -25,7 +25,7 @@ import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import t from 'translations/translate';
 
 // components
-import { Paragraph, MediumText, BaseText } from 'components/Typography';
+import { Paragraph, MediumText, BaseText } from 'components/legacy/Typography';
 import Checkbox from 'components/Checkbox';
 import Icon from 'components/Icon';
 import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';

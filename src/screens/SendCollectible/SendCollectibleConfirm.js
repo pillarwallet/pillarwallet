@@ -37,7 +37,7 @@ import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser, TableF
 import Button from 'components/legacy/Button';
 import { Spacing, ScrollWrapper } from 'components/legacy/Layout';
 import CollectibleReviewSummary from 'components/ReviewSummary/CollectibleReviewSummary';
-import { Paragraph } from 'components/Typography';
+import { Paragraph } from 'components/legacy/Typography';
 import Toast from 'components/Toast';
 
 // constants

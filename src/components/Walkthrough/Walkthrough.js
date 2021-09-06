@@ -8,7 +8,7 @@ import { NavigationActions } from 'react-navigation';
 import t from 'translations/translate';
 import { getNavigationPathAndParamsState, navigate } from 'services/navigation';
 import Button from 'components/legacy/Button';
-import { Paragraph, BoldText } from 'components/Typography';
+import { Paragraph, BoldText } from 'components/legacy/Typography';
 import Toast from 'components/Toast';
 import { spacing, fontStyles } from 'utils/variables';
 import { endWalkthroughAction, setWaitingForStepIdAction, setActiveStepIdAction } from 'actions/walkthroughsActions';

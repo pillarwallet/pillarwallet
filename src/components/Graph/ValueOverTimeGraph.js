@@ -22,7 +22,7 @@ import { View } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import { subWeeks, subMonths, subYears, subDays, isBefore, format, getTime } from 'date-fns';
 import t from 'translations/translate';
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 import { Spacing } from 'components/legacy/Layout';
 import {
   formatFiat,

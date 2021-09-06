@@ -22,7 +22,7 @@ import * as React from 'react';
 import SlideModal from 'components/Modals/SlideModal';
 import styled from 'styled-components/native';
 import { fontStyles, UIColors, baseColors } from 'utils/variables';
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 import Button from 'components/legacy/Button';
 import { getDeviceHeight } from 'utils/common';
 

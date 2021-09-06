@@ -20,7 +20,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { fontStyles } from 'utils/variables';
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/legacy/Typography';
 import { themedColors } from 'utils/themes';
 
 type Props = {

@@ -27,7 +27,7 @@ import Icon from 'components/Icon';
 
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { getThemeColors, themedColors, getColorByTheme } from 'utils/themes';
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/legacy/Typography';
 import type { Theme } from 'models/Theme';
 
 

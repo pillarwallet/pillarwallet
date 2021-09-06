@@ -31,7 +31,7 @@ import t from 'translations/translate';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import { Wrapper } from 'components/legacy/Layout';
 import Button from 'components/legacy/Button';
-import { TextLink, Label, BaseText } from 'components/Typography';
+import { TextLink, Label, BaseText } from 'components/legacy/Typography';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // configs

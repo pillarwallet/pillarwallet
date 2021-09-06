@@ -31,7 +31,7 @@ import FloatingButtons from 'components/FloatingButtons';
 import ActivityFeed from 'components/ActivityFeed';
 import HistoryList from 'components/HistoryList';
 import AssetPattern from 'components/AssetPattern';
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/legacy/Typography';
 import RefreshControl from 'components/RefreshControl';
 import SWActivationCard from 'components/SWActivationCard';
 

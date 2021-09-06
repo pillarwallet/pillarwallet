@@ -27,7 +27,7 @@ import t from 'translations/translate';
 import { BACKUP_PHRASE_VALIDATE } from 'constants/navigationConstants';
 
 // components
-import { Paragraph } from 'components/Typography';
+import { Paragraph } from 'components/legacy/Typography';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/legacy/Layout';
 import MnemonicPhrase from 'components/MnemonicPhrase';

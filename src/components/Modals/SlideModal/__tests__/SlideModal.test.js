@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 import { shallow } from 'enzyme';
 import { ThemeProvider } from 'styled-components/native';
 import { defaultTheme } from 'utils/themes';

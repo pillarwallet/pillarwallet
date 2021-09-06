@@ -30,7 +30,7 @@ import { finishOnboardingAction } from 'actions/onboardingActions';
 import { Container } from 'components/legacy/Layout';
 import Button from 'components/legacy/Button';
 import Loader from 'components/Loader';
-import { MediumText } from 'components/Typography';
+import { MediumText } from 'components/legacy/Typography';
 
 // utils
 import { fontStyles } from 'utils/variables';

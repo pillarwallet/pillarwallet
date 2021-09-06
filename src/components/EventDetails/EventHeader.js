@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { Platform } from 'react-native';
-import { MediumText, BaseText } from 'components/Typography';
+import { MediumText, BaseText } from 'components/legacy/Typography';
 import t from 'translations/translate';
 import styled, { withTheme } from 'styled-components/native';
 

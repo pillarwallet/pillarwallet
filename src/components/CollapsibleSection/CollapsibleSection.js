@@ -22,7 +22,7 @@ import styled from 'styled-components/native';
 import Collapsible from 'react-native-collapsible';
 
 // components
-import { MediumText, TextLink } from 'components/Typography';
+import { MediumText, TextLink } from 'components/legacy/Typography';
 import Icon from 'components/Icon';
 
 // utils

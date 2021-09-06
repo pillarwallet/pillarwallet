@@ -29,7 +29,7 @@ import { IMPORT_WALLET_LEGALS, FORGOT_PIN } from 'constants/navigationConstants'
 // components
 import { Wrapper } from 'components/legacy/Layout';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
-import { Paragraph } from 'components/Typography';
+import { Paragraph } from 'components/legacy/Typography';
 import Button from 'components/legacy/Button';
 
 // utils

@@ -40,7 +40,7 @@ import { Footer, ScrollWrapper, Wrapper } from 'components/legacy/Layout';
 import Button from 'components/legacy/Button';
 import ActivityFeed from 'components/ActivityFeed';
 import Animation from 'components/Animation';
-import { MediumText, Paragraph } from 'components/Typography';
+import { MediumText, Paragraph } from 'components/legacy/Typography';
 import Spinner from 'components/Spinner';
 
 // utils

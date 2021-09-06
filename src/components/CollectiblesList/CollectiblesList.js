@@ -24,7 +24,7 @@ import styled, { useTheme } from 'styled-components/native';
 import t from 'translations/translate';
 
 // Components
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 import CollectibleImage from 'components/CollectibleImage';
 import Button from 'components/legacy/Button';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';

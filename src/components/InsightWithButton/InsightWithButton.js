@@ -20,7 +20,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import ShadowedCard from 'components/ShadowedCard';
-import { MediumText, BaseText } from 'components/Typography';
+import { MediumText, BaseText } from 'components/legacy/Typography';
 import Icon from 'components/Icon';
 import Button from 'components/legacy/Button';
 import { spacing, fontStyles } from 'utils/variables';

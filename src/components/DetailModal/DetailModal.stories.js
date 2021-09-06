@@ -23,7 +23,7 @@ import React from 'react';
 import { storiesOf } from '@storybook/react-native';
 import styled from 'styled-components/native';
 
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 import Icon from 'components/Icon';
 import Image from 'components/Image';
 

@@ -32,7 +32,7 @@ import HeaderBlock from 'components/HeaderBlock';
 import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser, TableFee } from 'components/Table';
 import Button from 'components/legacy/Button';
 import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 import TransactionDeploymentWarning from 'components/other/TransactionDeploymentWarning';
 
 // utils

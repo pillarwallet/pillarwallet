@@ -28,7 +28,7 @@ import {
 } from 'react-native';
 
 import IconButton from 'components/IconButton';
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/legacy/Typography';
 import Spinner from 'components/Spinner';
 import Icon from 'components/Icon';
 import Image from 'components/Image';

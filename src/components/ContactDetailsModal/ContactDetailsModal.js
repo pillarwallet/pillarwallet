@@ -29,7 +29,7 @@ import { useDebounce } from 'use-debounce';
 import t from 'translations/translate';
 
 // Components
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 import AddressScanner from 'components/QRCodeScanner/AddressScanner';
 import Button from 'components/legacy/Button';
 import Icon from 'components/Icon';

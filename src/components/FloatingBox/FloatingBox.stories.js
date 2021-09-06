@@ -22,7 +22,7 @@ import React, { useState } from 'react';
 import { storiesOf } from '@storybook/react-native';
 import styled from 'styled-components/native';
 
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 import Button from 'components/legacy/Button';
 
 import FloatingBox from './FloatingBox';

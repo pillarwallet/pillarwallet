@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 import styled, { withTheme, css } from 'styled-components/native';
 import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import Icon from 'components/Icon';

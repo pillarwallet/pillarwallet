@@ -22,7 +22,7 @@ import React, { useRef } from 'react';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/legacy/Typography';
 import Button from 'components/legacy/Button';
 import Image from 'components/Image';
 import ModalBox from 'components/ModalBox';

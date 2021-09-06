@@ -24,7 +24,7 @@ import styled, { withTheme } from 'styled-components/native';
 import Icon from 'components/Icon';
 import t from 'translations/translate';
 
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/legacy/Typography';
 import ProfileImage from 'components/ProfileImage';
 import Button from 'components/legacy/Button';
 import Image from 'components/Image';

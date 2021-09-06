@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { MediumText } from 'components/Typography';
+import { MediumText } from 'components/legacy/Typography';
 import Icon from 'components/Icon';
 import { fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';

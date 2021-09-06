@@ -35,7 +35,7 @@ import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import ActivityFeed from 'components/ActivityFeed';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import { ScrollWrapper, Wrapper } from 'components/legacy/Layout';
-import { Paragraph } from 'components/Typography';
+import { Paragraph } from 'components/legacy/Typography';
 import CircleButton from 'components/CircleButton';
 import CollectibleImage from 'components/CollectibleImage';
 import HistoryList from 'components/HistoryList';

@@ -28,7 +28,7 @@ import debounce from 'lodash.debounce';
 // components
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import { Spacing } from 'components/legacy/Layout';
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 import Button from 'components/legacy/Button';
 import ValueInput from 'components/legacy/ValueInput';
 import Icon from 'components/Icon';

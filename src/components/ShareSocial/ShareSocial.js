@@ -22,7 +22,7 @@ import styled from 'styled-components/native';
 import Share from 'react-native-share';
 
 import { TouchableOpacity, TouchableNativeFeedback, Platform, Image, Linking } from 'react-native';
-import { Label } from 'components/Typography';
+import { Label } from 'components/legacy/Typography';
 
 const ShareWrapper = styled.View`
   justify-content: center;

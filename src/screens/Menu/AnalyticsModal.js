@@ -27,7 +27,7 @@ import { saveOptOutTrackingAction } from 'actions/appSettingsActions';
 
 import SlideModal from 'components/Modals/SlideModal';
 import { Wrapper } from 'components/legacy/Layout';
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 import Checkbox from 'components/Checkbox';
 
 import { spacing, fontStyles, fontTrackings } from 'utils/variables';

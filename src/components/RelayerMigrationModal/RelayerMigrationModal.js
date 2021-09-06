@@ -30,7 +30,7 @@ import { switchToGasTokenRelayerAction } from 'actions/smartWalletActions';
 
 // components
 import { Spacing } from 'components/legacy/Layout';
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/legacy/Typography';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/legacy/Button';
 import Image from 'components/Image';

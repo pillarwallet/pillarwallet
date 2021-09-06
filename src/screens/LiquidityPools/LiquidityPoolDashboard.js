@@ -30,7 +30,7 @@ import { fetchLiquidityPoolsDataAction, setShownStakingEnabledModalAction } from
 // components
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import { ScrollWrapper, Spacing } from 'components/legacy/Layout';
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/legacy/Typography';
 import CircleButton from 'components/CircleButton';
 import Button from 'components/legacy/Button';
 import Image from 'components/Image';

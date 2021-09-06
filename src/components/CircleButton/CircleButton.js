@@ -24,7 +24,7 @@ import { Image } from 'react-native';
 import Svg, { Circle, Defs, LinearGradient, Stop } from 'react-native-svg';
 import { fontSizes, fontTrackings } from 'utils/variables';
 import { getColorByThemeOutsideStyled, getThemeColors, getThemeType, themedColors } from 'utils/themes';
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 import Icon from 'components/Icon';
 import { Shadow } from 'components/Shadow';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';

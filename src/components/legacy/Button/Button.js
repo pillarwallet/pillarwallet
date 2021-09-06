@@ -21,7 +21,7 @@ import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import themeVariant from 'styled-theming';
 import debounce from 'lodash.debounce';
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 import Icon from 'components/Icon';
 import Spinner from 'components/Spinner';
 import { fontSizes, spacing } from 'utils/variables';

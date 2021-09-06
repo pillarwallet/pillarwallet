@@ -30,7 +30,7 @@ import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 
 // components
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/legacy/Typography';
 import Icon from 'components/Icon';
 import Image from 'components/Image';
 import TankAssetBalance from 'components/TankAssetBalance';

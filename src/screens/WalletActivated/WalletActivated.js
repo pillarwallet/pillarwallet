@@ -25,7 +25,7 @@ import styled, { withTheme } from 'styled-components/native';
 import t from 'translations/translate';
 
 import { fontStyles, objectFontStyles } from 'utils/variables';
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/legacy/Typography';
 import type { Theme } from 'models/Theme';
 import { ASSETS } from 'constants/navigationConstants';
 import Button from 'components/legacy/Button';

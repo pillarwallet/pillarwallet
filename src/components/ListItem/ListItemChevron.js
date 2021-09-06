@@ -22,7 +22,7 @@ import { StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 
 import Icon from 'components/Icon';
 import NativeTouchable from 'components/NativeTouchable';

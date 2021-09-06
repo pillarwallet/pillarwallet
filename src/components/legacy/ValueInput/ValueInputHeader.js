@@ -30,7 +30,7 @@ import { useTranslation } from 'translations/translate';
 // components
 import Icon from 'components/Icon';
 import Image from 'components/Image';
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/legacy/Typography';
 import { Spacing } from 'components/legacy/Layout';
 
 // types

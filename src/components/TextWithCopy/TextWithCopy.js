@@ -25,7 +25,7 @@ import { useTranslation } from 'react-i18next';
 import styled, { withTheme } from 'styled-components/native';
 
 // components
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 import Toast from 'components/Toast';
 
 // utils
@@ -33,7 +33,7 @@ import { fontStyles, spacing } from 'utils/variables';
 import { images } from 'utils/images';
 
 // Types
-import type { BaseTextProps } from 'components/Typography';
+import type { BaseTextProps } from 'components/legacy/Typography';
 import type { Theme } from 'models/Theme';
 
 const Container = styled.TouchableOpacity`

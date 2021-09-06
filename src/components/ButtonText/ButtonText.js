@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { Platform, TouchableOpacity, TouchableNativeFeedback } from 'react-native';
 import styled from 'styled-components/native';
-import { MediumText } from 'components/Typography';
+import { MediumText } from 'components/legacy/Typography';
 import Icon from 'components/Icon';
 import Spinner from 'components/Spinner';
 import type { IconProps } from 'components/Icon';

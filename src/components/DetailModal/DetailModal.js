@@ -27,7 +27,7 @@ import { SafeAreaView } from 'react-navigation';
 
 // components
 import SlideModal from 'components/Modals/SlideModal';
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/legacy/Typography';
 import { Spacing } from 'components/legacy/Layout';
 import Button from 'components/legacy/Button';
 import Spinner from 'components/Spinner';

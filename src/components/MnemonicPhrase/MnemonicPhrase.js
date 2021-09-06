@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/legacy/Typography';
 import { fontSizes } from 'utils/variables';
 import { getColorByTheme } from 'utils/themes';
 import { excludeFromMonitoring } from 'utils/monitoring';

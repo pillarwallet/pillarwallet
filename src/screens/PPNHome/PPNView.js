@@ -32,7 +32,7 @@ import { fetchVirtualAccountBalanceAction } from 'actions/smartWalletActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 
 // components
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 import CircleButton from 'components/CircleButton';
 import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 import Tabs from 'components/Tabs';

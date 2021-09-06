@@ -21,7 +21,7 @@ import React from 'react';
 import styled from 'styled-components/native';
 
 // components
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/legacy/Typography';
 import { Spacing } from 'components/legacy/Layout';
 import Image from 'components/Image';
 

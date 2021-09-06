@@ -6,7 +6,7 @@ import ExtraDimensions from 'react-native-extra-dimensions-android';
 import t from 'translations/translate';
 
 import Button from 'components/legacy/Button';
-import { Paragraph, MediumText } from 'components/Typography';
+import { Paragraph, MediumText } from 'components/legacy/Typography';
 import { spacing, fontStyles } from 'utils/variables';
 import { getiOSNavbarHeight } from 'utils/common';
 import { themedColors } from 'utils/themes';

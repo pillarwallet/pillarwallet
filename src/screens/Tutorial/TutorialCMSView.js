@@ -23,7 +23,7 @@ import { ScrollView, View } from 'react-native';
 import styled from 'styled-components/native';
 
 import Image from 'components/Image';
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/legacy/Typography';
 
 import type { ParsedCmsDocument } from 'models/CMSData';
 

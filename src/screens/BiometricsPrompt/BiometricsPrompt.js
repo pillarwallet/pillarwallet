@@ -31,7 +31,7 @@ import { beginOnboardingAction } from 'actions/onboardingActions';
 
 // components
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
-import { MediumText } from 'components/Typography';
+import { MediumText } from 'components/legacy/Typography';
 import Button from 'components/legacy/Button';
 import Image from 'components/Image';
 import Toast from 'components/Toast';

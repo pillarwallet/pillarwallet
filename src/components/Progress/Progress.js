@@ -25,7 +25,7 @@ import t from 'translations/translate';
 
 import { fontStyles, fontTrackings } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
-import { MediumText } from 'components/Typography';
+import { MediumText } from 'components/legacy/Typography';
 import type { Theme } from 'models/Theme';
 
 

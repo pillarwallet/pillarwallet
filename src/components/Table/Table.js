@@ -28,7 +28,7 @@ import { fontStyles } from 'utils/variables';
 import { formatUnits, hitSlop20 } from 'utils/common';
 import { getGasAddress, getGasDecimals, getGasSymbol } from 'utils/transactions';
 
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/legacy/Typography';
 import { Spacing } from 'components/legacy/Layout';
 import ProfileImage from 'components/ProfileImage';
 import IconButton from 'components/IconButton';

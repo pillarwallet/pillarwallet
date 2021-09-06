@@ -21,7 +21,7 @@ import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import { fontStyles } from 'utils/variables';
-import { MediumText } from 'components/Typography';
+import { MediumText } from 'components/legacy/Typography';
 
 
 type Props = {

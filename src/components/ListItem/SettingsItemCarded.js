@@ -23,7 +23,7 @@ import styled, { withTheme } from 'styled-components/native';
 import ShadowedCard from 'components/ShadowedCard';
 import Icon from 'components/Icon';
 import Image from 'components/Image';
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/legacy/Typography';
 import Spinner from 'components/Spinner';
 
 import { spacing, fontSizes, fontStyles } from 'utils/variables';
