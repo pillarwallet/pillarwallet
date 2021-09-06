@@ -28,8 +28,8 @@ import { useTranslationWithPrefix } from 'translations/translate';
 // Components
 import * as Table from 'components/modern/Table';
 import BalanceView from 'components/BalanceView';
-import Button from 'components/Button';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import Button from 'components/legacy/Button';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import FeeTable from 'components/modern/FeeTable';
 import Image from 'components/Image';
 import Spinner from 'components/Spinner';

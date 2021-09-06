@@ -24,7 +24,7 @@ import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import styled, { ThemeProvider, withTheme } from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
 import type { NavigationScreenProp } from 'react-navigation';
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 import IconButton from 'components/IconButton';
 import SvgIcon from 'components/modern/Icon';
 import Image from 'components/Image';

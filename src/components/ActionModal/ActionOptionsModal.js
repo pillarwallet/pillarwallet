@@ -22,8 +22,8 @@ import { SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
 
 import SlideModal from 'components/Modals/SlideModal';
-import { BaseText, MediumText } from 'components/Typography';
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
+import { BaseText, MediumText } from 'components/legacy/Typography';
+import ListItemWithImage from 'components/legacy/ListItem/ListItemWithImage';
 
 import { compactFalsy } from 'utils/array';
 import { themedColors } from 'utils/themes';

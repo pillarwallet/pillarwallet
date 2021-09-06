@@ -29,10 +29,10 @@ import { switchEnvironments } from 'configs/envConfig';
 import { resetOnboardingAndNavigateAction } from 'actions/onboardingActions';
 
 // components
-import { Wrapper } from 'components/Layout';
+import { Wrapper } from 'components/legacy/Layout';
 import Image from 'components/Image';
-import Button from 'components/Button';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import Button from 'components/legacy/Button';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 
 // utils
 import { spacing } from 'utils/variables';

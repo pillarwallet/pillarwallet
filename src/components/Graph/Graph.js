@@ -26,7 +26,7 @@ import Svg, {
   ForeignObject,
 } from 'react-native-svg';
 import { withTheme } from 'styled-components/native';
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 import { getThemeColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 

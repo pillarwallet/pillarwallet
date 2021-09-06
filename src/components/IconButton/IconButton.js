@@ -19,14 +19,14 @@
 */
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
-import Icon from 'components/Icon';
-import { MediumText } from 'components/Typography';
+import Icon from 'components/legacy/Icon';
+import { MediumText } from 'components/legacy/Typography';
 import { fontSizes } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
 
 // types
 import type { Theme } from 'models/Theme';
-import type { IconName } from 'components/Icon';
+import type { IconName } from 'components/legacy/Icon';
 import type { ViewStyleProp, TextStyleProp } from 'utils/types/react-native';
 
 export type Props = {

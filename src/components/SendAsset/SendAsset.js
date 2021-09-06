@@ -33,7 +33,7 @@ import { SEND_COLLECTIBLE_CONFIRM, SEND_TOKEN_CONFIRM } from 'constants/navigati
 import { ASSET_TYPES } from 'constants/assetsConstants';
 
 // components
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import Toast from 'components/Toast';
 

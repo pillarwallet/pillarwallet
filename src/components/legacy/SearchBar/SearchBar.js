@@ -25,7 +25,7 @@ import Clipboard from '@react-native-community/clipboard';
 import t from 'translations/translate';
 
 // Components
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 
 // Utils
 import { SIDE_BUTTON_APPEARANCE } from 'utils/layoutAnimations';
@@ -55,6 +55,11 @@ type Props = {|
   style?: ViewStyleProp,
 |};
 
+/**
+ * @deprecated This compontent is considered legacy and should not be used in new code
+ *
+ * Use: components/SearchBar instead
+ */
 const SearchBar = ({
   query,
   onChangeQuery,

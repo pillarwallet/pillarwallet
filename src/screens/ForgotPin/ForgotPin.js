@@ -27,10 +27,10 @@ import styled from 'styled-components/native';
 import { IMPORT_WALLET_LEGALS, FORGOT_PIN } from 'constants/navigationConstants';
 
 // components
-import { Wrapper } from 'components/Layout';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { Paragraph } from 'components/Typography';
-import Button from 'components/Button';
+import { Wrapper } from 'components/legacy/Layout';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
+import { Paragraph } from 'components/legacy/Typography';
+import Button from 'components/legacy/Button';
 
 // utils
 import { spacing } from 'utils/variables';

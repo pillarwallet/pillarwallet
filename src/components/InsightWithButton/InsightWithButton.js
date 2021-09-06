@@ -20,12 +20,12 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import ShadowedCard from 'components/ShadowedCard';
-import { MediumText, BaseText } from 'components/Typography';
-import Icon from 'components/Icon';
-import Button from 'components/Button';
+import { MediumText, BaseText } from 'components/legacy/Typography';
+import Icon from 'components/legacy/Icon';
+import Button from 'components/legacy/Button';
 import { spacing, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
-import type { Props as ButtonProps } from 'components/Button';
+import type { Props as ButtonProps } from 'components/legacy/Button';
 
 type Props = {
   title?: string,

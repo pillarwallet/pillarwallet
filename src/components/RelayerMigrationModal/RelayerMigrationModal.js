@@ -29,10 +29,10 @@ import { getPlrAddressForChain } from 'configs/assetsConfig';
 import { switchToGasTokenRelayerAction } from 'actions/smartWalletActions';
 
 // components
-import { Spacing } from 'components/Layout';
-import { BaseText, MediumText } from 'components/Typography';
+import { Spacing } from 'components/legacy/Layout';
+import { BaseText, MediumText } from 'components/legacy/Typography';
 import SlideModal from 'components/Modals/SlideModal';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import Image from 'components/Image';
 
 // constants

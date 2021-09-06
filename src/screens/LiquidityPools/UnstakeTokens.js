@@ -25,10 +25,10 @@ import t from 'translations/translate';
 import debounce from 'lodash.debounce';
 
 // components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { Container, Spacing } from 'components/Layout';
-import { BaseText } from 'components/Typography';
-import Button from 'components/Button';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
+import { Container, Spacing } from 'components/legacy/Layout';
+import { BaseText } from 'components/legacy/Typography';
+import Button from 'components/legacy/Button';
 import ValueInput from 'components/legacy/ValueInput';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 

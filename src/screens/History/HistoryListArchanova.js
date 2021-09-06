@@ -24,7 +24,7 @@ import { useNavigation } from 'react-navigation-hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // Components
-import ActivityFeed from 'components/ActivityFeed';
+import ActivityFeed from 'components/legacy/ActivityFeed';
 import RefreshControl from 'components/RefreshControl';
 
 // Constants

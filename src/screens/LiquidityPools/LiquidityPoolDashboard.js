@@ -28,11 +28,11 @@ import t from 'translations/translate';
 import { fetchLiquidityPoolsDataAction, setShownStakingEnabledModalAction } from 'actions/liquidityPoolsActions';
 
 // components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ScrollWrapper, Spacing } from 'components/Layout';
-import { BaseText, MediumText } from 'components/Typography';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
+import { ScrollWrapper, Spacing } from 'components/legacy/Layout';
+import { BaseText, MediumText } from 'components/legacy/Typography';
 import CircleButton from 'components/CircleButton';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import Image from 'components/Image';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 import Stats from 'components/Stats';

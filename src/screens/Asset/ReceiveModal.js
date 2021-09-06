@@ -29,7 +29,7 @@ import { createStructuredSelector } from 'reselect';
 // components
 import Text from 'components/modern/Text';
 import SlideModal from 'components/Modals/SlideModal';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import QRCodeWithTheme from 'components/QRCode';
 import Toast from 'components/Toast';
 import ProfileImage from 'components/ProfileImage';
