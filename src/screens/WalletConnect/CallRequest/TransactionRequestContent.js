@@ -26,13 +26,13 @@ import { BigNumber } from 'bignumber.js';
 import { useTranslation } from 'translations/translate';
 
 // Components
-import Button from 'components/modern/Button';
-import FeeLabel from 'components/modern/FeeLabel';
+import Button from 'components/core/Button';
+import FeeLabel from 'components/display/FeeLabel';
 import Image from 'components/Image';
-import LargeFiatTokenValueView from 'components/modern/LargeFiatTokenValueView';
-import Text from 'components/modern/Text';
+import LargeFiatTokenValueView from 'components/display/LargeFiatTokenValueView';
+import Text from 'components/core/Text';
 import TransactionDeploymentWarning from 'components/other/TransactionDeploymentWarning';
-import Icon from 'components/modern/Icon';
+import Icon from 'components/core/Icon';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';

@@ -23,9 +23,9 @@ import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 
 // Components
-import Button from 'components/modern/Button';
+import Button from 'components/core/Button';
 import Image from 'components/Image';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // Utils
 import { chainFromChainId } from 'utils/chains';

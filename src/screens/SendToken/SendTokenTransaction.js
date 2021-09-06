@@ -28,7 +28,7 @@ import t from 'translations/translate';
 import { Container, Wrapper } from 'components/legacy/Layout';
 import { Paragraph, MediumText } from 'components/legacy/Typography';
 import Title from 'components/legacy/Title';
-import Button from 'components/modern/Button';
+import Button from 'components/core/Button';
 import Animation from 'components/Animation';
 import Toast from 'components/Toast';
 

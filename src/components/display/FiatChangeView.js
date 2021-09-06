@@ -19,43 +19,46 @@
 */
 
 import * as React from 'react';
-import styled from 'styled-components/native';
+import { BigNumber } from 'bignumber.js';
 
 // Components
-import Icon from 'components/modern/Icon';
-import Text from 'components/modern/Text';
+import Text, { type TextVariant } from 'components/core/Text';
 
 // Utils
-import { hitSlop20 } from 'utils/common';
-import { formatExchangeRate } from 'utils/format';
+import { formatFiatChangeExtended } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 
-type Props = {
-  rate: number,
-  fromSymbol: string,
-  toSymbol: string,
-};
+// Types
+import type { TextStyleProp } from 'utils/types/react-native';
 
-const ExchangeRateText = ({ fromSymbol, toSymbol, rate }: Props) => {
-  const [isReversed, setIsReversed] = React.useState(false);
+type Props = {|
+  value: ?BigNumber,
+  change: ?BigNumber,
+  currency: string,
+  variant?: TextVariant,
+  color?: string,
+  style?: TextStyleProp,
+|};
 
+function FiatChangeView({ value, change, currency, variant = 'regular', color, style }: Props) {
   const colors = useThemeColors();
 
+  if (!change) return null;
+
+  const initialBalance = value?.minus(change);
+  const changeColor = color ?? (change.gte(0) ? colors?.positive : colors?.text);
+
   return (
-    <TouchableContainer onPress={() => setIsReversed(!isReversed)} hitSlop={hitSlop20}>
-      <ExchangeIcon name="refresh" color={colors.link} width={16} height={16} />
-      <Text>{formatExchangeRate(rate, fromSymbol, toSymbol, isReversed)}</Text>
-    </TouchableContainer>
+    <Text variant={variant} color={changeColor} style={[styles.textStyle, style]}>
+      {formatFiatChangeExtended(change, initialBalance, currency)}
+    </Text>
   );
+}
+
+export default FiatChangeView;
+
+const styles = {
+  textStyle: {
+    fontVariant: ['tabular-nums'],
+  },
 };
-
-export default ExchangeRateText;
-
-const TouchableContainer = styled.TouchableOpacity`
-  flex-direction: row;
-  align-items: center;
-`;
-
-export const ExchangeIcon = styled(Icon)`
-  margin-right: 4px;
-`;

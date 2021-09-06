@@ -25,7 +25,7 @@ import styled from 'styled-components/native';
 import t from 'translations/translate';
 
 // Components
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // Selectors
 import { useChainRates, useFiatCurrency } from 'selectors';

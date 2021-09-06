@@ -22,40 +22,56 @@ import * as React from 'react';
 import { BigNumber } from 'bignumber.js';
 
 // Components
-import Text, { type TextVariant } from 'components/modern/Text';
+import Text, { type TextVariant } from 'components/core/Text';
 
 // Utils
-import { formatFiatChangeExtended } from 'utils/format';
+import { formatTokenValue, formatTokenChange } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 
 // Types
 import type { TextStyleProp } from 'utils/types/react-native';
 
+type Mode = 'balance' | 'change';
+
 type Props = {|
   value: ?BigNumber,
-  change: ?BigNumber,
-  currency: string,
+  symbol: string,
   variant?: TextVariant,
+  mode?: Mode,
   color?: string,
   style?: TextStyleProp,
 |};
 
-function FiatChangeView({ value, change, currency, variant = 'regular', color, style }: Props) {
+function TokenValueView({
+  value,
+  symbol,
+  variant,
+  mode = 'balance',
+  color,
+  style,
+}: Props) {
   const colors = useThemeColors();
 
-  if (!change) return null;
+  if (!value) return null;
 
-  const initialBalance = value?.minus(change);
-  const changeColor = color ?? (change.gte(0) ? colors?.positive : colors?.text);
+  if (mode === 'change') {
+    const changeColor = color ?? (value.gte(0) ? colors?.positive : colors?.text);
+
+    return (
+      <Text variant={variant} color={changeColor} style={[styles.textStyle, style]}>
+        {formatTokenChange(value, symbol, { stripTrailingZeros: true })}
+      </Text>
+    );
+  }
 
   return (
-    <Text variant={variant} color={changeColor} style={[styles.textStyle, style]}>
-      {formatFiatChangeExtended(change, initialBalance, currency)}
+    <Text variant={variant} color={color} style={[styles.textStyle, style]}>
+      {formatTokenValue(value, symbol, { stripTrailingZeros: true })}
     </Text>
   );
 }
 
-export default FiatChangeView;
+export default TokenValueView;
 
 const styles = {
   textStyle: {

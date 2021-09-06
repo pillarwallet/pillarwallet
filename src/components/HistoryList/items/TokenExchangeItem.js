@@ -22,8 +22,8 @@ import * as React from 'react';
 import { useTranslation } from 'translations/translate';
 
 // Components
-import TokenValueView from 'components/modern/TokenValueView';
-import { ColumnRight } from 'components/modern/Layout';
+import TokenValueView from 'components/display/TokenValueView';
+import { ColumnRight } from 'components/layout/Layout';
 
 // Types
 import type { TokenExchangeEvent } from 'models/History';

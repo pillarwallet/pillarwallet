@@ -136,7 +136,7 @@ export type BaseTextProps = {|
 /**
  * @deprecated This compontent is considered legacy and should not be used in new code
  *
- * Use: components/modern/Text instead
+ * Use: components/core/Text instead
  */
 export const BaseText: React.ComponentType<BaseTextProps> = styled.Text`
   font-family: "${appFont.regular}";

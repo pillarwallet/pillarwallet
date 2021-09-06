@@ -22,7 +22,7 @@ import * as React from 'react';
 import { useTranslation } from 'translations/translate';
 
 // Components
-import Text, { type TextVariant } from 'components/modern/Text';
+import Text, { type TextVariant } from 'components/core/Text';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';

@@ -38,14 +38,14 @@ import { switchToEtherspotAccountIfNeededAction } from 'actions/accountsActions'
 // Components
 import { Wrapper } from 'components/legacy/Layout';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
-import AssetListItem from 'components/modern/AssetListItem';
+import AssetListItem from 'components/lists/AssetListItem';
 import BalanceView from 'components/BalanceView';
 import Button from 'components/legacy/Button';
-import CheckBox from 'components/modern/CheckBox';
+import CheckBox from 'components/core/CheckBox';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import RefreshControl from 'components/RefreshControl';
-import Text from 'components/modern/Text';
-import TextWithCopy from 'components/TextWithCopy';
+import Text from 'components/core/Text';
+import TextWithCopy from 'components/legacy/TextWithCopy';
 
 // utils
 import { compactFalsy } from 'utils/array';

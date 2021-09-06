@@ -19,44 +19,43 @@
 */
 
 import * as React from 'react';
+import styled from 'styled-components/native';
 
 // Components
-import Icon from 'components/modern/Icon';
+import Icon from 'components/core/Icon';
+import Text from 'components/core/Text';
 
 // Utils
+import { hitSlop20 } from 'utils/common';
+import { formatExchangeRate } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
-import { spacing } from 'utils/variables';
 
-// Types
-import type { ViewStyleProp } from 'utils/types/react-native';
-import { TRANSACTION_STATUS, type TransactionStatus } from 'models/History';
+type Props = {
+  rate: number,
+  fromSymbol: string,
+  toSymbol: string,
+};
 
+const ExchangeRateText = ({ fromSymbol, toSymbol, rate }: Props) => {
+  const [isReversed, setIsReversed] = React.useState(false);
 
-type Props = {|
-  status: ?TransactionStatus,
-  size: number,
-  style?: ViewStyleProp,
-|};
-
-function TransactionStatusIcon({ status, size, style }: Props) {
   const colors = useThemeColors();
 
-  switch (status) {
-    case TRANSACTION_STATUS.PENDING:
-      return <Icon name="pending" color={colors.neutral} width={size} height={size} style={[styles.icon, style]} />;
-    case TRANSACTION_STATUS.FAILED:
-    case TRANSACTION_STATUS.TIMEDOUT:
-      return <Icon name="failed" color={colors.negative} width={size} height={size} style={[styles.icon, style]} />;
-    default:
-      return null;
-  }
-}
-
-export default TransactionStatusIcon;
-
-const styles = {
-  icon: {
-    marginLeft: spacing.extraSmall,
-    marginRight: spacing.extraSmall,
-  },
+  return (
+    <TouchableContainer onPress={() => setIsReversed(!isReversed)} hitSlop={hitSlop20}>
+      <ExchangeIcon name="refresh" color={colors.link} width={16} height={16} />
+      <Text>{formatExchangeRate(rate, fromSymbol, toSymbol, isReversed)}</Text>
+    </TouchableContainer>
+  );
 };
+
+export default ExchangeRateText;
+
+const TouchableContainer = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+`;
+
+export const ExchangeIcon = styled(Icon)`
+  margin-right: 4px;
+`;

@@ -25,7 +25,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import { Container } from 'components/modern/Layout';
+import { Container } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import Modal from 'components/Modal';
 import WalletConnectDisconnectModal from 'screens/WalletConnect/DisconnectModal';

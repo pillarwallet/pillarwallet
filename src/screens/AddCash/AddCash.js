@@ -36,11 +36,11 @@ import { useThemeColors } from 'utils/themes';
 import { isLogV2AppEvents } from 'utils/environment';
 
 // Components
-import { Container } from 'components/modern/Layout';
-import Button from 'components/modern/Button';
+import { Container } from 'components/layout/Layout';
+import Button from 'components/core/Button';
 import TextInput from 'components/legacy/TextInput';
 import HeaderBlock from 'components/HeaderBlock';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 import Toast from 'components/Toast';
 import Modal from 'components/Modal';
 import BuyCryptoAccountNotActiveModal from 'components/BuyCryptoAccountNotActiveModal';

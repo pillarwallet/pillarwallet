@@ -26,7 +26,7 @@ import styled from 'styled-components/native';
 import Emoji from 'react-native-emoji';
 
 // Components
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // Hooks
 import useWalletConnect from 'hooks/useWalletConnect';

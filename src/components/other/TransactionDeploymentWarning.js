@@ -23,8 +23,8 @@ import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 
 // Components
-import Icon from 'components/modern/Icon';
-import Text from 'components/modern/Text';
+import Icon from 'components/core/Icon';
+import Text from 'components/core/Text';
 
 // Selectors
 import { useActiveAccount, useRootSelector } from 'selectors';

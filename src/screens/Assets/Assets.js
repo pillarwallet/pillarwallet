@@ -23,9 +23,9 @@ import { useNavigation } from 'react-navigation-hooks';
 import { useTranslation } from 'translations/translate';
 
 // Components
-import { Container } from 'components/modern/Layout';
+import { Container } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
-import TabView from 'components/modern/TabView';
+import TabView from 'components/layout/TabView';
 
 // Constants
 import { ASSET_CATEGORY as CATEGORY } from 'constants/assetsConstants';

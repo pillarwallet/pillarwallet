@@ -24,7 +24,7 @@ import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 
 // components
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 import Spinner from 'components/Spinner';
 import { Spacing } from 'components/legacy/Layout';
 

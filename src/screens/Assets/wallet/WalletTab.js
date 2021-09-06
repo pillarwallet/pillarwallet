@@ -28,9 +28,9 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import BalanceView from 'components/BalanceView';
-import ChainListHeader from 'components/modern/ChainListHeader';
-import ChainListFooter from 'components/modern/ChainListFooter';
-import FiatChangeView from 'components/modern/FiatChangeView';
+import ChainListHeader from 'components/lists/ChainListHeader';
+import ChainListFooter from 'components/lists/ChainListFooter';
+import FiatChangeView from 'components/display/FiatChangeView';
 import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';

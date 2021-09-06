@@ -62,7 +62,7 @@ const Text = styled(MediumText)`
 /**
  * @deprecated This compontent is considered legacy and should not be used in new code
  *
- * Use: components/modern/Text instead
+ * Use: components/core/Text instead
  */
 const Title = (props: Props) => {
   const ellipsized = !props.fullWidth ? {

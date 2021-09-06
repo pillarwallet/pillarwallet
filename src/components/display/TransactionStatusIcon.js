@@ -19,39 +19,44 @@
 */
 
 import * as React from 'react';
-import { useTranslation } from 'translations/translate';
 
 // Components
 import Icon from 'components/core/Icon';
-import Text from 'components/core/Text';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
+import { spacing } from 'utils/variables';
 
 // Types
-import { type EnsNameRegisteredEvent } from 'models/History';
+import type { ViewStyleProp } from 'utils/types/react-native';
+import { TRANSACTION_STATUS, type TransactionStatus } from 'models/History';
 
-// Local
-import HistoryListItem from './HistoryListItem';
 
 type Props = {|
-  event: EnsNameRegisteredEvent,
-  onPress?: () => mixed,
+  status: ?TransactionStatus,
+  size: number,
+  style?: ViewStyleProp,
 |};
 
-function EnsNameItem({ event, onPress }: Props) {
-  const { t } = useTranslation();
+function TransactionStatusIcon({ status, size, style }: Props) {
   const colors = useThemeColors();
 
-  return (
-    <HistoryListItem
-      iconComponent={<Icon name="profile" color={colors.homeEnsNameIcon} />}
-      title={t('ensName')}
-      subtitle={event.ensName}
-      valueComponent={<Text color={colors.basic030}>{t('label.registered')}</Text>}
-      onPress={onPress}
-    />
-  );
+  switch (status) {
+    case TRANSACTION_STATUS.PENDING:
+      return <Icon name="pending" color={colors.neutral} width={size} height={size} style={[styles.icon, style]} />;
+    case TRANSACTION_STATUS.FAILED:
+    case TRANSACTION_STATUS.TIMEDOUT:
+      return <Icon name="failed" color={colors.negative} width={size} height={size} style={[styles.icon, style]} />;
+    default:
+      return null;
+  }
 }
 
-export default EnsNameItem;
+export default TransactionStatusIcon;
+
+const styles = {
+  icon: {
+    marginLeft: spacing.extraSmall,
+    marginRight: spacing.extraSmall,
+  },
+};

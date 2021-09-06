@@ -23,9 +23,9 @@ import { useTranslation } from 'translations/translate';
 import styled from 'styled-components/native';
 
 // Components
-import Button from 'components/modern/Button';
+import Button from 'components/core/Button';
 import Image from 'components/Image';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';

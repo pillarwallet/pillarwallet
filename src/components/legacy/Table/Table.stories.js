@@ -29,8 +29,8 @@ import { ADDRESS_ZERO } from 'constants/assetsConstants';
 
 // local
 import Table, { TableRow, TableLabel, TableAmount, TableTotal } from './Table';
-import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
-import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
+import WithThemeDecorator from '../../../../storybook/WithThemeDecorator';
+import CenterViewDecorator from '../../../../storybook/CenterViewDecorator';
 
 
 storiesOf('Table', module)

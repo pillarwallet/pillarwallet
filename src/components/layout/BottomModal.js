@@ -22,11 +22,11 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 
 // Components
-import SafeAreaView from 'components/modern/SafeAreaViewWorkaround';
+import SafeAreaView from 'components/layout/SafeAreaViewWorkaround';
 import SlideModal from 'components/Modals/SlideModal';
 import Image from 'components/Image';
-import Text from 'components/modern/Text';
-import { Spacing } from 'components/modern/Layout';
+import Text from 'components/core/Text';
+import { Spacing } from 'components/layout/Layout';
 
 // Utils
 import { appFont, fontStyles, spacing } from 'utils/variables';

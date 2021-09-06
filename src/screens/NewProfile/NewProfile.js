@@ -23,7 +23,7 @@ import { debounce } from 'lodash';
 import t from 'translations/translate';
 
 // Components
-import { Container, Content } from 'components/modern/Layout';
+import { Container, Content } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import { Wrapper, Spacing } from 'components/legacy/Layout';
 import { BaseText, MediumText, Paragraph } from 'components/legacy/Typography';

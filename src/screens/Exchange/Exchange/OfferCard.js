@@ -23,8 +23,8 @@ import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 
 // Components
-import Button from 'components/modern/Button';
-import Text from 'components/modern/Text';
+import Button from 'components/core/Button';
+import Text from 'components/core/Text';
 import DynamicSizeImage from 'components/DynamicSizeImage';
 
 // Utils
