@@ -26,7 +26,7 @@ import styled, { withTheme } from 'styled-components/native';
 import t from 'translations/translate';
 
 // components
-import TextInput from 'components/TextInput';
+import TextInput from 'components/legacy/TextInput';
 import PercentsInputAccessoryHolder, {
   INPUT_ACCESSORY_NATIVE_ID,
 } from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';

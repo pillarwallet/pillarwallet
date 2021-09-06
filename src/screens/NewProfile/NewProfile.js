@@ -31,7 +31,7 @@ import Button from 'components/Button';
 import ProfileImage from 'components/ProfileImage';
 import Checkbox from 'components/Checkbox';
 import PrismicDocumentModal from 'components/Modals/PrismicDocumentModal';
-import TextInput from 'components/TextInput';
+import TextInput from 'components/legacy/TextInput';
 import Modal from 'components/Modal';
 
 // Constants

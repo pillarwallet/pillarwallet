@@ -37,7 +37,7 @@ import Image from 'components/Image';
 import Modal from 'components/Modal';
 import ModalBox from 'components/ModalBox';
 import Spinner from 'components/Spinner';
-import TextInput from 'components/TextInput';
+import TextInput from 'components/legacy/TextInput';
 import Title from 'components/Title';
 
 // Utils

@@ -21,7 +21,7 @@
 import React, { useState } from 'react';
 import { storiesOf } from '@storybook/react-native';
 
-import TextInput from 'components/TextInput';
+import TextInput from 'components/legacy/TextInput';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 import CenterViewStretchDecorator from '../../../storybook/CenterViewStretchDecorator';
 

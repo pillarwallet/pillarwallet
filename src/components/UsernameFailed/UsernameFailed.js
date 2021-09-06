@@ -35,7 +35,7 @@ import {
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
-import TextInput from 'components/TextInput';
+import TextInput from 'components/legacy/TextInput';
 import { getUsernameInputIcon } from 'screens/NewProfile';
 
 // utils
