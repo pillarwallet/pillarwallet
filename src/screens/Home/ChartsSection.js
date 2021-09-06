@@ -26,7 +26,7 @@ import { BigNumber } from 'bignumber.js';
 import { clamp } from 'lodash';
 
 // Components
-import PagerControl from 'components/modern/PagerControl';
+import PagerControl from 'components/layout/PagerControl';
 
 // Types
 import type { AssetCategoryRecord } from 'models/AssetCategory';
