@@ -24,7 +24,7 @@ import t from 'translations/translate';
 import { Keyboard } from 'react-native';
 
 // Components
-import BottomModal from 'components/modern/BottomModal';
+import BottomModal from 'components/layout/BottomModal';
 import Button from 'components/core/Button';
 import Image from 'components/Image';
 import Text from 'components/core/Text';
