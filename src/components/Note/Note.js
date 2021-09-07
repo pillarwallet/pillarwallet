@@ -21,7 +21,7 @@ import * as React from 'react';
 import { Text } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import Emoji from 'react-native-emoji';
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 import IconButton from 'components/IconButton';
 import { fontStyles, spacing, fontSizes } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';

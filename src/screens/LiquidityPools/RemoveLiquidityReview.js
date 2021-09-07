@@ -25,12 +25,12 @@ import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
 // components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
-import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableFee } from 'components/Table';
-import { Spacing } from 'components/Layout';
-import Button from 'components/Button';
-import { BaseText } from 'components/Typography';
+import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableFee } from 'components/legacy/Table';
+import { Spacing } from 'components/legacy/Layout';
+import Button from 'components/legacy/Button';
+import { BaseText } from 'components/legacy/Typography';
 import Toast from 'components/Toast';
 
 // utils

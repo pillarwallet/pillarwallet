@@ -22,8 +22,8 @@ import { Animated } from 'react-native';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
-import { Wrapper } from 'components/Layout';
-import { MediumText } from 'components/Typography';
+import { Wrapper } from 'components/legacy/Layout';
+import { MediumText } from 'components/legacy/Typography';
 import Spinner from 'components/Spinner';
 import { fontStyles } from 'utils/variables';
 import type { TranslatedString } from 'models/Translations';

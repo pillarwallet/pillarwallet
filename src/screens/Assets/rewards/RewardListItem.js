@@ -23,10 +23,10 @@ import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 
 // Components
-import Text from 'components/modern/Text';
-import FiatValueView from 'components/modern/FiatValueView';
-import TokenValueView from 'components/modern/TokenValueView';
-import TokenIcon from 'components/Icons/TokenIcon';
+import Text from 'components/core/Text';
+import FiatValueView from 'components/display/FiatValueView';
+import TokenValueView from 'components/display/TokenValueView';
+import TokenIcon from 'components/display/TokenIcon';
 
 // Selectors
 import { useFiatCurrency, useChainRates } from 'selectors';

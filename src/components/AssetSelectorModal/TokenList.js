@@ -25,10 +25,10 @@ import { BigNumber } from 'bignumber.js';
 import t from 'translations/translate';
 
 // Components
-import ChainListHeader from 'components/modern/ChainListHeader';
-import ChainListFooter from 'components/modern/ChainListFooter';
+import ChainListHeader from 'components/lists/ChainListHeader';
+import ChainListFooter from 'components/lists/ChainListFooter';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
+import ListItemWithImage from 'components/legacy/ListItem/ListItemWithImage';
 
 // Selectors
 import { useSupportedChains } from 'selectors/chains';

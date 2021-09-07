@@ -29,10 +29,10 @@ import { useTranslationWithPrefix } from 'translations/translate';
 import localeConfig from 'configs/localeConfig';
 
 // Components
-import { Container } from 'components/modern/Layout';
+import { Container } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
-import Icon from 'components/modern/Icon';
-import Text from 'components/modern/Text';
+import Icon from 'components/core/Icon';
+import Text from 'components/core/Text';
 
 // Selectors
 import { useLanguageCode } from 'selectors/appSettings';

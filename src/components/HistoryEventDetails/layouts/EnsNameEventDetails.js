@@ -26,11 +26,11 @@ import { useDispatch } from 'react-redux';
 import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 
 // Components
-import { Spacing } from 'components/modern/Layout';
-import Button from 'components/modern/Button';
-import FeeLabel from 'components/modern/FeeLabel';
-import Icon from 'components/modern/Icon';
-import Text from 'components/modern/Text';
+import { Spacing } from 'components/layout/Layout';
+import Button from 'components/core/Button';
+import FeeLabel from 'components/display/FeeLabel';
+import Icon from 'components/core/Icon';
+import Text from 'components/core/Text';
 
 // Utils
 import { useThemeColors } from 'utils/themes';

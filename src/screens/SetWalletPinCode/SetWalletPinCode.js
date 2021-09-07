@@ -23,9 +23,9 @@ import styled from 'styled-components/native';
 import t from 'translations/translate';
 
 // components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import PinCode from 'components/PinCode';
-import { MediumText, Paragraph } from 'components/Typography';
+import { MediumText, Paragraph } from 'components/legacy/Typography';
 
 // constants
 import { PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';

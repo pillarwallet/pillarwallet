@@ -26,7 +26,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // Constants
 import { KEY_BASED_ASSET_TRANSFER_INTRO, KEY_BASED_ASSET_TRANSFER_STATUS } from 'constants/navigationConstants';

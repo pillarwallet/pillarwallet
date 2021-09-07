@@ -28,12 +28,12 @@ import t from 'translations/translate';
 import { resetWalletImportErrorAction, importWalletFromMnemonicAction } from 'actions/onboardingActions';
 
 // components
-import { ScrollWrapper, Wrapper } from 'components/Layout';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { BaseText, MediumText } from 'components/Typography';
-import TextInput from 'components/TextInput';
-import Tabs from 'components/Tabs';
-import Button from 'components/Button';
+import { ScrollWrapper, Wrapper } from 'components/legacy/Layout';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
+import { BaseText, MediumText } from 'components/legacy/Typography';
+import TextInput from 'components/legacy/TextInput';
+import Tabs from 'components/legacy/Tabs';
+import Button from 'components/legacy/Button';
 
 // constants
 import { TWORDSPHRASE } from 'constants/walletConstants';

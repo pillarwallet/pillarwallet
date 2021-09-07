@@ -28,7 +28,7 @@ import { fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
 import { refreshEtherspotAccountsAction } from 'actions/etherspotActions';
 
 // Components
-import { Container, Content } from 'components/modern/Layout';
+import { Container, Content } from 'components/layout/Layout';
 import FloatingButtons from 'components/FloatingButtons';
 import HeaderBlock from 'components/HeaderBlock';
 import RefreshControl from 'components/RefreshControl';

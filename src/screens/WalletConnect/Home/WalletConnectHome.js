@@ -28,10 +28,10 @@ import { useTranslation, useTranslationWithPrefix } from 'translations/translate
 import { chunk } from 'lodash';
 
 // Components
-import { Container, Center } from 'components/modern/Layout';
+import { Container, Center } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
-import TabBar from 'components/modern/TabBar';
-import Text from 'components/modern/Text';
+import TabBar from 'components/layout/TabBar';
+import Text from 'components/core/Text';
 import FloatingButtons from 'components/FloatingButtons';
 import Spinner from 'components/Spinner';
 import Toast from 'components/Toast';

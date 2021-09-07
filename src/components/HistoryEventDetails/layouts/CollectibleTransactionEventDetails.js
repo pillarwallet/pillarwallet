@@ -26,12 +26,12 @@ import { useDispatch } from 'react-redux';
 import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 
 // Components
-import { Row, Spacing } from 'components/modern/Layout';
-import Button from 'components/modern/Button';
-import FeeLabel from 'components/modern/FeeLabel';
-import Text from 'components/modern/Text';
-import TransactionStatusIcon from 'components/modern/TransactionStatusIcon';
-import TransactionStatusText from 'components/modern/TransactionStatusText';
+import { Row, Spacing } from 'components/layout/Layout';
+import Button from 'components/core/Button';
+import FeeLabel from 'components/display/FeeLabel';
+import Text from 'components/core/Text';
+import TransactionStatusIcon from 'components/display/TransactionStatusIcon';
+import TransactionStatusText from 'components/display/TransactionStatusText';
 
 // Selectors
 import { useRootSelector } from 'selectors';

@@ -25,10 +25,10 @@ import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import Button from 'components/modern/Button';
-import FiatValueView from 'components/modern/FiatValueView';
-import Icon from 'components/modern/Icon';
-import Text from 'components/modern/Text';
+import Button from 'components/core/Button';
+import FiatValueView from 'components/display/FiatValueView';
+import Icon from 'components/core/Icon';
+import Text from 'components/core/Text';
 import Tooltip from 'components/Tooltip';
 
 // Contants

@@ -24,15 +24,15 @@ import { Image } from 'react-native';
 import Svg, { Circle, Defs, LinearGradient, Stop } from 'react-native-svg';
 import { fontSizes, fontTrackings } from 'utils/variables';
 import { getColorByThemeOutsideStyled, getThemeColors, getThemeType, themedColors } from 'utils/themes';
-import { BaseText } from 'components/Typography';
-import Icon from 'components/Icon';
+import { BaseText } from 'components/legacy/Typography';
+import Icon from 'components/legacy/Icon';
 import { Shadow } from 'components/Shadow';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import { hexToRgba } from 'utils/ui';
 
 // Types
 import type { Theme, ThemeColors } from 'models/Theme';
-import type { IconName } from 'components/Icon';
+import type { IconName } from 'components/legacy/Icon';
 
 
 type Props = {

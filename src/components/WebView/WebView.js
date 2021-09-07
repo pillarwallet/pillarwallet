@@ -20,8 +20,8 @@ import { useBackHandler } from '@react-native-community/hooks';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // components
-import { Wrapper } from 'components/Layout';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { Wrapper } from 'components/legacy/Layout';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import Spinner from 'components/Spinner';
 
 

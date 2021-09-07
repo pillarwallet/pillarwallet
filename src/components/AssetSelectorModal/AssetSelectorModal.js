@@ -24,10 +24,10 @@ import { orderBy } from 'lodash';
 import t from 'translations/translate';
 
 // Components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import SearchBar from 'components/SearchBar';
 import SlideModal from 'components/Modals/SlideModal';
-import Tabs from 'components/Tabs';
+import Tabs from 'components/legacy/Tabs';
 
 // Constants
 import { ASSET_TYPES } from 'constants/assetsConstants';

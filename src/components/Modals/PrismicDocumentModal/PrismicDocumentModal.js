@@ -26,8 +26,8 @@ import t from 'translations/translate';
 // Components
 import Modal from 'components/Modal';
 import HeaderBlock from 'components/HeaderBlock';
-import { Container } from 'components/modern/Layout';
-import Text from 'components/modern/Text';
+import { Container } from 'components/layout/Layout';
+import Text from 'components/core/Text';
 
 // Types
 import type { ScrollToProps } from 'components/Modals/SlideModal';

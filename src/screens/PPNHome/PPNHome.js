@@ -23,7 +23,7 @@ import { useDispatch } from 'react-redux';
 import t from 'translations/translate';
 
 // Components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 
 // Actions
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';

@@ -22,8 +22,8 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 
 // Components
-import Icon, { type IconName } from 'components/modern/Icon';
-import Text from 'components/modern/Text';
+import Icon, { type IconName } from 'components/core/Icon';
+import Text from 'components/core/Text';
 
 // Utils
 import { fontStyles, spacing } from 'utils/variables';

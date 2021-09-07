@@ -27,12 +27,12 @@ import { useDispatch } from 'react-redux';
 import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 
 // Components
-import { Row, Spacing } from 'components/modern/Layout';
-import Button from 'components/modern/Button';
-import FeeLabel from 'components/modern/FeeLabel';
-import TokenValueView from 'components/modern/TokenValueView';
-import TransactionStatusIcon from 'components/modern/TransactionStatusIcon';
-import TransactionStatusText from 'components/modern/TransactionStatusText';
+import { Row, Spacing } from 'components/layout/Layout';
+import Button from 'components/core/Button';
+import FeeLabel from 'components/display/FeeLabel';
+import TokenValueView from 'components/display/TokenValueView';
+import TransactionStatusIcon from 'components/display/TransactionStatusIcon';
+import TransactionStatusText from 'components/display/TransactionStatusText';
 
 // Constants
 import { SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';

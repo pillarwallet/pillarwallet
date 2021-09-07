@@ -22,11 +22,11 @@ import * as React from 'react';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import BottomModal from 'components/modern/BottomModal';
-import Button from 'components/modern/Button';
+import BottomModal from 'components/layout/BottomModal';
+import Button from 'components/core/Button';
 import Image from 'components/Image';
 import Toast from 'components/Toast';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // Hooks
 import useWalletConnect from 'hooks/useWalletConnect';
