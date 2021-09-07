@@ -95,9 +95,6 @@ export const sendAssetAction = (
   waitForActualTransactionHash: boolean = false,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    logBreadcrumb('transaction send flow', 'sendAssetAction called', {
-      transaction,
-    });
     const {
       tokenType,
       symbol,
@@ -200,16 +197,16 @@ export const sendAssetAction = (
           break;
       }
     } catch (error) {
-      reportErrorLog('transaction send flow:- sendAssetAction transaction failed', { error });
+      reportErrorLog('transaction send flow:- sendAssetAction transaction failed', {
+        error,
+        logTransactionType,
+        transaction,
+      });
       ({ error: transactionErrorMessage } = catchTransactionError(error, logTransactionType, transaction));
     }
 
     if (!transactionResult || transactionErrorMessage) {
-      logBreadcrumb(
-        'transaction send flow',
-        'sendAssetAction: transaction failed',
-        t('error.transactionFailed.default'),
-      );
+      logBreadcrumb('transaction send flow', 'sendAssetAction: transaction failed', { transactionErrorMessage });
       callback({
         isSuccess: false,
         error: transactionErrorMessage || t('error.transactionFailed.default'),
@@ -269,7 +266,7 @@ export const sendAssetAction = (
       ? parseTokenAmount(transaction.amount, transaction.decimals)
       : 0;
 
-    logBreadcrumb('transaction send flow', 'sendAssetAction: building history transaction');
+    logBreadcrumb('transaction send flow', 'sendAssetAction: buildHistoryTransaction');
     let historyTx = buildHistoryTransaction({
       ...transactionResult,
       to,
