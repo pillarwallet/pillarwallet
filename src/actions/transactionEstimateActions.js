@@ -57,17 +57,17 @@ import type { Chain } from 'models/Chain';
 export const resetEstimateTransactionAction = () => {
   return (dispatch: Dispatch) => {
     logBreadcrumb(
-      'transaction send flow',
+      'Send Flow',
       'resetEstimateTransactionAction: dispatching SET_TRANSACTION_ESTIMATE_FEE_INFO',
     );
     dispatch({ type: SET_TRANSACTION_ESTIMATE_FEE_INFO, payload: null });
     logBreadcrumb(
-      'transaction send flow',
+      'Send Flow',
       'resetEstimateTransactionAction: dispatching SET_TRANSACTION_ESTIMATE_ERROR',
     );
     dispatch({ type: SET_TRANSACTION_ESTIMATE_ERROR, payload: null });
     logBreadcrumb(
-      'transaction send flow',
+      'Send Flow',
       'resetEstimateTransactionAction: dispatching setEstimatingTransactionAction as false',
     );
     dispatch(setEstimatingTransactionAction(false));
@@ -83,7 +83,7 @@ export const setTransactionsEstimateFeeAction = (feeInfo: ?TransactionFeeInfo) =
   return (dispatch: Dispatch) => {
     if (!feeInfo || (feeInfo.fee && !feeInfo.fee.gte(0))) {
       logBreadcrumb(
-        'transaction send flow',
+        'Send Flow',
         'setTransactionsEstimateFeeAction: dispatching setTransactionsEstimateErrorAction',
         t('toast.transactionFeeEstimationFailed'),
       );
@@ -92,18 +92,18 @@ export const setTransactionsEstimateFeeAction = (feeInfo: ?TransactionFeeInfo) =
     }
 
     logBreadcrumb(
-      'transaction send flow',
+      'Send Flow',
       'setTransactionsEstimateFeeAction: dispatching SET_TRANSACTION_ESTIMATE_ERROR',
     );
     dispatch({ type: SET_TRANSACTION_ESTIMATE_ERROR, payload: null });
     logBreadcrumb(
-      'transaction send flow',
+      'Send Flow',
       'setTransactionsEstimateFeeAction: dispatching SET_TRANSACTION_ESTIMATE_FEE_INFO',
       { feeInfo },
     );
     dispatch({ type: SET_TRANSACTION_ESTIMATE_FEE_INFO, payload: feeInfo });
     logBreadcrumb(
-      'transaction send flow',
+      'Send Flow',
       'setTransactionsEstimateFeeAction: dispatching setEstimatingTransactionAction as false',
     );
     dispatch(setEstimatingTransactionAction(false));
@@ -113,21 +113,21 @@ export const setTransactionsEstimateFeeAction = (feeInfo: ?TransactionFeeInfo) =
 export const setTransactionsEstimateErrorAction = (errorMessage: string) => {
   return (dispatch: Dispatch, getState: GetState) => {
     logBreadcrumb(
-      'transaction send flow',
+      'Send Flow',
       'setTransactionsEstimateErrorAction: fetching transaction estimate error message',
       { errorMessage },
     );
     const currentErrorMessage = getState().transactionEstimate.errorMessage;
     if (currentErrorMessage) Toast.closeAll(); // hide if previous shown
     logBreadcrumb(
-      'transaction send flow',
+      'Send Flow',
       'setTransactionsEstimateErrorAction: dispatching SET_TRANSACTION_ESTIMATE_ERROR',
       { errorMessage },
     );
     dispatch({ type: SET_TRANSACTION_ESTIMATE_ERROR, payload: errorMessage });
 
     logBreadcrumb(
-      'transaction send flow',
+      'Send Flow',
       'setTransactionsEstimateErrorAction: dispatching setEstimatingTransactionAction as false',
     );
     dispatch(setEstimatingTransactionAction(false));
@@ -146,13 +146,13 @@ export const estimateTransactionsAction = (
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     logBreadcrumb(
-      'transaction send flow',
+      'Send Flow',
       'estimateTransactionsAction: dispatching setEstimatingTransactionAction as true',
     );
     dispatch(setEstimatingTransactionAction(true));
 
     logBreadcrumb(
-      'transaction send flow',
+      'Send Flow',
       'estimateTransactionsAction: checking for active account',
     );
     const activeAccount = activeAccountSelector(getState());
@@ -165,7 +165,7 @@ export const estimateTransactionsAction = (
 
     let transactions;
     try {
-      logBreadcrumb('transaction send flow', 'estimateTransactionsAction: building transaction', {
+      logBreadcrumb('Send Flow', 'estimateTransactionsAction: building transaction', {
         transactionsToEstimate, chain,
       });
       transactions = await Promise.all(transactionsToEstimate.map(({
@@ -211,7 +211,7 @@ export const estimateTransactionsAction = (
       case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
         // reset batch, not a promise
         try {
-          logBreadcrumb('transaction send flow', 'account type: etherspot smart wallet clearTransactionsBatch', {
+          logBreadcrumb('Send Flow', 'account type: etherspot smart wallet clearTransactionsBatch', {
             chain,
           });
           etherspotService.clearTransactionsBatch(chain);
@@ -221,7 +221,7 @@ export const estimateTransactionsAction = (
           return;
         }
 
-        logBreadcrumb('transaction send flow', 'account type: etherspot smart wallet, setTransactionsBatch', {
+        logBreadcrumb('Send Flow', 'account type: etherspot smart wallet, setTransactionsBatch', {
           chain,
           transactions,
         });
@@ -230,7 +230,7 @@ export const estimateTransactionsAction = (
           errorMessage = error?.message;
         });
 
-        logBreadcrumb('transaction send flow', 'account type: etherspot smart wallet, estimateTransactionsBatch', {
+        logBreadcrumb('Send Flow', 'account type: etherspot smart wallet, estimateTransactionsBatch', {
           chain,
         });
         estimated = await etherspotService.estimateTransactionsBatch(chain, gasToken?.address).catch((error) => {
@@ -238,13 +238,13 @@ export const estimateTransactionsAction = (
           if (!errorMessage) errorMessage = error?.message;
           return null;
         });
-        logBreadcrumb('transaction send flow', 'account type: etherspot smart wallet, buildEtherspotTxFeeInfo', {
+        logBreadcrumb('Send Flow', 'account type: etherspot smart wallet, buildEtherspotTxFeeInfo', {
           estimated, useGasToken,
         });
         feeInfo = buildEtherspotTxFeeInfo(estimated, useGasToken);
         break;
       case ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET:
-        logBreadcrumb('transaction send flow', 'account type: archanvova smart wallet, estimateAccountTransactions', {
+        logBreadcrumb('Send Flow', 'account type: archanvova smart wallet, estimateAccountTransactions', {
           transactions,
         });
         estimated = await archanovaService.estimateAccountTransactions(transactions).catch((error) => {
@@ -252,7 +252,7 @@ export const estimateTransactionsAction = (
           errorMessage = error?.message;
           return null;
         });
-        logBreadcrumb('transaction send flow', 'account type: archanvova smart wallet, buildEtherspotTxFeeInfo', {
+        logBreadcrumb('Send Flow', 'account type: archanvova smart wallet, buildEtherspotTxFeeInfo', {
           estimated, useGasToken,
         });
         feeInfo = buildArchanovaTxFeeInfo(estimated, useGasToken);
@@ -264,7 +264,7 @@ export const estimateTransactionsAction = (
 
     if (!feeInfo || errorMessage) {
       logBreadcrumb(
-        'transaction send flow',
+        'Send Flow',
         'estimateTransactionsAction: dispatching setTransactionsEstimateErrorAction',
         t('toast.transactionFeeEstimationFailed'),
       );
@@ -272,7 +272,7 @@ export const estimateTransactionsAction = (
       return;
     }
     logBreadcrumb(
-      'transaction send flow',
+      'Send Flow',
       'estimateTransactionsAction: dispatching setTransactionsEstimateFeeAction',
       { feeInfo },
     );
@@ -283,7 +283,7 @@ export const estimateTransactionsAction = (
 export const estimateTransactionAction = (transaction: TransactionToEstimate, chain: Chain) => {
   return (dispatch: Dispatch) => {
     logBreadcrumb(
-      'transaction send flow',
+      'Send Flow',
       'estimateTransactionAction: dispatching estimateTransactionsAction',
       { transaction, chain },
     );
