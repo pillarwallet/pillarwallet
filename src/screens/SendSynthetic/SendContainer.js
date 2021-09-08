@@ -34,8 +34,6 @@ import Spinner from 'components/Spinner';
 
 // Utils
 import { spacing } from 'utils/variables';
-import { CHAIN } from 'constants/chainConstants';
-import { useChainConfig } from 'utils/uiConfig';
 
 // Types
 import type { ContactSelectorProps } from 'components/ContactSelector';
@@ -72,14 +70,12 @@ const SendContainer = ({
   children,
   isLoading,
 }: Props) => {
-  const chainCofing = useChainConfig(CHAIN.ETHEREUM);
-
   return (
     <ContainerWithHeader
       headerProps={{
         centerItems: [
           {
-            title: t('transactions.title.sendScreen', { chain: chainCofing.titleShort }),
+            title: t('transactions.title.sendScreenPPN'),
           },
         ],
       }}
