@@ -26,6 +26,7 @@ import t from 'translations/translate';
 // Components
 import { Spacing } from 'components/layout/Layout';
 import TokenListItem from 'components/lists/TokenListItem';
+import CollectibleListItem from 'components/lists/CollectibleListItem';
 import Modal from 'components/Modal';
 import ChainAssetSelectorModal from 'components/Modals/ChainAssetSelectorModal';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -98,14 +99,7 @@ const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollect
     }
 
     if (collectible) {
-      return (
-        <TokenListItem
-          name={collectible.name}
-          iconUrl={collectible.icon}
-          chain={collectible.chain}
-          onPress={() => onSelectCollectible?.(collectible)}
-        />
-      );
+      return <CollectibleListItem collectible={collectible} onPress={() => onSelectCollectible?.(collectible)} />;
     }
 
     return null;

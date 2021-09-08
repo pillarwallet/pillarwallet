@@ -20,88 +20,49 @@
 
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
-import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 
 // Components
 import Text from 'components/core/Text';
-import TokenIcon from 'components/display/TokenIcon';
-
-// Selectors
-import { useChainRates, useFiatCurrency } from 'selectors';
+import CollectibleImage from 'components/CollectibleImage';
 
 // Utils
-import { formatTokenValue, formatFiatValue } from 'utils/format';
-import { getAssetValueInFiat } from 'utils/rates';
 import { fontStyles, spacing } from 'utils/variables';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
-import type { Chain } from 'models/Chain';
+import type { Collectible } from 'models/Collectible';
 
 type Props = {|
-  chain: Chain,
-  name: ?string,
-  iconUrl: ?string,
-  address?: string,
-  symbol?: string,
-  balance?: ?BigNumber,
-  onPress?: () => mixed,
-  onPressBalance?: () => mixed,
+  collectible: Collectible,
   subtitle?: string,
+  onPress?: () => mixed,
   leftAddOn?: React.Node,
   style?: ViewStyleProp,
 |};
 
 /**
- * Standard token list item displaying icon, name, and optionally balance, subtitle and left add-on (e.g. checkbox).
+ * Standard collectible list item displaying icon, name and optionally subtitle and left add-on (e.g. checkbox).
  */
-function TokenListItem({
-  chain,
-  name,
-  symbol,
-  address,
-  iconUrl,
-  balance,
-  onPress,
-  onPressBalance,
-  subtitle,
-  leftAddOn,
-  style,
-}: Props) {
-  const rates = useChainRates(chain);
-  const currency = useFiatCurrency();
-
-  const balanceInFiat = getAssetValueInFiat(balance, address, rates, currency);
-
-  const formattedBalance = balance?.gt(0) ? formatTokenValue(balance, symbol) : symbol;
-  const formattedBalanceInFiat = formatFiatValue(balanceInFiat, currency);
-
+function CollectibleListItem({ collectible, subtitle, onPress, leftAddOn, style }: Props) {
   return (
     <Container onPress={onPress} disabled={!onPress} style={style}>
       {!!leftAddOn && <LeftAddOn>{leftAddOn}</LeftAddOn>}
 
-      <TokenIcon url={iconUrl} style={styles.tokenIcon} />
+      <CollectibleImage source={{ uri: collectible.iconUrl }} width={48} height={48} style={styles.icon} />
 
       <TitleContainer>
-        <Title numberOfLines={1}>{name}</Title>
+        <Title numberOfLines={1}>{collectible.name}</Title>
         {!!subtitle && <Subtitle numberOfLines={1}>{subtitle}</Subtitle>}
       </TitleContainer>
-
-      {!!formattedBalance && (
-        <BalanceWrapper onPress={onPressBalance} disabled={!onPressBalance}>
-          <BalanceFiatValue numberOfLines={1}>{formattedBalanceInFiat ?? ' '}</BalanceFiatValue>
-          <BalanceTokenValue numberOfLines={1}>{formattedBalance}</BalanceTokenValue>
-        </BalanceWrapper>
-      )}
     </Container>
   );
 }
 
-export default TokenListItem;
+export default CollectibleListItem;
 
 const styles = {
-  tokenIcon: {
+  icon: {
     marginRight: spacing.medium,
   },
 };
@@ -131,20 +92,4 @@ const Title = styled(Text)`
 
 const Subtitle = styled(Text)`
   color: ${({ theme }) => theme.colors.secondaryText};
-`;
-
-const BalanceWrapper = styled(TouchableOpacity)`
-  margin-left: ${spacing.medium}px;
-  justify-content: flex-end;
-  align-items: flex-end;
-`;
-
-const BalanceFiatValue = styled(Text)`
-  ${fontStyles.medium};
-  font-variant: tabular-nums;
-`;
-
-const BalanceTokenValue = styled(Text)`
-  color: ${({ theme }) => theme.colors.secondaryText};
-  font-variant: tabular-nums;
 `;

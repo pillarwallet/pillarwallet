@@ -26,6 +26,7 @@ import { useTranslation } from 'translations/translate';
 
 // Components
 import TokenListItem from 'components/lists/TokenListItem';
+import CollectibleListItem from 'components/lists/CollectibleListItem';
 import CheckBox from 'components/core/CheckBox';
 import Text from 'components/core/Text';
 
@@ -99,10 +100,8 @@ const AssetList = ({
     const collectibleToMigrate = !!collectiblesToMigrate[getCollectibleKey(collectible)];
 
     return (
-      <TokenListItem
-        name={collectible.name}
-        iconUrl={collectible.icon}
-        chain={CHAIN.ETHEREUM}
+      <CollectibleListItem
+        collectible={collectible}
         onPress={() => onPressCollectible(collectible.contractAddress, collectible.id, collectible.isLegacy)}
         leftAddOn={
           <CheckBox

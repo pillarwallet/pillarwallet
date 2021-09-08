@@ -26,6 +26,7 @@ import t from 'translations/translate';
 // Components
 import { Spacing } from 'components/layout/Layout';
 import TokenListItem from 'components/lists/TokenListItem';
+import CollectibleListItem from 'components/lists/CollectibleListItem';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 // Utils
@@ -71,10 +72,8 @@ const SearchResultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCo
 
     if (collectible) {
       return (
-        <TokenListItem
-          name={collectible.name}
-          iconUrl={collectible.icon}
-          chain={collectible.chain}
+        <CollectibleListItem
+          collectible={collectible}
           subtitle={chainConfigs[collectible.chain]?.title}
           onPress={() => onSelectCollectible?.(collectible)}
         />
