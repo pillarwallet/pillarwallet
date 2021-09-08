@@ -33,6 +33,7 @@ import { addContactAction } from 'actions/contactsActions';
 import { Spacing } from 'components/layout/Layout';
 import Button from 'components/core/Button';
 import ContactDetailsModal from 'components/ContactDetailsModal';
+import ContactListItem from 'components/lists/ContactListItem';
 import Modal from 'components/Modal';
 import SearchBar from 'components/SearchBar';
 
@@ -47,9 +48,6 @@ import { spacing } from 'utils/variables';
 
 // Types
 import type { Contact } from 'models/Contact';
-
-// Local
-import ContactListItem from './ContactListItem';
 
 type Props = {|
   contacts: Contact[],
