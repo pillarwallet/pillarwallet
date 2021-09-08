@@ -24,7 +24,7 @@ import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 
 // Components
-import AssetListItem from 'components/lists/AssetListItem';
+import TokenListItem from 'components/lists/TokenListItem';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 // Utils
@@ -44,7 +44,7 @@ function TokenList({ items, onSelectItem }: Props) {
 
   const renderItem = (item: AssetOption) => {
     return (
-      <AssetListItem
+      <TokenListItem
         chain={item.chain}
         address={item.address}
         symbol={item.symbol}

@@ -25,7 +25,7 @@ import { BigNumber } from 'bignumber.js';
 import { useTranslation } from 'translations/translate';
 
 // Components
-import AssetListItem from 'components/lists/AssetListItem';
+import TokenListItem from 'components/lists/TokenListItem';
 import CheckBox from 'components/core/CheckBox';
 import Text from 'components/core/Text';
 
@@ -76,7 +76,7 @@ const AssetList = ({
     const resultBalance = BigNumber(tokenToMigrate?.balance ?? balance);
 
     return (
-      <AssetListItem
+      <TokenListItem
         name={token.name}
         address={token.address}
         symbol={token.symbol}
@@ -99,7 +99,7 @@ const AssetList = ({
     const collectibleToMigrate = !!collectiblesToMigrate[getCollectibleKey(collectible)];
 
     return (
-      <AssetListItem
+      <TokenListItem
         name={collectible.name}
         iconUrl={collectible.icon}
         chain={CHAIN.ETHEREUM}
