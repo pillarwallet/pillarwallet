@@ -33,11 +33,14 @@ import { appFont, fontStyles, spacing } from 'utils/variables';
 type Props = {|
   showMore: boolean,
   onPress: () => mixed,
+  isCollapsed: ?boolean,
 |};
 
-function ChainSectionFooter({ showMore, onPress }: Props) {
+function ChainSectionFooter({ showMore, onPress, isCollapsed }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColors();
+
+  if (isCollapsed) return null;
 
   return (
     <Container>
@@ -63,7 +66,7 @@ const styles = {
 const Container = styled.View`
   background-color: ${({ theme }) => theme.colors.background};
   align-items: stretch;
-  margin-bottom: ${spacing.large}px;
+  padding-bottom: ${spacing.large}px;
 `;
 
 const ItemContainer = styled.TouchableOpacity`

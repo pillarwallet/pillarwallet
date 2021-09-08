@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { Keyboard, SectionList } from 'react-native';
+import { Keyboard, SectionList, LayoutAnimation } from 'react-native';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
@@ -39,6 +39,7 @@ import { mapNotNil } from 'utils/array';
 import { getAssetOptionKey, defaultSortAssetOptions } from 'utils/assets';
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
 import { getCollectibleKey, defaultSortCollectibles } from 'utils/collectibles';
+import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
@@ -71,14 +72,23 @@ const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollect
     ));
   };
 
-  const sections = useSectionData(tokens, collectibles ?? []);
+  const { isChainCollapsed, toggleChain } = useCollapseChain();
+  const sections = useSectionData(tokens, collectibles ?? [], isChainCollapsed);
 
   const renderSectionHeader = ({ chain }: Section) => {
-    return <ChainSectionHeader chain={chain} />;
+    return (
+      <ChainSectionHeader chain={chain} onPress={() => toggleChain(chain)} isCollapsed={isChainCollapsed[chain]} />
+    );
   };
 
   const renderSectionFooter = ({ chain, showMore }: Section) => {
-    return <ChainSectionFooter showMore={showMore} onPress={() => handleShowMore(chain)} />;
+    return (
+      <ChainSectionFooter
+        showMore={showMore}
+        onPress={() => handleShowMore(chain)}
+        isCollapsed={isChainCollapsed[chain]}
+      />
+    );
   };
 
   const renderItem = (item: Item) => {
@@ -153,18 +163,41 @@ type Section = {
   showMore: boolean,
 };
 
-function useSectionData(items: AssetOption[], collectibles: Collectible[]): Section[] {
+export type FlagPerChain = { [Chain]: ?boolean };
+
+export function useCollapseChain() {
+  const [isChainCollapsed, setIsChainCollapsed] = React.useState<FlagPerChain>({});
+
+  const toggleChain = (chain: Chain) => {
+    LayoutAnimation.configureNext(LIST_ITEMS_APPEARANCE);
+    // $FlowFixMe: type inference limitation
+    setIsChainCollapsed({ ...isChainCollapsed, [chain]: !isChainCollapsed[chain] });
+  };
+
+  return { isChainCollapsed, toggleChain };
+}
+
+function useSectionData(items: AssetOption[], collectibles: Collectible[], isChainCollapsed: FlagPerChain): Section[] {
   const chains = useSupportedChains();
-  return mapNotNil(chains, (chain) => buildSection(items, collectibles, chain));
+  return mapNotNil(chains, (chain) => buildSection(items, collectibles, chain, isChainCollapsed[chain]));
 }
 
 const MAX_ITEMS = 5;
 
-function buildSection(tokens: AssetOption[], collectibles: Collectible[], chain: Chain): ?Section {
+function buildSection(
+  tokens: AssetOption[],
+  collectibles: Collectible[],
+  chain: Chain,
+  isCollapsed: ?boolean,
+): ?Section {
   const matchingTokens = getMatchingTokens(tokens, chain);
   const matchingCollectibles = getMatchingCollectibles(collectibles, chain);
 
   if (!matchingTokens.length && !matchingCollectibles.length) return null;
+
+  if (isCollapsed) {
+    return { key: chain, chain, data: [], showMore: false };
+  }
 
   const tokenItems = matchingTokens.map((token) => ({ token }));
   const collectibleItems = matchingCollectibles.map((collectible) => ({ collectible }));

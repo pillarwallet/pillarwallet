@@ -19,15 +19,11 @@
 */
 
 import * as React from 'react';
-import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
-import { useTranslation } from 'translations/translate';
 
 // Components
 import Text from 'components/core/Text';
-
-// Hooks
-import { useDeploymentStatus } from 'hooks/deploymentStatus';
+import Icon from 'components/core/Icon';
 
 // Utils
 import { appFont, fontStyles, spacing } from 'utils/variables';
@@ -38,47 +34,39 @@ import { type Chain } from 'models/Chain';
 
 type Props = {|
   chain: Chain,
-  onPress?: () => mixed,
+  onPress: () => mixed,
+  isCollapsed: ?boolean,
 |};
 
-function ChainSectionHeader({ chain, onPress }: Props) {
-  const { t } = useTranslation();
+function ChainSectionHeader({ chain, onPress, isCollapsed }: Props) {
   const { title } = useChainConfig(chain);
 
-  const { isDeployedOnChain, showDeploymentInterjection } = useDeploymentStatus();
-
-  const isDeployed = isDeployedOnChain[chain];
-
   return (
-    <Container>
-      <TouchableOpacity onPress={onPress} disabled={!onPress}>
-        <Title>{title}</Title>
-      </TouchableOpacity>
+    <Container onPress={onPress}>
+      <Title numberOfLines={1}>{title}</Title>
 
-      {!isDeployed && (
-        <TouchableOpacity onPress={() => showDeploymentInterjection(chain)}>
-          <WalletNotDeployed>{t('label.walletNotDeployed')}</WalletNotDeployed>
-        </TouchableOpacity>
-      )}
+      <Icon name={isCollapsed ? 'chevron-up' : 'chevron-down'} style={styles.collapseIcon} />
     </Container>
   );
 }
 
 export default ChainSectionHeader;
 
-const Container = styled.View`
+const styles = {
+  collapseIcon: {
+    marginRight: spacing.large,
+  },
+};
+
+const Container = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
   background-color: ${({ theme }) => theme.colors.background};
-  align-items: stretch;
 `;
 
 const Title = styled(Text)`
+  flex: 1;
   ${fontStyles.big};
   font-family: ${appFont.medium};
   margin: ${spacing.mediumLarge}px ${spacing.large}px;
-`;
-
-const WalletNotDeployed = styled(Text)`
-  padding-bottom: ${spacing.mediumLarge}px;
-  ${fontStyles.small};
-  color: ${({ theme }) => theme.colors.link};
 `;
