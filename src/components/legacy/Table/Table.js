@@ -143,6 +143,9 @@ const Divider = styled.View`
 `;
 
 const Table = ({ children, title }: Props) => {
+  const childrenList = React.Children.toArray(children).filter(Boolean);
+  const childrenCount = childrenList.length;
+
   return (
     <View>
       {!!title && (
@@ -152,7 +155,8 @@ const Table = ({ children, title }: Props) => {
         </>
       )}
       {React.Children.map(children, (child, index) => {
-        const childrenCount = React.Children.toArray(children).filter(c => !!c).length;
+        if (!child) return null;
+
         return (
           <>
             {index > 0 && childrenCount > 1 && <Divider />}
