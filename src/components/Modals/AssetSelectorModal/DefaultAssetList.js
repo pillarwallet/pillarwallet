@@ -25,7 +25,7 @@ import t from 'translations/translate';
 
 // Components
 import { Spacing } from 'components/layout/Layout';
-import AssetListItem from 'components/lists/AssetListItem';
+import TokenListItem from 'components/lists/TokenListItem';
 import Modal from 'components/Modal';
 import ChainAssetSelectorModal from 'components/Modals/ChainAssetSelectorModal';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -85,7 +85,7 @@ const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollect
 
     if (token) {
       return (
-        <AssetListItem
+        <TokenListItem
           chain={token.chain}
           address={token.address}
           symbol={token.symbol}
@@ -99,7 +99,7 @@ const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollect
 
     if (collectible) {
       return (
-        <AssetListItem
+        <TokenListItem
           name={collectible.name}
           iconUrl={collectible.icon}
           chain={collectible.chain}

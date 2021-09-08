@@ -25,7 +25,7 @@ import t from 'translations/translate';
 
 // Components
 import { Spacing } from 'components/layout/Layout';
-import AssetListItem from 'components/lists/AssetListItem';
+import TokenListItem from 'components/lists/TokenListItem';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 // Utils
@@ -56,7 +56,7 @@ const SearchResultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCo
 
     if (token) {
       return (
-        <AssetListItem
+        <TokenListItem
           chain={token.chain}
           address={token.address}
           symbol={token.symbol}
@@ -71,7 +71,7 @@ const SearchResultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCo
 
     if (collectible) {
       return (
-        <AssetListItem
+        <TokenListItem
           name={collectible.name}
           iconUrl={collectible.icon}
           chain={collectible.chain}
