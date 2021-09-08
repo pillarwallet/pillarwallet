@@ -74,8 +74,10 @@ function TokenListItem({
 
   const balanceInFiat = getAssetValueInFiat(balance, address, rates, currency);
 
-  const formattedBalance = balance?.gt(0) ? formatTokenValue(balance, symbol) : symbol;
+  const formattedBalance = formatTokenValue(balance, symbol);
   const formattedBalanceInFiat = formatFiatValue(balanceInFiat, currency);
+
+  const showBalance = !!balance?.gt(0);
 
   return (
     <Container onPress={onPress} disabled={!onPress} style={style}>
@@ -88,7 +90,7 @@ function TokenListItem({
         {!!subtitle && <Subtitle numberOfLines={1}>{subtitle}</Subtitle>}
       </TitleContainer>
 
-      {!!formattedBalance && (
+      {showBalance && (
         <BalanceWrapper onPress={onPressBalance} disabled={!onPressBalance}>
           <BalanceFiatValue numberOfLines={1}>{formattedBalanceInFiat ?? ' '}</BalanceFiatValue>
           <BalanceTokenValue numberOfLines={1}>{formattedBalance}</BalanceTokenValue>
