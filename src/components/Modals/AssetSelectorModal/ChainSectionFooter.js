@@ -33,14 +33,11 @@ import { appFont, fontStyles, spacing } from 'utils/variables';
 type Props = {|
   showMore: boolean,
   onPress: () => mixed,
-  isCollapsed: ?boolean,
 |};
 
-function ChainSectionFooter({ showMore, onPress, isCollapsed }: Props) {
+function ChainSectionFooter({ showMore, onPress }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColors();
-
-  if (isCollapsed) return null;
 
   return (
     <Container>

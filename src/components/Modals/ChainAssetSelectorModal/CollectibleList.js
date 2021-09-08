@@ -22,10 +22,6 @@ import * as React from 'react';
 import { FlatList, useWindowDimensions } from 'react-native';
 import styled from 'styled-components/native';
 import { chunk } from 'lodash';
-import { useTranslation } from 'translations/translate';
-
-// Components
-import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 // Utils
 import { getCollectibleKey } from 'utils/collectibles';
@@ -44,8 +40,6 @@ type Props = {|
 |};
 
 function CollectibleList({ items, onSelectItem }: Props) {
-  const { t } = useTranslation();
-
   const { width } = useWindowDimensions();
   const numberOfColumns = 2;
 
@@ -69,23 +63,11 @@ function CollectibleList({ items, onSelectItem }: Props) {
     );
   };
 
-  const renderEmptyState = () => {
-    return (
-      <EmptyStateWrapper>
-        <EmptyStateParagraph
-          title={t('collectiblesList.emptyState.noCollectibles.title')}
-          bodyText={t('collectiblesList.emptyState.noCollectibles.paragraph')}
-        />
-      </EmptyStateWrapper>
-    );
-  };
-
   return (
     <FlatList
       data={rowData}
       renderItem={({ item }) => renderItem(item)}
       keyExtractor={(rowItems) => getCollectibleKey(rowItems[0])}
-      ListEmptyComponent={renderEmptyState()}
       contentContainerStyle={styles.contentContainer}
     />
   );
@@ -105,10 +87,3 @@ const ListRow = styled.View`
   padding: 0 ${spacing.mediumLarge}px;
 `;
 
-const EmptyStateWrapper = styled.View`
-  padding-top: 90px;
-  padding-bottom: 90px;
-  justify-content: center;
-  align-items: center;
-  backgroundColor: 'red'
-`;

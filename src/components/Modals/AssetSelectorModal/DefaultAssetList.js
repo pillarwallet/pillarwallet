@@ -82,13 +82,8 @@ const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollect
   };
 
   const renderSectionFooter = ({ chain, showMore }: Section) => {
-    return (
-      <ChainSectionFooter
-        showMore={showMore}
-        onPress={() => handleShowMore(chain)}
-        isCollapsed={isChainCollapsed[chain]}
-      />
-    );
+    if (isChainCollapsed[chain]) return null;
+    return <ChainSectionFooter showMore={showMore} onPress={() => handleShowMore(chain)} />;
   };
 
   const renderItem = (item: Item) => {

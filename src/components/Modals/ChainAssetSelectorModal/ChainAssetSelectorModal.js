@@ -84,15 +84,19 @@ const ChainAssetSelectorModal = ({ chain, tokens, onSelectToken, collectibles, o
   const tokenItems = getTokens(tokens, chain);
   const collectibleItems = getCollectibles(collectibles, chain);
 
+  const renderTokenList = () => <TokenList items={tokenItems} onSelectItem={selectToken} />;
+
+  const showCollectibles = !!collectibleItems.length;
+
   const tabItems = [
     {
       key: ASSET_TYPES.TOKEN,
       title: t('tabs.tokens'),
-      render: () => <TokenList items={tokenItems} onSelectItem={selectToken} />,
+      render: renderTokenList,
     },
   ];
 
-  if (collectibles) {
+  if (showCollectibles) {
     tabItems.push({
       key: ASSET_TYPES.COLLECTIBLE,
       title: t('tabs.collectibles'),
@@ -107,7 +111,11 @@ const ChainAssetSelectorModal = ({ chain, tokens, onSelectToken, collectibles, o
       <Container>
         <HeaderBlock centerItems={[{ title }]} customOnBack={close} navigation={navigation} noPaddingTop />
 
-        <TabView items={tabItems} tabIndex={tabIndex} onTabIndexChange={setTabIndex} scrollEnabled />
+        {showCollectibles && (
+          <TabView items={tabItems} tabIndex={tabIndex} onTabIndexChange={setTabIndex} scrollEnabled={false} />
+        )}
+
+        {!showCollectibles && renderTokenList()}
       </Container>
     </SlideModal>
   );
