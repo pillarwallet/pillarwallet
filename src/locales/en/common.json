@@ -1163,13 +1163,10 @@
     "cannotGetBlockchainExplorerLink": "Cannot get blockchain explorer link. Please try again.",
     "cannotGetWalletAddress": "Cannot get wallet address.",
     "cannotEnableAsset": "Cannot enable asset. Please try again.",
-    "cannotSendCollectible": "Cannot send NFT. Please try again.",
     "cannotCreateStream": "Cannot create stream. Please try again.",
     "cannotCancelStream": "Cannot cancel stream. Please try again.",
     "cannotPurchaseTicket": "Cannot purchase ticket. Please try again.",
     "cannotWithdraw": "Cannot withdraw. Please try again.",
-    "cannotExchangeAsset": "Cannot exchange asset. Please try again.",
-    "cannotSendAsset": "Cannot send asset. Please try again.",
     "cannotDepositAsset": "Cannot deposit asset. Please try again.",
     "cannotWithdrawAsset": "Cannot withdraw asset. Please try again.",
     "failedToEstimateTransactionWithMessage": "Failed to estimate transaction: \"{{message}}\"",
@@ -1194,7 +1191,8 @@
     "ensMigrationFailed": "Sorry, ENS migration failed.",
     "cannotSendSyntheticAsset": "Sorry, asset cannot be sent.",
     "failedToGetGasPrices": "Failed to get gas prices.",
-    "waitingForWalletConnectConnection": "Waiting for WalletConnect service…"
+    "waitingForWalletConnectConnection": "Waiting for WalletConnect service…",
+    "transactionReverted": "Something went wrong. Try again or tap this message for details."
   },
 
   "exchangeContent": {

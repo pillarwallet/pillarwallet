@@ -28,10 +28,10 @@ import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 
-// actions
+// Actions
 import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 
-// components
+// Components
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser, TableFee } from 'components/legacy/Table';
 import Button from 'components/legacy/Button';
@@ -40,31 +40,34 @@ import CollectibleReviewSummary from 'components/ReviewSummary/CollectibleReview
 import { Paragraph } from 'components/legacy/Typography';
 import Toast from 'components/Toast';
 
-// constants
+// Constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
-// utils
+// Utils
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { reportErrorLog } from 'utils/common';
 import { nativeAssetPerChain } from 'utils/chains';
 import { isEtherspotAccount } from 'utils/accounts';
+import { openUrl } from 'utils/inAppBrowser';
 
-// services
+// Services
 import { fetchRinkebyETHBalance } from 'services/assets';
+import { firebaseRemoteConfig } from 'services/firebase';
 
-// hooks
+// Hooks
 import { useDeploymentStatus } from 'hooks/deploymentStatus';
 import { useEtherspotDeploymentFee } from 'hooks/transactions';
 
-// selectors
+// Selectors
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import { useActiveAccount } from 'selectors';
 
-// types
+// Types
 import type {
   CollectibleTransactionPayload,
   TransactionFeeInfo,
@@ -112,6 +115,8 @@ const SendCollectibleConfirm = ({
   const chain: Chain = useNavigationParam('chain');
   const activeAccount = useActiveAccount();
   const { deploymentFee, feeWithoutDeployment } = useEtherspotDeploymentFee(chain, feeInfo?.fee, feeInfo?.gasToken);
+
+  const transactionRevertedAricleURL = firebaseRemoteConfig.getString(REMOTE_CONFIG.TRANSACTION_REVERTED_ARTICLE_URL);
 
   const isKovanNetwork = getEnv().NETWORK_PROVIDER === 'kovan';
 
@@ -164,9 +169,12 @@ const SendCollectibleConfirm = ({
 
     if (!feeInfo) {
       Toast.show({
-        message: t('toast.cannotSendCollectible'),
-        emoji: 'woman-shrugging',
-        supportLink: true,
+        message: t('toast.transactionReverted'),
+        emoji: 'hushed',
+        autoClose: false,
+        onPress: () => {
+          openUrl(transactionRevertedAricleURL);
+        },
       });
       return;
     }

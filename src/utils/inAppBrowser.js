@@ -20,8 +20,12 @@
 
 import InAppBrowser from 'react-native-inappbrowser-reborn';
 import { reportOrWarn } from 'utils/common';
+import t from 'translations/translate';
 
 import type { InAppBrowserOptions } from 'react-native-inappbrowser-reborn';
+
+// Components
+import Toast from 'components/Toast';
 
 // NOTE: On Android devices, for react-native-inappbrowser-reborn to work there
 // needs to be an application that supports Custom Tabs. Otherwise,
@@ -45,4 +49,20 @@ export const openInAppBrowser = async (url: string, options?: InAppBrowserOption
 
   reportOrWarn('InAppBrowser.isAvailable() returned false', null, 'warning');
   throw new Error('InAppBrowser.isAvailable() returned false');
+};
+
+export const openUrl = async (url: string | null) => {
+  if (url) {
+    await openInAppBrowser(url).catch(showServiceLaunchError);
+  } else {
+    showServiceLaunchError();
+  }
+};
+
+const showServiceLaunchError = () => {
+  Toast.show({
+    message: t('toast.cryptoPurchaseLaunchFailed'),
+    emoji: 'hushed',
+    supportLink: true,
+  });
 };

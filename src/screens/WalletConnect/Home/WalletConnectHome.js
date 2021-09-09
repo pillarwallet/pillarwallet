@@ -34,7 +34,6 @@ import TabBar from 'components/layout/TabBar';
 import Text from 'components/core/Text';
 import FloatingButtons from 'components/FloatingButtons';
 import Spinner from 'components/Spinner';
-import Toast from 'components/Toast';
 import WalletConnectRequests from 'screens/WalletConnect/Requests';
 
 // Selectors
@@ -52,7 +51,7 @@ import { firebaseRemoteConfig } from 'services/firebase';
 import { mapNotNil } from 'utils/array';
 import { appFont, fontStyles, spacing } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
-import { openInAppBrowser } from 'utils/inAppBrowser';
+import { openUrl } from 'utils/inAppBrowser';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
@@ -100,24 +99,14 @@ function WalletConnectHome() {
   // Note: in order to achieve multicolumn layout, we group n normal items into one list row item.
   const renderListRow = (items: WalletConnectCmsApp[]) => <ListRow>{items.map(renderItem)}</ListRow>;
 
-  const openUrl = async (url: string | null) => {
+  const openAppUrl = (url: string | null) => {
     if (url) {
       if (enableURLInAppBrowser) {
-        await openInAppBrowser(url).catch(showDAppServiceLaunchError);
+        openUrl(url);
       } else {
         Linking.openURL(url);
       }
-    } else {
-      showDAppServiceLaunchError();
     }
-  };
-
-  const showDAppServiceLaunchError = () => {
-    Toast.show({
-      message: t('toast.showDAppServiceLaunchError'),
-      emoji: 'hushed',
-      supportLink: true,
-    });
   };
 
   const renderItem = (item: WalletConnectCmsApp) => (
@@ -126,7 +115,7 @@ function WalletConnectHome() {
       title={item.title}
       iconUrl={item.iconUrl}
       width={columnWidth}
-      onPress={() => openUrl(item.url)}
+      onPress={() => openAppUrl(item.url)}
     />
   );
 
