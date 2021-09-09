@@ -68,5 +68,5 @@ const Title = styled(Text)`
   flex: 1;
   ${fontStyles.big};
   font-family: ${appFont.medium};
-  margin: ${spacing.mediumLarge}px ${spacing.large}px;
+  margin: ${spacing.mediumLarge}px ${spacing.large}px ${spacing.small}px;
 `;
