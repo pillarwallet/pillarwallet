@@ -29,7 +29,7 @@ import Modal from 'components/Modal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 
 // Constants
-import { CONNECT_FLOW, EXCHANGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';
+import { CONNECT_FLOW, EXCHANGE_FLOW, SEND_TOKEN_SELECT_RECIPIENT } from 'constants/navigationConstants';
 
 // Utils
 import { isArchanovaAccount } from 'utils/accounts';
@@ -68,7 +68,7 @@ function FloatingActions() {
     {
       title: t('send'),
       iconName: 'send',
-      onPress: () => navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW),
+      onPress: () => navigation.navigate(SEND_TOKEN_SELECT_RECIPIENT),
       disabled: !isSendEnabled,
     },
     {

@@ -36,6 +36,9 @@ import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
 import ChangePinConfirmNewPinScreen from 'screens/ChangePin/ConfirmNewPin';
 import RevealBackupPhraseScreen from 'screens/RevealBackupPhrase';
+import SendFlowSelectRecipientScreen from 'screens/SendFlow/SelectRecipient';
+import SendFlowSelectAssetScreen from 'screens/SendFlow/SelectAsset';
+import SendFlowSelectAmountScreen from 'screens/SendFlow/SelectAmount';
 import SendTokenAmountScreen from 'screens/SendToken/SendTokenAmount';
 import SendTokenPinConfirmScreen from 'screens/SendToken/SendTokenPinConfirmScreen';
 import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
@@ -133,6 +136,9 @@ import {
   CHANGE_PIN_CURRENT_PIN,
   CHANGE_PIN_NEW_PIN,
   CHANGE_PIN_CONFIRM_NEW_PIN,
+  SEND_TOKEN_SELECT_RECIPIENT,
+  SEND_TOKEN_SELECT_ASSET,
+  SEND_TOKEN_SELECT_AMOUNT,
   SEND_TOKEN_AMOUNT,
   SEND_TOKEN_CONFIRM,
   SEND_TOKEN_TRANSACTION,
@@ -333,13 +339,26 @@ const homeFlow = createStackNavigator(
 // SEND TOKEN FLOW
 const sendTokenFlow = createStackNavigator(
   {
+    [SEND_TOKEN_SELECT_RECIPIENT]: SendFlowSelectRecipientScreen,
+    [SEND_TOKEN_SELECT_ASSET]: SendFlowSelectAssetScreen,
+    [SEND_TOKEN_SELECT_AMOUNT]: SendFlowSelectAmountScreen,
+    [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
+    [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
+    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+  },
+  { ...StackNavigatorConfig },
+);
+
+const legacySendTokenFlow = createStackNavigator(
+  {
     [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
     [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
     [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
   },
-  StackNavigatorModalConfig,
+  { ...StackNavigatorModalConfig },
 );
 
 const changePinFlow = createStackNavigator(

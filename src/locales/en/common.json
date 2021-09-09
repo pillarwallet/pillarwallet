@@ -637,6 +637,15 @@
     }
   },
 
+  "sendFlow": {
+    "selectRecipient": {
+      "title": "Send to"
+    },
+    "selectAsset": {
+      "title": "Send to {{recipient}}"
+    }
+  },
+
   "assetSelector": {
     "title": "Select asset"
   },
