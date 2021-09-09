@@ -639,7 +639,7 @@ export class EtherspotService {
         tokens = []; // let append native assets
       }
 
-      let supportedAssets = tokens.map(parseTokenListToken);
+      let supportedAssets = tokens.map(token => parseTokenListToken(token, chain));
 
       supportedAssets = appendNativeAssetIfNeeded(chain, supportedAssets);
 
@@ -656,6 +656,7 @@ export class EtherspotService {
         const existingAsset = findAssetByAddress(supportedAssets, address);
         if (!existingAsset) {
           supportedAssets.push({
+            chain,
             address,
             name,
             symbol,

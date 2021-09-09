@@ -288,8 +288,9 @@ export const isAssetOptionMatchedByQuery = (option: AssetOption, query: ?string)
   return caseInsensitiveIncludes(option.name, query) || caseInsensitiveIncludes(option.symbol, query);
 };
 
-export const mapAssetDataToAsset = (assetData: TokenData): Asset => {
+export const mapAssetDataToAsset = (assetData: TokenData, chain: Chain): Asset => {
   return {
+    chain,
     address: assetData.contractAddress,
     symbol: assetData.token,
     decimals: assetData.decimals,

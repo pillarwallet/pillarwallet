@@ -180,10 +180,14 @@ export const parseEtherspotTransactionState = (state: GatewayBatchStates): ?stri
   }
 };
 
-export const parseTokenListToken = ({ address, name, symbol, decimals, logoURI }: TokenListToken): Asset => {
+export const parseTokenListToken = (
+  { address, name, symbol, decimals, logoURI }: TokenListToken,
+  chain: Chain,
+): Asset => {
   const hasValidIconUrl = logoURI?.startsWith('https://') || logoURI?.startsWith('http://');
 
   return {
+    chain,
     address,
     name,
     symbol,

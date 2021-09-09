@@ -53,9 +53,10 @@ export type TokenData = {|
 |};
 
 export type Asset = {
+  chain: Chain,
+  address: string,
   symbol: string,
   name: string,
-  address: string,
   iconUrl: string,
   decimals: number,
 };
