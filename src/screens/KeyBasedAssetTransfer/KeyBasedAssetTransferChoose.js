@@ -38,7 +38,8 @@ import { switchToEtherspotAccountIfNeededAction } from 'actions/accountsActions'
 // Components
 import { Wrapper } from 'components/legacy/Layout';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
-import AssetListItem from 'components/lists/AssetListItem';
+import TokenListItem from 'components/lists/TokenListItem';
+import CollectibleListItem from 'components/lists/CollectibleListItem';
 import BalanceView from 'components/BalanceView';
 import Button from 'components/legacy/Button';
 import CheckBox from 'components/core/CheckBox';
@@ -168,12 +169,10 @@ const KeyBasedAssetTransferChoose = ({
       const onCheck = () => onAssetSelect(item);
 
       return (
-        <AssetListItem
-          name={item.name}
-          iconUrl={item.icon}
+        <CollectibleListItem
+          collectible={item}
           onPress={onCheck}
           leftAddOn={<CheckBox value={isChecked} onValueChange={onCheck} />}
-          chain={CHAIN.ETHEREUM}
         />
       );
     }
@@ -186,7 +185,7 @@ const KeyBasedAssetTransferChoose = ({
     const onCheck = () => onAssetSelect(item, assetAmountBN);
 
     return (
-      <AssetListItem
+      <TokenListItem
         name={item.name}
         symbol={item.token}
         address={item.contractAddress}

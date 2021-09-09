@@ -197,8 +197,8 @@ export const accountAssetsWithBalanceSelector = createSelector(
           ...relatedAsset,
           imageUrl,
           formattedBalanceInFiat,
-          balance: !!formattedBalanceInFiat && {
-            balance: assetBalanceBN,
+          balance: {
+            balance: assetBalanceBN.toNumber(),
             balanceInFiat,
             value: formattedBalanceInFiat,
             token: symbol,

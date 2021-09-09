@@ -18,9 +18,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import { orderBy } from 'lodash';
+
 // Utils
-import { addressAsKey } from 'utils/common';
 import { addressesEqual } from 'utils/assets';
+import { addressAsKey } from 'utils/common';
+import { caseInsensitiveIncludes } from 'utils/strings';
 
 // Types
 import type { Collectible } from 'models/Collectible';
@@ -32,8 +35,18 @@ export function buildCollectibleKey(contractAddress: string, id: string) {
   return `${addressAsKey(contractAddress)}-${id}`;
 }
 
-export function getCollectibleKey({ contractAddress, id }: Collectible) {
-  return buildCollectibleKey(contractAddress, id);
+export function getCollectibleKey(collectible: ?Collectible) {
+  if (!collectible) return '';
+  return buildCollectibleKey(collectible.contractAddress, collectible.id);
+}
+
+export function defaultSortCollectibles(collectibles: Collectible[]): Collectible[] {
+  return orderBy(collectibles, [({ name }) => name?.trim().toLowerCase()], ['asc']);
+}
+
+export function isCollectibleMatchedByQuery(collectible: Collectible, query: ?string): boolean {
+  if (!query) return true;
+  return caseInsensitiveIncludes(collectible.name, query);
 }
 
 export function findCollectible(
