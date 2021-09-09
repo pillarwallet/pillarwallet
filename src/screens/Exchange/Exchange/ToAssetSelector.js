@@ -24,7 +24,7 @@ import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 
 // Components
-import AssetSelectorModal from 'components/AssetSelectorModal';
+import AssetSelectorModal from 'components/Modals/AssetSelectorModal';
 import Modal from 'components/Modal';
 import TokenValueInput from 'components/inputs/TokenValueInput';
 import TokenFiatValueAccessory from 'components/inputs/TokenValueInput/TokenFiatValueAccessory';
@@ -45,7 +45,7 @@ type Props = {|
 const ToAssetSelector = ({ assets, selectedAsset, onSelectAsset, value, style }: Props) => {
   const openSelectAsset = () => {
     Keyboard.dismiss();
-    Modal.open(() => <AssetSelectorModal options={assets} onSelectOption={onSelectAsset} />);
+    Modal.open(() => <AssetSelectorModal tokens={assets} onSelectToken={onSelectAsset} />);
   };
 
   return (
