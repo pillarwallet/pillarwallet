@@ -73,7 +73,7 @@ const ChainAssetSelectorModal = ({ chain, tokens, onSelectToken, collectibles, o
 
   const selectToken = (token: AssetOption) => {
     close();
-    onSelectToken?.(token);
+    onSelectToken(token);
   };
 
   const selectCollectible = (collectible: Collectible) => {
