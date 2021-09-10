@@ -20,7 +20,6 @@
 
 import * as React from 'react';
 import { Keyboard } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
@@ -48,7 +47,6 @@ type Props = {|
 
 const AssetSelectorModal = ({ tokens, collectibles, onSelectToken, onSelectCollectible, title }: Props) => {
   const { t } = useTranslationWithPrefix('assetSelector');
-  const navigation = useNavigation();
   const colors = useThemeColors();
 
   const modalRef = React.useRef(null);
@@ -74,9 +72,9 @@ const AssetSelectorModal = ({ tokens, collectibles, onSelectToken, onSelectColle
     <SlideModal ref={modalRef} fullScreen noSwipeToDismiss noClose backgroundColor={colors.basic050} noTopPadding>
       <Container>
         <HeaderBlock
+          leftItems={[{ close: true }]}
           centerItems={[{ title }]}
-          customOnBack={close}
-          navigation={navigation}
+          onClose={close}
           noPaddingTop
         />
 

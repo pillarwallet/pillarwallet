@@ -20,7 +20,6 @@
 
 import * as React from 'react';
 import { Keyboard } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
 import { orderBy } from 'lodash';
 import { useTranslationWithPrefix } from 'translations/translate';
 
@@ -58,7 +57,6 @@ type Props = {|
 const ChainAssetSelectorModal = ({ chain, tokens, onSelectToken, collectibles, onSelectCollectible }: Props) => {
   const { t } = useTranslationWithPrefix('chainAssetSelector');
   const chainConfig = useChainConfig(chain);
-  const navigation = useNavigation();
 
   const modalRef = React.useRef(null);
 
@@ -109,7 +107,7 @@ const ChainAssetSelectorModal = ({ chain, tokens, onSelectToken, collectibles, o
   return (
     <SlideModal ref={modalRef} fullScreen noSwipeToDismiss noClose backgroundColor={colors.basic050} noTopPadding>
       <Container>
-        <HeaderBlock centerItems={[{ title }]} customOnBack={close} navigation={navigation} noPaddingTop />
+        <HeaderBlock leftItems={[{ close: true }]} centerItems={[{ title }]} onClose={close} noPaddingTop />
 
         {showCollectibles && (
           <TabView items={tabItems} tabIndex={tabIndex} onTabIndexChange={setTabIndex} scrollEnabled={false} />
