@@ -40,7 +40,7 @@ import CollectibleImage from 'components/CollectibleImage';
 import ProfileImage from 'components/display/ProfileImage';
 import Toast from 'components/Toast';
 import Modal from 'components/Modal';
-import DetailModal, { DetailRow, DetailParagraph, FEE_PENDING } from 'components/DetailModal';
+import DetailModal, { DetailRow, DetailParagraph, FEE_PENDING } from 'components/legacy/DetailModal';
 import { Spacing } from 'components/legacy/Layout';
 
 // utils

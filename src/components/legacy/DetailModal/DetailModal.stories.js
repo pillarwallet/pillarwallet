@@ -32,7 +32,7 @@ import { fontStyles } from 'utils/variables';
 import { images } from 'utils/images';
 
 import DetailModal, { DetailRow, DetailParagraph, FEE_PENDING } from './DetailModal';
-import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
+import WithThemeDecorator from '../../../../storybook/WithThemeDecorator';
 
 const iconImage = (
   <Icon

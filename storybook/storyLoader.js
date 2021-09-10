@@ -11,7 +11,7 @@ function loadStories() {
 	require('../src/components/legacy/Checkbox/Checkbox.stories');
 	require('../src/components/CircleButton/CircleButton.stories');
 	require('../src/components/ContactSelector/ContactSelector.stories');
-	require('../src/components/DetailModal/DetailModal.stories');
+	require('../src/components/legacy/DetailModal/DetailModal.stories');
 	require('../src/components/legacy/EventDetails/EventDetails.stories');
 	require('../src/components/FeeLabelToggle/FeeLabelToggle.stories');
 	require('../src/components/FloatingBox/FloatingBox.stories');
@@ -45,7 +45,7 @@ const stories = [
 	'../src/components/legacy/Checkbox/Checkbox.stories',
 	'../src/components/CircleButton/CircleButton.stories',
 	'../src/components/ContactSelector/ContactSelector.stories',
-	'../src/components/DetailModal/DetailModal.stories',
+	'../src/components/legacy/DetailModal/DetailModal.stories',
 	'../src/components/legacy/EventDetails/EventDetails.stories',
 	'../src/components/FeeLabelToggle/FeeLabelToggle.stories',
 	'../src/components/FloatingBox/FloatingBox.stories',
