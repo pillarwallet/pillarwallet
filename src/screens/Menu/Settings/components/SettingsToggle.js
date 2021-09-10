@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 
 // Components
 import Icon, { type IconName } from 'components/core/Icon';
-import Switcher from 'components/Switcher';
+import Switch from 'components/core/Switch';
 import Text from 'components/core/Text';
 
 // Utils
@@ -41,7 +41,7 @@ const SettingsToggle = ({ title, icon, value, onChangeValue }: Props) => {
     <Container>
       <Icon name={icon} width={16} height={16} style={styles.icon} />
       <Title>{title}</Title>
-      <Switcher isOn={value} onToggle={onChangeValue} />
+      <Switch isOn={value} onToggle={onChangeValue} />
     </Container>
   );
 };

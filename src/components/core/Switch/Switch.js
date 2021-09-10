@@ -63,7 +63,7 @@ const SwitcherTouchable = styled.TouchableOpacity`
 const AnimatedToggle = Animated.createAnimatedComponent(Toggle);
 
 
-class Switcher extends React.Component<Props, State> {
+class Switch extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -120,4 +120,4 @@ class Switcher extends React.Component<Props, State> {
   }
 }
 
-export default Switcher;
+export default Switch;
