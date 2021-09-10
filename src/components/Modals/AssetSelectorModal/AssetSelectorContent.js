@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 import t from 'translations/translate';
 
 // Components
-import SearchBar from 'components/SearchBar';
+import SearchBar from 'components/layout/SearchBar';
 
 // Types
 import type { AssetOption } from 'models/Asset';

@@ -37,7 +37,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import FloatingButtons from 'components/FloatingButtons';
 import ListItemWithImage from 'components/legacy/ListItem/ListItemWithImage';
 import Modal from 'components/Modal';
-import SearchBar from 'components/SearchBar';
+import SearchBar from 'components/layout/SearchBar';
 import SwipeoutButton from 'components/SwipeoutButton';
 
 // Constants

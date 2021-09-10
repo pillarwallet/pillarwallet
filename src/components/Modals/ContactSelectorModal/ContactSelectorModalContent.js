@@ -35,7 +35,7 @@ import Button from 'components/core/Button';
 import ContactDetailsModal from 'components/ContactDetailsModal';
 import ContactListItem from 'components/lists/ContactListItem';
 import Modal from 'components/Modal';
-import SearchBar from 'components/SearchBar';
+import SearchBar from 'components/layout/SearchBar';
 
 // Selectors
 import { useRootSelector, activeAccountAddressSelector } from 'selectors';
