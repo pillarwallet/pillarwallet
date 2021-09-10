@@ -30,7 +30,6 @@ import AssetSelectorContent from 'components/Modals/AssetSelectorModal/AssetSele
 // Constants
 import { SEND_TOKEN_SELECT_AMOUNT, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
 
-
 // Selectors
 import { useRootSelector } from 'selectors';
 import { accountAssetsWithBalanceSelector } from 'selectors/assets';
@@ -55,7 +54,7 @@ const SendFlowSelectAsset = () => {
   const collectibles = flattenCollectibles(useRootSelector(accountCollectiblesSelector));
 
   const selectToken = (token: AssetOption) => {
-    navigation.navigate(SEND_TOKEN_SELECT_AMOUNT, { token });
+    navigation.navigate(SEND_TOKEN_SELECT_AMOUNT, { token, contact });
   };
 
   const selectCollectible = (collectible: Collectible) => {

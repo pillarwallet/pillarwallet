@@ -42,8 +42,8 @@ const SendFlowSelectAmount = () => {
   const navigation = useNavigation();
 
   const contact: Contact = navigation.getParam('contact');
-  const initialToken: AssetOption = navigation.gteParam('token');
-  const initialCollectible: Collectible = navigation.gteParam('collectible');
+  const initialToken: AssetOption = navigation.getParam('token');
+  const initialCollectible: Collectible = navigation.getParam('collectible');
 
   const [selectedToken, setSelectedToken] = React.useState(initialToken);
   const [selectedCollectible, setSelectedCollectible] = React.useState(initialCollectible);

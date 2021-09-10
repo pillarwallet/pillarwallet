@@ -643,6 +643,9 @@
     },
     "selectAsset": {
       "title": "Send to {{recipient}}"
+    },
+    "selectAmount": {
+      "title": "Send to {{recipient}}"
     }
   },
 
