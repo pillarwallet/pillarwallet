@@ -30,7 +30,7 @@ import { useTheme } from 'utils/themes';
 import { getAssetRateInFiat } from 'utils/rates';
 
 // components
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 import { BaseText } from 'components/legacy/Typography';
 import Tooltip from 'components/Tooltip';
 

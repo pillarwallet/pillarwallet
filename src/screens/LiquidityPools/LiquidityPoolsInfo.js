@@ -24,7 +24,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 import { BaseText, MediumText } from 'components/legacy/Typography';
 import InsightWithButton from 'components/InsightWithButton';
 import { Spacing } from 'components/legacy/Layout';

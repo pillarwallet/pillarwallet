@@ -21,7 +21,7 @@ import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 
 import IconButton from 'components/IconButton';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 import { Paragraph } from 'components/legacy/Typography';
 import { fontSizes, spacing } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';

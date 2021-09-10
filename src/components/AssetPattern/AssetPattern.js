@@ -26,7 +26,7 @@ import { ColorMatrix, saturate } from 'react-native-color-matrix-image-filters';
 import { getColorByTheme, getThemeType } from 'utils/themes';
 import { images } from 'utils/images';
 import { LIGHT_THEME } from 'constants/appSettingsConstants';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 import type { Theme } from 'models/Theme';
 
 type Props = {

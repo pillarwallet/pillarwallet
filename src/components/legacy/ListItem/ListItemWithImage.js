@@ -27,7 +27,7 @@ import t from 'translations/translate';
 import { BaseText, MediumText } from 'components/legacy/Typography';
 import ProfileImage from 'components/ProfileImage';
 import Button from 'components/legacy/Button';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 import { Shadow } from 'components/Shadow';
 import { Wrapper, Spacing } from 'components/legacy/Layout';
 import TankAssetBalance from 'components/TankAssetBalance';

@@ -24,7 +24,7 @@ import { SvgCssUri } from 'react-native-svg';
 
 // Components
 import Icon, { type IconName } from 'components/core/Icon';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 import Text from 'components/core/Text';
 import TransactionStatusIcon from 'components/display/TransactionStatusIcon';
 

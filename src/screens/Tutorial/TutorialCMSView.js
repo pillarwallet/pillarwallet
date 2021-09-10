@@ -22,7 +22,7 @@ import * as React from 'react';
 import { ScrollView, View } from 'react-native';
 import styled from 'styled-components/native';
 
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 import { BaseText, MediumText } from 'components/legacy/Typography';
 
 import type { ParsedCmsDocument } from 'models/CMSData';

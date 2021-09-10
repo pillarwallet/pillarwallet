@@ -31,7 +31,7 @@ import IconButton from 'components/IconButton';
 import { BaseText, MediumText } from 'components/legacy/Typography';
 import Spinner from 'components/Spinner';
 import Icon from 'components/legacy/Icon';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 import Button from 'components/legacy/Button';
 import Input from 'components/Input';
 import ButtonText from 'components/legacy/ButtonText';

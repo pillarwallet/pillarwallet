@@ -22,7 +22,7 @@ import styled, { withTheme } from 'styled-components/native';
 
 import ShadowedCard from 'components/ShadowedCard';
 import Icon from 'components/legacy/Icon';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 import { BaseText, MediumText } from 'components/legacy/Typography';
 import Spinner from 'components/Spinner';
 

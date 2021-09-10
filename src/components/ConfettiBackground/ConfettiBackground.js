@@ -22,7 +22,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { spacing } from 'utils/variables';
 import { getDeviceWidth } from 'utils/common';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 
 type Props = {
   children: React.Node,

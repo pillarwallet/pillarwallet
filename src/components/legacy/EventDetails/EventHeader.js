@@ -26,7 +26,7 @@ import styled, { withTheme } from 'styled-components/native';
 
 import IconButton from 'components/IconButton';
 import Icon from 'components/legacy/Icon';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 
 import { TRANSACTION_EVENT, TX_CONFIRMED_STATUS, TX_FAILED_STATUS } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION, COLLECTIBLE_SENT } from 'constants/collectiblesConstants';

@@ -21,8 +21,8 @@
 import * as React from 'react';
 import { SvgCssUri } from 'react-native-svg';
 import { isSvgImage } from 'utils/images';
-import Image from 'components/Image';
-import type { ImageProps } from 'components/Image';
+import Image from 'components/core/Image';
+import type { ImageProps } from 'components/core/Image';
 
 type Props = ImageProps | SvgCssUri;
 

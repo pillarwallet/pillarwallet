@@ -33,7 +33,7 @@ import { ScrollWrapper, Spacing } from 'components/legacy/Layout';
 import { BaseText, MediumText } from 'components/legacy/Typography';
 import CircleButton from 'components/CircleButton';
 import Button from 'components/legacy/Button';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 import Stats from 'components/Stats';
 import Progress from 'components/Progress';

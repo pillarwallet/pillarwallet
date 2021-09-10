@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 
 import { BaseText, MediumText } from 'components/legacy/Typography';
 import { Spacing } from 'components/legacy/Layout';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 
 
 type Props = {

@@ -24,7 +24,7 @@ import t from 'translations/translate';
 
 import { BaseText, MediumText } from 'components/legacy/Typography';
 import Button from 'components/legacy/Button';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 import ModalBox from 'components/ModalBox';
 import { Spacing } from 'components/legacy/Layout';
 

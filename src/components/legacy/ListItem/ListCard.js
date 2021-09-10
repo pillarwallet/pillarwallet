@@ -22,7 +22,7 @@ import styled from 'styled-components/native';
 
 import ShadowedCard from 'components/ShadowedCard';
 import { Note } from 'components/Note';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 import { fontStyles, spacing, fontSizes } from 'utils/variables';
 import { BaseText, MediumText } from 'components/legacy/Typography';
 import { LabelBadge } from 'components/LabelBadge';

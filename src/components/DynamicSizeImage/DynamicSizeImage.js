@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { Image as RNImage } from 'react-native';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 
 // Types
 import type { ImageSource, ImageStyleProp } from 'utils/types/react-native';

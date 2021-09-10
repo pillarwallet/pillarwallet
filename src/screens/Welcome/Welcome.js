@@ -30,7 +30,7 @@ import { resetOnboardingAndNavigateAction } from 'actions/onboardingActions';
 
 // components
 import { Wrapper } from 'components/legacy/Layout';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 import Button from 'components/legacy/Button';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 

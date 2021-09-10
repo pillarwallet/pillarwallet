@@ -26,7 +26,7 @@ import { Keyboard } from 'react-native';
 // Components
 import BottomModal from 'components/layout/BottomModal';
 import Button from 'components/core/Button';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 import Text from 'components/core/Text';
 
 // Hooks

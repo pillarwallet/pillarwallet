@@ -33,7 +33,7 @@ import { Spacing } from 'components/legacy/Layout';
 import { BaseText, MediumText } from 'components/legacy/Typography';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/legacy/Button';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 
 // constants
 import { ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER } from 'constants/archanovaConstants';

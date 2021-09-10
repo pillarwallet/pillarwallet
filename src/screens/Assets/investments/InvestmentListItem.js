@@ -25,7 +25,7 @@ import styled from 'styled-components/native';
 // Components
 import FiatValueView from 'components/display/FiatValueView';
 import FiatChangeView from 'components/display/FiatChangeView';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 import Text from 'components/core/Text';
 
 // Selectors

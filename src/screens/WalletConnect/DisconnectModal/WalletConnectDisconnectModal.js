@@ -24,7 +24,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 // Components
 import BottomModal from 'components/layout/BottomModal';
 import Button from 'components/core/Button';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 import Toast from 'components/Toast';
 import Text from 'components/core/Text';
 

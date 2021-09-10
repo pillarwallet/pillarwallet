@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 import { SvgCssUri } from 'react-native-svg';
 
 // Components
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 import Text from 'components/core/Text';
 
 // Utils

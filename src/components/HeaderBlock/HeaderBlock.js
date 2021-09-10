@@ -27,7 +27,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { BaseText } from 'components/legacy/Typography';
 import IconButton from 'components/IconButton';
 import SvgIcon from 'components/core/Icon';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 import { getColorByTheme, getColorByThemeOutsideStyled, getThemeColors } from 'utils/themes';
 import { noop } from 'utils/common';
 

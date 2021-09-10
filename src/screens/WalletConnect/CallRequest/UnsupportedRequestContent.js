@@ -24,7 +24,7 @@ import { useTranslation } from 'translations/translate';
 
 // Components
 import Button from 'components/core/Button';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 import Text from 'components/core/Text';
 
 // Utils

@@ -33,7 +33,7 @@ import { BaseText } from 'components/legacy/Typography';
 import AddressScanner from 'components/QRCodeScanner/AddressScanner';
 import Button from 'components/legacy/Button';
 import Icon from 'components/legacy/Icon';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 import Modal from 'components/Modal';
 import ModalBox from 'components/ModalBox';
 import Spinner from 'components/Spinner';

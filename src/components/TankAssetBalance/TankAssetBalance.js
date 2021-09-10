@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 
 import { fontSizes } from 'utils/variables';
 import { BaseText } from 'components/legacy/Typography';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 
 type Props = {
   amount: string,

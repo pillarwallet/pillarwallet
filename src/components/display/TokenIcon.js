@@ -22,7 +22,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 
 // Components
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 
 // Utils
 import { useThemeColors } from 'utils/themes';

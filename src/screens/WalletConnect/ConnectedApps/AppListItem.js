@@ -24,7 +24,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import Text from 'components/core/Text';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 
 // Utils
 import { useThemeColors } from 'utils/themes';

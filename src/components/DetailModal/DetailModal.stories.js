@@ -25,7 +25,7 @@ import styled from 'styled-components/native';
 
 import { BaseText } from 'components/legacy/Typography';
 import Icon from 'components/legacy/Icon';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 
 import { themedColors, defaultTheme } from 'utils/themes';
 import { fontStyles } from 'utils/variables';

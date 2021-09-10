@@ -24,7 +24,7 @@ import styled from 'styled-components/native';
 // Components
 import SafeAreaView from 'components/layout/SafeAreaViewWorkaround';
 import SlideModal from 'components/Modals/SlideModal';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 import Text from 'components/core/Text';
 import { Spacing } from 'components/layout/Layout';
 

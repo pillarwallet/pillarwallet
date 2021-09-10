@@ -28,7 +28,7 @@ import type { ScrollEvent } from 'utils/types/react-native';
 
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import Button from 'components/legacy/Button';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 
 import { CMS_DATA_TYPES } from 'constants/cmsConstants';
 import { spacing } from 'utils/variables';

@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 
 // Components
 import Icon, { type IconName } from 'components/core/Icon';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 import SafeAreaView from 'components/layout/SafeAreaViewWorkaround';
 import SlideModal from 'components/Modals/SlideModal';
 import Text from 'components/core/Text';

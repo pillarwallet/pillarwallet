@@ -19,7 +19,7 @@
 */
 /* eslint-disable global-require */
 import React from 'react';
-import Image from 'components/Image';
+import Image from 'components/core/Image';
 
 
 type Props = {
