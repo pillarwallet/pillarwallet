@@ -32,7 +32,7 @@ import ActivityFeed from 'components/legacy/ActivityFeed';
 import HistoryList from 'components/HistoryList';
 import AssetPattern from 'components/AssetPattern';
 import { BaseText, MediumText } from 'components/legacy/Typography';
-import RefreshControl from 'components/RefreshControl';
+import RefreshControl from 'components/core/RefreshControl';
 import SWActivationCard from 'components/SWActivationCard';
 
 // Actions

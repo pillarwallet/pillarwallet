@@ -25,7 +25,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // Components
 import ActivityFeed from 'components/legacy/ActivityFeed';
-import RefreshControl from 'components/RefreshControl';
+import RefreshControl from 'components/core/RefreshControl';
 
 // Constants
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';

@@ -30,7 +30,7 @@ import { fetchEtherspotTransactionsHistoryAction } from 'actions/historyActions'
 // Components
 import HistoryEventDetails from 'components/HistoryEventDetails';
 import Modal from 'components/Modal';
-import RefreshControl from 'components/RefreshControl';
+import RefreshControl from 'components/core/RefreshControl';
 import Text from 'components/core/Text';
 
 // Utils

@@ -39,7 +39,7 @@ import Tabs from 'components/legacy/Tabs';
 import Button from 'components/legacy/Button';
 import ActivityFeed from 'components/legacy/ActivityFeed';
 import InsightWithButton from 'components/InsightWithButton';
-import RefreshControl from 'components/RefreshControl';
+import RefreshControl from 'components/core/RefreshControl';
 import SWActivationModal from 'components/SWActivationModal';
 import Modal from 'components/Modal';
 

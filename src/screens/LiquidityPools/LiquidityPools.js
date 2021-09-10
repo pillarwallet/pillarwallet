@@ -32,7 +32,7 @@ import { Spacing, ScrollWrapper } from 'components/legacy/Layout';
 import { BaseText } from 'components/legacy/Typography';
 import Tabs from 'components/legacy/Tabs';
 import ListItemWithImage from 'components/legacy/ListItem/ListItemWithImage';
-import RefreshControl from 'components/RefreshControl';
+import RefreshControl from 'components/core/RefreshControl';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
 // utils

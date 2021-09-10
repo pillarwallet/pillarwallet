@@ -44,7 +44,7 @@ import BalanceView from 'components/display/BalanceView';
 import Button from 'components/legacy/Button';
 import CheckBox from 'components/core/CheckBox';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import RefreshControl from 'components/RefreshControl';
+import RefreshControl from 'components/core/RefreshControl';
 import Text from 'components/core/Text';
 import TextWithCopy from 'components/legacy/TextWithCopy';
 

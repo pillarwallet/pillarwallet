@@ -31,7 +31,7 @@ import { refreshEtherspotAccountsAction } from 'actions/etherspotActions';
 import { Container, Content } from 'components/layout/Layout';
 import FloatingButtons from 'components/FloatingButtons';
 import HeaderBlock from 'components/layout/HeaderBlock';
-import RefreshControl from 'components/RefreshControl';
+import RefreshControl from 'components/core/RefreshControl';
 import Stories from 'components/Stories';
 import UserNameAndImage from 'components/UserNameAndImage';
 import WalletConnectRequests from 'screens/WalletConnect/Requests';

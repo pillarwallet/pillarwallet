@@ -39,7 +39,7 @@ import Stats from 'components/Stats';
 import Progress from 'components/Progress';
 import Loader from 'components/Loader';
 import Modal from 'components/Modal';
-import RefreshControl from 'components/RefreshControl';
+import RefreshControl from 'components/core/RefreshControl';
 import ValueOverTimeGraph from 'components/Graph/ValueOverTimeGraph';
 
 // constants

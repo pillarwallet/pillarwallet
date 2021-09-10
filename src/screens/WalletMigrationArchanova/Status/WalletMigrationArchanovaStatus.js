@@ -27,7 +27,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 import { Container } from 'components/layout/Layout';
 import ActivityFeed from 'components/legacy/ActivityFeed';
 import HeaderBlock from 'components/layout/HeaderBlock';
-import RefreshControl from 'components/RefreshControl';
+import RefreshControl from 'components/core/RefreshControl';
 
 // Constants
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
