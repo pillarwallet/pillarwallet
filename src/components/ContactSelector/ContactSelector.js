@@ -27,7 +27,7 @@ import { Spacing } from 'components/legacy/Layout';
 import { MediumText, BaseText } from 'components/legacy/Typography';
 import Modal from 'components/Modal';
 import ContactSelectorModal from 'components/Modals/ContactSelectorModal';
-import ProfileImage from 'components/ProfileImage';
+import ProfileImage from 'components/display/ProfileImage';
 import Spinner from 'components/Spinner';
 
 // Utils

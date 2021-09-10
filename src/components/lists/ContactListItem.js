@@ -22,7 +22,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 
 // Components
-import ProfileImage from 'components/ProfileImage';
+import ProfileImage from 'components/display/ProfileImage';
 import Text from 'components/core/Text';
 
 // Utils

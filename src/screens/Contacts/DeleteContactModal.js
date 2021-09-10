@@ -32,7 +32,7 @@ import { Spacing } from 'components/legacy/Layout';
 import { BaseText, MediumText } from 'components/legacy/Typography';
 import Button from 'components/legacy/Button';
 import SlideModal from 'components/Modals/SlideModal';
-import ProfileImage from 'components/ProfileImage';
+import ProfileImage from 'components/display/ProfileImage';
 
 // Utils
 import { spacing } from 'utils/variables';

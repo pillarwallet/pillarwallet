@@ -21,8 +21,8 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
 
 import ProfileImage from './ProfileImage';
-import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
-import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
+import WithThemeDecorator from '../../../../storybook/WithThemeDecorator';
+import CenterViewDecorator from '../../../../storybook/CenterViewDecorator';
 
 const usdcIcon = require('assets/images/usdc_color.png');
 

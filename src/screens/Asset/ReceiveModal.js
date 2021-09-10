@@ -32,7 +32,7 @@ import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/legacy/Button';
 import QRCodeWithTheme from 'components/QRCode';
 import Toast from 'components/Toast';
-import ProfileImage from 'components/ProfileImage';
+import ProfileImage from 'components/display/ProfileImage';
 import TextWithCopy from 'components/display/TextWithCopy';
 
 // utils

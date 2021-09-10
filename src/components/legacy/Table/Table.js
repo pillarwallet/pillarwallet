@@ -30,7 +30,7 @@ import { getGasAddress, getGasDecimals, getGasSymbol } from 'utils/transactions'
 
 import { BaseText, MediumText } from 'components/legacy/Typography';
 import { Spacing } from 'components/legacy/Layout';
-import ProfileImage from 'components/ProfileImage';
+import ProfileImage from 'components/display/ProfileImage';
 import IconButton from 'components/IconButton';
 import Tooltip from 'components/Tooltip';
 

@@ -28,7 +28,7 @@ import HeaderBlock from 'components/layout/HeaderBlock';
 import { Wrapper, Spacing } from 'components/legacy/Layout';
 import { BaseText, MediumText, Paragraph } from 'components/legacy/Typography';
 import Button from 'components/legacy/Button';
-import ProfileImage from 'components/ProfileImage';
+import ProfileImage from 'components/display/ProfileImage';
 import Checkbox from 'components/legacy/Checkbox';
 import PrismicDocumentModal from 'components/Modals/PrismicDocumentModal';
 import TextInput from 'components/legacy/TextInput';

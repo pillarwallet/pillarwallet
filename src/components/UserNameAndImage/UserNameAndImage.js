@@ -27,7 +27,7 @@ import { useDispatch } from 'react-redux';
 import { dismissAccountSwitchTooltipAction } from 'actions/appSettingsActions';
 
 // Components
-import ProfileImage from 'components/ProfileImage';
+import ProfileImage from 'components/display/ProfileImage';
 import Icon from 'components/core/Icon';
 import Text from 'components/core/Text';
 

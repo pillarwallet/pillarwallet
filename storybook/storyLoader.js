@@ -24,7 +24,7 @@ function loadStories() {
 	require('../src/components/legacy/ListItem/ListItemChevron.stories');
 	require('../src/components/legacy/ListItem/SettingsItemCarded.stories');
 	require('../src/components/Modals/SlideModal/SlideModal.stories');
-	require('../src/components/ProfileImage/ProfileImage.stories');
+	require('../src/components/display/ProfileImage/ProfileImage.stories');
 	require('../src/components/RetryGraphQueryBox/RetryGraphQueryBox.stories');
 	require('../src/components/ReviewSummary/ReviewSummary.stories');
 	require('../src/components/SWActivationCard/SWActivationCard.stories');
@@ -58,7 +58,7 @@ const stories = [
 	'../src/components/legacy/ListItem/ListItemChevron.stories',
 	'../src/components/legacy/ListItem/SettingsItemCarded.stories',
 	'../src/components/Modals/SlideModal/SlideModal.stories',
-	'../src/components/ProfileImage/ProfileImage.stories',
+	'../src/components/display/ProfileImage/ProfileImage.stories',
 	'../src/components/RetryGraphQueryBox/RetryGraphQueryBox.stories',
 	'../src/components/ReviewSummary/ReviewSummary.stories',
 	'../src/components/SWActivationCard/SWActivationCard.stories',
