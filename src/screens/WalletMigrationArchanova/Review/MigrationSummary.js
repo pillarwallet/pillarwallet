@@ -25,7 +25,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import * as Table from 'components/layout/Table';
-import BalanceView from 'components/BalanceView';
+import BalanceView from 'components/display/BalanceView';
 import FeeTable from 'components/display/FeeTable';
 import Image from 'components/core/Image';
 import Text from 'components/core/Text';

@@ -27,7 +27,7 @@ import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import BalanceView from 'components/BalanceView';
+import BalanceView from 'components/display/BalanceView';
 import ChainListHeader from 'components/lists/ChainListHeader';
 import ChainListFooter from 'components/lists/ChainListFooter';
 import FloatingButtons from 'components/FloatingButtons';

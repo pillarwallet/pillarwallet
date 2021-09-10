@@ -22,7 +22,7 @@ import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import BalanceView from 'components/BalanceView';
+import BalanceView from 'components/display/BalanceView';
 import Text from 'components/core/Text';
 import TextWithCopy from 'components/display/TextWithCopy';
 
