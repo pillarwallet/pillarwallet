@@ -26,7 +26,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import { Container } from 'components/layout/Layout';
-import HeaderBlock from 'components/HeaderBlock';
+import HeaderBlock from 'components/layout/HeaderBlock';
 import Modal from 'components/Modal';
 import WalletConnectDisconnectModal from 'screens/WalletConnect/DisconnectModal';
 

@@ -34,7 +34,7 @@ import {
 // Components
 import { Container } from 'components/layout/Layout';
 import Button from 'components/core/Button';
-import HeaderBlock from 'components/HeaderBlock';
+import HeaderBlock from 'components/layout/HeaderBlock';
 import Text from 'components/core/Text';
 
 // Actions

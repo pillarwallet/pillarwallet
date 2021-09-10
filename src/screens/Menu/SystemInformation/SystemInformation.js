@@ -27,7 +27,7 @@ import { getEnv } from 'configs/envConfig';
 
 // Components
 import { Container, Content } from 'components/layout/Layout';
-import HeaderBlock from 'components/HeaderBlock';
+import HeaderBlock from 'components/layout/HeaderBlock';
 
 // Local
 import InfoItem from './components/InfoItem';

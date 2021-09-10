@@ -30,7 +30,7 @@ import localeConfig from 'configs/localeConfig';
 
 // Components
 import { Container } from 'components/layout/Layout';
-import HeaderBlock from 'components/HeaderBlock';
+import HeaderBlock from 'components/layout/HeaderBlock';
 import Icon from 'components/core/Icon';
 import Text from 'components/core/Text';
 

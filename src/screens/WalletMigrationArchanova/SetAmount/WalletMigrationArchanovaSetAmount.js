@@ -27,7 +27,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 // Components
 import { Container, Content, Footer } from 'components/layout/Layout';
 import Button from 'components/core/Button';
-import HeaderBlock from 'components/HeaderBlock';
+import HeaderBlock from 'components/layout/HeaderBlock';
 import TokenValueInput from 'components/inputs/TokenValueInput';
 import TokenBalanceAccessory from 'components/inputs/TokenValueInput/TokenBalanceAccessory';
 

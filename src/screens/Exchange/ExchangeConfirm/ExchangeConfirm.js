@@ -25,7 +25,7 @@ import { useTranslation } from 'translations/translate';
 
 // Components
 import { Container, Content, Spacing } from 'components/layout/Layout';
-import HeaderBlock from 'components/HeaderBlock';
+import HeaderBlock from 'components/layout/HeaderBlock';
 import Button from 'components/core/Button';
 import Text from 'components/core/Text';
 import Toast from 'components/Toast';

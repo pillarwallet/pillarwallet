@@ -27,7 +27,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 // Components
 import { Container, Content, Spacing } from 'components/layout/Layout';
 import CheckAuth from 'components/CheckAuth';
-import HeaderBlock from 'components/HeaderBlock';
+import HeaderBlock from 'components/layout/HeaderBlock';
 import Text from 'components/core/Text';
 
 // Selectors

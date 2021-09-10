@@ -17,7 +17,7 @@ function loadStories() {
 	require('../src/components/FloatingBox/FloatingBox.stories');
 	require('../src/components/FloatingButtons/FloatingButtons.stories');
 	require('../src/components/Graph/ValueOverTimeGraph.stories');
-	require('../src/components/HeaderBlock/HeaderBlock.stories');
+	require('../src/components/layout/HeaderBlock/HeaderBlock.stories');
 	require('../src/components/HistoryList/HistoryList.stories');
 	require('../src/components/InsightWithButton/InsightWithButton.stories');
 	require('../src/components/legacy/ListItem/ListCard.stories');
@@ -51,7 +51,7 @@ const stories = [
 	'../src/components/FloatingBox/FloatingBox.stories',
 	'../src/components/FloatingButtons/FloatingButtons.stories',
 	'../src/components/Graph/ValueOverTimeGraph.stories',
-	'../src/components/HeaderBlock/HeaderBlock.stories',
+	'../src/components/layout/HeaderBlock/HeaderBlock.stories',
 	'../src/components/HistoryList/HistoryList.stories',
 	'../src/components/InsightWithButton/InsightWithButton.stories',
 	'../src/components/legacy/ListItem/ListCard.stories',

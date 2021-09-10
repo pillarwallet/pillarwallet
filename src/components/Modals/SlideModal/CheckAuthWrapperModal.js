@@ -36,7 +36,7 @@ import styled, { withTheme } from 'styled-components/native';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
 import { Wrapper } from 'components/legacy/Layout';
-import HeaderBlock from 'components/HeaderBlock';
+import HeaderBlock from 'components/layout/HeaderBlock';
 import { Keyboard } from 'react-native';
 import { getThemeColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';

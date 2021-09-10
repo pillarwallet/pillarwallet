@@ -39,7 +39,7 @@ import { isLogV2AppEvents } from 'utils/environment';
 import { Container } from 'components/layout/Layout';
 import Button from 'components/core/Button';
 import TextInput from 'components/legacy/TextInput';
-import HeaderBlock from 'components/HeaderBlock';
+import HeaderBlock from 'components/layout/HeaderBlock';
 import Text from 'components/core/Text';
 import Toast from 'components/Toast';
 import Modal from 'components/Modal';

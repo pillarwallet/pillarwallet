@@ -24,7 +24,7 @@ import { useTranslation } from 'translations/translate';
 
 // Components
 import { Container } from 'components/layout/Layout';
-import HeaderBlock from 'components/HeaderBlock';
+import HeaderBlock from 'components/layout/HeaderBlock';
 import TabView from 'components/layout/TabView';
 
 // Constants

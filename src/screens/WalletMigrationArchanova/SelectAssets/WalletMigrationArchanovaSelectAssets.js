@@ -28,7 +28,7 @@ import { isEmpty } from 'lodash';
 // Components
 import { Container, Footer } from 'components/layout/Layout';
 import Button from 'components/core/Button';
-import HeaderBlock from 'components/HeaderBlock';
+import HeaderBlock from 'components/layout/HeaderBlock';
 
 // Constants
 import {

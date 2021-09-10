@@ -25,7 +25,7 @@ import t from 'translations/translate';
 
 // Components
 import Modal from 'components/Modal';
-import HeaderBlock from 'components/HeaderBlock';
+import HeaderBlock from 'components/layout/HeaderBlock';
 import { Container } from 'components/layout/Layout';
 import Text from 'components/core/Text';
 

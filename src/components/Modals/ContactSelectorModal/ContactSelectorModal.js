@@ -24,7 +24,7 @@ import t from 'translations/translate';
 
 // Components
 import { Container } from 'components/layout/Layout';
-import HeaderBlock from 'components/HeaderBlock';
+import HeaderBlock from 'components/layout/HeaderBlock';
 import AddressScanner from 'components/QRCodeScanner/AddressScanner';
 import Modal from 'components/Modal';
 import SlideModal from 'components/Modals/SlideModal';

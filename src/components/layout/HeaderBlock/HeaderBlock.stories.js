@@ -25,7 +25,7 @@ import { getColorByTheme } from 'utils/themes';
 
 import type { NavigationScreenProp } from 'react-navigation';
 
-import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
+import WithThemeDecorator from '../../../../storybook/WithThemeDecorator';
 import HeaderBlock from './HeaderBlock';
 
 // @FlowFixMe: mock

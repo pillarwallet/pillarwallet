@@ -26,7 +26,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 import { Container, Content, Footer } from 'components/layout/Layout';
 import Button from 'components/core/Button';
 import CheckAuth from 'components/CheckAuth';
-import HeaderBlock from 'components/HeaderBlock';
+import HeaderBlock from 'components/layout/HeaderBlock';
 
 // Constants
 import { WALLET_MIGRATION_ARCHANOVA_PIN_CONFIRM } from 'constants/navigationConstants';

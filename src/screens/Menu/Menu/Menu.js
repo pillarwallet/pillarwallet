@@ -26,7 +26,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import { Container, Content } from 'components/layout/Layout';
-import HeaderBlock from 'components/HeaderBlock';
+import HeaderBlock from 'components/layout/HeaderBlock';
 import MigrateEnsBanner from 'components/Banners/MigrateEnsBanner';
 import MigrateWalletBanner from 'components/Banners/MigrateWalletBanner';
 import WalletMigrationArchanovaBanner from 'screens/WalletMigrationArchanova/Banner';

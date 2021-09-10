@@ -26,7 +26,7 @@ import SafeAreaView from 'react-native-safe-area-view';
 import isEqual from 'lodash.isequal';
 import isEmpty from 'lodash.isempty';
 
-import HeaderBlock from 'components/HeaderBlock';
+import HeaderBlock from 'components/layout/HeaderBlock';
 import { isColorDark } from 'utils/ui';
 import { isIphoneX } from 'utils/common';
 import { getThemeColors, getThemeType } from 'utils/themes';

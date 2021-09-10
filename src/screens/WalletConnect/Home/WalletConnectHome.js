@@ -29,7 +29,7 @@ import { chunk } from 'lodash';
 
 // Components
 import { Container, Center } from 'components/layout/Layout';
-import HeaderBlock from 'components/HeaderBlock';
+import HeaderBlock from 'components/layout/HeaderBlock';
 import TabBar from 'components/layout/TabBar';
 import Text from 'components/core/Text';
 import FloatingButtons from 'components/FloatingButtons';

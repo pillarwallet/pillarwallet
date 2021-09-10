@@ -33,7 +33,7 @@ import { KEY_BASED_ASSET_TRANSFER_CHOOSE } from 'constants/navigationConstants';
 import { Spacing } from 'components/legacy/Layout';
 import Button from 'components/legacy/Button';
 import { Container, Content } from 'components/layout/Layout';
-import HeaderBlock from 'components/HeaderBlock';
+import HeaderBlock from 'components/layout/HeaderBlock';
 import Text from 'components/core/Text';
 import EmojiCard from 'components/other/EmojiCard';
 

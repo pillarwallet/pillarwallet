@@ -26,7 +26,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 // Components
 import { Container } from 'components/layout/Layout';
 import ActivityFeed from 'components/legacy/ActivityFeed';
-import HeaderBlock from 'components/HeaderBlock';
+import HeaderBlock from 'components/layout/HeaderBlock';
 import RefreshControl from 'components/RefreshControl';
 
 // Constants

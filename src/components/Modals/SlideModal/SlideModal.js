@@ -28,7 +28,7 @@ import pick from 'lodash.pick';
 // Components
 import Modal from 'components/Modal';
 import { Wrapper } from 'components/legacy/Layout';
-import HeaderBlock from 'components/HeaderBlock';
+import HeaderBlock from 'components/layout/HeaderBlock';
 
 // Utils
 import { spacing } from 'utils/variables';
@@ -37,7 +37,7 @@ import { getThemeColors } from 'utils/themes';
 // Types
 import type { ScrollToProps } from 'components/Modal';
 import type { Theme } from 'models/Theme';
-import type { OwnProps as HeaderProps } from 'components/HeaderBlock';
+import type { OwnProps as HeaderProps } from 'components/layout/HeaderBlock';
 
 export type { ScrollToProps } from 'components/Modal';
 
