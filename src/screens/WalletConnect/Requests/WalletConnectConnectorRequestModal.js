@@ -24,10 +24,10 @@ import t from 'translations/translate';
 import { Keyboard } from 'react-native';
 
 // Components
-import BottomModal from 'components/modern/BottomModal';
-import Button from 'components/modern/Button';
+import BottomModal from 'components/layout/BottomModal';
+import Button from 'components/core/Button';
 import Image from 'components/Image';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // Hooks
 import useWalletConnect from 'hooks/useWalletConnect';

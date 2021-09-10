@@ -24,9 +24,9 @@ import { ThemeProvider } from 'styled-components/native';
 import { getThemeByType } from 'utils/themes';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
-import { Container } from 'components/Layout';
+import { Container } from 'components/legacy/Layout';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import { setAppThemeAction } from 'actions/appSettingsActions';
 import { getEnv } from 'configs/envConfig';
 import configureStore from '../src/configureStore';

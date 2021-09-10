@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { MediumText } from 'components/Typography';
+import { MediumText } from 'components/legacy/Typography';
 import type { Theme } from 'models/Theme';
 import { getColorByTheme } from 'utils/themes';
 

@@ -22,7 +22,7 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
-import { Container } from 'components/Layout';
+import { Container } from 'components/legacy/Layout';
 import CheckAuth from 'components/CheckAuth';
 import Loader from 'components/Loader';
 import { resetIncorrectPasswordAction } from 'actions/authActions';

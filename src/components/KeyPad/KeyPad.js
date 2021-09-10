@@ -21,7 +21,7 @@ import * as React from 'react';
 import { Platform, TouchableNativeFeedback, Image as RNImage, Dimensions } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import { fontSizes } from 'utils/variables';
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 import { KEYPAD_BUTTON_FORGOT } from 'constants/keyPadButtonsConstants';
 import type { Theme } from 'models/Theme';
 import { LIGHT_THEME } from 'constants/appSettingsConstants';

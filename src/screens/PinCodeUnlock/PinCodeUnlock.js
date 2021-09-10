@@ -36,7 +36,7 @@ import { ALLOWED_PIN_ATTEMPTS, PIN_LOCK_MULTIPLIER } from 'configs/walletConfig'
 import { FORGOT_PIN } from 'constants/navigationConstants';
 
 // components
-import { Container } from 'components/Layout';
+import { Container } from 'components/legacy/Layout';
 import Header from 'components/Header';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';

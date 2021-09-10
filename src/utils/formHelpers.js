@@ -26,7 +26,7 @@ import t from 'translations/translate';
 import { ETH } from 'constants/assetsConstants';
 
 // components
-import TextInput from 'components/TextInput';
+import TextInput from 'components/legacy/TextInput';
 
 // utils
 import { isValidNumber, parseNumber } from './common';

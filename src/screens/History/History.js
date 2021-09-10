@@ -23,7 +23,7 @@ import { useNavigation } from 'react-navigation-hooks';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import { Container } from 'components/modern/Layout';
+import { Container } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 
 // Selectors

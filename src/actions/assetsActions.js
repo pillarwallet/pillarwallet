@@ -51,7 +51,7 @@ import {
   getSupportedChains,
   nativeAssetPerChain,
 } from 'utils/chains';
-import { BigNumber, parseTokenAmount, reportErrorLog } from 'utils/common';
+import { BigNumber, parseTokenAmount, reportErrorLog, logBreadcrumb } from 'utils/common';
 import { buildHistoryTransaction, parseFeeWithGasToken } from 'utils/history';
 import {
   getActiveAccount,
@@ -115,11 +115,20 @@ export const sendAssetAction = (
     // fetch latest
     if (isCollectibleTransaction) {
       logTransactionType = 'ERC721'; // eslint-disable-line i18next/no-literal-string
+      logBreadcrumb(
+        'Send Flow',
+        'sendAssetAction: collectible transaction dispatching fetchCollectiblesAction',
+        { type: logTransactionType },
+      );
       await dispatch(fetchCollectiblesAction());
     } else {
       logTransactionType = symbol === ETH ? 'ETH' : 'ERC20'; // eslint-disable-line i18next/no-literal-string
     }
 
+    logBreadcrumb(
+      'Send Flow',
+      'sendAssetAction: checking for active account',
+    );
     const activeAccount = activeAccountSelector(getState());
     if (!activeAccount) {
       reportErrorLog('sendAssetAction failed: no active account');
@@ -133,8 +142,17 @@ export const sendAssetAction = (
 
     let collectibleInfo;
     if (isCollectibleTransaction) {
+      logBreadcrumb(
+        'Send Flow',
+        'sendAssetAction: collectible transaction fetching collectibleInfo',
+        { chain, collectibles: accountCollectiblesOnChain },
+      );
       collectibleInfo = accountCollectiblesOnChain.find(item => item.id === transaction.tokenId);
       if (!collectibleInfo) {
+        logBreadcrumb(
+          'Send Flow',
+          'sendAssetAction: failed to fetch collectibleInfo, ERROR_TYPE.NOT_OWNED',
+        );
         callback({
           isSuccess: false,
           error: ERROR_TYPE.NOT_OWNED,
@@ -144,6 +162,10 @@ export const sendAssetAction = (
       }
     }
 
+    logBreadcrumb(
+      'Send Flow',
+      'sendAssetAction: building fee with gas token if present',
+    );
     // build fee with gas token if present
     const feeWithGasToken = !isEmpty(gasToken)
       ? parseFeeWithGasToken(gasToken, txFeeInWei)
@@ -156,19 +178,35 @@ export const sendAssetAction = (
     try {
       switch (getAccountType(activeAccount)) {
         case ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET:
+          logBreadcrumb(
+            'Send Flow',
+            'sendAssetAction: account type: archanova smart wallet sending transaction',
+            { transaction, accountAddress, usePPN },
+          );
           transactionResult = await archanovaService.sendTransaction(transaction, accountAddress, usePPN);
           break;
         case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
+          logBreadcrumb(
+            'Send Flow',
+            'sendAssetAction: account type: etherspot smart wallet sending transaction',
+            { transaction, accountAddress, chain, usePPN },
+          );
           transactionResult = await etherspotService.sendTransaction(transaction, accountAddress, chain, usePPN);
           break;
         default:
           break;
       }
     } catch (error) {
+      reportErrorLog('Send Flow:- sendAssetAction transaction failed', {
+        error,
+        type: logTransactionType,
+        transaction,
+      });
       ({ error: transactionErrorMessage } = catchTransactionError(error, logTransactionType, transaction));
     }
 
     if (!transactionResult || transactionErrorMessage) {
+      logBreadcrumb('Send Flow', 'sendAssetAction: transaction failed', { error: transactionErrorMessage });
       callback({
         isSuccess: false,
         error: transactionErrorMessage || t('error.transactionFailed.default'),
@@ -201,6 +239,11 @@ export const sendAssetAction = (
       && !transactionHash
       && transactionBatchHash) {
       try {
+        logBreadcrumb(
+          'Send Flow',
+          'sendAssetAction: etherspot account fetching transaction hash',
+          { chain, batchHash: transactionBatchHash },
+        );
         transactionHash = await etherspotService.waitForTransactionHashFromSubmittedBatch(chain, transactionBatchHash);
       } catch (error) {
         reportErrorLog('Exception in wallet transaction: waitForTransactionHashFromSubmittedBatch failed', { error });
@@ -208,6 +251,10 @@ export const sendAssetAction = (
     }
 
     if (!transactionHash && !transactionBatchHash) {
+      logBreadcrumb(
+        'Send Flow',
+        'sendAssetAction: transaction failed as transactionHash and transactionBatchHash is not available',
+      );
       callback({
         isSuccess: false,
         error: t('error.transactionFailed.default'),
@@ -219,6 +266,7 @@ export const sendAssetAction = (
       ? parseTokenAmount(transaction.amount, transaction.decimals)
       : 0;
 
+    logBreadcrumb('Send Flow', 'sendAssetAction: buildHistoryTransaction');
     let historyTx = buildHistoryTransaction({
       ...transactionResult,
       to,
@@ -259,12 +307,22 @@ export const sendAssetAction = (
     }
 
     if (isArchanovaAccount(activeAccount) && !usePPN && transactionHash) {
+      logBreadcrumb(
+        'Send Flow',
+        'sendAssetAction: archanova account:- dispatching PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS ',
+        { hash: transactionHash },
+      );
       dispatch({ type: PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS, payload: transactionHash });
     }
 
     // update transaction history
     if (isCollectibleTransaction) {
       const { tokenId } = transaction;
+      logBreadcrumb(
+        'Send Flow',
+        'sendAssetAction: collectible transaction:- dispatching ADD_COLLECTIBLE_HISTORY_TRANSACTION ',
+        { historyTx, tokenId, contractAddress, accountId, chain },
+      );
       dispatch({
         type: ADD_COLLECTIBLE_HISTORY_TRANSACTION,
         payload: {
@@ -283,9 +341,17 @@ export const sendAssetAction = (
         },
       } = getState();
 
+      logBreadcrumb(
+        'Send Flow',
+        'sendAssetAction: collectible transaction:- dispatching saveDbAction to update collectibe transaction history',
+      );
       dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: updatedCollectiblesHistory }, true));
       dispatch(saveDbAction('collectibles', { collectibles: updatedCollectibles }, true));
     } else {
+      logBreadcrumb(
+        'Send Flow',
+        'sendAssetAction: dispatching ADD_HISTORY_TRANSACTION', { accountId, historyTx, chain },
+      );
       dispatch({
         type: ADD_HISTORY_TRANSACTION,
         payload: {
@@ -295,13 +361,27 @@ export const sendAssetAction = (
         },
       });
       const { history: { data: updatedHistory } } = getState();
+      logBreadcrumb(
+        'Send Flow',
+        'sendAssetAction: dispatching saveDbAction to update transaction history',
+      );
       dispatch(saveDbAction('history', { history: updatedHistory }, true));
     }
 
     if (receiverEnsName) {
+      logBreadcrumb(
+        'Send Flow',
+        'sendAssetAction: recieverENSName available dispatching addEnsRegistryRecordAction',
+        { to, receiverEnsName },
+      );
       dispatch(addEnsRegistryRecordAction(to, receiverEnsName));
     }
 
+    logBreadcrumb(
+      'Send Flow',
+      'sendAssetAction transaction sent',
+      { transactionHash, transactionBatchHash },
+    );
     callback({
       isSuccess: true,
       error: null,

@@ -26,8 +26,8 @@ import { BigNumber } from 'bignumber.js';
 import { isEmpty } from 'lodash';
 
 // Components
-import { Container, Footer } from 'components/modern/Layout';
-import Button from 'components/modern/Button';
+import { Container, Footer } from 'components/layout/Layout';
+import Button from 'components/core/Button';
 import HeaderBlock from 'components/HeaderBlock';
 
 // Constants

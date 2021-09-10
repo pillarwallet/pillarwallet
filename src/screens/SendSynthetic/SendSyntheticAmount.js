@@ -28,7 +28,7 @@ import t from 'translations/translate';
 import { BigNumber } from 'bignumber.js';
 
 // components
-import { Label } from 'components/Typography';
+import { Label } from 'components/legacy/Typography';
 import Toast from 'components/Toast';
 
 // actions
@@ -56,6 +56,7 @@ import type { Contact } from 'models/Contact';
 import archanovaService from 'services/archanova';
 
 // selectors
+import { contactsSelector } from 'selectors';
 import { activeSyntheticAssetsSelector } from 'selectors/synthetics';
 
 // Local
@@ -67,6 +68,7 @@ type Props = {
   fetchSingleEthereumAssetRates: (assetAddress: string) => void,
   isFetchingSyntheticAssets: boolean,
   fetchAvailableSyntheticAssets: () => void,
+  contacts: Contact[],
   syntheticAssets: AssetOption[],
 };
 
@@ -236,7 +238,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
   };
 
   render() {
-    const { isOnline, syntheticAssets, isFetchingSyntheticAssets } = this.props;
+    const { isOnline, contacts, syntheticAssets, isFetchingSyntheticAssets } = this.props;
     const {
       value,
       submitPressed,
@@ -272,9 +274,9 @@ class SendSyntheticAmount extends React.Component<Props, State> {
         customAssets={syntheticAssets}
         customBalances={customBalances}
         customSelectorProps={{
+          contacts,
           selectedContact,
           onSelectContact: this.handleReceiverSelect,
-          allowAddContact: false,
         }}
         footerProps={{
           isNextButtonVisible: showNextButton,
@@ -299,6 +301,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
+  contacts: contactsSelector,
   syntheticAssets: activeSyntheticAssetsSelector,
 });
 

@@ -30,12 +30,12 @@ import { DARK_THEME } from 'constants/appSettingsConstants';
 import { KEY_BASED_ASSET_TRANSFER_CHOOSE } from 'constants/navigationConstants';
 
 // Components
-import { Spacing } from 'components/Layout';
-import Button from 'components/Button';
-import { Container, Content } from 'components/modern/Layout';
+import { Spacing } from 'components/legacy/Layout';
+import Button from 'components/legacy/Button';
+import { Container, Content } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
-import Text from 'components/modern/Text';
-import EmojiCard from 'components/modern/EmojiCard';
+import Text from 'components/core/Text';
+import EmojiCard from 'components/other/EmojiCard';
 
 // Utils
 import { appFont, fontStyles, spacing } from 'utils/variables';

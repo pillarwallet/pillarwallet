@@ -26,16 +26,16 @@ import styled, { withTheme } from 'styled-components/native';
 import t from 'translations/translate';
 
 // components
-import TextInput from 'components/TextInput';
+import TextInput from 'components/legacy/TextInput';
 import PercentsInputAccessoryHolder, {
   INPUT_ACCESSORY_NATIVE_ID,
 } from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
-import AssetSelectorModal from 'components/AssetSelectorModal';
+import AssetSelectorModal from 'components/Modals/AssetSelectorModal';
 import CollectibleImage from 'components/CollectibleImage';
-import { MediumText } from 'components/Typography';
-import Icon from 'components/Icon';
+import { MediumText } from 'components/legacy/Typography';
+import Icon from 'components/legacy/Icon';
 import Input from 'components/Input';
-import { Spacing } from 'components/Layout';
+import { Spacing } from 'components/legacy/Layout';
 import Modal from 'components/Modal';
 
 // utils
@@ -282,9 +282,9 @@ const ValueInputComponent = ({
     Keyboard.dismiss();
     Modal.open(() => (
       <AssetSelectorModal
-        options={assetsOptions}
+        tokens={assetsOptions}
         collectibles={showCollectibles ? collectibles : undefined}
-        onSelectOption={onAssetDataChange}
+        onSelectToken={onAssetDataChange}
         onSelectCollectible={onCollectibleAssetDataChange}
         title={selectorOptionsTitle}
       />

@@ -23,7 +23,7 @@ import { useNavigation } from 'react-navigation-hooks';
 import { useTranslation } from 'translations/translate';
 
 // Components
-import BottomModal from 'components/modern/BottomModal';
+import BottomModal from 'components/layout/BottomModal';
 import Toast from 'components/Toast';
 
 // Constants

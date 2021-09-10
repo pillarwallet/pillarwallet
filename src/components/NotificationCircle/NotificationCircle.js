@@ -20,7 +20,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { fontSizes } from 'utils/variables';
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 
 type Props = {
   children?: React.Node,

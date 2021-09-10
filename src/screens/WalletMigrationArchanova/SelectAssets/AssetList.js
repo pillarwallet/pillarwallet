@@ -25,9 +25,10 @@ import { BigNumber } from 'bignumber.js';
 import { useTranslation } from 'translations/translate';
 
 // Components
-import AssetListItem from 'components/modern/AssetListItem';
-import CheckBox from 'components/modern/CheckBox';
-import Text from 'components/modern/Text';
+import TokenListItem from 'components/lists/TokenListItem';
+import CollectibleListItem from 'components/lists/CollectibleListItem';
+import CheckBox from 'components/core/CheckBox';
+import Text from 'components/core/Text';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
@@ -76,7 +77,7 @@ const AssetList = ({
     const resultBalance = BigNumber(tokenToMigrate?.balance ?? balance);
 
     return (
-      <AssetListItem
+      <TokenListItem
         name={token.name}
         address={token.address}
         symbol={token.symbol}
@@ -99,10 +100,8 @@ const AssetList = ({
     const collectibleToMigrate = !!collectiblesToMigrate[getCollectibleKey(collectible)];
 
     return (
-      <AssetListItem
-        name={collectible.name}
-        iconUrl={collectible.icon}
-        chain={CHAIN.ETHEREUM}
+      <CollectibleListItem
+        collectible={collectible}
         onPress={() => onPressCollectible(collectible.contractAddress, collectible.id, collectible.isLegacy)}
         leftAddOn={
           <CheckBox

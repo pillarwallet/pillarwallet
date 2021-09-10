@@ -26,7 +26,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 import { getEnv } from 'configs/envConfig';
 
 // Components
-import { Container, Content } from 'components/modern/Layout';
+import { Container, Content } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 
 // Local

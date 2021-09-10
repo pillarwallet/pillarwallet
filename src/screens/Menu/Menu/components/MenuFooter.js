@@ -26,7 +26,7 @@ import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import Button from 'components/modern/Button';
+import Button from 'components/core/Button';
 import Modal from 'components/Modal';
 import PrismicDocumentModal from 'components/Modals/PrismicDocumentModal';
 

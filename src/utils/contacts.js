@@ -29,6 +29,14 @@ import type { Contact } from 'models/Contact';
 import { resolveEnsName } from './common';
 import { isValidAddress, isEnsName } from './validators';
 
+export function getContactTitle(contact: Contact) {
+  return contact.name || contact.ensName || contact.ethAddress;
+}
+
+export function getContactKey(contact: Contact) {
+  return contact.ethAddress || contact.ensName || contact.name;
+}
+
 type ResolveContactOptions = {|
   showNotification: boolean;
 |};

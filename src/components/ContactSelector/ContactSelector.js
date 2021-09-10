@@ -23,9 +23,10 @@ import styled from 'styled-components/native';
 import t from 'translations/translate';
 
 // Components
-import { Spacing } from 'components/Layout';
-import { MediumText, BaseText } from 'components/Typography';
+import { Spacing } from 'components/legacy/Layout';
+import { MediumText, BaseText } from 'components/legacy/Typography';
 import Modal from 'components/Modal';
+import ContactSelectorModal from 'components/Modals/ContactSelectorModal';
 import ProfileImage from 'components/ProfileImage';
 import Spinner from 'components/Spinner';
 
@@ -37,15 +38,11 @@ import { spacing } from 'utils/variables';
 // Types
 import type { Contact } from 'models/Contact';
 
-import ContactSelectorOptions from './ContactSelectorOptions';
-
 export type ContactSelectorProps = {|
   contacts?: Contact[],
   selectedContact?: ?Contact,
   onSelectContact?: (contact: ?Contact) => mixed,
   placeholder?: string,
-  allowCustomAddress?: boolean,
-  allowAddContact?: boolean,
   disabled?: boolean,
 |};
 
@@ -67,8 +64,6 @@ const ContactSelector = ({
   selectedContact,
   onSelectContact,
   placeholder = t('label.whereToSend'),
-  allowCustomAddress = true,
-  allowAddContact = true,
   disabled,
 }: ContactSelectorProps) => {
   const [isResolvingContact, setIsResolvingContact] = React.useState(false);
@@ -82,17 +77,8 @@ const ContactSelector = ({
   };
 
   const openOptions = () => {
-    Modal.open(() => (
-      <ContactSelectorOptions
-        contacts={contacts}
-        onSelectContact={handleSelectContact}
-        allowCustomAddress={allowCustomAddress}
-        allowAddContact={allowAddContact}
-      />
-    ));
+    Modal.open(() => <ContactSelectorModal contacts={contacts} onSelectContact={handleSelectContact} />);
   };
-
-  const hasNoOptions = !contacts?.length && !allowCustomAddress;
 
   const renderContact = () => {
     if (isResolvingContact) {
@@ -102,7 +88,7 @@ const ContactSelector = ({
     if (!selectedContact) {
       return (
         <BaseText link medium>
-          {disabled || hasNoOptions ? t('label.noOptionsToSelect') : placeholder}
+          {disabled || placeholder}
         </BaseText>
       );
     }
@@ -120,7 +106,7 @@ const ContactSelector = ({
   };
 
   return (
-    <SelectorPill onPress={openOptions} disabled={disabled || hasNoOptions}>
+    <SelectorPill onPress={openOptions} disabled={disabled}>
       {renderContact()}
     </SelectorPill>
   );
