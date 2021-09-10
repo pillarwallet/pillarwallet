@@ -46,7 +46,7 @@ import type { ChangeEvent } from 'utils/types/react-native';
 import type { Theme } from 'models/Theme';
 import type { Props as ButtonProps } from 'components/legacy/Button';
 import type { Props as IconButtonProps } from 'components/IconButton';
-import type { InputPropsType } from 'models/TextInput';
+import type { InputPropsType } from 'models/legacy/TextInput';
 
 type Props = {
   errorMessage?: string,
