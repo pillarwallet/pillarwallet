@@ -52,9 +52,3 @@ export type InputPropsType = {
   inputAccessoryViewID?: string,
   customRightLabel?: React.Node,
 };
-
-export type FormSelector = {
-  selector: Object,
-  input: string,
-  dontCheckBalance?: boolean,
-};
