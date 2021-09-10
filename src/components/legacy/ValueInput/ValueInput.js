@@ -34,7 +34,7 @@ import AssetSelectorModal from 'components/Modals/AssetSelectorModal';
 import CollectibleImage from 'components/CollectibleImage';
 import { MediumText } from 'components/legacy/Typography';
 import Icon from 'components/legacy/Icon';
-import Input from 'components/Input';
+import Input from 'components/legacy/Input';
 import { Spacing } from 'components/legacy/Layout';
 import Modal from 'components/Modal';
 

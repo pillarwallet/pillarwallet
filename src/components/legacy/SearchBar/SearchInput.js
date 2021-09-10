@@ -24,7 +24,7 @@ import styled from 'styled-components/native';
 
 // Components
 import IconButton from 'components/IconButton';
-import Input from 'components/Input';
+import Input from 'components/legacy/Input';
 
 // Utils
 import { fontSizes, appFont } from 'utils/variables';

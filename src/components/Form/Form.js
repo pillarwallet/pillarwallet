@@ -19,7 +19,7 @@
 */
 import styled from 'styled-components/native';
 import { Form } from 'native-base';
-import Input from 'components/Input';
+import Input from 'components/legacy/Input';
 
 export const LoginForm = styled(Form)`
   margin: 10px 0 40px;
