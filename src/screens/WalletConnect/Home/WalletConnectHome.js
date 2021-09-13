@@ -51,7 +51,7 @@ import { firebaseRemoteConfig } from 'services/firebase';
 import { mapNotNil } from 'utils/array';
 import { appFont, fontStyles, spacing } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
-import { openUrl, showServiceLaunchError } from 'utils/inAppBrowser';
+import { openUrl, showServiceLaunchErrorToast } from 'utils/inAppBrowser';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
@@ -107,7 +107,7 @@ function WalletConnectHome() {
         Linking.openURL(url);
       }
     } else {
-      showServiceLaunchError();
+      showServiceLaunchErrorToast();
     }
   };
 

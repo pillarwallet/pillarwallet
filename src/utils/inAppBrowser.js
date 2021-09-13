@@ -53,15 +53,15 @@ export const openInAppBrowser = async (url: string, options?: InAppBrowserOption
 
 export const openUrl = async (url: string | null) => {
   if (url) {
-    await openInAppBrowser(url).catch(showServiceLaunchError);
+    await openInAppBrowser(url).catch(showServiceLaunchErrorToast);
   } else {
-    showServiceLaunchError();
+    showServiceLaunchErrorToast();
   }
 };
 
-export const showServiceLaunchError = () => {
+export const showServiceLaunchErrorToast = () => {
   Toast.show({
-    message: t('toast.cryptoPurchaseLaunchFailed'),
+    message: t('toast.serviceLaunchFailed'),
     emoji: 'hushed',
     supportLink: true,
   });
