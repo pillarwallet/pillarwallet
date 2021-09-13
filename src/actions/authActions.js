@@ -255,7 +255,7 @@ export const checkAuthAction = (
     // private key checked and removed on every root navigation component update, make sure it stays this way
     dispatch({ type: SET_WALLET, payload: { privateKey, address } });
 
-    if (onValidPin) onValidPin(pin, privateKey);
+    if (onValidPin) onValidPin(pin, wallet);
   };
 };
 
