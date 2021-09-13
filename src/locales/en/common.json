@@ -375,7 +375,8 @@
     "sendMax": "Send max",
     "spendMax": "Spend max",
     "useMax": "Use max",
-    "selectToken": "Select token..."
+    "selectToken": "Select token...",
+    "more": "More"
   },
 
   "paragraph": {
@@ -633,6 +634,18 @@
     },
     "rewards": {
       "availableToClaim": "Available to claim"
+    }
+  },
+
+  "assetSelector": {
+    "title": "Select asset"
+  },
+
+  "chainAssetSelector": {
+    "title": "{{chain}} assets",
+    "tabs": {
+      "tokens": "Tokens",
+      "collectibles": "NFTs"
     }
   },
 
