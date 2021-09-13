@@ -639,7 +639,7 @@ export class EtherspotService {
         tokens = []; // let append native assets
       }
 
-      let supportedAssets = tokens.map(token => parseTokenListToken(token, chain));
+      let supportedAssets = tokens.map(token => parseTokenListToken(token));
 
       supportedAssets = appendNativeAssetIfNeeded(chain, supportedAssets);
 

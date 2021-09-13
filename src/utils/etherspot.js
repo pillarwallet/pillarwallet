@@ -48,7 +48,7 @@ import { firebaseRemoteConfig } from 'services/firebase';
 import { isEtherspotAccount } from 'utils/accounts';
 import { findAssetByAddress } from 'utils/assets';
 import { fromEthersBigNumber } from 'utils/bigNumber';
-import { nativeAssetPerChain } from 'utils/chains';
+import { chainFromChainId, nativeAssetPerChain } from 'utils/chains';
 import { buildHistoryTransaction } from 'utils/history';
 import { isProdEnv } from 'utils/environment';
 
@@ -180,14 +180,18 @@ export const parseEtherspotTransactionState = (state: GatewayBatchStates): ?stri
   }
 };
 
-export const parseTokenListToken = (
-  { address, name, symbol, decimals, logoURI }: TokenListToken,
-  chain: Chain,
-): Asset => {
+export const parseTokenListToken = ({
+  address,
+  name,
+  symbol,
+  decimals,
+  logoURI,
+  chainId,
+}: TokenListToken): Asset => {
   const hasValidIconUrl = logoURI?.startsWith('https://') || logoURI?.startsWith('http://');
 
   return {
-    chain,
+    chain: chainFromChainId[chainId],
     address,
     name,
     symbol,
