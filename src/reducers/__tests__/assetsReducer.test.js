@@ -20,6 +20,7 @@
 
 // constants
 import { SET_SUPPORTED_ASSETS } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // reducers
 import reducer from 'reducers/assetsReducer';
@@ -31,6 +32,7 @@ import type { Asset } from 'models/Asset';
 describe('Assets reducer', () => {
   it('sorts supported assets', () => {
     const newAsset = (symbol: string): Asset => ({
+      chain: CHAIN.ETHEREUM,
       symbol,
       name: symbol,
       address: '0x0000',

@@ -97,7 +97,7 @@ function KeyBasedAssetTransferEditAmount() {
     navigation.goBack(null);
   };
 
-  const asset = assetData ? mapAssetDataToAsset(assetData) : null;
+  const asset = assetData ? mapAssetDataToAsset(assetData, CHAIN.ETHEREUM) : null;
 
   const buttonTitle = hasEnoughBalance ? t('button.confirm') : t('label.notEnoughBalance', { symbol: asset?.symbol });
 
