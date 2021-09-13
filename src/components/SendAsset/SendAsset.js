@@ -25,29 +25,28 @@ import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 import { BigNumber } from 'bignumber.js';
 
-// actions
+// Actions
 import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 
-// constants
+// Constants
 import { SEND_COLLECTIBLE_CONFIRM, SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
 import { ASSET_TYPES } from 'constants/assetsConstants';
 
-// components
+// Components
 import Button from 'components/legacy/Button';
 import FeeLabelToggle from 'components/FeeLabelToggle';
-import Toast from 'components/Toast';
 
-// utils
+// Utils
 import { truncateAmount, reportErrorLog } from 'utils/common';
 import { getBalanceBN, isEnoughBalanceForTransactionFee } from 'utils/assets';
-import { isValidValueForTransfer } from 'utils/transactions';
+import { isValidValueForTransfer, showTransactionRevertedToast } from 'utils/transactions';
 
-// selectors
+// Selectors
 import { useGasTokenSelector } from 'selectors/archanova';
 import { contactsSelector } from 'selectors';
 import { accountAssetsWithBalanceSelector } from 'selectors/assets';
 
-// types
+// Types
 import type { NavigationScreenProp } from 'react-navigation';
 import type {
   TransactionPayload,
@@ -155,11 +154,7 @@ const SendAsset = ({
 
     if (!feeInfo || !selectedContact || !assetData) {
       // something went wrong
-      Toast.show({
-        message: t('toast.cannotSendAsset'),
-        emoji: 'woman-shrugging',
-        supportLink: true,
-      });
+      showTransactionRevertedToast();
       reportErrorLog('SendAsset screen handleFormSubmit failed', { feeInfo, selectedContact, assetData });
       return;
     }
