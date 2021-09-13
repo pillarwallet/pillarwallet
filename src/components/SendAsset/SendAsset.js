@@ -31,18 +31,15 @@ import { estimateTransactionAction, resetEstimateTransactionAction } from 'actio
 // Constants
 import { SEND_COLLECTIBLE_CONFIRM, SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
 import { ASSET_TYPES } from 'constants/assetsConstants';
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Components
 import Button from 'components/legacy/Button';
 import FeeLabelToggle from 'components/FeeLabelToggle';
-import Toast from 'components/Toast';
 
 // Utils
 import { truncateAmount, reportErrorLog } from 'utils/common';
 import { getBalanceBN, isEnoughBalanceForTransactionFee } from 'utils/assets';
-import { isValidValueForTransfer } from 'utils/transactions';
-import { openUrl } from 'utils/inAppBrowser';
+import { isValidValueForTransfer, showTransactionRevertedToast } from 'utils/transactions';
 
 // Selectors
 import { useGasTokenSelector } from 'selectors/archanova';
@@ -63,9 +60,6 @@ import type { SessionData } from 'models/Session';
 import type { Contact } from 'models/Contact';
 import type { AccountAssetBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
-
-// Services
-import { firebaseRemoteConfig } from 'services/firebase';
 
 // Local
 import SendContainer from './SendContainer';
@@ -111,8 +105,6 @@ const SendAsset = ({
   const [value, setValue] = useState(null);
   const [selectedContact, setSelectedContact] = useState(defaultContact);
   const [submitPressed, setSubmitPressed] = useState(false);
-
-  const transactionRevertedAricleURL = firebaseRemoteConfig.getString(REMOTE_CONFIG.TRANSACTION_REVERTED_ARTICLE_URL);
 
   const assetAddress = assetData.contractAddress;
   const chain = assetData?.chain;
@@ -162,14 +154,7 @@ const SendAsset = ({
 
     if (!feeInfo || !selectedContact || !assetData) {
       // something went wrong
-      Toast.show({
-        message: t('toast.transactionReverted'),
-        emoji: 'hushed',
-        autoClose: false,
-        onPress: () => {
-          openUrl(transactionRevertedAricleURL);
-        },
-      });
+      showTransactionRevertedToast();
       reportErrorLog('SendAsset screen handleFormSubmit failed', { feeInfo, selectedContact, assetData });
       return;
     }

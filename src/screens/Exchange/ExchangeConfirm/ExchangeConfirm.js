@@ -28,13 +28,11 @@ import { Container, Content, Spacing } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import Button from 'components/core/Button';
 import Text from 'components/core/Text';
-import Toast from 'components/Toast';
 import TransactionDeploymentWarning from 'components/other/TransactionDeploymentWarning';
 
 // Constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { TRANSACTION_TYPE } from 'constants/transactionsConstants';
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Hooks
 import { useTransactionsEstimate, useTransactionFeeCheck } from 'hooks/transactions';
@@ -49,15 +47,11 @@ import {
 // Utils
 import { getFormattedBalanceInFiat } from 'utils/assets';
 import { useProviderConfig } from 'utils/exchange';
-import { mapTransactionsToTransactionPayload } from 'utils/transactions';
+import { mapTransactionsToTransactionPayload, showTransactionRevertedToast } from 'utils/transactions';
 import { spacing } from 'utils/variables';
-import { openUrl } from 'utils/inAppBrowser';
 
 // Types
 import type { ExchangeOffer } from 'models/Exchange';
-
-// Services
-import { firebaseRemoteConfig } from 'services/firebase';
 
 // Local
 import ExchangeScheme from './ExchangeScheme';
@@ -77,8 +71,6 @@ const ExchangeConfirmScreen = () => {
 
   const chainRates = useChainRates(chain);
 
-  const transactionRevertedAricleURL = firebaseRemoteConfig.getString(REMOTE_CONFIG.TRANSACTION_REVERTED_ARTICLE_URL);
-
   const { feeInfo, errorMessage: estimationErrorMessage, isEstimating } = useTransactionsEstimate(
     chain,
     offer.transactions,
@@ -88,16 +80,8 @@ const ExchangeConfirmScreen = () => {
   const providerConfig = useProviderConfig(provider);
 
   const confirmTransaction = () => {
-    if (!feeInfo) {
-      Toast.show({
-        message: t('toast.transactionReverted'),
-        emoji: 'hushed',
-        autoClose: false,
-        onPress: () => {
-          openUrl(transactionRevertedAricleURL);
-        },
-      });
-
+    if (feeInfo) {
+      showTransactionRevertedToast();
       return;
     }
 

@@ -38,13 +38,11 @@ import Button from 'components/legacy/Button';
 import { Spacing, ScrollWrapper } from 'components/legacy/Layout';
 import CollectibleReviewSummary from 'components/ReviewSummary/CollectibleReviewSummary';
 import { Paragraph } from 'components/legacy/Typography';
-import Toast from 'components/Toast';
 
 // Constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Utils
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
@@ -53,11 +51,10 @@ import { themedColors } from 'utils/themes';
 import { reportErrorLog } from 'utils/common';
 import { nativeAssetPerChain } from 'utils/chains';
 import { isEtherspotAccount } from 'utils/accounts';
-import { openUrl } from 'utils/inAppBrowser';
+import { showTransactionRevertedToast } from 'utils/transactions';
 
 // Services
 import { fetchRinkebyETHBalance } from 'services/assets';
-import { firebaseRemoteConfig } from 'services/firebase';
 
 // Hooks
 import { useDeploymentStatus } from 'hooks/deploymentStatus';
@@ -116,8 +113,6 @@ const SendCollectibleConfirm = ({
   const activeAccount = useActiveAccount();
   const { deploymentFee, feeWithoutDeployment } = useEtherspotDeploymentFee(chain, feeInfo?.fee, feeInfo?.gasToken);
 
-  const transactionRevertedAricleURL = firebaseRemoteConfig.getString(REMOTE_CONFIG.TRANSACTION_REVERTED_ARTICLE_URL);
-
   const isKovanNetwork = getEnv().NETWORK_PROVIDER === 'kovan';
 
   const {
@@ -168,14 +163,7 @@ const SendCollectibleConfirm = ({
     Keyboard.dismiss();
 
     if (!feeInfo) {
-      Toast.show({
-        message: t('toast.transactionReverted'),
-        emoji: 'hushed',
-        autoClose: false,
-        onPress: () => {
-          openUrl(transactionRevertedAricleURL);
-        },
-      });
+      showTransactionRevertedToast();
       return;
     }
 

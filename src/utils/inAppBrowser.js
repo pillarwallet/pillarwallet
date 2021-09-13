@@ -59,7 +59,7 @@ export const openUrl = async (url: string | null) => {
   }
 };
 
-const showServiceLaunchError = () => {
+export const showServiceLaunchError = () => {
   Toast.show({
     message: t('toast.cryptoPurchaseLaunchFailed'),
     emoji: 'hushed',
