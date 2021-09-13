@@ -80,7 +80,7 @@ const ExchangeConfirmScreen = () => {
   const providerConfig = useProviderConfig(provider);
 
   const confirmTransaction = () => {
-    if (feeInfo) {
+    if (!feeInfo) {
       showTransactionRevertedToast();
       return;
     }
