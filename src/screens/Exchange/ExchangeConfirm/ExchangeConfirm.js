@@ -28,7 +28,6 @@ import { Container, Content, Spacing } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import Button from 'components/core/Button';
 import Text from 'components/core/Text';
-import Toast from 'components/Toast';
 import TransactionDeploymentWarning from 'components/other/TransactionDeploymentWarning';
 
 // Constants
@@ -48,7 +47,7 @@ import {
 // Utils
 import { getFormattedBalanceInFiat } from 'utils/assets';
 import { useProviderConfig } from 'utils/exchange';
-import { mapTransactionsToTransactionPayload } from 'utils/transactions';
+import { mapTransactionsToTransactionPayload, showTransactionRevertedToast } from 'utils/transactions';
 import { spacing } from 'utils/variables';
 
 // Types
@@ -82,12 +81,7 @@ const ExchangeConfirmScreen = () => {
 
   const confirmTransaction = () => {
     if (!feeInfo) {
-      Toast.show({
-        message: t('toast.cannotExchangeAsset'),
-        emoji: 'woman-shrugging',
-        supportLink: true,
-      });
-
+      showTransactionRevertedToast();
       return;
     }
 

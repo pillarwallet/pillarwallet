@@ -227,14 +227,3 @@ export const Label: React.ComponentType<BaseTextProps> = styled(MediumText)`
   ${(props) => (props.small ? fontStyles.medium : fontStyles.regular)}px;
   color: ${({ color, theme }) => color || theme.colors.basic020};
 `;
-
-type HelpTextProps = {|
-  ...BaseTextProps,
-  noPadding?: boolean,
-|};
-
-export const HelpText: React.ComponentType<HelpTextProps> = styled(BaseText)`
-  ${fontStyles.regular};
-  ${({ noPadding }) => !noPadding && 'padding: 10px;'}
-  color: ${({ color, theme }) => color || theme.colors.basic020};
-`;

@@ -180,7 +180,7 @@ class SlideModal extends React.Component<Props, State> {
 
     const modalInner = (
       <React.Fragment>
-        {showModalHeader ? (
+        {!!showModalHeader && (
           // $FlowFixMe: flow update to 0.122
           <HeaderBlock
             leftItems={leftItems}
@@ -195,9 +195,10 @@ class SlideModal extends React.Component<Props, State> {
             forceInsetTop={insetTop ? 'always' : 'never'} // eslint-disable-line i18next/no-literal-string
             {...headerProps}
           />
-        ) : (
-          <HandleBar />
         )}
+
+        {!showModalHeader && !fullScreen && <HandleBar />}
+
         <ModalContent
           fullScreen={fullScreen}
           showHeader={showHeader}

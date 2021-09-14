@@ -36,6 +36,7 @@ import {
 } from 'utils/common';
 import { nativeAssetPerChain } from 'utils/chains';
 import { getAssetRateInFiat } from 'utils/rates';
+import { caseInsensitiveIncludes } from 'utils/strings';
 import { getGasAddress } from 'utils/transactions';
 
 // types
@@ -277,8 +278,19 @@ export const getAssetOption = (
   };
 };
 
-export const mapAssetDataToAsset = (assetData: TokenData): Asset => {
+export const getAssetOptionKey = (option: ?AssetOption) => {
+  if (!option) return '';
+  return `${option.chain}-${option.address ?? option.contractAddress}`;
+};
+
+export const isAssetOptionMatchedByQuery = (option: AssetOption, query: ?string) => {
+  if (!query) return true;
+  return caseInsensitiveIncludes(option.name, query) || caseInsensitiveIncludes(option.symbol, query);
+};
+
+export const mapAssetDataToAsset = (assetData: TokenData, chain: Chain): Asset => {
   return {
+    chain,
     address: assetData.contractAddress,
     symbol: assetData.token,
     decimals: assetData.decimals,

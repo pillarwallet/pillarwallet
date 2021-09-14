@@ -60,7 +60,7 @@ import {
   buildTransactionFeeInfo,
   getChainTokenListName,
 } from 'utils/etherspot';
-import { addressesEqual } from 'utils/assets';
+import { addressesEqual, findAssetByAddress } from 'utils/assets';
 import { nativeAssetPerChain } from 'utils/chains';
 import { mapToEthereumTransactions } from 'utils/transactions';
 
@@ -639,7 +639,7 @@ export class EtherspotService {
         tokens = []; // let append native assets
       }
 
-      let supportedAssets = tokens.map(parseTokenListToken);
+      let supportedAssets = tokens.map(token => parseTokenListToken(token));
 
       supportedAssets = appendNativeAssetIfNeeded(chain, supportedAssets);
 
@@ -653,13 +653,17 @@ export class EtherspotService {
         symbol,
         iconUrl,
       }) => {
-        supportedAssets.push({
-          address,
-          name,
-          symbol,
-          decimals: 18, // ref https://raw.githubusercontent.com/jab416171/uniswap-pairtokens/master/uniswap_pair_tokens.json
-          iconUrl,
-        });
+        const existingAsset = findAssetByAddress(supportedAssets, address);
+        if (!existingAsset) {
+          supportedAssets.push({
+            chain,
+            address,
+            name,
+            symbol,
+            decimals: 18, // ref https://raw.githubusercontent.com/jab416171/uniswap-pairtokens/master/uniswap_pair_tokens.json
+            iconUrl,
+          });
+        }
       });
 
       return supportedAssets;

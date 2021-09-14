@@ -75,7 +75,7 @@ function Button({
       setLocalDisabled(false);
     }, 300);
 
-    if (onPress) onPress();
+    onPress?.();
   };
 
   if (!titleColor) {

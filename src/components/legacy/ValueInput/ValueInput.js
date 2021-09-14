@@ -30,7 +30,7 @@ import TextInput from 'components/legacy/TextInput';
 import PercentsInputAccessoryHolder, {
   INPUT_ACCESSORY_NATIVE_ID,
 } from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
-import AssetSelectorModal from 'components/AssetSelectorModal';
+import AssetSelectorModal from 'components/Modals/AssetSelectorModal';
 import CollectibleImage from 'components/CollectibleImage';
 import { MediumText } from 'components/legacy/Typography';
 import Icon from 'components/legacy/Icon';
@@ -282,9 +282,9 @@ const ValueInputComponent = ({
     Keyboard.dismiss();
     Modal.open(() => (
       <AssetSelectorModal
-        options={assetsOptions}
+        tokens={assetsOptions}
         collectibles={showCollectibles ? collectibles : undefined}
-        onSelectOption={onAssetDataChange}
+        onSelectToken={onAssetDataChange}
         onSelectCollectible={onCollectibleAssetDataChange}
         title={selectorOptionsTitle}
       />

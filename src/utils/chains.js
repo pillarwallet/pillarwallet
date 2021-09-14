@@ -65,6 +65,7 @@ export function getSupportedChains(account: ?Account): Chain[] {
 /* eslint-disable i18next/no-literal-string */
 export const nativeAssetPerChain = {
   ethereum: {
+    chain: CHAIN.ETHEREUM,
     address: ADDRESS_ZERO,
     name: 'Ethereum',
     symbol: ETH,
@@ -72,6 +73,7 @@ export const nativeAssetPerChain = {
     iconUrl: 'https://tokens.1inch.exchange/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png',
   },
   polygon: {
+    chain: CHAIN.POLYGON,
     address: ADDRESS_ZERO,
     name: 'Matic',
     symbol: MATIC,
@@ -79,6 +81,7 @@ export const nativeAssetPerChain = {
     iconUrl: 'https://tokens.1inch.exchange/0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0.png',
   },
   binance: {
+    chain: CHAIN.BINANCE,
     address: ADDRESS_ZERO,
     name: 'BNB',
     symbol: BNB,
@@ -86,6 +89,7 @@ export const nativeAssetPerChain = {
     iconUrl: 'https://tokens.1inch.exchange/0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c.png',
   },
   xdai: {
+    chain: CHAIN.XDAI,
     address: ADDRESS_ZERO,
     name: 'xDAI',
     symbol: XDAI,

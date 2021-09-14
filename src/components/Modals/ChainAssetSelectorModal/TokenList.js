@@ -19,28 +19,20 @@
 */
 
 import * as React from 'react';
-import { SectionList } from 'react-native';
+import { FlatList } from 'react-native';
 import styled from 'styled-components/native';
-import { BigNumber } from 'bignumber.js';
-import t from 'translations/translate';
+import { useTranslation } from 'translations/translate';
 
 // Components
-import ChainListHeader from 'components/lists/ChainListHeader';
-import ChainListFooter from 'components/lists/ChainListFooter';
+import TokenListItem from 'components/lists/TokenListItem';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import ListItemWithImage from 'components/legacy/ListItem/ListItemWithImage';
-
-// Selectors
-import { useSupportedChains } from 'selectors/chains';
 
 // Utils
-import { mapNotNil } from 'utils/array';
-import { wrapBigNumberOrNil, sumOrNull } from 'utils/bigNumber';
+import { getAssetOptionKey } from 'utils/assets';
+import { wrapBigNumberOrNil } from 'utils/bigNumber';
 
 // Types
-import type { SectionBase } from 'utils/types/react-native';
 import type { AssetOption } from 'models/Asset';
-import type { Chain } from 'models/Chain';
 
 type Props = {|
   items: AssetOption[],
@@ -48,22 +40,18 @@ type Props = {|
 |};
 
 function TokenList({ items, onSelectItem }: Props) {
-  const sections = useSectionData(items);
-
-  const renderSectionHeader = ({ chain, balance }: Section) => {
-    return <ChainListHeader chain={chain} balance={balance} />;
-  };
+  const { t } = useTranslation();
 
   const renderItem = (item: AssetOption) => {
-    if (!item) return null;
-
     return (
-      <ListItemWithImage
+      <TokenListItem
+        chain={item.chain}
+        address={item.address}
+        symbol={item.symbol}
+        name={item.name}
+        iconUrl={item.iconUrl}
+        balance={wrapBigNumberOrNil(item.balance?.balance)}
         onPress={() => onSelectItem(item)}
-        label={item.name}
-        itemImageUrl={item.imageUrl}
-        balance={item.balance}
-        fallbackToGenericToken
       />
     );
   };
@@ -77,40 +65,21 @@ function TokenList({ items, onSelectItem }: Props) {
   };
 
   return (
-    <SectionList
-      sections={sections}
-      renderSectionHeader={({ section }) => renderSectionHeader(section)}
-      renderSectionFooter={() => <ChainListFooter />}
+    <FlatList
+      data={items}
       renderItem={({ item }) => renderItem(item)}
-      keyExtractor={(option) => `${option.chain}-${option.address}`}
-      keyboardShouldPersistTaps="always"
+      keyExtractor={getAssetOptionKey}
       ListEmptyComponent={renderEmptyState()}
       contentInsetAdjustmentBehavior="scrollableAxes"
+      keyboardShouldPersistTaps="always"
     />
   );
 }
 
 export default TokenList;
 
-type Section = {
-  ...SectionBase<AssetOption>,
-  chain: Chain,
-  balance: ?BigNumber,
-};
-
-const useSectionData = (items: AssetOption[]): Section[] => {
-  const chains = useSupportedChains();
-
-  return mapNotNil(chains, (chain) => {
-    const data = items.filter((item) => item.chain === chain);
-    const balance = sumOrNull(data.map((option) => wrapBigNumberOrNil(option.balance?.balanceInFiat)));
-    if (!data.length) return null;
-
-    return { key: chain, chain, balance, data };
-  });
-};
-
 const EmptyStateWrapper = styled.View`
+  flex: 1;
   padding-top: 90px;
   padding-bottom: 90px;
   align-items: center;

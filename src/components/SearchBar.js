@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { TextInput as RNTextInput } from 'react-native';
+import { Platform, TextInput as RNTextInput } from 'react-native';
 import styled from 'styled-components/native';
 
 // Components
@@ -29,7 +29,7 @@ import Text from 'components/core/Text';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
-import { fontStyles, objectFontStyles } from 'utils/variables';
+import { fontStyles, fontSizes, lineHeights } from 'utils/variables';
 
 // Types
 import type { ViewStyleProp, TextStyleProp } from 'utils/types/react-native';
@@ -93,22 +93,24 @@ export default SearchInput;
 
 const styles = {
   input: {
-    ...objectFontStyles.large,
+    fontSize: fontSizes.large,
+    // Weird Android bug: setting line height style cause view size jump from "" -> "A" (anything not empty).
+    lineHeight: Platform.OS !== 'android' ? lineHeights.large : undefined,
     textAlign: 'center',
-    paddingTop: 18,
-    paddingBottom: 32,
-    paddingHorizontal: 42,
+    maxHeight: 120,
   },
 };
 
-const Container = styled.View``;
+const Container = styled.View`
+  padding: 18px 32px 22px;
+`;
 
 const PlacerholderContainer = styled.View`
   position: absolute;
   left: 0;
   right: 0;
-  top: 0;
-  bottom: 6px;
+  top: ${Platform.select({ ios: '8', android: '0' })}px;
+  bottom: ${Platform.select({ ios: '0', android: '6' })}px;
   flex-direction: row;
   justify-content: center;
   align-items: center;
