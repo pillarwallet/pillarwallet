@@ -68,7 +68,7 @@ function KeyBasedAssetTransferEditAmount() {
 
   React.useEffect(() => {
     const promise = InteractionManager.runAfterInteractions(() => inputRef.current?.focus());
-    return () => { promise.cancel(); };
+    return () => { promise?.cancel(); };
   }, []);
 
   // Fail safe
