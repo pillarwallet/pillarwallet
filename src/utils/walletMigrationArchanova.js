@@ -186,7 +186,9 @@ const buildAssetMigrationRawTransactions = async (
   tokensToMigrate: TokensToMigrateByAddress,
   collectiblesToMigrate: CollectiblesToMigrateByCollectibleKey,
 ): Promise<string[]> => {
-  const etherWallet = new Wallet(wallet);
+  if (!wallet.address) {
+    wallet = new Wallet(wallet);
+  }
   const etherspotAccount = findFirstEtherspotAccount(accounts);
   if (!etherspotAccount) {
     reportErrorLog('buildAssetMigrationRawTransactions: no etherspot account found');
@@ -215,7 +217,7 @@ const buildAssetMigrationRawTransactions = async (
 
   // Sign migration message
   logBreadcrumb('walletMigrationArchanova', 'sign message');
-  const archanovaAccountDeviceSignature = await etherWallet.signMessage(migrator.migrationMessage);
+  const archanovaAccountDeviceSignature = await wallet.signMessage(migrator.migrationMessage);
   if (!archanovaAccountDeviceSignature) {
     reportErrorLog('buildAssetMigrationRawTransactions: signMessage returned null');
     throw new Error(t('error.failedToSignMessage'));
