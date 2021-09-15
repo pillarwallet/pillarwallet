@@ -23,7 +23,6 @@ import { View, Linking, InteractionManager } from 'react-native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled, { withTheme } from 'styled-components/native';
-import { format as formatDate } from 'date-fns';
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
@@ -79,6 +78,7 @@ import {
 } from 'utils/accounts';
 import { nativeAssetPerChain } from 'utils/chains';
 import { getAssetRateInFiat } from 'utils/rates';
+import { formatDate } from 'utils/date';
 
 // services
 import archanovaService from 'services/archanova';
@@ -1255,7 +1255,8 @@ export class EventDetail extends React.Component<Props> {
               {group.transactions.map(({
                 createdAt, assetSymbol, value, hash,
               }) => {
-                const formattedDate = formatDate(new Date(createdAt * 1000), 'MMM D HH:mm');
+                const createdAtDate = createdAt ? new Date(createdAt * 1000) : undefined;
+                const formattedDate = formatDate(createdAtDate, 'MMM D HH:mm');
                 const formattedAmount = formatAmount(formatUnits(value.toString(), 18));
                 return (
                   <Row marginBottom={13} key={hash}>

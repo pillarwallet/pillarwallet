@@ -34,7 +34,7 @@ export type HistorySection = {
 
 export function mapEventsToSections(items: Event[]): HistorySection[] {
   const sortedItems = orderBy(items, ['date'], ['desc']);
-  const groups = groupBy(sortedItems, (item) => formatDate(item.date, 'YYYY-MM-DD'));
+  const groups = groupBy(sortedItems, (item) => formatDate(item.date, 'yyyy-MM-dd'));
 
   return Object.keys(groups).map((key: string) => ({
     key,

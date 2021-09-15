@@ -1434,5 +1434,12 @@
   "tooltip": {
     "switchAccountsByTappingHere": "You can switch accounts by tapping here",
     "includesDeploymentFee": "One-time Smart Wallet deployment fee"
+  },
+
+  "governanceCall": {
+    "banner": {
+      "title": "Governance Call",
+      "live": "LIVE"
+    }
   }
 }

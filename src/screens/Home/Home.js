@@ -56,6 +56,7 @@ import ChartsSection from './ChartsSection';
 import AssetsSection from './AssetsSection';
 import FloatingActions from './FloatingActions';
 import { useAccountCollectibleCounts } from './utils';
+import GovernanceCallBanner from '../GovernanceCall/GovernanceCallBanner';
 
 function Home() {
   const navigation = useNavigation();
@@ -110,6 +111,8 @@ function Home() {
         <BalanceSection balanceInFiat={totalBalance} />
 
         <WalletConnectRequests />
+
+        <GovernanceCallBanner />
 
         <ChartsSection balancePerCategory={balancePerCategory} balancePerChain={balancePerChain} />
 

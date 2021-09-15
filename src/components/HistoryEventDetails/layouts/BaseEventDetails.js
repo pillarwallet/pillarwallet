@@ -100,7 +100,7 @@ const BaseEventDetails = ({
 
 export default BaseEventDetails;
 
-const DATE_FORMAT = 'MMMM D, YYYY HH:mm';
+const DATE_FORMAT = 'MMMM d, yyyy HH:mm';
 
 const SafeAreaContent = styled(SafeAreaView)`
   padding: ${spacing.large}px 0;

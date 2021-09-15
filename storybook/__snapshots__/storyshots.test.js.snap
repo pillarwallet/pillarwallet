@@ -26026,7 +26026,7 @@ exports[`Storyshots EventDetail Pillar Network Settle (PPN <-> SW) 1`] = `
                     }
                     tiny={true}
                   >
-                    Invalid Date
+                    
                   </Text>
                   <Text
                     secondary={true}
@@ -26133,7 +26133,7 @@ exports[`Storyshots EventDetail Pillar Network Settle (PPN <-> SW) 1`] = `
                     }
                     tiny={true}
                   >
-                    Invalid Date
+                    
                   </Text>
                   <Text
                     secondary={true}
