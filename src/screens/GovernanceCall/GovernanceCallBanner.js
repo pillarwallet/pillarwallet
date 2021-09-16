@@ -50,7 +50,7 @@ const smartWalletIcon = require('assets/icons/smart-wallet-migrate.png');
 
 const TYPE_GOVERNANCE_CALL = 'governance-calls';
 const DATE_FORMAT = 'dd.MM';
-const TIME_WITH_TIMEZONE_FORMAT = 'HH:mm OOO';
+const TIME_WITH_TIMEZONE_FORMAT = 'HH:mm zzzz';
 
 const GovernanceCallBanner = () => {
   const { t } = useTranslationWithPrefix('governanceCall');
@@ -62,43 +62,42 @@ const GovernanceCallBanner = () => {
 
   React.useEffect(() => {
     async function fetchGovernanceCallData() {
-      try {
-        const data = await Prismic.queryDocumentsByType(TYPE_GOVERNANCE_CALL);
-        data?.results?.map((governanceCallData) => {
-          const bannerTitleContent = [];
-          mapFromDocumentDataToString(governanceCallData?.data?.title, bannerTitleContent);
-          setTitle(bannerTitleContent);
-          const bannerDescriptionContent = [];
-          mapFromDocumentDataToString(governanceCallData?.data?.description, bannerDescriptionContent);
-          setDescription(bannerDescriptionContent);
-          /* eslint-disable camelcase */
-          setScheduledCallTime(governanceCallData?.data?.scheduled_for);
-          setGovernanceCallLink(governanceCallData?.data?.link?.url);
-          setShowPermanently(governanceCallData?.data?.show_permanently);
-        });
-      } catch (error) {
-        reportErrorLog('Prismic content fetch failed', { error });
-      }
+      const data = await Prismic.queryDocumentsByType(TYPE_GOVERNANCE_CALL).catch((error) =>
+        reportErrorLog('Prismic content fetch failed', { error }),
+      );
+      data?.results?.map((governanceCallData) => {
+        const bannerTitleContent = [];
+        mapFromDocumentDataToString(governanceCallData?.data?.title, bannerTitleContent);
+        setTitle(bannerTitleContent);
+        const bannerDescriptionContent = [];
+        mapFromDocumentDataToString(governanceCallData?.data?.description, bannerDescriptionContent);
+        setDescription(bannerDescriptionContent);
+        /* eslint-disable camelcase */
+        setScheduledCallTime(governanceCallData?.data?.scheduled_for);
+        setGovernanceCallLink(governanceCallData?.data?.link?.url);
+        setShowPermanently(governanceCallData?.data?.show_permanently);
+        /* eslint-enable camelcase */
+      });
     }
     fetchGovernanceCallData();
   }, [scheduledCallTime]);
 
-  const eventEndTime = addHours(new Date(scheduledCallTime), 1);
-  const formattedDate = formatDate(new Date(scheduledCallTime), DATE_FORMAT);
-  const formattedTimeWithTimezone = formatDate(new Date(scheduledCallTime), TIME_WITH_TIMEZONE_FORMAT);
-  const getTotalDays = differenceInDays(new Date(scheduledCallTime), Date.now());
-  const getTotalHours = differenceInHours(new Date(scheduledCallTime), Date.now());
-  const getTotalMinutes = differenceInMinutes(new Date(scheduledCallTime), Date.now());
-  const eventISLive = !isBefore(eventEndTime, Date.now()) && getTotalMinutes <= 0;
+  const currentDateTime = Date.now();
+  const scheduledGovernanceCallTime = new Date(scheduledCallTime);
+  const eventEndTime = addHours(scheduledGovernanceCallTime, 1);
+  const formattedDate = formatDate(scheduledGovernanceCallTime, DATE_FORMAT);
+  const formattedTimeWithTimezone = formatDate(scheduledGovernanceCallTime, TIME_WITH_TIMEZONE_FORMAT);
+  const getTotalDays = differenceInDays(scheduledGovernanceCallTime, currentDateTime);
+  const getTotalHours = differenceInHours(scheduledGovernanceCallTime, currentDateTime);
+  const getTotalMinutes = differenceInMinutes(scheduledGovernanceCallTime, currentDateTime);
+  const eventIsLive = !isBefore(eventEndTime, currentDateTime) && getTotalMinutes <= 0;
 
   const isBannerShow =
-    (showPermanently && isAfter(eventEndTime, Date.now())) || (getTotalHours <= 24 && getTotalHours >= 0);
+    (showPermanently && isAfter(eventEndTime, currentDateTime)) || (getTotalHours <= 24 && getTotalHours >= 0);
 
   if (!isBannerShow) return null;
 
-  const showRequestModal = () => {
-    Linking.openURL(governanceCallLink);
-  };
+  const showRequestModal = () => Linking.openURL(governanceCallLink);
 
   const calculateRemainingTime = () => {
     if (getTotalDays > 0) {
@@ -116,15 +115,15 @@ const GovernanceCallBanner = () => {
       <Column>
         <Title numberOfLines={1}>{title}</Title>
         {!!description && <Description>{description}</Description>}
-        {!eventISLive && (<ScheduledCallTime>{`${formattedDate} at ${formattedTimeWithTimezone}`}</ScheduledCallTime>)}
+        {!eventIsLive && (<ScheduledCallTime>{`${formattedDate} at ${formattedTimeWithTimezone}`}</ScheduledCallTime>)}
       </Column>
-      {eventISLive && (
+      {eventIsLive && (
         <LiveView>
           <LiveText>{t('banner.live')}</LiveText>
           <LiveDot />
         </LiveView>
       )}
-      {!eventISLive && (<CallTimeLeft>{calculateRemainingTime()}</CallTimeLeft>)}
+      {!eventIsLive && (<CallTimeLeft>{calculateRemainingTime()}</CallTimeLeft>)}
     </TouchableContainer>
   );
 };
@@ -168,7 +167,7 @@ const ScheduledCallTime = styled(Text)`
 `;
 
 const CallTimeLeft = styled(Text)`
-color: ${({ theme }) => theme.colors.buttonTextTitle};
+  color: ${({ theme }) => theme.colors.buttonTextTitle};
   alignSelf: center;
 `;
 

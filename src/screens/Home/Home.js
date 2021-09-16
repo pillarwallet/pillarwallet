@@ -45,6 +45,9 @@ import { useRootSelector, useSmartWalletAccounts } from 'selectors';
 import { accountTotalBalancesSelector } from 'selectors/totalBalances';
 import { useUser } from 'selectors/user';
 
+// Screens
+import GovernanceCallBanner from 'screens/GovernanceCall/GovernanceCallBanner';
+
 // Utils
 import { sumRecord } from 'utils/bigNumber';
 import { calculateTotalBalancePerCategory, calculateTotalBalancePerChain } from 'utils/totalBalances';
@@ -56,7 +59,6 @@ import ChartsSection from './ChartsSection';
 import AssetsSection from './AssetsSection';
 import FloatingActions from './FloatingActions';
 import { useAccountCollectibleCounts } from './utils';
-import GovernanceCallBanner from '../GovernanceCall/GovernanceCallBanner';
 
 function Home() {
   const navigation = useNavigation();
