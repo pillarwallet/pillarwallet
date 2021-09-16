@@ -25,6 +25,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 import { chunk } from 'lodash';
 import { useTranslation } from 'translations/translate';
+import { SwiperFlatList } from 'react-native-swiper-flatlist';
+
 
 // Components
 import ChainListHeader from 'components/lists/ChainListHeader';
@@ -83,18 +85,38 @@ function CollectiblesTab() {
   const renderItem = (items: CollectibleItem[], chain: Chain) => {
     const itemWidth = (width - 48) / numberOfColumns;
 
+    const dotStyle = styled.View`
+      flex-direction: column,
+      align-items: stretch;
+      padding: 0 ${spacing.mediumLarge}px;
+    `;
+
     return (
-      <ListRow>
-        {items.map((item) => (
-          <CollectibleListItem
-            key={item.key}
-            title={item.title}
-            iconUrl={item.iconUrl}
-            width={itemWidth}
-            onPress={() => navigateToCollectibleDetails(item, chain)}
-          />
-        ))}
-      </ListRow>
+      <>
+        <SwiperFlatList
+          // autoplay
+          // autoplayDelay={5}
+          // autoplayLoop
+          index={0}
+          showPagination={1}
+          data={items}
+          renderAll={1}
+          paginationStyleItem={dotStyle}
+          renderItem={({ item }) => (
+            <ListRow>
+              {item.map((item1) => (
+                <CollectibleListItem
+                  key={item1.key}
+                  title={item1.title}
+                  iconUrl={item1.iconUrl}
+                  width={itemWidth}
+                  onPress={() => navigateToCollectibleDetails(item1, chain)}
+                />
+              ))}
+            </ListRow>
+          )}
+        />
+      </>
     );
   };
 
@@ -121,7 +143,6 @@ function CollectiblesTab() {
         keyExtractor={(items) => items[0]?.key}
         contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
       />
-
       <FloatingButtons items={buttons} />
     </Container>
   );
@@ -140,7 +161,7 @@ const useSectionData = (numberOfColumns: number, expandItemsPerChain: FlagPerCha
 
   return chains.map((chain) => {
     const items = assetsPerChain[chain] ?? [];
-    const data = expandItemsPerChain[chain] ? chunk(items, numberOfColumns) : [];
+    const data = expandItemsPerChain[chain] ? Array(1).fill(chunk(items, numberOfColumns)) : [];
     return { key: chain, chain, data };
   });
 };

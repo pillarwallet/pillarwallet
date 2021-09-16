@@ -19,23 +19,18 @@
 */
 
 import * as React from 'react';
-import { SvgCssUri } from 'react-native-svg';
+import SvgImage from 'react-native-remote-svg';
 import { isSvgImage } from 'utils/images';
 import Image from 'components/Image';
 import type { ImageProps } from 'components/Image';
 
-type Props = ImageProps | SvgCssUri;
+type Props = ImageProps | SvgImage;
 
 const CollectibleImage = (props: Props) => {
   const { uri } = props.source;
   if (isSvgImage(uri)) {
     return (
-      <SvgCssUri
-        uri={uri}
-        width={props.width || '100%'}
-        height={props.height || '100%'}
-        {...props}
-      />
+      <SvgImage {...props} style={[{ width: props.width || '100%', height: props.height || '100%' }, props.style]} />
     );
   }
   return <Image {...props} style={[{ width: props.width, height: props.height }, props.style]} />;

@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { SvgCssUri } from 'react-native-svg';
+import SvgImage from 'react-native-remote-svg';
 
 // Components
 import Image from 'components/Image';
@@ -45,7 +45,7 @@ function CollectibleListItem({ title, iconUrl, onPress, width }: Props) {
       <IconContainer width={width}>
         {!!iconUrl && (
           <>
-            {isSvg && <SvgCssUri uri={iconUrl} width="100%" height="100%" />}
+            {isSvg && <SvgImage source={{ uri: iconUrl }} style={{ width: '100%', height: '100%' }} />}
             {!isSvg && <Icon source={{ uri: iconUrl }} resizeMode={Image.resizeMode.contain} />}
           </>
         )}
@@ -66,6 +66,7 @@ const TouchableContainer = styled.TouchableOpacity`
   align-items: center;
   margin: ${spacing.extraSmall}px;
   padding: 16px;
+  margin-bottom: 40px;
   border-radius: 10px;
   background-color: ${({ theme }) => theme.colors.basic050}};
 `;
