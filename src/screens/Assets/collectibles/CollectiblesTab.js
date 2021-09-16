@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { SectionList, useWindowDimensions } from 'react-native';
+import { SectionList, useWindowDimensions, View } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
@@ -83,40 +83,38 @@ function CollectiblesTab() {
   };
 
   const renderItem = (items: CollectibleItem[], chain: Chain) => {
-    const itemWidth = (width - 48) / numberOfColumns;
-
-    const dotStyle = styled.View`
-      flex-direction: column,
-      align-items: stretch;
-      padding: 0 ${spacing.mediumLarge}px;
-    `;
-
     return (
-      <>
+      <View style={container}>
         <SwiperFlatList
-          // autoplay
-          // autoplayDelay={5}
-          // autoplayLoop
           index={0}
-          showPagination={1}
+          showPagination
           data={items}
-          renderAll={1}
+          renderAll
+          // eslint-disable-next-line i18next/no-literal-string
+          paginationDefaultColor="white"
+          // eslint-disable-next-line i18next/no-literal-string
+          paginationActiveColor="red"
           paginationStyleItem={dotStyle}
-          renderItem={({ item }) => (
-            <ListRow>
-              {item.map((item1) => (
-                <CollectibleListItem
-                  key={item1.key}
-                  title={item1.title}
-                  iconUrl={item1.iconUrl}
-                  width={itemWidth}
-                  onPress={() => navigateToCollectibleDetails(item1, chain)}
-                />
-              ))}
-            </ListRow>
-          )}
+          renderItem={({ item }) => renderSlides(item, chain)}
         />
-      </>
+      </View>
+    );
+  };
+
+  const renderSlides = (items: CollectibleItem, chain: Chain) => {
+    const itemWidth = (width - 48) / numberOfColumns;
+    return (
+      <ListRow>
+        {items.map((item) => (
+          <CollectibleListItem
+            key={item.key}
+            title={item.title}
+            iconUrl={item.iconUrl}
+            width={itemWidth}
+            onPress={() => navigateToCollectibleDetails(item, chain)}
+          />
+        ))}
+      </ListRow>
     );
   };
 
@@ -160,8 +158,11 @@ const useSectionData = (numberOfColumns: number, expandItemsPerChain: FlagPerCha
   const assetsPerChain = useCollectibleAssets();
 
   return chains.map((chain) => {
-    const items = assetsPerChain[chain] ?? [];
-    const data = expandItemsPerChain[chain] ? Array(1).fill(chunk(items, numberOfColumns)) : [];
+    let items = assetsPerChain[chain] ?? [];
+    if (items.length > 0) {
+      items = Array(30).fill(items[0]);
+    }
+    const data = expandItemsPerChain[chain] ? [chunk(items, numberOfColumns)] : [];
     return { key: chain, chain, data };
   });
 };
@@ -174,4 +175,19 @@ const ListRow = styled.View`
   flex-direction: row;
   align-items: stretch;
   padding: 0 ${spacing.mediumLarge}px;
+`;
+
+const dotStyle = styled.View`
+  flex-direction: column,
+  flex: 1;
+  align-items: center;
+  padding: 0 ${spacing.mediumLarge}px;
+`;
+
+const container = styled.View`
+  position: relative,
+  flex-direction: column,
+  flex: 1,
+  margin-vertical: height * 0.0125,
+  top: 0,
 `;
