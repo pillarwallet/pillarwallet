@@ -701,14 +701,14 @@ export class EtherspotService {
         fromAmount: fromAmountEthers,
       });
 
-      return Promise.all(offers.map((offer) => buildExchangeOffer(
+      return offers.map((offer) => buildExchangeOffer(
         chain,
         fromAsset,
         toAsset,
         fromAmount,
         offer,
         captureFee,
-      )));
+      ));
     } catch (error) {
       reportErrorLog('EtherspotService getExchangeOffers failed', { chain, error });
       return [];

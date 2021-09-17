@@ -36,6 +36,7 @@ import HeaderBlock from 'components/HeaderBlock';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Icon from 'components/core/Icon';
 import Spinner from 'components/Spinner';
+import Toast from 'components/Toast';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
@@ -137,6 +138,17 @@ function Exchange() {
   };
 
   const handleOfferPress = async (selectedOffer: ExchangeOffer) => {
+    if (!activeAccount) {
+      // shouldn't happen
+      Toast.show({
+        message: t('toast.somethingWentWrong'),
+        emoji: 'hushed',
+        supportLink: true,
+        autoClose: false,
+      });
+      return;
+    }
+
     const offer = await appendFeeCaptureTransactionIfNeeded(selectedOffer, getAccountAddress(activeAccount));
     navigation.navigate(EXCHANGE_CONFIRM, { offer });
   };

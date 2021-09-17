@@ -150,7 +150,7 @@ export const getCaptureFeeDestinationAddress = (chain: Chain): ?string => {
 export const appendFeeCaptureTransactionIfNeeded = async (
   offer: ExchangeOffer,
   accountAddress: string,
-): ExchangeOffer => {
+): Promise<ExchangeOffer> => {
   const { fromAsset, captureFee, chain } = offer;
   const captureFeeDestinationAddress = getCaptureFeeDestinationAddress(chain);
 
@@ -169,6 +169,7 @@ export const appendFeeCaptureTransactionIfNeeded = async (
     chain,
   );
 
-  const offerTransactionsWithFeeCapture = [...offer.transactions, captureFeeTransaction];
+  const offerTransactionsWithFeeCapture = offer.transactions.concat(captureFeeTransaction);
+
   return { ...offer, transactions: offerTransactionsWithFeeCapture };
 };

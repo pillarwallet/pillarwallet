@@ -200,7 +200,7 @@ export const parseTokenListToken = ({
   };
 };
 
-export const buildExchangeOffer = async (
+export const buildExchangeOffer = (
   chain: Chain,
   fromAsset: AssetCore,
   toAsset: AssetCore,

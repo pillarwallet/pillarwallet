@@ -37,7 +37,7 @@ import type { ExchangeOffer } from 'models/Exchange';
 
 type Props = {
   offer: ExchangeOffer,
-  onPress: () => void,
+  onPress: () => Promise<void>,
   disabled?: boolean,
 };
 
