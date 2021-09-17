@@ -17,19 +17,28 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
+import { BigNumber } from 'bignumber.js';
 import { useTranslation } from 'translations/translate';
+
+// services
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // Constants
 import { EXCHANGE_PROVIDER as PROVIDER } from 'constants/exchangeConstants';
+import { ASSET_TYPES } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Utils
 import { useIsDarkTheme } from 'utils/themes';
+import { buildEthereumTransaction } from 'utils/transactions';
 
 // Types
 import type { ImageSource } from 'utils/types/react-native';
 import type { AssetOption } from 'models/Asset';
-import type { ExchangeProvider } from 'models/Exchange';
+import type { ExchangeOffer, ExchangeProvider } from 'models/Exchange';
+import type { Chain } from 'models/Chain';
+
 
 // Images
 const uniswapLightVertical = require('assets/images/exchangeProviders/uniswapLightVertical.png');
@@ -108,3 +117,58 @@ export function useProviderConfig(provider: ?ExchangeProvider): ?ProviderConfig 
   const configs = useProvidersConfig();
   return provider ? configs[provider] : undefined;
 }
+
+export const getCaptureFee = (fromAmount: BigNumber): BigNumber => {
+  if (firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_EXCHANGE_FEE_CAPTURE)) {
+    const feePrecentage = firebaseRemoteConfig.getNumber(REMOTE_CONFIG.EXCHANGE_FEE_CAPTURE_PERCENTAGE);
+    return fromAmount.times(feePrecentage / 100);
+  }
+
+  return new BigNumber(0);
+};
+
+export const getCaptureFeeDestinationAddress = (chain: Chain): ?string => {
+  if (chain === CHAIN.ETHEREUM) {
+    return firebaseRemoteConfig.getString(REMOTE_CONFIG.EXCHANGE_FEE_MAINNET_CAPTURE_ADDRESS);
+  }
+
+  if (chain === CHAIN.XDAI) {
+    return firebaseRemoteConfig.getString(REMOTE_CONFIG.EXCHANGE_FEE_XDAI_CAPTURE_ADDRESS);
+  }
+
+  if (chain === CHAIN.POLYGON) {
+    return firebaseRemoteConfig.getString(REMOTE_CONFIG.EXCHANGE_FEE_POLYGON_CAPTURE_ADDRESS);
+  }
+
+  if (chain === CHAIN.BINANCE) {
+    return firebaseRemoteConfig.getString(REMOTE_CONFIG.EXCHANGE_FEE_BSC_CAPTURE_ADDRESS);
+  }
+
+  return null;
+};
+
+export const appendFeeCaptureTransactionIfNeeded = async (
+  offer: ExchangeOffer,
+  accountAddress: string,
+): ExchangeOffer => {
+  const { fromAsset, captureFee, chain } = offer;
+  const captureFeeDestinationAddress = getCaptureFeeDestinationAddress(chain);
+
+  if (!captureFee.gt(0) || !captureFeeDestinationAddress) return offer;
+
+  const captureFeeTransaction = await buildEthereumTransaction(
+    captureFeeDestinationAddress,
+    accountAddress,
+    null,
+    captureFee.toString(),
+    fromAsset.symbol,
+    fromAsset.decimals,
+    ASSET_TYPES.TOKEN,
+    fromAsset.address,
+    null,
+    chain,
+  );
+
+  const offerTransactionsWithFeeCapture = [...offer.transactions, captureFeeTransaction];
+  return { ...offer, transactions: offerTransactionsWithFeeCapture };
+};
