@@ -193,11 +193,11 @@ export const setPreferredGasTokenAction = (preferredGasToken: string) => {
   };
 };
 
-export const initialDeeplinkExecutedAction = () => {
+export const initialDeepLinkExecutedAction = () => {
   return (dispatch: Dispatch) => {
     dispatch({
       type: UPDATE_APP_SETTINGS,
-      payload: { initialDeeplinkExecuted: true },
+      payload: { initialDeepLinkExecuted: true },
     });
   };
 };
@@ -242,5 +242,15 @@ export const dismissAccountSwitchTooltipAction = () => {
   return (dispatch: Dispatch) => {
     dispatch(saveDbAction('app_settings', { appSettings: { accountSwitchTooltipDismissed: true } }));
     dispatch({ type: UPDATE_APP_SETTINGS, payload: { accountSwitchTooltipDismissed: true } });
+  };
+};
+
+export const setDeviceUniqueIdIfNeededAction = (deviceUniqueId: string) => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const { deviceUniqueId: currentDeviceUniqueId } = getState().appSettings.data;
+    if (currentDeviceUniqueId) return;
+
+    dispatch(saveDbAction('app_settings', { appSettings: { deviceUniqueId } }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: { deviceUniqueId } });
   };
 };

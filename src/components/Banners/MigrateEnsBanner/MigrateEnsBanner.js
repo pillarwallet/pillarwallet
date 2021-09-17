@@ -25,8 +25,8 @@ import { useTranslationWithPrefix } from 'translations/translate';
 import { useNavigation } from 'react-navigation-hooks';
 
 // components
-import Text from 'components/modern/Text';
-import Icon from 'components/Icon';
+import Text from 'components/core/Text';
+import Icon from 'components/legacy/Icon';
 
 // constants
 import { ENS_MIGRATION_CONFIRM } from 'constants/navigationConstants';

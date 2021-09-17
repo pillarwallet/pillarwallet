@@ -21,14 +21,14 @@ import React, { useState } from 'react';
 import { FlatList, ScrollView, View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import t from 'translations/translate';
 
 // components
-import { Paragraph, MediumText, BaseText } from 'components/Typography';
-import Checkbox from 'components/Checkbox';
-import Icon from 'components/Icon';
-import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
+import { Paragraph, MediumText, BaseText } from 'components/legacy/Typography';
+import Checkbox from 'components/legacy/Checkbox';
+import Icon from 'components/legacy/Icon';
+import CollapsibleListItem from 'components/legacy/ListItem/CollapsibleListItem';
 
 // utils
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
@@ -40,7 +40,7 @@ import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 
 // types
 import type { Theme } from 'models/Theme';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 
 
 type Props = {

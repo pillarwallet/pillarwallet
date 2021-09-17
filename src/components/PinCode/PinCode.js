@@ -20,10 +20,15 @@
 import * as React from 'react';
 import { Animated, Easing } from 'react-native';
 import styled from 'styled-components/native';
-import KeyPad from 'components/KeyPad';
-import { Wrapper } from 'components/Layout';
+
+// constants
 import { KEYPAD_BUTTON_DELETE, KEYPAD_BUTTON_FORGOT } from 'constants/keyPadButtonsConstants';
+
+// components
+import KeyPad from 'components/KeyPad';
+import { Wrapper } from 'components/legacy/Layout';
 import HorizontalDots from 'components/HorizontalDots';
+import Spinner from 'components/Spinner';
 
 const PASS_CODE_LENGTH = 6;
 
@@ -36,6 +41,7 @@ type Props = {
   pinError?: boolean,
   flex: boolean,
   customStyle?: Object,
+  isLoading?: boolean,
 };
 
 type State = {
@@ -138,7 +144,7 @@ export default class PinCode extends React.Component<Props, State> {
   };
 
   render() {
-    const { showForgotButton, flex, customStyle } = this.props;
+    const { showForgotButton, flex, customStyle, isLoading } = this.props;
     const numActiveDots = this.state.passCode.length;
     return (
       <Container>
@@ -156,12 +162,15 @@ export default class PinCode extends React.Component<Props, State> {
             customStyle,
           ]}
         >
-          <HorizontalDots
-            wrapperWidth={156}
-            wrapperVerticalMargin={20}
-            numAllDots={PASS_CODE_LENGTH}
-            numActiveDots={numActiveDots}
-          />
+          {!!isLoading && <Spinner size={30} />}
+          {!isLoading && (
+            <HorizontalDots
+              wrapperWidth={156}
+              wrapperVerticalMargin={20}
+              numAllDots={PASS_CODE_LENGTH}
+              numActiveDots={numActiveDots}
+            />
+          )}
         </PinDotsWrapperAnimated>
         <KeyPad
           type="pincode"

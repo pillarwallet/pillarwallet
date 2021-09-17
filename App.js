@@ -59,12 +59,12 @@ import { STAGING } from 'constants/envConstants';
 import { REMOTE_CONFIG, INITIAL_REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // components
-import { Container } from 'components/Layout';
+import { Container } from 'components/legacy/Layout';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
 import Spinner from 'components/Spinner';
 import Walkthrough from 'components/Walkthrough';
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import PercentsInputAccessoryHolder from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
 import Modal from 'components/Modal';
 
@@ -122,7 +122,7 @@ type Props = {
   changeLanguage: (language: string) => void,
   translationsInitialised: boolean,
   updateTranslationResourceOnContextChange: () => void,
-  initialDeeplinkExecuted: boolean,
+  initialDeepLinkExecuted: boolean,
   sessionLanguageVersion: ?string,
   logScreenView: (screenName: string) => void,
   initWalletConnectSessionsWithoutReset: () => void,
@@ -284,7 +284,7 @@ class App extends React.Component<Props, *> {
 
   handleDeepLinkEvent = (event: { url: string }) => {
     // prevents invoking upon app launch, before login
-    if (this.props.initialDeeplinkExecuted) {
+    if (this.props.initialDeepLinkExecuted) {
       const { executeDeepLink } = this.props;
       const { url: deepLink } = event;
       if (deepLink === undefined) return;
@@ -369,7 +369,7 @@ class App extends React.Component<Props, *> {
 }
 
 const mapStateToProps = ({
-  appSettings: { isFetched, data: { themeType, isManualThemeSelection, initialDeeplinkExecuted } },
+  appSettings: { isFetched, data: { themeType, isManualThemeSelection, initialDeepLinkExecuted } },
   walkthroughs: { steps: activeWalkthroughSteps },
   session: { data: { translationsInitialised, sessionLanguageVersion } },
 }: RootReducerState): $Shape<Props> => ({
@@ -378,7 +378,7 @@ const mapStateToProps = ({
   isManualThemeSelection,
   activeWalkthroughSteps,
   translationsInitialised,
-  initialDeeplinkExecuted,
+  initialDeepLinkExecuted,
   sessionLanguageVersion,
 });
 

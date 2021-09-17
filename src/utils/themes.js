@@ -96,6 +96,10 @@ export const semanticLightThemeColors = {
   refreshControl: '#0000004C',
   pillarText: '#000000',
   exchangeScheme: lightThemeColors.basic080,
+  interjectionPointText: '#0a1427',
+  swiperButtonTrack: lightThemeColors.basic000,
+  swiperButtonThumb: '#ebf0f6',
+  modalHandleBar: '#ededed',
 };
 
 export const semanticDarkThemeColors = {
@@ -152,6 +156,10 @@ export const semanticDarkThemeColors = {
   refreshControl: '#FFFFFF4C',
   pillarText: '#e7e7e7',
   exchangeScheme: darkThemeColors.basic040,
+  interjectionPointText: '#0a1427',
+  swiperButtonTrack: '#520f8c',
+  swiperButtonThumb: baseColors.electricViolet,
+  modalHandleBar: '#4d4d4d',
 };
 
 export const themedColors = {

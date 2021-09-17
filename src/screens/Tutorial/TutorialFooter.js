@@ -22,7 +22,7 @@ import React from 'react';
 import t from 'translations/translate';
 
 import styled, { useTheme } from 'styled-components/native';
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 import { fontStyles } from 'utils/variables';
 import { hitSlop10 } from 'utils/common';
 

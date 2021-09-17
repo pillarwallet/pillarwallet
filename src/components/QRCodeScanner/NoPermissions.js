@@ -22,7 +22,7 @@ import t from 'translations/translate';
 
 import { themedColors } from 'utils/themes';
 import Header from 'components/Header';
-import { BaseText } from 'components/Typography';
+import { BaseText } from 'components/legacy/Typography';
 import styled from 'styled-components/native';
 
 

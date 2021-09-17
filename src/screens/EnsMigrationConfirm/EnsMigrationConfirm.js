@@ -23,6 +23,7 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 import { useNavigation } from 'react-navigation-hooks';
+import { type Wallet as EthersWallet } from 'ethers';
 
 // actions
 import {
@@ -37,10 +38,10 @@ import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // components
-import { ScrollWrapper, Spacing } from 'components/Layout';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { BaseText, MediumText } from 'components/Typography';
-import Button from 'components/Button';
+import { ScrollWrapper, Spacing } from 'components/legacy/Layout';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
+import { BaseText, MediumText } from 'components/legacy/Typography';
+import Button from 'components/legacy/Button';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import CheckAuth from 'components/CheckAuth';
 
@@ -123,7 +124,7 @@ const EnsMigrationConfirm = () => {
     });
   };
 
-  const onPinValid = (pin: string, unlockedWallet: Object) => {
+  const onPinValid = (pin: string, unlockedWallet: EthersWallet) => {
     setWallet(unlockedWallet);
   };
 

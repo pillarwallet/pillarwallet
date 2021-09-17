@@ -22,14 +22,14 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 
 // Components
-import Icon from 'components/modern/Icon';
-import Text from 'components/modern/Text';
+import Icon from 'components/core/Icon';
+import Text from 'components/core/Text';
 
 // Utils
 import { spacing } from 'utils/variables';
 
 // Types
-import type { IconName } from 'components/modern/Icon';
+import type { IconName } from 'components/core/Icon';
 
 export type Props = {|
   title: string,

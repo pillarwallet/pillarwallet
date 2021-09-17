@@ -26,8 +26,8 @@ import { BigNumber } from 'bignumber.js';
 import { isEmpty } from 'lodash';
 
 // Components
-import { Container, Footer } from 'components/modern/Layout';
-import Button from 'components/modern/Button';
+import { Container, Footer } from 'components/layout/Layout';
+import Button from 'components/core/Button';
 import HeaderBlock from 'components/HeaderBlock';
 
 // Constants
@@ -99,7 +99,7 @@ const WalletMigrationArchanovaSelectAssets = () => {
   };
 
   const handleTokenBalancePress = (address: string, balance: BigNumber) => {
-    navigation.navigate(WALLET_MIGRATION_ARCHANOVA_SET_AMOUNT, { address, balance: balance.toFixed() });
+    navigation.navigate(WALLET_MIGRATION_ARCHANOVA_SET_AMOUNT, { address, value: balance.toFixed() });
   };
 
   const navigateToReview = () => {

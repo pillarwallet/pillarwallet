@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 
 // Components
 import Image from 'components/Image';
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 import Modal from 'components/Modal';
 import WalletConnectRequestModal from 'screens/WalletConnect/CallRequest';
 

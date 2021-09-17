@@ -23,8 +23,8 @@ import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 
 // Components
-import Icon from 'components/modern/Icon';
-import Text from 'components/modern/Text';
+import Icon from 'components/core/Icon';
+import Text from 'components/core/Text';
 
 // Selectors
 import { useActiveAccount, useRootSelector } from 'selectors';
@@ -62,7 +62,7 @@ function TransactionDeploymentWarning({ chain, style }: Props) {
   return (
     <Container style={style}>
       <Icon name="warning" color={colors.negative} />
-      <Title color={colors.negative}>
+      <Title>
         {t('label.transactionDeploymentWarning', { chain: chainConfig.titleShort })}
       </Title>
     </Container>
@@ -73,11 +73,10 @@ export default TransactionDeploymentWarning;
 
 const Container = styled.View`
   flex-direction: row;
-  align-items: center;
 `;
 
 const Title = styled(Text)`
   flex: 1;
   margin-left: ${spacing.mediumLarge}px;
-  color: ${({ theme }) => theme.colors.negative};
+  color: ${({ theme }) => theme.colors.tertiaryText};
 `;

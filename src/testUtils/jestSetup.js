@@ -198,8 +198,10 @@ jest.setMock('react-native-background-timer', {
   stopBackgroundTimer: () => {},
 });
 
+export const mockDeviceUniqueId = '1x1x1x1x1x1x1';
+
 jest.setMock('react-native-device-info', {
-  getUniqueId: () => '1x1x1x1x1x1x1',
+  getUniqueId: () => mockDeviceUniqueId,
   getBuildNumber: () => '',
   getVersion: () => '',
 });
@@ -363,6 +365,8 @@ jest.setMock('react-native-notifications');
 
 jest.setMock('@react-native-community/netinfo');
 
+jest.setMock('rn-swipe-button');
+
 jest.setMock('react-native-appearance', {});
 
 jest.setMock('configs/envConfig', envConfigMock);
@@ -458,3 +462,4 @@ jest.setMock('services/etherspot', {
   getBalances: mockEtherspotGetBalances,
   getAccountTotalBalances: () => Promise.resolve(),
 });
+

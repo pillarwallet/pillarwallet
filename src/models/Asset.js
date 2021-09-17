@@ -53,9 +53,10 @@ export type TokenData = {|
 |};
 
 export type Asset = {
+  chain: Chain,
+  address: string,
   symbol: string,
   name: string,
-  address: string,
   iconUrl: string,
   decimals: number,
 };
@@ -85,8 +86,8 @@ export type AssetOption = {
   address: string,
   balance?: ?AssetOptionBalance,
   decimals: number,
-  imageUrl: string,
   name: string,
+  iconUrl: string,
   symbol: string,
   tokenType?: AssetType,
   chain: Chain,
@@ -96,8 +97,8 @@ export type AssetOption = {
   contractAddress?: string,
   ethAddress?: string,
   formattedBalanceInFiat?: string,
+  imageUrl?: string,
   icon?: string,
-  iconUrl?: string,
   id?: string,
   imageSource?: string,
   imageUrl?: string,

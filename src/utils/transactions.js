@@ -21,24 +21,31 @@
 import get from 'lodash.get';
 import { BigNumber } from 'bignumber.js';
 import { BigNumber as EthersBigNumber, utils } from 'ethers';
+import t from 'translations/translate';
 
-// constants
+// Components
+import Toast from 'components/Toast';
+
+// Constants
 import { ADDRESS_ZERO, ASSET_TYPES } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
-// utils
+// Utils
 import { getBalance } from 'utils/assets';
 import { fromEthersBigNumber } from 'utils/bigNumber';
 import { nativeAssetPerChain } from 'utils/chains';
 import { reportErrorLog } from 'utils/common';
+import { openUrl } from 'utils/inAppBrowser';
 
-// services
+// Services
 import { buildERC721TransactionData, encodeContractMethod } from 'services/assets';
+import { firebaseRemoteConfig } from 'services/firebase';
 
-// abi
+// Abi
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 
-// types
+// Types
 import type { AssetType } from 'models/Asset';
 import type { FeeInfo } from 'models/PaymentNetwork';
 import type { EthereumTransaction, GasToken, TransactionPayload } from 'models/Transaction';
@@ -230,4 +237,30 @@ export const getGasSymbol = (chain: Chain, gasToken: ?GasToken): string => {
   }
 
   return chainNativeAsset.symbol;
+};
+
+/**
+ * Standard check to allow transfer: value value, greater than zero & less than or equal to balance.
+ */
+export const isValidValueForTransfer = (value: ?BigNumber, balance: BigNumber): boolean %checks => {
+  return !!value && value.isFinite() && value.gt(0) && value.lte(balance);
+};
+
+/**
+ * Standard check to trigger not enough balance error message. Treats null value as zero.
+ */
+export const isLessThanOrEqualToBalance = (value: ?BigNumber, maxValue: BigNumber): boolean %checks => {
+  return value?.lte(maxValue) ?? true;
+};
+
+export const showTransactionRevertedToast = () => {
+  const transactionRevertedAricleURL = firebaseRemoteConfig.getString(REMOTE_CONFIG.TRANSACTION_REVERTED_ARTICLE_URL);
+  Toast.show({
+    message: t('toast.transactionReverted'),
+    emoji: 'hushed',
+    autoClose: false,
+    onPress: () => {
+      openUrl(transactionRevertedAricleURL);
+    },
+  });
 };

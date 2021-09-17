@@ -24,11 +24,10 @@ import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 
 // Components
-import { Container, Content, Spacing } from 'components/modern/Layout';
+import { Container, Content, Spacing } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
-import Button from 'components/modern/Button';
-import Text from 'components/modern/Text';
-import Toast from 'components/Toast';
+import Button from 'components/core/Button';
+import Text from 'components/core/Text';
 import TransactionDeploymentWarning from 'components/other/TransactionDeploymentWarning';
 
 // Constants
@@ -48,7 +47,7 @@ import {
 // Utils
 import { getFormattedBalanceInFiat } from 'utils/assets';
 import { useProviderConfig } from 'utils/exchange';
-import { mapTransactionsToTransactionPayload } from 'utils/transactions';
+import { mapTransactionsToTransactionPayload, showTransactionRevertedToast } from 'utils/transactions';
 import { spacing } from 'utils/variables';
 
 // Types
@@ -82,12 +81,7 @@ const ExchangeConfirmScreen = () => {
 
   const confirmTransaction = () => {
     if (!feeInfo) {
-      Toast.show({
-        message: t('toast.cannotExchangeAsset'),
-        emoji: 'woman-shrugging',
-        supportLink: true,
-      });
-
+      showTransactionRevertedToast();
       return;
     }
 

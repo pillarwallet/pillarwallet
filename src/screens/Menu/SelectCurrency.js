@@ -26,11 +26,11 @@ import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import { Container } from 'components/modern/Layout';
+import { Container } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
-import FiatIcon from 'components/Icons/FiatIcon';
-import Icon from 'components/modern/Icon';
-import Text from 'components/modern/Text';
+import FiatIcon from 'components/display/FiatIcon';
+import Icon from 'components/core/Icon';
+import Text from 'components/core/Text';
 
 // Constants
 import { supportedFiatCurrencies } from 'constants/assetsConstants';

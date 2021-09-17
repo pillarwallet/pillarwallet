@@ -18,13 +18,38 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export default function (storageData: Object) {
-  const supportedAssets = storageData?.supportedAssets?.supportedAssets || {};
+// Constants
+import { CHAIN } from 'constants/chainConstants';
 
-  // per migration moment current supported assets were Ethereum only
+// Types
+import type { Asset } from 'models/Asset';
+import type { Chain, ChainRecord } from 'models/Chain';
+
+export default function (storageData: Object) {
+  let supportedAssets = storageData?.supportedAssets?.supportedAssets || {};
+
+  // Version 1: migrate to multi-chain assets
   if (Array.isArray(supportedAssets)) {
-    return { ethereum: supportedAssets };
+    supportedAssets = ({ ethereum: supportedAssets }: ChainRecord<Asset[]>);
   }
 
+  // Version 2: add chain field
+  addChainFieldIfNeeded(supportedAssets, CHAIN.ETHEREUM);
+  addChainFieldIfNeeded(supportedAssets, CHAIN.POLYGON);
+  addChainFieldIfNeeded(supportedAssets, CHAIN.BINANCE);
+  addChainFieldIfNeeded(supportedAssets, CHAIN.XDAI);
+
   return supportedAssets;
+}
+
+function addChainFieldIfNeeded(supportedAssets: ChainRecord<Asset[]>, chain: Chain) {
+  const chainAssets = supportedAssets[chain];
+
+  // Empty array - do nothing
+  if (!chainAssets?.length) return;
+
+  // Already set - do nothing
+  if (chainAssets[0].chain) return;
+
+  supportedAssets[chain] = chainAssets.map((asset) => ({ ...asset, chain }));
 }

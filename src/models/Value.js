@@ -20,6 +20,8 @@
 
 import { BigNumber } from 'bignumber.js';
 
+export type Value = BigNumber | string | number;
+
 /**
  * TODO: add chain and remove symbol?
  * This comes of thinking that neither symbol nor address alone can have a meaning without chain.

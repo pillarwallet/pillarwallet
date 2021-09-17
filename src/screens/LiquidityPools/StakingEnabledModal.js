@@ -22,11 +22,11 @@ import React, { useRef } from 'react';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
-import { BaseText, MediumText } from 'components/Typography';
-import Button from 'components/Button';
+import { BaseText, MediumText } from 'components/legacy/Typography';
+import Button from 'components/legacy/Button';
 import Image from 'components/Image';
 import ModalBox from 'components/ModalBox';
-import { Spacing } from 'components/Layout';
+import { Spacing } from 'components/legacy/Layout';
 
 import type { LiquidityPool } from 'models/LiquidityPools';
 

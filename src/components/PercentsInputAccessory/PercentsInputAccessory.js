@@ -20,13 +20,33 @@
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
-import { BaseText } from 'components/Typography';
 
-type Props = {
-  handleUsePercent: (number) => any,
-};
+// Components
+import { BaseText } from 'components/legacy/Typography';
 
 const PERCENTS = [10, 25, 50, 75, 100];
+const PERCENTS_WITHOUT_MAX = [10, 25, 50, 75];
+
+type Props = {
+  handleUsePercent: (value: number) => mixed,
+  disableMaxValue?: boolean,
+};
+
+const PercentsInputAccessory = ({ handleUsePercent, disableMaxValue }: Props) => {
+  const values = disableMaxValue ? PERCENTS_WITHOUT_MAX : PERCENTS;
+
+  return (
+    <AccessoryContentWrapper>
+      {values.map((percent) => (
+        <TouchableOpacity key={percent} onPress={() => handleUsePercent(percent)}>
+          <BaseText>{percent}%</BaseText>
+        </TouchableOpacity>
+      ))}
+    </AccessoryContentWrapper>
+  );
+};
+
+export default PercentsInputAccessory;
 
 const AccessoryContentWrapper = styled.View`
   flex-direction: row;
@@ -36,17 +56,3 @@ const AccessoryContentWrapper = styled.View`
   border-top-width: 1px;
   border-color: ${({ theme }) => theme.colors.basic060};
 `;
-
-const PercentsInputAccessory = ({ handleUsePercent }: Props) => {
-  return (
-    <AccessoryContentWrapper>
-      {PERCENTS.map(percent => (
-        <TouchableOpacity onPress={() => handleUsePercent(percent)} key={percent}>
-          <BaseText>{percent}%</BaseText>
-        </TouchableOpacity>
-      ))}
-    </AccessoryContentWrapper>
-  );
-};
-
-export default PercentsInputAccessory;

@@ -23,8 +23,8 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import BalanceView from 'components/BalanceView';
-import Text from 'components/modern/Text';
-import TextWithCopy from 'components/modern/TextWithCopy';
+import Text from 'components/core/Text';
+import TextWithCopy from 'components/display/TextWithCopy';
 
 // Utils
 import { useThemeColors } from 'utils/themes';

@@ -30,12 +30,12 @@ import t from 'translations/translate';
 import { addContactAction, updateContactAction } from 'actions/contactsActions';
 
 // Components
-import Button from 'components/Button';
+import Button from 'components/legacy/Button';
 import ContactDetailsModal from 'components/ContactDetailsModal';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import FloatingButtons from 'components/FloatingButtons';
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
+import ListItemWithImage from 'components/legacy/ListItem/ListItemWithImage';
 import Modal from 'components/Modal';
 import SearchBar from 'components/SearchBar';
 import SwipeoutButton from 'components/SwipeoutButton';
@@ -90,7 +90,7 @@ const ContactsList = () => {
     <DeleteContactModal contact={contact} />
   ));
 
-  const handleChangeQuery = (value: string) => {
+  const handleQueryChange = (value: string) => {
     setQuery(value);
     const isValid = isValidAddressOrEnsName(value) && !filterContacts(contacts, value).length;
     setCustomAddressContact(isValid ? { ethAddress: value, name: '' } : null);
@@ -166,15 +166,7 @@ const ContactsList = () => {
       footer={<View />}
       shouldFooterAvoidKeyboard
     >
-      <SearchBar
-        query={query}
-        onChangeQuery={handleChangeQuery}
-        iconProps={{
-          persistIconOnFocus: true,
-        }}
-        placeholder={t('label.walletAddressEnsUser')}
-        showPasteButton
-      />
+      <SearchBar query={query} onQueryChange={handleQueryChange} placeholder={t('label.addressEnsUsername')} />
 
       <FlatList
         data={items}

@@ -23,19 +23,27 @@ import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import get from 'lodash.get';
 import t from 'translations/translate';
+import { type Wallet as EthersWallet } from 'ethers';
 
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+// actions
 import { checkAuthAction } from 'actions/authActions';
-import { Container, Wrapper } from 'components/Layout';
+
+// components
+import { Container, Wrapper } from 'components/legacy/Layout';
 import Loader from 'components/Loader';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
+import CheckAuthWrapperModal from 'components/Modals/SlideModal/CheckAuthWrapperModal';
+import Header from 'components/Header';
+
+// utils
 import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
 import { getKeychainDataObject } from 'utils/keychain';
 import { constructWalletFromMnemonic } from 'utils/wallet';
-import CheckAuthWrapperModal from 'components/Modals/SlideModal/CheckAuthWrapperModal';
-import Header from 'components/Header';
-import type { EthereumWallet } from 'models/Wallet';
+
+// types
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { OnValidPinCallback } from 'models/Wallet';
 
 
 type HeaderProps = {
@@ -50,14 +58,12 @@ type ModalProps = {|
   isVisible?: boolean,
 |};
 
-type ValidPinCallback = (pin: string, wallet: EthereumWallet) => Promise<void>;
-
 type Props = {
-  checkPin: (pin: string, onValidPin: Function, options: Object) => void,
+  checkPin: (pin: string, onValidPin: ?OnValidPinCallback, options: Object) => void,
   checkPrivateKey: (privateKey: ?string, onValidPin: Function) => void,
   wallet: Object,
   revealMnemonic: boolean,
-  onPinValid: ValidPinCallback,
+  onPinValid: OnValidPinCallback,
   isChecking: boolean,
   title?: string,
   useBiometrics: ?boolean,
@@ -191,9 +197,9 @@ class CheckAuth extends React.Component<Props, State> {
     checkPin(pin, this.onPinValidSuccess, revealMnemonic);
   };
 
-  onPinValidSuccess = (pin: string, wallet: EthereumWallet) => {
+  onPinValidSuccess = async (pin: ?string, wallet: EthersWallet) => {
     const { onPinValid } = this.props;
-    onPinValid(pin, wallet);
+    await onPinValid(pin, wallet);
     if (this._isMounted) this.setState({ showPin: false });
   };
 
@@ -281,12 +287,15 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  checkPin: (pin: string, onValidPin: ValidPinCallback, withMnemonic: boolean) => {
-    dispatch(checkAuthAction(pin, null, onValidPin, withMnemonic));
-  },
-  checkPrivateKey: (privateKey: ?string, onValidPin: ValidPinCallback) => {
-    dispatch(checkAuthAction(null, privateKey, onValidPin));
-  },
+  checkPin: (
+    pin: string,
+    onValidPin: ?OnValidPinCallback,
+    withMnemonic: boolean,
+  ) => dispatch(checkAuthAction(pin, null, onValidPin, withMnemonic)),
+  checkPrivateKey: (
+    privateKey: ?string,
+    onValidPin: ?OnValidPinCallback,
+  ) => dispatch(checkAuthAction(null, privateKey, onValidPin)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(CheckAuth);

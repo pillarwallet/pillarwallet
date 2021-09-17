@@ -19,7 +19,6 @@
 */
 
 import * as React from 'react';
-import type { Option } from './Selector';
 
 type Value = string | number;
 
@@ -52,17 +51,6 @@ export type InputPropsType = {
   editable?: boolean,
   inputAccessoryViewID?: string,
   customRightLabel?: React.Node,
-};
-
-export type SelectorOptions = {
-  options?: Option[],
-  selectorPlaceholder?: 'string',
-  fullWidth?: boolean,
-  showOptionsTitles?: boolean,
-  optionsTitle?: string,
-  selectorModalTitle?: string,
-  optionsSearchPlaceholder?: string,
-  displayFiatOptionsFirst?: boolean,
 };
 
 export type FormSelector = {

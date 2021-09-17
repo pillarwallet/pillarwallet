@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 import t from 'translations/translate';
 
 import { fontStyles } from 'utils/variables';
-import { MediumText } from 'components/Typography';
+import { MediumText } from 'components/legacy/Typography';
 import { getEnv } from 'configs/envConfig';
 import { themedColors } from 'utils/themes';
 

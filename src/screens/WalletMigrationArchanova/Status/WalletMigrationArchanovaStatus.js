@@ -24,8 +24,8 @@ import { useNavigation } from 'react-navigation-hooks';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import { Container } from 'components/modern/Layout';
-import ActivityFeed from 'components/ActivityFeed';
+import { Container } from 'components/layout/Layout';
+import ActivityFeed from 'components/legacy/ActivityFeed';
 import HeaderBlock from 'components/HeaderBlock';
 import RefreshControl from 'components/RefreshControl';
 

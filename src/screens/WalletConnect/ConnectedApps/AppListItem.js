@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 import Image from 'components/Image';
 
 // Utils

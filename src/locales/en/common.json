@@ -29,6 +29,7 @@
   "negativePercentValue": "-{{value}}%",
   "tokenValue": "{{value}} {{token}}",
   "totalValue": "Total {{value}}",
+  "estimatedValue": "≈ {{value}}",
   "availableValue": "Available: {{value}}",
   "ofValue": "of {{value}}",
   "valueOfValue": "{{partOfValue}} of {{allValue}}",
@@ -158,6 +159,7 @@
     "newSmartWalletAccountDevice": "New Smart Wallet account device",
     "notApplicable": "N/A",
     "notEnoughGas": "Insufficient gas",
+    "notEnoughBalance": "Insufficient {{symbol}} balance",
     "outgoingSablierStream": "Outgoing stream",
     "purchase": "Purchase",
     "received": "Received",
@@ -202,9 +204,9 @@
     "to": "To",
     "from": "From",
     "whereToSend": "Where to send",
-    "sendTo": "Send To",
+    "sendTo": "Send to",
     "walletAddress": "Wallet address",
-    "walletAddressEnsUser": "Wallet address, ENS, user",
+    "addressEnsUsername": "Address, ENS, username",
     "walletNotDeployed": "Wallet is not deployed",
     "tokens": "Tokens",
     "collectibles": "NFTs",
@@ -261,7 +263,10 @@
     "archanovaToEtherspotShort": "Pillar V1 to Etherspot",
     "deployed": "Deployed",
     "walletDeployment": "Wallet deployment",
-    "pleaseSelect": "Please select"
+    "pleaseSelect": "Please select",
+    "balanceFiatTokenFormat": "Balance {{balanceInFiat}} ({{balance}})",
+    "balanceTokenFormat": "Balance {{balance}}",
+    "filterByName": "Filter by name"
   },
 
   "button": {
@@ -316,6 +321,7 @@
     "subscribe": "Subscribe",
     "support": "Support",
     "swap": "Swap",
+    "swipeConfirm": "Swipe to confirm",
     "topUp": "Top up",
     "topUpMore": "Top up more",
     "topUpPLRTank": "Top up PLR Tank",
@@ -365,7 +371,12 @@
     "back": "Back",
     "native": "I know Crypto",
     "new": "I'm new to Crypto",
-    "copyAddress": "Copy address"
+    "copyAddress": "Copy address",
+    "sendMax": "Send max",
+    "spendMax": "Spend max",
+    "useMax": "Use max",
+    "selectToken": "Select token...",
+    "more": "More"
   },
 
   "paragraph": {
@@ -626,6 +637,18 @@
     }
   },
 
+  "assetSelector": {
+    "title": "Select asset"
+  },
+
+  "chainAssetSelector": {
+    "title": "{{chain}} assets",
+    "tabs": {
+      "tokens": "Tokens",
+      "collectibles": "NFTs"
+    }
+  },
+
   "walletConnect": {
     "home": {
       "title": "WalletConnect",
@@ -638,6 +661,7 @@
     "requests": {
       "messageRequest": "Signature request",
       "transactionRequest": "Transaction request",
+      "transactionRequestFormat": "{{app}} on {{chain}}",
       "unsupportedRequest": "Unsupported request"
     },
     "connectedApps": {
@@ -660,6 +684,18 @@
       "depositFormat": "Deposit {{symbol}} on {{chain}}",
       "error": "Can't fetch Smart Wallet Deployment Interjection data. Please try again.",
       "cost": "{{cost}} deployment cost will be added to your first transaction."
+    }
+  },
+
+  "contactSelector": {
+    "title": "Send to",
+    "button": {
+      "addContact": "Add to address book",
+      "skip": "Skip and just send"
+    },
+    "error": {
+      "incorrectAddress": "Incorrect address",
+      "cannotSendToYourself": "Cannot send to yourself"
     }
   },
 
@@ -979,8 +1015,7 @@
 
   "walletConnectContent": {
     "title": {
-      "walletConnectRequests": "WalletConnect Request",
-      "walletConnect": "WalletConnect"
+      "walletConnectRequests": "Connect to {{app}}"
     },
     "label": {
       "unknownRequestName": "Unknown",
@@ -1018,6 +1053,7 @@
   "transactions": {
     "title": {
       "sendScreen": "Send on {{chain}}",
+      "sendScreenPPN": "Send on PPN",
       "valueSelectorModal": "Choose asset",
       "review": "Review",
       "reviewAndConfirmScreen": "Review and confirm",
@@ -1123,7 +1159,7 @@
     "notEnoughForTransactionFee": "Not enough {{feeSymbol}} to pay for transaction fee.",
     "languageChanged": "Language changed.",
     "languageChangeFailed": "Can't change language. Please try again.",
-    "cryptoPurchaseLaunchFailed": "Sorry, we had a problem trying to open this service. Please try again later.",
+    "serviceLaunchFailed": "Sorry, we had a problem trying to open this service. Please try again later.",
     "exchangeAllowanceFailed": "We are sorry. Token allowance could not be set. Please try again.",
     "contactUpdated": "{{name}} updated.",
     "contactDeleted": "{{name}} removed from address book.",
@@ -1140,13 +1176,10 @@
     "cannotGetBlockchainExplorerLink": "Cannot get blockchain explorer link. Please try again.",
     "cannotGetWalletAddress": "Cannot get wallet address.",
     "cannotEnableAsset": "Cannot enable asset. Please try again.",
-    "cannotSendCollectible": "Cannot send NFT. Please try again.",
     "cannotCreateStream": "Cannot create stream. Please try again.",
     "cannotCancelStream": "Cannot cancel stream. Please try again.",
     "cannotPurchaseTicket": "Cannot purchase ticket. Please try again.",
     "cannotWithdraw": "Cannot withdraw. Please try again.",
-    "cannotExchangeAsset": "Cannot exchange asset. Please try again.",
-    "cannotSendAsset": "Cannot send asset. Please try again.",
     "cannotDepositAsset": "Cannot deposit asset. Please try again.",
     "cannotWithdrawAsset": "Cannot withdraw asset. Please try again.",
     "failedToEstimateTransactionWithMessage": "Failed to estimate transaction: \"{{message}}\"",
@@ -1171,7 +1204,8 @@
     "ensMigrationFailed": "Sorry, ENS migration failed.",
     "cannotSendSyntheticAsset": "Sorry, asset cannot be sent.",
     "failedToGetGasPrices": "Failed to get gas prices.",
-    "waitingForWalletConnectConnection": "Waiting for WalletConnect service…"
+    "waitingForWalletConnectConnection": "Waiting for WalletConnect service…",
+    "transactionReverted": "Something went wrong. Try again or tap this message for details."
   },
 
   "exchangeContent": {

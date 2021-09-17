@@ -46,6 +46,7 @@ import {
   ETH_SEND_TX,
   ETH_SIGN_TX,
   ETH_SIGN_TYPED_DATA,
+  ETH_SIGN_TYPED_DATA_V4,
   PERSONAL_SIGN,
 } from 'constants/walletConnectConstants';
 import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
@@ -133,6 +134,7 @@ const WalletConnectPinConfirmScreeen = ({
           result = await signPersonalMessage(message, wallet, isLegacyEip1271);
           break;
         case ETH_SIGN_TYPED_DATA:
+        case ETH_SIGN_TYPED_DATA_V4:
           result = await signTypedData(message, wallet, isLegacyEip1271);
           break;
         default:
@@ -145,7 +147,7 @@ const WalletConnectPinConfirmScreeen = ({
     return result;
   };
 
-  const onPinValid = async (pin: string, wallet: Object) => {
+  const onPinValid = async (pin: string, wallet: Wallet) => {
     setIsChecking(true);
     const { method } = callRequest;
 

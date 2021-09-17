@@ -29,19 +29,18 @@ import { useDispatch } from 'react-redux';
 import { fontSizes, appFont } from 'utils/variables';
 import { isValidFiatValue } from 'utils/validators';
 import { getCurrencySymbol, hasTooMuchDecimals } from 'utils/common';
-import { openInAppBrowser } from 'utils/inAppBrowser';
+import { openUrl } from 'utils/inAppBrowser';
 import { rampWidgetUrl } from 'utils/fiatToCrypto';
 import { getActiveAccount, getAccountAddress, isSmartWalletAccount, isEtherspotAccount } from 'utils/accounts';
 import { useThemeColors } from 'utils/themes';
 import { isLogV2AppEvents } from 'utils/environment';
 
 // Components
-import { Container } from 'components/modern/Layout';
-import Button from 'components/modern/Button';
-import TextInput from 'components/TextInput';
+import { Container } from 'components/layout/Layout';
+import Button from 'components/core/Button';
+import TextInput from 'components/legacy/TextInput';
 import HeaderBlock from 'components/HeaderBlock';
-import Text from 'components/modern/Text';
-import Toast from 'components/Toast';
+import Text from 'components/core/Text';
 import Modal from 'components/Modal';
 import BuyCryptoAccountNotActiveModal from 'components/BuyCryptoAccountNotActiveModal';
 
@@ -81,21 +80,6 @@ const AddCash = () => {
     setValue(updatedAmount);
   };
 
-  const openUrl = async (url: string | null) => {
-    if (url) {
-      await openInAppBrowser(url).catch(showServiceLaunchError);
-    } else {
-      showServiceLaunchError();
-    }
-  };
-
-  const showServiceLaunchError = () => {
-    Toast.show({
-      message: t('toast.cryptoPurchaseLaunchFailed'),
-      emoji: 'hushed',
-      supportLink: true,
-    });
-  };
 
   const onSelectValue = async (accessoryValue: string) => {
     Keyboard.dismiss();

@@ -21,7 +21,7 @@ import React, { useState, useMemo } from 'react';
 
 // Components
 import HistoryList from 'components/HistoryList';
-import TabView from 'components/modern/TabView';
+import TabView from 'components/layout/TabView';
 
 // Selectors
 import {

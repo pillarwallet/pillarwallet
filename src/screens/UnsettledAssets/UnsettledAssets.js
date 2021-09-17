@@ -26,9 +26,9 @@ import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
 // components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import Button from 'components/Button';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
+import ListItemWithImage from 'components/legacy/ListItem/ListItemWithImage';
+import Button from 'components/legacy/Button';
 
 // utils
 import { findAssetByAddress, getAssetsAsList } from 'utils/assets';

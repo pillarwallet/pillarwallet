@@ -19,17 +19,20 @@
 */
 
 import * as React from 'react';
-import styled from 'styled-components/native';
+import { View } from 'react-native';
+import SwipeButton from 'rn-swipe-button';
+import styled, { useTheme } from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 import { useTranslation } from 'translations/translate';
 
 // Components
-import Button from 'components/modern/Button';
-import FeeLabel from 'components/modern/FeeLabel';
+import Button from 'components/core/Button';
+import FeeLabel from 'components/display/FeeLabel';
 import Image from 'components/Image';
-import LargeTokenValueView from 'components/modern/LargeTokenValueView';
-import Text from 'components/modern/Text';
+import LargeFiatTokenValueView from 'components/display/LargeFiatTokenValueView';
+import Text from 'components/core/Text';
 import TransactionDeploymentWarning from 'components/other/TransactionDeploymentWarning';
+import Icon from 'components/core/Icon';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
@@ -53,10 +56,11 @@ import { wrapBigNumberOrNil } from 'utils/bigNumber';
 import { chainFromChainId } from 'utils/chains';
 import { getFormattedTransactionFeeValue } from 'utils/common';
 import { useChainsConfig } from 'utils/uiConfig';
-import { spacing } from 'utils/variables';
+import { fontSizes, spacing, appFont } from 'utils/variables';
 import { parsePeerName, mapCallRequestToTransactionPayload } from 'utils/walletConnect';
 import { isArchanovaAccount } from 'utils/accounts';
 import { getGasAddress, getGasSymbol } from 'utils/transactions';
+import { getThemeColors } from 'utils/themes';
 
 // Types
 import type { WalletConnectCallRequest } from 'models/WalletConnect';
@@ -68,11 +72,21 @@ type Props = {|
   onReject: () => mixed,
 |};
 
+const SwiperIconComponent = () => {
+  return (
+    <View style={styles.swiperView}>
+      <Icon name="arrow-right" />
+    </View>
+  );
+};
+
 function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
   const { t } = useTranslation();
   const chainConfigs = useChainsConfig();
+  const theme = useTheme();
+  const colors = getThemeColors(theme);
 
-  const { title, iconUrl, chain, errorMessage } = useViewData(request);
+  const { iconUrl, chain, errorMessage } = useViewData(request);
   const {
     fee,
     gasSymbol,
@@ -91,37 +105,74 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
   const chainConfig = chainConfigs[chain];
   const value = wrapBigNumberOrNil(transactionPayload?.amount);
   const symbol = transactionPayload?.symbol;
-  const confirmTitle = !hasNotEnoughGas ? t('button.confirm') : t('label.notEnoughGas');
+  const assetAddress = transactionPayload?.contractAddress;
+  const confirmTitle = !hasNotEnoughGas ? t('button.swipeConfirm') : t('label.notEnoughGas');
   const isConfirmDisabled = isEstimating || hasNotEnoughGas || !!errorMessage;
 
   return (
     <>
-      <Text color={chainConfig.color}>
-        {title} {t('label.dotSeparator')} {chainConfig.titleShort}
+      <IconView>
+        <Icon name={chainConfig.iconName} width={64} height={64} style={styles.chainIcon} />
+        <ServiceIcon source={{ uri: iconUrl }} />
+      </IconView>
+
+      <Text color={colors.secondaryText} style={styles.body}>
+        {t('walletConnect.requests.transactionRequest')}
       </Text>
 
-      <Image source={{ uri: iconUrl }} style={styles.icon} />
+      {value?.gt(0) && (
+        <LargeFiatTokenValueView
+          value={value}
+          assetAddress={assetAddress}
+          chain={chain}
+          symbol={symbol}
+          style={styles.tokenValue}
+        />
+      )}
 
-      <LargeTokenValueView value={value} symbol={symbol} style={styles.tokenValue} />
+      {!isConfirmDisabled && <TransactionDeploymentWarning chain={chain} style={styles.transactionDeploymentWarning} />}
 
       {!estimationErrorMessage && (
-        <FeeLabel
-          value={fee}
-          assetSymbol={gasSymbol}
-          assetAddress={gasAddress}
-          isLoading={isEstimating}
-          isNotEnough={hasNotEnoughGas}
-          style={styles.fee}
-          chain={chain}
-        />
+        <FeeView>
+          <FeeLabel
+            value={fee}
+            assetSymbol={gasSymbol}
+            assetAddress={gasAddress}
+            isLoading={isEstimating}
+            isNotEnough={hasNotEnoughGas}
+            chain={chain}
+            mode="actual"
+          />
+          <Icon name="info" width={16} height={16} color={colors.buttonTextTitle} style={styles.infoIcon} />
+        </FeeView>
       )}
 
       {!!errorMessage && <ErrorMessage variant="small">{errorMessage}</ErrorMessage>}
 
-      {!isConfirmDisabled && <TransactionDeploymentWarning chain={chain} style={styles.transactionDeploymentWarning} />}
-
-      <Button title={confirmTitle} onPress={handleConfirm} disabled={isConfirmDisabled} style={styles.button} />
-      <Button title={t('button.reject')} onPress={onReject} variant="destructive" style={styles.button} />
+      {!isConfirmDisabled ? (
+        <SwipeButton
+          width="100%"
+          height={72}
+          title={confirmTitle}
+          titleFontSize={fontSizes.medium}
+          titleColor={colors.buttonPrimaryTitle}
+          titleStyles={styles.swiperButtonTitle}
+          containerStyles={styles.swiperButtonContainer}
+          railBorderColor={colors.swiperButtonTrack}
+          railBackgroundColor={colors.swiperButtonTrack}
+          railFillBackgroundColor="transparent"
+          railFillBorderColor={colors.swiperButtonTrack}
+          thumbIconComponent={SwiperIconComponent}
+          thumbIconWidth={84}
+          thumbIconBackgroundColor={colors.swiperButtonThumb}
+          thumbIconBorderColor={colors.swiperButtonThumb}
+          thumbIconStyles={styles.swiperBtnthumbIcon}
+          onSwipeSuccess={handleConfirm}
+        />
+      ) : (
+        <Button title={confirmTitle} disabled size="large" />
+      )}
+      <Button title={t('button.reject')} size="large" onPress={onReject} variant="text" style={styles.buttonStyle} />
     </>
   );
 }
@@ -228,24 +279,43 @@ const useViewData = (request: WalletConnectCallRequest) => {
 };
 
 const styles = {
-  icon: {
-    width: 64,
-    height: 64,
+  chainIcon: {
+    position: 'absolute',
+    marginTop: 6,
+  },
+  body: {
     marginTop: spacing.largePlus,
-    marginBottom: spacing.mediumLarge,
-    borderRadius: 32,
+    fontSize: fontSizes.medium,
   },
   tokenValue: {
-    marginBottom: spacing.largePlus,
+    marginTop: spacing.small,
   },
   fee: {
-    marginBottom: spacing.mediumLarge,
+    fontSize: fontSizes.regular,
   },
-  button: {
-    marginVertical: spacing.small / 2,
+  infoIcon: {
+    justifyContent: 'center',
+    paddingLeft: spacing.medium,
   },
   transactionDeploymentWarning: {
-    marginBottom: spacing.mediumLarge,
+    marginTop: spacing.mediumLarge,
+  },
+  swiperView: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  swiperButtonTitle: {
+    paddingLeft: spacing.extraPlusLarge,
+    fontFamily: appFont.medium,
+  },
+  swiperButtonContainer: {
+    borderRadius: 14,
+  },
+  swiperBtnthumbIcon: {
+    borderRadius: 12,
+  },
+  buttonStyle: {
+    marginTop: spacing.mediumLarge,
   },
 };
 
@@ -253,4 +323,26 @@ const ErrorMessage = styled(Text)`
   margin: ${spacing.extraSmall}px 0 ${spacing.mediumLarge}px;
   text-align: center;
   color: ${({ theme }) => theme.colors.negative};
+`;
+
+const IconView = styled.View`
+  margin-top: ${spacing.largePlus}px;
+  text-align: center;
+  flexDirection: row;
+`;
+
+const ServiceIcon = styled(Image)`
+  width: 76px;
+  height: 76px;
+  border-radius: 39px;
+  margin-left: -48px;
+  borderWidth: 6px;
+  borderColor: ${({ theme }) => theme.colors.basic050};
+  overflow: hidden;
+`;
+
+const FeeView = styled.View`
+  flex-direction: row;
+  margin-top: ${spacing.largePlus}px;
+  margin-bottom: ${spacing.large}px;
 `;

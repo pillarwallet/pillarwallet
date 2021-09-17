@@ -34,7 +34,7 @@ import { CHAIN } from 'constants/chainConstants';
 import { useThemeColors } from 'utils/themes';
 
 // Types
-import type { IconName } from 'components/modern/Icon';
+import type { IconName } from 'components/core/Icon';
 import type { AssetCategory } from 'models/AssetCategory';
 import type { Chain } from 'models/Chain';
 

@@ -28,43 +28,43 @@ import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 
-// actions
+// Actions
 import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 
-// components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser, TableFee } from 'components/Table';
-import Button from 'components/Button';
-import { Spacing, ScrollWrapper } from 'components/Layout';
+// Components
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
+import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser, TableFee } from 'components/legacy/Table';
+import Button from 'components/legacy/Button';
+import { Spacing, ScrollWrapper } from 'components/legacy/Layout';
 import CollectibleReviewSummary from 'components/ReviewSummary/CollectibleReviewSummary';
-import { Paragraph } from 'components/Typography';
-import Toast from 'components/Toast';
+import { Paragraph } from 'components/legacy/Typography';
 
-// constants
+// Constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
-// utils
+// Utils
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { reportErrorLog } from 'utils/common';
 import { nativeAssetPerChain } from 'utils/chains';
 import { isEtherspotAccount } from 'utils/accounts';
+import { showTransactionRevertedToast } from 'utils/transactions';
 
-// services
+// Services
 import { fetchRinkebyETHBalance } from 'services/assets';
 
-// hooks
+// Hooks
 import { useDeploymentStatus } from 'hooks/deploymentStatus';
 import { useEtherspotDeploymentFee } from 'hooks/transactions';
 
-// selectors
+// Selectors
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import { useActiveAccount } from 'selectors';
 
-// types
+// Types
 import type {
   CollectibleTransactionPayload,
   TransactionFeeInfo,
@@ -163,11 +163,7 @@ const SendCollectibleConfirm = ({
     Keyboard.dismiss();
 
     if (!feeInfo) {
-      Toast.show({
-        message: t('toast.cannotSendCollectible'),
-        emoji: 'woman-shrugging',
-        supportLink: true,
-      });
+      showTransactionRevertedToast();
       return;
     }
 

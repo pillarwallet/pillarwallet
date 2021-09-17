@@ -155,6 +155,7 @@
         "animationIn",
         "animationOut",
         "autoCapitalize",
+        "autoCompleteType",
         "backgroundColor",
         "color",
         "contentAlign",

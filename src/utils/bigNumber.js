@@ -52,6 +52,13 @@ export const toEthersBigNumber = (value: BigNumber, decimals: number): EthersBig
   return utils.parseUnits(value.toString(), decimals);
 };
 
+export const truncateDecimalPlaces = (value: BigNumber, decimals: ?number): BigNumber => {
+  if (decimals == null) return value;
+  if (decimals >= value.decimalPlaces()) return value;
+
+  return value.decimalPlaces(decimals, BigNumber.ROUND_DOWN);
+};
+
 /**
  * Returns sum of nullable BigNumbers.
  *

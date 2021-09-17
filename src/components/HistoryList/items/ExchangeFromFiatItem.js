@@ -23,8 +23,8 @@ import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 
 // Components
-import FiatValueView from 'components/modern/FiatValueView';
-import TokenValueView from 'components/modern/TokenValueView';
+import FiatValueView from 'components/display/FiatValueView';
+import TokenValueView from 'components/display/TokenValueView';
 
 // Types
 import type { ExchangeFromFiatEvent } from 'models/History';

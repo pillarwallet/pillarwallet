@@ -40,6 +40,7 @@ import {
   ratesPerChainSelector,
   type Selector,
   fiatCurrencySelector,
+  useChainSupportedAssets,
 } from 'selectors';
 import {
   assetsBalancesPerAccountSelector,
@@ -51,7 +52,7 @@ import {
 import type { Account } from 'models/Account';
 import type { AssetsPerChain, AssetByAddress, Asset } from 'models/Asset';
 import type { AssetBalancesPerAccount, AccountAssetBalances, WalletAssetsBalances } from 'models/Balances';
-import type { ChainRecord } from 'models/Chain';
+import type { Chain, ChainRecord } from 'models/Chain';
 import type { RatesPerChain, Currency } from 'models/Rates';
 
 
@@ -196,8 +197,8 @@ export const accountAssetsWithBalanceSelector = createSelector(
           ...relatedAsset,
           imageUrl,
           formattedBalanceInFiat,
-          balance: !!formattedBalanceInFiat && {
-            balance: assetBalanceBN,
+          balance: {
+            balance: assetBalanceBN.toNumber(),
             balanceInFiat,
             value: formattedBalanceInFiat,
             token: symbol,
@@ -213,3 +214,8 @@ export const accountAssetsWithBalanceSelector = createSelector(
     }, []);
   },
 );
+
+export const useSupportedAsset = (chain: ?Chain, address: ?string): ?Asset => {
+  const supportedAssets = useChainSupportedAssets(chain);
+  return findAssetByAddress(supportedAssets, address);
+};

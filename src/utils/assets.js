@@ -36,6 +36,7 @@ import {
 } from 'utils/common';
 import { nativeAssetPerChain } from 'utils/chains';
 import { getAssetRateInFiat } from 'utils/rates';
+import { caseInsensitiveIncludes } from 'utils/strings';
 import { getGasAddress } from 'utils/transactions';
 
 // types
@@ -52,7 +53,7 @@ import type { GasToken } from 'models/Transaction';
 import type { WalletAssetBalance, WalletAssetsBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
 import type { Currency, RatesByAssetAddress } from 'models/Rates';
-import type { Value } from 'utils/common';
+import type { Value } from 'models/Value';
 import { omitNilProps } from 'utils/object';
 
 
@@ -190,10 +191,8 @@ export const isSupportedAssetAddress = (supportedAssets: Asset[], addressToCheck
   return supportedAssets.some((asset: Asset) => addressesEqual(asset.address, addressToCheck));
 };
 
-export const findAssetByAddress = (
-  assets: Asset[],
-  assetAddress: string,
-): ?Asset => assets.find(({ address }) => addressesEqual(address, assetAddress));
+export const findAssetByAddress = (assets: ?(Asset[]), addressToFind: ?string): ?Asset =>
+  assets?.find((asset) => addressesEqual(asset.address, addressToFind));
 
 export const mapAssetToAssetData = ({
   symbol: token,
@@ -279,6 +278,27 @@ export const getAssetOption = (
   };
 };
 
+export const getAssetOptionKey = (option: ?AssetOption) => {
+  if (!option) return '';
+  return `${option.chain}-${option.address ?? option.contractAddress}`;
+};
+
+export const isAssetOptionMatchedByQuery = (option: AssetOption, query: ?string) => {
+  if (!query) return true;
+  return caseInsensitiveIncludes(option.name, query) || caseInsensitiveIncludes(option.symbol, query);
+};
+
+export const mapAssetDataToAsset = (assetData: TokenData, chain: Chain): Asset => {
+  return {
+    chain,
+    address: assetData.contractAddress,
+    symbol: assetData.token,
+    decimals: assetData.decimals,
+    name: assetData.name ?? assetData.token ?? '',
+    iconUrl: assetData?.icon ?? '',
+  };
+};
+
 export const mapAssetDataToAssetOption = (
   assetData: TokenData,
   balances?: ?WalletAssetsBalances,
@@ -294,6 +314,7 @@ export const mapAssetDataToAssetOption = (
     tokenType: assetData.tokenType ?? ASSET_TYPES.TOKEN,
     balance: getAssetOptionBalance(assetData.token, assetData.contractAddress, balances, rates, fiatCurrency),
     chain: CHAIN.ETHEREUM,
+    iconUrl: assetData?.icon ?? '',
   };
 };
 
@@ -346,3 +367,10 @@ export const mapWalletAssetsBalancesIntoAssetsByAddress = (
 export const sortSupportedAssets = (
   supportedChainAssets: AssetsPerChain,
 ) => mapValues(supportedChainAssets, sortAssetsArray);
+
+export const isNativeAsset = (chain: ?Chain, assetAddress: ?string) => {
+  if (!chain || !assetAddress) return false;
+
+  const nativeAsset = nativeAssetPerChain[chain];
+  return addressesEqual(assetAddress, nativeAsset?.address);
+};

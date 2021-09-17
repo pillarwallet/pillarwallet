@@ -19,19 +19,28 @@
 */
 import * as React from 'react';
 import t from 'translations/translate';
-
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Wrapper } from 'components/Layout';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { Paragraph } from 'components/Typography';
-import Button from 'components/Button';
 import styled from 'styled-components/native';
-import { spacing } from 'utils/variables';
+
+// constants
 import { IMPORT_WALLET_LEGALS, FORGOT_PIN } from 'constants/navigationConstants';
 
+// components
+import { Wrapper } from 'components/legacy/Layout';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
+import { Paragraph } from 'components/legacy/Typography';
+import Button from 'components/legacy/Button';
+
+// utils
+import { spacing } from 'utils/variables';
+
+// types
+import type { OnValidPinCallback } from 'models/Wallet';
+
+
 type Props = {
-  checkPin: (pin: string, onValidPin: Function) => Function,
+  checkPin: (pin: string, onValidPin: ?OnValidPinCallback) => Function,
   wallet: Object,
   navigation: NavigationScreenProp<*>,
 }

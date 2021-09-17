@@ -252,6 +252,7 @@ class AssetPattern extends React.Component<Props, State> {
                 height: diameter - 4,
                 width: diameter - 4,
                 opacity,
+                borderRadius: (diameter - 4) / 2,
               }}
               source={icon}
               resizeMode="contain"

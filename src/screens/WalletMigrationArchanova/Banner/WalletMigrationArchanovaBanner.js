@@ -26,7 +26,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import Text from 'components/modern/Text';
+import Text from 'components/core/Text';
 
 // Constants
 import { WALLET_MIGRATION_ARCHANOVA_INTRO, WALLET_MIGRATION_ARCHANOVA_STATUS } from 'constants/navigationConstants';

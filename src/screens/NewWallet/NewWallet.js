@@ -22,7 +22,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 
 // components
-import { Container } from 'components/Layout';
+import { Container } from 'components/legacy/Layout';
 import Loader from 'components/Loader';
 import RetryApiRegistration from 'components/RetryApiRegistration';
 

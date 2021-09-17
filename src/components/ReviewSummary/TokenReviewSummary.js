@@ -21,12 +21,13 @@ import React from 'react';
 import styled from 'styled-components/native';
 
 // components
-import { BaseText, MediumText } from 'components/Typography';
-import { Spacing } from 'components/Layout';
+import { BaseText, MediumText } from 'components/legacy/Typography';
+import { Spacing } from 'components/legacy/Layout';
 import Image from 'components/Image';
 
 // utils
-import { formatFiat, formatTokenAmount, wrapBigNumber } from 'utils/common';
+import { formatFiat, formatTokenAmount } from 'utils/common';
+import { wrapBigNumber } from 'utils/bigNumber';
 import { images } from 'utils/images';
 import { useTheme } from 'utils/themes';
 import { getAssetRateInFiat } from 'utils/rates';
@@ -40,7 +41,7 @@ import {
 
 // types
 import type { Chain } from 'models/Chain';
-import type { Value } from 'utils/common';
+import type { Value } from 'models/Value';
 
 
 type Props = {

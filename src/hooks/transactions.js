@@ -41,7 +41,7 @@ import { addressesEqual, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { useChainConfig } from 'utils/uiConfig';
 import { nativeAssetPerChain } from 'utils/chains';
 import { isEtherspotAccount } from 'utils/accounts';
-import { wrapBigNumber } from 'utils/common';
+import { wrapBigNumber } from 'utils/bigNumber';
 
 // Hooks
 import { useDeploymentStatus } from 'hooks/deploymentStatus';
@@ -51,7 +51,7 @@ import type { QueryResult } from 'utils/types/react-query';
 import type { AssetCore } from 'models/Asset';
 import type { Chain } from 'models/Chain';
 import type { EthereumTransaction, GasToken, TransactionFeeInfo } from 'models/Transaction';
-import type { Value } from 'utils/common';
+import type { Value } from 'models/Value';
 
 type UseTransactionEstimateResult = {|
   feeInfo: ?TransactionFeeInfo,

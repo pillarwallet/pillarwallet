@@ -23,7 +23,7 @@ import { useNavigation } from 'react-navigation-hooks';
 import { useTranslation } from 'translations/translate';
 
 // Components
-import BottomModal from 'components/modern/BottomModal';
+import BottomModal from 'components/layout/BottomModal';
 import Toast from 'components/Toast';
 
 // Constants
@@ -34,7 +34,9 @@ import { REQUEST_TYPE } from 'constants/walletConnectConstants';
 import useWalletConnect from 'hooks/useWalletConnect';
 
 // Utils
-import { getWalletConnectCallRequestType, formatRequestType } from 'utils/walletConnect';
+import { getWalletConnectCallRequestType, formatRequestType, parsePeerName } from 'utils/walletConnect';
+import { chainFromChainId } from 'utils/chains';
+import { useChainsConfig } from 'utils/uiConfig';
 
 // Types
 import type { WalletConnectCallRequest } from 'models/WalletConnect';
@@ -52,13 +54,24 @@ type Props = {|
 function WalletConnectCallRequestModal({ request }: Props) {
   const { t } = useTranslation();
   const navigation = useNavigation();
+  const chainsConfig = useChainsConfig();
 
   const ref = React.useRef();
 
   const { rejectCallRequest } = useWalletConnect();
 
   const type = getWalletConnectCallRequestType(request);
-  const title = formatRequestType(type);
+  const chain = chainFromChainId[request.chainId];
+
+  if (!chain) return null;
+
+  const { title: chainName } = chainsConfig[chain];
+  const appName = parsePeerName(request.name);
+
+  const title =
+    type === REQUEST_TYPE.TRANSACTION
+      ? t('walletConnect.requests.transactionRequestFormat', { app: appName, chain: chainName })
+      : formatRequestType(type);
 
   const handleConfirm = (transactionPayload?: TransactionPayload) => {
     if (!request) {

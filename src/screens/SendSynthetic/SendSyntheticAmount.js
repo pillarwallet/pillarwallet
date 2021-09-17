@@ -25,19 +25,20 @@ import isEmpty from 'lodash.isempty';
 import debounce from 'lodash.debounce';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
+import { BigNumber } from 'bignumber.js';
 
 // components
-import { Label } from 'components/Typography';
-import SendContainer from 'containers/SendContainer';
+import { Label } from 'components/legacy/Typography';
 import Toast from 'components/Toast';
 
 // actions
 import { fetchAvailableSyntheticAssetsAction } from 'actions/syntheticsActions';
 import { fetchSingleChainAssetRatesAction } from 'actions/ratesActions';
 
-// utils, services
-import { parseNumber, addressAsKey } from 'utils/common';
+// utils
+import { parseNumber, valueForAddress, addressAsKey } from 'utils/common';
 import { getReceiverWithEnsName } from 'utils/contacts';
+import { isValidValueForTransfer } from 'utils/transactions';
 
 // constants
 import { PLR } from 'constants/assetsConstants';
@@ -55,7 +56,11 @@ import type { Contact } from 'models/Contact';
 import archanovaService from 'services/archanova';
 
 // selectors
+import { contactsSelector } from 'selectors';
 import { activeSyntheticAssetsSelector } from 'selectors/synthetics';
+
+// Local
+import SendContainer from './SendContainer';
 
 type Props = {
   navigation: NavigationScreenProp<any>,
@@ -63,14 +68,14 @@ type Props = {
   fetchSingleEthereumAssetRates: (assetAddress: string) => void,
   isFetchingSyntheticAssets: boolean,
   fetchAvailableSyntheticAssets: () => void,
+  contacts: Contact[],
   syntheticAssets: AssetOption[],
 };
 
 type State = {
-  value: string,
+  value: ?BigNumber,
   submitPressed: boolean,
   intentError: ?string,
-  inputHasError: boolean,
   receiver?: string,
   receiverEnsName?: string,
   selectedContact: ?Contact,
@@ -92,8 +97,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     this.state = {
       intentError: '',
       submitPressed: false,
-      value: '',
-      inputHasError: false,
+      value: null,
       selectedContact: null,
       assetData: null,
       receiver: '',
@@ -164,7 +168,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     this.setState(stateToUpdate);
   };
 
-  handleAssetValueSelect = (value: string, assetData: ?AssetOption) => {
+  handleAssetValueSelect = (value: ?BigNumber, assetData: ?AssetOption) => {
     const { intentError } = this.state;
     const { fetchSingleEthereumAssetRates } = this.props;
     let updatedState = { value, assetData };
@@ -234,12 +238,11 @@ class SendSyntheticAmount extends React.Component<Props, State> {
   };
 
   render() {
-    const { isOnline, syntheticAssets, isFetchingSyntheticAssets } = this.props;
+    const { isOnline, contacts, syntheticAssets, isFetchingSyntheticAssets } = this.props;
     const {
       value,
       submitPressed,
       intentError,
-      inputHasError,
       selectedContact,
       receiver,
       assetData,
@@ -250,9 +253,6 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     const showFeesLabel = !isEmpty(value) && !!receiver && !intentError;
     const showNextButton = showFeesLabel;
 
-    const isNextButtonDisabled = inputHasError || !isOnline || !!intentError;
-
-
     const customBalances = syntheticAssets
       .map(asset => ({ address: asset.address, balance: asset.balance?.syntheticBalance || '0' }))
       .reduce((balances, assetBalance) => {
@@ -260,22 +260,23 @@ class SendSyntheticAmount extends React.Component<Props, State> {
         return balances;
       }, {});
 
+    const resolvedAssetData = assetData ?? defaultAssetData;
+    const balance = BigNumber(valueForAddress(customBalances, resolvedAssetData?.contractAddress)?.balance || 0);
+    const isNextButtonDisabled = !isValidValueForTransfer(value, balance) || !isOnline || !!intentError;
+
     return (
       <SendContainer
         isLoading={isFetchingSyntheticAssets || syntheticAssets.length === 0}
+        assetData={resolvedAssetData}
+        onAssetDataChange={(newAssetData) => this.handleAssetValueSelect(value, newAssetData)}
+        value={value}
+        onValueChange={(newValue) => this.setState({ value: newValue })}
+        customAssets={syntheticAssets}
+        customBalances={customBalances}
         customSelectorProps={{
+          contacts,
           selectedContact,
           onSelectContact: this.handleReceiverSelect,
-          allowAddContact: false,
-        }}
-        customValueSelectorProps={{
-          onAssetDataChange: (newAssetData) => this.handleAssetValueSelect(value, newAssetData),
-          onValueChange: (newValue) => this.setState({ value: newValue }),
-          assetData: assetData || defaultAssetData,
-          value,
-          customAssets: syntheticAssets,
-          customBalances,
-          onFormValid: (isValid) => this.setState({ inputHasError: !isValid }),
         }}
         footerProps={{
           isNextButtonVisible: showNextButton,
@@ -300,6 +301,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
+  contacts: contactsSelector,
   syntheticAssets: activeSyntheticAssetsSelector,
 });
 
