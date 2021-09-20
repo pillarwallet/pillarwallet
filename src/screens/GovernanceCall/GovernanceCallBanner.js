@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable i18next/no-literal-string */
 // @flow
 /*
@@ -24,6 +25,7 @@ import { Linking } from 'react-native';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 import {
+  parseISO,
   addHours,
   differenceInMinutes,
   differenceInHours,
@@ -39,7 +41,6 @@ import Text from 'components/core/Text';
 // Utils
 import { fontStyles, spacing } from 'utils/variables';
 import { reportErrorLog } from 'utils/common';
-import { mapFromDocumentDataToString } from 'utils/prismic';
 import { formatDate } from 'utils/date';
 
 // Services
@@ -48,64 +49,90 @@ import * as Prismic from 'services/prismic';
 // assets
 const smartWalletIcon = require('assets/icons/smart-wallet-migrate.png');
 
+// local consts
 const TYPE_GOVERNANCE_CALL = 'governance-calls';
-const DATE_FORMAT = 'dd.MM';
-const TIME_WITH_TIMEZONE_FORMAT = 'HH:mm zzzz';
+const DATE_FORMAT = 'do LLL'; // Human readable
+const TIME_WITH_TIMEZONE_FORMAT = 'HH:mm O'; // Human readable
 
 const GovernanceCallBanner = () => {
   const { t } = useTranslationWithPrefix('governanceCall');
   const [title, setTitle] = React.useState(t('banner.title'));
   const [description, setDescription] = React.useState('');
-  const [scheduledCallTime, setScheduledCallTime] = React.useState(0);
   const [governanceCallLink, setGovernanceCallLink] = React.useState('');
-  const [showPermanently, setShowPermanently] = React.useState(false);
+  const [timingData, setTimingData] = React.useState({});
+  const [remainingTime, setRemainingTime] = React.useState({});
+  const [isVisible, setIsVisible] = React.useState(false);
+
+  const calculateLeftOverTime = (startTime) => {
+    const thisDateNow = Date.now();
+    const daysTillEventStart = differenceInDays(startTime, thisDateNow);
+    const hoursTillEventStart = differenceInHours(startTime, thisDateNow);
+    const minutesTillEventStart = differenceInMinutes(startTime, thisDateNow);
+    return { daysTillEventStart, hoursTillEventStart, minutesTillEventStart };
+  };
+
+  const fetchGovernanceCallDataMemoized = React.useCallback(() => {
+    Prismic.queryDocumentsByType(TYPE_GOVERNANCE_CALL)
+      .then((result) => {
+        const thisDateNow = Date.now();
+        const prismicResponse = result?.results[0]?.data;
+        setTitle(prismicResponse?.title[0]?.text);
+        setDescription(prismicResponse?.description[0]?.text);
+        setGovernanceCallLink(prismicResponse?.link?.url);
+        const governanceCallStartTime = new Date(parseISO(prismicResponse?.scheduled_for));
+        const governanceCallEndTime = addHours(governanceCallStartTime, 1);
+        const timeTillEventStart = calculateLeftOverTime(governanceCallStartTime);
+        setRemainingTime(timeTillEventStart);
+        const isEventLive =
+          !isBefore(governanceCallEndTime, thisDateNow) && timeTillEventStart.minutesTillEventStart <= 0;
+
+        const formattedDate = formatDate(governanceCallStartTime, DATE_FORMAT);
+
+        const formattedTimeWithTimezone = formatDate(governanceCallStartTime, TIME_WITH_TIMEZONE_FORMAT);
+
+        const calculatedBannerVisibility =
+          (prismicResponse?.show_permanently && isAfter(governanceCallEndTime, thisDateNow)) ||
+          (timeTillEventStart.hoursTillEventStart <= 24 && timeTillEventStart.hoursTillEventStart >= 0);
+
+        setTimingData({
+          governanceCallStartTime,
+          governanceCallEndTime,
+          formattedDate,
+          formattedTimeWithTimezone,
+          isEventLive,
+        });
+
+        setIsVisible(calculatedBannerVisibility);
+
+        return true;
+      })
+      .catch((error) => reportErrorLog('Prismic content fetch failed', { error }));
+  }, []);
 
   React.useEffect(() => {
-    async function fetchGovernanceCallData() {
-      const data = await Prismic.queryDocumentsByType(TYPE_GOVERNANCE_CALL).catch((error) =>
-        reportErrorLog('Prismic content fetch failed', { error }),
-      );
-      data?.results?.map((governanceCallData) => {
-        const bannerTitleContent = [];
-        mapFromDocumentDataToString(governanceCallData?.data?.title, bannerTitleContent);
-        setTitle(bannerTitleContent);
-        const bannerDescriptionContent = [];
-        mapFromDocumentDataToString(governanceCallData?.data?.description, bannerDescriptionContent);
-        setDescription(bannerDescriptionContent);
-        /* eslint-disable camelcase */
-        setScheduledCallTime(governanceCallData?.data?.scheduled_for);
-        setGovernanceCallLink(governanceCallData?.data?.link?.url);
-        setShowPermanently(governanceCallData?.data?.show_permanently);
-        /* eslint-enable camelcase */
-      });
-    }
-    fetchGovernanceCallData();
-  }, [scheduledCallTime]);
+    fetchGovernanceCallDataMemoized();
+  }, [fetchGovernanceCallDataMemoized]);
 
-  const currentDateTime = Date.now();
-  const scheduledGovernanceCallTime = new Date(scheduledCallTime);
-  const eventEndTime = addHours(scheduledGovernanceCallTime, 1);
-  const formattedDate = formatDate(scheduledGovernanceCallTime, DATE_FORMAT);
-  const formattedTimeWithTimezone = formatDate(scheduledGovernanceCallTime, TIME_WITH_TIMEZONE_FORMAT);
-  const getTotalDays = differenceInDays(scheduledGovernanceCallTime, currentDateTime);
-  const getTotalHours = differenceInHours(scheduledGovernanceCallTime, currentDateTime);
-  const getTotalMinutes = differenceInMinutes(scheduledGovernanceCallTime, currentDateTime);
-  const eventIsLive = !isBefore(eventEndTime, currentDateTime) && getTotalMinutes <= 0;
+  React.useEffect(() => {
+    setInterval(() => {
+      if (timingData?.governanceCallStartTime !== undefined) {
+        setRemainingTime(calculateLeftOverTime(timingData?.governanceCallStartTime));
+      }
+    }, 5000);
+  }, [timingData]);
 
-  const isBannerShow =
-    (showPermanently && isAfter(eventEndTime, currentDateTime)) || (getTotalHours <= 24 && getTotalHours >= 0);
-
-  if (!isBannerShow) return null;
+  if (!isVisible) return null;
 
   const showRequestModal = () => Linking.openURL(governanceCallLink);
 
   const calculateRemainingTime = () => {
-    if (getTotalDays > 0) {
-      return `${getTotalDays}d ${getTotalHours}h`;
-    } else if (getTotalHours > 0) {
-      return `${getTotalHours}h`;
+    if (remainingTime.daysTillEventStart > 0) {
+      const totalHours = remainingTime.hoursTillEventStart - (remainingTime.daysTillEventStart * 24);
+      return `${remainingTime.daysTillEventStart}d ${totalHours}h`;
+    } else if (remainingTime.hoursTillEventStart > 0) {
+      return `${remainingTime.hoursTillEventStart}h`;
     }
-    return `${getTotalMinutes}m`;
+    return `${remainingTime.minutesTillEventStart}m`;
   };
 
   return (
@@ -115,15 +142,19 @@ const GovernanceCallBanner = () => {
       <Column>
         <Title numberOfLines={1}>{title}</Title>
         {!!description && <Description>{description}</Description>}
-        {!eventIsLive && (<ScheduledCallTime>{`${formattedDate} at ${formattedTimeWithTimezone}`}</ScheduledCallTime>)}
+        {!timingData.isEventLive && (
+          <ScheduledCallTime>
+            {`${timingData.formattedDate} at ${timingData.formattedTimeWithTimezone}`}
+          </ScheduledCallTime>
+        )}
       </Column>
-      {eventIsLive && (
+      {timingData.isEventLive && (
         <LiveView>
           <LiveText>{t('banner.live')}</LiveText>
           <LiveDot />
         </LiveView>
       )}
-      {!eventIsLive && (<CallTimeLeft>{calculateRemainingTime()}</CallTimeLeft>)}
+      {!timingData.isEventLive && <CallTimeLeft>{calculateRemainingTime()}</CallTimeLeft>}
     </TouchableContainer>
   );
 };
@@ -188,3 +219,4 @@ const LiveDot = styled.View`
   background-color: ${({ theme }) => theme.colors.negative};
   alignSelf: center;
 `;
+
