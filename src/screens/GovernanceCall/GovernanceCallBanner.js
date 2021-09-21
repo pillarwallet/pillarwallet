@@ -118,7 +118,7 @@ const GovernanceCallBanner = () => {
       if (timingData?.governanceCallStartTime !== undefined) {
         setRemainingTime(calculateLeftOverTime(timingData?.governanceCallStartTime));
       }
-    }, 5000);
+    }, 60000);
   }, [timingData]);
 
   if (!isVisible) return null;
