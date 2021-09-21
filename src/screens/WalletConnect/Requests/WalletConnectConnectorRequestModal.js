@@ -40,6 +40,7 @@ import { chainFromChainId, mapChainToChainId } from 'utils/chains';
 import { spacing, fontStyles } from 'utils/variables';
 import { useThemedImages } from 'utils/images';
 import { parsePeerName, pickPeerIcon } from 'utils/walletConnect';
+import { useChainsConfig } from 'utils/uiConfig';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
@@ -52,7 +53,9 @@ type Props = {|
 function WalletConnectConnectorRequestModal({ connector, chainId }: Props) {
   const ref = React.useRef();
   const { genericToken } = useThemedImages();
+  const chainsConfig = useChainsConfig();
   const chain = chainFromChainId[chainId] ?? CHAIN.ETHEREUM;
+  const { title: chainName } = chainsConfig[chain];
 
   // Note: this will map chain id to testnet in test env.
   const mappedChainId = mapChainToChainId(chain);
@@ -75,7 +78,8 @@ function WalletConnectConnectorRequestModal({ connector, chainId }: Props) {
   return (
     <BottomModal
       ref={ref}
-      title={t('walletConnectContent.title.walletConnectRequests', { app: appName })}
+      title={t('walletConnectContent.title.walletConnectRequests', { app: appName, chain: chainName })}
+      style={styles.title}
     >
       {!!iconUrl && (
         <Image
@@ -112,6 +116,9 @@ const styles = {
     marginTop: spacing.largePlus,
     marginBottom: spacing.largePlus,
     borderRadius: 32,
+  },
+  title: {
+    textAlign: 'center',
   },
 };
 
