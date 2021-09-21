@@ -576,7 +576,8 @@
     "item": {
       "settings": "Settings",
       "addressBook": "Address book",
-      "supportChat": "Support chat"
+      "supportChat": "Support chat",
+      "storybook": "Storybook"
     },
     "footer": {
       "privacyPolicy": "Privacy Policy",
@@ -1015,7 +1016,7 @@
 
   "walletConnectContent": {
     "title": {
-      "walletConnectRequests": "Connect to {{app}}"
+      "walletConnectRequests": "Connect to {{app}} on \n {{chain}}"
     },
     "label": {
       "unknownRequestName": "Unknown",
