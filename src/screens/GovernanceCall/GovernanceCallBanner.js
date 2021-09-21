@@ -127,8 +127,8 @@ const GovernanceCallBanner = () => {
 
   const calculateRemainingTime = () => {
     if (remainingTime.daysTillEventStart > 0) {
-      const totalHours = remainingTime.hoursTillEventStart - (remainingTime.daysTillEventStart * 24);
-      return `${remainingTime.daysTillEventStart}d ${totalHours}h`;
+      const remainingTotalHours = remainingTime.hoursTillEventStart - (remainingTime.daysTillEventStart * 24);
+      return `${remainingTime.daysTillEventStart}d ${remainingTotalHours}h`;
     } else if (remainingTime.hoursTillEventStart > 0) {
       return `${remainingTime.hoursTillEventStart}h`;
     }
