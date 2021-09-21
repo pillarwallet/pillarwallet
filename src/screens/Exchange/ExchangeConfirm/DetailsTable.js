@@ -45,7 +45,7 @@ type Props = {
 };
 
 const DetailsTable = ({ offer, feeInfo }: Props) => {
-  const { exchangeRate, fromAsset, toAsset, chain } = offer;
+  const { exchangeRate, fromAsset, toAsset, chain, captureFee } = offer;
 
   const chainConfig = useChainConfig(chain);
   const providerConfig = useProviderConfig(offer.provider);
@@ -84,7 +84,7 @@ const DetailsTable = ({ offer, feeInfo }: Props) => {
         </TableRow>
         <TableRow>
           <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
-          <TableAmount amount={0} chain={chain} />
+          <TableAmount amount={captureFee} assetSymbol={fromAsset.symbol} chain={chain} />
         </TableRow>
         <TableRow>
           <TableLabel>{t('transactions.label.totalFee')}</TableLabel>
