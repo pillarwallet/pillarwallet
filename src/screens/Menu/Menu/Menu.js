@@ -32,7 +32,7 @@ import MigrateWalletBanner from 'components/Banners/MigrateWalletBanner';
 import WalletMigrationArchanovaBanner from 'screens/WalletMigrationArchanova/Banner';
 
 // Constants
-import { MENU_SETTINGS, CONTACTS_FLOW } from 'constants/navigationConstants';
+import { MENU_SETTINGS, CONTACTS_FLOW, STORYBOOK } from 'constants/navigationConstants';
 
 // Utils
 import { useIsDarkTheme } from 'utils/themes';
@@ -55,6 +55,7 @@ const Menu = () => {
   const goToSettings = () => navigation.navigate(MENU_SETTINGS);
   const goToInviteFriends = () => navigation.navigate(CONTACTS_FLOW);
   const goToSupportChat = () => Instabug.show();
+  const goToStorybook = () => navigation.navigate(STORYBOOK);
 
   return (
     <Container>
@@ -68,6 +69,8 @@ const Menu = () => {
         <MenuItem title={t('item.settings')} icon="settings" onPress={goToSettings} />
         <MenuItem title={t('item.addressBook')} icon="contacts" onPress={goToInviteFriends} />
         <MenuItem title={t('item.supportChat')} icon="message" onPress={goToSupportChat} />
+
+        {__DEV__ && <MenuItem title={t('item.storybook')} icon="lifebuoy" onPress={goToStorybook} />}
 
         <SocialMediaLinks />
 
