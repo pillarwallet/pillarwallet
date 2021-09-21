@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 /* eslint-disable i18next/no-literal-string */
 // @flow
 /*
@@ -79,6 +78,7 @@ const GovernanceCallBanner = () => {
         setTitle(prismicResponse?.title[0]?.text);
         setDescription(prismicResponse?.description[0]?.text);
         setGovernanceCallLink(prismicResponse?.link?.url);
+        /* eslint-disable camelcase */
         const governanceCallStartTime = new Date(parseISO(prismicResponse?.scheduled_for));
         const governanceCallEndTime = addHours(governanceCallStartTime, 1);
         const timeTillEventStart = calculateLeftOverTime(governanceCallStartTime);
@@ -91,6 +91,7 @@ const GovernanceCallBanner = () => {
         const formattedTimeWithTimezone = formatDate(governanceCallStartTime, TIME_WITH_TIMEZONE_FORMAT);
 
         const calculatedBannerVisibility =
+          /* eslint-disable camelcase */
           (prismicResponse?.show_permanently && isAfter(governanceCallEndTime, thisDateNow)) ||
           (timeTillEventStart.hoursTillEventStart <= 24 && timeTillEventStart.hoursTillEventStart >= 0);
 
@@ -115,7 +116,7 @@ const GovernanceCallBanner = () => {
 
   React.useEffect(() => {
     setInterval(() => {
-      if (timingData?.governanceCallStartTime !== undefined) {
+      if (timingData?.governanceCallStartTime) {
         setRemainingTime(calculateLeftOverTime(timingData?.governanceCallStartTime));
       }
     }, 60000);
@@ -128,7 +129,7 @@ const GovernanceCallBanner = () => {
   const calculateRemainingTime = () => {
     if (remainingTime.daysTillEventStart > 0) {
       const remainingTotalHours = remainingTime.hoursTillEventStart - (remainingTime.daysTillEventStart * 24);
-      return `${remainingTime.daysTillEventStart}d ${remainingTotalHours}h`;
+      return `${remainingTime.daysTillEventStart}d ${remainingTotalHours}h ${remainingTime.minutesTillEventStart}m`;
     } else if (remainingTime.hoursTillEventStart > 0) {
       return `${remainingTime.hoursTillEventStart}h`;
     }
@@ -138,7 +139,6 @@ const GovernanceCallBanner = () => {
   return (
     <TouchableContainer onPress={showRequestModal}>
       <IconImage source={smartWalletIcon} />
-
       <Column>
         <Title numberOfLines={1}>{title}</Title>
         {!!description && <Description>{description}</Description>}
@@ -148,7 +148,7 @@ const GovernanceCallBanner = () => {
           </ScheduledCallTime>
         )}
       </Column>
-      {timingData.isEventLive && (
+      {!!timingData.isEventLive && (
         <LiveView>
           <LiveText>{t('banner.live')}</LiveText>
           <LiveDot />
