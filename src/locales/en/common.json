@@ -1015,7 +1015,7 @@
 
   "walletConnectContent": {
     "title": {
-      "walletConnectRequests": "Connect to {{app}}"
+      "walletConnectRequests": "Connect to {{app}} on \n {{chain}}"
     },
     "label": {
       "unknownRequestName": "Unknown",
