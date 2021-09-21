@@ -22,7 +22,6 @@ import React from 'react';
 import type { Node as ReactNode } from 'react';
 import styled from 'styled-components/native';
 import type { ThemeValue } from 'styled-theming';
-import { format as formatDate } from 'date-fns';
 import { SafeAreaView } from 'react-navigation';
 
 // components
@@ -34,6 +33,7 @@ import Spinner from 'components/Spinner';
 
 // utils
 import { fontStyles, fontSizes } from 'utils/variables';
+import { formatDate } from 'utils/date';
 
 // types
 import type { Props as ButtonProps } from 'components/legacy/Button';
@@ -51,7 +51,7 @@ type Props = {|
   buttons?: ButtonProps[],
 |};
 
-const DATE_FORMAT = 'MMMM D, YYYY HH:mm';
+const DATE_FORMAT = 'MMMM d, yyyy HH:mm';
 
 const spacing = {
   side: 20,
