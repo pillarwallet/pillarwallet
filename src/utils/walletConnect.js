@@ -28,6 +28,7 @@ import {
   ETH_SIGN,
   ETH_SIGN_TX,
   ETH_SIGN_TYPED_DATA,
+  ETH_SIGN_TYPED_DATA_V4,
   PERSONAL_SIGN,
   REQUEST_TYPE,
 } from 'constants/walletConnectConstants';
@@ -174,6 +175,7 @@ export const getWalletConnectCallRequestType = (
       return REQUEST_TYPE.TRANSACTION;
     case ETH_SIGN:
     case ETH_SIGN_TYPED_DATA:
+    case ETH_SIGN_TYPED_DATA_V4:
     case PERSONAL_SIGN:
       return REQUEST_TYPE.MESSAGE;
     default:
