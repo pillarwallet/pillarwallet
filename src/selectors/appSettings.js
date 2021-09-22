@@ -17,12 +17,18 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { createSelector } from 'reselect';
 
 // Config
 import localeConfig from 'configs/localeConfig';
 
-// Selector
+// Selectors
 import { useRootSelector } from 'selectors';
+
+// Types
+import type { Selector } from 'reducers/rootReducer';
+import type { AppSettingsReducerState } from 'reducers/appSettingsReducer';
+
 
 export function useThemeType() {
   return useRootSelector((root) => root.appSettings.data.themeType);
@@ -38,3 +44,11 @@ export function useLanguageCode() {
 export function useBiometricsSelector() {
   return useRootSelector((root) => root.appSettings.data.useBiometrics);
 }
+
+export const maxPinCodeLengthSelector: Selector<number> = createSelector(
+  ({ appSettings }) => appSettings,
+  ({ data: appSettings }: AppSettingsReducerState): number => {
+    if (appSettings?.hasSixDigitsPin) return 6;
+    return 4;
+  },
+);

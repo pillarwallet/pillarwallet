@@ -22,14 +22,14 @@ import { connect } from 'react-redux';
 import t from 'translations/translate';
 import type { NavigationScreenProp } from 'react-navigation';
 
-// actios
+// actions
 import { changePinAction, resetIncorrectPasswordAction } from 'actions/authActions';
 
 // constants
 import { MENU } from 'constants/navigationConstants';
 
 // components
-import { Container } from 'components/legacy/Layout';
+import { Container, Wrapper } from 'components/legacy/Layout';
 import { BaseText } from 'components/legacy/Typography';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
@@ -37,8 +37,12 @@ import Button from 'components/legacy/Button';
 import Header from 'components/Header';
 import Loader from 'components/Loader';
 
+// selectors
+import { useRootSelector } from 'selectors';
+import { maxPinCodeLengthSelector } from 'selectors/appSettings';
+
 // utils
-import { validatePin } from 'utils/validators';
+import { validatePinWithConfirmation } from 'utils/validators';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -60,6 +64,7 @@ const ConfirmNewPin = ({
   const [pinError, setPinError] = useState(null);
   const [pinSuccessfullyChanged, setPinSuccessfullyChanged] = useState(false);
   const [newPinSubmitted, setNewPinSubmitted] = useState(false);
+  const maxPinCodeLength = useRootSelector(maxPinCodeLengthSelector);
 
   useEffect(() => {
     // on isChangingPin change to false when pin was set
@@ -72,7 +77,7 @@ const ConfirmNewPin = ({
   const handlePinSubmit = (enteredPin: string) => {
     const currentPin = navigation.getParam('currentPin');
     const newPin = navigation.getParam('newPin');
-    const validationError = validatePin(enteredPin, newPin);
+    const validationError = validatePinWithConfirmation(enteredPin, newPin, maxPinCodeLength);
 
     if (validationError) {
       setPinError(validationError);
@@ -98,9 +103,11 @@ const ConfirmNewPin = ({
 
   if (pinSuccessfullyChanged) {
     return (
-      <Container center>
-        <BaseText style={{ marginBottom: 20 }}>{t('label.pinChanged', { exclamation: true })}</BaseText>
-        <Button title={t('button.continue')} onPress={() => navigation.navigate(MENU)} />
+      <Container>
+        <Wrapper flex={1} center regularPadding>
+          <BaseText style={{ marginBottom: 20 }}>{t('label.pinChanged', { exclamation: true })}</BaseText>
+          <Button title={t('button.continue')} onPress={() => navigation.navigate(MENU)} />
+        </Wrapper>
       </Container>
     );
   }

@@ -266,7 +266,6 @@ export const changePinAction = (newPin: string, currentPin: string) => {
     const { wallet: encryptedWallet } = await storage.get('wallet');
     const { appSettings: { data: { useBiometrics } } } = getState();
 
-
     dispatch({ type: SET_WALLET_IS_DECRYPTING, payload: true });
 
     const deviceUniqueId = getState().appSettings.data.deviceUniqueId ?? await getDeviceUniqueId();

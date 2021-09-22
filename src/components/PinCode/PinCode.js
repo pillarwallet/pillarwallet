@@ -20,6 +20,7 @@
 import * as React from 'react';
 import { Animated, Easing } from 'react-native';
 import styled from 'styled-components/native';
+import { useEffect, useState } from 'react';
 
 // constants
 import { KEYPAD_BUTTON_DELETE, KEYPAD_BUTTON_FORGOT } from 'constants/keyPadButtonsConstants';
@@ -30,7 +31,12 @@ import { Wrapper } from 'components/legacy/Layout';
 import HorizontalDots from 'components/HorizontalDots';
 import Spinner from 'components/Spinner';
 
-const PASS_CODE_LENGTH = 6;
+// selectors
+import { useRootSelector } from 'selectors';
+import { maxPinCodeLengthSelector } from 'selectors/appSettings';
+
+// types
+import type { ViewStyleProp } from 'utils/types/react-native';
 
 
 type Props = {
@@ -39,14 +45,9 @@ type Props = {
   onForgotPin?: Function,
   showForgotButton?: boolean,
   pinError?: boolean,
-  flex: boolean,
-  customStyle?: Object,
+  flex?: boolean,
+  customStyle?: ViewStyleProp,
   isLoading?: boolean,
-};
-
-type State = {
-  passCode: string[],
-  errorShake: Animated.Value,
 };
 
 const PinDotsWrapper = styled(Wrapper)`
@@ -59,125 +60,105 @@ const Container = styled.View`
   justify-content: space-between;
 `;
 
+
 const PinDotsWrapperAnimated = Animated.createAnimatedComponent(PinDotsWrapper);
 
-export default class PinCode extends React.Component<Props, State> {
-  resetPinCodeTimeout: any | TimeoutID;
+const errorShakeAnimation = new Animated.Value(0);
 
-  static defaultProps = {
-    showForgotButton: true,
-    flex: true,
-  };
+const PinCode = ({
+  customStyle,
+  isLoading,
+  pinError,
+  onPinChanged,
+  onPinEntered,
+  onForgotPin,
+  showForgotButton = true,
+  flex = true,
+}: Props) => {
+  const [pinCode, setPinCode] = useState([]);
+  const [resetPinCodeTimeout, setResetPinCodeTimeout] = useState(null);
+  const maxPinCodeLength = useRootSelector(maxPinCodeLengthSelector);
 
-  state = {
-    passCode: [],
-    errorShake: new Animated.Value(0),
-  };
+  useEffect(() => {
+    if (!pinError) return;
+    Animated.timing(errorShakeAnimation, {
+      toValue: 1,
+      duration: 500,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    }).start();
+  }, [pinError]);
 
-  componentDidMount() {
-    if (this.props.pinError) {
-      Animated.timing(
-        this.state.errorShake,
-        {
-          toValue: 1,
-          duration: 500,
-          easing: Easing.linear,
-          useNativeDriver: true,
-        },
-      ).start();
-    }
-  }
+  useEffect(() => {
+    return () => {
+      // clear timeout on component dismount
+      if (resetPinCodeTimeout) clearTimeout(resetPinCodeTimeout);
+    };
+  }, [resetPinCodeTimeout]);
 
-  componentWillUnmount() {
-    if (this.resetPinCodeTimeout) {
-      clearTimeout(this.resetPinCodeTimeout);
-    }
-  }
-
-  handleButtonPressed = (value: any) => {
-    switch (value) {
-      case KEYPAD_BUTTON_DELETE: return this.handleKeyPressDelete();
-      case KEYPAD_BUTTON_FORGOT: return this.handleForgotPin();
-      default: return this.handleKeyPress(value);
-    }
-  };
-
-  handleKeyPress = (key: string) => {
-    const { passCode } = this.state;
-
-    if (passCode.length === PASS_CODE_LENGTH) {
+  const handleButtonPressed = (value: string) => {
+    if (value === KEYPAD_BUTTON_FORGOT) {
+      if (onForgotPin) onForgotPin();
       return;
     }
 
-    this.setState({ passCode: [...passCode, key] }, this.onPassCodeChanged);
+    const newPinCode = value === KEYPAD_BUTTON_DELETE
+      ? pinCode.slice(0, -1)
+      : [...pinCode, value];
+
+    const enteredPinCodeLength = newPinCode.length;
+
+    // pin incomplete
+    if (enteredPinCodeLength > maxPinCodeLength) return;
+
+    if (onPinChanged) onPinChanged(newPinCode.join(''));
+    setPinCode(newPinCode);
+
+    // is full pin entered
+    if (enteredPinCodeLength !== maxPinCodeLength) return;
+
+    const passCodeString = newPinCode.join('');
+    if (onPinEntered) onPinEntered(passCodeString);
+
+    const timeoutInstance = setTimeout(() => { setPinCode([]); }, 500);
+    setResetPinCodeTimeout(timeoutInstance);
   };
 
-  onPassCodeChanged = () => {
-    const { passCode } = this.state;
-    const passCodeString = passCode.join('');
+  const numActiveDots = pinCode.length;
 
-    if (passCode.length > PASS_CODE_LENGTH) return;
+  return (
+    <Container>
+      <PinDotsWrapperAnimated
+        flex={flex ? 1 : null}
+        style={[
+          {
+            transform: [{
+              translateX: errorShakeAnimation.interpolate({
+                inputRange: [0, 0.08, 0.25, 0.41, 0.58, 0.75, 0.92, 1],
+                outputRange: ([0, -10, 10, -10, 10, -5, 5, 0]: number[]),
+              }),
+            }],
+          },
+          customStyle,
+        ]}
+      >
+        {!!isLoading && <Spinner size={30} />}
+        {!isLoading && (
+          <HorizontalDots
+            wrapperWidth={156}
+            wrapperVerticalMargin={20}
+            numAllDots={maxPinCodeLength}
+            numActiveDots={numActiveDots}
+          />
+        )}
+      </PinDotsWrapperAnimated>
+      <KeyPad
+        type="pincode"
+        options={{ showForgotButton }}
+        onKeyPress={handleButtonPressed}
+      />
+    </Container>
+  );
+};
 
-    if (passCode.length === PASS_CODE_LENGTH) {
-      this.props.onPinEntered(passCodeString);
-      this.resetPinCodeTimeout = setTimeout(() => {
-        this.setState({ passCode: [] });
-      }, 500);
-    } else if (this.props.onPinChanged) {
-      this.props.onPinChanged(passCodeString);
-    }
-  };
-
-  handleKeyPressDelete = () => {
-    const { passCode } = this.state;
-    const newPassCode = passCode.slice(0, -1);
-    if (this.props.onPinChanged) {
-      this.props.onPinChanged(newPassCode);
-    }
-    this.setState({ passCode: newPassCode });
-  };
-
-  handleForgotPin = () => {
-    if (this.props.onForgotPin) {
-      this.props.onForgotPin();
-    }
-  };
-
-  render() {
-    const { showForgotButton, flex, customStyle, isLoading } = this.props;
-    const numActiveDots = this.state.passCode.length;
-    return (
-      <Container>
-        <PinDotsWrapperAnimated
-          flex={flex ? 1 : null}
-          style={[
-            {
-              transform: [{
-                translateX: this.state.errorShake.interpolate({
-                  inputRange: [0, 0.08, 0.25, 0.41, 0.58, 0.75, 0.92, 1],
-                  outputRange: ([0, -10, 10, -10, 10, -5, 5, 0]: number[]),
-                }),
-              }],
-            },
-            customStyle,
-          ]}
-        >
-          {!!isLoading && <Spinner size={30} />}
-          {!isLoading && (
-            <HorizontalDots
-              wrapperWidth={156}
-              wrapperVerticalMargin={20}
-              numAllDots={PASS_CODE_LENGTH}
-              numActiveDots={numActiveDots}
-            />
-          )}
-        </PinDotsWrapperAnimated>
-        <KeyPad
-          type="pincode"
-          options={{ showForgotButton }}
-          onKeyPress={this.handleButtonPressed}
-        />
-      </Container>
-    );
-  }
-}
+export default PinCode;
