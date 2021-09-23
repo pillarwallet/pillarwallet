@@ -23,7 +23,7 @@ import { View, Linking, InteractionManager } from 'react-native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled, { withTheme } from 'styled-components/native';
-import { format as formatDate } from 'date-fns';
+import { format as formatDate, parseISO } from 'date-fns';
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
@@ -1255,7 +1255,8 @@ export class EventDetail extends React.Component<Props> {
               {group.transactions.map(({
                 createdAt, assetSymbol, value, hash,
               }) => {
-                const formattedDate = formatDate(new Date(createdAt * 1000), 'MMM D HH:mm');
+                const createdAtDate = createdAt ? parseISO(createdAt.toString()) : 0;
+                const formattedDate = formatDate(new Date(createdAtDate * 1000), 'MMM d HH:mm');
                 const formattedAmount = formatAmount(formatUnits(value.toString(), 18));
                 return (
                   <Row marginBottom={13} key={hash}>
