@@ -45,6 +45,9 @@ import { useRootSelector, useSmartWalletAccounts } from 'selectors';
 import { accountTotalBalancesSelector } from 'selectors/totalBalances';
 import { useUser } from 'selectors/user';
 
+// Screens
+import GovernanceCallBanner from 'screens/GovernanceCall/GovernanceCallBanner';
+
 // Utils
 import { sumRecord } from 'utils/bigNumber';
 import { calculateTotalBalancePerCategory, calculateTotalBalancePerChain } from 'utils/totalBalances';
@@ -110,6 +113,8 @@ function Home() {
         <BalanceSection balanceInFiat={totalBalance} />
 
         <WalletConnectRequests />
+
+        <GovernanceCallBanner />
 
         <ChartsSection balancePerCategory={balancePerCategory} balancePerChain={balancePerChain} />
 
