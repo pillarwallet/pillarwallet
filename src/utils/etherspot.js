@@ -92,7 +92,6 @@ export const parseEtherspotTransactions = (
 ): Transaction[] => etherspotTransactions
   .reduce((mappedHistoryTransactions, etherspotTransaction) => {
     const {
-      from,
       to,
       gasLimit,
       gasPrice,
@@ -102,10 +101,17 @@ export const parseEtherspotTransactions = (
       asset: assetPayload,
       timestamp: createdAt,
       value: nativeAssetValue,
+      batch,
     } = etherspotTransaction;
+    let { from } = etherspotTransaction;
 
     let { address: assetAddress, symbol: assetSymbol } = nativeAssetPerChain[chain];
     let value = nativeAssetValue ?? EthersBigNumber.from(0);
+
+    // from address on batch is the actual wallet addresses
+    if (batch?.from) {
+      ({ from } = batch);
+    }
 
     if (assetPayload) {
       const {
