@@ -51,6 +51,7 @@ import { fromEthersBigNumber } from 'utils/bigNumber';
 import { chainFromChainId, nativeAssetPerChain } from 'utils/chains';
 import { buildHistoryTransaction } from 'utils/history';
 import { isProdEnv } from 'utils/environment';
+import { isCaseInsensitiveMatch } from 'utils/common';
 
 // types
 import type {
@@ -115,7 +116,7 @@ export const parseEtherspotTransactions = (
 
       value = assetValue;
 
-      if (assetName !== nativeAssetPerChain[chain].symbol) {
+      if (!isCaseInsensitiveMatch(assetName, nativeAssetPerChain[chain].symbol)) {
         const supportedAsset = findAssetByAddress(supportedAssets, contractAddress);
 
         // asset not supported
