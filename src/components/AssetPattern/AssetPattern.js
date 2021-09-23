@@ -23,10 +23,18 @@ import { Dimensions } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import { ColorMatrix, saturate } from 'react-native-color-matrix-image-filters';
 
+// Utils
 import { getColorByTheme, getThemeType } from 'utils/themes';
 import { images } from 'utils/images';
+
+// Constants
 import { LIGHT_THEME } from 'constants/appSettingsConstants';
+
+// Components
 import Image from 'components/Image';
+import CollectibleImage from 'components/CollectibleImage';
+
+// Types
 import type { Theme } from 'models/Theme';
 
 type Props = {
@@ -49,51 +57,6 @@ type Icon = string | { [uri: string]: ?string };
 
 
 const windowWidth = Dimensions.get('window').width;
-
-const Wrapper = styled.View`
-  width: 100%;
-  height: 250px;
-  justify-content: center;
-`;
-
-const PatternWrapper = styled.View`
-  width: 100%;
-  height: 220px;
-`;
-
-const NoIconWrapper = styled.View`
-  width: 100%;
-  height: 250px;
-  margin-top: 14px;
-  margin-bottom: 20px;
-  align-items: center;
-  justify-content: center;
-  opacity: ${props => props.isUnlisted ? 0.7 : 1};
-`;
-
-const IconWrapper = styled.View`
-  height: ${props => props.diameter}px;
-  width: ${props => props.diameter}px;
-  border: 2px solid ${({ theme }) => theme.colors.basic050};
-  position: absolute;
-  z-index: ${props => props.zIndex};
-  top: ${props => props.top}px;
-  left: ${props => props.left}px;
-  justify-content: center;
-  align-items: center;
-  elevation: ${props => props.addShadow ? props.elevation : 0};
-  shadow-color: ${getColorByTheme({ lightKey: 'basic010', darkCustom: 'transparent' })};
-  shadow-offset: ${props => props.addShadow ? '0px 3px' : 0};
-  shadow-opacity: ${props => props.addShadow ? props.shadowOpacity : 0};
-  shadow-radius: 6px;
-  background-color: ${({ theme }) => theme.colors.basic050};
-`;
-
-const NoIconImage = styled(Image)`
-  height: 192px;
-  width: 192px;
-`;
-
 class AssetPattern extends React.Component<Props, State> {
   state = {
     errorLoading: false,
@@ -247,13 +210,13 @@ class AssetPattern extends React.Component<Props, State> {
           <ColorMatrix
             matrix={saturate(saturation)}
           >
-            <Image
+            <CollectibleImage
               style={{
-                height: diameter - 4,
-                width: diameter - 4,
                 opacity,
                 borderRadius: (diameter - 4) / 2,
               }}
+              width={diameter - 4}
+              height={diameter - 4}
               source={icon}
               resizeMode="contain"
               onLoadEnd={() => { this.setState({ didLoad: true }); }}
@@ -296,3 +259,47 @@ class AssetPattern extends React.Component<Props, State> {
 }
 
 export default withTheme(AssetPattern);
+
+const Wrapper = styled.View`
+  width: 100%;
+  height: 250px;
+  justify-content: center;
+`;
+
+const PatternWrapper = styled.View`
+  width: 100%;
+  height: 220px;
+`;
+
+const NoIconWrapper = styled.View`
+  width: 100%;
+  height: 250px;
+  margin-top: 14px;
+  margin-bottom: 20px;
+  align-items: center;
+  justify-content: center;
+  opacity: ${props => props.isUnlisted ? 0.7 : 1};
+`;
+
+const IconWrapper = styled.View`
+  height: ${props => props.diameter}px;
+  width: ${props => props.diameter}px;
+  border: 2px solid ${({ theme }) => theme.colors.basic050};
+  position: absolute;
+  z-index: ${props => props.zIndex};
+  top: ${props => props.top}px;
+  left: ${props => props.left}px;
+  justify-content: center;
+  align-items: center;
+  elevation: ${props => props.addShadow ? props.elevation : 0};
+  shadow-color: ${getColorByTheme({ lightKey: 'basic010', darkCustom: 'transparent' })};
+  shadow-offset: ${props => props.addShadow ? '0px 3px' : 0};
+  shadow-opacity: ${props => props.addShadow ? props.shadowOpacity : 0};
+  shadow-radius: 6px;
+  background-color: ${({ theme }) => theme.colors.basic050};
+`;
+
+const NoIconImage = styled(Image)`
+  height: 192px;
+  width: 192px;
+`;

@@ -24,8 +24,78 @@ import styled, { css } from 'styled-components/native';
 import Image from 'components/Image';
 
 // Utils
-import { getIdenticonImageUrl } from 'utils/images';
+import { getIdenticonImageUrl, useThemedImages } from 'utils/images';
 import { getColorByTheme } from 'utils/themes';
+
+export type ProfileImageProps = {|
+  userName?: ?string,
+  containerStyle?: Object,
+  imageStyle?: Object,
+  onPress?: ?Function,
+  diameter?: number,
+  borderWidth?: number,
+  borderColor?: string,
+  style?: Object,
+  children?: React.Node,
+  cornerIcon?: Object,
+  cornerIconSize?: number,
+|};
+
+const ProfileImage = (props: ProfileImageProps) => {
+  const {
+    containerStyle,
+    imageStyle,
+    onPress,
+    style,
+    diameter = 50,
+    borderColor,
+    borderWidth = 0,
+    children,
+    userName,
+    cornerIcon,
+    cornerIconSize = 22,
+  } = props;
+
+  const diameterWithBorder = diameter + (borderWidth * 2);
+  const uri = getIdenticonImageUrl(userName, diameter);
+  // const uri = 'https://raw.githubusercontent.com/compound-finance/token-list/master/assets/asset_ZRX.svg';
+  const { personIcon } = useThemedImages();
+
+  const renderImage = () => (
+    <React.Fragment>
+      {children && <InnerBackground>{children}</InnerBackground>}
+
+      {!children && !!userName && (
+        <CircleImage
+          source={{ uri }}
+          diameter={diameter}
+          additionalImageStyle={imageStyle}
+          fallbackSource={personIcon}
+        />
+      )}
+    </React.Fragment>
+  );
+
+  return (
+    <ImageTouchable
+      additionalContainerStyle={containerStyle}
+      diameter={diameterWithBorder}
+      disabled={!onPress}
+      onPress={onPress}
+      transparent={uri}
+      style={style}
+      hasChildren={children}
+      borderWidth={borderWidth}
+      borderColor={borderColor}
+      needBackground={!uri}
+    >
+      {renderImage()}
+      {cornerIcon && <CornerIcon source={cornerIcon} size={cornerIconSize} />}
+    </ImageTouchable>
+  );
+};
+
+export default ProfileImage;
 
 const CircleImage = styled(Image)`
   width: ${props => (props.diameter ? props.diameter : '50')}px;
@@ -68,72 +138,3 @@ const CornerIcon = styled(Image)`
   right: 0;
 `;
 
-export type ProfileImageProps = {|
-  userName?: ?string,
-  containerStyle?: Object,
-  imageStyle?: Object,
-  onPress?: ?Function,
-  diameter?: number,
-  borderWidth?: number,
-  borderColor?: string,
-  style?: Object,
-  children?: React.Node,
-  cornerIcon?: Object,
-  cornerIconSize?: number,
-|};
-
-const IMAGE_LOAD_FAILED = 'image_load_failed';
-
-const ProfileImage = (props: ProfileImageProps) => {
-  const {
-    containerStyle,
-    imageStyle,
-    onPress,
-    style,
-    diameter = 50,
-    borderColor,
-    borderWidth = 0,
-    children,
-    userName,
-    cornerIcon,
-    cornerIconSize = 22,
-  } = props;
-
-  const diameterWithBorder = diameter + (borderWidth * 2);
-  const uri = getIdenticonImageUrl(userName, diameter);
-
-  const renderImage = () => (
-    <React.Fragment>
-      {children && <InnerBackground>{children}</InnerBackground>}
-
-      {!children && !!userName && (
-        <CircleImage
-          source={{ uri }}
-          diameter={diameter}
-          additionalImageStyle={imageStyle}
-          fallbackSource={IMAGE_LOAD_FAILED}
-        />
-      )}
-    </React.Fragment>
-  );
-
-  return (
-    <ImageTouchable
-      additionalContainerStyle={containerStyle}
-      diameter={diameterWithBorder}
-      disabled={!onPress}
-      onPress={onPress}
-      transparent={uri}
-      style={style}
-      hasChildren={children}
-      borderWidth={borderWidth}
-      borderColor={borderColor}
-      needBackground={!uri}
-    >
-      {renderImage()}
-      {cornerIcon && <CornerIcon source={cornerIcon} size={cornerIconSize} />}
-    </ImageTouchable>
-  );
-};
-
-export default ProfileImage;
