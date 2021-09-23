@@ -57,6 +57,7 @@ type Icon = string | { [uri: string]: ?string };
 
 
 const windowWidth = Dimensions.get('window').width;
+
 class AssetPattern extends React.Component<Props, State> {
   state = {
     errorLoading: false,

@@ -58,7 +58,6 @@ const ProfileImage = (props: ProfileImageProps) => {
 
   const diameterWithBorder = diameter + (borderWidth * 2);
   const uri = getIdenticonImageUrl(userName, diameter);
-  // const uri = 'https://raw.githubusercontent.com/compound-finance/token-list/master/assets/asset_ZRX.svg';
   const { personIcon } = useThemedImages();
 
   const renderImage = () => (
