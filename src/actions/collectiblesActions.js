@@ -31,7 +31,6 @@ import {
 } from 'constants/collectiblesConstants';
 
 // Services
-import { fetchCollectibles, fetchCollectiblesTransactionHistory } from 'services/opensea';
 import { getPoapCollectiblesOnXDai } from 'services/poap';
 import etherspotService from 'services/etherspot';
 
@@ -62,8 +61,8 @@ import { saveDbAction } from './dbActions';
 
 const parseCollectibleMedia = (data) => {
   const {
-    image_url: fullImage = '',
-    image_preview_url: previewImage = '',
+    imageUrl: fullImage = '',
+    imagePreviewUrl: previewImage = '',
   } = data;
 
   return {
@@ -73,12 +72,12 @@ const parseCollectibleMedia = (data) => {
 };
 
 export const parseCollectibleFromOpenSeaAsset = (asset: OpenSeaAsset): Collectible => {
-  const contract = asset.asset_contract;
+  const contract = asset.assetContract;
   const { image, icon } = parseCollectibleMedia(asset);
 
   return {
-    id: asset.token_id,
-    name: asset.name || `${contract.name} ${asset.token_id}`,
+    id: asset.tokenId,
+    name: asset.name || `${contract.name} ${asset.tokenId}`,
     description: asset.description,
     contractAddress: contract.address,
     tokenType: ASSET_TYPES.COLLECTIBLE,
@@ -108,8 +107,7 @@ export const fetchCollectiblesAction = (defaultAccount?: Account) => {
 
     const walletAddress = getAccountAddress(account);
     const accountId = getAccountId(account);
-
-    const openSeaCollectibles = await fetchCollectibles(walletAddress);
+    const openSeaCollectibles = await etherspotService.fetchCollectibles(walletAddress);
     if (!openSeaCollectibles) {
       reportErrorLog('fetchCollectiblesAction failed: fetchCollectibles response not valid', {
         openSeaCollectibles,
@@ -120,7 +118,7 @@ export const fetchCollectiblesAction = (defaultAccount?: Account) => {
     }
 
     let updatedAccountCollectibles = openSeaCollectibles
-      ? { [CHAIN.ETHEREUM]: openSeaCollectibles.map(parseCollectibleFromOpenSeaAsset) }
+      ? { [CHAIN.ETHEREUM]: openSeaCollectibles.items.map(parseCollectibleFromOpenSeaAsset) }
       : {};
 
     if (isEtherspotAccount(account)) {
@@ -139,15 +137,14 @@ const parseCollectibleTransactionFromOpenSeaHistoryItem = (event: OpenSeaHistory
   const {
     asset,
     transaction,
-    to_account: toAcc,
-    from_account: fromAcc,
+    toAccount: toAcc,
+    fromAccount: fromAcc,
   } = event;
 
-  const contract = asset.asset_contract;
-
+  const contract = asset.assetContract;
   const {
-    transaction_hash: trxHash,
-    block_number: blockNumber,
+    transactionHash: trxHash,
+    blockNumber,
     timestamp,
   } = transaction;
 
@@ -175,17 +172,6 @@ const parseCollectibleTransactionFromOpenSeaHistoryItem = (event: OpenSeaHistory
   };
 };
 
-const isOpenSeaCollectibleTransaction = (event: Object): boolean => {
-  const { asset } = event;
-  // NOTE: for some rare transactions we don't have information about the asset sent
-  if (!asset) return false;
-
-  const { asset_contract: assetContract } = asset;
-  if (!assetContract) return false;
-
-  return assetContract.schema_name === 'ERC721';
-};
-
 export const fetchCollectiblesHistoryAction = (account?: Account) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
@@ -210,7 +196,7 @@ export const fetchCollectiblesHistoryAction = (account?: Account) => {
       return;
     }
 
-    const openSeaHistory = await fetchCollectiblesTransactionHistory(walletAddress);
+    const openSeaHistory = await etherspotService.fetchCollectiblesTransactionHistory({ account: walletAddress });
     if (!openSeaHistory) {
       reportErrorLog('fetchCollectiblesHistoryAction failed: response not valid', {
         openSeaHistory,
@@ -221,8 +207,7 @@ export const fetchCollectiblesHistoryAction = (account?: Account) => {
       return;
     }
 
-    const accountCollectiblesHistory = openSeaHistory
-      .filter(isOpenSeaCollectibleTransaction)
+    const accountCollectiblesHistory = openSeaHistory.items
       .map(parseCollectibleTransactionFromOpenSeaHistoryItem);
 
     // TODO: implement multichain when available

@@ -38,6 +38,8 @@ import {
   Currencies as EtherspotCurrencies,
   ENSNodeStates,
   AccountStates,
+  OpenSeaAssets,
+  OpenSeaHistory,
 } from 'etherspot';
 import { map } from 'rxjs/operators';
 import type { Subscription } from 'rxjs';
@@ -621,6 +623,16 @@ export class EtherspotService {
       });
       return null;
     }
+  }
+
+  async fetchCollectibles(walletAddress: string): Promise<OpenSeaAssets> {
+    const sdk = this.getSdkForChain('ethereum');
+    return sdk.getCollectibles({ account: walletAddress });
+  }
+
+  fetchCollectiblesTransactionHistory(account: string): Promise<OpenSeaHistory> {
+    const sdk = this.getSdkForChain('ethereum');
+    return sdk.getCollectiblesTransactionHistory(account);
   }
 
   async getSupportedAssets(chain: Chain): Promise<?(Asset[])> {
