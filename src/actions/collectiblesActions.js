@@ -52,8 +52,9 @@ import { activeAccountSelector } from 'selectors';
 import type { Collectible, CollectibleTransaction } from 'models/Collectible';
 import type { GetState, Dispatch } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
-import type { OpenSeaAsset, OpenSeaHistoryItem } from 'models/OpenSea';
+// import type { OpenSeaAsset, OpenSeaHistoryItem } from 'models/OpenSea';
 import type { Chain } from 'models/Chain';
+import { OpenSeaAsset, OpenSeaHistoryItem } from 'etherspot';
 
 // Actions
 import { saveDbAction } from './dbActions';
@@ -196,7 +197,7 @@ export const fetchCollectiblesHistoryAction = (account?: Account) => {
       return;
     }
 
-    const openSeaHistory = await etherspotService.fetchCollectiblesTransactionHistory({ account: walletAddress });
+    const openSeaHistory = await etherspotService.fetchCollectiblesTransactionHistory(walletAddress);
     if (!openSeaHistory) {
       reportErrorLog('fetchCollectiblesHistoryAction failed: response not valid', {
         openSeaHistory,

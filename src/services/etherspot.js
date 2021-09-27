@@ -625,14 +625,22 @@ export class EtherspotService {
     }
   }
 
-  async fetchCollectibles(walletAddress: string): Promise<OpenSeaAssets> {
+  async fetchCollectibles(walletAddress: string): Promise<?(OpenSeaAssets)> {
     const sdk = this.getSdkForChain('ethereum');
+    if (!sdk) {
+      reportErrorLog('fetchCollectibles failed: no sdk instance for ethereum chain');
+      return null;
+    }
     return sdk.getCollectibles({ account: walletAddress });
   }
 
-  fetchCollectiblesTransactionHistory(account: string): Promise<OpenSeaHistory> {
+  async fetchCollectiblesTransactionHistory(account: string): Promise<?(OpenSeaHistory)> {
     const sdk = this.getSdkForChain('ethereum');
-    return sdk.getCollectiblesTransactionHistory(account);
+    if (!sdk) {
+      reportErrorLog('fetchCollectiblesTransactionHistory failed: no sdk instance for ethereum chain');
+      return null;
+    }
+    return sdk.getCollectiblesTransactionHistory({ account });
   }
 
   async getSupportedAssets(chain: Chain): Promise<?(Asset[])> {
