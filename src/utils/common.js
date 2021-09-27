@@ -462,7 +462,7 @@ export const groupSectionsByDate = (
   orderBy(data, [dateField], [sortDirection]).forEach((item) => {
     const safeTimestamp = parseTimestamp(item[dateField]);
     const date = new Date(safeTimestamp * timestampMultiplier);
-    const key = formatDate(date, 'YYYY-MM-DD');
+    const key = formatDate(date, 'yyyy-MM-dd');
 
     const existingSection = sections[key];
     if (!existingSection) {

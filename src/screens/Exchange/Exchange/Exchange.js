@@ -36,6 +36,7 @@ import HeaderBlock from 'components/HeaderBlock';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Icon from 'components/core/Icon';
 import Spinner from 'components/Spinner';
+import Toast from 'components/Toast';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
@@ -46,6 +47,8 @@ import { useChainConfig } from 'utils/uiConfig';
 import { isLogV2AppEvents } from 'utils/environment';
 import { nativeAssetPerChain } from 'utils/chains';
 import { addressesEqual } from 'utils/assets';
+import { appendFeeCaptureTransactionIfNeeded } from 'utils/exchange';
+import { getAccountAddress } from 'utils/accounts';
 
 // Actions
 import { logEventAction } from 'actions/analyticsActions';
@@ -55,16 +58,21 @@ import type { AssetOption } from 'models/Asset';
 import type { ExchangeOffer } from 'models/Exchange';
 import type { Chain } from 'models/Chain';
 
+// Selectors
+import { useActiveAccount } from 'selectors';
+
 // Local
 import FromAssetSelector from './FromAssetSelector';
 import ToAssetSelector from './ToAssetSelector';
 import OfferCard from './OfferCard';
 import { useFromAssets, useToAssets, useOffersQuery, sortOffers } from './utils';
 
+
 function Exchange() {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const activeAccount = useActiveAccount();
 
   const fromInputRef = React.useRef();
 
@@ -129,7 +137,19 @@ function Exchange() {
     setToAddress(asset.address);
   };
 
-  const handleOfferPress = (offer: ExchangeOffer) => {
+  const handleOfferPress = async (selectedOffer: ExchangeOffer) => {
+    if (!activeAccount) {
+      // shouldn't happen
+      Toast.show({
+        message: t('toast.somethingWentWrong'),
+        emoji: 'hushed',
+        supportLink: true,
+        autoClose: false,
+      });
+      return;
+    }
+
+    const offer = await appendFeeCaptureTransactionIfNeeded(selectedOffer, getAccountAddress(activeAccount));
     navigation.navigate(EXCHANGE_CONFIRM, { offer });
   };
 

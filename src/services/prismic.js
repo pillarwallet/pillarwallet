@@ -47,7 +47,7 @@ export type DocumentData = {
   text: string,
 }
 
-export function queryDocumentsByType<T>(type: string, options?: QueryOptions): Response<T> {
+export function queryDocumentsByType<T>(type: string, options?: QueryOptions): Promise<Response<T>> {
   return prismicClient.query(Prismic.Predicates.at(DOCUMENT_TYPE, type), options);
 }
 

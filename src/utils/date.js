@@ -33,11 +33,12 @@ import t from 'translations/translate';
 
 export * from 'date-fns';
 
-const USER_FULL_DATE_FORMAT = 'MMM D YYYY';
-const USER_MONTH_DAY_FORMAT = 'MMM D';
+const USER_FULL_DATE_FORMAT = 'MMM d yyyy';
+const USER_MONTH_DAY_FORMAT = 'MMM d';
 
 export const isSameDay = (first: Date, second: Date): boolean => {
-  const dateFormat = 'YYYY-MM-DD';
+  // eslint-disable-next-line i18next/no-literal-string
+  const dateFormat = 'yyyy-MM-dd';
   return DateFns.format(first, dateFormat) === DateFns.format(second, dateFormat);
 };
 
@@ -51,6 +52,7 @@ export const isYesterday = (date: Date): boolean => {
 
 export const formatDate = (date: ?Date, format?: string): string => {
   if (!date) return '';
+  if (!format) return '';
 
   return DateFns.format(date, format);
 };

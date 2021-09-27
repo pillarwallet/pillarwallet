@@ -576,7 +576,8 @@
     "item": {
       "settings": "Settings",
       "addressBook": "Address book",
-      "supportChat": "Support chat"
+      "supportChat": "Support chat",
+      "storybook": "Storybook"
     },
     "footer": {
       "privacyPolicy": "Privacy Policy",
@@ -1015,7 +1016,7 @@
 
   "walletConnectContent": {
     "title": {
-      "walletConnectRequests": "Connect to {{app}}"
+      "walletConnectRequests": "Connect to {{app}} on \n {{chain}}"
     },
     "label": {
       "unknownRequestName": "Unknown",
@@ -1434,5 +1435,12 @@
   "tooltip": {
     "switchAccountsByTappingHere": "You can switch accounts by tapping here",
     "includesDeploymentFee": "One-time Smart Wallet deployment fee"
+  },
+
+  "governanceCall": {
+    "banner": {
+      "title": "Governance Call",
+      "live": "LIVE"
+    }
   }
 }
