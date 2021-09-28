@@ -39,7 +39,7 @@ describe('Validators', () => {
 
     it('should allow only digits', () => {
       const expectedErrorMessage = t('auth:error.invalidPin.useNumericSymbolsOnly');
-      expect(validatePin('1asdsd')).toBe(expectedErrorMessage);
+      expect(validatePin('1asd', 4)).toBe(expectedErrorMessage);
     });
   });
 

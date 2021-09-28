@@ -48,6 +48,7 @@ type Props = {
   flex?: boolean,
   customStyle?: ViewStyleProp,
   isLoading?: boolean,
+  maxPinCodeLength?: number,
 };
 
 const PinDotsWrapper = styled(Wrapper)`
@@ -74,10 +75,10 @@ const PinCode = ({
   onForgotPin,
   showForgotButton = true,
   flex = true,
+  maxPinCodeLength: defaultMaxPinCodeLength,
 }: Props) => {
   const [pinCode, setPinCode] = useState([]);
-  const [resetPinCodeTimeout, setResetPinCodeTimeout] = useState(null);
-  const maxPinCodeLength = useRootSelector(maxPinCodeLengthSelector);
+  const maxPinCodeLength = defaultMaxPinCodeLength ?? useRootSelector(maxPinCodeLengthSelector);
 
   useEffect(() => {
     if (!pinError) return;
@@ -89,14 +90,9 @@ const PinCode = ({
     }).start();
   }, [pinError]);
 
-  useEffect(() => {
-    return () => {
-      // clear timeout on component dismount
-      if (resetPinCodeTimeout) clearTimeout(resetPinCodeTimeout);
-    };
-  }, [resetPinCodeTimeout]);
-
   const handleButtonPressed = (value: string) => {
+    if (isLoading) return;
+
     if (value === KEYPAD_BUTTON_FORGOT) {
       if (onForgotPin) onForgotPin();
       return;
@@ -120,8 +116,7 @@ const PinCode = ({
     const passCodeString = newPinCode.join('');
     if (onPinEntered) onPinEntered(passCodeString);
 
-    const timeoutInstance = setTimeout(() => { setPinCode([]); }, 500);
-    setResetPinCodeTimeout(timeoutInstance);
+    setPinCode([]);
   };
 
   const numActiveDots = pinCode.length;

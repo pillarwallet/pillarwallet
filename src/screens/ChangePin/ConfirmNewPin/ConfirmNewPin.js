@@ -37,10 +37,6 @@ import Button from 'components/legacy/Button';
 import Header from 'components/Header';
 import Loader from 'components/Loader';
 
-// selectors
-import { useRootSelector } from 'selectors';
-import { maxPinCodeLengthSelector } from 'selectors/appSettings';
-
 // utils
 import { validatePinWithConfirmation } from 'utils/validators';
 
@@ -64,7 +60,7 @@ const ConfirmNewPin = ({
   const [pinError, setPinError] = useState(null);
   const [pinSuccessfullyChanged, setPinSuccessfullyChanged] = useState(false);
   const [newPinSubmitted, setNewPinSubmitted] = useState(false);
-  const maxPinCodeLength = useRootSelector(maxPinCodeLengthSelector);
+  const maxPinCodeLength = 4;
 
   useEffect(() => {
     // on isChangingPin change to false when pin was set
@@ -125,6 +121,7 @@ const ConfirmNewPin = ({
         onPinChanged={() => setPinError(null)}
         showForgotButton={false}
         pinError={!!pinError}
+        maxPinCodeLength={maxPinCodeLength}
       />
     </Container>
   );
