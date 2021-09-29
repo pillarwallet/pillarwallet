@@ -50,6 +50,7 @@ export type AppSettingsReducerState = {
     isBrowsingWebView?: boolean,
     accountSwitchTooltipDismissed?: boolean,
     deviceUniqueId?: string,
+    hasSixDigitsPin?: boolean,
   },
   isFetched: boolean,
 };

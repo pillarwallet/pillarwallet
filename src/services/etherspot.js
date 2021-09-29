@@ -63,6 +63,7 @@ import {
 import { addressesEqual, findAssetByAddress } from 'utils/assets';
 import { nativeAssetPerChain } from 'utils/chains';
 import { mapToEthereumTransactions } from 'utils/transactions';
+import { getCaptureFee } from 'utils/exchange';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
@@ -689,7 +690,9 @@ export class EtherspotService {
     const sdk = this.getSdkForChain(chain);
     if (!sdk || !fromAsset || !toAsset) return [];
 
-    const fromAmountEthers = EthersUtils.parseUnits(fromAmount.toString(), fromAsset.decimals);
+    const captureFee = getCaptureFee(fromAmount); // can be 0
+    const fromAmountAfterCaptureFee = fromAmount.minus(captureFee);
+    const fromAmountEthers = EthersUtils.parseUnits(fromAmountAfterCaptureFee.toString(), fromAsset.decimals);
 
     try {
       const offers: EtherspotExchangeOffer[] = await sdk.getExchangeOffers({
@@ -698,7 +701,14 @@ export class EtherspotService {
         fromAmount: fromAmountEthers,
       });
 
-      return offers.map((offer) => buildExchangeOffer(chain, fromAsset, toAsset, fromAmount, offer));
+      return offers.map((offer) => buildExchangeOffer(
+        chain,
+        fromAsset,
+        toAsset,
+        fromAmount,
+        offer,
+        captureFee,
+      ));
     } catch (error) {
       reportErrorLog('EtherspotService getExchangeOffers failed', { chain, error });
       return [];

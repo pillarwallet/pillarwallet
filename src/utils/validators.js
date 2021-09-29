@@ -32,15 +32,21 @@ type AddressValidator = {
   message: string,
 };
 
-export const validatePin = (pin: string, confirmationPin?: string): string => {
-  if (pin.length !== 6) {
-    return t('auth:error.invalidPin.tooLong', { requiredLength: 6 });
+export const validatePin = (pin: string, maxPinLength: number): string => {
+  if (pin.length !== maxPinLength) {
+    return t('auth:error.invalidPin.tooLong', { requiredLength: maxPinLength });
   } else if (!pin.match(/^\d+$/)) {
     return t('auth:error.invalidPin.useNumericSymbolsOnly');
-  } else if (confirmationPin && pin !== confirmationPin) {
-    return t('auth:error.invalidPin.doesNotMatchPrevious');
   }
   return '';
+};
+
+export const validatePinWithConfirmation = (pin: string, confirmationPin: string, maxPinLength: number): string => {
+  if (confirmationPin && pin !== confirmationPin) {
+    return t('auth:error.invalidPin.doesNotMatchPrevious');
+  }
+
+  return validatePin(pin, maxPinLength);
 };
 
 
