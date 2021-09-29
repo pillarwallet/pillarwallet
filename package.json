@@ -67,7 +67,7 @@
     "eth-sig-util": "^3.0.0",
     "ethereumjs-util": "^7.0.8",
     "ethers": "5.0.19",
-    "etherspot": "^1.18.3",
+    "etherspot": "^1.18.5",
     "events": "^1.0.0",
     "https-browserify": "~0.0.0",
     "i18next": "^19.5.6",

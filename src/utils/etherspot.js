@@ -113,17 +113,17 @@ export const parseEtherspotTransactions = (
       ({ from } = batch);
     }
 
-    // actual to address is first transaction on internalTransactions
-    if (internalTransactions?.[0]?.to) {
-      ([{ to }] = internalTransactions);
-    }
-
     if (assetPayload) {
       const {
+        to: assetTo,
+        from: assetFrom,
         value: assetValue,
         contract: contractAddress,
         name: assetName,
       } = assetPayload;
+
+      if (assetTo) to = assetTo;
+      if (assetFrom) from = assetFrom;
 
       value = assetValue;
 
