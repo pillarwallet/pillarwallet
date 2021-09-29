@@ -43,6 +43,7 @@ import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { SET_CACHED_URLS } from 'constants/cacheConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 
 // utils
 import { reportErrorLog, reportLog } from 'utils/common';
@@ -266,7 +267,6 @@ export const changePinAction = (newPin: string, currentPin: string) => {
     const { wallet: encryptedWallet } = await storage.get('wallet');
     const { appSettings: { data: { useBiometrics } } } = getState();
 
-
     dispatch({ type: SET_WALLET_IS_DECRYPTING, payload: true });
 
     const deviceUniqueId = getState().appSettings.data.deviceUniqueId ?? await getDeviceUniqueId();
@@ -280,6 +280,13 @@ export const changePinAction = (newPin: string, currentPin: string) => {
     await dispatch(encryptAndSaveWalletAction(newPin, wallet, backupStatus, useBiometrics));
 
     dispatch({ type: SET_WALLET_IS_CHANGING_PIN, payload: false });
+
+    // check if 6 digits flag is active
+    const { hasSixDigitsPin } = getState().appSettings.data;
+    if (!hasSixDigitsPin) return;
+
+    // remove 6 digits pin flag
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: { hasSixDigitsPin: false } });
   };
 };
 

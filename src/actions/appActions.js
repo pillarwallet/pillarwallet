@@ -185,6 +185,10 @@ export const initAppAndRedirectAction = () => {
 
       if (wallet.backupStatus) dispatch({ type: UPDATE_WALLET_BACKUP_STATUS, payload: wallet.backupStatus });
 
+      if (!wallet?.pinV2 && !appSettings?.data?.hasSixDigitsPin) {
+        dispatch({ type: UPDATE_APP_SETTINGS, payload: { hasSixDigitsPin: true } });
+      }
+
       const historyLastSyncIds = get(storageData, 'historyLastSyncIds');
       if (historyLastSyncIds) dispatch({ type: SET_HISTORY_LAST_SYNC_IDS, payload: historyLastSyncIds });
     }
