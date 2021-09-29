@@ -85,6 +85,7 @@ export default class NewPin extends React.Component<Props, State> {
           onPinChanged={this.handlePinChange}
           showForgotButton={false}
           pinError={!!pinError}
+          maxPinCodeLength={4}
         />
       </Container>
     );

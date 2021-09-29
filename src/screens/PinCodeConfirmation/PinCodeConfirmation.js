@@ -35,8 +35,12 @@ import { MediumText } from 'components/legacy/Typography';
 // constants
 import { BIOMETRICS_PROMPT } from 'constants/navigationConstants';
 
+// selectors
+import { useRootSelector } from 'selectors';
+import { maxPinCodeLengthSelector } from 'selectors/appSettings';
+
 // utils
-import { validatePin } from 'utils/validators';
+import { validatePinWithConfirmation } from 'utils/validators';
 import { fontStyles, spacing } from 'utils/variables';
 import { getSupportedBiometryType } from 'utils/keychain';
 
@@ -67,11 +71,12 @@ const PinCodeConfirmation = ({
   navigation,
 }) => {
   const [errorMessage, setErrorMessage] = useState(null);
+  const maxPinCodeLength = useRootSelector(maxPinCodeLengthSelector);
 
   const previousPinCode = navigation.getParam('pinCode');
 
   const handlePinSubmit = (pinCode: string) => {
-    const validationError = validatePin(pinCode, previousPinCode);
+    const validationError = validatePinWithConfirmation(pinCode, previousPinCode, maxPinCodeLength);
 
     if (validationError) {
       setErrorMessage(validationError);

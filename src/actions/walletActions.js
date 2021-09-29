@@ -108,6 +108,7 @@ export const encryptAndSaveWalletAction = (
       wallet: {
         ...encryptedWallet,
         backupStatus,
+        pinV2: true, // pin digits count changed
       },
     }));
 
