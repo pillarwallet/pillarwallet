@@ -9,17 +9,20 @@ jobs:
     outputs:
       open-pr: ${{ steps.get_current_day.outputs.open-pr }}
     steps:
-      - name: Get current day of month
+      - name: Get current day and week
         id: get_current_day
         run: |
           currentday=$(date '+%d' | sed "s/^0*//g")
-          echo "Today is $currentday of the month"
-          if (( $currentday <= 7 || (( $currentday >= 15 && $currentday <=21 ))))
+          echo "Today is $currentday day of the month"
+          currentweek=$(date '+%V' | sed "s/^0*//g")
+          echo "This is $currentweek week of the year"
+          isodd=$(expr $currentweek % 2)
+          if [ $isodd = 1 ]
           then
-            echo "It is a first or third week of the month"
+            echo "This is an odd week of a year. Let's create PR!"
             echo '::set-output name=open-pr::green'
           else
-            echo "It is NOT a first or third week of the month"
+            echo "This is an even week of a year. No PR this week!"
             echo '::set-output name=open-pr::red'
           fi
   create_pr:
