@@ -22,7 +22,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 
 // Components
-import Image from 'components/Image';
+import CollectibleImage from 'components/CollectibleImage';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
@@ -53,8 +53,6 @@ function TokenIcon({ url, size = 48, chain, style, imageStyle, chainIconStyle }:
 
   const source = url ? { uri: url } : genericToken;
   const imageSizeStyle = {
-    width: size,
-    height: size,
     borderRadius: size / 2,
   };
 
@@ -65,7 +63,13 @@ function TokenIcon({ url, size = 48, chain, style, imageStyle, chainIconStyle }:
 
   return (
     <Container style={style}>
-      <Image source={source} style={[imageSizeStyle, imageStyle]} />
+      <CollectibleImage
+        source={source}
+        resizeMode="contain"
+        width={size}
+        height={size}
+        style={[imageSizeStyle, imageStyle]}
+      />
 
       {!!ChainIcon && (
         <ChainIconWrapper style={[chainIconSizeStyle, chainIconStyle]}>
