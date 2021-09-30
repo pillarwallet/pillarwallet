@@ -101,7 +101,6 @@ export const parseEtherspotTransactions = (
       timestamp: createdAt,
       value: nativeAssetValue,
       batch,
-      internalTransactions,
     } = etherspotTransaction;
     let { to, from } = etherspotTransaction;
 

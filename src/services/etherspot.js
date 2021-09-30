@@ -603,7 +603,7 @@ export class EtherspotService {
       .getTransactions({ account: address })
       .then(({ items }) => items)
       .catch((error) => {
-        reportErrorLog('getTransactionsByAddress -> getTransactions failed', { address, error });
+        reportErrorLog('getTransactionsByAddress -> getTransactions failed', { address, chain, error });
         return null;
       });
   }
