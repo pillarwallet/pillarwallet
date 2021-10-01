@@ -577,7 +577,8 @@
       "settings": "Settings",
       "addressBook": "Address book",
       "supportChat": "Support chat",
-      "storybook": "Storybook"
+      "storybook": "Storybook",
+      "supportConversations": "Support Conversations",
     },
     "footer": {
       "privacyPolicy": "Privacy Policy",
