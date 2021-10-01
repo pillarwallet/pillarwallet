@@ -79,7 +79,8 @@ const Menu = () => {
         <MenuItem title={t('item.settings')} icon="settings" onPress={goToSettings} />
         <MenuItem title={t('item.addressBook')} icon="contacts" onPress={goToInviteFriends} />
         <MenuItem title={t('item.supportChat')} icon="message" onPress={goToSupportChat} />
-        {repliesFlag && <MenuItem title={t('item.supportConversations')} icon="message" onPress={goToSupportConversations} />}
+        {repliesFlag &&
+        <MenuItem title={t('item.supportConversations')} icon="message" onPress={goToSupportConversations} />}
         {__DEV__ && <MenuItem title={t('item.storybook')} icon="lifebuoy" onPress={goToStorybook} />}
 
         <SocialMediaLinks />
