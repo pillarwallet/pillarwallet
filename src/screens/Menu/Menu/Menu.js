@@ -60,7 +60,6 @@ const Menu = () => {
     }
   });
 
-
   const goToSettings = () => navigation.navigate(MENU_SETTINGS);
   const goToInviteFriends = () => navigation.navigate(CONTACTS_FLOW);
   const goToSupportChat = () => Instabug.show();
