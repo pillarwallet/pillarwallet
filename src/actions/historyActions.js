@@ -62,6 +62,7 @@ import { mapTransactionsHistoryWithRari } from 'utils/rari';
 import { mapTransactionsHistoryWithLiquidityPools } from 'utils/liquidityPools';
 import { parseEtherspotTransactions, parseEtherspotTransactionStatus } from 'utils/etherspot';
 import { viewTransactionOnBlockchain } from 'utils/blockchainExplorer';
+import { getSupportedChains } from 'utils/chains';
 
 // services
 import archanovaService from 'services/archanova';
@@ -73,6 +74,7 @@ import {
   accountsSelector,
   activeAccountSelector,
   historySelector,
+  supportedAssetsPerChainSelector,
 } from 'selectors';
 
 // models, types
@@ -136,22 +138,36 @@ export const fetchEtherspotTransactionsHistoryAction = () => {
     const accountAddress = getAccountAddress(etherspotAccount);
     const accountId = getAccountId(etherspotAccount);
 
-    const ethereumSupportedAssets = ethereumSupportedAssetsSelector(getState());
+    await Promise.all(getSupportedChains(etherspotAccount).map(async (supportedChain) => {
+      const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
+      const chainSupportedAssets = supportedAssetsPerChain?.[supportedChain] ?? [];
 
-    const etherspotTransactions = await etherspotService.getTransactionsByAddress(accountAddress);
-    if (!etherspotTransactions?.length) {
-      dispatch(setFetchingHistoryAction(false));
-      return;
-    }
+      const etherspotTransactions = await etherspotService.getTransactionsByAddress(supportedChain, accountAddress);
+      if (!etherspotTransactions?.length) return;
 
-    const etherspotTransactionsHistory = parseEtherspotTransactions(
-      etherspotTransactions,
-      ethereumSupportedAssets,
-    );
+      let etherspotTransactionsHistory;
+      try {
+        etherspotTransactionsHistory = parseEtherspotTransactions(
+          supportedChain,
+          etherspotTransactions,
+          chainSupportedAssets,
+        );
+      } catch (error) {
+        reportLog('fetchEtherspotTransactionsHistoryAction parseEtherspotTransactions failed', {
+          error,
+          supportedChain,
+          accountAddress,
+        });
+      }
 
-    // TODO: repeat for each chain when available on Etherspot SDK
-    dispatch(syncAccountHistoryAction(etherspotTransactionsHistory, accountId, CHAIN.ETHEREUM));
-    dispatch(extractEnsInfoFromTransactionsAction(etherspotTransactionsHistory));
+      if (!etherspotTransactionsHistory?.length) return;
+
+      dispatch(syncAccountHistoryAction(etherspotTransactionsHistory, accountId, supportedChain));
+
+      if (supportedChain !== CHAIN.ETHEREUM) return;
+
+      dispatch(extractEnsInfoFromTransactionsAction(etherspotTransactionsHistory));
+    }));
 
     await dispatch(fetchCollectiblesHistoryAction(etherspotAccount));
 
