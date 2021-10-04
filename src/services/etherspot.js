@@ -592,12 +592,18 @@ export class EtherspotService {
     });
   }
 
-  getTransactionsByAddress(address: string): Promise<?(EtherspotTransaction[])> {
-    return this.sdk
+  async getTransactionsByAddress(chain: Chain, address: string): Promise<?(EtherspotTransaction[])> {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      reportErrorLog('getSupportedAssetsByChain failed: no sdk instance for chain', { chain });
+      return null;
+    }
+
+    return sdk
       .getTransactions({ account: address })
       .then(({ items }) => items)
       .catch((error) => {
-        reportErrorLog('getTransactionsByAddress -> getTransactions failed', { address, error });
+        reportErrorLog('getTransactionsByAddress -> getTransactions failed', { address, chain, error });
         return null;
       });
   }
