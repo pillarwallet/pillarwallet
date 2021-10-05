@@ -69,6 +69,7 @@ function TokenIcon({ url, size = 48, chain, style, imageStyle, chainIconStyle }:
         width={size}
         height={size}
         style={[imageSizeStyle, imageStyle]}
+        fallbackSource={genericToken}
       />
 
       {!!ChainIcon && (
