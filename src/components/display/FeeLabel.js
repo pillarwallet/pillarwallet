@@ -28,12 +28,8 @@ import Text from 'components/core/Text';
 import Spinner from 'components/Spinner';
 import { Spacing } from 'components/legacy/Layout';
 
-// Selectors
-import { useFiatCurrency, useChainRates } from 'selectors';
-
 // Utils
-import { getBalanceInFiat } from 'utils/assets';
-import { formatTokenValue, formatFiatValue } from 'utils/format';
+import { formatTokenValue } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 
 // Types
@@ -55,26 +51,17 @@ type Props = {
   isLoading?: boolean,
   isNotEnough?: boolean,
   style?: ViewStyleProp,
-  disableFeeSwitching?: boolean,
 };
 
 function FeeLabel({
   value,
   assetSymbol,
-  assetAddress,
   mode,
   isLoading,
   isNotEnough,
   style,
-  chain,
-  disableFeeSwitching,
 }: Props) {
   const { t } = useTranslation();
-
-  const [showFiatValue, setShowFiatValue] = React.useState(true);
-
-  const chainRates = useChainRates(chain);
-  const currency = useFiatCurrency();
 
   const colors = useThemeColors();
 
@@ -82,8 +69,6 @@ function FeeLabel({
     return <Spinner size={20} trackWidth={2} style={style} />;
   }
 
-  const valueInFiat = BigNumber(getBalanceInFiat(currency, value, chainRates, assetAddress));
-  const labelValue = showFiatValue ? formatFiatValue(valueInFiat, currency) : formatTokenValue(value, assetSymbol);
   const tokenValue = formatTokenValue(value, assetSymbol);
 
   return (
@@ -94,15 +79,10 @@ function FeeLabel({
 
       <Spacing w={8} />
 
-      {disableFeeSwitching ? (
-        <FeeTokenValue $isNotEnough={isNotEnough}>
-          <Text color={isNotEnough ? colors.negative : colors.secondaryText}>{tokenValue}</Text>
-        </FeeTokenValue>
-      ) : (
-        <FeeValue onPress={() => setShowFiatValue(!showFiatValue)} $isNotEnough={isNotEnough}>
-          <Text color={isNotEnough ? colors.negative : colors.secondaryText}>{labelValue}</Text>
-        </FeeValue>
-      )}
+      <FeeValue $isNotEnough={isNotEnough}>
+        <Text color={isNotEnough ? colors.negative : colors.secondaryText}>{tokenValue}</Text>
+      </FeeValue>
+
     </LabelWrapper>
   );
 }
@@ -114,10 +94,6 @@ const LabelWrapper = styled.View`
   align-items: center;
 `;
 
-const FeeValue = styled.TouchableOpacity`
-  justify-content: center;
-`;
-
-const FeeTokenValue = styled.View`
+const FeeValue = styled.View`
   justify-content: center;
 `;
