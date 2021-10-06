@@ -135,6 +135,7 @@ function TokenTransactionEventDetails({ event, chain }: Props) {
             assetAddress={event.fee.address}
             mode="actual"
             chain={chain}
+            disableFeeSwitching
           />
         )}
         <Spacing h={spacing.mediumLarge} />

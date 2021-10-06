@@ -55,6 +55,7 @@ type Props = {
   isLoading?: boolean,
   isNotEnough?: boolean,
   style?: ViewStyleProp,
+  disableFeeSwitching?: boolean,
 };
 
 function FeeLabel({
@@ -66,6 +67,7 @@ function FeeLabel({
   isNotEnough,
   style,
   chain,
+  disableFeeSwitching,
 }: Props) {
   const { t } = useTranslation();
 
@@ -82,6 +84,7 @@ function FeeLabel({
 
   const valueInFiat = BigNumber(getBalanceInFiat(currency, value, chainRates, assetAddress));
   const labelValue = showFiatValue ? formatFiatValue(valueInFiat, currency) : formatTokenValue(value, assetSymbol);
+  const tokenValue = formatTokenValue(value, assetSymbol);
 
   return (
     <LabelWrapper style={style}>
@@ -91,9 +94,15 @@ function FeeLabel({
 
       <Spacing w={8} />
 
-      <FeeValue onPress={() => setShowFiatValue(!showFiatValue)} $isNotEnough={isNotEnough}>
-        <Text color={isNotEnough ? colors.negative : colors.secondaryText}>{labelValue}</Text>
-      </FeeValue>
+      {disableFeeSwitching ? (
+        <FeeTokenValue $isNotEnough={isNotEnough}>
+          <Text color={isNotEnough ? colors.negative : colors.secondaryText}>{tokenValue}</Text>
+        </FeeTokenValue>
+      ) : (
+        <FeeValue onPress={() => setShowFiatValue(!showFiatValue)} $isNotEnough={isNotEnough}>
+          <Text color={isNotEnough ? colors.negative : colors.secondaryText}>{labelValue}</Text>
+        </FeeValue>
+      )}
     </LabelWrapper>
   );
 }
@@ -106,5 +115,9 @@ const LabelWrapper = styled.View`
 `;
 
 const FeeValue = styled.TouchableOpacity`
+  justify-content: center;
+`;
+
+const FeeTokenValue = styled.View`
   justify-content: center;
 `;
