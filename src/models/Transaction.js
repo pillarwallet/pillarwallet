@@ -176,6 +176,7 @@ export type Transaction = {
 
 export type TransactionPayload = {
   gasLimit?: number,
+  gasUsed?: number,
   to: string,
   receiverEnsName?: ?string,
   name?: string,
@@ -221,6 +222,7 @@ export type TransactionEthers = {
   value: string | Object,
   gasPrice?: Object | number,
   gasLimit?: Object | number,
+  gasUsed?: Object | number,
   assetAddress: string,
   assetSymbol: string,
   note?: ?string,
