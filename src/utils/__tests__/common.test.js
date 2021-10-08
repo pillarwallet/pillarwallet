@@ -340,10 +340,10 @@ describe('Common utils', () => {
       });
     });
     it('formats other tokens correctly', () => {
-      expect(formatTokenAmount(123.456789, PLR)).toEqual('123.45');
-      expect(formatTokenAmount('123.456789', USDC)).toEqual('123.45');
+      expect(formatTokenAmount(123.456789, PLR)).toEqual('123.456789');
+      expect(formatTokenAmount('123.456789', USDC)).toEqual('123.456789');
       expect(formatTokenAmount('123.4000000', USDC)).toEqual('123.4');
-      expect(formatTokenAmount('123.456789')).toEqual('123.45');
+      expect(formatTokenAmount('123.456789')).toEqual('123.456789');
     });
   });
 
