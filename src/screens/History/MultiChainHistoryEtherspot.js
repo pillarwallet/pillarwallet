@@ -214,7 +214,10 @@ function useEnsRegisteredEvent(chain: Chain): ?EnsNameRegisteredEvent {
     return {
       id: `ethereum-${EVENT_TYPE.ENS_NAME_REGISTERED}`,
       type: EVENT_TYPE.ENS_NAME_REGISTERED,
-      date: ensRegisteredDate ?? new Date(+createdAt - 1), // -1 to list it before smart wallet is created (per AC),
+      // As per acceptance criteria, the ENS history item needs to be
+      // visually after the wallet creation history item. Adding 1000ms
+      // achieves this.
+      date: ensRegisteredDate ?? new Date(Date.parse(createdAt) + 1000),
       ensName: getMigratedEnsName(accounts),
       hash: transactionHash,
       fee: transactionFee,
