@@ -30,15 +30,16 @@ import t from 'translations/translate';
 describe('Validators', () => {
   describe('validatePin', () => {
     it('should validate the length of provided pincode', () => {
-      const pin = '123456';
-      const expectedErrorMessage = t('auth:error.invalidPin.tooLong', { requiredLength: 6 });
-      expect(validatePin(pin)).toHaveLength(0);
-      expect(validatePin('1')).toBe(expectedErrorMessage);
+      const pin = '1234';
+      const requiredLength = 4;
+      const expectedErrorMessage = t('auth:error.invalidPin.tooLong', { requiredLength });
+      expect(validatePin(pin, requiredLength)).toHaveLength(0);
+      expect(validatePin('12345', requiredLength)).toBe(expectedErrorMessage);
     });
 
     it('should allow only digits', () => {
       const expectedErrorMessage = t('auth:error.invalidPin.useNumericSymbolsOnly');
-      expect(validatePin('1asdsd')).toBe(expectedErrorMessage);
+      expect(validatePin('1asd', 4)).toBe(expectedErrorMessage);
     });
   });
 

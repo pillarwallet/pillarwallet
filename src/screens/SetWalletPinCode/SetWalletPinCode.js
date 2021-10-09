@@ -30,6 +30,10 @@ import { MediumText, Paragraph } from 'components/legacy/Typography';
 // constants
 import { PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
 
+// selectors
+import { useRootSelector } from 'selectors';
+import { maxPinCodeLengthSelector } from 'selectors/appSettings';
+
 // utils
 import { validatePin } from 'utils/validators';
 import { fontStyles, spacing } from 'utils/variables';
@@ -61,6 +65,7 @@ const SetWalletPinCode = ({
 }: Props) => {
   const [pinCode, setPinCode] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+  const maxPinCodeLength = useRootSelector(maxPinCodeLengthSelector);
 
   useEffect(() => {
     if (errorMessage) setErrorMessage(null);
@@ -68,7 +73,7 @@ const SetWalletPinCode = ({
   }, [pinCode]);
 
   const handlePinSubmit = (submittedPinCode: string) => {
-    const validationError = validatePin(submittedPinCode);
+    const validationError = validatePin(submittedPinCode, maxPinCodeLength);
     if (validationError) {
       setErrorMessage(validationError);
       return;

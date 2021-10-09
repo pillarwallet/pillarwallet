@@ -35,7 +35,7 @@ import {
   TX_FAILED_STATUS,
   TX_PENDING_STATUS,
 } from 'constants/historyConstants';
-import { ASSET_CATEGORY, ETH } from 'constants/assetsConstants';
+import { ASSET_CATEGORY } from 'constants/assetsConstants';
 import { EXCHANGE_PROVIDER } from 'constants/exchangeConstants';
 import { TRANSACTION_STATUS } from 'models/History';
 import { CHAIN } from 'constants/chainConstants';
@@ -51,6 +51,7 @@ import { fromEthersBigNumber } from 'utils/bigNumber';
 import { chainFromChainId, nativeAssetPerChain } from 'utils/chains';
 import { buildHistoryTransaction } from 'utils/history';
 import { isProdEnv } from 'utils/environment';
+import { isCaseInsensitiveMatch } from 'utils/common';
 
 // types
 import type {
@@ -85,13 +86,12 @@ export const isEtherspotAccountDeployed = (account: ?Account, chain: Chain) => {
 };
 
 export const parseEtherspotTransactions = (
+  chain: Chain,
   etherspotTransactions: EtherspotTransaction[],
   supportedAssets: Asset[],
 ): Transaction[] => etherspotTransactions
   .reduce((mappedHistoryTransactions, etherspotTransaction) => {
     const {
-      from,
-      to,
       gasLimit,
       gasPrice,
       gasUsed,
@@ -99,21 +99,34 @@ export const parseEtherspotTransactions = (
       status: rawStatus,
       asset: assetPayload,
       timestamp: createdAt,
+      value: nativeAssetValue,
+      batch,
     } = etherspotTransaction;
+    let { to, from } = etherspotTransaction;
 
-    let { address: assetAddress, symbol: assetSymbol } = nativeAssetPerChain.ethereum;
-    let value = EthersBigNumber.from(0);
+    let { address: assetAddress, symbol: assetSymbol } = nativeAssetPerChain[chain];
+    let value = nativeAssetValue ?? EthersBigNumber.from(0);
+
+    // from address on batch is the actual wallet addresses
+    if (batch?.from) {
+      ({ from } = batch);
+    }
 
     if (assetPayload) {
       const {
+        to: assetTo,
+        from: assetFrom,
         value: assetValue,
         contract: contractAddress,
         name: assetName,
       } = assetPayload;
 
+      if (assetTo) to = assetTo;
+      if (assetFrom) from = assetFrom;
+
       value = assetValue;
 
-      if (assetName !== ETH) {
+      if (!isCaseInsensitiveMatch(assetName, nativeAssetPerChain[chain].symbol)) {
         const supportedAsset = findAssetByAddress(supportedAssets, contractAddress);
 
         // asset not supported
