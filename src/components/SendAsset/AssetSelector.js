@@ -55,6 +55,15 @@ type Props = {|
   txFeeInfo: ?TransactionFeeInfo,
 |};
 
+const getToken = (tokens, selectedToken) => {
+  return tokens.find(e => {
+    if (selectedToken?.chain === e.chain && selectedToken?.contractAddress === e.contractAddress) {
+      return true;
+    }
+    return false;
+  });
+};
+
 const AssetSelector = ({
   selectedToken,
   onSelectToken,
@@ -69,7 +78,11 @@ const AssetSelector = ({
   const tokens = useRootSelector(accountAssetsWithBalanceSelector);
   const collectibles = flattenCollectibles(useRootSelector(accountCollectiblesSelector));
 
-  const tokenBalance = useWalletAssetBalance(selectedToken?.chain, selectedToken?.address);
+  if (!!selectedToken && !tokens.includes(selectedToken)) {
+    selectedToken = getToken(tokens, selectedToken);
+  }
+
+  const tokenBalance = useWalletAssetBalance(selectedToken?.chain, selectedToken?.contractAddress);
   const tokenBalanceAfterFee = useTokenBalanceAfterFee(selectedToken, txFeeInfo);
 
   React.useEffect(() => {
@@ -119,7 +132,7 @@ const AssetSelector = ({
   }
 
   // Disable send max for native assets, as it's hard to get it right atm.
-  const disableMaxValue = isNativeAsset(selectedToken?.chain, selectedToken?.address);
+  const disableMaxValue = isNativeAsset(selectedToken?.chain, selectedToken?.contractAddress);
 
   return (
     <TokenFiatValueInputs

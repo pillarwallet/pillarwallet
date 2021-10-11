@@ -576,8 +576,9 @@
     "item": {
       "settings": "Settings",
       "addressBook": "Address book",
-      "supportChat": "Support chat",
-      "storybook": "Storybook"
+      "supportChat": "Support",
+      "storybook": "Storybook",
+      "supportConversations": "Support conversations"
     },
     "footer": {
       "privacyPolicy": "Privacy Policy",
