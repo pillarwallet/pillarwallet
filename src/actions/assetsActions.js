@@ -278,6 +278,7 @@ export const sendAssetAction = (
       assetAddress: contractAddress ?? nativeAssetPerChain[chain].address,
       gasPrice: transaction.gasPrice,
       gasLimit: transaction.gasLimit,
+      gasUsed: transaction.gasUsed,
       isPPNTransaction: !!usePPN,
       status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
       value: transactionValue,
