@@ -27,6 +27,7 @@ import CollectibleImage from 'components/CollectibleImage';
 // Utils
 import { useThemeColors } from 'utils/themes';
 import { useThemedImages } from 'utils/images';
+import { spacing } from 'utils/variables';
 
 // Types
 import type { ViewStyleProp, ImageStyleProp } from 'utils/types/react-native';
@@ -45,16 +46,22 @@ type Props = {|
   style?: ViewStyleProp,
   imageStyle?: ImageStyleProp,
   chainIconStyle?: ViewStyleProp,
+  setMarginRight?: boolean,
 |};
 
-function TokenIcon({ url, size = 48, chain, style, imageStyle, chainIconStyle }: Props) {
+function TokenIcon({ url, size = 48, chain, style, imageStyle, chainIconStyle, setMarginRight }: Props) {
   const { genericToken } = useThemedImages();
   const colors = useThemeColors();
 
   const source = url ? { uri: url } : genericToken;
-  const imageSizeStyle = {
-    borderRadius: size / 2,
-  };
+  const imageSizeStyle = setMarginRight
+    ? {
+      borderRadius: size / 2,
+      marginRight: spacing.medium,
+    }
+    : {
+      borderRadius: size / 2,
+    };
 
   const ChainIcon = chain ? IconComponentPerChain[chain] : undefined;
 
@@ -69,6 +76,7 @@ function TokenIcon({ url, size = 48, chain, style, imageStyle, chainIconStyle }:
         width={size}
         height={size}
         style={[imageSizeStyle, imageStyle]}
+        fallbackSource={genericToken}
       />
 
       {!!ChainIcon && (
