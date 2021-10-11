@@ -50,7 +50,7 @@ function DepositListItem({ title, subtitle, iconUrl, value, change, onPress }: P
 
   return (
     <TouchableContainer onPress={onPress} disabled={!onPress}>
-      <TokenIcon url={iconUrl} style={styles.icon} />
+      <TokenIcon url={iconUrl} setMarginRight />
 
       <TitleContainer>
         <Text variant="medium" numberOfLines={1}>
@@ -68,12 +68,6 @@ function DepositListItem({ title, subtitle, iconUrl, value, change, onPress }: P
 }
 
 export default DepositListItem;
-
-const styles = {
-  icon: {
-    marginRight: spacing.medium,
-  },
-};
 
 const TouchableContainer = styled.TouchableOpacity`
   flex-direction: row;

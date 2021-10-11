@@ -51,7 +51,7 @@ function LiquidityPoolListItem({ title, subtitle, iconUrl, value, change, onPres
 
   return (
     <TouchableContainer onPress={onPress} disabled={!onPress}>
-      <TokenIcon url={iconUrl} style={styles.icon} />
+      <TokenIcon url={iconUrl} setMarginRight />
 
       <TitleContainer>
         <Text variant="medium" numberOfLines={1}>
@@ -69,12 +69,6 @@ function LiquidityPoolListItem({ title, subtitle, iconUrl, value, change, onPres
 }
 
 export default LiquidityPoolListItem;
-
-const styles = {
-  icon: {
-    marginRight: spacing.medium,
-  },
-};
 
 const TouchableContainer = styled.TouchableOpacity`
   flex-direction: row;

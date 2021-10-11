@@ -47,7 +47,7 @@ function InvestmentListItem({ title, iconUrl, value, change, onPress }: Props) {
 
   return (
     <TouchableContainer onPress={onPress} disabled={!onPress}>
-      <TokenIcon url={iconUrl} style={styles.icon} />
+      <TokenIcon url={iconUrl} setMarginRight />
       <TitleContainer>
         <Text variant="medium" numberOfLines={1}>
           {title}
@@ -63,12 +63,6 @@ function InvestmentListItem({ title, iconUrl, value, change, onPress }: Props) {
 }
 
 export default InvestmentListItem;
-
-const styles = {
-  icon: {
-    marginRight: spacing.medium,
-  },
-};
 
 const TouchableContainer = styled.TouchableOpacity`
   flex-direction: row;
