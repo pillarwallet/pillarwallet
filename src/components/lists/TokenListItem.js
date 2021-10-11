@@ -83,7 +83,7 @@ function TokenListItem({
     <Container onPress={onPress} disabled={!onPress} style={style}>
       {!!leftAddOn && <LeftAddOn>{leftAddOn}</LeftAddOn>}
 
-      <TokenIcon url={iconUrl} style={styles.tokenIcon} />
+      <TokenIcon url={iconUrl} setMarginRight />
 
       <TitleContainer>
         <Title numberOfLines={1}>{name}</Title>
@@ -101,12 +101,6 @@ function TokenListItem({
 }
 
 export default TokenListItem;
-
-const styles = {
-  tokenIcon: {
-    marginRight: spacing.medium,
-  },
-};
 
 const Container = styled(TouchableOpacity)`
   flex-direction: row;
