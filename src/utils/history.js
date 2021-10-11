@@ -59,7 +59,7 @@ export const buildHistoryTransaction = ({
   to,
   value,
   gasPrice,
-  gasLimit,
+  gasUsed,
   assetSymbol,
   assetAddress,
   note,
@@ -73,7 +73,7 @@ export const buildHistoryTransaction = ({
   type,
 }: TransactionEthers): Transaction => ({
   status: status || TX_PENDING_STATUS,
-  gasUsed: gasLimit ? Number(gasLimit) : 0,
+  gasUsed: gasUsed ? Number(gasUsed) : 0,
   gasPrice: gasPrice ? Number(gasPrice) : 0,
   value: typeof value === 'object' ? value.toString() : value,
   from,
