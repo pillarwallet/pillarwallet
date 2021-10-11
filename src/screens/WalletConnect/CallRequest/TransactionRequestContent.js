@@ -94,18 +94,15 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
   const { estimateCallRequestTransaction, callRequests } = useWalletConnect();
 
   React.useEffect(() => {
+    // perform additional check to avoid estimate on request dismiss
+    const requestExists = callRequests.some(({ callId }) => callId === request.callId);
+    if (!requestExists) return;
+
     if (sdkInstances.length <= 0) {
       setInterval(() => {
         setSdkInstances(Object.keys(etherspotService.instances));
       }, 2000);
-    }
-  }, [sdkInstances.length]);
-
-  React.useEffect(() => {
-    // perform additional check to avoid estimate on request dismiss
-    const requestExists = callRequests.some(({ callId }) => callId === request.callId);
-    if (!requestExists) return;
-    if (sdkInstances.length > 0) {
+    } else {
       setIsLoading(false);
       estimateCallRequestTransaction(request);
     }
