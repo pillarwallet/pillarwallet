@@ -42,9 +42,11 @@ import {
   ETH,
   HIGH_VALUE_TOKENS,
 } from 'constants/assetsConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // services
 import etherspotService from 'services/etherspot';
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // utils
 import { wrapBigNumber } from 'utils/bigNumber';
@@ -244,7 +246,8 @@ export const isValidNumber = (amount: Value = '0') => {
 export const getDecimalPlaces = (assetSymbol: ?string): number => {
   if (assetSymbol === ETH) return 4;
   if (HIGH_VALUE_TOKENS.includes(assetSymbol)) return 8;
-  return 2;
+
+  return firebaseRemoteConfig.getNumber(REMOTE_CONFIG.EXCHANGE_AMOUNT_DECIMAL_PLACES);
 };
 
 export const formatAmount = (amount: Value, precision: number = 6): string => {
