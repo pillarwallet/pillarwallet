@@ -60,7 +60,7 @@ function RewardListItem({ title, subtitle, iconUrl, value, assetSymbol, assetAdd
 
   return (
     <TouchableContainer onPress={onPress} disabled={!onPress}>
-      <TokenIcon url={iconUrl} style={styles.icon} />
+      <TokenIcon url={iconUrl} setMarginRight />
 
       <TitleContainer>
         <Text variant="medium" numberOfLines={1}>
@@ -78,12 +78,6 @@ function RewardListItem({ title, subtitle, iconUrl, value, assetSymbol, assetAdd
 }
 
 export default RewardListItem;
-
-const styles = {
-  icon: {
-    marginRight: spacing.medium,
-  },
-};
 
 const TouchableContainer = styled.TouchableOpacity`
   flex-direction: row;

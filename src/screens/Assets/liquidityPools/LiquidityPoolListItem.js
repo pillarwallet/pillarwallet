@@ -25,14 +25,13 @@ import styled from 'styled-components/native';
 // Components
 import FiatValueView from 'components/display/FiatValueView';
 import FiatChangeView from 'components/display/FiatChangeView';
-import Image from 'components/Image';
+import TokenIcon from 'components/display/TokenIcon';
 import Text from 'components/core/Text';
 
 // Selectors
 import { useFiatCurrency } from 'selectors';
 
 // Utils
-import { useThemedImages } from 'utils/images';
 import { spacing } from 'utils/variables';
 import { useThemeColors } from 'utils/themes';
 
@@ -50,13 +49,9 @@ function LiquidityPoolListItem({ title, subtitle, iconUrl, value, change, onPres
   const colors = useThemeColors();
   const currency = useFiatCurrency();
 
-  const { genericToken } = useThemedImages();
-
   return (
     <TouchableContainer onPress={onPress} disabled={!onPress}>
-      <IconContainer>
-        <IconImage source={iconUrl ? { uri: iconUrl } : genericToken} />
-      </IconContainer>
+      <TokenIcon url={iconUrl} setMarginRight />
 
       <TitleContainer>
         <Text variant="medium" numberOfLines={1}>
@@ -79,18 +74,6 @@ const TouchableContainer = styled.TouchableOpacity`
   flex-direction: row;
   padding: ${spacing.small}px ${spacing.large}px;
   min-height: 64px;
-`;
-
-const IconContainer = styled.View`
-  justify-content: center;
-  align-items: center;
-  margin-right: ${spacing.medium}px;
-  width: 48px;
-`;
-
-const IconImage = styled(Image)`
-  width: 48px;
-  height: 48px;
 `;
 
 const TitleContainer = styled.View`

@@ -50,6 +50,9 @@ import { isArchanovaAccountDeployedSelector } from 'selectors/archanova';
 // Hooks
 import useWalletConnect from 'hooks/useWalletConnect';
 
+// Services
+import etherspotService from 'services/etherspot';
+
 // Utils
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
@@ -81,10 +84,29 @@ const SwiperIconComponent = () => {
 };
 
 function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
+  const [sdkInstances, setSdkInstances] = React.useState(Object.keys(etherspotService.instances));
+  const [isLoading, setIsLoading] = React.useState(true);
   const { t } = useTranslation();
   const chainConfigs = useChainsConfig();
   const theme = useTheme();
   const colors = getThemeColors(theme);
+
+  const { estimateCallRequestTransaction, callRequests } = useWalletConnect();
+
+  React.useEffect(() => {
+    // perform additional check to avoid estimate on request dismiss
+    const requestExists = callRequests.some(({ callId }) => callId === request.callId);
+    if (!requestExists) return;
+
+    if (sdkInstances.length <= 0) {
+      setInterval(() => {
+        setSdkInstances(Object.keys(etherspotService.instances));
+      }, 2000);
+    } else {
+      setIsLoading(false);
+      estimateCallRequestTransaction(request);
+    }
+  }, [request, estimateCallRequestTransaction, callRequests, sdkInstances.length]);
 
   const { iconUrl, chain, errorMessage } = useViewData(request);
   const {
@@ -107,7 +129,8 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
   const symbol = transactionPayload?.symbol;
   const assetAddress = transactionPayload?.contractAddress;
   const confirmTitle = !hasNotEnoughGas ? t('button.swipeConfirm') : t('label.notEnoughGas');
-  const isConfirmDisabled = isEstimating || hasNotEnoughGas || !!errorMessage;
+  const isConfirmDisabled = isEstimating || hasNotEnoughGas || !!errorMessage || isLoading;
+  const loadFeeValue = isEstimating || isLoading;
 
   return (
     <>
@@ -138,12 +161,14 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
             value={fee}
             assetSymbol={gasSymbol}
             assetAddress={gasAddress}
-            isLoading={isEstimating}
+            isLoading={loadFeeValue}
             isNotEnough={hasNotEnoughGas}
             chain={chain}
             mode="actual"
           />
-          <Icon name="info" width={16} height={16} color={colors.buttonTextTitle} style={styles.infoIcon} />
+          {!loadFeeValue && (
+            <Icon name="info" width={16} height={16} color={colors.buttonTextTitle} style={styles.infoIcon} />
+          )}
         </FeeView>
       )}
 
@@ -172,7 +197,12 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
       ) : (
         <Button title={confirmTitle} disabled size="large" />
       )}
-      <Button title={t('button.reject')} size="large" onPress={onReject} variant="text" style={styles.buttonStyle} />
+
+      {!loadFeeValue ? (
+        <Button title={t('button.reject')} size="large" onPress={onReject} variant="text" style={styles.buttonStyle} />
+      ) : (
+        <Button title={t('button.reject')} disabled size="large" variant="text" />
+      )}
     </>
   );
 }
@@ -220,16 +250,6 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
     gasToken: feeInfo?.gasToken,
   };
   const hasNotEnoughGas = !isEnoughBalanceForTransactionFee(walletBalances, balanceCheckTransaction, chain);
-
-  const { estimateCallRequestTransaction, callRequests } = useWalletConnect();
-
-  React.useEffect(() => {
-    // perform additional check to avoid estimate on request dismiss
-    const requestExists = callRequests.some(({ callId }) => callId === request.callId);
-    if (!requestExists) return;
-
-    estimateCallRequestTransaction(request);
-  }, [request, estimateCallRequestTransaction, callRequests]);
 
   return {
     fee,

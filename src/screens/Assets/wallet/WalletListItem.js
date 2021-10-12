@@ -77,7 +77,7 @@ function WalletListItem({
 
   return (
     <TouchableContainer onPress={onPress} disabled={!onPress}>
-      <TokenIcon url={iconUrl} style={styles.icon} />
+      <TokenIcon url={iconUrl} setMarginRight />
 
       <TitleContainer>
         <Text variant="medium" numberOfLines={1}>
@@ -98,12 +98,6 @@ function WalletListItem({
 }
 
 export default WalletListItem;
-
-const styles = {
-  icon: {
-    marginRight: spacing.medium,
-  },
-};
 
 const TouchableContainer = styled.TouchableOpacity`
   flex-direction: row;
