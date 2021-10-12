@@ -18,54 +18,83 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React from 'react';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useNavigation } from 'react-navigation-hooks';
 import t from 'translations/translate';
 import styled, { useTheme } from 'styled-components/native';
 
 // Components
-import { Container, Content } from 'components/layout/Layout';
+import { Container, Center } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import Text from 'components/core/Text';
 import Button from 'components/core/Button';
 import Image from 'components/Image';
 
+// Constants
+import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
+
 // Utils
-import { fontStyles, spacing } from 'utils/variables';
+import { fontStyles, spacing, appFont } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
+
+// Actions
+import { setAppThemeAction } from 'actions/appSettingsActions';
 
 const lightTheme = require('assets/images/appAppearence/lightTheme.png');
 const darkTheme = require('assets/images/appAppearence/darkTheme.png');
 
 const AppAppearence = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const theme = useTheme();
+  const { current } = theme;
   const colors = getThemeColors(theme);
+  const [isLightThemePressed, setLightThemePressed] = useState(current === LIGHT_THEME);
+  const [isDarkThemePressed, setDarkThemePressed] = useState(current === DARK_THEME);
+
+  const onPressLightTheme = () => {
+    setLightThemePressed(true);
+    setDarkThemePressed(false);
+    dispatch(setAppThemeAction(LIGHT_THEME, true));
+  };
+
+  const onPressDarkTheme = () => {
+    setDarkThemePressed(true);
+    setLightThemePressed(false);
+    dispatch(setAppThemeAction(DARK_THEME, true));
+  };
+
+  const style = {
+    borderColor: theme.colors.buttonPrimaryBackground,
+    borderWidth: 2,
+    borderRadius: 10,
+  };
 
   return (
     <Container>
-      <HeaderBlock
-        leftItems={[{ close: true }]}
-        navigation={navigation}
-        noPaddingTop
-      />
-      <Content>
+      <HeaderBlock leftItems={[{ close: true }]} navigation={navigation} noPaddingTop />
+      <Center flex={1} padding={spacing.rhythm}>
         <Title>{t('auth:title.appAppearence')}</Title>
-        <Text color={colors.secondaryText} variant="medium" style={{ textAlign: 'center' }}>
+        <Text color={colors.tertiaryText} variant="medium" style={styles.textStyle}>
           {t('auth:paragraph.appAppearenceDescription')}
         </Text>
         <ThemeView>
-          <Themes>
+          <Themes onPress={onPressLightTheme} style={isLightThemePressed && style}>
             <ThemeImage source={lightTheme} />
-            <Text variant="small" style={{ textAlign: 'center' }}>{t('auth:label.light')}</Text>
+            <Text variant="small" style={styles.textStyle}>
+              {t('auth:label.light')}
+            </Text>
           </Themes>
-          <Themes style={styles.themeViewStyle}>
+          <Themes onPress={onPressDarkTheme} style={[styles.themeViewStyle, isDarkThemePressed && style]}>
             <ThemeImage source={darkTheme} />
-            <Text variant="small" style={{ textAlign: 'center' }}>{t('auth:label.dark')}</Text>
+            <Text variant="small" style={styles.textStyle}>
+              {t('auth:label.dark')}
+            </Text>
           </Themes>
         </ThemeView>
         <Button title={t('auth:button.confirm')} size="large" style={styles.confirmButton} />
-      </Content>
+      </Center>
     </Container>
   );
 };
@@ -77,6 +106,9 @@ const styles = {
   themeViewStyle: {
     marginLeft: spacing.small,
   },
+  textStyle: {
+    textAlign: 'center',
+  },
 };
 
 const Title = styled(Text)`
@@ -85,6 +117,7 @@ const Title = styled(Text)`
   height: 48px;
   text-align: center;
   margin-bottom: ${spacing.small}px;
+  font-family: '${appFont.medium}';
 `;
 
 const ThemeView = styled.View`
@@ -94,13 +127,10 @@ const ThemeView = styled.View`
   margin-top: 48px;
 `;
 
-const Themes = styled.View`
+const Themes = styled.TouchableOpacity`
   flex: 1;
   width: 164px;
   height: 206px;
-  borderColor: ${({ theme }) => theme.colors.negative};
-  borderWidth: 2px;
-  border-radius: 10px;
   justify-content: center;
   align-items: center;
 `;

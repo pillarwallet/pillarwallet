@@ -143,13 +143,15 @@ type CenterProps = {|
   children: React.Node,
   flex?: number,
   height?: string | number,
-  weight?: string | number,
+  width?: string | number,
+  padding?: string | number,
 |};
 
 export const Center: React.ComponentType<CenterProps> = styled.View`
   ${({ flex }) => flex != null && `flex: ${flex};`};
   ${({ height }) => height != null && `height: ${height}px;`}
   ${({ width }) => width != null && `width: ${width}px;`}
+  ${({ padding }) => padding != null && `padding: 0 ${padding}px;`}
   justify-content: center;
   align-items: center;
 `;
