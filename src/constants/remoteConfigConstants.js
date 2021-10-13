@@ -58,6 +58,7 @@ export const REMOTE_CONFIG = {
   EXCHANGE_FEE_POLYGON_CAPTURE_ADDRESS: 'exchange_fee_polygon_capture_address',
   EXCHANGE_FEE_BSC_CAPTURE_ADDRESS: 'exchange_fee_bsc_capture_address',
   EXCHANGE_FEE_CAPTURE_PERCENTAGE: 'exchange_fee_capture_percentage',
+  EXCHANGE_AMOUNT_DECIMAL_PLACES: 'exchange_amount_decimal_places',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values
@@ -98,4 +99,5 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.EXCHANGE_FEE_POLYGON_CAPTURE_ADDRESS]: '0x370631d0C26F52331DF4efCBe59b679315da983F',
   [REMOTE_CONFIG.EXCHANGE_FEE_BSC_CAPTURE_ADDRESS]: '0xBda4bA77F5340c74f430d49120abfe0BDDAD122a',
   [REMOTE_CONFIG.EXCHANGE_FEE_CAPTURE_PERCENTAGE]: 0.85,
+  [REMOTE_CONFIG.EXCHANGE_AMOUNT_DECIMAL_PLACES]: 4,
 };
