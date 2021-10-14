@@ -65,6 +65,12 @@ const sushiswapLightMonochrome = require('assets/images/exchangeProviders/sushis
 const sushiswapDarkVertical = require('assets/images/exchangeProviders/sushiswapDarkVertical.png');
 const sushiswapDarkHorizontal = require('assets/images/exchangeProviders/sushiswapDarkHorizontal.png');
 const sushiswapDarkMonochrome = require('assets/images/exchangeProviders/sushiswapDarkMonochrome.png');
+const honeyswapLightHorizontal = require('assets/images/exchangeProviders/honeyswapLightHorizontal.png');
+const honeyswapLightVertical = require('assets/images/exchangeProviders/honeyswapLightVertical.png');
+const honeyswapLightMonochrome = require('assets/images/exchangeProviders/honeyswapLightMonochrome.png');
+const honeyswapDarkVertical = require('assets/images/exchangeProviders/honeyswapDarkVertical.png');
+const honeyswapDarkHorizontal = require('assets/images/exchangeProviders/honeyswapDarkHorizontal.png');
+const honeyswapDarkMonochrome = require('assets/images/exchangeProviders/honeyswapDarkMonochrome.png');
 
 export type ExchangeOptions = {
   fromOptions: AssetOption[],
@@ -109,6 +115,12 @@ export function useProvidersConfig(): { [key: ExchangeProvider]: ProviderConfig 
       iconVertical: isDarkTheme ? sushiswapDarkVertical : sushiswapLightVertical,
       iconHorizontal: isDarkTheme ? sushiswapDarkHorizontal : sushiswapLightHorizontal,
       iconMonochrome: isDarkTheme ? sushiswapDarkMonochrome : sushiswapLightMonochrome,
+    },
+    [PROVIDER.HONEYSWAP]: {
+      title: t('exchangeContent.providers.honeyswap'),
+      iconVertical: isDarkTheme ? honeyswapDarkVertical : honeyswapLightVertical,
+      iconHorizontal: isDarkTheme ? honeyswapDarkHorizontal : honeyswapLightHorizontal,
+      iconMonochrome: isDarkTheme ? honeyswapDarkMonochrome : honeyswapLightMonochrome,
     },
   };
 }
