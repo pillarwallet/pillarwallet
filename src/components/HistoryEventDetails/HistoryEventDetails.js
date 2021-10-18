@@ -23,6 +23,7 @@ import * as React from 'react';
 // Types
 import { type Event, EVENT_TYPE } from 'models/History';
 import type { Chain } from 'models/Chain';
+import type { AssetDataNavigationParam } from 'models/Asset';
 
 // Local
 import TokenTransactionEventDetails from './layouts/TokenTransactionEventDetails';
@@ -36,13 +37,14 @@ import EnsNameEventDetails from './layouts/EnsNameEventDetails';
 type Props = {|
   event: Event,
   chain: Chain,
+  assetData: AssetDataNavigationParam
 |};
 
-function HistoryEventDetails({ event, chain }: Props) {
+function HistoryEventDetails({ event, chain, assetData }: Props) {
   switch (event.type) {
     case EVENT_TYPE.TOKEN_RECEIVED:
     case EVENT_TYPE.TOKEN_SENT:
-      return <TokenTransactionEventDetails event={event} chain={chain} />;
+      return <TokenTransactionEventDetails event={event} chain={chain} assetData={assetData} />;
     case EVENT_TYPE.COLLECTIBLE_RECEIVED:
     case EVENT_TYPE.COLLECTIBLE_SENT:
       return <CollectibleTransactionEventDetails event={event} chain={chain} />;

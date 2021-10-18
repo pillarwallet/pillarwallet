@@ -49,6 +49,7 @@ import { spacing } from 'utils/variables';
 // Types
 import { EVENT_TYPE, type TokenTransactionEvent } from 'models/History';
 import type { Chain } from 'models/Chain';
+import type { AssetDataNavigationParam } from 'models/Asset';
 
 // Local
 import BaseEventDetails from './BaseEventDetails';
@@ -56,9 +57,10 @@ import BaseEventDetails from './BaseEventDetails';
 type Props = {|
   event: TokenTransactionEvent,
   chain: Chain,
+  assetData: AssetDataNavigationParam
 |};
 
-function TokenTransactionEventDetails({ event, chain }: Props) {
+function TokenTransactionEventDetails({ event, chain, assetData }: Props) {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -76,6 +78,7 @@ function TokenTransactionEventDetails({ event, chain }: Props) {
         name: ensRegistry[address] ?? address,
         ensName: ensRegistry[address],
       },
+      assetData,
     });
   };
 

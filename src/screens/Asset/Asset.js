@@ -224,7 +224,11 @@ const AssetScreen = ({
               />
             )}
             {/* $FlowFixMe: should be fine after Archanova history mappings are discarded */}
-            {isEtherspotAccount(activeAccount) && <HistoryList items={transactions} chain={chain} />}
+            {isEtherspotAccount(activeAccount) && <HistoryList
+              items={transactions}
+              chain={chain}
+              assetData={assetData}
+            />}
           </>
         )}
       </Content>
