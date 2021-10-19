@@ -16,8 +16,7 @@ jobs:
           echo "Today is $currentday day of the month"
           currentweek=$(date '+%V' | sed "s/^0*//g")
           echo "This is $currentweek week of the year"
-          isodd=$(expr $currentweek % 2)
-          if [ $isodd = 1 ]
+          if [ `echo "$currentweek % 2" | bc` -eq 1 ]
           then
             echo "This is an odd week of a year. Let's create PR!"
             echo '::set-output name=open-pr::green'
