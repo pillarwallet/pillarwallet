@@ -55,7 +55,7 @@ export const getPoapCollectiblesOnXDai = async (walletAddress: string): Promise<
   /* eslint-disable i18next/no-literal-string */
   const result = await callSubgraph(poapSubgraphName, `
     {
-      tokens(first: 5, where: {
+      tokens(where: {
         owner: "${walletAddress.toLowerCase()}"
       }) {
         id
