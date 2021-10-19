@@ -39,7 +39,7 @@ describe('The fiatToCrypto.js utility module', () => {
         fiatValue: fakeFiatValue,
         hostApiKey: null,
         userAddress: fakeEthAddress,
-        swapAsset: ['ETH', 'DAI', 'PLR', 'USDC', 'USDT', 'MATIC', 'MATIC_DAI', 'MATIC_USDC', 'xDAI'].join(','),
+        swapAsset: ['ETH', 'DAI', 'PLR', 'USDC', 'USDT', 'MATIC', 'MATIC_DAI', 'MATIC_USDC', 'xDAI', 'BNB'].join(','),
       };
       const expectedUrl = `${rampStagingUrl}?${querystring.stringify(expectedParams)}`;
 
