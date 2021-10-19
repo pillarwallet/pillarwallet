@@ -43,7 +43,6 @@ import { useRootSelector } from 'selectors';
 // Types
 import { EVENT_TYPE, type Event } from 'models/History';
 import type { Chain } from 'models/Chain';
-import type { AssetDataNavigationParam } from 'models/Asset';
 
 // Local
 import { mapEventsToSections, type HistorySection } from './utils';
@@ -57,17 +56,16 @@ import EnsNameItem from './items/EnsNameItem';
 type Props = {|
   items: ?(Event[]),
   chain: Chain,
-  assetData: ?(AssetDataNavigationParam)
 |};
 
-function HistoryList({ items, chain, assetData }: Props) {
+function HistoryList({ items, chain }: Props) {
   const safeArea = useSafeAreaInsets();
   const dispatch = useDispatch();
 
   const sections = mapEventsToSections(items ?? []);
 
   const showEventDetails = (event: Event) => {
-    Modal.open(() => <HistoryEventDetails event={event} chain={chain} assetData={assetData} />);
+    Modal.open(() => <HistoryEventDetails event={event} chain={chain} />);
   };
 
   const renderSectionHeader = (section: HistorySection) => {

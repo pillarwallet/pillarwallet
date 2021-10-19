@@ -27,7 +27,6 @@ import { ADDRESS_ZERO } from 'constants/assetsConstants';
 
 // Types
 import { EVENT_TYPE, TRANSACTION_STATUS, type Event } from 'models/History';
-import type { AssetDataNavigationParam } from 'models/Asset';
 
 // Local
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
@@ -40,21 +39,8 @@ export const mockEthAddress = ADDRESS_ZERO;
 
 const stories = storiesOf('HistoryList', module).addDecorator(WithThemeDecorator);
 
-const assetData: AssetDataNavigationParam = {
-  chain: 'ethereum',
-  contractAddress: '0x0000000000000000000000000000000000000000',
-  decimals: 18,
-  icon: 'https://tokens.1inch.exchange/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png',
-  iconColor: 'https://tokens.1inch.exchange/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png',
-  id: 'ETH',
-  imageUrl: 'https://tokens.1inch.exchange/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png',
-  name: 'Ethereum',
-  patternIcon: 'https://tokens.1inch.exchange/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png',
-  token: 'ETH',
-};
-
 stories.add('basic transactions', () => {
-  return <HistoryList items={basicItems} chain={CHAIN.ETHEREUM} assetData={assetData} />;
+  return <HistoryList items={basicItems} chain={CHAIN.ETHEREUM} />;
 });
 
 const basicItems: Event[] = [

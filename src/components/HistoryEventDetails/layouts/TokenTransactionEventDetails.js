@@ -49,7 +49,6 @@ import { spacing } from 'utils/variables';
 // Types
 import { EVENT_TYPE, type TokenTransactionEvent } from 'models/History';
 import type { Chain } from 'models/Chain';
-import type { AssetDataNavigationParam } from 'models/Asset';
 
 // Local
 import BaseEventDetails from './BaseEventDetails';
@@ -57,10 +56,9 @@ import BaseEventDetails from './BaseEventDetails';
 type Props = {|
   event: TokenTransactionEvent,
   chain: Chain,
-  assetData: ?(AssetDataNavigationParam)
 |};
 
-function TokenTransactionEventDetails({ event, chain, assetData }: Props) {
+function TokenTransactionEventDetails({ event, chain }: Props) {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -71,14 +69,17 @@ function TokenTransactionEventDetails({ event, chain, assetData }: Props) {
 
   const viewOnBlockchain = () => dispatch(viewTransactionOnBlockchainAction(chain, event));
 
-  const sendTokensToAddress = (address: string) => {
+  const sendTokensToAddress = (address: string, contractAddress: string) => {
     navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW, {
       contact: {
         ethAddress: address,
         name: ensRegistry[address] ?? address,
         ensName: ensRegistry[address],
       },
-      assetData,
+      assetData: {
+        chain,
+        contractAddress,
+      },
     });
   };
 
@@ -104,7 +105,7 @@ function TokenTransactionEventDetails({ event, chain, assetData }: Props) {
         <Button
           variant="secondary"
           title={t('button.sendBack')}
-          onPress={() => sendTokensToAddress(event.fromAddress)}
+          onPress={() => sendTokensToAddress(event.fromAddress, event.value?.address)}
         />
         <Spacing h={spacing.small} />
         <Button variant="text" title={t('button.viewOnBlockchain')} onPress={viewOnBlockchain} />
