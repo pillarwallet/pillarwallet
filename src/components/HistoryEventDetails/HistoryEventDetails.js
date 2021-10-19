@@ -37,7 +37,7 @@ import EnsNameEventDetails from './layouts/EnsNameEventDetails';
 type Props = {|
   event: Event,
   chain: Chain,
-  assetData: AssetDataNavigationParam
+  assetData: ?(AssetDataNavigationParam)
 |};
 
 function HistoryEventDetails({ event, chain, assetData }: Props) {

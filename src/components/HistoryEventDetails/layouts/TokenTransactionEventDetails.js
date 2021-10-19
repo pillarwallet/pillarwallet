@@ -57,7 +57,7 @@ import BaseEventDetails from './BaseEventDetails';
 type Props = {|
   event: TokenTransactionEvent,
   chain: Chain,
-  assetData: AssetDataNavigationParam
+  assetData: ?(AssetDataNavigationParam)
 |};
 
 function TokenTransactionEventDetails({ event, chain, assetData }: Props) {

@@ -57,7 +57,7 @@ import EnsNameItem from './items/EnsNameItem';
 type Props = {|
   items: ?(Event[]),
   chain: Chain,
-  assetData: AssetDataNavigationParam
+  assetData: ?(AssetDataNavigationParam)
 |};
 
 function HistoryList({ items, chain, assetData }: Props) {
