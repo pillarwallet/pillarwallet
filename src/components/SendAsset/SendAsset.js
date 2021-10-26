@@ -97,11 +97,11 @@ const SendAsset = ({
 }: Props) => {
   let defaultAssetData = navigation.getParam('assetData');
 
-  if (!defaultAssetData.token && defaultAssetData.contractAddress && defaultAssetData.chain) {
+  if (!defaultAssetData?.token && defaultAssetData?.contractAddress && defaultAssetData?.chain) {
     defaultAssetData = getAssetData(assetsWithBalance, defaultAssetData);
   }
 
-  const defaultAssetOption = defaultAssetData && {
+  const defaultAssetOption = defaultAssetData && defaultAssetData?.token && {
     ...defaultAssetData,
     symbol: defaultAssetData.token,
   };
