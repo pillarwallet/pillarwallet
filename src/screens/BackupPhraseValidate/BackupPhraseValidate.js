@@ -216,7 +216,6 @@ const BackupPhraseValidate = ({
       <MnemonicPhraseWord
         key={`${word}${index}`}
         onPress={() => handleWordSetting(word)}
-        disabled={enteredWords.includes(word)}
       >
         <MnemonicPhraseWordText>{word}</MnemonicPhraseWordText>
       </MnemonicPhraseWord>
