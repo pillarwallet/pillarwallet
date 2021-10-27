@@ -1444,5 +1444,14 @@
       "title": "Governance Call",
       "live": "LIVE"
     }
+  },
+
+  "biometricLogin": {
+    "title": "Sign in with Touch ID",
+    "description": "Enable biometric login instead of typing PIN every time?",
+    "button": {
+      "enable": "Enable",
+      "cancel": "Cancel"
+    }
   }
 }

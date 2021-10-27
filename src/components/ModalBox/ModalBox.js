@@ -36,29 +36,6 @@ type Props = {|
   onModalHide?: () => void,
 |};
 
-const Box = styled.View`
-  flex-direction: column;
-  ${({ noBoxMinHeight }) => !noBoxMinHeight && 'min-height: 320px;'}
-  width: 100%;
-  margin: auto 0;
-  align-self: center;
-  border-radius: 10px;
-  background-color: ${({ theme }) => theme.colors.basic050};
-`;
-
-const ModalCloseButton = styled.TouchableOpacity`
-  position: absolute;
-  top: 15px;
-  right: -15px;
-  border-radius: 15px;
-  height: 60px;
-  width: 60px;
-  padding: 15px;
-  justify-content: center;
-  align-items: center;
-  opacity: 0.5;
-`;
-
 export type ModalBoxInstance = {
   close: () => void,
 };
@@ -97,3 +74,26 @@ const ModalBox = React.forwardRef<Props, ModalBoxInstance>(({
 });
 
 export default ModalBox;
+
+const Box = styled.View`
+  flex-direction: column;
+  ${({ noBoxMinHeight }) => !noBoxMinHeight && 'min-height: 320px;'}
+  width: 100%;
+  margin: auto 0;
+  align-self: center;
+  border-radius: 10px;
+  background-color: ${({ theme }) => theme.colors.basic050};
+`;
+
+const ModalCloseButton = styled.TouchableOpacity`
+  position: absolute;
+  top: 15px;
+  right: -15px;
+  border-radius: 15px;
+  height: 60px;
+  width: 60px;
+  padding: 15px;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.5;
+`;
