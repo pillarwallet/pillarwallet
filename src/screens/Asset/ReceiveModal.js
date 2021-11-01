@@ -20,7 +20,8 @@
 
 import React, { useCallback, type AbstractComponent } from 'react';
 import { connect } from 'react-redux';
-import { Share, Clipboard } from 'react-native';
+import { Share } from 'react-native';
+import Clipboard from '@react-native-community/clipboard';
 import { SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
 import t from 'translations/translate';

@@ -100,6 +100,8 @@ export const semanticLightThemeColors = {
   swiperButtonTrack: lightThemeColors.basic000,
   swiperButtonThumb: '#ebf0f6',
   modalHandleBar: '#ededed',
+  toastBackgroundColor: lightThemeColors.synthetic140,
+  toastTextColor: lightThemeColors.basic090,
 };
 
 export const semanticDarkThemeColors = {
@@ -160,6 +162,8 @@ export const semanticDarkThemeColors = {
   swiperButtonTrack: '#520f8c',
   swiperButtonThumb: baseColors.electricViolet,
   modalHandleBar: '#4d4d4d',
+  toastBackgroundColor: '#2e673c',
+  toastTextColor: darkThemeColors.basic010,
 };
 
 export const themedColors = {
