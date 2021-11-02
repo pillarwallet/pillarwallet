@@ -95,8 +95,13 @@ const SendAsset = ({
   estimateTransaction,
   resetEstimateTransaction,
 }: Props) => {
-  const defaultAssetData = navigation.getParam('assetData');
-  const defaultAssetOption = defaultAssetData && {
+  let defaultAssetData = navigation.getParam('assetData');
+
+  if (!defaultAssetData?.token && defaultAssetData?.contractAddress && defaultAssetData?.chain) {
+    defaultAssetData = getAssetData(assetsWithBalance, defaultAssetData);
+  }
+
+  const defaultAssetOption = defaultAssetData && defaultAssetData?.token && {
     ...defaultAssetData,
     symbol: defaultAssetData.token,
   };
@@ -259,6 +264,15 @@ const SendAsset = ({
       }}
     />
   );
+};
+
+const getAssetData = (tokens, selectedToken) => {
+  return tokens.find((token) => {
+    if (selectedToken?.chain === token.chain && selectedToken?.contractAddress === token.contractAddress) {
+      return true;
+    }
+    return false;
+  });
 };
 
 const mapStateToProps = ({

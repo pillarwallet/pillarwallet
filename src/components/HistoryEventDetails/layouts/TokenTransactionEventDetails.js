@@ -69,12 +69,16 @@ function TokenTransactionEventDetails({ event, chain }: Props) {
 
   const viewOnBlockchain = () => dispatch(viewTransactionOnBlockchainAction(chain, event));
 
-  const sendTokensToAddress = (address: string) => {
+  const sendTokensToAddress = (address: string, contractAddress: string) => {
     navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW, {
       contact: {
         ethAddress: address,
         name: ensRegistry[address] ?? address,
         ensName: ensRegistry[address],
+      },
+      assetData: {
+        chain,
+        contractAddress,
       },
     });
   };
@@ -101,7 +105,7 @@ function TokenTransactionEventDetails({ event, chain }: Props) {
         <Button
           variant="secondary"
           title={t('button.sendBack')}
-          onPress={() => sendTokensToAddress(event.fromAddress)}
+          onPress={() => sendTokensToAddress(event.fromAddress, event.value?.address)}
         />
         <Spacing h={spacing.small} />
         <Button variant="text" title={t('button.viewOnBlockchain')} onPress={viewOnBlockchain} />
