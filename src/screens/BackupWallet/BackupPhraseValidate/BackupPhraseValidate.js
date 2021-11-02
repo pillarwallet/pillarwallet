@@ -24,7 +24,7 @@ import SafeAreaView from 'react-native-safe-area-view';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
-import { useTranslationWithPrefix } from 'translations/translate';
+import t from 'translations/translate';
 
 // Components
 import { Container } from 'components/layout/Layout';
@@ -48,36 +48,39 @@ type Props = {
   backupWallet: () => void,
 };
 
-const smartWalletImage = require('assets/images/logo-wallet-backup.png');
+const walletBackupImage = require('assets/images/logo-wallet-backup.png');
 
 const BackupPhraseValidate = ({ navigation, backupWallet }: Props) => {
-  const { t, tRoot } = useTranslationWithPrefix('backupWallet.backupWallet');
-
   const mnemonicPhrase = navigation.getParam('mnemonicPhrase', null);
 
   const handleCopyToClipboard = (seedPhrase: string) => {
     Clipboard.setString(seedPhrase);
-    Toast.show({ message: tRoot('toast.seedPhraseCopiedToClipboard'), emoji: 'ok_hand' });
+    Toast.show({ message: t('toast.seedPhraseCopiedToClipboard'), emoji: 'ok_hand' });
   };
 
   const handlePassedValidation = () => {
     backupWallet();
     navigation.dismiss();
     Toast.show({
-      message: tRoot('toast.walletBackedUp'),
+      message: t('toast.walletBackedUp'),
       emoji: 'the_horns',
     });
   };
 
   return (
     <Container>
-      <HeaderBlock centerItems={[{ title: t('seedPhrase') }]} navigation={navigation} noPaddingTop />
+      <HeaderBlock centerItems={[{ title: t('title.seedPhrase') }]} navigation={navigation} noPaddingTop />
       <NonScrollableContent>
         <LogoContainer>
-          <Logo source={smartWalletImage} />
+          <Logo source={walletBackupImage} />
         </LogoContainer>
         <MnemonicPhrase phrase={mnemonicPhrase} />
-        <Button title={t('button.savedPhrase')} style={styles.button} onPress={handlePassedValidation} size="large" />
+        <Button
+          title={t('button.savedPhrase')}
+          style={styles.button}
+          onPress={handlePassedValidation}
+          size="large"
+        />
         <Button
           title={t('button.copyToClipboard')}
           variant="text"

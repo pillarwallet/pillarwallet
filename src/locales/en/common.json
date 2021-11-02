@@ -121,7 +121,8 @@
     "privateKey": "Private key",
     "exchange": "Exchange",
     "unlockWithBiometrics": "Unlock with biometric sensor",
-    "welcome": "Welcome to Pillar Wallet!"
+    "welcome": "Welcome to Pillar Wallet!",
+    "seedPhrase": "12 words seed phrase"
   },
 
   "label": {
@@ -376,7 +377,9 @@
     "useMax": "Use max",
     "selectToken": "Select token...",
     "more": "More",
-    "notNow": "Not now"
+    "notNow": "Not now",
+    "copyToClipboard": "Copy to clipboard",
+    "savedPhrase": "I have saved my 12 words"
   },
 
   "paragraph": {
@@ -1452,13 +1455,6 @@
       "title": "Backup your wallet",
       "subtitle": "Your funds may be at risk ",
       "body": "On the blockchain, there is no traditional account tied to email or phone number. Instead, there is a seed phrase as your “password”. If it’s lost, your funds are lost. Make sure you have your 12 words saved nice and secure."
-    },
-    "backupWallet": {
-      "seedPhrase": "12 words seed phrase",
-      "button": {
-        "copyToClipboard": "Copy to clipboard",
-        "savedPhrase": "I have saved my 12 words"
-      }
     }
   }
 }
