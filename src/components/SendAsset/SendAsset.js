@@ -267,8 +267,8 @@ const SendAsset = ({
 };
 
 const getAssetData = (tokens, selectedToken) => {
-  return tokens.find((e) => {
-    if (selectedToken?.chain === e.chain && selectedToken?.contractAddress === e.contractAddress) {
+  return tokens.find((token) => {
+    if (selectedToken?.chain === token.chain && selectedToken?.contractAddress === token.contractAddress) {
       return true;
     }
     return false;
