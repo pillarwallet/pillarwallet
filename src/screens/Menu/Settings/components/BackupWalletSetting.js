@@ -57,8 +57,10 @@ function BackupWalletSetting({ wallet }: Props) {
 
   return (
     <SettingsItem
-      icon="key16"
-      title={t('backupNotFinished')}
+      icon="alert"
+      size={24}
+      color={colors.negative}
+      title={t('viewBackupPhrase')}
       value={t('backupNotFinishedWarning')}
       valueColor={colors.negative}
       onPress={goToBackupWallet}

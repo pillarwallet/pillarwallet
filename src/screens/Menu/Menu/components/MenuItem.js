@@ -33,14 +33,17 @@ type Props = {|
   title: string,
   icon: IconName,
   onPress: () => mixed,
+  value?: string,
+  valueColor?: string,
 |};
 
-const MenuItem = ({ title, icon, onPress }: Props) => {
+const MenuItem = ({ title, icon, onPress, value, valueColor }: Props) => {
   return (
     <Container>
       <TouchableContainer onPress={onPress}>
         <ItemIcon name={icon} width={16} height={16} />
         <Title>{title}</Title>
+        {!!value && <Value $color={valueColor}>{value}</Value>}
       </TouchableContainer>
     </Container>
   );
@@ -53,7 +56,7 @@ const Container = styled.View``;
 const TouchableContainer = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
-  padding: ${spacing.large}px;
+  padding: ${spacing.large}px ${spacing.large}px 18px ${spacing.large}px;
 `;
 
 const ItemIcon = styled(Icon)`
@@ -61,5 +64,10 @@ const ItemIcon = styled(Icon)`
 `;
 
 const Title = styled(Text)`
+  flex: 1;
   ${fontStyles.medium};
+`;
+
+const Value = styled(Text)`
+  color: ${({ theme, $color }) => $color || theme.colors.secondaryText};
 `;

@@ -111,7 +111,7 @@
     "collectibleReceive": "NFT received",
     "connectionRequested": "Requested",
     "assets": "Assets",
-    "backupPhrase": "Backup phrase",
+    "backupPhrase": "12 words seed phrase",
     "verifyBackupPhrase": "Verify backup phrase",
     "confirmNewPin": "Confirm new pincode",
     "enterNewPincode": "Enter new pincode",
@@ -345,7 +345,6 @@
     "sendTokenInstead": "Send token instead",
     "addToContacts": "Add to contacts",
     "addToAddressBook": "Add to address book",
-    "copyToClipboard": "Copy to clipboard",
     "paste": "Paste",
     "resendIt": "Resend it",
     "migrateAssetsToSmartWallet": "Migrate assets to Smart Wallet",
@@ -376,7 +375,8 @@
     "spendMax": "Spend max",
     "useMax": "Use max",
     "selectToken": "Select token...",
-    "more": "More"
+    "more": "More",
+    "notNow": "Not now"
   },
 
   "paragraph": {
@@ -596,8 +596,8 @@
       "changePin": "Change PIN",
       "walletBackup": "Wallet backup",
       "viewBackupPhrase": "View 12 words",
-      "backupNotFinished": "Backup not finished",
-      "backupNotFinishedWarning": "Warning"
+      "backupNotFinishedWarning": "Security warning",
+      "backupComplete": "Backup complete"
     },
     "selectLanguage": {
       "title": "Language"
@@ -1207,7 +1207,8 @@
     "cannotSendSyntheticAsset": "Sorry, asset cannot be sent.",
     "failedToGetGasPrices": "Failed to get gas prices.",
     "waitingForWalletConnectConnection": "Waiting for WalletConnect service…",
-    "transactionReverted": "Something went wrong. Try again or tap this message for details."
+    "transactionReverted": "Something went wrong. Try again or tap this message for details.",
+    "seedPhraseCopiedToClipboard": "12 words copied to clipboard"
   },
 
   "exchangeContent": {
@@ -1443,6 +1444,21 @@
     "banner": {
       "title": "Governance Call",
       "live": "LIVE"
+    }
+  },
+
+  "backupWallet": {
+    "intro": {
+      "title": "Backup your wallet",
+      "subtitle": "Your funds may be at risk ",
+      "body": "On the blockchain, there is no traditional account tied to email or phone number. Instead, there is a seed phrase as your “password”. If it’s lost, your funds are lost. Make sure you have your 12 words saved nice and secure."
+    },
+    "backupWallet": {
+      "seedPhrase": "12 words seed phrase",
+      "button": {
+        "copyToClipboard": "Copy to clipboard",
+        "savedPhrase": "I have saved my 12 words"
+      }
     }
   }
 }
