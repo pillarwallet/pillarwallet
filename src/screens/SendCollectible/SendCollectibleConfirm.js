@@ -42,7 +42,6 @@ import { Paragraph } from 'components/legacy/Typography';
 // Constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
-import { CHAIN } from 'constants/chainConstants';
 
 // Utils
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
@@ -154,7 +153,7 @@ const SendCollectibleConfirm = ({
 
   useEffect(() => {
     resetEstimateTransaction();
-    estimateTransaction({ to: receiver, value: 0, assetData }, CHAIN.ETHEREUM);
+    estimateTransaction({ to: receiver, value: 0, assetData }, chain);
     if (isKovanNetwork) fetchRinkebyEth();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
