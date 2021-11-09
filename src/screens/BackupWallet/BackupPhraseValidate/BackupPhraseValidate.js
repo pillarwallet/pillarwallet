@@ -101,7 +101,7 @@ export default connect(null, mapDispatchToProps)(BackupPhraseValidate);
 
 const styles = {
   button: {
-    marginBottom: spacing.large,
+    marginBottom: spacing.small,
   },
 };
 
@@ -112,7 +112,6 @@ const NonScrollableContent = styled(SafeAreaView)`
 
 const LogoContainer = styled.View`
   flex: 1;
-  margin: 28px 0px;
   justify-content: center;
   align-items: center;
 `;

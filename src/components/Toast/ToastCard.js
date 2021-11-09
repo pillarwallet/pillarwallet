@@ -24,7 +24,6 @@ import Emoji from 'react-native-emoji';
 
 import ShadowedCard from 'components/ShadowedCard';
 import { Spacing } from 'components/layout/Layout';
-import { TextLink } from 'components/legacy/Typography';
 import Icon from 'components/core/Icon';
 import Text from 'components/core/Text';
 
@@ -61,11 +60,11 @@ const ToastCard = ({
         <Spacing w={18} />
         <Text color={colors.toastTextColor} style={{ flex: 1 }}>
           {message}
-          {!!link && <TextLink onPress={onLinkPress} regular> {link}</TextLink>}
+          {!!link && <Text onPress={onLinkPress}> {link}</Text>}
         </Text>
       </ContentWrapper>
       <CloseIconWrapper onPress={onClose}>
-        <CloseIcon name="rounded-close" />
+        <Icon name="close-circle" color="#fcfdff" width={16} height={16} />
       </CloseIconWrapper>
     </ShadowedCard>
   );
@@ -86,9 +85,4 @@ const CloseIconWrapper = styled.TouchableOpacity`
   top: 7px;
   right: 8px;
   padding: 10px;
-`;
-
-const CloseIcon = styled(Icon)`
-  color: ${({ theme }) => theme.colors.toastCloseIcon};
-  font-size: 16px;
 `;

@@ -64,11 +64,11 @@ const styles = {
 };
 
 const MnemonicPhraseWrapper = styled.View`
-  height: 20%;
+  height: 130px;
   width: 100%;
   flex-wrap: wrap;
   justify-content: center;
-  margin: 24px 16px;
+  margin: 24px 0px;
 `;
 
 const MnemonicPhraseItem = styled.View`

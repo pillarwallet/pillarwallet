@@ -21,7 +21,6 @@
 import * as React from 'react';
 import { Image } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
-import SafeAreaView from 'react-native-safe-area-view';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
@@ -29,7 +28,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 import { BACKUP_PHRASE } from 'constants/navigationConstants';
 
 // Components
-import { Container } from 'components/layout/Layout';
+import { Container, Content } from 'components/layout/Layout';
 import Button from 'components/core/Button';
 import HeaderBlock from 'components/HeaderBlock';
 import Text from 'components/core/Text';
@@ -59,7 +58,7 @@ function BackupWalletIntro() {
     <Container>
       <HeaderBlock leftItems={[{ close: true }]} navigation={navigation} noPaddingTop />
 
-      <NonScrollableContent>
+      <Content>
         <LogoContainer>
           <Logo source={smartWalletImage} />
         </LogoContainer>
@@ -70,14 +69,8 @@ function BackupWalletIntro() {
         <Body>{t('body')}</Body>
 
         <Button title={tRoot('button.continue')} onPress={navigateToBackupPhrase} style={styles.button} size="large" />
-        <Button
-          title={tRoot('button.notNow')}
-          variant="text"
-          onPress={close}
-          style={styles.button}
-          size="large"
-        />
-      </NonScrollableContent>
+        <Button title={tRoot('button.notNow')} variant="text" onPress={close} size="large" />
+      </Content>
     </Container>
   );
 }
@@ -86,14 +79,9 @@ export default BackupWalletIntro;
 
 const styles = {
   button: {
-    marginBottom: spacing.large,
+    marginBottom: spacing.small,
   },
 };
-
-const NonScrollableContent = styled(SafeAreaView)`
-  flex: 1;
-  padding: 0 ${spacing.large}px;
-`;
 
 const LogoContainer = styled.View`
   flex: 1;
@@ -113,13 +101,13 @@ const Title = styled(Text)`
 `;
 
 const Subtitle = styled(Text)`
-  margin: ${spacing.small}px 0 0;
+  margin: ${spacing.extraSmall}px 0 0;
   color: ${({ theme }) => theme.colors.negative};
   text-align: center;
 `;
 
 const Body = styled(Text)`
-  margin: ${spacing.large}px 0 ${spacing.extraLarge}px;
+  margin: ${spacing.largePlus}px 0;
   color: ${({ theme }) => theme.colors.tertiaryText};
   ${fontStyles.medium};
   text-align: center;
