@@ -94,8 +94,7 @@ const TokenFiatValueInputs = ({
   };
 
   const handleUseMax = () => {
-    onValueChange(truncateDecimalPlaces(balance, 15));
-    // onValueChange(balance);
+    onValueChange(truncateDecimalPlaces(balance ?? BigNumber(0), 15));
   };
 
   const fiatRate = getAssetRateInFiat(rates, asset?.address, currency);
