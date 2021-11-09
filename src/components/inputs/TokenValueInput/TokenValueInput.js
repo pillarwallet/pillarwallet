@@ -92,7 +92,8 @@ const TokenValueInput = React.forwardRef<Props, Instance>((props, ref) => {
     }
 
     const newValue = referenceValue.times(percent).div(100).precision(6, BigNumber.ROUND_DOWN);
-    const newValueTruncated = truncateDecimalPlaces(newValue, asset?.decimals ?? 18);
+    const decimals = asset?.decimals ?? 15;
+    const newValueTruncated = truncateDecimalPlaces(newValue, decimals > 15 ? 15 : decimals);
     onValueChange?.(newValueTruncated);
   };
 
@@ -110,7 +111,7 @@ const TokenValueInput = React.forwardRef<Props, Instance>((props, ref) => {
         ref={ref}
         value={value}
         onValueChange={onValueChange}
-        decimals={asset?.decimals}
+        decimals={asset?.decimals > 15 ? 15 : asset?.decimals}
         maxValue={maxValue}
         editable={editable}
         style={[styles.input, textStyle]}
