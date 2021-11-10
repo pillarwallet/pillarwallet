@@ -66,12 +66,6 @@ const AppAppearence = () => {
     dispatch(setAppThemeAction(DARK_THEME, true));
   };
 
-  const selectedThemeStyle = {
-    borderColor: colors.buttonPrimaryBackground,
-    borderWidth: 2,
-    borderRadius: 10,
-  };
-
   return (
     <Container>
       <HeaderBlock leftItems={[{ close: true }]} navigation={navigation} noPaddingTop />
@@ -81,7 +75,10 @@ const AppAppearence = () => {
           {t('auth:paragraph.appAppearenceDescription')}
         </Text>
         <ThemeView>
-          <Themes onPress={onPressLightTheme} style={isLightThemePressed && selectedThemeStyle}>
+          <Themes
+            onPress={onPressLightTheme}
+            style={isLightThemePressed && [selectedThemeStyle, { borderColor: colors.buttonPrimaryBackground }]}
+          >
             <ThemeImage source={lightTheme} />
             <Text variant="small" style={appearenceStyles.textStyle}>
               {t('auth:label.light')}
@@ -89,7 +86,7 @@ const AppAppearence = () => {
           </Themes>
           <Themes
             onPress={onPressDarkTheme}
-            style={[appearenceStyles.themeViewStyle, isDarkThemePressed && selectedThemeStyle]}
+            style={isDarkThemePressed && [selectedThemeStyle, { borderColor: colors.buttonPrimaryBackground }]}
           >
             <ThemeImage source={darkTheme} />
             <Text variant="small" style={appearenceStyles.textStyle}>
@@ -103,12 +100,14 @@ const AppAppearence = () => {
   );
 };
 
+const selectedThemeStyle = {
+  borderWidth: 2,
+  borderRadius: 10,
+};
+
 const appearenceStyles = {
   confirmButton: {
     marginTop: 91,
-  },
-  themeViewStyle: {
-    marginLeft: spacing.small,
   },
   textStyle: {
     textAlign: 'center',
