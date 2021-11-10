@@ -18,6 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+/*
+  There is an issue with the bignumber.js when the decimal places exceeds 15 it warns about the underflow error on
+  fractional decimal due to calculations involved for exchange rates and the fiat conversions and javascript isnt
+  good in handling many decimal places. In order to overcome this we have restricted the decimal places upto 15
+  as it is highly unlikely for the user to do so.
+*/
+
 import * as React from 'react';
 import { Keyboard, TextInput as RNTextInput } from 'react-native';
 import { BigNumber } from 'bignumber.js';
