@@ -18,6 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+/*
+  There is an issue with the bignumber.js when the decimal places exceeds 15 it warns about the underflow error on
+  fractional decimal due to calculations involved for exchange rates and the fiat conversions and javascript isnt
+  good in handling many decimal places. In order to overcome this we have restricted the decimal places upto 15
+  as it is highly unlikely for the user to do so.
+*/
+
 import * as React from 'react';
 import { Keyboard, TextInput as RNTextInput } from 'react-native';
 import { BigNumber } from 'bignumber.js';
@@ -79,6 +86,7 @@ const TokenValueInput = React.forwardRef<Props, Instance>((props, ref) => {
   } = props;
 
   const { t } = useTranslation();
+  const decimals = asset?.decimals ?? 15;
 
   const handleSetPercent = (percent: number) => {
     Keyboard.dismiss();
@@ -92,7 +100,7 @@ const TokenValueInput = React.forwardRef<Props, Instance>((props, ref) => {
     }
 
     const newValue = referenceValue.times(percent).div(100).precision(6, BigNumber.ROUND_DOWN);
-    const newValueTruncated = truncateDecimalPlaces(newValue, asset?.decimals ?? 18);
+    const newValueTruncated = truncateDecimalPlaces(newValue, decimals > 15 ? 15 : decimals);
     onValueChange?.(newValueTruncated);
   };
 
@@ -110,7 +118,7 @@ const TokenValueInput = React.forwardRef<Props, Instance>((props, ref) => {
         ref={ref}
         value={value}
         onValueChange={onValueChange}
-        decimals={asset?.decimals}
+        decimals={decimals > 15 ? 15 : decimals}
         maxValue={maxValue}
         editable={editable}
         style={[styles.input, textStyle]}
