@@ -35,6 +35,7 @@ import { useWalletAssetBalance } from 'selectors/balances';
 
 // Utils
 import { isNativeAsset } from 'utils/assets';
+import { truncateDecimalPlaces } from 'utils/bigNumber';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
@@ -81,7 +82,7 @@ const FromAssetSelector = ({
 
   const handleUseMax = () => {
     Keyboard.dismiss();
-    onValueChange(balance);
+    onValueChange(truncateDecimalPlaces(balance, 15));
   };
 
   const disableUseMax = !editable || isNativeAsset(selectedAsset?.chain, selectedAsset?.address);
