@@ -87,7 +87,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts }: Props
 
   const toggleShowChains = (category: AssetCategory) => {
     LayoutAnimation.configureNext(LIST_ITEMS_APPEARANCE);
-    const previousValue = showChainsPerCategory[category];
+    const previousValue = showChainsPerCategory[category] ?? true;
     // $FlowFixMe: flow is able to handle this
     setShowChainsPerCategory({ ...showChainsPerCategory, [category]: !previousValue });
   };
