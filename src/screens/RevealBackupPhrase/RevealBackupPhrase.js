@@ -111,6 +111,7 @@ class RevealBackupPhrase extends React.Component<Props, State> {
             centerItems={[{ title: t('title.seedPhrase') }]}
             leftItems={[{ close: true }]}
             onClose={this.handleScreenDismissal}
+            noPaddingTop
           />
           <NonScrollableContent>
             <Content style={{ flex: 1, justifyContent: 'center' }}>
@@ -134,6 +135,7 @@ class RevealBackupPhrase extends React.Component<Props, State> {
           centerItems={[{ title: t('title.privateKey') }]}
           leftItems={[{ close: true }]}
           onClose={this.handleScreenDismissal}
+          noPaddingTop
         />
         <NonScrollableContent>
           <Content>

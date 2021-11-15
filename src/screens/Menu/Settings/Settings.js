@@ -74,7 +74,7 @@ const Settings = () => {
 
   return (
     <Container>
-      <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} />
+      <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
 
       <Content paddingHorizontal={0}>
         {!isBackedUp && (

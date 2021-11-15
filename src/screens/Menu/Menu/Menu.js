@@ -77,6 +77,7 @@ const Menu = () => {
         leftItems={[{ close: true }]}
         centerItems={[{ custom: isDarkTheme ? <PillarLogoDark /> : <PillarLogo /> }]}
         navigation={navigation}
+        noPaddingTop
       />
 
       <Content paddingHorizontal={0}>
