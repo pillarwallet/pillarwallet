@@ -24,7 +24,7 @@ import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
-// Contants
+// Constants
 import { BACKUP_PHRASE } from 'constants/navigationConstants';
 
 // Components
