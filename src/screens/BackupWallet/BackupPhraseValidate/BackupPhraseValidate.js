@@ -17,7 +17,7 @@
    with this program; if not, write to the Free Software Foundation, Inc.,
    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React from 'react';
+import React, { useState } from 'react';
 import { Image } from 'react-native';
 import Clipboard from '@react-native-community/clipboard';
 import SafeAreaView from 'react-native-safe-area-view';
@@ -33,6 +33,7 @@ import Button from 'components/core/Button';
 import MnemonicPhrase from 'components/MnemonicPhrase';
 import Toast from 'components/Toast';
 import Text from 'components/core/Text';
+import CheckAuth from 'components/CheckAuth';
 
 // Actions
 import { backupWalletAction } from 'actions/walletActions';
@@ -43,6 +44,7 @@ import { appFont, spacing, fontSizes } from 'utils/variables';
 
 // Types
 import type { Dispatch } from 'reducers/rootReducer';
+import type { WalletObject } from 'models/Wallet';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -52,12 +54,37 @@ type Props = {
 
 const walletBackupImage = require('assets/images/logo-wallet-backup.png');
 
-const BackupPhraseValidate = ({ navigation, backupWallet }: Props) => {
+const BackupPhraseValidate = ({ navigation, backupWallet, resetIncorrectPassword }: Props) => {
   const wallet = navigation.getParam('wallet', null);
-  const mnemonicPhrase = wallet?.mnemonic;
-  const privateKey = wallet?.privateKey;
 
-  const handleCopyToClipboard = (copiedText: string, isPrivateKey?: boolean) => {
+  const [pinIsValid, setPinIsValid] = useState(!!wallet);
+  const [unlockedwallet, setUnlockedWallet] = React.useState<?WalletObject>(wallet);
+
+  const mnemonicPhrase = unlockedwallet?.mnemonic;
+  const walletPrivateKey = unlockedwallet?.privateKey;
+
+  const handleScreenDismissal = () => {
+    resetIncorrectPassword();
+    navigation.goBack(null);
+  };
+
+  const onPinValid = (walletPin: ?string, { mnemonic, privateKey }) => {
+    setPinIsValid(true);
+    setUnlockedWallet({ mnemonic: mnemonic?.phrase, privateKey });
+  };
+
+  if (!pinIsValid || !mnemonicPhrase) {
+    return (
+      <CheckAuth
+        revealMnemonic
+        enforcePin
+        onPinValid={onPinValid}
+        headerProps={{ onClose: handleScreenDismissal }}
+      />
+    );
+  }
+
+  const handleCopyToClipboard = (copiedText: ?string, isPrivateKey?: boolean) => {
     Clipboard.setString(copiedText);
     if (isPrivateKey) {
       Toast.show({ message: t('toast.privateKeyCopiedToClipboard'), emoji: 'ok_hand', autoClose: true });
@@ -85,7 +112,7 @@ const BackupPhraseValidate = ({ navigation, backupWallet }: Props) => {
         {mnemonicPhrase ? (
           <MnemonicPhrase phrase={mnemonicPhrase} />
         ) : (
-          <PrivateKeyWrapper ref={excludeFromMonitoring}>{privateKey}</PrivateKeyWrapper>
+          <PrivateKeyWrapper ref={excludeFromMonitoring}>{walletPrivateKey}</PrivateKeyWrapper>
         )}
         <Button
           title={mnemonicPhrase ? t('button.savedPhrase') : t('button.savedPrivateKey')}
@@ -107,7 +134,7 @@ const BackupPhraseValidate = ({ navigation, backupWallet }: Props) => {
             variant="text"
             style={styles.button}
             size="large"
-            onPress={() => handleCopyToClipboard(privateKey)}
+            onPress={() => handleCopyToClipboard(walletPrivateKey, true)}
           />
         )}
       </NonScrollableContent>
