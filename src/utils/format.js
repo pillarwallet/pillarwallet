@@ -130,7 +130,10 @@ export function formatFiatValue(value: ?BigNumber | number, currency?: string, o
   const formattedValue = formatValue(value, { decimalPlaces: 2, ...options });
   if (!formattedValue) return null;
 
-  return currency ? t('fiatValue', { value: formattedValue, symbol: getCurrencySymbol(currency) }) : formattedValue;
+  if (!currency) return formattedValue;
+
+  const currencyValue = t('fiatValue', { value: formattedValue, symbol: getCurrencySymbol(currency) });
+  return formattedValue < 0.01 && formattedValue > 0 ? ('< ').concat(currencyValue) : currencyValue;
 }
 
 /**
