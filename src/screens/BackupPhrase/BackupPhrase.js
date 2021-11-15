@@ -23,10 +23,10 @@ import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
-// constants
+// Constants
 import { BACKUP_PHRASE_VALIDATE } from 'constants/navigationConstants';
 
-// components
+// Components
 import { Paragraph } from 'components/legacy/Typography';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/legacy/Layout';
@@ -34,23 +34,14 @@ import MnemonicPhrase from 'components/MnemonicPhrase';
 import Button from 'components/legacy/Button';
 import CheckAuth from 'components/CheckAuth';
 
-// actions
+// Actions
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 
-// utils
+// Utils
 import { spacing } from 'utils/variables';
 
-// types
+// Types
 import type { Dispatch } from 'reducers/rootReducer';
-import type { Wallet } from 'ethers';
-
-const FooterWrapper = styled.View`
-  justify-content: center;
-  align-items: center;
-  padding: ${spacing.large}px;
-  width: 100%;
-  background-color: ${({ theme }) => theme.colors.basic070};
-`;
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -72,9 +63,9 @@ const BackupPhrase = ({
     navigation.goBack(null);
   };
 
-  const onPinValid = (decryptedWallet: ?Wallet) => {
+  const onPinValid = (walletPin: string, { mnemonic }) => {
     setPinIsValid(true);
-    setMnemonicPhrase(decryptedWallet?.mnemonic?.phrase);
+    setMnemonicPhrase(mnemonic?.phrase);
   };
 
   if (!pinIsValid || !mnemonicPhrase) {
@@ -115,3 +106,11 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
 });
 
 export default connect(null, mapDispatchToProps)(BackupPhrase);
+
+const FooterWrapper = styled.View`
+  justify-content: center;
+  align-items: center;
+  padding: ${spacing.large}px;
+  width: 100%;
+  background-color: ${({ theme }) => theme.colors.basic070};
+`;
