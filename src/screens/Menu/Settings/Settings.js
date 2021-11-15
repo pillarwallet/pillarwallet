@@ -93,9 +93,14 @@ const Settings = () => {
         <ChangePinSetting />
 
         <Spacing h={spacing.large} />
-        <Header>{t('walletBackup')}</Header>
 
-        <ViewBackupPhraseSetting wallet={wallet} />
+        {isBackedUp && (
+          <View>
+            <Header>{t('walletBackup')}</Header>
+            <ViewBackupPhraseSetting wallet={wallet} />
+          </View>
+        )}
+
       </Content>
     </Container>
   );
