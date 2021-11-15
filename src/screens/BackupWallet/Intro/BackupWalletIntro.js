@@ -42,12 +42,11 @@ const smartWalletImage = require('assets/images/logo-wallet-migration.png');
 function BackupWalletIntro() {
   const { t, tRoot } = useTranslationWithPrefix('backupWallet.intro');
   const navigation = useNavigation();
-  const seedPhrase = navigation.getParam('mnemonicPhrase', null);
+  const wallet = navigation.getParam('wallet', null);
+  const mnemonicPhrase = wallet?.mnemonic;
 
   const navigateToBackupPhrase = () => {
-    navigation.navigate(BACKUP_PHRASE, {
-      mnemonicPhrase: seedPhrase,
-    });
+    navigation.navigate(BACKUP_PHRASE, { wallet });
   };
 
   const close = () => {
@@ -62,11 +61,10 @@ function BackupWalletIntro() {
         <LogoContainer>
           <Logo source={smartWalletImage} />
         </LogoContainer>
-
-        <Title>{t('title')}</Title>
+        {mnemonicPhrase ? <Title>{t('title')}</Title> : <Title>{tRoot('title.privateKey')}</Title>}
         <Subtitle>{t('subtitle')}</Subtitle>
 
-        <Body>{t('body')}</Body>
+        {mnemonicPhrase ? <Body>{t('seedPhraseWarning')}</Body> : <Body>{t('privateKeyWarning')}</Body>}
 
         <Button title={tRoot('button.continue')} onPress={navigateToBackupPhrase} style={styles.button} size="large" />
         <Button title={tRoot('button.notNow')} variant="text" onPress={close} size="large" />

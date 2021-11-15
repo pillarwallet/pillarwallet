@@ -76,9 +76,13 @@ class RevealBackupPhrase extends React.Component<Props, State> {
     this.props.navigation.goBack(null);
   };
 
-  handleCopyToClipboard = (seedPhrase: string) => {
-    Clipboard.setString(seedPhrase);
-    Toast.show({ message: t('toast.seedPhraseCopiedToClipboard'), emoji: 'ok_hand' });
+  handleCopyToClipboard = (copiedText: string, isPrivateKey?: boolean) => {
+    Clipboard.setString(copiedText);
+    if (isPrivateKey) {
+      Toast.show({ message: t('toast.privateKeyCopiedToClipboard'), emoji: 'ok_hand', autoClose: true });
+    } else {
+      Toast.show({ message: t('toast.seedPhraseCopiedToClipboard'), emoji: 'ok_hand', autoClose: true });
+    }
   };
 
   onPinValid = (wallet: Object) => {
@@ -88,6 +92,8 @@ class RevealBackupPhrase extends React.Component<Props, State> {
   render() {
     const { pinIsValid, wallet } = this.state;
     const showPrivateKey = get(this.props, 'navigation.state.params.showPrivateKey', false);
+    const mnemonicPhrase = wallet?.mnemonic;
+    const privateKey = wallet?.privateKey;
     if (!pinIsValid) {
       return (
         <CheckAuth
@@ -98,7 +104,7 @@ class RevealBackupPhrase extends React.Component<Props, State> {
       );
     }
 
-    if (wallet?.mnemonic && !showPrivateKey) {
+    if (mnemonicPhrase && !showPrivateKey) {
       return (
         <Container>
           <HeaderBlock
@@ -109,13 +115,13 @@ class RevealBackupPhrase extends React.Component<Props, State> {
           <NonScrollableContent>
             <Content style={{ flex: 1, justifyContent: 'center' }}>
               <Logo source={walletBackupImage} />
-              <MnemonicPhrase phrase={wallet.mnemonic} />
+              <MnemonicPhrase phrase={mnemonicPhrase} />
             </Content>
             <Button
               title={t('button.copyToClipboard')}
               style={styles.button}
               size="large"
-              onPress={() => this.handleCopyToClipboard(wallet.mnemonic)}
+              onPress={() => this.handleCopyToClipboard(mnemonicPhrase)}
             />
           </NonScrollableContent>
         </Container>
@@ -125,20 +131,20 @@ class RevealBackupPhrase extends React.Component<Props, State> {
     return (
       <Container>
         <HeaderBlock
-          centerItems={[{ title: t('title.seedPhrase') }]}
+          centerItems={[{ title: t('title.privateKey') }]}
           leftItems={[{ close: true }]}
           onClose={this.handleScreenDismissal}
         />
         <NonScrollableContent>
           <Content>
             <Logo source={walletBackupImage} />
-            <PrivateKeyWrapper ref={excludeFromMonitoring}>{wallet.privateKey}</PrivateKeyWrapper>
+            <PrivateKeyWrapper ref={excludeFromMonitoring}>{privateKey}</PrivateKeyWrapper>
           </Content>
           <Button
             title={t('button.copyToClipboard')}
             style={styles.button}
             size="large"
-            onPress={() => this.handleCopyToClipboard(wallet.mnemonic)}
+            onPress={() => this.handleCopyToClipboard(privateKey, true)}
           />
         </NonScrollableContent>
       </Container>
@@ -161,7 +167,9 @@ const styles = {
 const PrivateKeyWrapper = styled(Text)`
   padding: 10px;
   font-family: ${appFont.medium};
-  font-size: ${fontSizes.big}px;
+  font-size: ${fontSizes.large}px;
+  color: ${({ theme }) => theme.colors.tertiaryText};
+  text-align: center;
 `;
 
 const NonScrollableContent = styled(SafeAreaView)`

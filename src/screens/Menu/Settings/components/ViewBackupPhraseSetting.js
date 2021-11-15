@@ -55,7 +55,7 @@ function ViewBackupPhraseSetting({ wallet }: Props) {
   return (
     <SettingsItem
       icon="key16"
-      title={t('viewBackupPhrase')}
+      title={wallet?.mnemonic ? t('viewBackupPhrase') : t('viewPrivateKey')}
       value={t('backupComplete')}
       valueColor={colors.positive}
       onPress={goToBackupPhrase}

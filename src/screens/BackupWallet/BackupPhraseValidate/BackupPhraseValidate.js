@@ -32,12 +32,14 @@ import HeaderBlock from 'components/HeaderBlock';
 import Button from 'components/core/Button';
 import MnemonicPhrase from 'components/MnemonicPhrase';
 import Toast from 'components/Toast';
+import Text from 'components/core/Text';
 
 // Actions
 import { backupWalletAction } from 'actions/walletActions';
 
 // Utils
-import { spacing } from 'utils/variables';
+import { excludeFromMonitoring } from 'utils/monitoring';
+import { appFont, spacing, fontSizes } from 'utils/variables';
 
 // Types
 import type { Dispatch } from 'reducers/rootReducer';
@@ -51,11 +53,17 @@ type Props = {
 const walletBackupImage = require('assets/images/logo-wallet-backup.png');
 
 const BackupPhraseValidate = ({ navigation, backupWallet }: Props) => {
-  const mnemonicPhrase = navigation.getParam('mnemonicPhrase', null);
+  const wallet = navigation.getParam('wallet', null);
+  const mnemonicPhrase = wallet?.mnemonic;
+  const privateKey = wallet?.privateKey;
 
-  const handleCopyToClipboard = (seedPhrase: string) => {
-    Clipboard.setString(seedPhrase);
-    Toast.show({ message: t('toast.seedPhraseCopiedToClipboard'), emoji: 'ok_hand' });
+  const handleCopyToClipboard = (copiedText: string, isPrivateKey?: boolean) => {
+    Clipboard.setString(copiedText);
+    if (isPrivateKey) {
+      Toast.show({ message: t('toast.privateKeyCopiedToClipboard'), emoji: 'ok_hand', autoClose: true });
+    } else {
+      Toast.show({ message: t('toast.seedPhraseCopiedToClipboard'), emoji: 'ok_hand', autoClose: true });
+    }
   };
 
   const handlePassedValidation = () => {
@@ -74,20 +82,34 @@ const BackupPhraseValidate = ({ navigation, backupWallet }: Props) => {
         <LogoContainer>
           <Logo source={walletBackupImage} />
         </LogoContainer>
-        <MnemonicPhrase phrase={mnemonicPhrase} />
+        {mnemonicPhrase ? (
+          <MnemonicPhrase phrase={mnemonicPhrase} />
+        ) : (
+          <PrivateKeyWrapper ref={excludeFromMonitoring}>{privateKey}</PrivateKeyWrapper>
+        )}
         <Button
-          title={t('button.savedPhrase')}
+          title={mnemonicPhrase ? t('button.savedPhrase') : t('button.savedPrivateKey')}
           style={styles.button}
           onPress={handlePassedValidation}
           size="large"
         />
-        <Button
-          title={t('button.copyToClipboard')}
-          variant="text"
-          style={styles.button}
-          size="large"
-          onPress={() => handleCopyToClipboard(mnemonicPhrase)}
-        />
+        {mnemonicPhrase ? (
+          <Button
+            title={t('button.copyToClipboard')}
+            variant="text"
+            style={styles.button}
+            size="large"
+            onPress={() => handleCopyToClipboard(mnemonicPhrase)}
+          />
+        ) : (
+          <Button
+            title={t('button.copyToClipboard')}
+            variant="text"
+            style={styles.button}
+            size="large"
+            onPress={() => handleCopyToClipboard(privateKey)}
+          />
+        )}
       </NonScrollableContent>
     </Container>
   );
@@ -118,4 +140,12 @@ const LogoContainer = styled.View`
 
 const Logo = styled(Image)`
   align-self: center;
+`;
+
+const PrivateKeyWrapper = styled(Text)`
+  padding: ${spacing.largePlus}px 0px;
+  font-family: ${appFont.medium};
+  font-size: ${fontSizes.large}px;
+  color: ${({ theme }) => theme.colors.tertiaryText};
+  text-align: center;
 `;

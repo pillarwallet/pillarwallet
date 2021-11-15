@@ -26,6 +26,7 @@ import Text from 'components/core/Text';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
+import { spacing } from 'utils/variables';
 
 
 const getIndex = (number: number) => {
@@ -68,11 +69,11 @@ const MnemonicPhraseWrapper = styled.View`
   width: 100%;
   flex-wrap: wrap;
   justify-content: center;
-  margin: 24px 0px;
+  margin: ${spacing.largePlus}px 0px;
 `;
 
 const MnemonicPhraseItem = styled.View`
-  width: 35%;
+  width: 140px;
   flex-direction: row;
   align-items: center;
   margin-bottom: 8px;
