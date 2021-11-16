@@ -183,7 +183,6 @@ class ShadowedCard extends React.Component<Props, State> {
 
 export default withTheme(ShadowedCard);
 
-
 const CardOutter = styled.View`
   position: relative;
   opacity: ${({ disabled }) => disabled ? 0.6 : 1};

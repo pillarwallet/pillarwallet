@@ -75,7 +75,7 @@ type Props = {|
 
 const handleCopyToClipboard = (addressName: string) => {
   Clipboard.setString(addressName);
-  Toast.show({ message: t('toast.addressCopiedToClipboard'), emoji: 'ok_hand', supportLink: true });
+  Toast.show({ message: t('toast.addressCopiedToClipboard'), emoji: 'ok_hand' });
 };
 
 const ReceiveModal = ({

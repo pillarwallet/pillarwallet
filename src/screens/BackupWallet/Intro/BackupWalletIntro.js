@@ -25,7 +25,7 @@ import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Constants
-import { BACKUP_PHRASE } from 'constants/navigationConstants';
+import { BACKUP_PHRASE_VALIDATE } from 'constants/navigationConstants';
 
 // Components
 import { Container, Content } from 'components/layout/Layout';
@@ -36,7 +36,7 @@ import Text from 'components/core/Text';
 // Utils
 import { appFont, fontStyles, spacing, fontSizes } from 'utils/variables';
 
-
+// Assets
 const smartWalletImage = require('assets/images/logo-wallet-migration.png');
 
 function BackupWalletIntro() {
@@ -46,7 +46,7 @@ function BackupWalletIntro() {
   const mnemonicPhrase = wallet?.mnemonic;
 
   const navigateToBackupPhrase = () => {
-    navigation.navigate(BACKUP_PHRASE, { wallet });
+    navigation.navigate(BACKUP_PHRASE_VALIDATE, { wallet });
   };
 
   const close = () => {

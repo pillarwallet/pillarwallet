@@ -59,6 +59,7 @@ type State = {
   wallet: Object,
 };
 
+// Assets
 const walletBackupImage = require('assets/images/logo-wallet-backup.png');
 
 class RevealBackupPhrase extends React.Component<Props, State> {

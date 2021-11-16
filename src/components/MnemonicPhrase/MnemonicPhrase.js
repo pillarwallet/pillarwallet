@@ -76,5 +76,5 @@ const MnemonicPhraseItem = styled.View`
   width: 140px;
   flex-direction: row;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: ${spacing.small}px;
 `;

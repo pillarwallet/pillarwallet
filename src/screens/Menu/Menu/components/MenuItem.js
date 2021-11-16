@@ -56,7 +56,7 @@ const Container = styled.View``;
 const TouchableContainer = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
-  padding: ${spacing.large}px ${spacing.large}px 18px ${spacing.large}px;
+  padding: ${spacing.large}px;
 `;
 
 const ItemIcon = styled(Icon)`

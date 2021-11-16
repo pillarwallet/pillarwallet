@@ -102,7 +102,7 @@ import TutorialScreen from 'screens/Tutorial';
 import EnsMigrationConfirmScreen from 'screens/EnsMigrationConfirm';
 import AddCashScreen from 'screens/AddCash/AddCash';
 import BackupWalletIntro from 'screens/BackupWallet/Intro';
-import BackupPhraseScreen from 'screens/BackupWallet/BackupPhraseValidate';
+import BackupPhraseValidateScreen from 'screens/BackupWallet/BackupPhraseValidate';
 
 // components
 import Toast from 'components/Toast';
@@ -141,7 +141,7 @@ import {
   SEND_TOKEN_PIN_CONFIRM,
   REVEAL_BACKUP_PHRASE,
   BACKUP_WALLET_INTRO,
-  BACKUP_PHRASE,
+  BACKUP_PHRASE_VALIDATE,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
   COLLECTIBLE,
   SEND_COLLECTIBLE_FROM_ASSET_FLOW,
@@ -355,7 +355,7 @@ const changePinFlow = createStackNavigator(
 const backupWalletFlow = createStackNavigator(
   {
     [BACKUP_WALLET_INTRO]: BackupWalletIntro,
-    [BACKUP_PHRASE]: BackupPhraseScreen,
+    [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
   },
   StackNavigatorModalConfig,
 );

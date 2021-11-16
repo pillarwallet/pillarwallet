@@ -52,6 +52,7 @@ type Props = {
   backupWallet: () => void,
 };
 
+// Assets
 const walletBackupImage = require('assets/images/logo-wallet-backup.png');
 
 const BackupPhraseValidate = ({ navigation, backupWallet, resetIncorrectPassword }: Props) => {

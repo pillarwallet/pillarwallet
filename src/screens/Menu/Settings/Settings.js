@@ -100,7 +100,6 @@ const Settings = () => {
             <ViewBackupPhraseSetting wallet={wallet} />
           </View>
         )}
-
       </Content>
     </Container>
   );
