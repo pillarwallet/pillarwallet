@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
+import React, { useState } from 'react';
 import { Image } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
@@ -32,6 +32,10 @@ import { Container, Content } from 'components/layout/Layout';
 import Button from 'components/core/Button';
 import HeaderBlock from 'components/HeaderBlock';
 import Text from 'components/core/Text';
+import CheckAuth from 'components/CheckAuth';
+
+// Types
+import type { WalletObject } from 'models/Wallet';
 
 // Utils
 import { appFont, fontStyles, spacing, fontSizes } from 'utils/variables';
@@ -39,14 +43,43 @@ import { appFont, fontStyles, spacing, fontSizes } from 'utils/variables';
 // Assets
 const smartWalletImage = require('assets/images/logo-wallet-migration.png');
 
-function BackupWalletIntro() {
+type Props = {
+  resetIncorrectPassword: () => void,
+};
+
+function BackupWalletIntro({ resetIncorrectPassword }: Props) {
   const { t, tRoot } = useTranslationWithPrefix('backupWallet.intro');
   const navigation = useNavigation();
   const wallet = navigation.getParam('wallet', null);
-  const mnemonicPhrase = wallet?.mnemonic;
+
+  const [pinIsValid, setPinIsValid] = useState(!!wallet);
+  const [unlockedwallet, setUnlockedWallet] = React.useState<?WalletObject>(wallet);
+
+  const mnemonicPhrase = unlockedwallet?.mnemonic;
+
+  const handleScreenDismissal = () => {
+    resetIncorrectPassword();
+    navigation.goBack(null);
+  };
+
+  const onPinValid = (walletPin: ?string, { mnemonic, privateKey }) => {
+    setPinIsValid(true);
+    setUnlockedWallet({ mnemonic: mnemonic?.phrase, privateKey });
+  };
+
+  if (!pinIsValid || !mnemonicPhrase) {
+    return (
+      <CheckAuth
+        revealMnemonic
+        enforcePin
+        onPinValid={onPinValid}
+        headerProps={{ onClose: handleScreenDismissal }}
+      />
+    );
+  }
 
   const navigateToBackupPhrase = () => {
-    navigation.navigate(BACKUP_PHRASE_VALIDATE, { wallet });
+    navigation.navigate(BACKUP_PHRASE_VALIDATE, { unlockedwallet });
   };
 
   const close = () => {
