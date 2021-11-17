@@ -85,18 +85,11 @@ const TermsOfService = () => {
           <HTML source={{ html: documentHTMLData }} baseFontStyle={{ color: colors.text }} />
         )}
       </Content>
-      {!onBoardingFlow && (
-      <Footer>
-        <Button title={t('auth:button.accept')} size="large" style={styles.buttonStyle} />
-        <Button
-          title={t('auth:button.reject')}
-          size="large"
-          variant="text"
-          onPress={() => {
-            navigation.dismiss();
-          }}
-        />
-      </Footer>
+      {!!onBoardingFlow && (
+        <Footer>
+          <Button title={t('auth:button.accept')} size="large" style={styles.buttonStyle} />
+          <Button title={t('auth:button.reject')} size="large" variant="text" />
+        </Footer>
       )}
     </Container>
   );
@@ -108,18 +101,6 @@ export default TermsOfService;
 const styles = {
   buttonStyle: {
     marginBottom: spacing.small,
-  },
-  textStyle: {
-    textAlign: 'center',
-    marginBottom: 48,
-  },
-  modal: {
-    position: 'relative',
-    width: 250,
-    height: 100,
-    backgroundColor: '#FFF',
-    justifyContent: 'center',
-    alignSelf: 'center',
   },
 };
 
