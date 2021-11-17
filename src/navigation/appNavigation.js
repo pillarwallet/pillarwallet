@@ -103,6 +103,7 @@ import LiquidityPoolsInfoScreen from 'screens/LiquidityPools/LiquidityPoolsInfo'
 import TutorialScreen from 'screens/Tutorial';
 import EnsMigrationConfirmScreen from 'screens/EnsMigrationConfirm';
 import AddCashScreen from 'screens/AddCash/AddCash';
+import TermsAndServiceScreen from 'screens/TermsAndService/TermsAndService';
 
 // components
 import Toast from 'components/Toast';
@@ -221,6 +222,7 @@ import {
   WEB_VIEW,
   ENS_MIGRATION_FLOW,
   ADD_CASH,
+  TERMS_AND_PRIVACY,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -556,6 +558,7 @@ const AppFlowNavigation = createStackNavigator(
     [ENS_MIGRATION_FLOW]: ensMigrationFlow,
     [ADD_CASH]: addCashFlow,
     [WEB_VIEW]: WebViewScreen,
+    [TERMS_AND_PRIVACY]: TermsAndServiceScreen,
   },
   modalTransition,
 );

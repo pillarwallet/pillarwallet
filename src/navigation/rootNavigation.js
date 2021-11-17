@@ -34,6 +34,7 @@ import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import WelcomeScreen from 'screens/Welcome';
 import ForgotPinScreen from 'screens/ForgotPin';
 import BiometricsPromptScreen from 'screens/BiometricsPrompt';
+import TermsAndServiceScreen from 'screens/TermsAndService/TermsAndService';
 
 import { modalTransition } from 'utils/common';
 import { ModalProvider } from 'components/Modal';
@@ -52,6 +53,7 @@ import {
   FORGOT_PIN,
   PERMISSIONS,
   IMPORT_WALLET_LEGALS,
+  TERMS_AND_PRIVACY,
   BIOMETRICS_PROMPT,
 } from 'constants/navigationConstants';
 
@@ -90,6 +92,7 @@ const onBoardingFlow = createStackNavigator({
   [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
   [BIOMETRICS_PROMPT]: BiometricsPromptScreen,
   [NEW_PROFILE]: NewProfileScreen,
+  [TERMS_AND_PRIVACY]: TermsAndServiceScreen,
 }, StackNavigatorConfig);
 
 const authFlow = createStackNavigator({
