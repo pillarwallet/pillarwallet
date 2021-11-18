@@ -102,7 +102,6 @@ const SendContainer = ({
           },
         ],
       }}
-      footer={<SendFooter {...footerProps} />}
       minAvoidHeight={800}
       keyboardShouldPersistTaps="handled"
       onScroll={() => {
@@ -133,6 +132,8 @@ const SendContainer = ({
 
           <ContactSelector {...customSelectorProps} />
         </Wrapper>
+
+        <SendFooter {...footerProps} />
 
         {children}
       </ScrollView>
