@@ -71,7 +71,7 @@
     "events": "^1.0.0",
     "https-browserify": "~0.0.0",
     "i18next": "^19.5.6",
-    "immer": "^9.0.5",
+    "immer": "^9.0.6",
     "instabug-reactnative": "^10.4.0",
     "jimp": "^0.12.1",
     "js-sha3": "^0.8.0",

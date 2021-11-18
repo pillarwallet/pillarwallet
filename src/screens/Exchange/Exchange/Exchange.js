@@ -173,6 +173,7 @@ function Exchange() {
   return (
     <Container>
       <HeaderBlock
+        leftItems={[{ close: true }]}
         centerItems={[{ title: t('exchangeContent.title.exchange', { chain: chainConfig.titleShort }) }]}
         navigation={navigation}
         noPaddingTop
