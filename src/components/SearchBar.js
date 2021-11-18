@@ -43,6 +43,7 @@ type Props = {
   style?: ViewStyleProp,
   inputStyle?: TextStyleProp,
   inputRef?: React.Ref<typeof RNTextInput>,
+  autoFocus?: boolean,
 };
 
 function SearchInput({
@@ -54,6 +55,7 @@ function SearchInput({
   style,
   inputStyle,
   inputRef,
+  autoFocus = false,
 }: Props) {
   const colors = useThemeColors();
 
@@ -75,6 +77,7 @@ function SearchInput({
         autoCompleteType="off"
         autoCorrect={false}
         blurOnSubmit
+        autoFocus={autoFocus}
       />
 
       {!query && (
