@@ -166,6 +166,10 @@ function Exchange() {
   };
 
   const toValue = maxBy(offers, (offer) => offer.toAmount)?.toAmount.precision(6);
+  const customTitle =
+    (nativeAssetPerChain[CHAIN.ETHEREUM]?.address === fromAddress) && (chain === CHAIN.ETHEREUM)
+      ? t('exchangeContent.title.initialExchange')
+      : t('exchangeContent.title.exchange', { chain: chainConfig.titleShort });
 
   const showLoading = offersQuery.isFetching;
   const showEmptyState = !offers?.length && !offersQuery.isIdle && !offersQuery.isFetching;
@@ -174,7 +178,7 @@ function Exchange() {
     <Container>
       <HeaderBlock
         leftItems={[{ close: true }]}
-        centerItems={[{ title: t('exchangeContent.title.exchange', { chain: chainConfig.titleShort }) }]}
+        centerItems={[{ title: customTitle }]}
         navigation={navigation}
         noPaddingTop
       />
