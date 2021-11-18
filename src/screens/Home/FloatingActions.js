@@ -91,7 +91,7 @@ const useEnabledActions = () => {
     && (!isArchanovaAccount(activeAccount) || isEmpty(smartWalletState.sendingBlockedMessage));
 
   return {
-    isSendEnabled: isEnabled,
+    isSendEnabled: true,
     isExchangeEnabled: isEnabled,
   };
 };
