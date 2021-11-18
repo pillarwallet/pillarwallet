@@ -123,7 +123,12 @@ function WalletConnectHome() {
 
   return (
     <Container>
-      <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
+      <HeaderBlock
+        leftItems={[{ close: true }]}
+        centerItems={[{ title: t('title') }]}
+        navigation={navigation}
+        noPaddingTop
+      />
 
       {isReady && !isFetching && (
         <SectionList
