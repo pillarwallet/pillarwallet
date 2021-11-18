@@ -72,7 +72,7 @@ const TokenBalanceAccessory = ({
     onUseMax?.();
   };
 
-  if (!balance) return null;
+  if (!balance || BigNumber(balance).lte(0)) return null;
 
   const formattedBalance = formatBalance(balance, asset, rates, currency);
 
