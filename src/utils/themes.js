@@ -162,7 +162,7 @@ export const semanticDarkThemeColors = {
   swiperButtonTrack: '#520f8c',
   swiperButtonThumb: baseColors.electricViolet,
   modalHandleBar: '#4d4d4d',
-  toastBackgroundColor: '#2e673c',
+  toastBackgroundColor: darkThemeColors.darkGreen,
   toastTextColor: darkThemeColors.basic010,
 };
 

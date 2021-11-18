@@ -79,11 +79,11 @@ class RevealBackupPhrase extends React.Component<Props, State> {
 
   handleCopyToClipboard = (copiedText: string, isPrivateKey?: boolean) => {
     Clipboard.setString(copiedText);
-    if (isPrivateKey) {
-      Toast.show({ message: t('toast.privateKeyCopiedToClipboard'), emoji: 'ok_hand', autoClose: true });
-    } else {
-      Toast.show({ message: t('toast.seedPhraseCopiedToClipboard'), emoji: 'ok_hand', autoClose: true });
-    }
+    Toast.show({
+      message: isPrivateKey ? t('toast.privateKeyCopiedToClipboard') : t('toast.seedPhraseCopiedToClipboard'),
+      emoji: 'ok_hand',
+      autoClose: true,
+    });
   };
 
   onPinValid = (wallet: Object) => {

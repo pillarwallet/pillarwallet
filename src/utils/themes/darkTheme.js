@@ -91,4 +91,7 @@ export default {
 
   // WalletConnect
   purple: '#A020F0',
+
+  // Toast background
+  darkGreen: '#2e673c',
 };
