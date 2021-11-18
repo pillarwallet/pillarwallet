@@ -195,9 +195,8 @@ const NewProfile = () => {
     ? { floating: true, transparent: true }
     : { centerItems: [{ title: t('auth:title.chooseUsername') }] };
 
-  const openLegalScreen = (documentId: string, documentName: string) => {
+  const openLegalScreen = (documentId: string, documentName: string) =>
     navigation.navigate(TERMS_AND_PRIVACY, { prismicDocumentId: documentId, prismicDocumentName: documentName });
-  };
 
   return (
     <Container>

@@ -63,9 +63,8 @@ const MenuFooter = () => {
 
   const goToSystemInformation = () => navigation.navigate(MENU_SYSTEM_INFORMATION);
 
-  const openLegalScreen = (documentId: string, documentName: string) => {
+  const openLegalScreen = (documentId: string, documentName: string) =>
     navigation.navigate(TERMS_AND_PRIVACY, { prismicDocumentId: documentId, prismicDocumentName: documentName });
-  };
 
   const handleSignOut = () => {
     const isWalletBackedUp = walletBackupStatus.isImported || walletBackupStatus.isBackedUp || __DEV__;
