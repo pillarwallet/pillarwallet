@@ -177,6 +177,7 @@ function Exchange() {
   return (
     <Container>
       <HeaderBlock
+        leftItems={[{ close: true }]}
         centerItems={[{ title: customTitle }]}
         navigation={navigation}
         noPaddingTop
