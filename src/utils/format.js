@@ -134,7 +134,9 @@ export function formatFiatValue(value: ?BigNumber | number, currency?: string, o
 
   const currencyValue = t('fiatValue', { value: formattedValue, symbol: getCurrencySymbol(currency) });
   // eslint-disable-next-line max-len
-  return BigNumber(formattedValue).lt(0.01) && BigNumber(formattedValue).gt(0) ? ('< ').concat(currencyValue) : currencyValue;
+  return BigNumber(formattedValue).lt(0.01) && BigNumber(formattedValue).gt(0)
+    ? '< '.concat(currencyValue)
+    : currencyValue;
 }
 
 /**
