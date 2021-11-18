@@ -167,7 +167,7 @@ function Exchange() {
 
   const toValue = maxBy(offers, (offer) => offer.toAmount)?.toAmount.precision(6);
   const customTitle =
-    nativeAssetPerChain[CHAIN.ETHEREUM]?.address === fromAddress && chain === CHAIN.ETHEREUM
+    (nativeAssetPerChain[CHAIN.ETHEREUM]?.address === fromAddress) && (chain === CHAIN.ETHEREUM)
       ? t('exchangeContent.title.initialExchange')
       : t('exchangeContent.title.exchange', { chain: chainConfig.titleShort });
 
