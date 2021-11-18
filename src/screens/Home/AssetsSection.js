@@ -87,7 +87,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts }: Props
 
   const toggleShowChains = (category: AssetCategory) => {
     LayoutAnimation.configureNext(LIST_ITEMS_APPEARANCE);
-    const previousValue = showChainsPerCategory[category];
+    const previousValue = showChainsPerCategory[category] ?? true;
     // $FlowFixMe: flow is able to handle this
     setShowChainsPerCategory({ ...showChainsPerCategory, [category]: !previousValue });
   };
@@ -106,7 +106,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts }: Props
     const formattedBalance = formatFiatValue(balance, fiatCurrency);
 
     const { title, iconName } = categoriesConfig[category];
-    const showChains = showChainsPerCategory[category];
+    const showChains = showChainsPerCategory[category] ?? true;
 
     return (
       <React.Fragment key={`${category}-fragment`}>
@@ -142,7 +142,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts }: Props
 
   const renderCollectiblesCategory = () => {
     const { title, iconName } = categoriesConfig.collectibles;
-    const showChains = showChainsPerCategory.collectibles;
+    const showChains = showChainsPerCategory.collectibles ?? true;
     return (
       <React.Fragment key="collectibles-fragment">
         <CategoryListItem
