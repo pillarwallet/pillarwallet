@@ -95,6 +95,7 @@ const SendContainer = ({
   return (
     <ContainerWithHeader
       headerProps={{
+        leftItems: [{ close: true }],
         centerItems: [
           {
             title: customScreenTitle || t('transactions.title.sendScreen', { chain: chainTitle }),
