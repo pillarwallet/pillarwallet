@@ -56,13 +56,13 @@
     "1e12": "{{value}}T"
   },
   "chains": {
-    "ethereum": "Ethereum Mainnet",
+    "ethereum": "Ethereum",
     "binance": "Binance Smart Chain",
     "xdai": "xDai",
     "polygon": "Polygon"
   },
   "chainsShort": {
-    "ethereum": "Ethereum Mainnet",
+    "ethereum": "Ethereum",
     "binance": "BSC",
     "xdai": "xDai",
     "polygon": "Polygon"
@@ -126,7 +126,7 @@
     "canceled": "Anuluar",
     "collectibleFromUser": "NFT nga {{username}}",
     "collectibleToUser": "NFT në {{username}}",
-    "contactSupport": "Kontaktoni me mbështetjen",
+    "contactSupport": "Kontaktoni me supportin",
     "created": "Krijuar",
     "currentApyFormat": "APY aktuale: {{value}}",
     "dotSeparator": "  ·",
@@ -198,8 +198,8 @@
     "sendTo": "Dërgo në",
     "walletAddress": "Adresa e portofolit",
     "addressEnsUsername": "Adresa, ENS, emri i përdoruesit",
-    "walletNotDeployed": "Portofoli nuk është vendosur",
-    "tokens": "Shenjat",
+    "walletNotDeployed": "Portofoli nuk është aktivizuar",
+    "tokens": "Tokenvt",
     "collectibles": "NFT-të",
     "collectible": "NFT",
     "processing": "Po përpunohet...",
@@ -253,7 +253,7 @@
     "archanovaToEtherspot": "Pillar V1 në Etherspot (Pillar V2)",
     "archanovaToEtherspotShort": "Pillar V1 në Etherspot",
     "deployed": "Të vendosura",
-    "walletDeployment": "Vendosja e portofolit",
+    "walletDeployment": "Aktivizimi i portofolit",
     "pleaseSelect": "Ju lutem zgjidhni",
     "balanceFiatTokenFormat": "Bilanci {{balanceInFiat}} ({{balance}})",
     "balanceTokenFormat": "Bilanci {{balance}}",
@@ -263,7 +263,7 @@
     "activate": "Aktivizoni",
     "activatePPN": "Aktivizo Pillar Network",
     "add": "Shtoni",
-    "addCash": "Shtoni para të gatshme",
+    "addCash": "Shtoni para",
     "addContact": "Shto kontakt",
     "addContacts": "Shto kontakte",
     "addDetails": "Shto detaje",
@@ -280,7 +280,7 @@
     "claim": "Kerkese",
     "close": "Mbylle",
     "depositMore": "Depozitoni më shumë",
-    "deploy": "Vendosni",
+    "deploy": "Aktivizoni",
     "explore": "Eksploroni",
     "exchange": "Shkëmbim",
     "exchangeMore": "Shkëmbeni më shumë",
@@ -303,13 +303,13 @@
     "sendAll": "Dërgo të gjitha",
     "sendBack": "Dërgo prapa",
     "sendFromAnotherWallet": "Dërgo nga një portofol tjetër",
-    "sendMore": "Dergo me shume",
+    "sendMore": "Dërgo me shume",
     "settleMore": "Vendosni më shumë",
     "settleTransactions": "Zgjidh transaksionet",
     "shareAddress": "Shpërndaje",
     "smartWalletFAQ": "FAQ për portofolin inteligjent",
     "subscribe": "Abonohu",
-    "support": "Mbështetje",
+    "support": "Kontakto support",
     "swap": "këmbejnë",
     "swipeConfirm": "Rrëshqitni për të konfirmuar",
     "topUp": "Mbushe",
@@ -365,7 +365,7 @@
     "sendMax": "Dërgo max",
     "spendMax": "Shpenzoni maksimum",
     "useMax": "Përdorni max",
-    "selectToken": "Zgjidh token...",
+    "selectToken": "Zgjidh asetin...",
     "more": "Më shumë"
   },
   "paragraph": {
@@ -550,7 +550,7 @@
       "services": "Shërbimet"
     },
     "actions": {
-      "receive": "Merrni",
+      "receive": "Prano",
       "send": "Dërgo",
       "swap": "Këmbej",
       "connect": "Lidhu"
@@ -634,7 +634,7 @@
     "home": {
       "title": "WalletConnect",
       "headerStories": "E re dhe e rëndësishme",
-      "deployOnChainFormat": "Vendoseni këtë portofol për të përfituar plotësisht nga përdorimi i {{chain}}.",
+      "deployOnChainFormat": "Aktivizoni këtë portofol për të përfituar plotësisht nga përdorimi i {{chain}}.",
       "toast": {
         "showDAppServiceLaunchError": "Na vjen keq, patëm një problem në përpjekjen për të hapur këtë dApp. Ju lutemi provoni sërish më vonë."
       }
@@ -660,10 +660,10 @@
   },
   "etherspot": {
     "deploymentInterjection": {
-      "title": "Vendosja e portofolit inteligjent",
+      "title": "Aktivizimi i portofolit inteligjent (Smart Wallet)",
       "depositFormat": "Depozitoni {{symbol}} në {{chain}}",
-      "error": "Nuk mund të merren të dhënat e Ndërthurjes së vendosjes së portofolit inteligjent. Ju lutemi provoni përsëri.",
-      "cost": "{{cost}} kosto e vendosjes do t'i shtohet transaksionit tuaj të parë."
+      "error": "Nuk mund të merren të dhënat e Ndërthurjes së aktivizimit së portofolit inteligjent. Ju lutemi provoni përsëri.",
+      "cost": "{{cost}} kosto e aktivizimit do t'i shtohet transaksionit tuaj të parë."
     }
   },
   "contactSelector": {
@@ -1005,7 +1005,7 @@
     "ramp": {
       "addCash": {
         "title": "Blini Crypto",
-        "subTitle": "Ju paguani me karte"
+        "subTitle": "Ju paguani me kartelë"
       }
     },
     "liquidityPools": {
@@ -1019,7 +1019,7 @@
   },
   "transactions": {
     "title": {
-      "sendScreen": "Dërgo më {{chain}}",
+      "sendScreen": "Dërgo në {{chain}}",
       "sendScreenPPN": "Dërgo në PPN",
       "valueSelectorModal": "Zgjidhni aktivin",
       "review": "Rishikimi",
@@ -1064,7 +1064,7 @@
       "maximumFee": "Tarifa maksimale",
       "pillarFee": "Tarifa e Pillar",
       "totalFee": "Tarifa totale",
-      "deploymentFee": "Tarifa e vendosjes së portofolit inteligjent",
+      "deploymentFee": "Tarifa e aktivizimit së portofolit inteligjent",
       "maxTransactionFee": "Maks. tarifë transaksioni",
       "youAreSending": "Ju jeni duke dërguar",
       "fees": "Tarifat",
@@ -1113,7 +1113,7 @@
     "addressCopiedToClipboard": "Adresa u kopjua në kujtesën e fragmenteve.",
     "ensNameCopiedToClipboard": "Emri ENS u kopjua në kujtesën e fragmenteve.",
     "forbiddenToRemoveAsset": "{{assetName}} ({{assetSymbol}}) nuk mund të hiqet. Është thelbësore për Pillar.",
-    "failedToGetFaceIDPermission": "Face ID e kufizuar për Pillar. Mund ta ndryshoni në cilësimet e telefonit tuaj.",
+    "failedToGetFaceIDPermission": "Face ID nuk lejohet për Pillar app. Mund ta ndryshoni në cilësimet e telefonit tuaj.",
     "subscribedToNewsletter": "Abonuar në buletinin.",
     "subscriptionToNewsletterFailed": "Nuk mund të abonoheni në buletinin. Ju lutemi provoni përsëri.",
     "cantInviteYourself": "Nuk mund ta ftoni veten.",
@@ -1137,7 +1137,7 @@
     "failedToUploadImage": "Marrja e imazhit nga galeria dështoi. Ju lutemi provoni përsëri.",
     "failedToDeleteAvatar": "Fshirja e avatarit dështoi. Ju lutemi provoni përsëri.",
     "failedToCreateOrder": "Një gabim Ndodhi. Kjo ofertë nuk mund të pranohet. Ju lutemi provoni përsëri.",
-    "cannotFindDeploymentHash": "Nuk mund të gjendet hash-i i vendosjes. Ju lutemi provoni përsëri.",
+    "cannotFindDeploymentHash": "Nuk mund të gjendet hash-i i aktivizimit. Ju lutemi provoni përsëri.",
     "cannotFindTransactionHash": "Nuk mund të gjendet hash transaksioni. Ju lutemi provoni përsëri.",
     "cannotGetBlockchainExplorerLink": "Nuk mund të marrë lidhjen e eksploruesit të blockchain. Ju lutemi provoni përsëri.",
     "cannotGetWalletAddress": "Nuk mund të merret adresa e portofolit.",
