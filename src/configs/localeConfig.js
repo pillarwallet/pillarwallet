@@ -38,6 +38,10 @@ const AM_AUTH = require('../locales/am/auth.json');
 const BS_COMMON = require('../locales/bs/common.json');
 const BS_AUTH = require('../locales/bs/auth.json');
 
+// SQ
+const SQ_COMMON = require('../locales/sq/common.json');
+const SQ_AUTH = require('../locales/sq/auth.json');
+
 export const DEFAULT_LANGUAGE_CODE = 'en';
 const DEFAULT_LANGUAGE = 'English';
 const DEFAULT_NAMESPACE = 'common';
@@ -69,6 +73,7 @@ export default ({
     [DEFAULT_LANGUAGE_CODE]: DEFAULT_LANGUAGE,
     am: 'አማርኛ',
     bs: 'Bosanski',
+    sq: 'Shqip'
   },
   defaultNameSpace: DEFAULT_NAMESPACE,
   namespaces: ['auth', DEFAULT_NAMESPACE],
@@ -85,6 +90,10 @@ export default ({
     bs: {
       common: BS_COMMON,
       auth: BS_AUTH,
+    },
+    sq: {
+      common: SQ_COMMON,
+      auth: SQ_AUTH,
     },
   },
 }: LocalisationConfig);
