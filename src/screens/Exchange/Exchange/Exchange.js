@@ -194,7 +194,7 @@ function Exchange() {
           valueInputRef={fromInputRef}
         />
 
-        <TouchableSwapIcon onPress={handleSwapAssets} disabled={!allowSwap}>
+        <TouchableSwapIcon onPress={handleSwapAssets} disabled={!allowSwap} hitSlop={swapIconHitSlop}>
           {toAsset ? <Icon name="arrow-up-down" /> : <Spacing h={24} />}
         </TouchableSwapIcon>
 
@@ -244,6 +244,8 @@ const TouchableSwapIcon = styled.TouchableOpacity`
   margin: 8px 0 8px;
   align-self: center;
 `;
+
+const swapIconHitSlop = { top: 20, bottom: 20, left: 50, right: 50 };
 
 const EmptyStateWrapper = styled.View`
   justify-content: center;
