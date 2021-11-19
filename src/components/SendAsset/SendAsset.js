@@ -111,7 +111,7 @@ const SendAsset = ({
   const [selectedContact, setSelectedContact] = useState(defaultContact);
   const [submitPressed, setSubmitPressed] = useState(false);
 
-  const assetAddress = assetData.contractAddress;
+  const assetAddress = assetData?.contractAddress;
   const chain = assetData?.chain;
   const balances = accountAssetsBalances?.[chain]?.wallet ?? {};
   const balance = getBalanceBN(balances, assetAddress);

@@ -120,7 +120,7 @@ const TokenValueInput = React.forwardRef<Props, Instance>((props, ref) => {
         onValueChange={onValueChange}
         decimals={decimals > 15 ? 15 : decimals}
         maxValue={maxValue}
-        editable={editable}
+        editable={asset ? editable : false}
         style={[styles.input, textStyle]}
         onFocus={referenceValue ? handleFocus : undefined}
         onBlur={referenceValue ? handleBlur : undefined}

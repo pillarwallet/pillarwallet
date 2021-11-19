@@ -77,7 +77,7 @@
     "wallet": "Wallet",
     "deposits": "Deposits",
     "investments": "Investments",
-    "liquidityPools": "Liquidity pools",
+    "liquidityPools": "Liquidity Pools",
     "rewards": "Rewards",
     "datasets": "Datasets",
     "collectibles": "NFTs"
@@ -1235,6 +1235,7 @@
     },
     "title": {
       "exchange": "Swap on {{chain}}",
+      "initialExchange": "Swap",
       "confirm": "Review"
     },
     "label": {
