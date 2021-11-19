@@ -9,55 +9,82 @@
   "pillarTank": "Pillar Tank",
   "poolTogether": "Pool Together",
   "smartWallet": "Smart Wallet",
+  "legacySmartWallet": "Pametni novčanik (naslijeđe)",
   "telegram": "Telegram",
   "twitter": "Twitter",
   "youtube": "Youtube",
   "ellipsedString": "{{string}}...",
   "ellipsedMiddleString": "{{stringStart}}...{{stringEnd}}",
-
   "ticketAmount": "{{count}} ulaznica",
   "ticketAmount_plural": "{{count}} ulaznica",
-  "ticket": "ulaznica",
-  "ticket_plural": "ulaznice",
-
   "positiveValue": "+ {{value}}",
   "negativeValue": "- {{value}}",
   "positiveTokenValue": "+ {{value}} {{token}}",
   "negativeTokenValue": "- {{value}} {{token}}",
+  "fiatValue": "{{symbol}}{{value}}",
+  "percentValue": "{{value}} %",
   "positivePercentValue": "+ {{value}} %",
+  "negativePercentValue": "-{{value}}%",
   "tokenValue": "{{value}} {{token}}",
   "totalValue": "Ukupno {{value}}",
-  "percentValue": "{{value}} %",
+  "estimatedValue": "≈ {{value}}",
   "availableValue": "Dostupno: {{value}}",
   "ofValue": "od {{value}}",
   "valueOfValue": "{{partOfValue}} od {{allValue}}",
-  "ofTotalTokenValue": "od {{value}} {{token}} ukupno",
   "tokenFiatValue": "{{tokenValue}} ({{fiatValue}})",
-  "maxTokenValue": "Max {{value}} {{token}}",
-  "minTokenValue": "Min {{value}} {{token}}",
   "lessThanSignValue": "<{{value}}",
   "moreThanSignValue": ">{{value}}",
   "rangeValues": "{{fromValue}} - {{toValue}}",
-
+  "exchangeRate": "{{rate}} {{toSymbol}}/{{fromSymbol}}",
   "timeDaysHours": "{{days}}d {{hours}}h",
   "timeHoursMinutes": "{{hours}}h {{minutes}}m",
-  "timeDaysHoursMinutes":"{{days}}d {{hours}}h {{minutes}}m",
-  "inTimeDaysHoursMinutes":"In {{days}}d {{hours}}h {{minutes}}m",
-  "timeDaysHoursMinutesLayout":"{{days}} {{hours}} {{minutes}}",
+  "timeDaysHoursMinutes": "{{days}}d {{hours}}h {{minutes}}m",
+  "inTimeDaysHoursMinutes": "In {{days}}d {{hours}}h {{minutes}}m",
+  "timeDaysHoursMinutesLayout": "{{days}} {{hours}} {{minutes}}",
   "day": "{{count}} dan",
   "day_plural": "{{count}} dana",
   "hour": "{{count}} sat",
   "hour_plural": "{{count}} sati",
   "minute": "{{count}} minuta",
   "minute_plural": "{{count}} minuta",
-
-  "navigationTabs": {
-    "home": "Glavni meni",
-    "assets": "Imovina",
-    "connect": "Spoji",
-    "services": "Usluge"
+  "tutorialTitle": "Dobrodošli u Pillar!",
+  "tutorialSubtitle": "Sam bol je ljubav prema boli, glavni ekološki problemi, ali ja dajem ovakvom vremenu da padne, pa da neki veliki bol i bol.",
+  "units": {
+    "1e3": "{{value}} K",
+    "1e6": "{{value}}M",
+    "1e9": "{{value}}B",
+    "1e12": "{{value}}T"
   },
-
+  "chains": {
+    "ethereum": "Ethereum Mainnet",
+    "binance": "Binance pametni lanac",
+    "xdai": "xDai Network",
+    "polygon": "Polygon"
+  },
+  "chainsShort": {
+    "ethereum": "Mainnet",
+    "binance": "BSC",
+    "xdai": "xDai",
+    "polygon": "Polygon"
+  },
+  "assetCategories": {
+    "wallet": "Novčanik",
+    "deposits": "Depoziti",
+    "investments": "Investicije",
+    "liquidityPools": "Pulovi likvidnosti",
+    "rewards": "Nagrade",
+    "datasets": "Skupovi podataka",
+    "collectibles": "NFTs"
+  },
+  "assetCategoriesShort": {
+    "wallet": "Novčanik",
+    "deposits": "Depoziti",
+    "investments": "Investicije",
+    "liquidityPools": "Bazeni",
+    "rewards": "Nagrade",
+    "datasets": "Skupovi podataka",
+    "collectibles": "NFTs"
+  },
   "title": {
     "accounts": "Računi",
     "addFundsToWallet": "Dodaj sredstva u Pillar",
@@ -74,7 +101,6 @@
     "pending": "Na čekanju",
     "collectibleSent": "Značka poslana",
     "collectibleReceive": "Značka primljena",
-    "badgeReceived": "Značka zaprimljena",
     "connectionRequested": "Zatraženo",
     "assets": "Imovina",
     "backupPhrase": "Rezervna fraza",
@@ -86,23 +112,24 @@
     "confirm": "Potvrdi",
     "privateKey": "Privatni ključ",
     "exchange": "Mjenjačnica",
-    "unlockWithBiometrics": "Otključaj biometrijskim senzorom"
+    "unlockWithBiometrics": "Otključaj biometrijskim senzorom",
+    "welcome": "Dobrodošli u Pillar Wallet!"
   },
-
   "label": {
     "activate": "Aktiviraj",
     "activateSmartWallet": "Aktiviraj Smart Wallet",
     "activated": "Aktivirano",
     "added": "Dodano",
     "adding": "Dodavanje",
+    "all": "Sve",
     "backedUp": "Rezerva osigurana",
-    "badge": "Značka",
     "canceled": "Poništeno",
     "collectibleFromUser": "Značka od {{username}}",
     "collectibleToUser": "Značka za {{username}}",
     "contactSupport": "Kontaktiraj podršku",
     "created": "Napravljeno",
-    "emailOrPhone": "Email ili telefon",
+    "currentApyFormat": "Trenutni APY: {{value}}",
+    "dotSeparator": "  ·",
     "enabled": "Omogućeno",
     "enableSmartWalletGasRelayerPLR": "Omogući plaćanje transakcija sa PLR-om",
     "enabling": "Omogućivanje",
@@ -122,6 +149,8 @@
     "needToActivate": "Potrebna aktivacija",
     "newSmartWalletAccountDevice": "Novi Smart Wallet uređaj",
     "notApplicable": "N/A",
+    "notEnoughGas": "Nedovoljno gasa",
+    "notEnoughBalance": "Nedovoljno stanje {{symbol}}",
     "outgoingSablierStream": "Izlazni tok",
     "purchase": "Kupovina",
     "received": "Primljeno",
@@ -137,16 +166,19 @@
     "sending": "Slanje",
     "sent": "Poslano",
     "settle": "Podmiri",
+    "settlement": "Naselje",
     "smartWalletAccountDevice": "Smart Wallet uređaj",
     "smartWalletAccountDeviceAdded": "Novi račun dodan",
     "smartWalletAccountDeviceRemoved": "Račun uređaja ukinut",
     "smartWalletGasRelayerPLR": "Smart Wallet troškovi sa PLR tokenima",
     "started": "Započelo",
+    "transactionDeploymentWarning": "Nemojte nastaviti ako ne želite implementirati {{chain}} Smart Wallet.",
     "today": "Danas",
     "toKeyWallet": "u Key wallet",
     "toPPN": "u Pillar Mrežu",
     "topUp": "Nadopuna",
     "toSmartWallet": "u Smart Wallet",
+    "wallet": "Novčanik",
     "withdraw": "Podigni",
     "withdrawal": "Podizanje",
     "yesterday": "Jučer",
@@ -162,8 +194,11 @@
     "gettingFee": "Dohvaćam troškove...",
     "to": "Do",
     "from": "Od",
-    "chooseReceiver": "Odaberite primatelja",
+    "whereToSend": "Gdje poslati",
+    "sendTo": "Poslati",
     "walletAddress": "Adresa novčanika",
+    "addressEnsUsername": "Adresa, ENS, korisničko ime",
+    "walletNotDeployed": "Novčanik nije raspoređen",
     "tokens": "Tokeni",
     "collectibles": "Značke",
     "collectible": "Značka",
@@ -171,6 +206,7 @@
     "mainAccount": "Glavni Račun",
     "free": "Besplatno",
     "estimatedFee": "Proračun troškova:",
+    "estFee": "Istok. vila",
     "nothingFound": "Ništa nije pronađeno",
     "verified": "Provjereno",
     "select": "Odabir",
@@ -185,7 +221,7 @@
     "thisDevice": "Ovaj uređaj",
     "onHold": "Na čekanju",
     "deviceAddress": "Adresa uređaja",
-    "noContactsAdded": "Nema dodanih kontakata",
+    "noContacts": "Nema kontakata",
     "comingSoon": "Dolazi uskoro",
     "buy": "Kupi",
     "sell": "Prodaj",
@@ -197,16 +233,42 @@
     "popular": "Popularno",
     "set": "Postavi",
     "notAvailableInYourCountry": "Nije dostupno u Vašoj državi",
-    "cannotProceedOffline": "Nemoguće nastaviti offline"
+    "cannotProceedOffline": "Nemoguće nastaviti offline",
+    "payWithPLR": "Platite sa PLR",
+    "notSet": "Nije postavljeno",
+    "deposit": "Depozit",
+    "claim": "TVRDITI",
+    "fromRariToWallet": "Rari Capital → Novčanik",
+    "fromWalletToRari": "Novčanik → Rari Capital",
+    "rewardsClaimed": "Tražene nagrade",
+    "keyFacts": "Ključne činjenice",
+    "multiple": "Višestruko",
+    "walletToPillarPay": "Novčanik → Pillar Pay",
+    "pillarPayToWallet": "Pillar Pay → Novčanik",
+    "fromToFormat": "{{from}} → {{to}}",
+    "completed": "Završeno",
+    "failed": "Nije uspjelo",
+    "assetMigration": "Migracija imovine",
+    "ensMigration": "ENS migracija",
+    "archanovaToEtherspot": "Stub V1 u Etherspot (Pillar V2)",
+    "archanovaToEtherspotShort": "Stub V1 na Etherspot",
+    "deployed": "Deployed",
+    "walletDeployment": "Postavljanje novčanika",
+    "pleaseSelect": "Molimo odaberite",
+    "balanceFiatTokenFormat": "Stanje {{balanceInFiat}} ({{balance}})",
+    "balanceTokenFormat": "Stanje {{balance}}",
+    "filterByName": "Filtrirajte po imenu"
   },
-
   "button": {
     "activate": "Aktiviraj",
     "activatePPN": "Aktiviraj Pillar Mrežu",
     "add": "Dodaj",
+    "addCash": "Dodajte gotovinu",
+    "addContact": "Dodaj kontakt",
     "addContacts": "Dodaj kontatke",
     "addDetails": "Dodaj detalje",
     "addFunds": "Dodaj sredstva",
+    "apply": "Prijavite se",
     "approve": "Odobri",
     "buyPLR": "Kupi PLR",
     "buyTokensWithCreditCard": "Kupi tokene sa kreditnom karticom",
@@ -218,10 +280,13 @@
     "claim": "Preuzmi",
     "close": "Zatvori",
     "depositMore": "Uplatite više",
+    "deploy": "Razviti",
     "explore": "Istraži",
     "exchange": "Mjenjačnica",
+    "exchangeMore": "Razmijenite više",
     "hide": "Sakrij",
     "inviteAndGetTokens": "Pozovite i zaradite besplatne tokene",
+    "inviteFriend": "Pozovi prijatelja",
     "inviteFriends": "Pozovi prijatelje",
     "inviteMoreFriends": "Pozovi još prijatelja",
     "inviteToPillar": "Pozovi u Pillar",
@@ -234,20 +299,18 @@
     "receive": "Primi",
     "seeOnEtherscan": "Vidi na Etherscan-u",
     "selectAll": "Odaberi sve",
-    "selectContacts": "Odaberi kontakte",
     "send": "Pošalji",
     "sendAll": "Pošalji sve",
     "sendBack": "Pošalji nazad",
     "sendFromAnotherWallet": "Pošalji sa drugog wallet-a",
-    "sendInvites": "Pošalji pozivnice",
     "sendMore": "Pošalji još",
-    "sendMax": "Pošalji sve",
     "settleMore": "Podmiri još",
     "settleTransactions": "Podmiri transakcije",
     "shareAddress": "Podijeli",
     "smartWalletFAQ": "Smart Wallet FAQ",
     "subscribe": "Pretplati se",
     "support": "Podrška",
+    "swap": "Swap",
     "swipeConfirm": "Prevucite za potvrdu",
     "topUp": "Nadopuna",
     "topUpMore": "Nadopuni još",
@@ -256,34 +319,30 @@
     "tryAgain": "Pokušajte ponovo",
     "viewAllItemsAmount": "Prikaži sve {{amount}} ",
     "viewAll": "Prikaži sve",
-    "viewBadge": "Prikaži značku",
     "viewBalance": "Prikaži balans",
     "viewDeposit": "Prikaži depozit",
     "viewOnBlockchain": "Prikaži na blockchain-u",
-    "viewPoolTogetherPool": "Prikaži pool",
-    "viewSablierStream": "Prikaži tok",
     "verify": "Provjeri",
     "withdraw": "Podigni",
-    "withdrawAll": "Podigni sve",
     "withdrawMore": "Podigni još",
     "delete": "Obriši",
-    "addNew": "Dodaj novi",
     "save": "Spremi",
     "next": "Dalje",
-    "spendMax": "Potroši sve",
     "confirmWithdraw": "Potvrdi podizanje",
     "enable": "Omogući",
-    "useMax": "Koristi sve",
     "allow": "Dopusti",
     "max": "Sve",
     "sendTokenInstead": "Šalji token",
     "addToContacts": "Dodaj u kontatke",
+    "addToAddressBook": "Dodaj u adresar",
     "copyToClipboard": "Kopiraj u pretinac",
+    "paste": "Zalijepi",
     "resendIt": "Ponovo pošalji",
     "migrateAssetsToSmartWallet": "Prebaci imovinu u Smart Wallet",
     "continue": "Nastavi",
     "remove": "Ukloni",
     "cancel": "Poništi",
+    "skip": "Skip",
     "edit": "Izmjeni",
     "magic": "Čarolija",
     "disconnect": "Odspoji",
@@ -292,9 +351,23 @@
     "readMore": "Saznaj još",
     "activateSmartWallet": "Aktiviraj Smart Wallet",
     "finish": "Završi",
-    "copyAddress": "Kopiraj adresu"
+    "claimMore": "Zahtevajte više",
+    "transferMore": "Transfer više",
+    "addMoreLiquidity": "Dodajte više likvidnosti",
+    "removeMoreLiquidity": "Uklonite više likvidnosti",
+    "stakeMoreLiquidity": "Uložite više",
+    "unstakeMoreLiquidity": "Unstake more",
+    "claimMoreRewards": "Zahtevajte više",
+    "back": "Nazad",
+    "native": "Znam Crypto",
+    "new": "Ja sam nov u Crypto",
+    "copyAddress": "Kopiraj adresu",
+    "sendMax": "Pošalji sve",
+    "spendMax": "Potroši sve",
+    "useMax": "Koristi sve",
+    "selectToken": "Odaberite token...",
+    "more": "Više"
   },
-
   "paragraph": {
     "addressCopiedToClipboard": "Adresa kopirana u pretinac.",
     "doNotSendRealEthOrTokens": "Ne šaljite prave ETH ili ERC20 tokene.",
@@ -309,18 +382,10 @@
     "backupPhraseRevealedPurpose": "Molim korisite ovih 12 tajnih riječi kako bi obnovili svoj račun.",
     "privateKeyRevealedPurpose": "Molim korisite ovaj privatni ključ kako bi obnovili svoj račun.",
     "doNotShareBackup": "Držite ih sigurnim jer je to jedini način za obnovu računa. Nemojte email-at ga ili screenshot-at.",
-    "sessionExpiredReEnterPin": "Sesija istekla, molim unesite PIN za nastavak."
+    "sessionExpiredReEnterPin": "Sesija istekla, molim unesite PIN za nastavak.",
+    "addContacts": "Dodajte kontakte u adresar da lako pristupite omiljenim adresama za slanje sredstava."
   },
-
   "insight": {
-    "keyWalletIntro": {
-      "title": "Nikad ne gubite imovinu",
-      "description": {
-        "backupWallet": "Rezervni novčanik",
-        "setPinCode": "Postavi PIN ",
-        "enableBiometrics": "Prijava biometrijom (izborno)"
-      }
-    },
     "pillarNetworkActivate": {
       "hasNoPPNBalance": {
         "title": "Aktiviraj Pillar Mrežu",
@@ -344,18 +409,6 @@
         }
       }
     },
-    "smartWalletIntro": {
-      "title": "Dobrodošli u Pillar Smart Wallet!",
-      "description": {
-        "intro": "Pillar Smart Wallet zamjenjuje postojeći Pillar Legacy Wallet ima sljedeće prednosti:",
-        "recovery": "Može se oporaviti s bilo kojeg uređaja povezanog na mrežu nakon pravilnog postavljanja.",
-        "accessToPPN": "Omogućava pristup Pillar Payment Network mreži, uključujući trenutne transakcije i transakcije bez troškova.",
-        "multipleKeys": "Može kontrolirati više ključeva pružajući specifična ograničenja upotrebe i potrošnje dapp-a."
-      },
-      "button": {
-        "ok": "Predobro"
-      }
-    },
     "smartWalletActivate": {
       "default": {
         "title": "Za slati imovinu, prvo aktivirajte Smart Wallet",
@@ -374,30 +427,8 @@
           "default": "Greška na serveru. Molimo pokušajte ponovo koristeći gumb ispod."
         }
       }
-    },
-    "dataPrivacy": {
-      "title": "Svi vaši podaci su privatni.",
-      "description": "Mi brinemo o privatnosti naših korisnika. Ne podržavamo prevarante. Moramo biti sigurni da ste pravi korisnik kako biste bili nagrađeni PLR tokenima za pozivanje prijatelja.",
-      "button": {
-        "ok": "Shvaćam"
-      }
-    },
-    "walletConnectAppsListExplain": {
-      "title": "Šta je to?",
-      "description": "dabrana kolekcija web3 aplikacija dostupnih za upotrebu u Pillaru. Prijavite se bez otvaranja računa. Samo skenirajte QR i krenite.",
-      "button": {
-        "ok": "Super, hvala"
-      }
-    },
-    "moneyStream": {
-      "title": "Streamajte svoj novac ili primajte stream sa Sablierom",
-      "description": {
-        "forWorkers": "Kao radnik, možete vidjeti uplatu u pravom vremenu na Sablier računu.",
-        "forOrganizations": "Kao organizacija, naša tehnologija pomaže vam da se riješite gnjavaže oko administratora obračuna plata."
-      }
     }
   },
-
   "form": {
     "countryCode": {
       "label": "Pozivni kod zemlje",
@@ -430,7 +461,6 @@
       "assetSearchPlaceholder": "Pretraži tokene"
     }
   },
-
   "error": {
     "transactionFailed": {
       "timeOut": "Transakcija istekla",
@@ -440,12 +470,11 @@
       "notOwnedCollectible": "Više ne posjedujete ovu značku.",
       "collectibleCantBeTransferred": "Ovo kolekcionarstvo ne može se prenijeti",
       "notEnoughStake": "Nedovoljno PLR-a u tankeru.",
-      "notEnoughForGasWithBalance": "Nedovoljno {{token}} za troškove transakcije. Trenutna imovina: {{balance}} {{token}}",
       "cantCalculateFee": "Greška u računanju troškova"
     },
     "emptyAddress": "Adresa ne smije biti prazna",
-    "contactWithAddressExist": "Već postoji kontakt s ovom adresom",
-    "contactWithNameExist": "Već postoji kontakt s ovim imenom",
+    "contactWithAddressExists": "Kontakt sa ovom adresom već postoji",
+    "contactWithNameExists": "Kontakt sa ovim imenom već postoji",
     "emptyName": "Ime ne smije biti prazno",
     "invalid": {
       "address": "Netočna adresa",
@@ -455,7 +484,6 @@
     "cannotSendYourself": "Ne možete slati sebi. Molimo koristite drugu adresu.",
     "ensNameNotFound": "ENS ime nije pronađeno. Molimo provjerite i pokušajte ponovo.",
     "notEnoughTokenForFee": "Nedovoljno {{token}} za troškove aktivacije.",
-    "notEnoughTokenForFeeExtended": "Žao nam je, nemate dovoljno {{token}} u novčaniku za izvršenje ove transakcije. Napunite novčanik i pokušajte ponovo.",
     "noCameraPermission": "Nema dozvole za kameru - kamera se ne može otvoriti",
     "noField": {
       "address": "Nema adrese za prikazati",
@@ -473,7 +501,6 @@
       "shouldNotHaveDecimals": "Iznos ne smije sadržavati decimalna mjesta",
       "notProvided": "Količina treba biti specifiricana.",
       "shouldBeGreaterThanValue": "Količina mora biti više od {{value}} {{token}} ",
-      "shouldNotBeGreaterThanBalanceValue": "Iznos ne smije biti veći od vašeg stanja - {{balance}} {{token}}",
       "amountShouldBeBiggerThanZero": "Količina mora biti više od 0",
       "notEnoughToken": "Nedovoljno {{token}}",
       "shouldBeGreaterThan1Wei": "Iznos mora biti veći od 1 Wei (0.000000000000000001 ETH)"
@@ -483,23 +510,173 @@
     },
     "exchange": {
       "incorrectNumber": "Netočan broj",
-      "amountTooBig": "Iznos ne smije biti veći od vašeg stanja - {{assetBalance}} {{symbol}}"
+      "amountTooBig": "Iznos ne smije biti veći od vašeg stanja - {{assetBalance}} {{symbol}}",
+      "exchangeFailed": "Ova transakcija nije mogla biti dovršena. Molimo pokušajte ponovo."
     },
     "walletConnect": {
       "assetNotSupported": "Ova transakcija još nije podržana",
       "unsupportedAction": "Žao nam je, ne podržavamo ovo još.",
+      "noMatchingConnector": "Nisu pronađeni odgovarajući WalletConnect konektori, pokušajte se ponovo povezati ili kontaktirajte podršku ako se problem nastavi",
       "requestNotFound": "Zahtjev nije pronađen",
       "requestRejected": "Zahtjev za poziv je odbijen",
       "invalidSession": "Nevažeća sesija WalletConnect",
-      "alreadyPending": "Spajanje je već na čekanju"
+      "alreadyPending": "Spajanje je već na čekanju",
+      "callRequestRejectFailed": "Odbijanje zahtjeva za poziv nije uspjelo",
+      "callRequestApproveFailed": "Odobrenje zahtjeva za poziv nije uspjelo",
+      "invalidRequest": "Ovaj zahtjev za WalletConnect nije izgledao sasvim ispravno - pokušajte ponovo",
+      "cannotDetermineEthereumChain": "Nismo mogli vidjeti kojem Ethereum lancu pripada ovaj zahtjev - pokušajte ponovo",
+      "activeAccountDoesNotSupportSelectedChain": "Aktivni račun ne podržava odabrani Ethereum lanac"
     },
-    "reverted": "vraćeno"
+    "unableToEstimateTransaction": "Nije moguće procijeniti transakciju. Molimo pokušajte ponovo.",
+    "theGraphQueryFailed": {
+      "liquidityPools": "Ne mogu se povezati na uslugu Pulova likvidnosti"
+    },
+    "unableToSendTransaction": "Nije moguće poslati transakciju. Molimo pokušajte ponovo.",
+    "unableToSetTransaction": "Nije moguće postaviti transakciju. Molimo pokušajte ponovo.",
+    "unableToResetTransactions": "Nije moguće resetirati transakcije. Molimo pokušajte ponovo.",
+    "prismicDataFetchFailed": "Nije moguće preuzeti {{prismicDocument}} podatke. Molimo pokušajte ponovo.",
+    "noTransactionsToEstimate": "Nema transakcija za procjenu.",
+    "failedToSignMessage": "Potpisivanje poruke nije uspjelo",
+    "failedToBuildTransaction": "Izgradnja transakcije nije uspjela",
+    "failedToEstimateTransaction": "Procjena transakcije nije uspjela",
+    "failedToSubmitTransaction": "Slanje transakcije nije uspjelo"
   },
-
-  "badgeText": {
-    "new": "NOVO"
+  "home": {
+    "balance": {
+      "lastWeek": "Prošle sedmice"
+    },
+    "assets": {
+      "contacts": "Kontakti",
+      "services": "Usluge"
+    },
+    "actions": {
+      "receive": "Primi",
+      "send": "Pošalji",
+      "swap": "Swap",
+      "connect": "Povežite se"
+    }
   },
-
+  "menu": {
+    "item": {
+      "settings": "Postavke",
+      "addressBook": "Adresar",
+      "supportChat": "Podrška",
+      "storybook": "Knjiga priča",
+      "supportConversations": "Podrška razgovorima"
+    },
+    "footer": {
+      "privacyPolicy": "Politika privatnosti",
+      "termsOfService": "Uslovi korištenja",
+      "systemInformation": "Informacije o sistemu",
+      "signOut": "Odjaviti se"
+    },
+    "settings": {
+      "title": "Postavke",
+      "appSettings": "Postavke aplikacije",
+      "darkMode": "Tamni mod",
+      "language": "Jezik",
+      "fiatCurrency": "Lokalna fiat valuta",
+      "biometricLogin": "Biometrijska prijava",
+      "changePin": "Promijenite PIN",
+      "walletBackup": "Sigurnosna kopija novčanika",
+      "viewBackupPhrase": "Pogledajte 12 riječi",
+      "backupNotFinished": "Sigurnosna kopija nije završena",
+      "backupNotFinishedWarning": "Upozorenje"
+    },
+    "selectLanguage": {
+      "title": "Jezik"
+    },
+    "selectCurrency": {
+      "title": "Valuta"
+    },
+    "systemInformation": {
+      "title": "Informacije o sistemu",
+      "environment": "Životna sredina",
+      "buildNumber": "Broj gradnje"
+    }
+  },
+  "history": {
+    "title": "Istorija transakcija"
+  },
+  "assets": {
+    "wallet": {
+      "pillarPay": {
+        "title": "Pillar Pay",
+        "topUp": "Dopuniti",
+        "hint": "Prenesite bilo koji token besplatno sa svog PLR stanja."
+      }
+    },
+    "deposits": {
+      "deposit": "Depozit"
+    },
+    "investments": {
+      "invest": "Invest"
+    },
+    "liquidityPools": {
+      "addLiquidity": "Dodajte likvidnost",
+      "poolShare": "Dijeljenje bazena {{share}}"
+    },
+    "rewards": {
+      "availableToClaim": "Dostupno za potraživanje"
+    }
+  },
+  "assetSelector": {
+    "title": "Odaberite sredstvo"
+  },
+  "chainAssetSelector": {
+    "title": "{{chain}} imovine",
+    "tabs": {
+      "tokens": "Tokens",
+      "collectibles": "NFTs"
+    }
+  },
+  "walletConnect": {
+    "home": {
+      "title": "WalletConnect",
+      "headerStories": "Novo i vrijedno pažnje",
+      "deployOnChainFormat": "Pokrenite ovaj novčanik da u potpunosti iskoristite prednosti korištenja {{chain}}.",
+      "toast": {
+        "showDAppServiceLaunchError": "Žao nam je, imali smo problem pri otvaranju ove dApp. Molimo pokušajte ponovo kasnije."
+      }
+    },
+    "requests": {
+      "messageRequest": "Zahtjev za potpis",
+      "transactionRequest": "Zahtjev za transakciju",
+      "transactionRequestFormat": "{{app}} na {{chain}}",
+      "unsupportedRequest": "Nepodržani zahtjev"
+    },
+    "connectedApps": {
+      "title": "Povezani dapps",
+      "connected": "Povezano"
+    },
+    "disconnectModal": {
+      "title": "Prekini vezu",
+      "body": "Jeste li sigurni da želite prekinuti vezu s {{app}} na {{chain}}?",
+      "disconnect": "Da, prekinuti vezu",
+      "toast": {
+        "missingSessionUrl": "Nije moguće prekinuti vezu s aplikacijom jer nedostaje URL sesije."
+      }
+    }
+  },
+  "etherspot": {
+    "deploymentInterjection": {
+      "title": "Primena Smart Wallet-a",
+      "depositFormat": "Uplatite {{symbol}} na {{chain}}",
+      "error": "Nije moguće dohvatiti podatke Interjection za implementaciju pametnog novčanika. Molimo pokušajte ponovo.",
+      "cost": "Troškovi implementacije od {{cost}} bit će dodani vašoj prvoj transakciji."
+    }
+  },
+  "contactSelector": {
+    "title": "Poslati",
+    "button": {
+      "addContact": "Dodaj u adresar",
+      "skip": "Preskoči i samo pošalji"
+    },
+    "error": {
+      "incorrectAddress": "Netačna adresa",
+      "cannotSendToYourself": "Ne možete poslati sebi"
+    }
+  },
   "ppnContent": {
     "tabs": {
       "incoming": {
@@ -522,6 +699,7 @@
       }
     },
     "title": {
+      "home": "Pillar Payment Network",
       "settleTransactionsScreen": "Podmiri transakcije",
       "fundTankScreen": "Nadopuni PLR Tanker",
       "sendTokenViaPpnScreen": "Šalji {{token}} putem PPN",
@@ -561,7 +739,66 @@
       "settleTransactions": "Podmiri transakcije"
     }
   },
-
+  "migrateENSContent": {
+    "banner": {
+      "title": "Ponovo usmjerite svoje ENS ime na Etherspot"
+    },
+    "details": {
+      "title": "Ponovo usmjerite svoje ENS ime na Etherspot",
+      "body": "Trenutno, vaše ENS ime ukazuje na vaš naslijeđeni Smart Wallet. To znači da će sve transakcije koje upućuju na {{ensName}} uvijek doći u vaš Archanova Smart Wallet (adresa: {{address}}). Nastavite ispod da ponovo usmjerite svoje ENS ime na svoj novi Etherspot Smart Wallet račun",
+      "migrate": "Migrirati",
+      "cannotMigrate": "Žao nam je, trenutno ne možemo migrirati. Molimo pokušajte ponovo.",
+      "noAccountFound": "Žao nam je, nije pronađen nijedan račun."
+    }
+  },
+  "walletMigrationArchanova": {
+    "banner": {
+      "title": "Migrirajte sredstva sa Stuba V1 na Etherspot (Pillar V2)"
+    },
+    "intro": {
+      "title": "Migrirajte svoju imovinu",
+      "subtitle": "Prebacite se na Etherspot (Pillar V2)",
+      "header": "Vaš račun se nadograđuje na Pillar Smart Wallet.",
+      "body": "Etherspot je spreman za više lanaca. Trenutno su podržani Polygon, Binance Smart Chain i xDai. Prebacite sredstva na svoj novi Pillar v2 novčanik i uživajte u DeFi-ju uz niske ili nikakve naknade."
+    },
+    "status": {
+      "title": "Migracioni status",
+      "emptyState": "Nema migracijskih transakcija"
+    },
+    "selectAssets": {
+      "title": "Migracija na Smart Wallet",
+      "migratingFrom": "migriraju iz",
+      "review": "Pregled"
+    },
+    "setAmount": {
+      "title": "Postavite iznos"
+    },
+    "review": {
+      "title": "Pregled",
+      "header": "Vi migrirate",
+      "details": {
+        "header": "Detalji migracije",
+        "fromWallet": "Iz Stupa V1",
+        "toWallet": "Na Etherspot (Pillar V2)"
+      },
+      "assets": {
+        "header": "Odabrana sredstva"
+      },
+      "fees": {
+        "header": "Naknade",
+        "ethereum": "Max. Ethereum naknada",
+        "pillar": "Naknada za stub",
+        "total": "Ukupna naknada"
+      },
+      "calculateFee": "Izračunajte naknadu za transakciju",
+      "calculatingFee": "Obračun naknade…",
+      "submit": "Submit",
+      "estimatingTransactions": "Procjena transakcija…"
+    },
+    "pinConfirm": {
+      "submittingTransactions": "Slanje transakcija…"
+    }
+  },
   "smartWalletContent": {
     "activationCard": {
       "button": {
@@ -605,25 +842,48 @@
     "title": {
       "smartWalletIsActivated": "Smart Wallet je aktiviran",
       "walletActivatedScreen": "Šta dalje?"
-    }
-  },
-
-  "assetSearchContent": {
-    "title": "Tokeni",
-    "tabs": {
-      "visible": {
-        "title": "Prikazano",
-        "emptyState": {
-          "title": "Token nije pronađen",
-          "paragraph": "Provjerite je li ime točno upisano ili dodajte token"
-        }
+    },
+    "banner": {
+      "title": "Migrirajte sredstva iz novčanika za ključeve na Etherspot (Pillar V2)"
+    },
+    "intro": {
+      "title": "Vrijeme je da poboljšate svoje kripto iskustvo",
+      "header": "Vaš račun se nadograđuje na Pillar Smart Wallet.",
+      "upgrade": {
+        "subtitle": "Šta je ovo nadogradnja?",
+        "body": "Ukratko: Pillar čini Ethereum dostupnijim i postavlja temelje za dalja poboljšanja Pillar platforme."
       },
-      "withBalance": {
-        "title": "Svi veći od 0"
+      "benefits": {
+        "secure": "Zaštitite svoja sredstva u slučaju gubitka telefona ili ključa.",
+        "ensName": "Nabavite svoju vlastitu pillar.eth ENS adresu da je koristite na različitim platformama.",
+        "betterApp": "Uživajte u osvježenom korisničkom interfejsu i poboljšanim performansama aplikacije."
+      },
+      "footer": "Ova nadogradnja zahtijeva zapis na blockchainu. To znači da će se mala naknada za Ethereum mrežu dodati prvoj transakciji napravljenoj s vašim novim Pillar Smart Walletom. Naknada će biti izuzetno mala zahvaljujući Pillar Etherspot tehnologiji.",
+      "button": {
+        "upgrade": "Nadogradite"
       }
+    },
+    "confirm": {
+      "title": "Pregled",
+      "header": "Vi migrirate",
+      "details": {
+        "header": "Detalji migracije",
+        "fromKeyWallet": "Iz postojećeg novčanika za ključeve",
+        "toSmartWallet": "Za pametni novčanik"
+      },
+      "assets": {
+        "header": "Odabrana sredstva"
+      },
+      "fees": {
+        "header": "Naknade",
+        "ethereum": "Max. Ethereum naknada",
+        "pillar": "Naknada za stub",
+        "total": "Ukupna naknada"
+      },
+      "submit": "Submit"
     }
   },
-
+  
   "collectiblesList": {
     "emptyState": {
       "noCollectibles": {
@@ -636,73 +896,6 @@
       }
     }
   },
-
-  "phoneBookContactsList": {
-    "emptyState": {
-      "couldNotGetContacts": {
-        "title": "Nemoguće dohvatiti kontakte"
-      },
-      "noneFound": {
-        "title": "Ništa nije pronađeno",
-        "paragraph": "Provjerite je li broj ili email točno unesen"
-      }
-    }
-  },
-
-  "countryList": {
-    "emptyState": {
-      "noneFound": {
-        "title": "Ništa nije pronađeno",
-        "paragraph": "Provjerite je li država točno unesena"
-      }
-    }
-  },
-
-  "aaveContent": {
-    "depositedAssetsList": {
-      "title": "Aave Depoziti"
-    },
-    "title": {
-      "assetsToDepositScreen": "Odaberite token za depozit",
-      "noAssetsToDeposit": "Nema tokena za depozit",
-      "noDepositedAssets": "Nema depozitanih tokena",
-      "depositedAssetsScreen": "Vaši depoziti",
-      "depositConfirmationScreen": "Pregledaj",
-      "depositAmountScreen": "Dodaj depozit",
-      "withdrawAmountScreen": "Podigni",
-      "depositedAssetScreen": "Vaš depozit",
-      "activityFeed": "Povijest",
-      "withdrawConfirmationScreen": "Pregledaj"
-    },
-    "label": {
-      "currentAPY": "Trenutni APY",
-      "currentAPYPercentage": "Trenutni APY {{rate}} %",
-      "earned": "Zaradjeno"
-    },
-    "button": {
-      "confirmDeposit": "Potvrdi depozit",
-      "confirmWithdrawal": "Potvrdi podizanje"
-    },
-    "paragraph": {
-      "receiveOnWithdrawal": "Dobiti ćete {{token]] u vaš novčanik"
-    }
-  },
-
-  "badgesContent": {
-    "badgesList": {
-      "title": "Igra znački",
-      "emptyState": {
-        "noBadges": {
-          "title": "Nema znački",
-          "paragraph": "Nemate nikakvih znački još"
-        }
-      }
-    },
-    "title": {
-      "unknownBadge": "Nepoznata značka"
-    }
-  },
-
   "settingsContent": {
     "settingsItem": {
       "analytics": {
@@ -711,109 +904,9 @@
           "agreeSharingInfo": "Želim anonimo podijeliti statistike korištenja",
           "legal": "Dijeljenjem statistike korištenja pomažete Pillar-u napraviti bolji novčanik.\nStatistika korištenja ne posjeduje nikakve privatne podatke od vas ili vaših kontakata."
         }
-      },
-      "appSettings": {
-        "title": "Postavke Aplikacije"
-      },
-      "assetsMigration": {
-        "title": "Prebaci imovinu u Smart Wallet"
-      },
-      "backup": {
-        "title": "Izrada sigurnosne kopije nije završena",
-        "label": {
-          "notFinished": "Upozorenje"
-        }
-      },
-      "backupPhrase": {
-        "title": "Pogledaj 12 riječi"
-      },
-      "biometricLogin": {
-        "title": "Prijava Biometrijom"
-      },
-      "changePIN": {
-        "title": "Promjeni PIN"
-      },
-      "community": {
-        "title": "Zajednica",
-        "paragraph": "Pridružite se Pillar zajednici, zapratite naše novine za najnovije vijesti, ažuriranja i više",
-        "label": {
-          "follow": "Zapratite nas"
-        }
-      },
-      "darkMode": {
-        "title": "Dark mode"
-      },
-      "fiatCurrency": {
-        "title": "Lokalna fiat valuta",
-        "screenTitle": "Odaberite glavnu valutu"
-      },
-      "faq": {
-        "title": "Baza znanja"
-      },
-      "inviteFriends": {
-        "title": "Pozovi prijatelje"
-      },
-      "linkedDevices": {
-        "title": "Povezani uredjaji",
-        "subtitle": "Upravljaj Smart Wallet uredjajima"
-      },
-      "payFeeWithPillar": {
-        "title": "Plaćanje transakcija sa PLR-om"
-      },
-      "privateKey": {
-        "title": "Pogledaj privatni ključ"
-      },
-      "securitySettings": {
-        "title": "Postavke zaštite",
-        "screenTitle": "Postavke zaštite",
-        "label": {
-          "globalSettings": "Globalno",
-          "smartWalletSettings": "Smart Wallet"
-        }
-      },
-      "systemInfo": {
-        "title": "Informacije sistema"
-      },
-      "spendingLimits": {
-        "title": "Limiti trošenja",
-        "subtitle": "Zaštitite imovinu zabranom većih transakcija",
-        "label": {
-          "notAvailableYet": "uskoro"
-        }
-      },
-      "support": {
-        "title": "Kontaktiraj podršku"
-      },
-      "recoverySettings": {
-        "title": "Postakve oporavka",
-        "screenTitle": "Oporavak",
-        "label": {
-          "notFinished": "Upozorenje",
-          "globalSettings": "Globalno",
-          "keyWalletSettings": "Key wallet"
-        }
-      },
-      "referFriends": {
-        "title": "Pozovi prijatelje"
-      },
-      "requirePinOnLogin": {
-        "title": "Traži PIN na prijavi"
-      },
-      "userProfile": {
-        "title": "Korisnički profil"
-      },
-      "addressBook": {
-        "title": "Adresna knjiga"
       }
-    },
-    "button": {
-      "termOfUse": "Uvjeti korištenja",
-      "privacyPolicy": "Politika privatnosti",
-      "lockWallet": "Zaključaj novčanik",
-      "signOut": "Odjava sa računa"
     }
   },
-
   "profileContent": {
     "title": {
       "manage": "Korisničke postavke"
@@ -893,231 +986,54 @@
     }
   },
 
-  "poolTogetherContent": {
-    "label": {
-      "prizeInDollars": "Nagrada ${{prize}}",
-      "ownedTickets": "{{count}} ulaznica",
-      "ownedTickets_plural": "{{count}} ulaznica",
-      "winChance": "{{chancePercent}} postotak",
-      "prizeEstimate": "Nagrada proc.",
-      "currentPrize": "Trenutna nagrada",
-      "winningChance": "<0>{{primaryText}}</0> šanse za dobiti",
-      "purchaseTickets": "Kupite karte za pool",
-      "daiPool": "DAI Pool",
-      "usdcPool": "USDC Pool"
-    },
-    "ticketsList": {
-      "title": "PoolTogether igra štednje"
-    },
-    "title": {
-      "mainScreen": "Pool Together",
-      "activityFeed": "Povijest",
-      "ticketPurchaseScreen": "Kupite Karte",
-      "withdrawScreen": "Podigni",
-      "withdrawConfirmScreen": "Pregledaj",
-      "purchaseConfirmScreen": "Pregledaj"
-    },
-    "button": {
-      "joinPool": "Pridružite se Poolu",
-      "purchaseTickets": "Kupite Karte"
-    },
-    "paragraph": {
-      "purchasedTicketsEligibleDate": "Ulaznice kupljene danas moći će dobiti nagrade početkom {{date}}",
-      "withdrawalNote": "Ako odustanete, više nećete imati pravo na osvajanje nagrada.",
-      "receiveOnWithdrawal": "Dobiti ćete {{token]] u vaš novčanik"
-    }
-  },
-
-  "sablierContent": {
-    "status": {
-      "canceled": "Poništeno",
-      "ended": "Završilo",
-      "remaining": "Preostalo"
-    },
-    "moneyStreamingList": {
-      "title": "Sablier money streaming"
-    },
-    "title": {
-      "incomingStream": "Nadolazeći tok",
-      "newStreamScreen": "Novi tok",
-      "newStreamReviewScreen": "Pregledaj",
-      "outgoingStreamScreen": "Izlazni tok",
-      "streamingActivityFeed": "Povijest",
-      "allowanceModal": "Dopusti Sablier",
-      "cancelStreamScreen": "Poništi tok",
-      "userStreamsScreen": "Vaši tokovi",
-      "withdrawScreen": "Podigni",
-      "withdrawReviewScreen": "Pregledaj",
-      "startFirstStream": "Pokrenite svoj prvi tok"
-    },
-    "label": {
-      "streamed": "Stream",
-      "withdrawn": "podignuto",
-      "start": "Započelo",
-      "end": "Završilo",
-      "ofTokenValueStream": "od {{value}} {{token}} toka"
-    },
-    "button": {
-      "startImmediately": "Kreni odmah",
-      "plusHour": "+1 sat",
-      "plusDay": "+1 dan",
-      "plus30Days": "+30 dana",
-      "startStream": "Pokrenite tok",
-      "cancelStream": "Poništi tok",
-      "confirmStreamCancellation": "Potvrdi poništavanje",
-      "cancelStreamCancellation": "Nemoj poništiti",
-      "newStream": "Novi tok",
-      "confirmWithdraw": "Potvrdi podizanje"
-    },
-    "paragraph": {
-      "allowanceMissing": "Da biste stvorili tok, morat ćete dopustiti Sablieru da u vaše ime šalje transakcije {{asset}}",
-      "allowancePending": "Molimo pričekajte transakciju naknade za Sablier",
-      "newStreamInformation": "Strujat ćete ukupno {{value}} {{asset}} tijekom {{duration}} brzinom od {{streamingRate}} u minuti",
-      "allowSablierWithToken": "Dopustite Sablieru da šalje {{token}} transakcije u vaše ime",
-      "cancelStreamWarning": "Ako poništite tok, novac poslan primatelju ostaje kod njega, ostatak se vraća vama.",
-      "receiveOnWithdrawal": "Dobiti ćete {{token]] u vaš novčanik"
-    },
-    "tabs": {
-      "outgoingStreams": "Izlazno",
-      "incomingStreams": "Nadolazeće"
-    }
-  },
-
   "walletConnectContent": {
     "title": {
-      "appsList": "Istraži aplikacije",
-      "requestsList": "Zahtjevi",
-      "activeConnections": "Aktivne veze",
-      "connect": "Spoji",
-      "walletConnectRequests": "Povežite se na {{app}}",
-      "walletConnect": "WalletConnect",
-      "requestType": {
-        "call": "Zahtjev za poziv",
-        "transaction": "Zahtjev za transakciju",
-        "message": "Zahtjev za poruku",
-        "unsupported": "Nepodržani Zahtjev",
-        "default": "Zahtjev"
-      },
-      "manageSessionsScreen": "Upravljanje Sesijama"
+      "walletConnectRequests": "Povežite se na {{app}}"
     },
     "label": {
-      "requestFrom": "Zahtjev od {{name}}",
       "unknownRequestName": "Nepoznato",
       "requestDescription": "Opis",
       "requestLink": "Url",
-      "upcomingApp": "Dolazi uskoro",
-      "name": "Ime"
+      "name": "Ime",
+      "chain": "Lanac"
     },
-    "banner": {
-      "promo": {
-        "paragraph": "Kolekcija dapps-a za upotrebu sa Pillarom"
-      },
-      "promoExtended": {
-        "paragraph": "Zamijenite tokene na decentraliziranim burzama, posuđujte i posuđujte kripto, igrajte igre i još mnogo toga"
-      }
-    },
-    "button": {
-      "approveType": {
-        "call": "Odobri Poziv",
-        "transaction": "Odobri Transakciju",
-        "message": "Odobri Poruku",
-        "unsupported": "Odobrenje nije podržano ",
-        "default": "Odobri"
-      },
-      "checkApp": "Prikaži "
-    },
-    "appDescription": {
-      "zerion": "Jednostavno sučelje za pristup decentraliziranim financijama za ulaganje, zaradu kamata i posudbu kripto imovine.",
-      "poolTogether": "Revidirana igra štednje bez gubitaka. Položite Dai u Pool da dobijete karte. Svaka ulaznica prilika je za osvajanje tjednih nagrada!",
-      "mooni": "Jednostavno rješenje za unovčavanje kriptovaluta u fiat na bankovni račun, bez KYC-a.",
-      "oasis": "Trguj, posuđuj, i štedi sa Dai-om.",
-      "sablier": "\"Strimujte\" novac u stvarnom vremenu.",
-      "binanceDex": "Decentralizirana razmjena digitalne imovine stvaralaca jedne od vodećih svjetskih kripto burzi.",
-      "localCryptos": "Najpopularnije svjetsko peer-to-peer tržište bez skrbništva na kojem ljudi međusobno razmjenjuju kripto. Kupujte i prodajte kripto pod vlastitim uvjetima, koristeći bilo koji način plaćanja.",
-      "asyncArt": "Skupite i iskusite programabilnu rijetku umjetnost.",
-      "knownOrigin": "Otkrijte i sakupljajte rijetka digitalna umjetnička djela.",
-      "clovers": "Otkrijte, sakupljajte i trgujte kriptografskim ikonama.",
-      "default": "N/A"
-    },
-    "tabs": {
-      "active": {
-        "title": "Aktivno",
-        "emptyState": {
-          "title": "Nema Aktivnih Sesija"
-        }
-      },
-      "requests": {
-        "title": "Zahtjevi",
-        "emptyState": {
-          "title": "Nema zahtjeva na čekanju"
-        }
-      }
-    },
-    "paragraph": {
-      "finalFeeMightBeHigher": "Napomena: naknada u nastavku može se prikazati višom od one predviđene na povezanoj platformi, no obično će biti manja"
+    "error": {
+      "smartWalletNeedToBeActivated": "Pametni novčanik mora biti aktiviran da nastavite.",
+      "unsupportedRequestCallRequestType": "Nepodržani tip zahtjeva za poziv."
     }
   },
-
   "servicesContent": {
     "title": {
       "servicesScreen": "Usluge"
     },
-    "exchange": {
-      "title": "Tražilica ponuda",
-      "description": "Zbirne ponude mnogih decentraliziranih burzi i usluga zamjene tokena",
-      "label": {
-        "exchangeCount": "{{count}} mjenjačnica",
-        "exchangeCount_plural": "{{count}} mjenjačnica"
-      }
-    },
-    "aaveDeposit": {
-      "title": "AAVE Depozit",
-      "description": "Uložite kripto i zaradite kamate u stvarnom vremenu"
-    },
-    "poolTogether": {
-      "title": "PoolTogether igra štednje",
-      "description": "Položite DAI / USDC u Pool da biste dobili karte. Svaka ulaznica prilika je za osvajanje tjednih / dnevnih nagrada!"
-    },
-    "sablier": {
-      "title": "Sablier money streaming",
-      "description": "Prijenos novca ljudima i organizacijama u stvarnom vremenu uz samo jedan depozit"
-    },
-    "peerToPeerTrading": {
-      "title": "Peer-to-peer trgovanje",
-      "description": "Zamijenite tokene izravno s drugima. Sigurno, sigurno, anonimno"
-    },
+
     "ramp": {
-      "assetDecisionAlert": {
-        "title": "Molim odaberite...",
-        "description": "Želite kupiti PLR tokene, ili neke druge?",
-        "actionNonPlr": "Drugi tokeni",
-        "actionPlr": "PLR tokeni"
-      },
       "addCash": {
         "title": "Kupi kripto",
         "subTitle": "Plaćate karticom"
-      },
-      "title": "Kupuj sa Ramp.Mrežom",
-      "description": "Kupi Odmah"
+      }
+    },
+    "liquidityPools": {
+      "title": "Pulovi likvidnosti",
+      "description": "Uložite svoje PLR tokene likvidnosti i primite svoje nagrade."
     },
     "label": {
       "requiresActivation": "Zahtijeva aktivaciju",
-      "forSmartWallet": "Za Smart Wallet",
-      "soon": "uskoro"
+      "forSmartWallet": "Za Smart Wallet"
     }
   },
 
   "transactions": {
     "title": {
       "sendScreen": "Pošalji na {{chain}}",
+      "sendScreenPPN": "Pošaljite na PPN",
       "valueSelectorModal": "Pošalji",
+      "review": "Pregled",
       "reviewAndConfirmScreen": "Pregledaj i potvrdi",
       "allowanceTransactionSuccess": "Transakcija je na putu",
       "exchangeTransactionSuccess": "Zamjena tokena ...",
       "transactionSuccess": "Tokeni su na putu",
       "collectibleTransactionSuccess": "Kolekcionarstvo je na putu",
-      "poolTogetherTransactionSuccess": "U Pool-u ste!",
-      "sablierTransactionSuccess": "Vaš tok je započeo",
       "transferAssetsToSmartWalletScreen": "Odaberite sredstva za prijenos",
       "amountEditScreen": "Uredite iznos",
       "assetsTransferToSmartWalletStatusScreen": "Migracija Key based imovine ",
@@ -1128,36 +1044,44 @@
       "payFeeWithPillar": "Plaćanje transakcija sa PLR-om",
       "confirmTransaction": "Potvrdi transakciju",
       "cancelUnsent": "Poništi neposlano",
-      "speedSettings": "Postavke brzine"
+      "send": "Pošalji"
     },
     "label": {
       "amount": "Količina",
       "receiver": "Primatelj",
       "recipient": "Primatelj",
+      "sender": "Pošiljalac",
       "recipientEnsName": "ENS ime primatelja",
       "recipientAddress": "Adresa Primatelja",
       "transactionFee": "Proc. trošak",
       "assetsToSettle": "Imovina za namirenje",
       "recipientGet": "Primatelj dobija",
       "youPay": "Plaćate",
-      "collectibleName": "Značka",
       "noAssetsFound": "Nije pronađena nijedna imovina",
       "noCollectiblesFound": "Nisu pronađene kolekcionarski predmeti",
       "fromKeyWallet": "Sa Key wallet-a",
       "toSmartWallet": "U Smart Wallet",
       "tokensToTransfer": "Tokeni za transfer",
       "collectiblesToTransfer": "Značke za transfer",
-      "speed": "Brzina",
       "data": "Podaci",
       "message": "Poruka",
-      "address": "Adresa"
+      "address": "Adresa",
+      "ethFee": "Max. Ethereum naknada",
+      "maximumFee": "Maksimalna naknada",
+      "pillarFee": "Naknada za stub",
+      "totalFee": "Ukupna naknada",
+      "deploymentFee": "Naknada za implementaciju Smart Wallet-a",
+      "maxTransactionFee": "Max. naknada za transakciju",
+      "youAreSending": "Vi šaljete",
+      "fees": "Naknade",
+      "allowancePlusEthFee": "Dodatak + maksimalna naknada",
+      "migratingFrom": "migriraju iz",
+      "network": "Mreža"
     },
     "paragraph": {
       "exchangeTransactionSuccess": "Može proći neko vrijeme dok se ova transakcija ne završi",
-      "poolTogetherDepositTransactionSuccess": "Pazite na Pool i neka sreća bude s vama",
-      "sablierStreamTransactionSuccess": "Sada možete gledati kako sredstva idu na adresu {{address}}",
       "transactionSuccess": "Riješit će se za nekoliko trenutaka, ovisno o postavkama cijene transakcija i opterećenju Ethereum mreže",
-      "finalFeeInformation": "Konačna stopa može biti nešto viša ili niža na kraju transakcije."
+      "typedDataMessage": "Poruka unesenih podataka"
     },
     "emptyState": {
       "assetsList": {
@@ -1166,54 +1090,28 @@
       }
     }
   },
-
   "toast": {
-    "cantUpdateUser": "Promjene nisu sačuvane. Pokušajte ponovo kasnije",
-    "cantVerifyCode": "Trenutno ne možemo potvrditi vaš kôd. Pokušajte ponovo kasnije",
-    "cantVerifyInfo": {
-      "phone": "Trenutno ne možemo potvrditi vaš telefon. Pokušajte ponovo kasnije",
-      "email": "Trenutno ne možemo potvrditi vaš email. Pokušajte ponovo kasnije",
-      "default": "Trenutno ne možemo potvrditi vaše podatke. Pokušajte ponovo kasnije"
-    },
-    "verificationSuccess": {
-      "email": "Provjera e-pošte bila je uspješna",
-      "phone": "Telefonska provjera bila je uspješna"
-    },
     "userIsOffline": "Čini se da ste offline. Molimo provjerite internetsku vezu.",
     "biometricLoginEnabled": "Biometrijska prijava omogućena.",
     "biometricLoginDisabled": "Biometrijska prijava je onemogućena.",
-    "assetAdded": "{{assetName}} ({{assetSymbol}}) dodan.",
-    "badgeReceived": "{{badgeName}} primljen.",
-    "unableToAddDevice": "Nije moguće dodati uređaj, pokušajte ponovo.",
-    "linkedDeviceRemoved": "Nije moguće dodati uređaj, pokušajte ponovo.",
-    "linkedDeviceNotFound": "Povezani uređaj nije pronađen.",
-    "exchangeEnabled": "{{fromAssetName}} ({{fromAssetSymbol}}) u {{toAssetName}} ({{toAssetSymbol}}) izmjena omogućena.",
     "keyWalletAssetsTransfered": "Imovina prenesena. Uživajte u korištenju svog pametnog novčanika!",
-    "walletRecovered": "Novčanik je sada oporavljen. Uživajte u korištenju Pillara!",
-    "rewardsOnTheirWay": "Nagrada za preporuku je na putu. Uskoro ćete ju dobiti.",
     "somethingWentWrong": "Nešto je pošlo po zlu, mi to već istražujemo. Ne brinite, vaša sredstva su sigurna. Pokušajte ponovo ili kontaktirajte podršku.",
     "failedToLogIn": "Došlo je do problema prilikom prijave, pokušajte ponovo.",
     "PPNTopUpSuccess": "{{paymentInfo}} dodano u Pillar Tanker.",
     "PPNWithdrawSuccess": "{{PaymentInfo}} povučeno iz Pillar Tankera.",
     "PPNSettleSuccess": "Imovina namirena u vašem novčaniku.",
-    "lendingDepositSuccess": "{{paymentInfo}} dodano.",
-    "lendingWithdrawSuccess": " {{paymentInfo}} podignuto.",
     "transactionSent": "{{paymentInfo}} poslano.",
     "transactionReceived": "{{paymentInfo}} primljeno.",
     "backendProblem": "Došlo je do problema na našem serveru. Ne brinite, vaša sredstva su sigurna. Pokušajte ponovo ili kontaktirajte podršku.",
     "PPNTopUp": "{{PaymentInfo}} poslano u Pillar Tanker.",
     "PPNWithdraw": "Počelo je povlačenje {{paymentInfo}}. Uskoro ćete dobiti tokene.",
     "PPNSettle": "Nagodba je započela. Uskoro ćete dobiti tokene.",
-    "failedToAddDevice": "Nije moguće dodati uređaj. Molimo pokušajte ponovo.",
-    "failedToRemoveDevice": "Uređaj nije moguće ukloniti. Molimo pokušajte ponovo.",
     "switchRelayerTokenFailed": "Nije moguće zamijeniti žeton naknade. Molimo pokušajte ponovo.",
     "syntheticTransactionFailed": "Ne mogu izvršiti ovu transakciju. Molimo pokušajte ponovo.",
     "assetHasBeenHidden": "Uklonjen je {{assetName}} ({{assetSymbol}}).",
     "ensureBackup": "Svakako napravite sigurnosnu kopiju novčanika.",
     "walletConnectUnsupportedApp": "Ova aplikacija nije podržana. Možete zatražiti podršku za ovu aplikaciju.",
     "walletConnectConnectionsExpired": "Veze su istekle. Povežite se ponovo.",
-    "walletConnectSessionTimedOut": "Veze su istekle. Povežite se ponovo.",
-    "walletConnectSmartWalletNotActive": "WalletConnect ne može se koristiti bez aktiviranja Smart Wallet-a",
     "cantReadQRCode": "Ne mogu pročitati ovaj QR kôd. Pokušajte još jednom ili upotrijebite drugu sliku.",
     "incorrectQRCode": "QR kôd je netačan.",
     "transactionFeeEstimationFailed": "Ne mogu procijeniti naknadu za transakciju. Molimo pokušajte ponovo.",
@@ -1228,84 +1126,98 @@
     "invalidPhoneNumber": "Telefonski broj treba imati pozivni broj države.",
     "dailyInvitationsLimitReached": "Imate još {{remainingDailyInvitations}} pozivnica danas. Maksimalno {{allowedDailyUpdates}} dnevno",
     "ensNameNotFound": "ENS ime nije pronađeno. Pokušajte s drugim imenom.",
-    "purchasedPoolTogetherTickets": "{{count}} ulaznica kupljena. Sretno!",
-    "purchasedPoolTogetherTickets_plural": "{{count}} ulaznica kupljeno. Sretno!",
     "transactionStarted": "{{paymentInfo}} poslano.",
     "tooManyTransactionsToSettle": "Možete podmiriti samo {{maxTxToSettle}} transakcija odjednom. Možete podmiriti više u drugoj seriji.",
     "notEnoughForTransactionFee": "Nema dovoljno {{feeSymbol}} za plaćanje naknade za transakciju.",
     "languageChanged": "Jezik promjenjen.",
     "languageChangeFailed": "Nije moguće promijeniti jezik. Molimo pokušajte ponovo.",
-    "sablierWithdraw": "{{assetName}} ({{assetSymbol}}) povučeno.",
-    "sablierCancelStream": "Tok poništen.",
     "serviceLaunchFailed": "Nažalost, imali smo problem pri pokušaju otvaranja ove usluge. Pokušajte ponovo kasnije.",
     "exchangeAllowanceFailed": "Žao nam je. Nije moguće postaviti dozvolu za tokene. Molimo pokušajte ponovo.",
     "contactUpdated": "Kontakt ažuriran",
     "contactDeleted": "Kontakt obrisan",
     "contactAdded": "Novi kontakt dodan",
     "smartWalletActivationUnavailable": "Aktivacija je privremeno nedostupa. Molim pokušajte opet kasnije.",
+    "languageChangedWithSomeTranslationsMissing": "Jezik je promijenjen, ali neki prijevodi možda nedostaju. Aktivno radimo na tome.",
+    "languageIsNoLongerSupported": "Žao nam je, vaš odabrani jezik više nije podržan. Promijenjen je na zadani jezik.",
+    "languageIsNotSupported": "Žao nam je, ovaj jezik nije podržan.",
     "failedToUploadImage": "Neuspješno dohvaćanje slike iz galerije. Molim pokušajte ponovo.",
     "failedToDeleteAvatar": "Greška u brisanju profilne slike. Molim pokušajte ponovo.",
     "failedToCreateOrder": "Dogodila se greška. Ova ponuda nije uspjela. Pokušajte ponovo.",
     "cannotFindDeploymentHash": "Ne mogu pronaći hash za postavljanje. Molimo pokušajte ponovo.",
     "cannotFindTransactionHash": "Ne mogu pronaći hash transakcije. Molimo pokušajte ponovo.",
-    "cannotGetBlockchainExplorerLink": "Nije moguće dobiti link blockchain explorer-a. Molimo pokušajte ponovo."
+    "cannotGetBlockchainExplorerLink": "Nije moguće dobiti link blockchain explorer-a. Molimo pokušajte ponovo.",
+    "cannotGetWalletAddress": "Ne mogu dobiti adresu novčanika.",
+    "cannotEnableAsset": "Nije moguće omogućiti sredstvo. Molimo pokušajte ponovo.",
+    "cannotCreateStream": "Nije moguće kreirati prijenos. Molimo pokušajte ponovo.",
+    "cannotCancelStream": "Nije moguće otkazati prijenos. Molimo pokušajte ponovo.",
+    "cannotPurchaseTicket": "Nije moguće kupiti kartu. Molimo pokušajte ponovo.",
+    "cannotWithdraw": "Ne mogu se povući. Molimo pokušajte ponovo.",
+    "cannotDepositAsset": "Ne mogu deponovati sredstva. Molimo pokušajte ponovo.",
+    "cannotWithdrawAsset": "Nije moguće povući sredstvo. Molimo pokušajte ponovo.",
+    "failedToEstimateTransactionWithMessage": "Procjena transakcije nije uspjela: \"{{message}}\"",
+    "walletBackedUp": "Sigurnosna kopija vašeg novčanika je sada napravljena.",
+    "poolDataFetchFailed": "Nije moguće dohvatiti podatke o fondovima likvidnosti. Pokušajte ponovo ili kontaktirajte podršku.",
+    "cannotAddLiquidity": "Ne može se dodati likvidnost. Molimo pokušajte ponovo.",
+    "cannotStakeTokens": "Ne mogu uložiti tokene. Molimo pokušajte ponovo.",
+    "cannotUnstakeTokens": "Nije moguće poništiti tokene. Molimo pokušajte ponovo.",
+    "cannotRemoveLiquidity": "Ne može ukloniti likvidnost. Molimo pokušajte ponovo.",
+    "liquidityPoolsAddLiquidity": "{{value}} {{token}} primljeno.",
+    "liquidityPoolsRemoveLiquidity": "{{value}} {{token}} uklonjeno iz likvidnosti.",
+    "liquidityPoolsStake": "{{value}} {{token}} uloženo.",
+    "liquidityPoolsUnstake": "{{value}} {{token}} uklonjeno iz likvidnosti.",
+    "liquidityPoolsClaimRewards": "{{value}} {{token}} je položeno.",
+    "noActiveAccountFound": "Nije pronađen nijedan aktivan račun.",
+    "walletConnectFailed": "WalletConnect nije uspio.",
+    "walletConnectCallRequestApproveFailed": "Odobrenje zahtjeva za poziv nije uspjelo.",
+    "walletConnectCallRequestRejectFailed": "Odbijanje zahtjeva za poziv nije uspjelo.",
+    "walletConnectRequestRejected": "Zahtjev za WalletConnect poziv je odbijen.",
+    "walletConnectRequestApproved": "WalletConnect zahtjev za poziv odobren.",
+    "ensMigrationCannotProceed": "Žao nam je, ENS migracija se ne može nastaviti.",
+    "ensMigrationFailed": "Žao nam je, migracija ENS-a nije uspjela.",
+    "cannotSendSyntheticAsset": "Nažalost, materijal se ne može poslati.",
+    "failedToGetGasPrices": "Nije moguće dobiti cijene plina.",
+    "waitingForWalletConnectConnection": "Čeka se usluga WalletConnect…",
+    "transactionReverted": "Nešto je pošlo po zlu. Pokušajte ponovo ili dodirnite ovu poruku za detalje."
   },
 
   "exchangeContent": {
+    "providers": {
+      "uniswap": "Uniswap",
+      "oneInch": "1 inč",
+      "synthetix": "Synthetix",
+      "sushiswap": "Sushiwap",
+      "honeyswap": "Honeyswap"
+    },
+
     "modal": {
-      "smartWalletMissing": {
-        "title": "Aktiviraj Smart Wallet",
-        "paragraph": "Potreban vam je Smart Wallet da dobijate tokene.",
-        "button": {
-          "enable": "Omogući"
-        }
-      },
       "smartWalletIsNotActive": {
         "title": "Koristi Smart Wallet račun",
         "paragraph": "Molim odaberite svoj Smart Wallet račun da kupujete kriptovalute.",
         "button": {
           "selectAccount": "Odredite količinu"
         }
-      },
-      "enableAsset": {
-        "title": "Omogući {{asset}}",
-        "paragraph": "Kad omogućeno, biti će dostupno za trgovanje na  {{providerName}}",
-        "button": {
-          "enable": "Omogući"
-        }
-      },
-      "intro": {
-        "title": "Mjenjačnica.",
-        "paragraph": "Pillar Exchange ili Offers Engine, kako ga mi nazivamo, objedinjuje ponude više provajdera provjerenih od strane Pillar-a.\n\nKupujte kripto s kreditnim karticama, Apple Payom ili Google Payom. Razmijenite tokene u nekoliko dodira.",
-        "button": {
-          "next": "Dalje"
-        }
       }
     },
+
     "title": {
-      "confirmScreen": "Detalji",
-      "settingsScreen": "Postavke",
-      "activateSmartWalletScreen": "Aktiviraj Smart Wallet"
-    },
-    "button": {
-      "enableAsset": "Omogući Token",
-      "allowExchange": "Daj dopuštenje ovoj mjenjačnici"
-    },
-    "paragraph": {
-      "tokenAllowanceInReviewScreen": "Pregledajte detalje i omogućite sredstvo, također potvrdite cijenu transakcije podataka.",
-      "ruleToGetExchangedTokensIntoSmartWallet": "Aktivirajte Smart Wallet\nkako bi dobili izmenjene tokene u"
+      "exchange": "Zamijeni na {{chain}}",
+      "initialExchange": "Swap",
+      "confirm": "Pregled"
     },
     "label": {
-      "assetToEnable": "Token za omogućiti",
-      "enabledAssets": "Omogućena sredstva za razmjenu:",
+      "exchangeDetails": "Detalji razmjene",
+      "network": "Mreža",
       "exchangeRate": "Prodajni kurs",
-      "availableAmount": "Dostupno",
-      "updatedRealTime": "Ažurirano u trenutnom vremenu"
+      "exchangeRateLayout": "{{rate}} {{toAssetCode}}/{{fromAssetCode}}",
+      "maxSlippage": "Max. klizanje"
+    },
+    "tooltip": {
+      "feeFormat": "{{provider}} će moći automatizirati transakcije u vaše ime. Ethereum naknada bi mogla biti niža."
     },
     "emptyState": {
-      "noOffers": {
-        "title": "Nema dostupnih ponuda",
-        "paragraph": "Trenutno nema takvih ponuda na mjenjačnicama.\nNove ponude dolaze u bilo kojem vremenu - nemojte propustiti."
+      "offers": {
+        "title": "Nema ponuda uživo",
+        "paragraph": "Trenutno nema odgovarajućih ponuda iz servisa razmjene."
       }
     }
   },
@@ -1384,10 +1296,121 @@
     "receivedCollectible": "Dobili ste kolekcionarstvo.",
     "collectibleSentAndReceived": "Vaša značka je primljena."
   },
-
+  "graph": {
+    "timeRangeButtons": {
+      "day": "1 D",
+      "week": "7 D",
+      "month": "30 D",
+      "halfYear": "6 M",
+      "year": "1 I",
+      "all": "SVE"
+    }
+  },
+  "liquidityPoolsContent": {
+    "title": {
+      "addLiquidity": "Dodajte likvidnost",
+      "addLiquidityReview": "Pregled",
+      "stakeTokens": "Žetoni za ulog",
+      "stakeTokensReview": "Pregled",
+      "unstakeTokens": "Unstake tokens",
+      "unstakeTokensReview": "Pregled",
+      "removeLiquidity": "Uklonite likvidnost",
+      "removeLiquidityReview": "Pregled",
+      "claimRewardsReview": "Pregled",
+      "liquidityPools": "Pulovi likvidnosti",
+      "infoScreen": "Pulovi likvidnosti"
+    },
+    "button": {
+      "addLiquidity": "Dodajte likvidnost",
+      "addLiquidityWrapped": "Dodati\nlikvidnost",
+      "removeLiquidity": "Uklonite likvidnost",
+      "removeLiquidityWrapped": "Ukloni\nlikvidnost",
+      "stake": "Ulog",
+      "unstake": "Unstake",
+      "claimRewards": "Zatražite nagrade"
+    },
+    "label": {
+      "staked": "Staked",
+      "rewards": "Nagrade",
+      "claimedSoFar": "{{value}} {{token}} je do sada položeno",
+      "addLiquidityToStartEarning": "Dodajte likvidnost da počnete da zarađujete od uloga",
+      "stakeLiquidityToGetRewards": "Uložite tokene likvidnosti da biste dobili nagrade",
+      "shareOfPool": "Udio u bazenu",
+      "youAreAddingLiquidity": "Vi dodajete likvidnost",
+      "tokenAllocation": "Dodjela tokena",
+      "youAreStaking": "Ulogujete",
+      "youAreUnstaking": "Ti si nepopustljiv",
+      "youAreRemovingLiquidity": "Uklanjate likvidnost",
+      "youWillReceive": "Primićete",
+      "youAreClaiming": "Vi tvrdite",
+      "price": "Cijena",
+      "volume": "Volume",
+      "weeklyRewards": "Sedmične nagrade",
+      "24h": "24 č",
+      "1w": "1 in",
+      "1m": "1 m",
+      "tokenPercent": "{{value}}% {{token}}",
+      "availableRewards": "Dostupne nagrade",
+      "totalLiquidity": "Ukupna likvidnost",
+      "24hVolume": "24h volume",
+      "tokenLiquidity": "{{tokenName}} likvidnost",
+      "poolTokenAllocation": "Dodjela tokena skupa",
+      "yourPoolShareAllocation": "Vaša raspodjela tokena za dijeljenje",
+      "tokenPrice": "Cijena tokena",
+      "quantity": "Količina",
+      "liquidityAdded": "Dodata likvidnost",
+      "unstaked": "Unstaked",
+      "rewardsClaimed": "Tražene nagrade",
+      "liquidityRemoved": "Likvidnost uklonjena",
+      "fromWalletToPool": "Novčanik → {{poolName}}",
+      "fromPoolToWallet": "{{poolName}} → Novčanik",
+      "24hFees": "24h naknade"
+    },
+    "tabs": {
+      "active": "Dostupan",
+      "purchased": "Dodata likvidnost",
+      "staked": "Staked"
+    },
+    "infoContent": {
+      "subtitle": {
+        "whatAreLiquidityPools": "Šta su bazeni likvidnosti?",
+        "howDoLiquidityPoolsWork": "Kako funkcionišu bazeni likvidnosti?"
+      },
+      "paragraph": {
+        "whatAreLiqudityPools": "Pulovi likvidnosti, u suštini, su skupovi tokena koji su zaključani u pametnom ugovoru. Koriste se za olakšavanje trgovanja pružanjem likvidnosti i uveliko ih koriste neke od decentraliziranih berzi koje se nazivaju DEX-ovi.",
+        "howDoLiquidityPoolsWork": "U svom osnovnom obliku, jedan bazen likvidnosti sadrži 2 tokena i svaki skup stvara novo tržište za taj određeni par tokena. DAI/ETH može biti dobar primjer popularnog bazena likvidnosti na Uniswap-u.\n\nKada se kreira novi bazen, prvi dobavljač likvidnosti je onaj koji postavlja početnu cijenu sredstava u pulu. Provajder likvidnosti je podstaknut da isporuči jednaku vrijednost oba tokena u skup. Ako početna cijena tokena u pulu odstupa od trenutne globalne tržišne cijene, to stvara trenutnu mogućnost arbitraže koja može rezultirati gubitkom kapitala za dobavljača likvidnosti. Ovaj koncept isporuke tokena u ispravnom omjeru ostaje isti za sve ostale pružaoce likvidnosti koji su voljni kasnije dodati više sredstava u skup.\n\nKada se likvidnost isporučuje pulu, dobavljač likvidnosti (LP) prima posebne tokene koji se nazivaju LP tokeni srazmjerno količini likvidnosti koju su isporučili grupi. Kada se trgovina olakša putem pula, naknada od 0,3% se proporcionalno raspoređuje među svim vlasnicima tokena LP. Ako pružalac likvidnosti želi da vrati svoju osnovnu likvidnost, plus sve akumulirane naknade, mora spaliti svoje LP tokene.\n\nSvaka zamjena tokena koju omogućava prikupljanje likvidnosti rezultira prilagođavanjem cijene prema determinističkom algoritmu cijene. Ovaj mehanizam se takođe naziva automatizovani market mejker (AMM) i skupovi likvidnosti u različitim protokolima mogu koristiti malo drugačiji algoritam."
+      },
+      "insight": {
+        "title": "Dodajte likvidnost da počnete da zarađujete od uloga",
+        "button": "Istražite bazene"
+      }
+    },
+    "depositsList": {
+      "title": "Pulovi likvidnosti"
+    },
+    "modal": {
+      "stakingEnabled": {
+        "stakingUnlocked": "Ulaganje otključano",
+        "liquidityAdded": "Dodata likvidnost",
+        "stakeYourTokens": "Uložite svoje žetone da dobijete više interesa i dodatne nagrade.",
+        "stakeTokensButton": "Žetoni za ulog",
+        "laterButton": "Kasnije"
+      }
+    }
+  },
   "receiveModal": {
     "etherspotSingleAddressInfo": "Svi lanci koriste jednu adresu novčanika.",
     "notDeployedWarning": "Primite <0>{{chain}}</0> imovina",
     "withCaution": "s oprezom."
+  },
+  "tooltip": {
+    "switchAccountsByTappingHere": "Možete promijeniti račune dodirom ovdje",
+    "includesDeploymentFee": "Jednokratna naknada za implementaciju Smart Wallet-a"
+  },
+  "governanceCall": {
+    "banner": {
+      "title": "Poziv za upravljanje",
+      "live": "LIVE"
+    }
   }
 }

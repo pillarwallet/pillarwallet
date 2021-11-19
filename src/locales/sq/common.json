@@ -1,0 +1,1405 @@
+{
+  "aaveDeposit": "Depozita Aave",
+  "ensName": "Emri ENS",
+  "ethereum": "Ethereum",
+  "facebook": "Facebook",
+  "keyWallet": "Portofoli i keywallet (portfolio me çelës)",
+  "medium": "E mesme",
+  "pillarNetwork": "Rrjeti Pillar",
+  "pillarTank": "Pillar Tanku",
+  "poolTogether": "PoolTogether",
+  "smartWallet": "Portofoli i zgjuar(smart)",
+  "legacySmartWallet": "Portofoli inteligjent (i trashëguar/verzioni i vjetër)",
+  "telegram": "Telegrami",
+  "twitter": "Twitter",
+  "youtube": "YouTube",
+  "ellipsedString": "{{string}}...",
+  "ellipsedMiddleString": "{{stringStart}}...{{stringEnd}}",
+  "ticketAmount": "{{count}} biletë",
+  "ticketAmount_plural": "{{count}} bileta",
+  "positiveValue": "+ {{value}}",
+  "negativeValue": "- {{value}}",
+  "positiveTokenValue": "+ {{value}} {{token}}",
+  "negativeTokenValue": "- {{value}} {{token}}",
+  "fiatValue": "{{symbol}}{{value}}",
+  "percentValue": "{{value}}%",
+  "positivePercentValue": "+{{value}}%",
+  "negativePercentValue": "-{{value}}%",
+  "tokenValue": "{{value}} {{token}}",
+  "totalValue": "Gjithsej {{value}}",
+  "estimatedValue": "≈ {{value}}",
+  "availableValue": "Në dispozicion: {{value}}",
+  "ofValue": "nga {{value}}",
+  "valueOfValue": "{{partOfValue}} nga {{allValue}}",
+  "tokenFiatValue": "{{tokenValue}} ({{fiatValue}})",
+  "lessThanSignValue": "<{{value}}",
+  "moreThanSignValue": ">{{value}}",
+  "rangeValues": "{{fromValue}} - {{toValue}}",
+  "exchangeRate": "{{rate}} {{toSymbol}}/{{fromSymbol}}",
+  "timeDaysHours": "{{days}}d {{hours}}h",
+  "timeHoursMinutes": "{{hours}}h {{minutes}}m",
+  "timeDaysHoursMinutes": "{{days}}d {{hours}}h {{minutes}}m",
+  "inTimeDaysHoursMinutes": "Për {{days}}d {{hours}}orë {{minutes}}min",
+  "timeDaysHoursMinutesLayout": "{{days}} {{hours}} {{minutes}}",
+  "day": "{{count}} ditë",
+  "day_plural": "{{count}} ditë",
+  "hour": "{{count}} orë",
+  "hour_plural": "{{count}} orë",
+  "minute": "{{count}} minutë",
+  "minute_plural": "{{count}} minuta",
+  "tutorialTitle": "Mirë se vini në Pillar!",
+  "tutorialSubtitle": "Lorem ipsum.",
+  "units": {
+    "1e3": "{{value}} K",
+    "1e6": "{{value}}M",
+    "1e9": "{{value}}B",
+    "1e12": "{{value}}T"
+  },
+  "chains": {
+    "ethereum": "Ethereum Mainnet",
+    "binance": "Binance Smart Chain",
+    "xdai": "xDai",
+    "polygon": "Polygon"
+  },
+  "chainsShort": {
+    "ethereum": "Ethereum Mainnet",
+    "binance": "BSC",
+    "xdai": "xDai",
+    "polygon": "Polygon"
+  },
+  "assetCategories": {
+    "wallet": "Portofoli",
+    "deposits": "Depozitat",
+    "investments": "Investimet",
+    "liquidityPools": "Likuiditeti",
+    "rewards": "Shpërblime",
+    "datasets": "Grupet e të dhënave",
+    "collectibles": "NFT-të"
+  },
+  "assetCategoriesShort": {
+    "wallet": "Portofoli",
+    "deposits": "Depozitat",
+    "investments": "Investimet",
+    "liquidityPools": "Likuiditeti",
+    "rewards": "Shpërblime",
+    "datasets": "Grupet e të dhënave",
+    "collectibles": "NFT-të"
+  },
+  "title": {
+    "accounts": "Llogaritë",
+    "addFundsToWallet": "Shtoni fonde në Portofol",
+    "mainActivityFeed": "Historia",
+    "publicAddress": "Adresa publike",
+    "success": "Sukses",
+    "totalBalance": "Gjendjet totale",
+    "transactions": "Transaksionet",
+    "addNewContact": "Shto kontakt të ri",
+    "editContact": "Redakto kontaktin",
+    "addressBook": "Libri i adresave",
+    "select": "Zgjidhni",
+    "failed": "Dështoi",
+    "pending": "Në pritje",
+    "collectibleSent": "NFT u dërgua",
+    "collectibleReceive": "NFT e marrë",
+    "connectionRequested": "Kërkuar",
+    "assets": "Asetet",
+    "backupPhrase": "Fraza rezervë",
+    "verifyBackupPhrase": "Verifiko frazën rezervë",
+    "confirmNewPin": "Konfirmo kodin e ri pin",
+    "enterNewPincode": "Fut kodin e ri pin",
+    "manageDevices": "Menaxho pajisjet",
+    "noConnectedDevices": "Nuk ka pajisje të lidhura",
+    "confirm": "Konfirmo",
+    "privateKey": "Çelës privat",
+    "exchange": "Shkëmbim",
+    "unlockWithBiometrics": "Zhblloko me sensor biometrik",
+    "welcome": "Mirë se vini në Pillar Wallet!"
+  },
+  "label": {
+    "activate": "Aktivizoni",
+    "activateSmartWallet": "Aktivizo Smart Wallet",
+    "activated": "Aktivizuar",
+    "added": "Shtuar",
+    "adding": "Duke shtuar",
+    "all": "Të gjitha",
+    "backedUp": "Rezervimi i siguruar",
+    "canceled": "Anuluar",
+    "collectibleFromUser": "NFT nga {{username}}",
+    "collectibleToUser": "NFT në {{username}}",
+    "contactSupport": "Kontaktoni me mbështetjen",
+    "created": "Krijuar",
+    "currentApyFormat": "APY aktuale: {{value}}",
+    "dotSeparator": "  ·",
+    "enabled": "Aktivizuar",
+    "enableSmartWalletGasRelayerPLR": "Aktivizo tarifat e transaksionit me PLR",
+    "enabling": "Duke mundësuar",
+    "ended": "Përfundoi",
+    "erc20TokensOnly": "Vetëm argumentet ERC-20",
+    "faceIDSettings": "Cilësimet e ID-së së fytyrës",
+    "feeToken": "Tarifa {{tokenValue}}",
+    "feeTokenFiat": "Tarifa {{tokenValue}} ({{fiatValue}})",
+    "fromKeyWallet": "nga portofoli i çelësit",
+    "fromPPN": "nga rrjeti i Pillar",
+    "fromSmartWallet": "nga Smart Wallet",
+    "imported": "I importuar",
+    "incomingBalance": "Bilanci në hyrje",
+    "incomingSablierStream": "Transmetimi në hyrje",
+    "keyWalletVisibilityToggle": "Portofoli i vjetër (i avancuar)",
+    "loadingDefaultAssets": "Po ngarkohen aktivet e paracaktuara",
+    "needToActivate": "Duhet të aktivizohet",
+    "newSmartWalletAccountDevice": "Pajisja e re e llogarisë Smart Wallet",
+    "notApplicable": "N/A",
+    "notEnoughGas": "Gaz i pamjaftueshëm",
+    "notEnoughBalance": "Bilanci i pamjaftueshëm i {{symbol}}",
+    "outgoingSablierStream": "Transmetimi në dalje",
+    "purchase": "Blerje",
+    "received": "Marrë",
+    "receiving": "Marrja",
+    "registered": "I regjistruar",
+    "registerEnsName": "Regjistro etiketën ENS",
+    "removed": "U hoq",
+    "removing": "Duke hequr",
+    "requested": "Kërkuar",
+    "search": "Kërko",
+    "searchAsset": "Kërko asetin",
+    "searchCollectible": "Kërko NFT",
+    "sending": "Dërgimi",
+    "sent": "Dërguar",
+    "settle": "Vendoseni",
+    "settlement": "Zgjidhje",
+    "smartWalletAccountDevice": "Pajisja e llogarisë Smart Wallet",
+    "smartWalletAccountDeviceAdded": "U shtua një pajisje e re llogarie",
+    "smartWalletAccountDeviceRemoved": "Pajisja e llogarisë u hoq",
+    "smartWalletGasRelayerPLR": "Tarifat e portofolit inteligjent me token PLR",
+    "started": "Filloi",
+    "transactionDeploymentWarning": "Mos vazhdo nëse nuk dëshiron të vendosësh \"Portofolin inteligjent\" {{chain}}.",
+    "today": "Sot",
+    "toKeyWallet": "në portofolin e çelësit",
+    "toPPN": "te Pillar Network",
+    "topUp": "Mbushe",
+    "toSmartWallet": "në portofolin inteligjent",
+    "wallet": "Portofoli",
+    "withdraw": "Tërheqë",
+    "withdrawal": "Tërheqja",
+    "yesterday": "Dje",
+    "yourEnsName": "Emri ENS i portofolit tuaj",
+    "name": "Emri",
+    "address": "Adresë",
+    "resolvingEnsName": "Zgjidhja e emrit ENS",
+    "endingSoon": "Mbaron se shpejti",
+    "endsIn": "Përfundon në {{endsIn}}",
+    "fetchingFee": "Tarifa po merret...",
+    "notEnoughToken": "Nuk mjafton {{token}}",
+    "fee": "Tarifa",
+    "gettingFee": "Marrja e tarifës...",
+    "to": "për",
+    "from": "Nga",
+    "whereToSend": "Ku të dërgoni",
+    "sendTo": "Dërgo në",
+    "walletAddress": "Adresa e portofolit",
+    "addressEnsUsername": "Adresa, ENS, emri i përdoruesit",
+    "walletNotDeployed": "Portofoli nuk është vendosur",
+    "tokens": "Shenjat",
+    "collectibles": "NFT-të",
+    "collectible": "NFT",
+    "processing": "Po përpunohet...",
+    "mainAccount": "Llogaria kryesore",
+    "free": "Falas",
+    "estimatedFee": "Tarifa e vlerësuar e transaksionit",
+    "estFee": "Tarifa e vlerësuar transaksionit",
+    "nothingFound": "Asgjë nuk u gjet",
+    "verified": "Verifikuar",
+    "select": "Zgjidhni",
+    "selectCurrency": "Zgjidhni monedhën",
+    "choseOption": "Zgjidhni opsionin",
+    "noOptionsToSelect": "Nuk ka opsione për të zgjedhur",
+    "availableBalance": "Bilanci i disponueshëm",
+    "sendingToReceiver": "Po dërgohet te {{receiver}}",
+    "sentToReceiver": "Është dërguar te {{receiver}}",
+    "walletBalance": "Bilanci i portofolit {{balance}}",
+    "checking": "Duke kontrolluar",
+    "thisDevice": "Kjo pajisje",
+    "onHold": "Ne pritje",
+    "deviceAddress": "Adresa e pajisjes",
+    "noContacts": "Nuk ka kontakte",
+    "comingSoon": "Së shpejti",
+    "buy": "Blej",
+    "sell": "Shitet",
+    "unknown": "E panjohur",
+    "pending": "Në pritje",
+    "fromPillarTank": "Nga tanku Pillar",
+    "pinChanged": "Pini u ndryshua",
+    "device": "Pajisja {{address}}",
+    "popular": "Popullore",
+    "set": "Vendos",
+    "notAvailableInYourCountry": "Nuk disponohet në shtetin tuaj",
+    "cannotProceedOffline": "Nuk mund të vazhdohet jashtë linje",
+    "payWithPLR": "Paguani me PLR",
+    "notSet": "E pavendosur",
+    "deposit": "Depozitë",
+    "claim": "Kerkese",
+    "fromRariToWallet": "Rari Capital → Portofoli",
+    "fromWalletToRari": "Portofoli → Rari Capital",
+    "rewardsClaimed": "Shpërblimet e pretenduara",
+    "keyFacts": "Faktet kryesore",
+    "multiple": "Të shumëfishta",
+    "walletToPillarPay": "Portofoli → Pagesa e Pillar",
+    "pillarPayToWallet": "Pagesa e Pillar → Portofoli",
+    "fromToFormat": "{{from}} → {{to}}",
+    "completed": "E përfunduar",
+    "failed": "Dështoi",
+    "assetMigration": "Migrimi i aseteve",
+    "ensMigration": "Migrimi ENS",
+    "archanovaToEtherspot": "Pillar V1 në Etherspot (Pillar V2)",
+    "archanovaToEtherspotShort": "Pillar V1 në Etherspot",
+    "deployed": "Të vendosura",
+    "walletDeployment": "Vendosja e portofolit",
+    "pleaseSelect": "Ju lutem zgjidhni",
+    "balanceFiatTokenFormat": "Bilanci {{balanceInFiat}} ({{balance}})",
+    "balanceTokenFormat": "Bilanci {{balance}}",
+    "filterByName": "Filtro sipas emrit"
+  },
+  "button": {
+    "activate": "Aktivizoni",
+    "activatePPN": "Aktivizo Pillar Network",
+    "add": "Shtoni",
+    "addCash": "Shtoni para të gatshme",
+    "addContact": "Shto kontakt",
+    "addContacts": "Shto kontakte",
+    "addDetails": "Shto detaje",
+    "addFunds": "Shtoni fonde",
+    "apply": "Aplikoni",
+    "approve": "Mirato",
+    "buyPLR": "Blej PLR",
+    "buyTokensWithCreditCard": "Bleni argumente me kartë krediti",
+    "buyTokens": "Bleni argumente",
+    "buyWithCard": "Bleni me një kartë",
+    "buyWithCardOrApplePay": "Blini me kartë ose Apple Pay",
+    "confirm": "Konfirmo",
+    "connect": "Lidhu",
+    "claim": "Kerkese",
+    "close": "Mbylle",
+    "depositMore": "Depozitoni më shumë",
+    "deploy": "Vendosni",
+    "explore": "Eksploroni",
+    "exchange": "Shkëmbim",
+    "exchangeMore": "Shkëmbeni më shumë",
+    "hide": "Fshih",
+    "inviteAndGetTokens": "Ftoni dhe fitoni argumente falas",
+    "inviteFriend": "Fto shokun",
+    "inviteFriends": "Ftoni miqtë",
+    "inviteMoreFriends": "Ftoni më shumë miq",
+    "inviteToPillar": "Fto në Pillar",
+    "notEnoughPLR": "Nuk mjafton PLR",
+    "purchase": "Blerje",
+    "purchaseMore": "Blini më shumë",
+    "referFriends": "Referojini miqtë",
+    "reject": "Refuzo",
+    "retry": "Provo sërish",
+    "receive": "Merrni",
+    "seeOnEtherscan": "Shihni në Etherscan",
+    "selectAll": "Selektoj të gjitha",
+    "send": "Dërgo",
+    "sendAll": "Dërgo të gjitha",
+    "sendBack": "Dërgo prapa",
+    "sendFromAnotherWallet": "Dërgo nga një portofol tjetër",
+    "sendMore": "Dergo me shume",
+    "settleMore": "Vendosni më shumë",
+    "settleTransactions": "Zgjidh transaksionet",
+    "shareAddress": "Shpërndaje",
+    "smartWalletFAQ": "FAQ për portofolin inteligjent",
+    "subscribe": "Abonohu",
+    "support": "Mbështetje",
+    "swap": "këmbejnë",
+    "swipeConfirm": "Rrëshqitni për të konfirmuar",
+    "topUp": "Mbushe",
+    "topUpMore": "Mbushe më shumë",
+    "topUpPLRTank": "Mbushe rezervuarin PLR",
+    "transferToSmartWallet": "Transferoni në portofolin inteligjent",
+    "tryAgain": "Provo përsëri",
+    "viewAllItemsAmount": "Shiko të gjitha {{amount}}",
+    "viewAll": "Shiko te gjitha",
+    "viewBalance": "Shiko bilancin",
+    "viewDeposit": "Shiko depozitën",
+    "viewOnBlockchain": "Shiko në blockchain",
+    "verify": "Verifiko",
+    "withdraw": "Tërheqë",
+    "withdrawMore": "Tërhiqni më shumë",
+    "delete": "Fshije",
+    "save": "Ruaj",
+    "next": "Tjetra",
+    "confirmWithdraw": "Konfirmo tërheqjen",
+    "enable": "Aktivizo",
+    "allow": "Lejo",
+    "max": "Maks",
+    "sendTokenInstead": "Dërgo token në vend të kësaj",
+    "addToContacts": "Shto tek kontaktet",
+    "addToAddressBook": "Shto në librin e adresave",
+    "copyToClipboard": "Kopjo në kujtesën e fragmenteve",
+    "paste": "Ngjit",
+    "resendIt": "Ridërgojeni",
+    "migrateAssetsToSmartWallet": "Migroni asetet në Smart Wallet",
+    "continue": "Vazhdoni",
+    "remove": "Hiq",
+    "cancel": "Anulo",
+    "skip": "Kapërceni",
+    "edit": "Redakto",
+    "magic": "Magjike",
+    "disconnect": "Shkëputeni",
+    "open": "Hapur",
+    "proceed": "Vazhdoni",
+    "readMore": "Lexo më shumë",
+    "activateSmartWallet": "Aktivizo Smart Wallet",
+    "finish": "Përfundo",
+    "claimMore": "Pretendoni më shumë",
+    "transferMore": "Transferoni më shumë",
+    "addMoreLiquidity": "Shtoni më shumë likuiditet",
+    "removeMoreLiquidity": "Hiqni më shumë likuiditet",
+    "stakeMoreLiquidity": "Aksione më shumë",
+    "unstakeMoreLiquidity": "Hiq më shumë",
+    "claimMoreRewards": "Pretendoni më shumë",
+    "back": "Mbrapa",
+    "native": "Unë e njoh Crypto",
+    "new": "Unë jam i ri në Crypto",
+    "copyAddress": "Kopjo adresën",
+    "sendMax": "Dërgo max",
+    "spendMax": "Shpenzoni maksimum",
+    "useMax": "Përdorni max",
+    "selectToken": "Zgjidh token...",
+    "more": "Më shumë"
+  },
+  "paragraph": {
+    "addressCopiedToClipboard": "Adresa u kopjua në kujtesën e fragmenteve.",
+    "doNotSendRealEthOrTokens": "Mos dërgoni shenja të vërteta ETH ose ERC20.",
+    "ensNameCopiedToClipboard": "Emri ENS u kopjua në kujtesën e fragmenteve.",
+    "cameraPermissionMissing": "Lejet e kamerës nuk janë dhënë - nuk mund të hapet pamja paraprake e kamerës.",
+    "didNotReceiveVerificationCodeQuestion": "Nuk e morët kodin?",
+    "instructionsOnBackingUpBackupPhase": "Shkruani frazën tuaj rezervë prej 12 fjalësh në rendin e duhur.",
+    "backupPhraseVerificationInstructions": "Ju lutemi zgjidhni fjalët e duhura.",
+    "deviceRemovalConfirm": "Ju lutemi, konfirmoni që detajet e mëposhtme janë të sakta përpara se të hiqni pajisjen.",
+    "loggingOutFirstMessage": "Fshirja kërkon një moment",
+    "loggingOutSecondMessage": "Na vjen keq që të shoh që po largohesh",
+    "backupPhraseRevealedPurpose": "Ju lutemi përdorni këtë frazë rezervë prej 12 fjalësh për të rivendosur portofolin.",
+    "privateKeyRevealedPurpose": "Ju lutemi përdorni këtë çelës privat për të rivendosur portofolin.",
+    "doNotShareBackup": "Mbajeni të sigurt pasi është mënyra e vetme për të rikuperuar llogarinë tuaj në rast urgjence. Mos dërgoni email ose pamje nga ekrani.",
+    "sessionExpiredReEnterPin": "Sesioni i hyrjes ka skaduar, ju lutemi shkruani kodin PIN për të vazhduar.",
+    "addContacts": "Shtoni kontakte në librin e adresave për t'iu qasur lehtësisht adresave të preferuara për dërgimin e aseteve."
+  },
+  "insight": {
+    "pillarNetworkActivate": {
+      "hasNoPPNBalance": {
+        "title": "Aktivizo Pillar Network",
+        "description": {
+          "activationBenefit": "Për të dërguar ndonjë shenjë, së pari duhet të plotësoni Pillar Tank me PLR"
+        }
+      },
+      "smartWalletIsNotActivated": {
+        "title": "Përfitimet unike të Rrjetit të Pagesave të Pillar për përdoruesit e PLR",
+        "description": {
+          "instantTransactions": "Transaksione të menjëhershme, pa gaz dhe private.",
+          "singleTokenExperience": "Një përvojë e vetme token, duke përfshirë aftësinë për të dërguar/shpenzuar argumente që nuk i zotëroni tashmë përmes shkëmbimeve në kohë reale."
+        },
+        "button": {
+          "activatePPN": "Aktivizo Pillar Network"
+        }
+      },
+      "deploying": {
+        "description": {
+          "smartWalletActivatingStatusCard": "Aktivizimi i portofolit tuaj inteligjent. Së shpejti do të jetë gati."
+        }
+      }
+    },
+    "smartWalletActivate": {
+      "default": {
+        "title": "Për të dërguar asete, aktivizo fillimisht Smart Wallet",
+        "description": "Ju do të duhet të paguani një tarifë të vogël"
+      },
+      "isBeingDeployed": {
+        "title": "Smart Wallet po vendoset tani",
+        "description": {
+          "waitingTime": "Ju do të jeni në gjendje të dërgoni aktive pasi ato të vendosen. Koha mesatare aktuale e pritjes është {{waitingTimeInMinutes}} minuta."
+        }
+      },
+      "activationFailed": {
+        "title": "Aktivizimi i \"Portofolit inteligjent\" dështoi",
+        "error": {
+          "needToSetupSmartAccount": "Së pari duhet të rimbushni llogarinë tuaj inteligjente.",
+          "default": "Kishte një gabim në serverin tonë. Ju lutemi provoni të riaktivizoni llogarinë duke klikuar butonin më poshtë."
+        }
+      }
+    }
+  },
+  "form": {
+    "countryCode": {
+      "label": "Kodi i Shtetit",
+      "placeholder": "Emri i vendit",
+      "selectorTitle": "Të gjitha kodet"
+    },
+    "email": {
+      "label": "Email",
+      "placeholder": "Email",
+      "description": {
+        "empty": "Shtoni emailin tuaj që të mund të merrni kërkesa të veçanta.",
+        "added": "Verifikoni emailin tuaj dhe do të mund të ftoni miqtë tuaj në Pillar.",
+        "confirmed": "Pas ndryshimit të emailit, do t'ju duhet ta verifikoni përsëri."
+      }
+    },
+    "phoneNumber": {
+      "label": "Numri i telefonit",
+      "description": {
+        "empty": "Shtoni numrin tuaj të telefonit që të mund të ftoni miqtë tuaj.",
+        "added": "Verifikoni numrin tuaj të telefonit dhe do të mund të ftoni miqtë tuaj në komunitetin Pillar.",
+        "confirmed": "Pas ndryshimit të numrit të telefonit, do të duhet ta verifikoni përsëri."
+      }
+    },
+    "subscription": {
+      "placeholder": "E-mail-i juaj"
+    },
+    "selector": {
+      "placeholder": "Zgjidhni",
+      "searchPlaceholder": "Kërko",
+      "assetSearchPlaceholder": "Kërkimi i aseteve"
+    }
+  },
+  "error": {
+    "transactionFailed": {
+      "timeOut": "Transaksioni mbaroi",
+      "default": "Transaksioni dështoi",
+      "offline": "Nuk mund të dërgosh transaksione jashtë linje",
+      "notEnoughGas": "Nuk ka gaz të mjaftueshëm për të mbuluar tarifën e transaksionit. Mbushni bilancin tuaj ETH",
+      "notOwnedCollectible": "Nuk e zotëron më këtë NFT",
+      "collectibleCantBeTransferred": "Ky NFT nuk mund të transferohet",
+      "notEnoughStake": "Nuk ka mjaftueshëm PLR në rezervuar",
+      "cantCalculateFee": "Nuk mund të llogaritet tarifa e transaksionit"
+    },
+    "emptyAddress": "Adresa nuk mund të jetë bosh",
+    "contactWithAddressExists": "Kontakti me këtë adresë ekziston tashmë",
+    "contactWithNameExists": "Kontakti me këtë emër ekziston tashmë",
+    "emptyName": "Emri nuk mund të jetë bosh",
+    "invalid": {
+      "address": "Adresë e pavlefshme",
+      "email": "Ju lutemi shkruani një email të vlefshëm",
+      "fiatValue": "Na vjen keq, fut një shumë të vlefshme (përfshin 0-9 dhe një pikë dhjetore). Ju lutemi provoni përsëri."
+    },
+    "cannotSendYourself": "Na vjen keq, ju nuk mund t'i dërgoni vetes. Ju lutemi përdorni një adresë tjetër.",
+    "ensNameNotFound": "Na vjen keq, emri i ENS nuk u gjet. Ju lutemi kontrolloni dhe provoni përsëri.",
+    "notEnoughTokenForFee": "Nuk mjafton {{token}} për tarifën e transaksionit",
+    "noCameraPermission": "Lejet e kamerës nuk janë dhënë - nuk mund të hapë skanerin QR.",
+    "noField": {
+      "address": "Nuk ka adresë për të treguar",
+      "phone": "Nuk ka telefon për të treguar",
+      "default": "Nuk ka informacion për të treguar"
+    },
+    "incorrectBackupPhraseWordsSelected": "Fjalët e gabuara të zgjedhura",
+    "pin": {
+      "newShouldBeDifferent": "Kodi i ri pin duhet të jetë i ndryshëm nga ai aktual"
+    },
+    "deviceRemovalOffline": "Duhet të jesh në linjë për të hequr pajisjen Smart Wallet.",
+    "amount": {
+      "invalidNumber": "Është futur një numër i gabuar",
+      "exceedBalance": "Shuma nuk duhet të kalojë bilancin total",
+      "shouldNotHaveDecimals": "Shuma nuk duhet të përmbajë numra dhjetorë",
+      "notProvided": "Shuma duhet të specifikohet",
+      "shouldBeGreaterThanValue": "Shuma duhet të jetë më e madhe se {{value}} {{token}}",
+      "amountShouldBeBiggerThanZero": "Shuma duhet të jetë më e madhe se 0",
+      "notEnoughToken": "Nuk mjafton {{token}}",
+      "shouldBeGreaterThan1Wei": "Shuma duhet të jetë më e madhe se 1 Wei (0.0000000000000000001 ETH)"
+    },
+    "synthetics": {
+      "failedToCalculate": "Llogaritja e shkëmbimit të sintetikës dështoi"
+    },
+    "exchange": {
+      "incorrectNumber": "Është futur një numër i gabuar",
+      "amountTooBig": "Shuma nuk duhet të jetë më e madhe se bilanci juaj - {{assetBalance}} {{symbol}}.",
+      "exchangeFailed": "Ky transaksion nuk mund të përfundonte. Ju lutemi provoni përsëri."
+    },
+    "walletConnect": {
+      "assetNotSupported": "Ky transaksion i të dhënave ose token nuk mbështetet ende në Pillar Wallet",
+      "unsupportedAction": "Na vjen keq, por ende nuk e mbështesim këtë veprim",
+      "noMatchingConnector": "Nuk u gjetën lidhës që përputhen me WalletConnect, ju lutemi provoni të lidheni përsëri ose kontaktoni mbështetjen nëse problemi vazhdon",
+      "requestNotFound": "Kërkesa nuk u gjet",
+      "requestRejected": "Kërkesa për thirrje u refuzua",
+      "invalidSession": "Sesion i pavlefshëm i WalletConnect",
+      "alreadyPending": "Një lidhje është tashmë në pritje",
+      "callRequestRejectFailed": "Refuzimi i kërkesës për thirrje dështoi",
+      "callRequestApproveFailed": "Miratimi i kërkesës për telefonatë dështoi",
+      "invalidRequest": "Kjo kërkesë për WalletConnect nuk dukej mjaft e drejtë - ju lutemi provoni përsëri",
+      "cannotDetermineEthereumChain": "Nuk mundëm të shihnim se cilit zinxhir Ethereum i përket këto kërkesa - ju lutemi provoni përsëri",
+      "activeAccountDoesNotSupportSelectedChain": "Llogaria aktive nuk mbështet zinxhirin e zgjedhur të Ethereum"
+    },
+    "unableToEstimateTransaction": "I paaftë për të vlerësuar transaksionin. Ju lutemi provoni përsëri.",
+    "theGraphQueryFailed": {
+      "liquidityPools": "Nuk mund të lidhet me shërbimin Liquidity Pools"
+    },
+    "unableToSendTransaction": "Transaksioni nuk mund të dërgohet. Ju lutemi provoni përsëri.",
+    "unableToSetTransaction": "Transaksioni nuk mund të caktohet. Ju lutemi provoni përsëri.",
+    "unableToResetTransactions": "Transaksionet nuk mund të rivendosen. Ju lutemi provoni përsëri.",
+    "prismicDataFetchFailed": "Të dhënat e {{prismicDocument}} nuk mund të merren. Ju lutemi provoni përsëri.",
+    "noTransactionsToEstimate": "Nuk ka transaksione për t'u vlerësuar.",
+    "failedToSignMessage": "Nënshkrimi i mesazhit dështoi",
+    "failedToBuildTransaction": "Ndërtimi i transaksionit dështoi",
+    "failedToEstimateTransaction": "Vlerësimi i transaksionit dështoi",
+    "failedToSubmitTransaction": "Dërgimi i transaksionit dështoi"
+  },
+  "home": {
+    "balance": {
+      "lastWeek": "Javen e shkuar"
+    },
+    "assets": {
+      "contacts": "Kontaktet",
+      "services": "Shërbimet"
+    },
+    "actions": {
+      "receive": "Merrni",
+      "send": "Dërgo",
+      "swap": "Këmbej",
+      "connect": "Lidhu"
+    }
+  },
+  "menu": {
+    "item": {
+      "settings": "Cilësimet",
+      "addressBook": "Libri i adresave",
+      "supportChat": "Mbështetje",
+      "storybook": "Libër tregimesh",
+      "supportConversations": "Mbështetni bisedat"
+    },
+    "footer": {
+      "privacyPolicy": "Politika e privatësisë",
+      "termsOfService": "Kushtet e shërbimit",
+      "systemInformation": "Informacioni i sistemit",
+      "signOut": "Dilni"
+    },
+    "settings": {
+      "title": "Cilësimet",
+      "appSettings": "Cilësimet e aplikacionit",
+      "darkMode": "Modaliteti i errët",
+      "language": "Gjuha",
+      "fiatCurrency": "Monedha lokale",
+      "biometricLogin": "Hyrja biometrike",
+      "changePin": "Ndrysho PIN-in",
+      "walletBackup": "Rezervimi i portofolit",
+      "viewBackupPhrase": "Shiko 12 fjalët",
+      "backupNotFinished": "Ruajtja e 12 fjalëve sekrete nuk ka përfunduar",
+      "backupNotFinishedWarning": "Paralajmërim"
+    },
+    "selectLanguage": {
+      "title": "Gjuha"
+    },
+    "selectCurrency": {
+      "title": "Monedha"
+    },
+    "systemInformation": {
+      "title": "Informacioni i Sistemit",
+      "environment": "Mjedisi",
+      "buildNumber": "Versioni i aplikacionit"
+    }
+  },
+  "history": {
+    "title": "Historia e transaksioneve"
+  },
+  "assets": {
+    "wallet": {
+      "pillarPay": {
+        "title": "Pagesa e Pillar",
+        "topUp": "Mbushe",
+        "hint": "Transferoni çdo shenjë falas nga balanca juaj PLR."
+      }
+    },
+    "deposits": {
+      "deposit": "Depozitë"
+    },
+    "investments": {
+      "invest": "Investoj"
+    },
+    "liquidityPools": {
+      "addLiquidity": "Shtoni likuiditet",
+      "poolShare": "Ndarja e pishinës/likuiditetit {{share}}"
+    },
+    "rewards": {
+      "availableToClaim": "Në dispozicion për të marrë"
+    }
+  },
+  "assetSelector": {
+    "title": "Zgjidh asetin"
+  },
+  "chainAssetSelector": {
+    "title": "{{chain}} aktive",
+    "tabs": {
+      "tokens": "Shenjat",
+      "collectibles": "NFT-të"
+    }
+  },
+  "walletConnect": {
+    "home": {
+      "title": "WalletConnect",
+      "headerStories": "E re dhe e rëndësishme",
+      "deployOnChainFormat": "Vendoseni këtë portofol për të përfituar plotësisht nga përdorimi i {{chain}}.",
+      "toast": {
+        "showDAppServiceLaunchError": "Na vjen keq, patëm një problem në përpjekjen për të hapur këtë dApp. Ju lutemi provoni sërish më vonë."
+      }
+    },
+    "requests": {
+      "messageRequest": "Kërkesa për nënshkrim",
+      "transactionRequest": "Kërkesa për transaksion",
+      "transactionRequestFormat": "{{app}} në {{chain}}",
+      "unsupportedRequest": "Kërkesë e pambështetur"
+    },
+    "connectedApps": {
+      "title": "Dapps të lidhura",
+      "connected": "Lidhur"
+    },
+    "disconnectModal": {
+      "title": "Shkëputeni",
+      "body": "Jeni i sigurt që dëshironi të shkëputeni nga {{app}} në {{chain}}?",
+      "disconnect": "Po, shkëputeni",
+      "toast": {
+        "missingSessionUrl": "Aplikacioni nuk mund të shkëputet sepse mungon URL-ja e sesionit."
+      }
+    }
+  },
+  "etherspot": {
+    "deploymentInterjection": {
+      "title": "Vendosja e portofolit inteligjent",
+      "depositFormat": "Depozitoni {{symbol}} në {{chain}}",
+      "error": "Nuk mund të merren të dhënat e Ndërthurjes së vendosjes së portofolit inteligjent. Ju lutemi provoni përsëri.",
+      "cost": "{{cost}} kosto e vendosjes do t'i shtohet transaksionit tuaj të parë."
+    }
+  },
+  "contactSelector": {
+    "title": "Dërgo në",
+    "button": {
+      "addContact": "Shto në librin e adresave",
+      "skip": "Kalo dhe thjesht dërgo"
+    },
+    "error": {
+      "incorrectAddress": "Adresa e gabuar",
+      "cannotSendToYourself": "Nuk mund t'i dërgoni vetes"
+    }
+  },
+  "ppnContent": {
+    "tabs": {
+      "incoming": {
+        "title": "Në hyrje",
+        "emptyState": {
+          "title": "Nuk ka transaksione hyrëse"
+        }
+      },
+      "sent": {
+        "title": "Dërguar",
+        "emptyState": {
+          "title": "Asnjë transaksion i dërguar"
+        }
+      },
+      "settled": {
+        "title": "Vendosën",
+        "emptyState": {
+          "title": "Asnjë transaksion i shlyer"
+        }
+      }
+    },
+    "title": {
+      "home": "Rrjeti i Pagesave Pillar",
+      "settleTransactionsScreen": "Zgjidh transaksionet",
+      "fundTankScreen": "Rezervuari i fondeve PLR",
+      "sendTokenViaPpnScreen": "Dërgo {{token}} nëpërmjet PPN",
+      "unsettledAssetsScreen": "Pasuritë e pashlyera",
+      "withdrawFromTankScreen": "Tërhiqe nga rezervuari PLR"
+    },
+    "button": {
+      "fundTank": "Depozit e Fondit",
+      "releaseTankFunds": "Lëshimi i fondeve",
+      "withdrawFromTank": "Tërhiqe nga rezervuari PLR",
+      "settleTransactions": "Zgjidh transaksionet",
+      "enableSmartWalletForTank": "Aktivizo Smart Wallet për të krijuar Tank",
+      "goToTank": "Shkoni te PLR Tank"
+    },
+    "label": {
+      "availableBalance": "Bilanci i disponueshëm",
+      "paidByPillar": "Pa tarifa - të paguara nga Pillar",
+      "transactionsAvailableToSettle": "Transaksionet e disponueshme për t'u shlyer"
+    },
+    "paragraph": {
+      "introFirstParagraph": "Vendosni argumentet PLR në rezervuarin tuaj për të mundësuar transaksione falas dhe të menjëhershme midis jush dhe kontakteve tuaja. PLR vepron si një meta-token që ju lejon të dërgoni dhe merrni çdo aktiv që mbështetet nga Rrjeti i Pagesave të Pillar.",
+      "introSecondParagraph": "Vizatoni nga rezervuari juaj PLR për të dërguar gjithçka që dëshironi."
+    },
+    "ppnFeatures": {
+      "first": {
+        "title": "E menjëhershme.",
+        "description": "Nuk ka pritje për konfirmimet e minatorëve ose bllokut. Transaksione seriozisht të menjëhershme."
+      },
+      "second": {
+        "title": "Falas.",
+        "description": "Nuk ka nevojë të paguani kostot e rrjetit ose gazit për asnjë transaksion."
+      },
+      "three": {
+        "title": "Privat.",
+        "description": "Vetëm shlyerja përfundimtare regjistrohet në zinxhir. Transaksionet e grumbulluara lejojnë kombinimin e transfertave të shumta."
+      },
+      "settleTransactions": "Zgjidh transaksionet"
+    }
+  },
+  "migrateENSContent": {
+    "banner": {
+      "title": "Rivendosni emrin tuaj ENS në Etherspot"
+    },
+    "details": {
+      "title": "Rivendosni emrin tuaj ENS në Etherspot",
+      "body": "Aktualisht, emri juaj ENS tregon për \"Portofoli inteligjent\" i vjetër. Kjo do të thotë se çdo transaksion që tregon {{ensName}} do të vendoset gjithmonë në portofolin tuaj inteligjent Archanova (adresa: {{address}}). Vazhdoni më poshtë për të ridrejtuar emrin tuaj ENS në llogarinë tuaj të re Etherspot Smart Wallet",
+      "migrate": "Migroni",
+      "cannotMigrate": "Na vjen keq, nuk mund të migrojmë për momentin. Ju lutemi provoni përsëri.",
+      "noAccountFound": "Na vjen keq, nuk u gjet asnjë llogari."
+    }
+  },
+  "walletMigrationArchanova": {
+    "banner": {
+      "title": "Migroni asetet nga Pillar V1 në Etherspot (Pillar V2)"
+    },
+    "intro": {
+      "title": "Migroni pasuritë tuaja",
+      "subtitle": "Kalo në Etherspot (Pillar V2)",
+      "header": "Llogaria juaj po përmirësohet në një portofol inteligjent Pillar.",
+      "body": "Etherspot është gati me shumë zinxhirë. Polygon, Binance Smart Chain dhe xDai aktualisht mbështeten. Migroni asetet në portofolin tuaj të ri Pillar v2 dhe shijoni DeFi me tarifa të ulëta."
+    },
+    "status": {
+      "title": "Statusi i migracionit",
+      "emptyState": "Asnjë transaksion migrimi"
+    },
+    "selectAssets": {
+      "title": "Migrimi në portofolin inteligjent",
+      "migratingFrom": "duke migruar nga",
+      "review": "Rishikimi"
+    },
+    "setAmount": {
+      "title": "Përcaktoni shumën"
+    },
+    "review": {
+      "title": "Rishikimi",
+      "header": "Ju po migroni",
+      "details": {
+        "header": "Detajet e migracionit",
+        "fromWallet": "Nga Pillar V1",
+        "toWallet": "Në Etherspot (Pillar V2)"
+      },
+      "assets": {
+        "header": "Asetet e zgjedhura"
+      },
+      "fees": {
+        "header": "Tarifat",
+        "ethereum": "Maks. Tarifa e Ethereum",
+        "pillar": "Tarifa e Pillar",
+        "total": "Tarifa totale"
+      },
+      "calculateFee": "Llogaritni tarifën e transaksionit",
+      "calculatingFee": "Tarifa po llogaritet…",
+      "submit": "Paraqisni",
+      "estimatingTransactions": "Duke vlerësuar transaksionet…"
+    },
+    "pinConfirm": {
+      "submittingTransactions": "Po dërgon transaksionet…"
+    }
+  },
+  "smartWalletContent": {
+    "activationCard": {
+      "button": {
+        "activate": "Aktivizo Smart Wallet"
+      },
+      "description": {
+        "activating": "Duke aktivizuar llogarinë tuaj",
+        "default": "Për të filluar dërgimin e aktiveve, duhet të aktivizoni Smart Wallet"
+      }
+    },
+    "activationModal": {
+      "paragraph": "Për të filluar dërgimin dhe shkëmbimin e aktiveve, duhet të aktivizoni portofolin tuaj.",
+      "title": "Aktivizo Smart Wallet"
+    },
+    "walletActivationView": {
+      "title": "Smart Wallet po aktivizohet",
+      "paragraph": {
+        "smartWalletActivating": "Nuk do të zgjasë shumë. Ndërsa aktivizimi është në proces, mos ngurroni të eksploroni veçoritë emocionuese të Pillar Smart Wallet"
+      }
+    },
+    "exchangeActivation": {
+      "message": "Për të filluar shkëmbimin e aktiveve, duhet të aktivizoni portofolin tuaj inteligjent",
+      "button": "Aktivizo Smart Wallet"
+    },
+    "tabs": {
+      "tokens": {
+        "title": "Shenjat"
+      },
+      "collectibles": {
+        "title": "NFT-të"
+      }
+    },
+    "paragraph": {
+      "introFirstParagraph": "Portofoli juaj i ri i zgjuar Pillar mundësohet nga një kontratë inteligjente personale. Kjo siguron menaxhim më të mirë të aseteve, funksione sigurie dhe rikuperimi.",
+      "introSecondParagraph": "Pillar rekomandon gjithashtu që të transferoni shumicën e aseteve tuaja në portofolin tuaj inteligjent për shkak të përfitimeve të listuara.",
+      "walletIsActivated": "Tani mund të hyni në portofolin tuaj të ri inteligjent dhe rrjetin e ri të pagesave të Pillar nga ana e sipërme djathtas dhe nga ana e ekranit të \"Aseteve\""
+    },
+    "button": {
+      "goToSmartWallet": "Shkoni te Smart Wallet"
+    },
+    "title": {
+      "smartWalletIsActivated": "Portofoli juaj inteligjent tani është aktivizuar",
+      "walletActivatedScreen": "Ç'pritet më tej"
+    },
+    "banner": {
+      "title": "Migroni asetet nga portofoli kryesor në Etherspot (Pillar V2)"
+    },
+    "intro": {
+      "title": "Koha për të përmirësuar përvojën tuaj të kriptove",
+      "header": "Llogaria juaj po përmirësohet në një portofol inteligjent Pillar.",
+      "upgrade": {
+        "subtitle": "Çfarë është ky përmirësim?",
+        "body": "Me pak fjalë: Pillar po e bën Ethereum më të aksesueshëm dhe po hedh një themel për përmirësime të mëtejshme të platformës Pillar."
+      },
+      "benefits": {
+        "secure": "Mbani fondet tuaja të sigurta në rast të humbjes së telefonit ose çelësit.",
+        "ensName": "Merrni adresën tuaj pillar.eth ENS për ta përdorur atë nëpër platforma të ndryshme.",
+        "betterApp": "Shijoni një ndërfaqe të rifreskuar të përdoruesit dhe performancë të përmirësuar të aplikacionit."
+      },
+      "footer": "Ky përmirësim kërkon një rekord në blockchain. Kjo do të thotë, një tarifë e vogël e rrjetit Ethereum do t'i shtohet transaksionit të parë të bërë me portofolin tuaj të ri Pillar Smart. Tarifa do të jetë jashtëzakonisht e vogël falë teknologjisë Pillar Etherspot.",
+      "button": {
+        "upgrade": "Përmirëso"
+      }
+    },
+    "confirm": {
+      "title": "Rishikimi",
+      "header": "Ju po migroni",
+      "details": {
+        "header": "Detajet e migracionit",
+        "fromKeyWallet": "Nga portofoli ekzistues i çelësave",
+        "toSmartWallet": "Në portofolin inteligjent"
+      },
+      "assets": {
+        "header": "Asetet e zgjedhura"
+      },
+      "fees": {
+        "header": "Tarifat",
+        "ethereum": "Maks. Tarifa e Ethereum",
+        "pillar": "Tarifa e Pillar",
+        "total": "Tarifa totale"
+      },
+      "submit": "Paraqisni"
+    }
+  },
+  "collectiblesList": {
+    "emptyState": {
+      "noCollectibles": {
+        "title": "Nuk ka NFT",
+        "paragraph": "Nuk ka NFT në këtë portofol"
+      },
+      "noneFound": {
+        "title": "NFT nuk u gjet",
+        "paragraph": "Kontrolloni nëse emri është futur saktë"
+      }
+    }
+  },
+  "settingsContent": {
+    "settingsItem": {
+      "analytics": {
+        "title": "Analiza e përdorimit",
+        "paragraph": {
+          "agreeSharingInfo": "Jam i lumtur të ndaj statistikat anonime të përdorimit të aplikacionit",
+          "legal": "Duke ndarë statistikat e përdorimit të aplikacionit, ju po ndihmoni Pillar të ndërtojë një portofol më të mirë.\nStatistikat e përdorimit nuk përfshijnë asnjë informacion personal nga ju ose nga kontaktet tuaja."
+        }
+      }
+    }
+  },
+  "profileContent": {
+    "title": {
+      "manage": "Cilësimet e përdoruesit"
+    },
+    "paragraph": {
+      "verificationIsRequired": "Kërkohet verifikimi për të parandaluar aktivitetin e mashtruesve. Ne kujdesemi për privatësinë e përdoruesve tanë."
+    },
+    "modal": {
+      "updatingData": {
+        "title": "Vazhdoni me kujdes",
+        "paragraph": {
+          "emailChanged": "Pas ndryshimit të emailit, do t'ju duhet ta verifikoni përsëri në mënyrë që të ruani aftësinë për të ftuar miqtë dhe për t'u shpërblyer.",
+          "phoneChanged": "Pas ndryshimit të numrit të telefonit, do t'ju duhet ta verifikoni përsëri në mënyrë që të ruani aftësinë për të ftuar miqtë dhe për t'u shpërblyer."
+        },
+        "button": {
+          "changeEmail": "Ndrysho emailin tim",
+          "changePhone": "Ndrysho numrin tim të telefonit"
+        }
+      },
+      "verification": {
+        "title": {
+          "email": "Fut kodin e verifikimit (email)",
+          "phone": "Fut kodin e verifikimit (SMS)"
+        },
+        "error": "Kjo nuk funksionoi, ju lutemi provoni përsëri"
+      },
+      "profileImage": {
+        "button": {
+          "takeSelfie": "Bëni selfie",
+          "uploadPicture": "Ngarko foto",
+          "deleteAvatar": "Fshi avatarin"
+        }
+      },
+      "deleteAvatar": {
+        "title": "Fshi avatarin",
+        "paragraph": {
+          "areYouSure": "Jeni i sigurt që dëshironi të fshini avatarin tuaj?"
+        },
+        "button": {
+          "delete": "Po, fshi",
+          "cancel": "Anulo"
+        }
+      }
+    }
+  },
+  "relayerMigrationContent": {
+    "modal": {
+      "switch": {
+        "title": "Paguani tarifat me PLR",
+        "paragraph": "Mirupafshim ETH! Pas ndërrimit, do të jeni në gjendje të paguani tarifat e transaksionit me token PLR. Kurrë më gaz i pamjaftueshëm.",
+        "button": {
+          "switch": "Ndërro"
+        },
+        "label": {
+          "freeSwitching": "Ndërrimi është falas",
+          "switchPending": "Transaksioni i ndërrimit është në pritje",
+          "waitingForConfirmation": "Në pritje të konfirmimit..."
+        }
+      },
+      "verification": {
+        "title": {
+          "email": "Fut kodin e verifikimit (email)",
+          "phone": "Fut kodin e verifikimit (SMS)"
+        },
+        "error": "Kjo nuk funksionoi, ju lutemi provoni përsëri"
+      }
+    }
+  },
+  "addressBookContent": {
+    "title": {
+      "allowAccess": "Qasja në librin e adresave"
+    },
+    "paragraph": {
+      "allowAccess": "Ju lutemi jepni qasje në librin tuaj të adresave në mënyrë që të jeni në gjendje të zgjidhni kontaktet e telefonit ose emailit tuaj."
+    }
+  },
+  "walletConnectContent": {
+    "title": {
+      "walletConnectRequests": "Lidhu me {{app}} aktiv\n {{chain}}"
+    },
+    "label": {
+      "unknownRequestName": "E panjohur",
+      "requestDescription": "Përshkrim",
+      "requestLink": "Url",
+      "name": "Emri",
+      "chain": "Zinxhir"
+    },
+    "error": {
+      "smartWalletNeedToBeActivated": "Smart Wallet duhet të aktivizohet për të vazhduar.",
+      "unsupportedRequestCallRequestType": "Lloji i kërkesës për thirrje të pambështetur."
+    }
+  },
+  "servicesContent": {
+    "title": {
+      "servicesScreen": "Shërbimet"
+    },
+    "ramp": {
+      "addCash": {
+        "title": "Blini Crypto",
+        "subTitle": "Ju paguani me karte"
+      }
+    },
+    "liquidityPools": {
+      "title": "Pishinat e Likuiditetit",
+      "description": "Vendosni argumentet tuaja të likuiditetit PLR dhe merrni shpërblimet tuaja."
+    },
+    "label": {
+      "requiresActivation": "Kërkon aktivizim",
+      "forSmartWallet": "Për portofolin inteligjent"
+    }
+  },
+  "transactions": {
+    "title": {
+      "sendScreen": "Dërgo më {{chain}}",
+      "sendScreenPPN": "Dërgo në PPN",
+      "valueSelectorModal": "Zgjidhni aktivin",
+      "review": "Rishikimi",
+      "reviewAndConfirmScreen": "Rishikoni dhe konfirmoni",
+      "allowanceTransactionSuccess": "Transaksioni është në rrugë e sipër",
+      "exchangeTransactionSuccess": "Duke shkëmbyer argumentet...",
+      "transactionSuccess": "Shenjat janë në rrugën e tyre",
+      "collectibleTransactionSuccess": "NFT është në rrugën e saj",
+      "transferAssetsToSmartWalletScreen": "Migrimi në portofolin inteligjent",
+      "amountEditScreen": "Përcaktoni shumën",
+      "assetsTransferToSmartWalletStatusScreen": "Migrimi i aktiveve me bazë kyçe",
+      "creatingTransactions": "Krijimi i transaksioneve",
+      "keyBasedAssetsMigrationComplete": "Migrimi i aktiveve me bazë kyçe përfundoi"
+    },
+    "button": {
+      "payFeeWithPillar": "Paguani tarifat me PLR",
+      "confirmTransaction": "Konfirmo transaksionin",
+      "cancelUnsent": "Anulo e padërguar",
+      "send": "Dërgo"
+    },
+    "label": {
+      "amount": "Shuma",
+      "receiver": "Marrësi",
+      "recipient": "Marrësi",
+      "sender": "Dërguesi",
+      "recipientEnsName": "Emri i kontejnerit ENS",
+      "recipientAddress": "Adresa e Marrësit",
+      "transactionFee": "Tarifa e transaksionit",
+      "assetsToSettle": "Asetet për t'u shlyer",
+      "recipientGet": "Marrësi do të marrë",
+      "youPay": "Ju do të paguani",
+      "noAssetsFound": "Nuk u gjet asnjë pasuri",
+      "noCollectiblesFound": "Nuk u gjet asnjë NFT",
+      "fromKeyWallet": "Nga portofoli i bazuar në çelës",
+      "toSmartWallet": "Në portofolin inteligjent",
+      "tokensToTransfer": "Shenjat për transferim",
+      "collectiblesToTransfer": "NFT për të transferuar",
+      "data": "Të dhënat",
+      "message": "Mesazh",
+      "address": "Adresë",
+      "ethFee": "Maks. Tarifa e Ethereum",
+      "maximumFee": "Tarifa maksimale",
+      "pillarFee": "Tarifa e Pillar",
+      "totalFee": "Tarifa totale",
+      "deploymentFee": "Tarifa e vendosjes së portofolit inteligjent",
+      "maxTransactionFee": "Maks. tarifë transaksioni",
+      "youAreSending": "Ju jeni duke dërguar",
+      "fees": "Tarifat",
+      "allowancePlusEthFee": "Kompensimi + Tarifa maksimale",
+      "migratingFrom": "duke migruar nga",
+      "network": "Rrjeti"
+    },
+    "paragraph": {
+      "exchangeTransactionSuccess": "Mund të duhet pak kohë që ky transaksion të përfundojë",
+      "transactionSuccess": "Do të zgjidhet brenda pak çastesh, në varësi të ngarkesës {{network}}",
+      "typedDataMessage": "Mesazh i shtypur i të dhënave"
+    },
+    "emptyState": {
+      "assetsList": {
+        "title": "Nuk u gjet asnjë aset",
+        "paragraph": "Kontrolloni nëse emri është futur saktë"
+      }
+    }
+  },
+  "toast": {
+    "userIsOffline": "Duket se je jashtë linje. Ju lutemi kontrolloni lidhjen tuaj të internetit.",
+    "biometricLoginEnabled": "Identifikimi biometrik u aktivizua.",
+    "biometricLoginDisabled": "Identifikimi biometrik është çaktivizuar.",
+    "keyWalletAssetsTransfered": "Asetet e transferuara. Kënaquni duke përdorur portofolin tuaj inteligjent!",
+    "somethingWentWrong": "Diçka shkoi keq, ne tashmë jemi duke e hetuar. Mos u shqetësoni, fondet tuaja janë të sigurta. Ju lutemi provoni përsëri ose kontaktoni mbështetjen.",
+    "failedToLogIn": "Pati një problem me identifikimin, ju lutemi provoni përsëri.",
+    "PPNTopUpSuccess": "{{paymentInfo}} u shtua te Pillar Tank.",
+    "PPNWithdrawSuccess": "{{paymentInfo}} u tërhoq nga Pillar Tank.",
+    "PPNSettleSuccess": "Asetet e vendosura në portofolin tuaj.",
+    "transactionSent": "{{paymentInfo}} u dërgua.",
+    "transactionReceived": "{{paymentInfo}} të marra.",
+    "backendProblem": "Kishte një problem në serverin tonë. Mos u shqetësoni, fondet tuaja janë të sigurta. Ju lutemi provoni përsëri ose kontaktoni mbështetjen.",
+    "PPNTopUp": "{{paymentInfo}} u dërgua te Pillar Tank.",
+    "PPNWithdraw": "Filloi tërheqja e {{paymentInfo}}. Së shpejti do të merrni shenja.",
+    "PPNSettle": "Zgjidhja filloi. Së shpejti do të merrni shenja.",
+    "switchRelayerTokenFailed": "Shenja e tarifës nuk mund të ndërrohet. Ju lutemi provoni përsëri.",
+    "syntheticTransactionFailed": "Ky transaksion nuk mund të kryhet. Ju lutemi provoni përsëri.",
+    "assetHasBeenHidden": "{{assetName}} ({{assetSymbol}}) u hoq.",
+    "ensureBackup": "Ju lutemi sigurohuni që të bëni kopje rezervë të portofolit tuaj tani.",
+    "walletConnectUnsupportedApp": "Ky aplikacion nuk mbështetet. Ju mund të kërkoni mbështetje për këtë aplikacion.",
+    "walletConnectConnectionsExpired": "Lidhjet kanë skaduar. Lidhu sërish.",
+    "cantReadQRCode": "Ky kod QR nuk mund të lexohet. Provo edhe një herë ose përdor një imazh tjetër.",
+    "incorrectQRCode": "Kodi QR është i pasaktë.",
+    "transactionFeeEstimationFailed": "Nuk mund të vlerësohet tarifa e transaksionit. Ju lutemi provoni përsëri.",
+    "walkthroughFailed": "Dicka shkoi keq. Ju lutemi provoni përsëri.",
+    "addressCopiedToClipboard": "Adresa u kopjua në kujtesën e fragmenteve.",
+    "ensNameCopiedToClipboard": "Emri ENS u kopjua në kujtesën e fragmenteve.",
+    "forbiddenToRemoveAsset": "{{assetName}} ({{assetSymbol}}) nuk mund të hiqet. Është thelbësore për Pillar.",
+    "failedToGetFaceIDPermission": "Face ID e kufizuar për Pillar. Mund ta ndryshoni në cilësimet e telefonit tuaj.",
+    "subscribedToNewsletter": "Abonuar në buletinin.",
+    "subscriptionToNewsletterFailed": "Nuk mund të abonoheni në buletinin. Ju lutemi provoni përsëri.",
+    "cantInviteYourself": "Nuk mund ta ftoni veten.",
+    "invalidPhoneNumber": "Numri i telefonit duhet të ketë kodin e shtetit.",
+    "dailyInvitationsLimitReached": "Ju kanë mbetur edhe {{remainingDailyInvitations}} ftesa sot. Maksimumi {{allowedDailyUpdates}} në ditë",
+    "ensNameNotFound": "Emri ENS nuk u gjet. Provoni një emër tjetër.",
+    "transactionStarted": "{{paymentInfo}} u dërgua.",
+    "tooManyTransactionsToSettle": "Mund të shlyeni vetëm {{maxTxToSettle}} transaksione njëherësh. Ju mund të vendosni më shumë në një grup tjetër.",
+    "notEnoughForTransactionFee": "Nuk mjafton {{feeSymbol}} për të paguar tarifën e transaksionit.",
+    "languageChanged": "Gjuha ndryshoi.",
+    "languageChangeFailed": "Gjuha nuk mund të ndryshohet. Ju lutemi provoni përsëri.",
+    "serviceLaunchFailed": "Na vjen keq, patëm një problem në përpjekjen për të hapur këtë shërbim. Ju lutemi provoni sërish më vonë.",
+    "exchangeAllowanceFailed": "Na vjen keq. Nuk mund të caktohej kompensimi i tokenit. Ju lutemi provoni përsëri.",
+    "contactUpdated": "{{name}} u përditësua.",
+    "contactDeleted": "{{name}} u hoq nga libri i adresave.",
+    "contactAdded": "{{name}} u shtua në librin e adresave.",
+    "smartWalletActivationUnavailable": "Aktivizimi është përkohësisht i padisponueshëm. Ju lutemi provoni sërish më vonë",
+    "languageChangedWithSomeTranslationsMissing": "Gjuha ka ndryshuar, por disa përkthime mund të mungojnë. Ne jemi duke punuar në mënyrë aktive për të.",
+    "languageIsNoLongerSupported": "Na vjen keq, por gjuha juaj e zgjedhur nuk mbështetet më. Është ndryshuar në gjuhën e paracaktuar.",
+    "languageIsNotSupported": "Na vjen keq, kjo gjuhë nuk mbështetet.",
+    "failedToUploadImage": "Marrja e imazhit nga galeria dështoi. Ju lutemi provoni përsëri.",
+    "failedToDeleteAvatar": "Fshirja e avatarit dështoi. Ju lutemi provoni përsëri.",
+    "failedToCreateOrder": "Një gabim Ndodhi. Kjo ofertë nuk mund të pranohet. Ju lutemi provoni përsëri.",
+    "cannotFindDeploymentHash": "Nuk mund të gjendet hash-i i vendosjes. Ju lutemi provoni përsëri.",
+    "cannotFindTransactionHash": "Nuk mund të gjendet hash transaksioni. Ju lutemi provoni përsëri.",
+    "cannotGetBlockchainExplorerLink": "Nuk mund të marrë lidhjen e eksploruesit të blockchain. Ju lutemi provoni përsëri.",
+    "cannotGetWalletAddress": "Nuk mund të merret adresa e portofolit.",
+    "cannotEnableAsset": "Puna nuk mund të aktivizohet. Ju lutemi provoni përsëri.",
+    "cannotCreateStream": "Transmetimi nuk mund të krijohet. Ju lutemi provoni përsëri.",
+    "cannotCancelStream": "Transmetimi nuk mund të anulohet. Ju lutemi provoni përsëri.",
+    "cannotPurchaseTicket": "Bileta nuk mund të blihet. Ju lutemi provoni përsëri.",
+    "cannotWithdraw": "Nuk mund të tërhiqet. Ju lutemi provoni përsëri.",
+    "cannotDepositAsset": "Aktivi nuk mund të depozitohet. Ju lutemi provoni përsëri.",
+    "cannotWithdrawAsset": "Aseti nuk mund të tërhiqet. Ju lutemi provoni përsëri.",
+    "failedToEstimateTransactionWithMessage": "Vlerësimi i transaksionit dështoi: \"{{message}}\"",
+    "walletBackedUp": "Portofoli juaj është rezervuar tani.",
+    "poolDataFetchFailed": "Të dhënat e grupeve të likuiditetit nuk mund të merren. Ju lutemi provoni përsëri ose kontaktoni mbështetjen.",
+    "cannotAddLiquidity": "Nuk mund të shtohet likuiditet. Ju lutemi provoni përsëri.",
+    "cannotStakeTokens": "Shenjat nuk mund të vendosen. Ju lutemi provoni përsëri.",
+    "cannotUnstakeTokens": "Shenjat nuk mund të hiqen. Ju lutemi provoni përsëri.",
+    "cannotRemoveLiquidity": "Likuiditeti nuk mund të hiqet. Ju lutemi provoni përsëri.",
+    "liquidityPoolsAddLiquidity": "{{value}} {{token}} të marra.",
+    "liquidityPoolsRemoveLiquidity": "{{value}} {{token}} u hoq nga likuiditeti.",
+    "liquidityPoolsStake": "{{value}} {{token}} të vendosura.",
+    "liquidityPoolsUnstake": "{{value}} {{token}} u hoq nga likuiditeti.",
+    "liquidityPoolsClaimRewards": "{{value}} {{token}} pretenduar.",
+    "noActiveAccountFound": "Nuk u gjet asnjë llogari aktive.",
+    "walletConnectFailed": "WalletConnect dështoi.",
+    "walletConnectCallRequestApproveFailed": "Aprovimi i kërkesës për telefonatë dështoi.",
+    "walletConnectCallRequestRejectFailed": "Refuzimi i kërkesës për telefonatë dështoi.",
+    "walletConnectRequestRejected": "Kërkesa për telefonatë në WalletConnect u refuzua.",
+    "walletConnectRequestApproved": "Kërkesa për telefonatë WalletConnect u miratua.",
+    "ensMigrationCannotProceed": "Na vjen keq, migrimi i ENS nuk mund të vazhdojë.",
+    "ensMigrationFailed": "Na vjen keq, migrimi i ENS dështoi.",
+    "cannotSendSyntheticAsset": "Na vjen keq, por puna nuk mund të dërgohet.",
+    "failedToGetGasPrices": "Dështoi në marrjen e çmimeve të gazit.",
+    "waitingForWalletConnectConnection": "Në pritje të shërbimit WalletConnect…",
+    "transactionReverted": "Dicka shkoi keq. Provo sërish ose prek këtë mesazh për detaje."
+  },
+  "exchangeContent": {
+    "providers": {
+      "uniswap": "Shkëmbimi",
+      "oneInch": "1 inç",
+      "synthetix": "Synthetix",
+      "sushiswap": "Sushiwap",
+      "honeyswap": "Shkëmbim mjalti"
+    },
+    "modal": {
+      "smartWalletIsNotActive": {
+        "title": "Përdorni llogarinë Smart Wallet",
+        "paragraph": "Ju lutemi zgjidhni llogarinë tuaj Smart Wallet për të blerë kriptomonedhë.",
+        "button": {
+          "selectAccount": "Zgjidhni llogarinë"
+        }
+      }
+    },
+    "title": {
+      "exchange": "këmbe në {{chain}}",
+      "initialExchange": "këmbejnë",
+      "confirm": "Rishikimi"
+    },
+    "label": {
+      "exchangeDetails": "Shkëmbeni detajet",
+      "network": "Rrjeti",
+      "exchangeRate": "Kursi i këmbimit",
+      "exchangeRateLayout": "{{rate}} {{toAssetCode}}/{{fromAssetCode}}",
+      "maxSlippage": "Maks. rrëshqitje"
+    },
+    "tooltip": {
+      "feeFormat": "{{provider}} do të lejohet të automatizojë transaksionet në emrin tuaj. Tarifa e Ethereum mund të jetë më e ulët."
+    },
+    "emptyState": {
+      "offers": {
+        "title": "Nuk ka oferta të drejtpërdrejta",
+        "paragraph": "Aktualisht nuk ofrohet asnjë ofertë përputhëse nga shërbimet e shkëmbimit."
+      }
+    }
+  },
+  "alert": {
+    "deleteContact": {
+      "title": "Fshi adresën",
+      "message": "Jeni i sigurt që dëshironi të hiqni {{name}} nga libri i adresave?",
+      "button": {
+        "cancel": "Anulo",
+        "ok": "Konfirmo"
+      }
+    },
+    "hideAsset": {
+      "title": "A je i sigurt?",
+      "message": "Kjo do të fshehë {{asset}} nga portofoli juaj",
+      "button": {
+        "cancel": "Anulo",
+        "ok": "Fshih"
+      }
+    },
+    "logOut": {
+      "title": "Shkyç",
+      "message": "Pas daljes nga llogaria, nuk do të mund të identifikoheni përsëri në këtë portofol pa kopje rezervë të 12 fjalëve.",
+      "button": {
+        "cancel": "Anulo",
+        "ok": "Konfirmo"
+      }
+    },
+    "attemptToLogOutWithoutBackup": {
+      "title": "Shkyç",
+      "message": "Mund të dilni vetëm pasi të keni siguruar frazën tuaj rezervë prej 12 fjalësh.",
+      "button": {
+        "cancel": "Anulo",
+        "backup": "Rezervoni 12 fjalë"
+      }
+    },
+    "walletConnectDisconnect": {
+      "title": "Shkëputeni nga {{name}}",
+      "message": "Ju lutemi konfirmoni shkëputjen nga {{name}}.",
+      "button": {
+        "cancel": "Anulo",
+        "ok": "Shkëputeni"
+      }
+    },
+    "addressIsNotOnPillarNetwork": {
+      "title": "Kjo adresë nuk është në Pillar Network",
+      "message": "Ftoje pronarin e tij të instalojë portofolin Pillar në mënyrë që të mund të dërgojë transaksione të menjëhershme falas ose të kalojë në Ethereum Mainnet për të dërguar transaksione të rregullta.",
+      "button": {
+        "switchToMainnet": "Kalo te Ethereum Mainnet",
+        "cancel": "Anulo"
+      }
+    },
+    "removeConnectedDevice": {
+      "title": "A je i sigurt?",
+      "message": "Ju do të hiqni lidhjen midis kësaj pajisjeje dhe llogarisë tuaj.\n\nJu lutemi sigurohuni që të keni rezervuar të gjitha fondet tuaja.",
+      "button": {
+        "cancel": "Anulo",
+        "ok": "Konfirmo heqjen"
+      }
+    },
+    "contactsPermission": {
+      "title": "Kontaktet",
+      "message": "Ky aplikacion dëshiron të shikojë kontaktet tuaja.",
+      "button": {
+        "ok": "Lejo"
+      }
+    }
+  },
+  "notification": {
+    "transactionReceivedPending": "{{tokenValue}} vjen së shpejti.",
+    "transactionReceivedConfirmed": "{{tokenValue}} të marra.",
+    "transactionSentPending": "{{tokenValue}} po dërgohet.",
+    "transactionSentConfirmed": "{{tokenValue}} u dërgua.",
+    "receivedCollectible": "Ju keni marrë një NFT.",
+    "collectibleSentAndReceived": "NFT-ja juaj është marrë."
+  },
+  "graph": {
+    "timeRangeButtons": {
+      "day": "1 D",
+      "week": "7 D",
+      "month": "30 D",
+      "halfYear": "6 M",
+      "year": "1 Vit",
+      "all": "TE GJITHA"
+    }
+  },
+  "liquidityPoolsContent": {
+    "title": {
+      "addLiquidity": "Shtoni likuiditet",
+      "addLiquidityReview": "Rishikimi",
+      "stakeTokens": "Shenjat e aksioneve",
+      "stakeTokensReview": "Rishikimi",
+      "unstakeTokens": "Hiq argumentet",
+      "unstakeTokensReview": "Rishikimi",
+      "removeLiquidity": "Hiq likuiditetin",
+      "removeLiquidityReview": "Rishikimi",
+      "claimRewardsReview": "Rishikimi",
+      "liquidityPools": "Pishinat e Likuiditetit",
+      "infoScreen": "Pishinat e Likuiditetit"
+    },
+    "button": {
+      "addLiquidity": "Shtoni likuiditet",
+      "addLiquidityWrapped": "Shtoni\nlikuiditetit",
+      "removeLiquidity": "Hiq likuiditetin",
+      "removeLiquidityWrapped": "Hiq\nlikuiditetit",
+      "stake": "Shto në qarkullim",
+      "unstake": "Hiq nga qarkullimi",
+      "claimRewards": "Merrni shpërblimet"
+    },
+    "label": {
+      "staked": "Aksionet",
+      "rewards": "Shpërblime",
+      "claimedSoFar": "{{value}} {{token}} pretenduar deri më tani",
+      "addLiquidityToStartEarning": "Shtoni likuiditet për të filluar të fitoni nga aksionet",
+      "stakeLiquidityToGetRewards": "Vendosni argumentet e likuiditetit për të marrë shpërblime",
+      "shareOfPool": "Pjesa e pishinës",
+      "youAreAddingLiquidity": "Ju po shtoni likuiditet",
+      "tokenAllocation": "Shpërndarja e tokenit",
+      "youAreStaking": "Ju jeni duke vënë në lojë",
+      "youAreUnstaking": "Ti je i pangopur",
+      "youAreRemovingLiquidity": "Jeni duke hequr likuiditetin",
+      "youWillReceive": "Ju do të merrni",
+      "youAreClaiming": "Ju po pretendoni",
+      "price": "Çmimi",
+      "volume": "Vëllimi",
+      "weeklyRewards": "Shpërblime javore",
+      "24h": "24 h",
+      "1w": "1 inç",
+      "1m": "1 m",
+      "tokenPercent": "{{value}}% {{token}}",
+      "availableRewards": "Shpërblime të disponueshme",
+      "totalLiquidity": "Likuiditeti total",
+      "24hVolume": "Vëllimi 24 orë",
+      "tokenLiquidity": "{{tokenName}} likuiditet",
+      "poolTokenAllocation": "Alokimi i tokenit të pishinës",
+      "yourPoolShareAllocation": "Shpërndarja e tokenit të ndarjes së grupit tuaj",
+      "tokenPrice": "Çmimi token",
+      "quantity": "sasi",
+      "liquidityAdded": "Likuiditeti i shtuar",
+      "unstaked": "I padiskutueshëm",
+      "rewardsClaimed": "Shpërblimet e pretenduara",
+      "liquidityRemoved": "Likuiditeti është hequr",
+      "fromWalletToPool": "Portofoli → {{poolName}}",
+      "fromPoolToWallet": "{{poolName}} → Portofoli",
+      "24hFees": "Tarifat 24h"
+    },
+    "tabs": {
+      "active": "Në dispozicion",
+      "purchased": "Likuiditeti i shtuar",
+      "staked": "Aksionet"
+    },
+    "infoContent": {
+      "subtitle": {
+        "whatAreLiquidityPools": "Çfarë janë mundësitë (pishinat) e Likuiditetit?",
+        "howDoLiquidityPoolsWork": "Si funksionojnë mundësitë(pishinat) e likuiditetit?"
+      },
+      "paragraph": {
+        "whatAreLiqudityPools": "Pishinat e likuiditetit, në thelb, janë grupe argumentesh që janë të kyçur në një kontratë inteligjente. Ato përdoren për të lehtësuar tregtimin duke ofruar likuiditet dhe përdoren gjerësisht nga disa nga shkëmbimet e decentralizuara të quajtura DEX.",
+        "howDoLiquidityPoolsWork": "Në formën e tij bazë, një grup i vetëm likuiditeti mban 2 argumente dhe secila grup krijon një treg të ri për atë palë të veçanta argumentesh. DAI/ETH mund të jetë një shembull i mirë i një grupi të njohur likuiditeti në Uniswap.\n\nKur krijohet një grup i ri, ofruesi i parë i likuiditetit është ai që përcakton çmimin fillestar të aktiveve në grup. Ofruesi i likuiditetit është i stimuluar të ofrojë një vlerë të barabartë të të dy tokeneve në grup. Nëse çmimi fillestar i argumenteve në grup ndryshon nga çmimi aktual i tregut global, ai krijon një mundësi arbitrazhi të menjëhershëm që mund të rezultojë në humbje të kapitalit për ofruesin e likuiditetit. Ky koncept i furnizimit me token në një raport të saktë mbetet i njëjtë për të gjithë ofruesit e tjerë të likuiditetit që janë të gatshëm të shtojnë më shumë fonde në grup më vonë.\n\nKur likuiditeti furnizohet në një grup, ofruesi i likuiditetit (LP) merr argumente speciale të quajtura argumente LP në proporcion me sasinë e likuiditetit që ata i dhanë grupit. Kur një tregti lehtësohet nga grupi, një tarifë prej 0.3% shpërndahet proporcionalisht midis të gjithë mbajtësve të tokenit LP. Nëse ofruesi i likuiditetit dëshiron të rimarrë likuiditetin e tij themelor, plus çdo tarifë të përllogaritur, ai duhet të djegë argumentet e tyre LP.\n\nÇdo shkëmbim token që lehtëson një grup likuiditeti rezulton në një rregullim çmimi sipas një algoritmi përcaktues të çmimit. Ky mekanizëm quhet gjithashtu një krijues i automatizuar i tregut (AMM) dhe grupet e likuiditetit nëpër protokolle të ndryshme mund të përdorin një algoritëm paksa të ndryshëm."
+      },
+      "insight": {
+        "title": "Shtoni likuiditet për të filluar të fitoni nga aksionet",
+        "button": "Eksploroni mundësi likuiditeti"
+      }
+    },
+    "depositsList": {
+      "title": "Likuiditeti"
+    },
+    "modal": {
+      "stakingEnabled": {
+        "stakingUnlocked": "Aksioni u çbllokua",
+        "liquidityAdded": "Likuiditeti i shtuar",
+        "stakeYourTokens": "Vendosni argumentet tuaja për të marrë më shumë interes dhe shpërblime shtesë.",
+        "stakeTokensButton": "Shenjat e aksioneve",
+        "laterButton": "Më vonë"
+      }
+    }
+  },
+  "receiveModal": {
+    "etherspotSingleAddressInfo": "Të gjithë zinxhirët përdorin adresë të vetme portofoli.",
+    "notDeployedWarning": "Merr <0>{{chain}}</0> asete",
+    "withCaution": "me kujdes."
+  },
+  "tooltip": {
+    "switchAccountsByTappingHere": "Mund të ndërroni llogaritë duke trokitur këtu",
+    "includesDeploymentFee": "Tarifa një herë e vendosjes së Smart Wallet"
+  },
+  "governanceCall": {
+    "banner": {
+      "title": "Thirrja e qeverisjes",
+      "live": "LIVE"
+    }
+  }
+}
