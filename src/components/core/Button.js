@@ -122,9 +122,9 @@ const TouchableContainer = styled(TouchableOpacity)`
   align-items: center;
   border-radius: 6px;
   ${({ disabled }) => disabled && 'opacity: 0.5;'}
-  ${({ $size }) => $size === 'regular' && `width: 100%; padding: 14px ${spacing.large}px;`}
+  ${({ $size }) => $size === 'regular' && `width: 100%; height: 72px; padding: 14px ${spacing.large}px`}
   ${({ $size }) =>
-    $size === 'large' && `width: 100%; padding: ${spacing.largePlus}px ${spacing.large}px; border-radius: 14px;`}
+    $size === 'large' && `width: 100%; height: 72px; padding: ${spacing.largePlus}px ${spacing.large}px; border-radius: 14px;`}
   ${({ $size }) => $size === 'compact' && `padding: 6px ${spacing.medium}px;`}
   ${({ theme, $variant }) => $variant === 'primary' && `background-color: ${theme.colors.buttonPrimaryBackground}`};
   ${({ theme, $variant }) => $variant === 'secondary' && `background-color: ${theme.colors.buttonSecondaryBackground};`}
