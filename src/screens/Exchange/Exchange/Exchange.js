@@ -49,6 +49,7 @@ import { nativeAssetPerChain } from 'utils/chains';
 import { addressesEqual } from 'utils/assets';
 import { appendFeeCaptureTransactionIfNeeded } from 'utils/exchange';
 import { getAccountAddress } from 'utils/accounts';
+import { hitSlop50w20h } from 'utils/common';
 
 // Actions
 import { logEventAction } from 'actions/analyticsActions';
@@ -66,7 +67,6 @@ import FromAssetSelector from './FromAssetSelector';
 import ToAssetSelector from './ToAssetSelector';
 import OfferCard from './OfferCard';
 import { useFromAssets, useToAssets, useOffersQuery, sortOffers } from './utils';
-import { hitSlop50w20h } from '../../../utils/common';
 
 
 function Exchange() {

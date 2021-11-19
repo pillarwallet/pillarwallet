@@ -576,7 +576,6 @@ export const hitSlop50w20h = {
   right: 50,
 };
 
-
 export const formatBigAmount = (value: Value) => {
   const _value = wrapBigNumber(value);
 
