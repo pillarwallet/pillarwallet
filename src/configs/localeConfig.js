@@ -73,7 +73,7 @@ export default ({
     [DEFAULT_LANGUAGE_CODE]: DEFAULT_LANGUAGE,
     am: 'አማርኛ',
     bs: 'Bosanski',
-    sq: 'Shqip'
+    sq: 'Shqip',
   },
   defaultNameSpace: DEFAULT_NAMESPACE,
   namespaces: ['auth', DEFAULT_NAMESPACE],
