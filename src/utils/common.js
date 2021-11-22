@@ -569,6 +569,13 @@ export const hitSlop20 = {
   right: 20,
 };
 
+export const hitSlop50w20h = {
+  top: 20,
+  bottom: 20,
+  left: 50,
+  right: 50,
+};
+
 export const formatBigAmount = (value: Value) => {
   const _value = wrapBigNumber(value);
 
