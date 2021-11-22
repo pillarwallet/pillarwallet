@@ -49,6 +49,7 @@ import { nativeAssetPerChain } from 'utils/chains';
 import { addressesEqual } from 'utils/assets';
 import { appendFeeCaptureTransactionIfNeeded } from 'utils/exchange';
 import { getAccountAddress } from 'utils/accounts';
+import { hitSlop50w20h } from 'utils/common';
 
 // Actions
 import { logEventAction } from 'actions/analyticsActions';
@@ -194,7 +195,7 @@ function Exchange() {
           valueInputRef={fromInputRef}
         />
 
-        <TouchableSwapIcon onPress={handleSwapAssets} disabled={!allowSwap}>
+        <TouchableSwapIcon onPress={handleSwapAssets} disabled={!allowSwap} hitSlop={hitSlop50w20h}>
           {toAsset ? <Icon name="arrow-up-down" /> : <Spacing h={24} />}
         </TouchableSwapIcon>
 
