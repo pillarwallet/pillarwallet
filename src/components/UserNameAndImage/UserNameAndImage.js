@@ -45,12 +45,12 @@ import { useThemeColors } from 'utils/themes';
 // Types
 import type { User } from 'models/User';
 
-
 type Props = {
   user: User,
+  address?: string,
 };
 
-const UserNameAndImage = ({ user }: Props) => {
+const UserNameAndImage = ({ user, address }: Props) => {
   const navigation = useNavigation();
   const colors = useThemeColors();
   const dispatch = useDispatch();
@@ -69,6 +69,8 @@ const UserNameAndImage = ({ user }: Props) => {
 
       {!!username && <UserName>{username}</UserName>}
 
+      {!!address && !username && <Address numberOfLines={1} ellipsizeMode="middle">{address}</Address>}
+
       {canSwitchAccount && <Icon name="select" color={colors.basic020} />}
     </Wrapper>
   );
@@ -86,5 +88,11 @@ const UserName = styled(Text)`
   ${fontStyles.medium};
   margin-left: ${spacing.small}px;
   flex-wrap: wrap;
+  flex-shrink: 1;
+`;
+
+const Address = styled(Text)`
+  ${fontStyles.medium};
+  margin-left: ${spacing.small}px;
   flex-shrink: 1;
 `;

@@ -34,6 +34,7 @@ type Props = {|
   showModalClose?: boolean,
   noBoxMinHeight?: boolean,
   onModalHide?: () => void,
+  noCloseOnBackdropPress?: boolean,
 |};
 
 export type ModalBoxInstance = {
@@ -46,6 +47,7 @@ const ModalBox = React.forwardRef<Props, ModalBoxInstance>(({
   showModalClose,
   noBoxMinHeight,
   onModalHide,
+  noCloseOnBackdropPress,
 }: Props, ref) => {
   const modalRef = useRef();
 
@@ -60,6 +62,7 @@ const ModalBox = React.forwardRef<Props, ModalBoxInstance>(({
       ref={modalRef}
       onModalHide={onModalHide}
       style={[{ justifyContent: 'center' }, modalStyle]}
+      noCloseOnBackdropPress={noCloseOnBackdropPress}
     >
       {showModalClose && (
         <ModalCloseButton onPress={close}>

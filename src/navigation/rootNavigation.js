@@ -20,39 +20,12 @@
 
 import * as React from 'react';
 import { createSwitchNavigator, createAppContainer } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
 
 // screens
-import NewWalletScreen from 'screens/NewWallet';
-import NewProfileScreen from 'screens/NewProfile';
-import PermissionsScreen from 'screens/Permissions';
-import ImportWalletScreen from 'screens/ImportWallet';
-import ImportWalletLegalsScreen from 'screens/ImportWallet/ImportWalletLegals';
-import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
-import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
-import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
-import WelcomeScreen from 'screens/Welcome';
-import ForgotPinScreen from 'screens/ForgotPin';
-import BiometricsPromptScreen from 'screens/BiometricsPrompt';
-
-import { modalTransition } from 'utils/common';
 import { ModalProvider } from 'components/Modal';
 
 import {
   APP_FLOW,
-  ONBOARDING_FLOW,
-  AUTH_FLOW,
-  SET_WALLET_PIN_CODE,
-  NEW_WALLET,
-  NEW_PROFILE,
-  IMPORT_WALLET,
-  PIN_CODE_CONFIRMATION,
-  PIN_CODE_UNLOCK,
-  WELCOME,
-  FORGOT_PIN,
-  PERMISSIONS,
-  IMPORT_WALLET_LEGALS,
-  BIOMETRICS_PROMPT,
 } from 'constants/navigationConstants';
 
 import type { NavigationNavigator } from 'react-navigation';
@@ -63,43 +36,7 @@ type Props = {
   language: string,
 };
 
-const StackNavigatorConfig = {
-  defaultNavigationOptions: {
-    headerShown: false,
-    gestureEnabled: true,
-  },
-};
-
-const onBoardingFlow = createStackNavigator({
-  [WELCOME]: {
-    screen: WelcomeScreen,
-    defaultNavigationOptions: {
-      headerShown: false,
-    },
-  },
-  [PERMISSIONS]: PermissionsScreen,
-  [NEW_WALLET]: {
-    screen: NewWalletScreen,
-    defaultNavigationOptions: {
-      headerShown: false,
-    },
-  },
-  [IMPORT_WALLET_LEGALS]: ImportWalletLegalsScreen,
-  [IMPORT_WALLET]: ImportWalletScreen,
-  [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
-  [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
-  [BIOMETRICS_PROMPT]: BiometricsPromptScreen,
-  [NEW_PROFILE]: NewProfileScreen,
-}, StackNavigatorConfig);
-
-const authFlow = createStackNavigator({
-  [PIN_CODE_UNLOCK]: PinCodeUnlockScreen,
-  [FORGOT_PIN]: ForgotPinScreen,
-}, modalTransition);
-
 const RootSwitch: NavigationNavigator<any, {}, {}> = createSwitchNavigator({
-  [ONBOARDING_FLOW]: onBoardingFlow,
-  [AUTH_FLOW]: authFlow,
   [APP_FLOW]: AppFlow,
 });
 

@@ -23,6 +23,7 @@ import React, { useRef, useCallback } from 'react';
 import { View } from 'react-native';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
+import { useDispatch } from 'react-redux';
 
 // Components
 import Button from 'components/core/Button';
@@ -33,32 +34,42 @@ import Text from 'components/core/Text';
 import { useThemeColors } from 'utils/themes';
 import { spacing, appFont } from 'utils/variables';
 
-// Types
-import type { Contact } from 'models/Contact';
+// Actions
+import { resetOnboardingAndCreateRandomWallet } from 'actions/onboardingActions';
+
+// Selectors
+import { useRootSelector } from 'selectors';
 
 type Props = {|
-  onSave: (contact: Contact) => void,
-  contact: ?Contact,
-  title?: string,
-  contacts: Contact[],
-  showQRScanner?: boolean,
   onModalHide?: () => void,
+  biometricType: string,
 |};
 
 const BiometricModal = ({
   onModalHide,
+  biometricType,
 }: Props) => {
   const modalRef = useRef();
   const colors = useThemeColors();
+  const dispatch = useDispatch();
+
+  const useBiometrics = useRootSelector((root) => root.appSettings.data.useBiometrics);
 
   const close = useCallback(() => {
     if (modalRef.current) modalRef.current.close();
   }, []);
 
+  if (useBiometrics) return null;
+
+  const proceedTobeginOnboarding = (setBiometrics: boolean) => {
+    close();
+    dispatch(resetOnboardingAndCreateRandomWallet(setBiometrics));
+  };
+
   return (
-    <ModalBox ref={modalRef} onModalHide={onModalHide} noBoxMinHeight modalStyle={styles.modal}>
+    <ModalBox ref={modalRef} onModalHide={onModalHide} noBoxMinHeight modalStyle={styles.modal} noCloseOnBackdropPress>
       <View>
-        <Title variant="big">{t('biometricLogin.title')}</Title>
+        <Title variant="big">{t('biometricLogin.title', { biometryType: biometricType })}</Title>
         <Description color={colors.secondaryText}>{t('biometricLogin.description')}</Description>
         <HorizontalDivider />
         <ButtonWrapper>
@@ -74,6 +85,7 @@ const BiometricModal = ({
             variant="text"
             style={styles.button}
             titleColor={colors.buttonTextTitle}
+            onPress={() => proceedTobeginOnboarding(true)}
           />
         </ButtonWrapper>
       </View>

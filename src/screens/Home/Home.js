@@ -26,6 +26,7 @@ import { useTranslation } from 'translations/translate';
 // Actions
 import { fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
 import { refreshEtherspotAccountsAction } from 'actions/etherspotActions';
+import { resetOnboardingAndCreateRandomWallet } from 'actions/onboardingActions';
 
 // Components
 import { Container, Content } from 'components/layout/Layout';
@@ -36,6 +37,7 @@ import Stories from 'components/Stories';
 import UserNameAndImage from 'components/UserNameAndImage';
 import WalletConnectRequests from 'screens/WalletConnect/Requests';
 import Tooltip from 'components/Tooltip';
+import Modal from 'components/Modal';
 
 // Constants
 import { MENU, HOME_HISTORY } from 'constants/navigationConstants';
@@ -52,6 +54,7 @@ import GovernanceCallBanner from 'screens/GovernanceCall/GovernanceCallBanner';
 import { sumRecord } from 'utils/bigNumber';
 import { calculateTotalBalancePerCategory, calculateTotalBalancePerChain } from 'utils/totalBalances';
 import { useThemeColors } from 'utils/themes';
+import { getSupportedBiometryType } from 'utils/keychain';
 
 // Local
 import BalanceSection from './BalanceSection';
@@ -59,6 +62,7 @@ import ChartsSection from './ChartsSection';
 import AssetsSection from './AssetsSection';
 import FloatingActions from './FloatingActions';
 import { useAccountCollectibleCounts } from './utils';
+import BiometricModal from '../../components/BiometricModal/BiometricModal';
 
 function Home() {
   const navigation = useNavigation();
@@ -68,7 +72,23 @@ function Home() {
   const accountTotalBalances = useRootSelector(accountTotalBalancesSelector);
   const accountCollectibleCounts = useAccountCollectibleCounts();
   const user = useUser();
+  const wallet = useRootSelector((root) => root.wallet.data);
+
   const dispatch = useDispatch();
+
+  React.useEffect(() => {
+    if (!wallet) {
+      getSupportedBiometryType((biometryType) => {
+        if (biometryType) {
+          Modal.open(() => <BiometricModal biometricType={biometryType} />);
+        } else {
+          dispatch(resetOnboardingAndCreateRandomWallet());
+        }
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const { accountSwitchTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
 
   const canSwitchAccount = useSmartWalletAccounts().length > 1;
@@ -83,12 +103,11 @@ function Home() {
     dispatch(fetchAllAccountsTotalBalancesAction());
   };
 
-
   return (
     <Container>
       <HeaderBlock
         leftItems={[{ svgIcon: 'menu', color: colors.basic020, onPress: () => navigation.navigate(MENU) }]}
-        centerItems={[{ custom: <UserNameAndImage user={user} /> }]}
+        centerItems={[{ custom: <UserNameAndImage user={user} address={wallet?.address} /> }]}
         rightItems={[{ svgIcon: 'history', color: colors.basic020, onPress: () => navigation.navigate(HOME_HISTORY) }]}
         navigation={navigation}
         noPaddingTop

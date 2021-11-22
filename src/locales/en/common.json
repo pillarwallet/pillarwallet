@@ -1447,7 +1447,7 @@
   },
 
   "biometricLogin": {
-    "title": "Sign in with Touch ID",
+    "title": "Sign in with {{biometryType}}",
     "description": "Enable biometric login instead of typing PIN every time?",
     "button": {
       "enable": "Enable",

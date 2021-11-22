@@ -61,11 +61,13 @@ import {
 } from 'utils/common';
 import { getAccountEnsName } from 'utils/accounts';
 import { isLogV2AppEvents } from 'utils/environment';
+import { setKeychainDataObject } from 'utils/keychain';
 
 // services
 import { navigate } from 'services/navigation';
 import { firebaseMessaging, firebaseRemoteConfig } from 'services/firebase';
 import { getExistingServicesAccounts, isUsernameTaken } from 'services/onboarding';
+import { getEtherspotSupportService } from 'services/etherspot';
 
 // actions
 import { importArchanovaAccountsIfNeededAction, managePPNInitFlagAction } from 'actions/smartWalletActions';
@@ -81,10 +83,11 @@ import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedA
 import { importEtherspotAccountsAction, initEtherspotServiceAction } from 'actions/etherspotActions';
 import { fetchSupportedAssetsAction, fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
 import { fetchTutorialDataIfNeededAction } from 'actions/cmsActions';
-import { initialDeepLinkExecutedAction } from 'actions/appSettingsActions';
+import { initialDeepLinkExecutedAction, changeUseBiometricsAction } from 'actions/appSettingsActions';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type { KeyChainData } from 'utils/keychain';
 
 
 export const setupUserAction = (username: ?string) => {
@@ -582,5 +585,36 @@ export const resetWalletImportErrorAction = () => {
       type: SET_ONBOARDING_ERROR,
       payload: null,
     });
+  };
+};
+
+export const resetOnboardingAndCreateRandomWallet = (enableBiometrics?: boolean) => {
+  return async (dispatch: Dispatch) => {
+    logBreadcrumb('onboarding', 'resetOnboardingAndCreateRandomWallet: dispatching resetOnboardingAction');
+    dispatch(resetOnboardingAction());
+
+    const etherspotService = await getEtherspotSupportService();
+    if (!etherspotService) {
+      reportErrorLog('getEtherspotSupportService failed');
+      return false;
+    }
+
+    // will return new mnemonic if importedWallet is not present
+    const mnemonic = generateMnemonicPhrase();
+    // create wallet object
+    const ethersWallet = ethers.Wallet.fromMnemonic(mnemonic);
+
+    // raw private key will be removed from reducer once registration finishes
+    const { address, privateKey } = ethersWallet;
+    dispatch({ type: SET_WALLET, payload: { address, privateKey } });
+
+    const keychainData: KeyChainData = { mnemonic: mnemonic || '', privateKey };
+    if (enableBiometrics) {
+      await dispatch(changeUseBiometricsAction(true, keychainData, true));
+    } else {
+      await setKeychainDataObject(keychainData);
+    }
+
+    return true;
   };
 };

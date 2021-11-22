@@ -73,6 +73,7 @@ type Props = {|
   useNativeDriver?: boolean,
   hideModalContentWhileAnimating?: boolean,
   style?: any,
+  noCloseOnBackdropPress?: boolean,
 |};
 
 type State = {|
@@ -147,7 +148,7 @@ class Modal extends React.Component<Props, State> {
   render() {
     // swipeDirection is passed explicitly to work around issues with using
     // spread operator on union types
-    const { children, swipeDirection, ...props } = this.props;
+    const { children, swipeDirection, noCloseOnBackdropPress = false, ...props } = this.props;
     const { isVisible } = this.state;
 
     // render contents direrctly with overlay-like background if the modal was
@@ -164,7 +165,7 @@ class Modal extends React.Component<Props, State> {
         propagateSwipe
         swipeDirection={swipeDirection ?? 'down'}
         onSwipeComplete={this.close}
-        onBackdropPress={this.close}
+        onBackdropPress={!noCloseOnBackdropPress ? this.close : null}
         onBackButtonPress={this.close}
         avoidKeyboard
         style={{ margin: 0 }}
