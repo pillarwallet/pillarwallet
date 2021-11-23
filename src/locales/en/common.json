@@ -111,7 +111,6 @@
     "collectibleReceive": "NFT received",
     "connectionRequested": "Requested",
     "assets": "Assets",
-    "backupPhrase": "Backup phrase",
     "verifyBackupPhrase": "Verify backup phrase",
     "confirmNewPin": "Confirm new pincode",
     "enterNewPincode": "Enter new pincode",
@@ -121,7 +120,8 @@
     "privateKey": "Private key",
     "exchange": "Exchange",
     "unlockWithBiometrics": "Unlock with biometric sensor",
-    "welcome": "Welcome to Pillar Wallet!"
+    "welcome": "Welcome to Pillar Wallet!",
+    "seedPhrase": "12 words seed phrase"
   },
 
   "label": {
@@ -345,7 +345,6 @@
     "sendTokenInstead": "Send token instead",
     "addToContacts": "Add to contacts",
     "addToAddressBook": "Add to address book",
-    "copyToClipboard": "Copy to clipboard",
     "paste": "Paste",
     "resendIt": "Resend it",
     "migrateAssetsToSmartWallet": "Migrate assets to Smart Wallet",
@@ -376,7 +375,11 @@
     "spendMax": "Spend max",
     "useMax": "Use max",
     "selectToken": "Select token...",
-    "more": "More"
+    "more": "More",
+    "notNow": "Not now",
+    "copyToClipboard": "Copy to clipboard",
+    "savedPhrase": "I have saved my 12 words",
+    "savedPrivateKey": "I have saved my private key"
   },
 
   "paragraph": {
@@ -596,8 +599,9 @@
       "changePin": "Change PIN",
       "walletBackup": "Wallet backup",
       "viewBackupPhrase": "View 12 words",
-      "backupNotFinished": "Backup not finished",
-      "backupNotFinishedWarning": "Warning"
+      "viewPrivateKey": "View Private Key",
+      "backupNotFinishedWarning": "Security warning",
+      "backupComplete": "Backup complete"
     },
     "selectLanguage": {
       "title": "Language"
@@ -1207,7 +1211,9 @@
     "cannotSendSyntheticAsset": "Sorry, asset cannot be sent.",
     "failedToGetGasPrices": "Failed to get gas prices.",
     "waitingForWalletConnectConnection": "Waiting for WalletConnect service…",
-    "transactionReverted": "Something went wrong. Try again or tap this message for details."
+    "transactionReverted": "Something went wrong. Try again or tap this message for details.",
+    "seedPhraseCopiedToClipboard": "12 words copied to clipboard",
+    "privateKeyCopiedToClipboard": "Private Key copied to clipboard"
   },
 
   "exchangeContent": {
@@ -1444,6 +1450,15 @@
     "banner": {
       "title": "Governance Call",
       "live": "LIVE"
+    }
+  },
+
+  "backupWallet": {
+    "intro": {
+      "title": "Backup your wallet",
+      "subtitle": "Your funds may be at risk ",
+      "seedPhraseWarning": "On the blockchain, there is no traditional account tied to email or phone number. Instead, there is a seed phrase as your “password”. If it’s lost, your funds are lost. Make sure you have your 12 words saved nice and secure.",
+      "privateKeyWarning": "Your Private key is used to restore/ import your wallet in case of device loss/change or deleting your wallet. Losing private key results in loss of access to your funds."
     }
   }
 }

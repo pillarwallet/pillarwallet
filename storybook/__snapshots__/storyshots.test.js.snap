@@ -45734,6 +45734,8 @@ exports[`Storyshots ToastCard default 1`] = `
                 Array [
                   Object {
                     "alignItems": "flex-start",
+                    "backgroundColor": "#2329D6",
+                    "borderRadius": 20,
                     "flexDirection": "row",
                     "paddingBottom": 14,
                     "paddingLeft": 20,
@@ -45765,16 +45767,20 @@ exports[`Storyshots ToastCard default 1`] = `
                 w={18}
               />
               <Text
-                regular={true}
                 style={
                   Array [
                     Object {
-                      "color": "#0A1427",
-                      "fontFamily": "EuclidCircularB-Medium",
-                      "fontSize": 14,
-                      "lineHeight": 22,
+                      "fontFamily": "EuclidCircularB-Regular",
                       "textAlignVertical": "center",
                     },
+                    Object {
+                      "color": "#FCFDFF",
+                    },
+                    Object {
+                      "fontSize": 14,
+                      "lineHeight": 22,
+                    },
+                    false,
                     Object {
                       "flex": 1,
                     },
@@ -45806,19 +45812,7 @@ exports[`Storyshots ToastCard default 1`] = `
                   "top": 7,
                 }
               }
-            >
-              <View
-                name="rounded-close"
-                style={
-                  Array [
-                    Object {
-                      "color": "#ededed",
-                      "fontSize": 16,
-                    },
-                  ]
-                }
-              />
-            </View>
+            />
           </View>
         </View>
       </View>
@@ -45915,6 +45909,8 @@ exports[`Storyshots ToastCard link 1`] = `
                 Array [
                   Object {
                     "alignItems": "flex-start",
+                    "backgroundColor": "#2329D6",
+                    "borderRadius": 20,
                     "flexDirection": "row",
                     "paddingBottom": 14,
                     "paddingLeft": 20,
@@ -45946,16 +45942,20 @@ exports[`Storyshots ToastCard link 1`] = `
                 w={18}
               />
               <Text
-                regular={true}
                 style={
                   Array [
                     Object {
-                      "color": "#0A1427",
-                      "fontFamily": "EuclidCircularB-Medium",
-                      "fontSize": 14,
-                      "lineHeight": 22,
+                      "fontFamily": "EuclidCircularB-Regular",
                       "textAlignVertical": "center",
                     },
+                    Object {
+                      "color": "#FCFDFF",
+                    },
+                    Object {
+                      "fontSize": 14,
+                      "lineHeight": 22,
+                    },
+                    false,
                     Object {
                       "flex": 1,
                     },
@@ -45964,20 +45964,24 @@ exports[`Storyshots ToastCard link 1`] = `
               >
                 Magna culpa aliquip nisi in eu
                 <Text
-                  regular={true}
                   style={
                     Array [
                       Object {
-                        "color": "#007AFF",
                         "fontFamily": "EuclidCircularB-Regular",
-                        "fontSize": 14,
-                        "lineHeight": 22,
                         "textAlignVertical": "center",
                       },
+                      Object {
+                        "color": "#0A1427",
+                      },
+                      Object {
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                      },
+                      false,
+                      undefined,
                     ]
                   }
                 >
-                   
                   toast link
                 </Text>
               </Text>
@@ -46004,19 +46008,7 @@ exports[`Storyshots ToastCard link 1`] = `
                   "top": 7,
                 }
               }
-            >
-              <View
-                name="rounded-close"
-                style={
-                  Array [
-                    Object {
-                      "color": "#ededed",
-                      "fontSize": 16,
-                    },
-                  ]
-                }
-              />
-            </View>
+            />
           </View>
         </View>
       </View>
@@ -46113,6 +46105,8 @@ exports[`Storyshots ToastCard long text 1`] = `
                 Array [
                   Object {
                     "alignItems": "flex-start",
+                    "backgroundColor": "#2329D6",
+                    "borderRadius": 20,
                     "flexDirection": "row",
                     "paddingBottom": 14,
                     "paddingLeft": 20,
@@ -46144,16 +46138,20 @@ exports[`Storyshots ToastCard long text 1`] = `
                 w={18}
               />
               <Text
-                regular={true}
                 style={
                   Array [
                     Object {
-                      "color": "#0A1427",
-                      "fontFamily": "EuclidCircularB-Medium",
-                      "fontSize": 14,
-                      "lineHeight": 22,
+                      "fontFamily": "EuclidCircularB-Regular",
                       "textAlignVertical": "center",
                     },
+                    Object {
+                      "color": "#FCFDFF",
+                    },
+                    Object {
+                      "fontSize": 14,
+                      "lineHeight": 22,
+                    },
+                    false,
                     Object {
                       "flex": 1,
                     },
@@ -46185,19 +46183,7 @@ exports[`Storyshots ToastCard long text 1`] = `
                   "top": 7,
                 }
               }
-            >
-              <View
-                name="rounded-close"
-                style={
-                  Array [
-                    Object {
-                      "color": "#ededed",
-                      "fontSize": 16,
-                    },
-                  ]
-                }
-              />
-            </View>
+            />
           </View>
         </View>
       </View>
