@@ -95,13 +95,13 @@ const SendContainer = ({
   return (
     <ContainerWithHeader
       headerProps={{
+        leftItems: [{ close: true }],
         centerItems: [
           {
             title: customScreenTitle || t('transactions.title.sendScreen', { chain: chainTitle }),
           },
         ],
       }}
-      footer={<SendFooter {...footerProps} />}
       minAvoidHeight={800}
       keyboardShouldPersistTaps="handled"
       onScroll={() => {
@@ -132,6 +132,8 @@ const SendContainer = ({
 
           <ContactSelector {...customSelectorProps} />
         </Wrapper>
+
+        <SendFooter {...footerProps} />
 
         {children}
       </ScrollView>

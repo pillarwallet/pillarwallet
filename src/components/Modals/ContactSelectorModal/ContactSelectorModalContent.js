@@ -140,6 +140,7 @@ const ContactSelectorModalContent = ({ contacts = [], onSelectContact, query, on
         onQueryChange={onQueryChange}
         placeholder={tRoot('label.addressEnsUsername')}
         error={!!errorMessage}
+        autoFocus
       />
 
       <FlatList
