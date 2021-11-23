@@ -140,16 +140,6 @@ export default class Toast {
   static isVisible = () => Toast._toastInstances.some(instance => instance.getToasts().length > 0);
 }
 
-const ToastsWrapper = styled(SafeAreaView)`
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  z-index: 1000;
-  margin-top: ${({ statusBarHeight = 0 }) => statusBarHeight + 40}px;
-  padding: 0px 20px;
-`;
-
 export const ToastProvider = () => {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const [isAnimationDisabled, setAnimationDisabled] = useState(false);
@@ -242,3 +232,13 @@ export const ToastProvider = () => {
     </ToastsWrapper>
   );
 };
+
+const ToastsWrapper = styled(SafeAreaView)`
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  margin-top: ${({ statusBarHeight = 0 }) => statusBarHeight + 20}px;
+  padding: 0px 20px;
+`;
