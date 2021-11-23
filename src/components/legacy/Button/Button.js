@@ -79,7 +79,7 @@ const getButtonHeight = (props) => {
     return '32px';
   }
 
-  return '52px';
+  return '72px';
 };
 
 const getButtonWidth = (props) => {
