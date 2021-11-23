@@ -132,7 +132,7 @@ const AssetSelector = ({
   }
 
   // Disable send max for native assets, as it's hard to get it right atm.
-  const disableMaxValue = isNativeAsset(selectedToken?.chain, selectedToken?.contractAddress);
+  const disableMaxValue = selectedToken ? isNativeAsset(selectedToken?.chain, selectedToken?.contractAddress) : true;
 
   return (
     <TokenFiatValueInputs
