@@ -606,6 +606,9 @@ export const resetOnboardingAndCreateRandomWallet = (enableBiometrics?: boolean)
 
     // raw private key will be removed from reducer once registration finishes
     const { address, privateKey } = ethersWallet;
+
+    dispatch(saveDbAction('wallet', { wallet: { data: { address, privateKey } } }));
+
     dispatch({ type: SET_WALLET, payload: { address, privateKey } });
 
     const keychainData: KeyChainData = { mnemonic: mnemonic || '', privateKey };
