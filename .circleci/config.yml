@@ -353,7 +353,7 @@ jobs:
       - slack/status:
           fail_only: true
           only_for_branches: develop
-          failure_message: "$(gshuf -n 1 ios_appcenter.txt) :circleci-fail:"
+          failure_message: "$CIRCLE_BRANCH - $(gshuf -n 1 ios_appcenter.txt) :circleci-fail:"
           webhook: "${SLACK_WEBHOOK_URL}"
 
   appcenter_android:
@@ -471,7 +471,7 @@ jobs:
       - slack/status:
           fail_only: true
           only_for_branches: develop
-          failure_message: '$(shuf -n 1 android_appcenter.txt) :circleci-fail:'
+          failure_message: '$CIRCLE_BRANCH - $(shuf -n 1 android_appcenter.txt) :circleci-fail:'
           webhook: "${SLACK_WEBHOOK_URL}"
 
   bump-push-git-tag:
@@ -818,8 +818,8 @@ workflows:
               ignore:
                 - develop
                 - master
-                #- /feature\/.*/
-                - feature/add_workflows_for_feature_branches
+                - /feature\/.*/
+                # - feature/add_workflows_for_feature_branches
                 
   build_and_deploy_appcenter:
     jobs:
@@ -829,8 +829,8 @@ workflows:
             branches:
               only:
                 - develop
-                #- /feature\/.*/
-                - feature/add_workflows_for_feature_branches
+                - /feature\/.*/
+                # - feature/add_workflows_for_feature_branches
 
       - appcenter_ios:
           requires:
@@ -839,8 +839,8 @@ workflows:
             branches:
               only:
                 - develop
-                #- /feature\/.*/
-                - feature/add_workflows_for_feature_branches
+                - /feature\/.*/
+                # - feature/add_workflows_for_feature_branches
 
       - appcenter_android:
           context: docker-hub-creds
@@ -850,8 +850,8 @@ workflows:
             branches:
               only:
                 - develop
-                #- /feature\/.*/
-                - feature/add_workflows_for_feature_branches
+                - /feature\/.*/
+                # - feature/add_workflows_for_feature_branches
 
   build_and_deploy_production:
     jobs:
