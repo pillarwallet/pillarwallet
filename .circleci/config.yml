@@ -352,7 +352,7 @@ jobs:
             fi
       - slack/status:
           fail_only: true
-          only_for_branches: develop
+          # only_for_branches: develop
           failure_message: "$CIRCLE_BRANCH - $(gshuf -n 1 ios_appcenter.txt) :circleci-fail:"
           webhook: "${SLACK_WEBHOOK_URL}"
 
@@ -470,7 +470,7 @@ jobs:
             fi
       - slack/status:
           fail_only: true
-          only_for_branches: develop
+          # only_for_branches: develop
           failure_message: '$CIRCLE_BRANCH - $(shuf -n 1 android_appcenter.txt) :circleci-fail:'
           webhook: "${SLACK_WEBHOOK_URL}"
 
