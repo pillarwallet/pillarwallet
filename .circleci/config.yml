@@ -223,6 +223,7 @@ jobs:
       - run:
           name: Save build number
           command: |
+            echo $CIRCLE_BRANCH
             APP_BUILD_NUMBER=${CIRCLE_BUILD_NUM}
             mkdir -p /tmp/workspace/build-num
             mkdir -p /tmp/workspace/releases
@@ -351,7 +352,7 @@ jobs:
             fi
       - slack/status:
           fail_only: true
-          # only_for_branches: develop
+          only_for_branches: develop
           failure_message: "$(gshuf -n 1 ios_appcenter.txt) :circleci-fail:"
           webhook: "${SLACK_WEBHOOK_URL}"
 
@@ -469,7 +470,7 @@ jobs:
             fi
       - slack/status:
           fail_only: true
-          # only_for_branches: develop
+          only_for_branches: develop
           failure_message: '$(shuf -n 1 android_appcenter.txt) :circleci-fail:'
           webhook: "${SLACK_WEBHOOK_URL}"
 
@@ -818,7 +819,7 @@ workflows:
                 - develop
                 - master
                 #- /feature\/.*/
-                #- feature/add_workflows_for_feature_branches
+                - feature/add_workflows_for_feature_branches
                 
   build_and_deploy_appcenter:
     jobs:
@@ -829,7 +830,7 @@ workflows:
               only:
                 - develop
                 #- /feature\/.*/
-                #- feature/add_workflows_for_feature_branches
+                - feature/add_workflows_for_feature_branches
 
       - appcenter_ios:
           requires:
@@ -839,7 +840,7 @@ workflows:
               only:
                 - develop
                 #- /feature\/.*/
-                #- feature/add_workflows_for_feature_branches
+                - feature/add_workflows_for_feature_branches
 
       - appcenter_android:
           context: docker-hub-creds
@@ -850,7 +851,7 @@ workflows:
               only:
                 - develop
                 #- /feature\/.*/
-                #- feature/add_workflows_for_feature_branches
+                - feature/add_workflows_for_feature_branches
 
   build_and_deploy_production:
     jobs:
