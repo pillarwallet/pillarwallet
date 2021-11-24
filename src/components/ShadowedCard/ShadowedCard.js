@@ -21,36 +21,20 @@
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { Animated, TouchableWithoutFeedback, View } from 'react-native';
+
+// Components
 import { Shadow } from 'components/Shadow';
+
+// Utils
 import { getThemeType } from 'utils/themes';
 import { noop } from 'utils/common';
+
+// Constants
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
 // Types
 import type { Theme } from 'models/Theme';
 import type { LayoutEvent } from 'utils/types/react-native';
-
-
-const CardOutter = styled.View`
-  position: relative;
-  opacity: ${({ disabled }) => disabled ? 0.6 : 1};
-`;
-
-const ContentWrapper = styled.View`
-  flex-direction: column;
-  justify-content: flex-start;
-  border-radius: ${({ borderRadius }) => borderRadius}px;
-  background: ${({ theme }) => theme.colors.basic050};
-  width: 100%;
-  opacity: ${({ opacity }) => opacity};
-  ${({ isAnimated }) => isAnimated && `
-    position: absolute;
-    top: 0;
-    left: 0;
-  `}
-`;
-
-const AnimatedCardOutter = Animated.createAnimatedComponent(CardOutter);
 
 type Props = {
   children: React.Node,
@@ -198,3 +182,24 @@ class ShadowedCard extends React.Component<Props, State> {
 }
 
 export default withTheme(ShadowedCard);
+
+const CardOutter = styled.View`
+  position: relative;
+  opacity: ${({ disabled }) => disabled ? 0.6 : 1};
+`;
+
+const ContentWrapper = styled.View`
+  flex-direction: column;
+  justify-content: flex-start;
+  border-radius: ${({ borderRadius }) => borderRadius}px;
+  background: ${({ theme }) => theme.colors.basic050};
+  width: 100%;
+  opacity: ${({ opacity }) => opacity};
+  ${({ isAnimated }) => isAnimated && `
+    position: absolute;
+    top: 0;
+    left: 0;
+  `}
+`;
+
+const AnimatedCardOutter = Animated.createAnimatedComponent(CardOutter);

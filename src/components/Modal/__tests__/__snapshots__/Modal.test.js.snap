@@ -136,7 +136,7 @@ exports[`Modal opens a modal 1`] = `
         style={
           Object {
             "left": 0,
-            "marginTop": 40,
+            "marginTop": 20,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -297,7 +297,7 @@ exports[`Modal opens multiple modals 1`] = `
         style={
           Object {
             "left": 0,
-            "marginTop": 40,
+            "marginTop": 20,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -452,7 +452,7 @@ exports[`Modal opens multiple modals 1`] = `
               style={
                 Object {
                   "left": 0,
-                  "marginTop": 40,
+                  "marginTop": 20,
                   "paddingBottom": 0,
                   "paddingLeft": 20,
                   "paddingRight": 20,
