@@ -89,6 +89,7 @@ export default {
   synthetic170: '#0000B3',
   synthetic180: '#000099',
 
-  // WalletConnect
+  // common colors
   purple: '#A020F0',
+  darkGreen: '#2e673c',
 };

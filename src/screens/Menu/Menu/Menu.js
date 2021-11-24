@@ -34,8 +34,11 @@ import WalletMigrationArchanovaBanner from 'screens/WalletMigrationArchanova/Ban
 // Constants
 import { MENU_SETTINGS, CONTACTS_FLOW, STORYBOOK } from 'constants/navigationConstants';
 
+// Selectors
+import { useIsWalletBackedUp } from 'selectors/wallets';
+
 // Utils
-import { useIsDarkTheme } from 'utils/themes';
+import { useIsDarkTheme, useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
 // Assets
@@ -48,9 +51,11 @@ import MenuFooter from './components/MenuFooter';
 import SocialMediaLinks from './components/SocialMediaLinks';
 
 const Menu = () => {
-  const { t } = useTranslationWithPrefix('menu');
+  const { t, tRoot } = useTranslationWithPrefix('menu');
   const isDarkTheme = useIsDarkTheme();
   const navigation = useNavigation();
+  const colors = useThemeColors();
+  const isBackedUp = useIsWalletBackedUp();
 
   const [repliesFlag, setRepliesFlag] = useState(false);
 
@@ -72,10 +77,17 @@ const Menu = () => {
         leftItems={[{ close: true }]}
         centerItems={[{ custom: isDarkTheme ? <PillarLogoDark /> : <PillarLogo /> }]}
         navigation={navigation}
+        noPaddingTop
       />
 
       <Content paddingHorizontal={0}>
-        <MenuItem title={t('item.settings')} icon="settings" onPress={goToSettings} />
+        <MenuItem
+          title={t('item.settings')}
+          icon="settings"
+          value={!isBackedUp ? tRoot('menu.settings.backupNotFinishedWarning') : ''}
+          valueColor={colors.negative}
+          onPress={goToSettings}
+        />
         <MenuItem title={t('item.addressBook')} icon="contacts" onPress={goToInviteFriends} />
         <MenuItem title={t('item.supportChat')} icon="message" onPress={goToSupportChat} />
         {repliesFlag &&

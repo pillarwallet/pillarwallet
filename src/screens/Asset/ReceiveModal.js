@@ -20,13 +20,14 @@
 
 import React, { useCallback, type AbstractComponent } from 'react';
 import { connect } from 'react-redux';
-import { Share, Clipboard } from 'react-native';
+import { Share } from 'react-native';
+import Clipboard from '@react-native-community/clipboard';
 import { SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 import { createStructuredSelector } from 'reselect';
 
-// components
+// Components
 import Text from 'components/core/Text';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/legacy/Button';
@@ -35,18 +36,18 @@ import Toast from 'components/Toast';
 import ProfileImage from 'components/ProfileImage';
 import TextWithCopy from 'components/display/TextWithCopy';
 
-// utils
+// Utils
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { getAccountEnsName, isEtherspotAccount } from 'utils/accounts';
 import { getThemeColors } from 'utils/themes';
 
-// models and types
+// Types
 import type { Account } from 'models/Account';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { User } from 'models/User';
 import type { Theme } from 'models/Theme';
 
-// selectors
+// Selectors
 import { activeAccountSelector } from 'selectors';
 
 // Hooks

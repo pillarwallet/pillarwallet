@@ -101,6 +101,7 @@ import IconUser from 'assets/icons/svg/icon-24-user.svg';
 import IconWallet from 'assets/icons/svg/icon-24-wallet.svg';
 import IconWarning from 'assets/icons/svg/icon-24-warning.svg';
 import IconWithdraw from 'assets/icons/svg/icon-24-withdraw.svg';
+import IconAlert from 'assets/icons/svg/icon-24-circle-filled-alert.svg';
 
 // Assets: services icons
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
@@ -181,6 +182,7 @@ const components: Record<SvgImage> = {
   wallet: IconWallet,
   warning: IconWarning,
   withdraw: IconWithdraw,
+  alert: IconAlert,
 
   // Service icons
   binance: IconBinance,
