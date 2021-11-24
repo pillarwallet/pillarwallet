@@ -1,0 +1,1419 @@
+{
+  "aaveDeposit": "Aave 存款",
+  "ensName": "ENS名称",
+  "ethereum": "Ethereum",
+  "facebook": "Facebook",
+  "keyWallet": "钥匙钱包",
+  "medium": "中等的",
+  "pillarNetwork": "支柱网络",
+  "pillarTank": "柱式坦克",
+  "poolTogether": "一起游泳池",
+  "smartWallet": "智能钱包",
+  "legacySmartWallet": "智能钱包（旧版）",
+  "telegram": "电报",
+  "twitter": "推特",
+  "youtube": "YouTube",
+  "ellipsedString": "{{string}}...",
+  "ellipsedMiddleString": "{{stringStart}}...{{stringEnd}}",
+  "ticketAmount": "{{count}} 票",
+  "ticketAmount_plural": "{{count}} 张门票",
+  "positiveValue": "+ {{value}}",
+  "negativeValue": "- {{value}}",
+  "positiveTokenValue": "+ {{value}} {{token}}",
+  "negativeTokenValue": "- {{value}} {{token}}",
+  "fiatValue": "{{symbol}}{{value}}",
+  "percentValue": "{{value}}%",
+  "positivePercentValue": "+{{value}}%",
+  "negativePercentValue": "-{{value}}%",
+  "tokenValue": "{{value}} {{token}}",
+  "totalValue": "总计 {{value}}",
+  "estimatedValue": "≈ {{value}}",
+  "availableValue": "可用：{{value}}",
+  "ofValue": "{{value}} 个",
+  "valueOfValue": "{{partOfValue}} 个，共 {{allValue}} 个",
+  "tokenFiatValue": "{{tokenValue}} ({{fiatValue}})",
+  "lessThanSignValue": "<{{value}}",
+  "moreThanSignValue": ">{{value}}",
+  "rangeValues": "{{fromValue}} - {{toValue}}",
+  "exchangeRate": "{{rate}} {{toSymbol}}/{{fromSymbol}}",
+  "timeDaysHours": "{{days}}d {{hours}}h",
+  "timeHoursMinutes": "{{hours}}h {{minutes}} 米",
+  "timeDaysHoursMinutes": "{{days}}d {{hours}}h {{minutes}} 米",
+  "inTimeDaysHoursMinutes": "在 {{days}}d {{hours}}h {{minutes}} 米",
+  "timeDaysHoursMinutesLayout": "{{days}} {{hours}} {{minutes}}",
+  "day": "{{count}} 天",
+  "day_plural": "{{count}} 天",
+  "hour": "{{count}} 小时",
+  "hour_plural": "{{count}} 小时",
+  "minute": "{{count}} 分钟",
+  "minute_plural": "{{count}} 分钟",
+  "tutorialTitle": "欢迎来到柱子！",
+  "tutorialSubtitle": "痛苦本身就是爱的痛苦，主要的生态问题，但我给这种时间倒下，让一些巨大的痛苦和痛苦。",
+  "units": {
+    "1e3": "{{value}} 千",
+    "1e6": "{{value}}米",
+    "1e9": "{{value}}乙",
+    "1e12": "{{value}}T"
+  },
+  "chains": {
+    "ethereum": "Ethereum",
+    "binance": "BSC",
+    "xdai": "xDai",
+    "polygon": "Polygon"
+  },
+  "chainsShort": {
+    "ethereum": "Ethereum",
+    "binance": "BSC",
+    "xdai": "xDai",
+    "polygon": "Polygon"
+  },
+  "assetCategories": {
+    "wallet": "钱包",
+    "deposits": "存款",
+    "investments": "投资",
+    "liquidityPools": "流动资金池",
+    "rewards": "奖励",
+    "datasets": "数据集",
+    "collectibles": "NFT"
+  },
+  "assetCategoriesShort": {
+    "wallet": "钱包",
+    "deposits": "存款",
+    "investments": "投资",
+    "liquidityPools": "游泳池",
+    "rewards": "奖励",
+    "datasets": "数据集",
+    "collectibles": "NFT"
+  },
+  "title": {
+    "accounts": "帐户",
+    "addFundsToWallet": "向 Pillar 添加资金",
+    "mainActivityFeed": "历史",
+    "publicAddress": "公共广播",
+    "success": "成功",
+    "totalBalance": "总余额",
+    "transactions": "交易",
+    "addNewContact": "添加新联系人",
+    "editContact": "更改联系资料",
+    "addressBook": "地址簿",
+    "select": "选择",
+    "failed": "失败的",
+    "pending": "待办的",
+    "collectibleSent": "发送 NFT",
+    "collectibleReceive": "收到 NFT",
+    "connectionRequested": "已请求",
+    "assets": "资产",
+    "verifyBackupPhrase": "验证备份短语",
+    "confirmNewPin": "确认新的密码",
+    "enterNewPincode": "输入新的密码",
+    "manageDevices": "管理设备",
+    "noConnectedDevices": "没有连接的设备",
+    "confirm": "确认",
+    "privateKey": "私钥",
+    "exchange": "交换",
+    "unlockWithBiometrics": "使用生物识别传感器解锁",
+    "welcome": "欢迎来到 Pillar 钱包！",
+    "seedPhrase": "12字种子词组"
+  },
+  "label": {
+    "activate": "启用",
+    "activateSmartWallet": "激活智能钱包",
+    "activated": "活性",
+    "added": "添加",
+    "adding": "添加",
+    "all": "全部",
+    "backedUp": "备份安全",
+    "canceled": "取消",
+    "collectibleFromUser": "来自 {{username}} 的 NFT",
+    "collectibleToUser": "NFT 到 {{username}}",
+    "contactSupport": "联系支持",
+    "created": "已创建",
+    "currentApyFormat": "当前 APY：{{value}}",
+    "dotSeparator": "  ·",
+    "enabled": "启用",
+    "enableSmartWalletGasRelayerPLR": "使用 PLR 启用交易费用",
+    "enabling": "启用",
+    "ended": "结束",
+    "erc20TokensOnly": "仅限 ERC-20 代币",
+    "faceIDSettings": "人脸识别设置",
+    "feeToken": "费用 {{tokenValue}}",
+    "feeTokenFiat": "费用 {{tokenValue}} ({{fiatValue}})",
+    "fromKeyWallet": "来自钥匙钱包",
+    "fromPPN": "来自支柱网络",
+    "fromSmartWallet": "来自智能钱包",
+    "imported": "进口",
+    "incomingBalance": "收入余额",
+    "incomingSablierStream": "传入流",
+    "keyWalletVisibilityToggle": "传统钱包（高级）",
+    "loadingDefaultAssets": "加载默认资源",
+    "needToActivate": "需要激活",
+    "newSmartWalletAccountDevice": "新的智能钱包账户设备",
+    "notApplicable": "不适用",
+    "notEnoughGas": "气量不足",
+    "notEnoughBalance": "{{symbol}} 余额不足",
+    "outgoingSablierStream": "输出流",
+    "purchase": "购买",
+    "received": "已收到",
+    "receiving": "接收",
+    "registered": "挂号的",
+    "registerEnsName": "注册 ENS 标签",
+    "removed": "已移除",
+    "removing": "删除",
+    "requested": "已请求",
+    "search": "搜索",
+    "searchAsset": "搜索资产",
+    "searchCollectible": "搜索 NFT",
+    "sending": "发送",
+    "sent": "发送",
+    "settle": "定居",
+    "settlement": "沉降",
+    "smartWalletAccountDevice": "智能钱包账户设备",
+    "smartWalletAccountDeviceAdded": "添加了新帐户设备",
+    "smartWalletAccountDeviceRemoved": "帐号设备已移除",
+    "smartWalletGasRelayerPLR": "使用 PLR 代币的智能钱包费用",
+    "started": "开始",
+    "transactionDeploymentWarning": "如果您不想部署 {{chain}} 智能钱包，请不要继续。",
+    "today": "今天",
+    "toKeyWallet": "到钥匙钱包",
+    "toPPN": "到支柱网络",
+    "topUp": "充值",
+    "toSmartWallet": "到智能钱包",
+    "wallet": "钱包",
+    "withdraw": "提取",
+    "withdrawal": "退出",
+    "yesterday": "昨天",
+    "yourEnsName": "您的钱包 ENS 名称",
+    "name": "姓名",
+    "address": "地址",
+    "resolvingEnsName": "解析 ENS 名称",
+    "endingSoon": "即将结束",
+    "endsIn": "以 {{endsIn}} 结束",
+    "fetchingFee": "收取费用...",
+    "notEnoughToken": "不够{{token}}",
+    "fee": "费用",
+    "gettingFee": "收取费用...",
+    "to": "到",
+    "from": "从",
+    "whereToSend": "寄到哪里",
+    "sendTo": "发给",
+    "walletAddress": "钱包地址",
+    "addressEnsUsername": "地址、ENS、用户名",
+    "walletNotDeployed": "钱包未部署",
+    "tokens": "代币",
+    "collectibles": "NFT",
+    "collectible": "NFT",
+    "processing": "加工...",
+    "mainAccount": "主账户",
+    "free": "自由",
+    "estimatedFee": "东。仙女",
+    "estFee": "东。仙女",
+    "nothingFound": "没有发现",
+    "verified": "已验证",
+    "select": "选择",
+    "selectCurrency": "选择货币",
+    "choseOption": "选择选项",
+    "noOptionsToSelect": "没有可供选择的选项",
+    "availableBalance": "可用余额",
+    "sendingToReceiver": "发送至{{receiver}}",
+    "sentToReceiver": "已发送至 {{receiver}}",
+    "walletBalance": "电子钱包余额 {{balance}}",
+    "checking": "检查",
+    "thisDevice": "这个设备",
+    "onHold": "等候接听",
+    "deviceAddress": "设备地址",
+    "noContacts": "没有联系人",
+    "comingSoon": "即将推出",
+    "buy": "买",
+    "sell": "卖",
+    "unknown": "未知",
+    "pending": "待办的",
+    "fromPillarTank": "从支柱坦克",
+    "pinChanged": "引脚已更改",
+    "device": "设备{{address}}",
+    "popular": "受欢迎的",
+    "set": "放",
+    "notAvailableInYourCountry": "在您的国家/地区不可用",
+    "cannotProceedOffline": "无法离线进行",
+    "payWithPLR": "用 PLR 支付",
+    "notSet": "没有设置",
+    "deposit": "订金",
+    "claim": "宣称",
+    "fromRariToWallet": "Rari Capital → 钱包",
+    "fromWalletToRari": "钱包 → Rari Capital",
+    "rewardsClaimed": "已领取奖励",
+    "keyFacts": "关键事实",
+    "multiple": "多种的",
+    "walletToPillarPay": "钱包 → Pillar Pay",
+    "pillarPayToWallet": "Pillar Pay → 钱包",
+    "fromToFormat": "{{from}} → {{to}}",
+    "completed": "完全的",
+    "failed": "失败的",
+    "assetMigration": "资产迁移",
+    "ensMigration": "ENS迁移",
+    "archanovaToEtherspot": "Pillar V1 到 Etherspot (Pillar V2)",
+    "archanovaToEtherspotShort": "Pillar V1 到 Etherspot",
+    "deployed": "已部署",
+    "walletDeployment": "钱包部署",
+    "pleaseSelect": "请选择",
+    "balanceFiatTokenFormat": "余额 {{balanceInFiat}} ({{balance}})",
+    "balanceTokenFormat": "余额{{balance}}",
+    "filterByName": "按名称过滤"
+  },
+  "button": {
+    "activate": "启用",
+    "activatePPN": "激活支柱网络",
+    "add": "添加",
+    "addCash": "添加现金",
+    "addContact": "增加联系人",
+    "addContacts": "添加联系人",
+    "addDetails": "添加详细信息",
+    "addFunds": "增加资金",
+    "apply": "申请",
+    "approve": "批准",
+    "buyPLR": "购买PLR",
+    "buyTokensWithCreditCard": "用信用卡购买代币",
+    "buyTokens": "购买代币",
+    "buyWithCard": "用卡购买",
+    "buyWithCardOrApplePay": "使用卡或 Apple Pay 购买",
+    "confirm": "确认",
+    "connect": "连接",
+    "claim": "宣称",
+    "close": "关闭",
+    "depositMore": "存款更多",
+    "deploy": "部署",
+    "explore": "探索",
+    "exchange": "交换",
+    "exchangeMore": "交流更多",
+    "hide": "隐藏",
+    "inviteAndGetTokens": "邀请并获得免费代币",
+    "inviteFriend": "邀请朋友",
+    "inviteFriends": "邀请朋友",
+    "inviteMoreFriends": "邀请更多朋友",
+    "inviteToPillar": "邀请到支柱",
+    "notEnoughPLR": "没有足够的PLR",
+    "purchase": "购买",
+    "purchaseMore": "购买更多",
+    "referFriends": "推荐朋友",
+    "reject": "拒绝",
+    "retry": "重试",
+    "receive": "收到",
+    "seeOnEtherscan": "在 Etherscan 上查看",
+    "selectAll": "全选",
+    "send": "发送",
+    "sendAll": "全部发送",
+    "sendBack": "送回去",
+    "sendFromAnotherWallet": "从另一个钱包发送",
+    "sendMore": "发送更多",
+    "settleMore": "解决更多",
+    "settleTransactions": "结算交易",
+    "shareAddress": "分享",
+    "smartWalletFAQ": "智能钱包常见问题",
+    "subscribe": "订阅",
+    "support": "支持",
+    "swap": "交换",
+    "swipeConfirm": "滑动确认",
+    "topUp": "充值",
+    "topUpMore": "充值更多",
+    "topUpPLRTank": "加满 PLR 坦克",
+    "transferToSmartWallet": "转移到智能钱包",
+    "tryAgain": "再试一次",
+    "viewAllItemsAmount": "查看全部{{amount}}",
+    "viewAll": "查看全部",
+    "viewBalance": "查看余额",
+    "viewDeposit": "查看存款",
+    "viewOnBlockchain": "在区块链上查看",
+    "verify": "核实",
+    "withdraw": "提取",
+    "withdrawMore": "提现更多",
+    "delete": "删除",
+    "save": "节省",
+    "next": "下一个",
+    "confirmWithdraw": "确认提现",
+    "enable": "使能够",
+    "allow": "允许",
+    "max": "最大限度",
+    "sendTokenInstead": "改为发送令牌",
+    "addToContacts": "添加到通讯录",
+    "addToAddressBook": "加至地址簿",
+    "paste": "粘贴",
+    "resendIt": "重新发送",
+    "migrateAssetsToSmartWallet": "将资产迁移到智能钱包",
+    "continue": "继续",
+    "remove": "消除",
+    "cancel": "取消",
+    "skip": "跳过",
+    "edit": "编辑",
+    "magic": "魔法",
+    "disconnect": "断开",
+    "open": "打开",
+    "proceed": "继续",
+    "readMore": "阅读更多",
+    "activateSmartWallet": "激活智能钱包",
+    "finish": "结束",
+    "claimMore": "索取更多",
+    "transferMore": "转移更多",
+    "addMoreLiquidity": "增加流动性",
+    "removeMoreLiquidity": "移除更多流动性",
+    "stakeMoreLiquidity": "赌注更多",
+    "unstakeMoreLiquidity": "取消抵押更多",
+    "claimMoreRewards": "索取更多",
+    "back": "后退",
+    "native": "我知道加密",
+    "new": "我是加密新手",
+    "copyAddress": "复制地址",
+    "sendMax": "发送最大值",
+    "spendMax": "最高消费",
+    "useMax": "使用最大值",
+    "selectToken": "选择令牌...",
+    "more": "更多的",
+    "notNow": "现在不要",
+    "copyToClipboard": "复制到剪贴板",
+    "savedPhrase": "我已经保存了我的 12 个字",
+    "savedPrivateKey": "我已经保存了我的私钥"
+  },
+  "paragraph": {
+    "addressCopiedToClipboard": "地址已复制到剪贴板。",
+    "doNotSendRealEthOrTokens": "不要发送真实的 ETH 或 ERC20 代币。",
+    "ensNameCopiedToClipboard": "ENS 名称已复制到剪贴板。",
+    "cameraPermissionMissing": "未授予相机权限 - 无法打开相机预览。",
+    "didNotReceiveVerificationCodeQuestion": "没有收到验证码？",
+    "instructionsOnBackingUpBackupPhase": "以正确的顺序写下您的 12 字备用短语。",
+    "backupPhraseVerificationInstructions": "请选择正确的词。",
+    "deviceRemovalConfirm": "移除设备前，请确认以下详细信息正确无误。",
+    "loggingOutFirstMessage": "删除需要一点时间",
+    "loggingOutSecondMessage": "很遗憾看见您离开",
+    "backupPhraseRevealedPurpose": "请使用这个 12 字的备份短语来恢复钱包。",
+    "privateKeyRevealedPurpose": "请使用此私钥来恢复钱包。",
+    "doNotShareBackup": "确保它的安全，因为这是在紧急情况下恢复帐户的唯一方法。不要通过电子邮件发送或截图。",
+    "sessionExpiredReEnterPin": "登录会话已过期，请输入您的 PIN 码以继续。",
+    "addContacts": "将联系人添加到地址簿以轻松访问收藏地址以发送资产。"
+  },
+  "insight": {
+    "pillarNetworkActivate": {
+      "hasNoPPNBalance": {
+        "title": "激活支柱网络",
+        "description": {
+          "activationBenefit": "要发送任何代币，您需要先用 PLR 充值 Pillar Tank"
+        }
+      },
+      "smartWalletIsNotActivated": {
+        "title": "PLR 用户的 Pillar 支付网络的独特优势",
+        "description": {
+          "instantTransactions": "即时、无气体和私人交易。",
+          "singleTokenExperience": "单一代币体验，包括通过实时交换发送/使用您尚未拥有的代币的能力。"
+        },
+        "button": {
+          "activatePPN": "激活支柱网络"
+        }
+      },
+      "deploying": {
+        "description": {
+          "smartWalletActivatingStatusCard": "激活您的智能钱包。它很快就会准备好。"
+        }
+      }
+    },
+    "smartWalletActivate": {
+      "default": {
+        "title": "要发送资产，请先激活智能钱包",
+        "description": "您将需要支付少量费用"
+      },
+      "isBeingDeployed": {
+        "title": "智能钱包正在部署中",
+        "description": {
+          "waitingTime": "部署资产后，您将能够发送资产。当前平均等待时间为 {{waitingTimeInMinutes}} 分钟。"
+        }
+      },
+      "activationFailed": {
+        "title": "智能钱包激活失败",
+        "error": {
+          "needToSetupSmartAccount": "您需要先为您的智能账户充值。",
+          "default": "我们的服务器出现错误。请尝试通过单击下面的按钮重新激活帐户。"
+        }
+      }
+    }
+  },
+  "form": {
+    "countryCode": {
+      "label": "国家代码",
+      "placeholder": "国家的名字",
+      "selectorTitle": "所有代码"
+    },
+    "email": {
+      "label": "电子邮件",
+      "placeholder": "电子邮件",
+      "description": {
+        "empty": "添加您的电子邮件以接收特殊请求。",
+        "added": "验证您的电子邮件，您将能够在 Pillar 中邀请您的朋友。",
+        "confirmed": "更改电子邮件后，您将重新验证它。"
+      }
+    },
+    "phoneNumber": {
+      "label": "电话号码",
+      "description": {
+        "empty": "添加您的电话号码以邀请您的朋友。",
+        "added": "验证您的电话号码，您就可以在 Pillar 社区邀请您的朋友。",
+        "confirmed": "更改电话号码后，您将重新验证它。"
+      }
+    },
+    "subscription": {
+      "placeholder": "你的邮件"
+    },
+    "selector": {
+      "placeholder": "选择",
+      "searchPlaceholder": "搜索",
+      "assetSearchPlaceholder": "资产搜索"
+    }
+  },
+  "error": {
+    "transactionFailed": {
+      "timeOut": "交易超时",
+      "default": "交易失败",
+      "offline": "离线时无法发送交易",
+      "notEnoughGas": "没有足够的gas来支付交易费用。充值您的 ETH 余额",
+      "notOwnedCollectible": "您不再拥有此 NFT",
+      "collectibleCantBeTransferred": "此 NFT 无法转移",
+      "notEnoughStake": "坦克中没有足够的PLR",
+      "cantCalculateFee": "无法计算交易费用"
+    },
+    "emptyAddress": "地址不能为空",
+    "contactWithAddressExists": "此地址的联系人已存在",
+    "contactWithNameExists": "同名联系人已存在",
+    "emptyName": "名称不能为空",
+    "invalid": {
+      "address": "无效地址",
+      "email": "请输入有效电子邮件",
+      "fiatValue": "抱歉，请输入有效金额（包括 0-9 和小数点）。请再试一次。"
+    },
+    "cannotSendYourself": "抱歉，您无法发送给自己。请使用不同的地址。",
+    "ensNameNotFound": "抱歉，未找到 ENS 名称。请检查并重试。",
+    "notEnoughTokenForFee": "{{token}} 不足以支付交易费用",
+    "noCameraPermission": "未授予相机权限 - 无法打开 QR 扫描仪。",
+    "noField": {
+      "address": "没有可显示的地址",
+      "phone": "没有手机显示",
+      "default": "没有可显示的信息"
+    },
+    "incorrectBackupPhraseWordsSelected": "选择了错误的词",
+    "pin": {
+      "newShouldBeDifferent": "新密码必须与当前密码不同"
+    },
+    "deviceRemovalOffline": "您需要在线才能移除智能钱包设备。",
+    "amount": {
+      "invalidNumber": "输入的号码不正确",
+      "exceedBalance": "金额不应超过总余额",
+      "shouldNotHaveDecimals": "金额不应包含小数位",
+      "notProvided": "应指定金额",
+      "shouldBeGreaterThanValue": "金额应大于 {{value}} {{token}}",
+      "amountShouldBeBiggerThanZero": "金额应大于 0",
+      "notEnoughToken": "不够{{token}}",
+      "shouldBeGreaterThan1Wei": "金额应大于 1 维（0.000000000000000001 ETH）"
+    },
+    "synthetics": {
+      "failedToCalculate": "无法计算合成交换"
+    },
+    "exchange": {
+      "incorrectNumber": "输入的号码不正确",
+      "amountTooBig": "金额不应大于您的余额 - {{assetBalance}} {{symbol}}。",
+      "exchangeFailed": "此交易无法完成。请再试一次。"
+    },
+    "walletConnect": {
+      "assetNotSupported": "Pillar Wallet 尚不支持此数据交易或代币",
+      "unsupportedAction": "很抱歉，但我们尚不支持此操作",
+      "noMatchingConnector": "未找到匹配的 WalletConnect 连接器，如果问题仍然存在，请尝试重新连接或联系支持人员",
+      "requestNotFound": "未找到请求",
+      "requestRejected": "呼叫请求被拒绝",
+      "invalidSession": "无效的 WalletConnect 会话",
+      "alreadyPending": "连接已在等待",
+      "callRequestRejectFailed": "呼叫请求拒绝失败",
+      "callRequestApproveFailed": "呼叫请求批准失败",
+      "invalidRequest": "此 WalletConnect 请求看起来不太正确 - 请重试",
+      "cannotDetermineEthereumChain": "我们无法看到此请求属于哪个以太坊链 - 请重试",
+      "activeAccountDoesNotSupportSelectedChain": "活跃账户不支持所选以太坊链"
+    },
+    "unableToEstimateTransaction": "无法估计交易。请再试一次。",
+    "theGraphQueryFailed": {
+      "liquidityPools": "无法连接到流动性池服务"
+    },
+    "unableToSendTransaction": "无法发送交易。请再试一次。",
+    "unableToSetTransaction": "无法设置事务。请再试一次。",
+    "unableToResetTransactions": "无法重置交易。请再试一次。",
+    "prismicDataFetchFailed": "无法获取 {{prismicDocument}} 数据。请再试一次。",
+    "noTransactionsToEstimate": "没有交易可以估计。",
+    "failedToSignMessage": "未能签署消息",
+    "failedToBuildTransaction": "建立交易失败",
+    "failedToEstimateTransaction": "无法估计交易",
+    "failedToSubmitTransaction": "提交交易失败"
+  },
+  "home": {
+    "balance": {
+      "lastWeek": "上个星期"
+    },
+    "assets": {
+      "contacts": "联系人",
+      "services": "服务"
+    },
+    "actions": {
+      "receive": "收到",
+      "send": "发送",
+      "swap": "交换",
+      "connect": "连接"
+    }
+  },
+  "menu": {
+    "item": {
+      "settings": "设置",
+      "addressBook": "地址簿",
+      "supportChat": "支持",
+      "storybook": "故事书",
+      "supportConversations": "支持对话"
+    },
+    "footer": {
+      "privacyPolicy": "隐私政策",
+      "termsOfService": "服务条款",
+      "systemInformation": "系统信息",
+      "signOut": "登出"
+    },
+    "settings": {
+      "title": "设置",
+      "appSettings": "应用设置",
+      "darkMode": "黑暗模式",
+      "language": "语",
+      "fiatCurrency": "当地法定货币",
+      "biometricLogin": "生物识别登录",
+      "changePin": "更改密码",
+      "walletBackup": "钱包备份",
+      "viewBackupPhrase": "查看 12 个单词",
+      "viewPrivateKey": "查看私钥",
+      "backupNotFinishedWarning": "安全警告",
+      "backupComplete": "备份完成"
+    },
+    "selectLanguage": {
+      "title": "语"
+    },
+    "selectCurrency": {
+      "title": "货币"
+    },
+    "systemInformation": {
+      "title": "系统信息",
+      "environment": "环境",
+      "buildNumber": "版本号"
+    }
+  },
+  "history": {
+    "title": "交易记录"
+  },
+  "assets": {
+    "wallet": {
+      "pillarPay": {
+        "title": "支柱薪酬",
+        "topUp": "充值",
+        "hint": "从您的 PLR 余额中免费转移任何代币。"
+      }
+    },
+    "deposits": {
+      "deposit": "订金"
+    },
+    "investments": {
+      "invest": "投资"
+    },
+    "liquidityPools": {
+      "addLiquidity": "增加流动性",
+      "poolShare": "池共享 {{share}}"
+    },
+    "rewards": {
+      "availableToClaim": "可索赔"
+    }
+  },
+  "assetSelector": {
+    "title": "选择资产"
+  },
+  "chainAssetSelector": {
+    "title": "{{chain}} 个资产",
+    "tabs": {
+      "tokens": "代币",
+      "collectibles": "NFT"
+    }
+  },
+  "walletConnect": {
+    "home": {
+      "title": "钱包连接",
+      "headerStories": "新的和值得注意的",
+      "deployOnChainFormat": "部署此钱包以充分利用 {{chain}}。",
+      "toast": {
+        "showDAppServiceLaunchError": "抱歉，我们在尝试打开此 dApp 时遇到问题。请稍后再试。"
+      }
+    },
+    "requests": {
+      "messageRequest": "签名请求",
+      "transactionRequest": "交易请求",
+      "transactionRequestFormat": "{{chain}} 上的 {{app}}",
+      "unsupportedRequest": "不支持的请求"
+    },
+    "connectedApps": {
+      "title": "连接的 dapp",
+      "connected": "连接的"
+    },
+    "disconnectModal": {
+      "title": "断开",
+      "body": "您确定要在 {{chain}} 上断开与 {{app}} 的连接吗？",
+      "disconnect": "是的，断开连接",
+      "toast": {
+        "missingSessionUrl": "无法断开应用程序，因为缺少会话 URL。"
+      }
+    }
+  },
+  "etherspot": {
+    "deploymentInterjection": {
+      "title": "智能钱包部署",
+      "depositFormat": "在 {{chain}} 存入 {{symbol}}",
+      "error": "无法获取智能钱包部署插入数据。请再试一次。",
+      "cost": "{{cost}} 部署成本将添加到您的第一笔交易中。"
+    }
+  },
+  "contactSelector": {
+    "title": "发给",
+    "button": {
+      "addContact": "加至地址簿",
+      "skip": "跳过并发送"
+    },
+    "error": {
+      "incorrectAddress": "地址不正确",
+      "cannotSendToYourself": "不能寄给自己"
+    }
+  },
+  "ppnContent": {
+    "tabs": {
+      "incoming": {
+        "title": "传入",
+        "emptyState": {
+          "title": "没有传入的交易"
+        }
+      },
+      "sent": {
+        "title": "发送",
+        "emptyState": {
+          "title": "没有发送的交易"
+        }
+      },
+      "settled": {
+        "title": "定居",
+        "emptyState": {
+          "title": "无结算交易"
+        }
+      }
+    },
+    "title": {
+      "home": "支柱支付网络",
+      "settleTransactionsScreen": "结算交易",
+      "fundTankScreen": "基金PLR罐",
+      "sendTokenViaPpnScreen": "通过 PPN 发送 {{token}}",
+      "unsettledAssetsScreen": "未结算资产",
+      "withdrawFromTankScreen": "从PLR罐中撤出"
+    },
+    "button": {
+      "fundTank": "基金支柱罐",
+      "releaseTankFunds": "释放资金",
+      "withdrawFromTank": "从PLR罐中撤出",
+      "settleTransactions": "结算交易",
+      "enableSmartWalletForTank": "启用智能钱包创建坦克",
+      "goToTank": "前往 PLR 坦克"
+    },
+    "label": {
+      "availableBalance": "可用余额",
+      "paidByPillar": "不收费 - 由 Pillar 支付",
+      "transactionsAvailableToSettle": "可结算的交易"
+    },
+    "paragraph": {
+      "introFirstParagraph": "在您的油箱中放置 PLR 代币，以实现您和您的联系人之间的免费和即时交易。 PLR 充当元代币，允许您发送和接收 Pillar 支付网络支持的任何资产。",
+      "introSecondParagraph": "从您的 PLR 油箱中抽取以发送您想要的任何内容。"
+    },
+    "ppnFeatures": {
+      "first": {
+        "title": "立即的。",
+        "description": "无需等待矿工或区块确认。认真的即时交易。"
+      },
+      "second": {
+        "title": "自由。",
+        "description": "无需为任何交易支付网络成本或gas。"
+      },
+      "three": {
+        "title": "私人的。",
+        "description": "只有最终结算记录在链上。批处理事务允许合并多个传输。"
+      },
+      "settleTransactions": "结算交易"
+    }
+  },
+  "migrateENSContent": {
+    "banner": {
+      "title": "将您的 ENS 名称重新指向 Etherspot"
+    },
+    "details": {
+      "title": "将您的 ENS 名称重新指向 Etherspot",
+      "body": "目前，您的 ENS 名称指向您的旧版智能钱包。这意味着指向 {{ensName}} 的任何交易将始终登陆您的 Archanova 智能钱包（地址：{{address}}）。继续下面将您的 ENS 名称重新指向您的新 Etherspot 智能钱包帐户",
+      "migrate": "迁移",
+      "cannotMigrate": "抱歉，我们现在无法迁移。请再试一次。",
+      "noAccountFound": "抱歉，没有找到帐户。"
+    }
+  },
+  "walletMigrationArchanova": {
+    "banner": {
+      "title": "将资产从 Pillar V1 迁移到 Etherspot (Pillar V2)"
+    },
+    "intro": {
+      "title": "迁移您的资产",
+      "subtitle": "切换到 Etherspot (Pillar V2)",
+      "header": "您的帐户正在升级为 Pillar 智能钱包。",
+      "body": "Etherspot 支持多链。目前支持 Polygon、Binance Smart Chain 和 xDai。将资产迁移到您的新 Pillar v2 钱包，享受低至零费用的 DeFi。"
+    },
+    "status": {
+      "title": "迁移状态",
+      "emptyState": "无迁移交易"
+    },
+    "selectAssets": {
+      "title": "迁移到智能钱包",
+      "migratingFrom": "从",
+      "review": "审查"
+    },
+    "setAmount": {
+      "title": "设定金额"
+    },
+    "review": {
+      "title": "审查",
+      "header": "你正在迁移",
+      "details": {
+        "header": "迁移详情",
+        "fromWallet": "从支柱 V1",
+        "toWallet": "到 Etherspot (Pillar V2)"
+      },
+      "assets": {
+        "header": "精选资产"
+      },
+      "fees": {
+        "header": "费用",
+        "ethereum": "最大限度。以太坊费用",
+        "pillar": "支柱费",
+        "total": "总费用"
+      },
+      "calculateFee": "计算交易费用",
+      "calculatingFee": "正在计算费用…",
+      "submit": "提交",
+      "estimatingTransactions": "正在估算交易…"
+    },
+    "pinConfirm": {
+      "submittingTransactions": "正在提交交易…"
+    }
+  },
+  "smartWalletContent": {
+    "activationCard": {
+      "button": {
+        "activate": "激活智能钱包"
+      },
+      "description": {
+        "activating": "激活您的帐户",
+        "default": "要开始发送资产，您需要激活智能钱包"
+      }
+    },
+    "activationModal": {
+      "paragraph": "要开始发送和交换资产，您需要激活您的钱包。",
+      "title": "激活智能钱包"
+    },
+    "walletActivationView": {
+      "title": "正在激活智能钱包",
+      "paragraph": {
+        "smartWalletActivating": "不会花很长时间。在激活过程中，您可以随意探索 Pillar 智能钱包的精彩功能"
+      }
+    },
+    "exchangeActivation": {
+      "message": "要开始交换资产，您需要激活您的智能钱包",
+      "button": "激活智能钱包"
+    },
+    "tabs": {
+      "tokens": {
+        "title": "代币"
+      },
+      "collectibles": {
+        "title": "NFT"
+      }
+    },
+    "paragraph": {
+      "introFirstParagraph": "您的新 Pillar 智能钱包由个人智能合约提供支持。这提供了更好的资产管理、安全和恢复功能。",
+      "introSecondParagraph": "由于列出的好处，Pillar 还建议您将大部分资产转移到智能钱包。",
+      "walletIsActivated": "您现在可以从资产屏幕的右上角和侧面访问您的新智能钱包和新的 Pillar 支付网络"
+    },
+    "button": {
+      "goToSmartWallet": "前往智能钱包"
+    },
+    "title": {
+      "smartWalletIsActivated": "您的智能钱包现已激活",
+      "walletActivatedScreen": "下一步是什么"
+    },
+    "banner": {
+      "title": "将资产从密钥钱包迁移到 Etherspot (Pillar V2)"
+    },
+    "intro": {
+      "title": "是时候提升您的加密体验了",
+      "header": "您的帐户正在升级为 Pillar 智能钱包。",
+      "upgrade": {
+        "subtitle": "这是什么升级？",
+        "body": "简而言之：Pillar 正在使以太坊更易于访问，并为 Pillar 平台的进一步改进奠定基础。"
+      },
+      "benefits": {
+        "secure": "万一丢失手机或钥匙，请确保您的资金安全。",
+        "ensName": "获取您自己的 pillar.eth ENS 地址以在不同平台上使用它。",
+        "betterApp": "享受更新的用户界面和改进的应用程序性能。"
+      },
+      "footer": "此升级需要在区块链上进行记录。这意味着，使用新的 Pillar 智能钱包进行的第一笔交易中将添加少量的以太坊网络费用。得益于 Pillar Etherspot 技术，费用将非常低。",
+      "button": {
+        "upgrade": "升级"
+      }
+    },
+    "confirm": {
+      "title": "审查",
+      "header": "你正在迁移",
+      "details": {
+        "header": "迁移详情",
+        "fromKeyWallet": "从现有的钥匙钱包",
+        "toSmartWallet": "到智能钱包"
+      },
+      "assets": {
+        "header": "精选资产"
+      },
+      "fees": {
+        "header": "费用",
+        "ethereum": "最大限度。以太坊费用",
+        "pillar": "支柱费",
+        "total": "总费用"
+      },
+      "submit": "提交"
+    }
+  },
+  "collectiblesList": {
+    "emptyState": {
+      "noCollectibles": {
+        "title": "没有 NFT",
+        "paragraph": "这个钱包里没有 NFT"
+      },
+      "noneFound": {
+        "title": "未找到 NFT",
+        "paragraph": "检查名称是否输入正确"
+      }
+    }
+  },
+  "settingsContent": {
+    "settingsItem": {
+      "analytics": {
+        "title": "使用分析",
+        "paragraph": {
+          "agreeSharingInfo": "我很高兴分享匿名应用程序使用统计",
+          "legal": "通过共享应用程序使用统计数据，您正在帮助 Pillar 构建更好的钱包。\n使用统计数据不包括您或您的联系人的任何个人信息。"
+        }
+      }
+    }
+  },
+  "profileContent": {
+    "title": {
+      "manage": "用户设置"
+    },
+    "paragraph": {
+      "verificationIsRequired": "需要验证以防止诈骗者的活动。我们关心用户的隐私。"
+    },
+    "modal": {
+      "updatingData": {
+        "title": "谨慎行事",
+        "paragraph": {
+          "emailChanged": "更改电子邮件后，您必须重新验证它才能保留邀请朋友并获得奖励的能力。",
+          "phoneChanged": "更改电话号码后，您必须重新验证它才能保留邀请朋友和获得奖励的能力。"
+        },
+        "button": {
+          "changeEmail": "更改我的电子邮件",
+          "changePhone": "更改我的电话号码"
+        }
+      },
+      "verification": {
+        "title": {
+          "email": "输入验证码（邮箱）",
+          "phone": "输入验证码（短信）"
+        },
+        "error": "这不起作用，请重试"
+      },
+      "profileImage": {
+        "button": {
+          "takeSelfie": "自拍",
+          "uploadPicture": "上传图片",
+          "deleteAvatar": "删除头像"
+        }
+      },
+      "deleteAvatar": {
+        "title": "删除头像",
+        "paragraph": {
+          "areYouSure": "您确定要删除您的头像吗？"
+        },
+        "button": {
+          "delete": "是的，删除",
+          "cancel": "取消"
+        }
+      }
+    }
+  },
+  "relayerMigrationContent": {
+    "modal": {
+      "switch": {
+        "title": "使用 PLR 支付费用",
+        "paragraph": "再见 ETH！切换后，您将可以使用 PLR 代币支付交易费用。再也不会缺气了。",
+        "button": {
+          "switch": "转变"
+        },
+        "label": {
+          "freeSwitching": "切换是免费的",
+          "switchPending": "切换交易待处理",
+          "waitingForConfirmation": "等待确认中..."
+        }
+      },
+      "verification": {
+        "title": {
+          "email": "输入验证码（邮箱）",
+          "phone": "输入验证码（短信）"
+        },
+        "error": "这不起作用，请重试"
+      }
+    }
+  },
+  "addressBookContent": {
+    "title": {
+      "allowAccess": "访问地址簿"
+    },
+    "paragraph": {
+      "allowAccess": "请授予访问您的地址簿的权限，以便能够选择您的电话或电子邮件联系人。"
+    }
+  },
+  "walletConnectContent": {
+    "title": {
+      "walletConnectRequests": "连接到{{app}}\n {{chain}}"
+    },
+    "label": {
+      "unknownRequestName": "未知",
+      "requestDescription": "描述",
+      "requestLink": "网址",
+      "name": "姓名",
+      "chain": "链"
+    },
+    "error": {
+      "smartWalletNeedToBeActivated": "需要激活智能钱包才能继续。",
+      "unsupportedRequestCallRequestType": "不支持的呼叫请求类型。"
+    }
+  },
+  "servicesContent": {
+    "title": {
+      "servicesScreen": "服务"
+    },
+    "ramp": {
+      "addCash": {
+        "title": "购买加密",
+        "subTitle": "你用卡支付"
+      }
+    },
+    "liquidityPools": {
+      "title": "流动资金池",
+      "description": "质押您的 PLR Liquidity 代币并获得奖励。"
+    },
+    "label": {
+      "requiresActivation": "需要激活",
+      "forSmartWallet": "智能钱包"
+    }
+  },
+  "transactions": {
+    "title": {
+      "sendScreen": "在 {{chain}} 发送",
+      "sendScreenPPN": "在 PPN 上发送",
+      "valueSelectorModal": "选择资产",
+      "review": "审查",
+      "reviewAndConfirmScreen": "查看并确认",
+      "allowanceTransactionSuccess": "交易正在进行中",
+      "exchangeTransactionSuccess": "交换令牌...",
+      "transactionSuccess": "代币正在路上",
+      "collectibleTransactionSuccess": "NFT 正在路上",
+      "transferAssetsToSmartWalletScreen": "迁移到智能钱包",
+      "amountEditScreen": "设定金额",
+      "assetsTransferToSmartWalletStatusScreen": "基于密钥的资产迁移",
+      "creatingTransactions": "创建交易",
+      "keyBasedAssetsMigrationComplete": "基于密钥的资产迁移完成"
+    },
+    "button": {
+      "payFeeWithPillar": "使用 PLR 支付费用",
+      "confirmTransaction": "确认交易",
+      "cancelUnsent": "取消未发送",
+      "send": "发送"
+    },
+    "label": {
+      "amount": "数量",
+      "receiver": "接收者",
+      "recipient": "接受者",
+      "sender": "发件人",
+      "recipientEnsName": "ENS 容器名称",
+      "recipientAddress": "收件人地址",
+      "transactionFee": "东。仙女",
+      "assetsToSettle": "要结算的资产",
+      "recipientGet": "收件人将获得",
+      "youPay": "你会付出代价的",
+      "noAssetsFound": "未找到资产",
+      "noCollectiblesFound": "未找到 NFT",
+      "fromKeyWallet": "从基于密钥的钱包",
+      "toSmartWallet": "到智能钱包",
+      "tokensToTransfer": "要转移的代币",
+      "collectiblesToTransfer": "要转移的 NFT",
+      "data": "数据",
+      "message": "信息",
+      "address": "地址",
+      "ethFee": "最大限度。以太坊费用",
+      "maximumFee": "最高费用",
+      "pillarFee": "支柱费",
+      "totalFee": "总费用",
+      "deploymentFee": "智能钱包部署费",
+      "maxTransactionFee": "最大限度。手续费",
+      "youAreSending": "你正在发送",
+      "fees": "费用",
+      "allowancePlusEthFee": "津贴 + 最高费用",
+      "migratingFrom": "从",
+      "network": "网络"
+    },
+    "paragraph": {
+      "exchangeTransactionSuccess": "此交易可能需要一些时间才能完成",
+      "transactionSuccess": "它将在几分钟内解决，具体取决于 {{network}} 负载",
+      "typedDataMessage": "类型数据消息"
+    },
+    "emptyState": {
+      "assetsList": {
+        "title": "未找到资产",
+        "paragraph": "检查名称是否输入正确"
+      }
+    }
+  },
+  "toast": {
+    "userIsOffline": "你好像离线了。请检查您的互联网连接。",
+    "biometricLoginEnabled": "启用生物识别登录。",
+    "biometricLoginDisabled": "生物识别登录已禁用。",
+    "keyWalletAssetsTransfered": "资产转移。享受使用您的智能钱包的乐趣！",
+    "somethingWentWrong": "出了点问题，我们已经在调查了。别担心，您的资金是安全的。请重试或联系支持人员。",
+    "failedToLogIn": "登录时出现问题，请重试。",
+    "PPNTopUpSuccess": "{{paymentInfo}} 添加到 Pillar Tank。",
+    "PPNWithdrawSuccess": "{{paymentInfo}} 从 Pillar Tank 中撤出。",
+    "PPNSettleSuccess": "资产已结算到您的钱包。",
+    "transactionSent": "{{paymentInfo}} 已发送。",
+    "transactionReceived": "{{paymentInfo}} 已收到。",
+    "backendProblem": "我们的服务器出现问题。别担心，您的资金是安全的。请重试或联系支持人员。",
+    "PPNTopUp": "{{paymentInfo}} 发送到 Pillar Tank。",
+    "PPNWithdraw": "已开始提取 {{paymentInfo}}。您将很快收到代币。",
+    "PPNSettle": "结算开始。您将很快收到代币。",
+    "switchRelayerTokenFailed": "无法切换费用令牌。请再试一次。",
+    "syntheticTransactionFailed": "无法进行此交易。请再试一次。",
+    "assetHasBeenHidden": "{{assetName}} ({{assetSymbol}}) 已移除。",
+    "ensureBackup": "请确保您现在备份您的钱包。",
+    "walletConnectUnsupportedApp": "不支持此应用程序。您可以请求对此应用程序的支持。",
+    "walletConnectConnectionsExpired": "连接已过期。请重新连接。",
+    "cantReadQRCode": "无法读取此二维码。再试一次或使用其他图像。",
+    "incorrectQRCode": "二维码不正确。",
+    "transactionFeeEstimationFailed": "无法估算交易费用。请再试一次。",
+    "walkthroughFailed": "出了些问题。请再试一次。",
+    "addressCopiedToClipboard": "地址已复制到剪贴板。",
+    "ensNameCopiedToClipboard": "ENS 名称已复制到剪贴板。",
+    "forbiddenToRemoveAsset": "{{assetName}} ({{assetSymbol}}) 无法删除。这对 Pillar 来说是必不可少的。",
+    "failedToGetFaceIDPermission": "Pillar 的面容 ID 受限。您可以在手机设置中更改它。",
+    "subscribedToNewsletter": "订阅了时事通讯。",
+    "subscriptionToNewsletterFailed": "无法订阅时事通讯。请再试一次。",
+    "cantInviteYourself": "你不能邀请自己。",
+    "invalidPhoneNumber": "电话号码应该有国家代码。",
+    "dailyInvitationsLimitReached": "您今天还有 {{remainingDailyInvitations}} 个邀请。每天最多 {{allowedDailyUpdates}}",
+    "ensNameNotFound": "未找到 ENS 名称。尝试不同的名称。",
+    "transactionStarted": "{{paymentInfo}} 已发送。",
+    "tooManyTransactionsToSettle": "您一次只能结算 {{maxTxToSettle}} 笔交易。您可以在另一批次中解决更多问题。",
+    "notEnoughForTransactionFee": "没有足够的 {{feeSymbol}} 来支付交易费用。",
+    "languageChanged": "语言变了。",
+    "languageChangeFailed": "无法更改语言。请再试一次。",
+    "serviceLaunchFailed": "抱歉，我们在尝试打开此服务时遇到问题。请稍后再试。",
+    "exchangeAllowanceFailed": "我们很抱歉。无法设置令牌限额。请再试一次。",
+    "contactUpdated": "{{name}} 已更新。",
+    "contactDeleted": "{{name}} 从地址簿中删除。",
+    "contactAdded": "{{name}} 添加到地址簿。",
+    "smartWalletActivationUnavailable": "暂时无法激活。请稍后再试",
+    "languageChangedWithSomeTranslationsMissing": "语言已更改，但可能缺少某些翻译。我们正在积极努力。",
+    "languageIsNoLongerSupported": "抱歉，您选择的语言不再受支持。它已更改为默认语言。",
+    "languageIsNotSupported": "抱歉，不支持此语言。",
+    "failedToUploadImage": "无法从图库中获取图像。请再试一次。",
+    "failedToDeleteAvatar": "无法删除头像。请再试一次。",
+    "failedToCreateOrder": "发生错误。无法接受此优惠。请再试一次。",
+    "cannotFindDeploymentHash": "找不到部署哈希。请再试一次。",
+    "cannotFindTransactionHash": "找不到交易哈希。请再试一次。",
+    "cannotGetBlockchainExplorerLink": "无法获取区块链浏览器链接。请再试一次。",
+    "cannotGetWalletAddress": "无法获取钱包地址。",
+    "cannotEnableAsset": "无法启用资产。请再试一次。",
+    "cannotCreateStream": "无法创建流。请再试一次。",
+    "cannotCancelStream": "无法取消流。请再试一次。",
+    "cannotPurchaseTicket": "不能买票。请再试一次。",
+    "cannotWithdraw": "不能退。请再试一次。",
+    "cannotDepositAsset": "不能存入资产。请再试一次。",
+    "cannotWithdrawAsset": "无法提取资产。请再试一次。",
+    "failedToEstimateTransactionWithMessage": "无法估计交易：“{{message}}”",
+    "walletBackedUp": "您的钱包现已备份。",
+    "poolDataFetchFailed": "无法获取流动性池数据。请重试或联系支持人员。",
+    "cannotAddLiquidity": "不能增加流动性。请再试一次。",
+    "cannotStakeTokens": "不能质押代币。请再试一次。",
+    "cannotUnstakeTokens": "无法取消抵押代币。请再试一次。",
+    "cannotRemoveLiquidity": "无法去除流动性。请再试一次。",
+    "liquidityPoolsAddLiquidity": "{{value}} {{token}} 已收到。",
+    "liquidityPoolsRemoveLiquidity": "{{value}} {{token}} 从流动性中移除。",
+    "liquidityPoolsStake": "{{value}} {{token}} 押注。",
+    "liquidityPoolsUnstake": "{{value}} {{token}} 从流动性中移除。",
+    "liquidityPoolsClaimRewards": "{{value}} {{token}} 个已声明。",
+    "noActiveAccountFound": "未找到活动帐户。",
+    "walletConnectFailed": "钱包连接失败。",
+    "walletConnectCallRequestApproveFailed": "未能批准呼叫请求。",
+    "walletConnectCallRequestRejectFailed": "拒绝呼叫请求失败。",
+    "walletConnectRequestRejected": "WalletConnect 呼叫请求被拒绝。",
+    "walletConnectRequestApproved": "WalletConnect 呼叫请求已获批准。",
+    "ensMigrationCannotProceed": "抱歉，ENS 迁移无法继续。",
+    "ensMigrationFailed": "抱歉，ENS 迁移失败。",
+    "cannotSendSyntheticAsset": "抱歉，无法发送资产。",
+    "failedToGetGasPrices": "未能获得天然气价格。",
+    "waitingForWalletConnectConnection": "正在等待 WalletConnect 服务...",
+    "transactionReverted": "出了些问题。重试或点按此消息以了解详细信息。",
+    "seedPhraseCopiedToClipboard": "12 个字已复制到剪贴板",
+    "privateKeyCopiedToClipboard": "私钥复制到剪贴板"
+  },
+  "exchangeContent": {
+    "providers": {
+      "uniswap": "Uniswap",
+      "oneInch": "1英尺",
+      "synthetix": "合成器",
+      "sushiswap": "寿司卷",
+      "honeyswap": "蜜糖交换"
+    },
+    "modal": {
+      "smartWalletIsNotActive": {
+        "title": "使用智能钱包账户",
+        "paragraph": "请选择您的智能钱包账户购买加密货币。",
+        "button": {
+          "selectAccount": "选择帐号"
+        }
+      }
+    },
+    "title": {
+      "exchange": "在 {{chain}} 上交换",
+      "initialExchange": "交换",
+      "confirm": "审查"
+    },
+    "label": {
+      "exchangeDetails": "交流详情",
+      "network": "网络",
+      "exchangeRate": "汇率",
+      "exchangeRateLayout": "{{rate}} {{toAssetCode}}/{{fromAssetCode}}",
+      "maxSlippage": "最大限度。滑移"
+    },
+    "tooltip": {
+      "feeFormat": "{{provider}} 将被允许代表您自动进行交易。以太坊费用可能会更低。"
+    },
+    "emptyState": {
+      "offers": {
+        "title": "没有实时优惠",
+        "paragraph": "目前不提供来自交换服务的匹配报价。"
+      }
+    }
+  },
+  "alert": {
+    "deleteContact": {
+      "title": "删除地址",
+      "message": "您确定要从地址簿中删除 {{name}} 吗？",
+      "button": {
+        "cancel": "取消",
+        "ok": "确认"
+      }
+    },
+    "hideAsset": {
+      "title": "你确定吗？",
+      "message": "这将从您的钱包中隐藏 {{asset}}",
+      "button": {
+        "cancel": "取消",
+        "ok": "隐藏"
+      }
+    },
+    "logOut": {
+      "title": "登出",
+      "message": "注销后，如果没有 12 字备份，您将无法重新登录此钱包。",
+      "button": {
+        "cancel": "取消",
+        "ok": "确认"
+      }
+    },
+    "attemptToLogOutWithoutBackup": {
+      "title": "登出",
+      "message": "您只有在保护 12 个单词的备份短语后才能注销。",
+      "button": {
+        "cancel": "取消",
+        "backup": "备份 12 个字"
+      }
+    },
+    "walletConnectDisconnect": {
+      "title": "与 {{name}} 断开连接",
+      "message": "请确认与 {{name}} 断开连接。",
+      "button": {
+        "cancel": "取消",
+        "ok": "断开"
+      }
+    },
+    "addressIsNotOnPillarNetwork": {
+      "title": "该地址不在 Pillar Network 上",
+      "message": "邀请其所有者安装 Pillar 钱包，以便能够免费发送即时交易或切换到以太坊主网发送常规交易。",
+      "button": {
+        "switchToMainnet": "切换到以太坊主网",
+        "cancel": "取消"
+      }
+    },
+    "removeConnectedDevice": {
+      "title": "你确定吗？",
+      "message": "您将删除此设备与您的帐户之间的链接。\n\n请确保您已备份所有资金。",
+      "button": {
+        "cancel": "取消",
+        "ok": "确认删除"
+      }
+    },
+    "contactsPermission": {
+      "title": "联系人",
+      "message": "此应用程序想查看您的联系人。",
+      "button": {
+        "ok": "允许"
+      }
+    }
+  },
+  "notification": {
+    "transactionReceivedPending": "{{tokenValue}} 即将推出。",
+    "transactionReceivedConfirmed": "{{tokenValue}} 已收到。",
+    "transactionSentPending": "{{tokenValue}} 正在发送。",
+    "transactionSentConfirmed": "{{tokenValue}} 已发送。",
+    "receivedCollectible": "您收到了 NFT。",
+    "collectibleSentAndReceived": "您的 NFT 已收到。"
+  },
+  "graph": {
+    "timeRangeButtons": {
+      "day": "1 天",
+      "week": "7D",
+      "month": "30 天",
+      "halfYear": "6米",
+      "year": "1 与",
+      "all": "全部"
+    }
+  },
+  "liquidityPoolsContent": {
+    "title": {
+      "addLiquidity": "增加流动性",
+      "addLiquidityReview": "审查",
+      "stakeTokens": "股权代币",
+      "stakeTokensReview": "审查",
+      "unstakeTokens": "取消抵押代币",
+      "unstakeTokensReview": "审查",
+      "removeLiquidity": "去除流动性",
+      "removeLiquidityReview": "审查",
+      "claimRewardsReview": "审查",
+      "liquidityPools": "流动资金池",
+      "infoScreen": "流动资金池"
+    },
+    "button": {
+      "addLiquidity": "增加流动性",
+      "addLiquidityWrapped": "添加\n流动性",
+      "removeLiquidity": "去除流动性",
+      "removeLiquidityWrapped": "消除\n流动性",
+      "stake": "赌注",
+      "unstake": "取消抵押",
+      "claimRewards": "领取奖励"
+    },
+    "label": {
+      "staked": "质押",
+      "rewards": "奖励",
+      "claimedSoFar": "{{value}} {{token}} 个到目前为止已认领",
+      "addLiquidityToStartEarning": "增加流动性以开始从 Staking 中获利",
+      "stakeLiquidityToGetRewards": "抵押流动性代币以获得奖励",
+      "shareOfPool": "池份额",
+      "youAreAddingLiquidity": "您正在增加流动性",
+      "tokenAllocation": "代币分配",
+      "youAreStaking": "你在赌",
+      "youAreUnstaking": "你不赌",
+      "youAreRemovingLiquidity": "您正在消除流动性",
+      "youWillReceive": "您将收到",
+      "youAreClaiming": "你在索赔",
+      "price": "价钱",
+      "volume": "体积",
+      "weeklyRewards": "每周奖励",
+      "24h": "24 小时",
+      "1w": "1 英寸",
+      "1m": "1米",
+      "tokenPercent": "{{value}}%{{token}}",
+      "availableRewards": "可用奖励",
+      "totalLiquidity": "总流动性",
+      "24hVolume": "24小时容积",
+      "tokenLiquidity": "{{tokenName}} 流动性",
+      "poolTokenAllocation": "矿池代币分配",
+      "yourPoolShareAllocation": "您的矿池份额代币分配",
+      "tokenPrice": "代币价格",
+      "quantity": "数量",
+      "liquidityAdded": "流动性增加",
+      "unstaked": "未抵押",
+      "rewardsClaimed": "已领取奖励",
+      "liquidityRemoved": "流动性移除",
+      "fromWalletToPool": "钱包 → {{poolName}}",
+      "fromPoolToWallet": "{{poolName}} → 钱包",
+      "24hFees": "24小时收费"
+    },
+    "tabs": {
+      "active": "可用的",
+      "purchased": "流动性增加",
+      "staked": "质押"
+    },
+    "infoContent": {
+      "subtitle": {
+        "whatAreLiquidityPools": "什么是流动性池？",
+        "howDoLiquidityPoolsWork": "流动性池如何运作？"
+      },
+      "paragraph": {
+        "whatAreLiqudityPools": "流动性池本质上是锁定在智能合约中的代币池。它们用于通过提供流动性来促进交易，并被一些去中心化交易所（又名 DEX）广泛使用。",
+        "howDoLiquidityPoolsWork": "在其基本形式中，单个流动性池持有 2 个代币，每个池为那对特定的代币创建一个新市场。 DAI/ETH 是 Uniswap 上流行的流动性池的一个很好的例子。\n\n创建新池时，第一个流动性提供者是设置池中资产初始价格的人。激励流动性提供者向池中提供相等价值的两种代币。如果池中代币的初始价格与当前的全球市场价格不同，就会产生即时套利机会，可能导致流动性提供者损失资本。对于愿意稍后向池中添加更多资金的所有其他流动性提供者来说，以正确的比率提供代币的概念保持不变。\n\n当向池提供流动性时，流动性提供者 (LP) 会收到称为 LP 代币的特殊代币，其比例与他们向池中提供的流动性成比例。当池促进交易时，0.3% 的费用按比例分配给所有 LP 代币持有者。如果流动性提供者想要收回他们的基础流动性，加上任何应计费用，他们必须销毁他们的 LP 代币。\n\n流动性池促成的每次代币交换都会根据确定性定价算法进行价格调整。这种机制也称为自动做市商 (AMM)，跨不同协议的流动性池可能使用略有不同的算法。"
+      },
+      "insight": {
+        "title": "增加流动性以开始从 Staking 中获利",
+        "button": "探索泳池"
+      }
+    },
+    "depositsList": {
+      "title": "流动资金池"
+    },
+    "modal": {
+      "stakingEnabled": {
+        "stakingUnlocked": "Staking 已解锁",
+        "liquidityAdded": "流动性增加",
+        "stakeYourTokens": "抵押您的代币以获得更多兴趣和额外奖励。",
+        "stakeTokensButton": "股权代币",
+        "laterButton": "之后"
+      }
+    }
+  },
+  "receiveModal": {
+    "etherspotSingleAddressInfo": "所有链都使用单个钱包地址。",
+    "notDeployedWarning": "接收 <0>{{chain}}</0> 个资产",
+    "withCaution": "慎用。"
+  },
+  "tooltip": {
+    "switchAccountsByTappingHere": "您可以点按此处切换帐户",
+    "includesDeploymentFee": "一次性智能钱包部署费"
+  },
+  "governanceCall": {
+    "banner": {
+      "title": "治理呼吁",
+      "live": "居住"
+    }
+  },
+  "backupWallet": {
+    "intro": {
+      "title": "备份你的钱包",
+      "subtitle": "您的资金可能面临风险",
+      "seedPhraseWarning": "在区块链上，没有与电子邮件或电话号码绑定的传统帐户。相反，有一个种子短语作为您的“密码”。如果它丢失了，您的资金就会丢失。确保你的 12 个单词保存得很好而且安全。",
+      "privateKeyWarning": "您的私钥用于在设备丢失/更改或删除您的钱包时恢复/导入您的钱包。丢失私钥会导致无法访问您的资金。"
+    }
+  }
+}
