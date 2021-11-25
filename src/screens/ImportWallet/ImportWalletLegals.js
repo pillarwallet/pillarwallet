@@ -39,7 +39,7 @@ import { firebaseRemoteConfig } from 'services/firebase';
 
 // Constants
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
-import { IMPORT_WALLET, TERMS_AND_PRIVACY } from 'constants/navigationConstants';
+import { IMPORT_WALLET, LEGAL_SCREEN } from 'constants/navigationConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -88,7 +88,7 @@ class ImportWalletLegals extends React.Component<Props, State> {
 
   openLegalScreen = (documentId: string, documentName: string) => {
     const { navigation } = this.props;
-    navigation.navigate(TERMS_AND_PRIVACY, { prismicDocumentId: documentId, prismicDocumentName: documentName });
+    navigation.navigate(LEGAL_SCREEN, { prismicDocumentId: documentId, prismicDocumentName: documentName });
   };
 
   render() {

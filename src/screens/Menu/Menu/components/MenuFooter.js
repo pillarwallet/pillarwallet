@@ -32,7 +32,7 @@ import Button from 'components/core/Button';
 import {
   MENU_SYSTEM_INFORMATION,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
-  TERMS_AND_PRIVACY,
+  LEGAL_SCREEN,
 } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
@@ -64,7 +64,7 @@ const MenuFooter = () => {
   const goToSystemInformation = () => navigation.navigate(MENU_SYSTEM_INFORMATION);
 
   const openLegalScreen = (documentId: string, documentName: string) =>
-    navigation.navigate(TERMS_AND_PRIVACY, { prismicDocumentId: documentId, prismicDocumentName: documentName });
+    navigation.navigate(LEGAL_SCREEN, { prismicDocumentId: documentId, prismicDocumentName: documentName });
 
   const handleSignOut = () => {
     const isWalletBackedUp = walletBackupStatus.isImported || walletBackupStatus.isBackedUp || __DEV__;

@@ -40,7 +40,7 @@ import { mapFromDocumentDataToString } from 'utils/prismic';
 import { reportErrorLog } from 'utils/common';
 import { spacing } from 'utils/variables';
 
-const TermsOfService = () => {
+const LegalScreen = () => {
   const navigation = useNavigation();
   const colors = useThemeColors();
   const prismicDocumentId = navigation.getParam('prismicDocumentId');
@@ -95,7 +95,7 @@ const TermsOfService = () => {
   );
 };
 
-export default TermsOfService;
+export default LegalScreen;
 
 
 const styles = {

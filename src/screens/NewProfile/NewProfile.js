@@ -33,7 +33,7 @@ import Checkbox from 'components/legacy/Checkbox';
 import TextInput from 'components/legacy/TextInput';
 
 // Constants
-import { PERMISSIONS, SET_WALLET_PIN_CODE, TERMS_AND_PRIVACY } from 'constants/navigationConstants';
+import { PERMISSIONS, SET_WALLET_PIN_CODE, LEGAL_SCREEN } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
@@ -196,7 +196,7 @@ const NewProfile = () => {
     : { centerItems: [{ title: t('auth:title.chooseUsername') }] };
 
   const openLegalScreen = (documentId: string, documentName: string) =>
-    navigation.navigate(TERMS_AND_PRIVACY, { prismicDocumentId: documentId, prismicDocumentName: documentName });
+    navigation.navigate(LEGAL_SCREEN, { prismicDocumentId: documentId, prismicDocumentName: documentName });
 
   return (
     <Container>
