@@ -223,7 +223,6 @@ jobs:
       - run:
           name: Save build number
           command: |
-            echo $CIRCLE_BRANCH
             APP_BUILD_NUMBER=${CIRCLE_BUILD_NUM}
             mkdir -p /tmp/workspace/build-num
             mkdir -p /tmp/workspace/releases
@@ -296,7 +295,7 @@ jobs:
               export buildNumber=$(node -e "console.log(require('./package.json').version);")
             else
               export buildNum=$(node -e "console.log(require('./package.json').version);")
-              echo $buildNum-feature > build_number.txt
+              echo $buildNum-ui > build_number.txt
               export buildNumber=$(cat build_number.txt)
             fi
             sed -i.bak "s/_build_type_/staging/g" .env
@@ -333,17 +332,17 @@ jobs:
           path: ./toArchive
           destination: app_build
       - run:
-          name: Copy feature branch iOS artifact to S3
+          name: Copy UI feature branch iOS artifact to S3
           command: |
             if [ "$CIRCLE_BRANCH" != "develop" ]; then
               export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
               cd ./ios/output/gym/
               touch ios-s3-URL-feature.txt
-              aws --region $AWS_DEFAULT_REGION s3 cp pillarwallet-staging.ipa $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-ios-feature-$buildNumber.ipa
-              aws --region $AWS_DEFAULT_REGION s3 presign $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-ios-feature-$buildNumber.ipa --expires-in 604800 > ios-s3-URL-feature.txt
+              aws --region $AWS_DEFAULT_REGION s3 cp pillarwallet-staging.ipa $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-ios-ui-feature-$buildNumber.ipa
+              aws --region $AWS_DEFAULT_REGION s3 presign $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-ios-ui-feature-$buildNumber.ipa --expires-in 604800 > ios-s3-URL-feature.txt
             fi
       - run:
-          name: Announce feature branch iOS URL
+          name: Announce UI feature branch iOS URL
           command: |
             if [ "$CIRCLE_BRANCH" != "develop" ]; then
               cd ~/pillarwallet
@@ -352,7 +351,6 @@ jobs:
             fi
       - slack/status:
           fail_only: true
-          # only_for_branches: develop
           failure_message: "$CIRCLE_BRANCH - $(gshuf -n 1 ios_appcenter.txt) :circleci-fail:"
           webhook: "${SLACK_WEBHOOK_URL}"
 
@@ -411,7 +409,7 @@ jobs:
               export buildNumber=$(node -e "console.log(require('./package.json').version);")
             else
               export buildNum=$(node -e "console.log(require('./package.json').version);")
-              echo $buildNum-feature > build_number.txt
+              echo $buildNum-ui > build_number.txt
               export buildNumber=$(cat build_number.txt)
             fi
             sed -i.bak "s/_build_type_/staging/g" .env
@@ -451,17 +449,17 @@ jobs:
           path: android/app/build/outputs/apk
           destination: apks
       - run:
-          name: Copy feature branch android artifact to S3
+          name: Copy UI feature branch android artifact to S3
           command: |
             if [ "$CIRCLE_BRANCH" != "develop" ]; then
               export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
               cd ./android/app/build/outputs/apk/staging
               touch android-s3-URL-feature.txt
-              aws --region $AWS_DEFAULT_REGION s3 cp app-staging.apk $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-android-feature-$buildNumber.apk
-              aws --region $AWS_DEFAULT_REGION s3 presign $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-android-feature-$buildNumber.apk --expires-in 604800 > android-s3-URL-feature.txt
+              aws --region $AWS_DEFAULT_REGION s3 cp app-staging.apk $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-android-ui-feature-$buildNumber.apk
+              aws --region $AWS_DEFAULT_REGION s3 presign $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-android-ui-feature-$buildNumber.apk --expires-in 604800 > android-s3-URL-feature.txt
             fi
       - run:
-          name: Announce feature branch android URL
+          name: Announce UI feature branch android URL
           command: |
             if [ "$CIRCLE_BRANCH" != "develop" ]; then
               cd ~/pillarwallet
@@ -470,7 +468,6 @@ jobs:
             fi
       - slack/status:
           fail_only: true
-          # only_for_branches: develop
           failure_message: '$CIRCLE_BRANCH - $(shuf -n 1 android_appcenter.txt) :circleci-fail:'
           webhook: "${SLACK_WEBHOOK_URL}"
 
