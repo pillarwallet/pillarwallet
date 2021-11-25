@@ -30,12 +30,10 @@ import { BaseText, MediumText, Paragraph } from 'components/legacy/Typography';
 import Button from 'components/legacy/Button';
 import ProfileImage from 'components/ProfileImage';
 import Checkbox from 'components/legacy/Checkbox';
-import PrismicDocumentModal from 'components/Modals/PrismicDocumentModal';
 import TextInput from 'components/legacy/TextInput';
-import Modal from 'components/Modal';
 
 // Constants
-import { PERMISSIONS, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
+import { PERMISSIONS, SET_WALLET_PIN_CODE, LEGAL_SCREEN } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
@@ -197,10 +195,8 @@ const NewProfile = () => {
     ? { floating: true, transparent: true }
     : { centerItems: [{ title: t('auth:title.chooseUsername') }] };
 
-  const openLegalModal = (prismicDocumentId: string, prismicDocumentName: string) =>
-    Modal.open(() => (
-      <PrismicDocumentModal prismicDocumentId={prismicDocumentId} prismicDocumentName={prismicDocumentName} />
-    ));
+  const openLegalScreen = (documentId: string, documentName: string) =>
+    navigation.navigate(LEGAL_SCREEN, { prismicDocumentId: documentId, prismicDocumentName: documentName });
 
   return (
     <Container>
@@ -224,7 +220,7 @@ const NewProfile = () => {
               <CheckboxText>
                 {t('auth:withLink.readUnderstandAgreeTo', {
                   linkedText: t('auth:termsOfUse'),
-                  onPress: () => openLegalModal(prismicTermsOfPolicyDocumentId, t('auth:termsOfUse')),
+                  onPress: () => openLegalScreen(prismicTermsOfPolicyDocumentId, t('auth:termsOfUse')),
                 })}
               </CheckboxText>
             </Checkbox>
@@ -237,7 +233,7 @@ const NewProfile = () => {
               <CheckboxText>
                 {t('auth:withLink.readUnderstandAgreeTo', {
                   linkedText: t('auth:privacyPolicy'),
-                  onPress: () => openLegalModal(prismicPrivacyPolicyDocumentId, t('auth:privacyPolicy')),
+                  onPress: () => openLegalScreen(prismicPrivacyPolicyDocumentId, t('auth:privacyPolicy')),
                 })}
               </CheckboxText>
             </Checkbox>

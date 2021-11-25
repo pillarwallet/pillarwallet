@@ -24,6 +24,7 @@ export const EXCHANGE_PROVIDER = {
   SYNTHETIX: ('Synthetix': 'Synthetix'),
   SUSHISWAP: ('Sushiswap': 'Sushiswap'),
   HONEYSWAP: ('Honeyswap': 'Honeyswap'),
+  PARASWAP: ('Paraswap': 'Paraswap'),
 };
 
 // Hardcoded in Etherspot backend

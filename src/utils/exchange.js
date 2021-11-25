@@ -71,6 +71,12 @@ const honeyswapLightMonochrome = require('assets/images/exchangeProviders/honeys
 const honeyswapDarkVertical = require('assets/images/exchangeProviders/honeyswapDarkVertical.png');
 const honeyswapDarkHorizontal = require('assets/images/exchangeProviders/honeyswapDarkHorizontal.png');
 const honeyswapDarkMonochrome = require('assets/images/exchangeProviders/honeyswapDarkMonochrome.png');
+const paraswapLightHorizontal = require('assets/images/exchangeProviders/paraswapLightHorizontal.png');
+const paraswapLightVertical = require('assets/images/exchangeProviders/paraswapLightVertical.png');
+const paraswapLightMonochrome = require('assets/images/exchangeProviders/paraswapLightMonochrome.png');
+const paraswapDarkVertical = require('assets/images/exchangeProviders/paraswapDarkVertical.png');
+const paraswapDarkHorizontal = require('assets/images/exchangeProviders/paraswapDarkHorizontal.png');
+const paraswapDarkMonochrome = require('assets/images/exchangeProviders/paraswapDarkMonochrome.png');
 
 export type ExchangeOptions = {
   fromOptions: AssetOption[],
@@ -121,6 +127,12 @@ export function useProvidersConfig(): { [key: ExchangeProvider]: ProviderConfig 
       iconVertical: isDarkTheme ? honeyswapDarkVertical : honeyswapLightVertical,
       iconHorizontal: isDarkTheme ? honeyswapDarkHorizontal : honeyswapLightHorizontal,
       iconMonochrome: isDarkTheme ? honeyswapDarkMonochrome : honeyswapLightMonochrome,
+    },
+    [PROVIDER.PARASWAP]: {
+      title: t('exchangeContent.providers.paraswap'),
+      iconVertical: isDarkTheme ? paraswapDarkVertical : paraswapLightVertical,
+      iconHorizontal: isDarkTheme ? paraswapDarkHorizontal : paraswapLightHorizontal,
+      iconMonochrome: isDarkTheme ? paraswapDarkMonochrome : paraswapLightMonochrome,
     },
   };
 }

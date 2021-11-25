@@ -27,11 +27,13 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import Button from 'components/core/Button';
-import Modal from 'components/Modal';
-import PrismicDocumentModal from 'components/Modals/PrismicDocumentModal';
 
 // Constants
-import { MENU_SYSTEM_INFORMATION, BACKUP_WALLET_IN_SETTINGS_FLOW } from 'constants/navigationConstants';
+import {
+  MENU_SYSTEM_INFORMATION,
+  BACKUP_WALLET_IN_SETTINGS_FLOW,
+  LEGAL_SCREEN,
+} from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
@@ -61,11 +63,8 @@ const MenuFooter = () => {
 
   const goToSystemInformation = () => navigation.navigate(MENU_SYSTEM_INFORMATION);
 
-  const openPrismicModal = (prismicDocumentId: string, prismicDocumentName: string) => {
-    Modal.open(() => (
-      <PrismicDocumentModal prismicDocumentId={prismicDocumentId} prismicDocumentName={prismicDocumentName} />
-    ));
-  };
+  const openLegalScreen = (documentId: string, documentName: string) =>
+    navigation.navigate(LEGAL_SCREEN, { prismicDocumentId: documentId, prismicDocumentName: documentName });
 
   const handleSignOut = () => {
     const isWalletBackedUp = walletBackupStatus.isImported || walletBackupStatus.isBackedUp || __DEV__;
@@ -94,7 +93,7 @@ const MenuFooter = () => {
       <LeftColumn>
         <Button
           title={t('privacyPolicy')}
-          onPress={() => openPrismicModal(privacyPolicyDocumentId, t('privacyPolicy'))}
+          onPress={() => openLegalScreen(privacyPolicyDocumentId, t('privacyPolicy'))}
           variant="text"
           size="compact"
           style={styles.button}
@@ -103,7 +102,7 @@ const MenuFooter = () => {
         />
         <Button
           title={t('termsOfService')}
-          onPress={() => openPrismicModal(termsOfServiceDocumentId, t('termsOfService'))}
+          onPress={() => openLegalScreen(termsOfServiceDocumentId, t('termsOfService'))}
           variant="text"
           size="compact"
           style={styles.button}
