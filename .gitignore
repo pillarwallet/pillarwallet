@@ -66,3 +66,6 @@ buck-out/
 /.npmrc
 /reports/
 package-lock.json
+
+# src
+src/configs/buildConfig.js

@@ -37,6 +37,7 @@ import Spinner from 'components/Spinner';
 import WalletConnectRequests from 'screens/WalletConnect/Requests';
 
 // Selectors
+import { useActiveAccount } from 'selectors';
 import { useSupportedChains } from 'selectors/chains';
 
 // Hooks
@@ -52,6 +53,7 @@ import { mapNotNil } from 'utils/array';
 import { appFont, fontStyles, spacing } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
 import { openUrl, showServiceLaunchErrorToast } from 'utils/inAppBrowser';
+import { isArchanovaAccount } from 'utils/accounts';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
@@ -74,6 +76,7 @@ function WalletConnectHome() {
   const isReady = useInteractionManager(); // Used to prevent jank on screen entry animation
   const enableURLInAppBrowser = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_WC_DASHBOARD_INAPPBROWSER);
 
+  const activeAccount = useActiveAccount();
   const tabItems = useTabItems();
   const [activeChain, setActiveChain] = React.useState<?Chain>(null);
 
@@ -88,8 +91,9 @@ function WalletConnectHome() {
     return (
       <ListHeader>
         <WalletConnectRequests />
-
-        <TabBar items={tabItems} activeTab={activeChain} onActiveTabChange={setActiveChain} style={styles.tabs} />
+        {!isArchanovaAccount(activeAccount) && (
+          <TabBar items={tabItems} activeTab={activeChain} onActiveTabChange={setActiveChain} style={styles.tabs} />
+        )}
 
         {showDeployBanner && activeChain != null && <DeployBanner chain={activeChain} style={styles.banner} />}
       </ListHeader>
@@ -123,7 +127,12 @@ function WalletConnectHome() {
 
   return (
     <Container>
-      <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
+      <HeaderBlock
+        leftItems={[{ close: true }]}
+        centerItems={[{ title: t('title') }]}
+        navigation={navigation}
+        noPaddingTop
+      />
 
       {isReady && !isFetching && (
         <SectionList

@@ -19,6 +19,7 @@
 */
 
 import * as React from 'react';
+import { View } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
@@ -32,6 +33,7 @@ import Text from 'components/core/Text';
 
 // Selectors
 import { useRootSelector } from 'selectors';
+import { useIsWalletBackedUp } from 'selectors/wallets';
 
 // Actions
 import { resetIncorrectPasswordAction } from 'actions/authActions';
@@ -55,6 +57,7 @@ import BackupWalletSetting from './components/BackupWalletSetting';
 const Settings = () => {
   const { t } = useTranslationWithPrefix('menu.settings');
   const navigation = useNavigation();
+  const isBackedUp = useIsWalletBackedUp();
 
   const { showPinModal, pin, wallet, onPinValid } = useWalletData();
 
@@ -71,9 +74,16 @@ const Settings = () => {
 
   return (
     <Container>
-      <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} />
+      <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
 
       <Content paddingHorizontal={0}>
+        {!isBackedUp && (
+          <View>
+            <Header>{t('walletBackup')}</Header>
+            <BackupWalletSetting wallet={wallet} />
+          </View>
+        )}
+
         <Header>{t('appSettings')}</Header>
 
         <DarkModeSetting />
@@ -83,10 +93,13 @@ const Settings = () => {
         <ChangePinSetting />
 
         <Spacing h={spacing.large} />
-        <Header>{t('walletBackup')}</Header>
 
-        <ViewBackupPhraseSetting wallet={wallet} />
-        <BackupWalletSetting wallet={wallet} />
+        {isBackedUp && (
+          <View>
+            <Header>{t('walletBackup')}</Header>
+            <ViewBackupPhraseSetting wallet={wallet} />
+          </View>
+        )}
       </Content>
     </Container>
   );

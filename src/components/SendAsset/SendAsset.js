@@ -37,7 +37,7 @@ import Button from 'components/legacy/Button';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // Utils
-import { truncateAmount, reportErrorLog } from 'utils/common';
+import { truncateAmount, reportErrorLog, lookupAddress } from 'utils/common';
 import { getBalanceBN, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { isValidValueForTransfer, showTransactionRevertedToast } from 'utils/transactions';
 
@@ -111,7 +111,7 @@ const SendAsset = ({
   const [selectedContact, setSelectedContact] = useState(defaultContact);
   const [submitPressed, setSubmitPressed] = useState(false);
 
-  const assetAddress = assetData.contractAddress;
+  const assetAddress = assetData?.contractAddress;
   const chain = assetData?.chain;
   const balances = accountAssetsBalances?.[chain]?.wallet ?? {};
   const balance = getBalanceBN(balances, assetAddress);
@@ -165,6 +165,8 @@ const SendAsset = ({
     }
 
     setSubmitPressed(true);
+
+    selectedContact.ensName = await lookupAddress(selectedContact.ethAddress);
 
     if (assetData.tokenType === ASSET_TYPES.COLLECTIBLE) {
       setSubmitPressed(false);

@@ -44,8 +44,6 @@ import SendCollectibleConfirmScreen from 'screens/SendCollectible/SendCollectibl
 import PPNSendTokenAmountScreen from 'screens/Tank/SendToken/PPNSendTokenAmount';
 import HistoryScreen from 'screens/History';
 import HomeScreen from 'screens/Home';
-import BackupPhraseScreen from 'screens/BackupPhrase';
-import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
 import WalletConnectHomeScreen from 'screens/WalletConnect/Home';
 import WalletConnectConnectedAppsScreen from 'screens/WalletConnect/ConnectedApps';
@@ -103,6 +101,9 @@ import LiquidityPoolsInfoScreen from 'screens/LiquidityPools/LiquidityPoolsInfo'
 import TutorialScreen from 'screens/Tutorial';
 import EnsMigrationConfirmScreen from 'screens/EnsMigrationConfirm';
 import AddCashScreen from 'screens/AddCash/AddCash';
+import LegalScreen from 'screens/LegalScreen/LegalScreen';
+import BackupWalletIntro from 'screens/BackupWallet/Intro';
+import BackupPhraseValidateScreen from 'screens/BackupWallet/BackupPhraseValidate';
 
 // components
 import Toast from 'components/Toast';
@@ -140,7 +141,7 @@ import {
   SEND_TOKEN_FROM_CONTACT_FLOW,
   SEND_TOKEN_PIN_CONFIRM,
   REVEAL_BACKUP_PHRASE,
-  BACKUP_PHRASE,
+  BACKUP_WALLET_INTRO,
   BACKUP_PHRASE_VALIDATE,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
   COLLECTIBLE,
@@ -221,6 +222,7 @@ import {
   WEB_VIEW,
   ENS_MIGRATION_FLOW,
   ADD_CASH,
+  LEGAL_SCREEN,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -354,7 +356,7 @@ const changePinFlow = createStackNavigator(
 // WALLET BACKUP IN SETTINGS FLOW
 const backupWalletFlow = createStackNavigator(
   {
-    [BACKUP_PHRASE]: BackupPhraseScreen,
+    [BACKUP_WALLET_INTRO]: BackupWalletIntro,
     [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
   },
   StackNavigatorModalConfig,
@@ -556,6 +558,7 @@ const AppFlowNavigation = createStackNavigator(
     [ENS_MIGRATION_FLOW]: ensMigrationFlow,
     [ADD_CASH]: addCashFlow,
     [WEB_VIEW]: WebViewScreen,
+    [LEGAL_SCREEN]: LegalScreen,
   },
   modalTransition,
 );
