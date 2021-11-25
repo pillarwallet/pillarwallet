@@ -818,7 +818,8 @@ workflows:
               ignore:
                 - develop
                 - master
-                - /feature\/.*/
+                - /(-|_)(u|U)(i|I)/
+                - /(u|U)(i|I)(-|_)/
                 # - feature/add_workflows_for_feature_branches
                 
   build_and_deploy_appcenter:
@@ -829,7 +830,8 @@ workflows:
             branches:
               only:
                 - develop
-                - /feature\/.*/
+                - /(-|_)(u|U)(i|I)/
+                - /(u|U)(i|I)(-|_)/
                 # - feature/add_workflows_for_feature_branches
 
       - appcenter_ios:
@@ -839,7 +841,8 @@ workflows:
             branches:
               only:
                 - develop
-                - /feature\/.*/
+                - /(-|_)(u|U)(i|I)/
+                - /(u|U)(i|I)(-|_)/
                 # - feature/add_workflows_for_feature_branches
 
       - appcenter_android:
@@ -850,7 +853,8 @@ workflows:
             branches:
               only:
                 - develop
-                - /feature\/.*/
+                - /(-|_)(u|U)(i|I)/
+                - /(u|U)(i|I)(-|_)/
                 # - feature/add_workflows_for_feature_branches
 
   build_and_deploy_production:
