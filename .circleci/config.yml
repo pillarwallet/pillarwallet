@@ -818,9 +818,8 @@ workflows:
               ignore:
                 - develop
                 - master
-                - /(-|_)(u|U)(i|I)/
-                - /(u|U)(i|I)(-|_)/
-                # - feature/add_workflows_for_feature_branches
+                - /.*(u|U)(i|I)(-|_).*/
+                - /.*(-|_)(u|U)(i|I).*/
                 
   build_and_deploy_appcenter:
     jobs:
@@ -830,9 +829,8 @@ workflows:
             branches:
               only:
                 - develop
-                - /(-|_)(u|U)(i|I)/
-                - /(u|U)(i|I)(-|_)/
-                # - feature/add_workflows_for_feature_branches
+                - /.*(u|U)(i|I)(-|_).*/
+                - /.*(-|_)(u|U)(i|I).*/
 
       - appcenter_ios:
           requires:
@@ -841,9 +839,8 @@ workflows:
             branches:
               only:
                 - develop
-                - /(-|_)(u|U)(i|I)/
-                - /(u|U)(i|I)(-|_)/
-                # - feature/add_workflows_for_feature_branches
+                - /.*(u|U)(i|I)(-|_).*/
+                - /.*(-|_)(u|U)(i|I).*/
 
       - appcenter_android:
           context: docker-hub-creds
@@ -853,9 +850,8 @@ workflows:
             branches:
               only:
                 - develop
-                - /(-|_)(u|U)(i|I)/
-                - /(u|U)(i|I)(-|_)/
-                # - feature/add_workflows_for_feature_branches
+                - /.*(u|U)(i|I)(-|_).*/
+                - /.*(-|_)(u|U)(i|I).*/
 
   build_and_deploy_production:
     jobs:
