@@ -1222,7 +1222,8 @@
       "oneInch": "1 Inch",
       "synthetix": "Synthetix",
       "sushiswap": "Sushiswap",
-      "honeyswap": "Honeyswap"
+      "honeyswap": "Honeyswap",
+      "paraswap": "Paraswap"
     },
     "modal": {
       "smartWalletIsNotActive": {
