@@ -17,16 +17,15 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { firebase } from '@react-native-firebase/app';
-import '@react-native-firebase/crashlytics';
-import '@react-native-firebase/iid';
-import '@react-native-firebase/analytics';
-import '@react-native-firebase/messaging';
-import '@react-native-firebase/remote-config';
+import '@react-native-firebase/app';
+import auth from '@react-native-firebase/auth';
+import analytics from '@react-native-firebase/analytics';
+import crashlytics from '@react-native-firebase/crashlytics';
+import messaging from '@react-native-firebase/messaging';
+import remoteConfig from '@react-native-firebase/remote-config';
 
-
-export const firebaseAnalytics = firebase.analytics();
-export const firebaseIid = firebase.iid();
-export const firebaseCrashlytics = firebase.crashlytics();
-export const firebaseMessaging = firebase.messaging();
-export const firebaseRemoteConfig = firebase.remoteConfig();
+export const firebaseAuth = auth();
+export const firebaseAnalytics = analytics();
+export const firebaseCrashlytics = crashlytics();
+export const firebaseMessaging = messaging();
+export const firebaseRemoteConfig = remoteConfig();

@@ -47,7 +47,6 @@ import WalletConnectMock from './walletConnectMock';
 import envConfigMock from './envConfigMock';
 import localeConfigMock from './localeConfigMock';
 
-
 process.env.IS_TEST = 'TEST';
 
 /**
@@ -75,7 +74,7 @@ copyProps(window, global);
 Enzyme.configure({ adapter: new Adapter() });
 
 // Ignore React Web errors when using React Native
-(console: any).error = message => {
+(console: any).error = (message) => {
   return message;
 };
 
@@ -114,8 +113,7 @@ jest.mock('@react-native-firebase/app', () => ({
       setUserProperties: () => Promise.resolve(),
     }),
     crashlytics: () => ({
-      setUserId: () => {
-      },
+      setUserId: () => {},
     }),
     remoteConfig: () => ({
       remoteConfig: () => Promise.resolve(),
@@ -126,7 +124,7 @@ jest.mock('@react-native-firebase/app', () => ({
       getNumber: jest.fn().mockReturnValue(4),
     }),
     messaging: () => ({
-      registerForRemoteNotifications: () => Promise.resolve(),
+      registerDeviceForRemoteMessages: () => Promise.resolve(),
       requestPermission: () => Promise.resolve(),
       hasPermission: () => Promise.resolve(1),
       getToken: () => Promise.resolve('12x2342x212'),
@@ -170,7 +168,7 @@ jest.setMock('ethers', {
   Wallet: EthersWallet,
   Contract: mocktract,
   utils: {
-    parseEther: x => x,
+    parseEther: (x) => x,
     id: utils.id,
     getAddress: utils.getAddress,
     formatUnits: utils.formatUnits,
@@ -241,7 +239,7 @@ export const mockEthAddress = ADDRESS_ZERO;
 const mockTokensExchangeRates = {
   [mockPlrAddress]: {
     EUR: 1.21,
-    GBP: 1.10,
+    GBP: 1.1,
     USD: 1.42,
   },
 };
@@ -325,10 +323,11 @@ jest.setMock('@smartwallet/sdk', {
       subscribe: jest.fn(),
       next: jest.fn(),
     },
-    estimateAccountTransaction: () => Promise.resolve({
-      gasFee: new BN(70000),
-      signedGasPrice: { gasPrice: new BN(5000000000) },
-    }),
+    estimateAccountTransaction: () =>
+      Promise.resolve({
+        gasFee: new BN(70000),
+        signedGasPrice: { gasPrice: new BN(5000000000) },
+      }),
     reset: () => Promise.resolve(),
     getConnectedAccountDevices: () => Promise.resolve([]),
     state: {
@@ -342,9 +341,16 @@ jest.setMock('@smartwallet/sdk', {
 
 jest.setMock('react-native-keychain', {
   setGenericPassword: jest.fn().mockResolvedValue(),
-  getGenericPassword: jest.fn(() => new Promise((resolve) => resolve({
-    pin: '123456', privateKey: 'testKey', mnemonic: { phrase: 'testMnemonic' },
-  }))),
+  getGenericPassword: jest.fn(
+    () =>
+      new Promise((resolve) =>
+        resolve({
+          pin: '123456',
+          privateKey: 'testKey',
+          mnemonic: { phrase: 'testMnemonic' },
+        }),
+      ),
+  ),
   resetGenericPassword: jest.fn().mockResolvedValue(),
   ACCESS_CONTROL: {
     BIOMETRY_ANY: 'BIOMETRY_ANY',
@@ -413,10 +419,11 @@ const getMockedTranslations = (url) => {
 jest.setMock('utils/cache', {
   // getCachedJSONFile: (localPath) => Promise.resolve({ test: 'yaya' }),
   getCachedJSONFile: (localPath) => getMockedTranslations(localPath),
-  getCachedTranslationResources: (translationsData) => translationsData.reduce((formatted, { ns, url }) => {
-    if (ns) formatted[ns] = getMockedTranslations(url);
-    return formatted;
-  }, {}),
+  getCachedTranslationResources: (translationsData) =>
+    translationsData.reduce((formatted, { ns, url }) => {
+      if (ns) formatted[ns] = getMockedTranslations(url);
+      return formatted;
+    }, {}),
 });
 
 export const mockEtherspotAccount = {
@@ -463,4 +470,3 @@ jest.setMock('services/etherspot', {
   getBalances: mockEtherspotGetBalances,
   getAccountTotalBalances: () => Promise.resolve(),
 });
-
