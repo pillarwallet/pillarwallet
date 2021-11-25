@@ -38,6 +38,10 @@ const AM_AUTH = require('../locales/am/auth.json');
 const BS_COMMON = require('../locales/bs/common.json');
 const BS_AUTH = require('../locales/bs/auth.json');
 
+// zh-CN
+const CN_COMMON = require('../locales/zh-CN/common.json');
+const CN_AUTH = require('../locales/zh-CN/auth.json');
+
 export const DEFAULT_LANGUAGE_CODE = 'en';
 const DEFAULT_LANGUAGE = 'English';
 const DEFAULT_NAMESPACE = 'common';
@@ -69,6 +73,7 @@ export default ({
     [DEFAULT_LANGUAGE_CODE]: DEFAULT_LANGUAGE,
     am: 'አማርኛ',
     bs: 'Bosanski',
+    cn: 'Chinese (Simplified)',
   },
   defaultNameSpace: DEFAULT_NAMESPACE,
   namespaces: ['auth', DEFAULT_NAMESPACE],
@@ -85,6 +90,10 @@ export default ({
     bs: {
       common: BS_COMMON,
       auth: BS_AUTH,
+    },
+    cn: {
+      common: CN_COMMON,
+      auth: CN_AUTH,
     },
   },
 }: LocalisationConfig);

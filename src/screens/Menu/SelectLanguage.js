@@ -48,6 +48,8 @@ import { fontStyles, spacing } from 'utils/variables';
 import IconEn from 'assets/icons/svg/icon-48-lang-en.svg';
 import IconAm from 'assets/icons/svg/icon-48-lang-am.svg';
 import IconBs from 'assets/icons/svg/icon-48-lang-bs.svg';
+import IconCn from 'assets/icons/svg/icon-48-lang-cn.svg';
+
 
 const SelectLanguage = () => {
   const { t } = useTranslationWithPrefix('menu.selectLanguage');
@@ -98,6 +100,7 @@ const iconComponentForLanguageCode = {
   en: IconEn,
   am: IconAm,
   bs: IconBs,
+  cn: IconCn,
 };
 
 function useLanguageItems() {
