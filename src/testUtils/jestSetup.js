@@ -100,36 +100,67 @@ jest.mock('react-native-reanimated', () => {
   return Reanimated;
 });
 
-jest.setMock('@react-native-firebase/crashlytics');
+// jest.setMock('@react-native-firebase/crashlytics');
 jest.setMock('@react-native-firebase/app/lib/internal/registry/nativeModule', {});
-jest.mock('@react-native-firebase/app', () => ({
-  firebase: {
-    iid: () => ({
-      delete: () => Promise.resolve(),
-    }),
-    analytics: () => ({
-      logEvent: () => {},
-      setCurrentScreen: () => {},
-      setUserProperties: () => Promise.resolve(),
-    }),
-    crashlytics: () => ({
-      setUserId: () => {},
-    }),
-    remoteConfig: () => ({
-      remoteConfig: () => Promise.resolve(),
-      setDefaults: () => Promise.resolve(),
-      fetch: () => Promise.resolve(),
-      getAll: () => Promise.resolve({}),
-      getBoolean: jest.fn(),
-      getNumber: jest.fn().mockReturnValue(4),
-    }),
-    messaging: () => ({
-      registerDeviceForRemoteMessages: () => Promise.resolve(),
-      requestPermission: () => Promise.resolve(),
-      hasPermission: () => Promise.resolve(1),
-      getToken: () => Promise.resolve('12x2342x212'),
-    }),
+// jest.mock('@react-native-firebase/app', () => ({
+//   firebase: {
+//     iid: () => ({
+//       delete: () => Promise.resolve(),
+//     }),
+//     analytics: () => ({
+//       logEvent: () => {},
+//       setCurrentScreen: () => {},
+//       setUserProperties: () => Promise.resolve(),
+//     }),
+//     crashlytics: () => ({
+//       setUserId: () => {},
+//     }),
+//     remoteConfig: () => ({
+//       remoteConfig: () => Promise.resolve(),
+//       setDefaults: () => Promise.resolve(),
+//       fetch: () => Promise.resolve(),
+//       getAll: () => Promise.resolve({}),
+//       getBoolean: jest.fn(),
+//       getNumber: jest.fn().mockReturnValue(4),
+//     }),
+//     messaging: () => ({
+//       registerDeviceForRemoteMessages: () => Promise.resolve(),
+//       requestPermission: () => Promise.resolve(),
+//       hasPermission: () => Promise.resolve(1),
+//       getToken: () => Promise.resolve('12x2342x212'),
+//     }),
+//   },
+// }));
+
+jest.mock('@react-native-firebase/auth', () => () => ({
+  currentUser: {
+    delete: () => Promise.resolve(),
   },
+}));
+
+jest.mock('@react-native-firebase/analytics', () => () => ({
+  logScreenView: () => jest.fn(),
+  logEvent: () => jest.fn(),
+}));
+
+jest.mock('@react-native-firebase/crashlytics', () => () => ({
+  setUserId: () => {},
+}));
+
+jest.mock('@react-native-firebase/messaging', () => () => ({
+  registerDeviceForRemoteMessages: () => Promise.resolve(),
+  requestPermission: () => Promise.resolve(),
+  hasPermission: () => Promise.resolve(1),
+  getToken: () => Promise.resolve('12x2342x212'),
+}));
+
+jest.mock('@react-native-firebase/remote-config', () => () => ({
+  remoteConfig: () => Promise.resolve(),
+  setDefaults: () => Promise.resolve(),
+  fetch: () => Promise.resolve(),
+  getAll: () => Promise.resolve({}),
+  getBoolean: jest.fn(),
+  getNumber: jest.fn().mockReturnValue(4),
 }));
 
 jest.setMock('react-native-splash-screen', {
