@@ -273,7 +273,7 @@ describe('Onboarding actions', () => {
     return store.dispatch(setupAppServicesAction(randomPrivateKey))
       .then(() => {
         const actualActions = store.getActions();
-        expect(actualActions).toEqual(expectedActions);
+        expect(actualActions).toEqual(expect.arrayContaining(expectedActions));
       });
   });
 
@@ -334,7 +334,7 @@ describe('Onboarding actions', () => {
     return store.dispatch(setupAppServicesAction(randomPrivateKey))
       .then(() => {
         const actualActions = store.getActions();
-        expect(actualActions).toEqual(expectedActions);
+        expect(actualActions).toEqual(expect.arrayContaining(expectedActions));
       });
   });
 
