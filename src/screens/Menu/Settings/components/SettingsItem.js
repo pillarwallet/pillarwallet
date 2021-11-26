@@ -34,13 +34,21 @@ type Props = {|
   onPress: () => mixed,
   value?: string,
   valueColor?: string,
+  size?: number,
+  color?: string,
 |};
 
-const SettingsItem = ({ title, icon, onPress, value, valueColor }: Props) => {
+const SettingsItem = ({ title, icon, onPress, value, valueColor, size, color }: Props) => {
   return (
     <Container>
       <TouchableContainer onPress={onPress}>
-        <Icon name={icon} width={16} height={16} style={styles.icon} />
+        <Icon
+          name={icon}
+          width={!size ? 16 : size}
+          height={!size ? 16 : size}
+          color={color}
+          style={styles.icon}
+        />
         <Title>{title}</Title>
         <Value $color={valueColor}>{value}</Value>
       </TouchableContainer>

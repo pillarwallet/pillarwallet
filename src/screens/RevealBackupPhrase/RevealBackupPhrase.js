@@ -18,27 +18,32 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { Image } from 'react-native';
+import SafeAreaView from 'react-native-safe-area-view';
+import Clipboard from '@react-native-community/clipboard';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import get from 'lodash.get';
 import t from 'translations/translate';
 
-// actions
+// Actions
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 
-// components
-import { Container, Wrapper, ScrollWrapper } from 'components/legacy/Layout';
-import { Paragraph } from 'components/legacy/Typography';
+// Components
+import { Container } from 'components/layout/Layout';
 import MnemonicPhrase from 'components/MnemonicPhrase';
 import CheckAuth from 'components/CheckAuth';
-import Header from 'components/Header';
+import HeaderBlock from 'components/HeaderBlock';
+import Button from 'components/core/Button';
+import Toast from 'components/Toast';
+import Text from 'components/core/Text';
 
-// utils
-import { themedColors } from 'utils/themes';
+// Utils
 import { excludeFromMonitoring } from 'utils/monitoring';
+import { appFont, spacing, fontSizes } from 'utils/variables';
 
-// types
+// Types
 import type { Dispatch } from 'reducers/rootReducer';
 import type { OnValidPinCallback } from 'models/Wallet';
 
@@ -54,13 +59,8 @@ type State = {
   wallet: Object,
 };
 
-const PrivateKeyWrapper = styled(Paragraph)`
-  padding: 10px;
-  border-radius: 12px;
-  border-width: 0.5;
-  border-color: ${themedColors.border};
-  border-style: solid;
-`;
+// Assets
+const walletBackupImage = require('assets/images/logo-wallet-backup.png');
 
 class RevealBackupPhrase extends React.Component<Props, State> {
   constructor(props) {
@@ -77,6 +77,15 @@ class RevealBackupPhrase extends React.Component<Props, State> {
     this.props.navigation.goBack(null);
   };
 
+  handleCopyToClipboard = (copiedText: string, isPrivateKey?: boolean) => {
+    Clipboard.setString(copiedText);
+    Toast.show({
+      message: isPrivateKey ? t('toast.privateKeyCopiedToClipboard') : t('toast.seedPhraseCopiedToClipboard'),
+      emoji: 'ok_hand',
+      autoClose: true,
+    });
+  };
+
   onPinValid = (wallet: Object) => {
     this.setState({ pinIsValid: true, wallet });
   };
@@ -84,6 +93,8 @@ class RevealBackupPhrase extends React.Component<Props, State> {
   render() {
     const { pinIsValid, wallet } = this.state;
     const showPrivateKey = get(this.props, 'navigation.state.params.showPrivateKey', false);
+    const mnemonicPhrase = wallet?.mnemonic;
+    const privateKey = wallet?.privateKey;
     if (!pinIsValid) {
       return (
         <CheckAuth
@@ -94,27 +105,51 @@ class RevealBackupPhrase extends React.Component<Props, State> {
       );
     }
 
-    if (wallet?.mnemonic && !showPrivateKey) {
+    if (mnemonicPhrase && !showPrivateKey) {
       return (
         <Container>
-          <Header title={t('title.backupPhrase')} onClose={this.handleScreenDismissal} />
-          <ScrollWrapper regularPadding>
-            <Paragraph>{t('paragraph.backupPhraseRevealedPurpose')}</Paragraph>
-            <Paragraph light>{t('paragraph.doNotShareBackup')}</Paragraph>
-            <MnemonicPhrase phrase={wallet.mnemonic} />
-          </ScrollWrapper>
+          <HeaderBlock
+            centerItems={[{ title: t('title.seedPhrase') }]}
+            leftItems={[{ close: true }]}
+            onClose={this.handleScreenDismissal}
+            noPaddingTop
+          />
+          <NonScrollableContent>
+            <Content style={{ flex: 1, justifyContent: 'center' }}>
+              <Logo source={walletBackupImage} />
+              <MnemonicPhrase phrase={mnemonicPhrase} />
+            </Content>
+            <Button
+              title={t('button.copyToClipboard')}
+              style={styles.button}
+              size="large"
+              onPress={() => this.handleCopyToClipboard(mnemonicPhrase)}
+            />
+          </NonScrollableContent>
         </Container>
       );
     }
 
     return (
       <Container>
-        <Header title={t('title.privateKey')} onClose={this.handleScreenDismissal} />
-        <Wrapper regularPadding>
-          <Paragraph>{t('paragraph.privateKeyRevealedPurpose')}</Paragraph>
-          <Paragraph light>{t('paragraph.doNotShareBackup')}</Paragraph>
-          <PrivateKeyWrapper ref={excludeFromMonitoring}>{wallet.privateKey}</PrivateKeyWrapper>
-        </Wrapper>
+        <HeaderBlock
+          centerItems={[{ title: t('title.privateKey') }]}
+          leftItems={[{ close: true }]}
+          onClose={this.handleScreenDismissal}
+          noPaddingTop
+        />
+        <NonScrollableContent>
+          <Content>
+            <Logo source={walletBackupImage} />
+            <PrivateKeyWrapper ref={excludeFromMonitoring}>{privateKey}</PrivateKeyWrapper>
+          </Content>
+          <Button
+            title={t('button.copyToClipboard')}
+            style={styles.button}
+            size="large"
+            onPress={() => this.handleCopyToClipboard(privateKey, true)}
+          />
+        </NonScrollableContent>
       </Container>
     );
   }
@@ -125,3 +160,31 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
 });
 
 export default connect(null, mapDispatchToProps)(RevealBackupPhrase);
+
+const styles = {
+  button: {
+    marginBottom: spacing.large,
+  },
+};
+
+const PrivateKeyWrapper = styled(Text)`
+  padding: 10px;
+  font-family: ${appFont.medium};
+  font-size: ${fontSizes.large}px;
+  color: ${({ theme }) => theme.colors.tertiaryText};
+  text-align: center;
+`;
+
+const NonScrollableContent = styled(SafeAreaView)`
+  flex: 1;
+  padding: 0 ${spacing.large}px;
+`;
+
+const Logo = styled(Image)`
+  align-self: center;
+`;
+
+const Content = styled.View`
+  flex: 1;
+  justify-content: center;
+`;

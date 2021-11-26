@@ -23,11 +23,11 @@ import styled from 'styled-components/native';
 import Emoji from 'react-native-emoji';
 
 import ShadowedCard from 'components/ShadowedCard';
-import { Spacing } from 'components/legacy/Layout';
-import { MediumText, TextLink } from 'components/legacy/Typography';
-import Icon from 'components/legacy/Icon';
+import { Spacing } from 'components/layout/Layout';
+import Icon from 'components/core/Icon';
+import Text from 'components/core/Text';
 
-import { themedColors } from 'utils/themes';
+import { useThemeColors } from 'utils/themes';
 
 export type Props = {
   message: string,
@@ -38,24 +38,6 @@ export type Props = {
   onLinkPress?: () => void,
 };
 
-const ContentWrapper = styled.View`
-  flex-direction: row;
-  padding: 14px 55px 14px 20px;
-  align-items: flex-start;
-`;
-
-const CloseIconWrapper = styled.TouchableOpacity`
-  position: absolute;
-  top: 7px;
-  right: 8px;
-  padding: 10px;
-`;
-
-const CloseIcon = styled(Icon)`
-  color: ${themedColors.toastCloseIcon};
-  font-size: 16px;
-`;
-
 const ToastCard = ({
   message,
   emoji,
@@ -64,6 +46,7 @@ const ToastCard = ({
   onClose,
   onLinkPress,
 }: Props) => {
+  const colors = useThemeColors();
   return (
     <ShadowedCard
       forceShadow
@@ -75,16 +58,31 @@ const ToastCard = ({
       <ContentWrapper>
         {!!emoji && <Emoji name={emoji} style={{ fontSize: 16 }} />}
         <Spacing w={18} />
-        <MediumText regular style={{ flex: 1 }}>
+        <Text color={colors.toastTextColor} style={{ flex: 1 }}>
           {message}
-          {!!link && <TextLink onPress={onLinkPress} regular> {link}</TextLink>}
-        </MediumText>
+          {!!link && <Text onPress={onLinkPress}>{link}</Text>}
+        </Text>
       </ContentWrapper>
       <CloseIconWrapper onPress={onClose}>
-        <CloseIcon name="rounded-close" />
+        <Icon name="close-circle" color="#fcfdff" width={16} height={16} />
       </CloseIconWrapper>
     </ShadowedCard>
   );
 };
 
 export default ToastCard;
+
+const ContentWrapper = styled.View`
+  flex-direction: row;
+  padding: 14px 55px 14px 20px;
+  align-items: flex-start;
+  background: ${({ theme }) => theme.colors.toastBackgroundColor};
+  border-radius: 20px;
+`;
+
+const CloseIconWrapper = styled.TouchableOpacity`
+  position: absolute;
+  top: 7px;
+  right: 8px;
+  padding: 10px;
+`;

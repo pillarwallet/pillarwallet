@@ -50,15 +50,14 @@ function BackupWalletSetting({ wallet }: Props) {
 
   if (isBackedUp || !wallet) return null;
 
-  const goToBackupWallet = () =>
-    navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW, {
-      mnemonicPhrase: wallet?.mnemonic,
-    });
+  const goToBackupWallet = () => navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW, { wallet });
 
   return (
     <SettingsItem
-      icon="key16"
-      title={t('backupNotFinished')}
+      icon="alert"
+      size={24}
+      color={colors.negative}
+      title={wallet?.mnemonic ? t('viewBackupPhrase') : t('viewPrivateKey')}
       value={t('backupNotFinishedWarning')}
       valueColor={colors.negative}
       onPress={goToBackupWallet}
