@@ -60,7 +60,7 @@ export default MnemonicPhrase;
 
 const styles = {
   word: {
-    marginLeft: 8,
+    marginLeft: spacing.medium,
   },
 };
 
@@ -73,7 +73,7 @@ const MnemonicPhraseWrapper = styled.View`
 `;
 
 const MnemonicPhraseItem = styled.View`
-  width: 140px;
+  width: 33.3%;
   flex-direction: row;
   align-items: center;
   margin-bottom: ${spacing.small}px;
