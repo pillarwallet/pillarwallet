@@ -68,7 +68,7 @@ const MnemonicPhraseWrapper = styled.View`
   height: 130px;
   width: 100%;
   flex-wrap: wrap;
-  justify-content: center;
+  align-content: center;
   margin: ${spacing.largePlus}px 0px;
 `;
 
