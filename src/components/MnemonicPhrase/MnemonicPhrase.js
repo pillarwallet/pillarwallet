@@ -47,8 +47,8 @@ const MnemonicPhrase = (props: Props) => {
       {mnemonicList.map((word, index) => {
         return (
           <MnemonicPhraseItem key={`${word}+${index}`}>
-            <Text color={colors.secondaryText} variant="small">{getIndex(index + 1)}</Text>
-            <Text variant="medium" style={styles.word}>{word}</Text>
+            <Index color={colors.secondaryText} variant="small">{getIndex(index + 1)}</Index>
+            <Word variant="medium">{word}</Word>
           </MnemonicPhraseItem>
         );
       })}
@@ -57,12 +57,6 @@ const MnemonicPhrase = (props: Props) => {
 };
 
 export default MnemonicPhrase;
-
-const styles = {
-  word: {
-    marginLeft: spacing.medium,
-  },
-};
 
 const MnemonicPhraseWrapper = styled.View`
   height: 130px;
@@ -77,4 +71,14 @@ const MnemonicPhraseItem = styled.View`
   flex-direction: row;
   align-items: center;
   margin-bottom: ${spacing.small}px;
+`;
+
+const Index = styled(Text)`
+  width: 15%;
+  text-align: right;
+`;
+
+const Word = styled(Text)`
+  width: 80%;
+  margin-left: ${spacing.small}px;
 `;
