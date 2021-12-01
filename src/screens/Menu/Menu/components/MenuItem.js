@@ -33,14 +33,17 @@ type Props = {|
   title: string,
   icon: IconName,
   onPress: () => mixed,
+  value?: string,
+  valueColor?: string,
 |};
 
-const MenuItem = ({ title, icon, onPress }: Props) => {
+const MenuItem = ({ title, icon, onPress, value, valueColor }: Props) => {
   return (
     <Container>
       <TouchableContainer onPress={onPress}>
         <ItemIcon name={icon} width={16} height={16} />
         <Title>{title}</Title>
+        {!!value && <Value $color={valueColor}>{value}</Value>}
       </TouchableContainer>
     </Container>
   );
@@ -61,5 +64,10 @@ const ItemIcon = styled(Icon)`
 `;
 
 const Title = styled(Text)`
+  flex: 1;
   ${fontStyles.medium};
+`;
+
+const Value = styled(Text)`
+  color: ${({ theme, $color }) => $color || theme.colors.secondaryText};
 `;

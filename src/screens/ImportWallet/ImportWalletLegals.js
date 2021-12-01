@@ -17,30 +17,29 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { Platform, BackHandler } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
-// components
+// Components
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import { BaseText } from 'components/legacy/Typography';
-import PrismicDocumentModal from 'components/Modals/PrismicDocumentModal';
 import Button from 'components/legacy/Button';
 import Checkbox from 'components/legacy/Checkbox';
-import Modal from 'components/Modal';
 
-// utils
+// Utils
 import { spacing, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 
-// services
+// Services
 import { firebaseRemoteConfig } from 'services/firebase';
 
 // Constants
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
-import { IMPORT_WALLET } from 'constants/navigationConstants';
+import { IMPORT_WALLET, LEGAL_SCREEN } from 'constants/navigationConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -50,31 +49,6 @@ type State = {
   hasAgreedToTerms: boolean,
   hasAgreedToPolicy: boolean,
 };
-
-const Wrapper = styled.View`
-  flex: 1;
-  padding: ${spacing.large}px;
-  justify-content: space-between;
-`;
-
-const ContentWrapper = styled.View`
-`;
-
-const ButtonWrapper = styled.View`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: ${spacing.large}px;
-`;
-
-const CheckboxText = styled(BaseText)`
-  ${fontStyles.regular};
-  color: ${themedColors.accent};
-`;
-
-const StyledButton = styled(Button)`
-  margin: 0 6px;
-`;
 
 class ImportWalletLegals extends React.Component<Props, State> {
   state = {
@@ -112,10 +86,10 @@ class ImportWalletLegals extends React.Component<Props, State> {
     }
   };
 
-  openLegalModal = (prismicDocumentId: string, prismicDocumentName: string) =>
-    Modal.open(() => (
-      <PrismicDocumentModal prismicDocumentId={prismicDocumentId} prismicDocumentName={prismicDocumentName} />
-    ));
+  openLegalScreen = (documentId: string, documentName: string) => {
+    const { navigation } = this.props;
+    navigation.navigate(LEGAL_SCREEN, { prismicDocumentId: documentId, prismicDocumentName: documentName });
+  };
 
   render() {
     const { navigation } = this.props;
@@ -153,7 +127,7 @@ class ImportWalletLegals extends React.Component<Props, State> {
               <CheckboxText>
                 {t('auth:withLink.readUnderstandAgreeTo', {
                   linkedText: t('auth:termsOfUse'),
-                  onPress: () => this.openLegalModal(prismicTermsOfPolicyDocumentId, t('auth:termsOfUse')),
+                  onPress: () => this.openLegalScreen(prismicTermsOfPolicyDocumentId, t('auth:termsOfUse')),
                 })}
               </CheckboxText>
             </Checkbox>
@@ -168,7 +142,7 @@ class ImportWalletLegals extends React.Component<Props, State> {
               <CheckboxText>
                 {t('auth:withLink.readUnderstandAgreeTo', {
                   linkedText: t('auth:privacyPolicy'),
-                  onPress: () => this.openLegalModal(prismicPrivacyPolicyDocumentId, t('auth:privacyPolicy')),
+                  onPress: () => this.openLegalScreen(prismicPrivacyPolicyDocumentId, t('auth:privacyPolicy')),
                 })}
               </CheckboxText>
             </Checkbox>
@@ -187,3 +161,28 @@ class ImportWalletLegals extends React.Component<Props, State> {
 }
 
 export default ImportWalletLegals;
+
+const Wrapper = styled.View`
+  flex: 1;
+  padding: ${spacing.large}px;
+  justify-content: space-between;
+`;
+
+const ContentWrapper = styled.View`
+`;
+
+const ButtonWrapper = styled.View`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: ${spacing.large}px;
+`;
+
+const CheckboxText = styled(BaseText)`
+  ${fontStyles.regular};
+  color: ${themedColors.accent};
+`;
+
+const StyledButton = styled(Button)`
+  margin: 0 6px;
+`;

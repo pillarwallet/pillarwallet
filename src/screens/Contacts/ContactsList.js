@@ -166,7 +166,12 @@ const ContactsList = () => {
       footer={<View />}
       shouldFooterAvoidKeyboard
     >
-      <SearchBar query={query} onQueryChange={handleQueryChange} placeholder={t('label.addressEnsUsername')} />
+      <SearchBar
+        query={query}
+        onQueryChange={handleQueryChange}
+        placeholder={t('label.addressEnsUsername')}
+        autoFocus
+      />
 
       <FlatList
         data={items}

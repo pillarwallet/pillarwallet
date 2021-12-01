@@ -250,6 +250,14 @@ export const sendAssetAction = (
       }
     }
 
+    if (!transactionHash && transactionBatchHash) {
+      try {
+        transactionHash = await etherspotService.waitForTransactionHashFromSubmittedBatch(chain, transactionBatchHash);
+      } catch (error) {
+        reportErrorLog('Exception in wallet transaction: waitForTransactionHashFromSubmittedBatch failed', { error });
+      }
+    }
+
     if (!transactionHash && !transactionBatchHash) {
       logBreadcrumb(
         'Send Flow',

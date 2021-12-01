@@ -37,7 +37,7 @@ import Button from 'components/legacy/Button';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // Utils
-import { truncateAmount, reportErrorLog } from 'utils/common';
+import { truncateAmount, reportErrorLog, lookupAddress } from 'utils/common';
 import { getBalanceBN, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { isValidValueForTransfer, showTransactionRevertedToast } from 'utils/transactions';
 
@@ -95,8 +95,13 @@ const SendAsset = ({
   estimateTransaction,
   resetEstimateTransaction,
 }: Props) => {
-  const defaultAssetData = navigation.getParam('assetData');
-  const defaultAssetOption = defaultAssetData && {
+  let defaultAssetData = navigation.getParam('assetData');
+
+  if (!defaultAssetData?.token && defaultAssetData?.contractAddress && defaultAssetData?.chain) {
+    defaultAssetData = getAssetData(assetsWithBalance, defaultAssetData);
+  }
+
+  const defaultAssetOption = defaultAssetData && defaultAssetData?.token && {
     ...defaultAssetData,
     symbol: defaultAssetData.token,
   };
@@ -106,7 +111,7 @@ const SendAsset = ({
   const [selectedContact, setSelectedContact] = useState(defaultContact);
   const [submitPressed, setSubmitPressed] = useState(false);
 
-  const assetAddress = assetData.contractAddress;
+  const assetAddress = assetData?.contractAddress;
   const chain = assetData?.chain;
   const balances = accountAssetsBalances?.[chain]?.wallet ?? {};
   const balance = getBalanceBN(balances, assetAddress);
@@ -160,6 +165,8 @@ const SendAsset = ({
     }
 
     setSubmitPressed(true);
+
+    selectedContact.ensName = await lookupAddress(selectedContact.ethAddress);
 
     if (assetData.tokenType === ASSET_TYPES.COLLECTIBLE) {
       setSubmitPressed(false);
@@ -259,6 +266,15 @@ const SendAsset = ({
       }}
     />
   );
+};
+
+const getAssetData = (tokens, selectedToken) => {
+  return tokens.find((token) => {
+    if (selectedToken?.chain === token.chain && selectedToken?.contractAddress === token.contractAddress) {
+      return true;
+    }
+    return false;
+  });
 };
 
 const mapStateToProps = ({

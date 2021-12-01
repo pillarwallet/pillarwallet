@@ -88,4 +88,8 @@ export default {
   synthetic160: '#0000CC',
   synthetic170: '#0000B3',
   synthetic180: '#000099',
+
+  // common colors
+  purple: '#A020F0',
+  darkGreen: '#2e673c',
 };

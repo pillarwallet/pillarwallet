@@ -31,6 +31,9 @@ import { useIsWalletBackedUp } from 'selectors/wallets';
 // Types
 import type { WalletObject } from 'models/Wallet';
 
+// Utils
+import { useThemeColors } from 'utils/themes';
+
 // Local
 import SettingsItem from './SettingsItem';
 
@@ -41,6 +44,7 @@ type Props = {
 function ViewBackupPhraseSetting({ wallet }: Props) {
   const { t } = useTranslationWithPrefix('menu.settings');
   const navigation = useNavigation();
+  const colors = useThemeColors();
 
   const isBackedUp = useIsWalletBackedUp();
 
@@ -48,7 +52,15 @@ function ViewBackupPhraseSetting({ wallet }: Props) {
 
   const goToBackupPhrase = () => navigation.navigate(REVEAL_BACKUP_PHRASE, { wallet });
 
-  return <SettingsItem icon="key16" title={t('viewBackupPhrase')} onPress={goToBackupPhrase} />;
+  return (
+    <SettingsItem
+      icon="key16"
+      title={wallet?.mnemonic ? t('viewBackupPhrase') : t('viewPrivateKey')}
+      value={t('backupComplete')}
+      valueColor={colors.positive}
+      onPress={goToBackupPhrase}
+    />
+  );
 }
 
 export default ViewBackupPhraseSetting;

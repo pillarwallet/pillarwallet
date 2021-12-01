@@ -19,45 +19,15 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { BaseText, MediumText } from 'components/legacy/Typography';
-import { fontSizes } from 'utils/variables';
-import { getColorByTheme } from 'utils/themes';
 import { excludeFromMonitoring } from 'utils/monitoring';
 
-const MnemonicPhraseWrapper = styled.View`
-  flex-direction: row;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  margin: 20px 0;
-  padding: 20px 10px 10px;
-  width: 100%;
-  background-color: ${({ theme }) => theme.colors.primaryAccent130};
-  border-radius: 12px;
-`;
+// Components
+import Text from 'components/core/Text';
 
-const MnemonicPhraseItem = styled.View`
-  width: 100%;
-  padding-right: 10px;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  margin-bottom: 10px;
-`;
+// Utils
+import { useThemeColors } from 'utils/themes';
+import { spacing } from 'utils/variables';
 
-const MnemonicPhraseIndex = styled(BaseText)`
-  flex: 0 0 30px;
-  text-align: right;
-  font-size: ${fontSizes.medium}px;
-  color: ${getColorByTheme({ lightKey: 'basic050', darkKey: 'basic090' })};
-  opacity: 0.5;
-`;
-
-const MnemonicPhraseWord = styled(MediumText)`
-  font-size: ${fontSizes.medium}px;
-  padding-left: 10px;
-  flex: 1;
-  color: ${getColorByTheme({ lightKey: 'basic050', darkKey: 'basic090' })};
-`;
 
 const getIndex = (number: number) => {
   return (`0${number}`).slice(-2);
@@ -70,20 +40,45 @@ type Props = {
 const MnemonicPhrase = (props: Props) => {
   const { phrase } = props;
   const mnemonicList = phrase.split(' ');
+  const colors = useThemeColors();
 
   return (
     <MnemonicPhraseWrapper ref={excludeFromMonitoring}>
-      {
-        mnemonicList.map((word, index) => (
+      {mnemonicList.map((word, index) => {
+        return (
           <MnemonicPhraseItem key={`${word}+${index}`}>
-            <MnemonicPhraseIndex>{getIndex(index + 1)}</MnemonicPhraseIndex>
-            <MnemonicPhraseWord>{word}</MnemonicPhraseWord>
+            <Index color={colors.secondaryText} variant="small">{getIndex(index + 1)}</Index>
+            <Word variant="medium">{word}</Word>
           </MnemonicPhraseItem>
-          ),
-        )
-      }
+        );
+      })}
     </MnemonicPhraseWrapper>
   );
 };
 
 export default MnemonicPhrase;
+
+const MnemonicPhraseWrapper = styled.View`
+  height: 130px;
+  width: 100%;
+  flex-wrap: wrap;
+  align-content: center;
+  margin: ${spacing.largePlus}px 0px;
+`;
+
+const MnemonicPhraseItem = styled.View`
+  width: 33.3%;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: ${spacing.small}px;
+`;
+
+const Index = styled(Text)`
+  width: 15%;
+  text-align: right;
+`;
+
+const Word = styled(Text)`
+  width: 80%;
+  margin-left: ${spacing.small}px;
+`;

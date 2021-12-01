@@ -260,7 +260,7 @@ export const setupAppServicesAction = (privateKey: ?string) => {
       'onboarding',
       'setupAppServicesAction: dispatching fetchAllAccountsTotalBalancesAction',
     );
-    await dispatch(fetchAllAccountsTotalBalancesAction());
+    dispatch(fetchAllAccountsTotalBalancesAction());
 
     logBreadcrumb(
       'onboarding',

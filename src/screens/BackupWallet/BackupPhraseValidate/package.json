@@ -1,0 +1,6 @@
+{
+    "name": "BackupPhraseValidate",
+    "version": "0.0.0",
+    "private": true,
+    "main": "./BackupPhraseValidate.js"
+}
