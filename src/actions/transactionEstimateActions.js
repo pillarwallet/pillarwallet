@@ -177,7 +177,7 @@ export const estimateTransactionsAction = (
         to,
         activeAccountAddress,
         data,
-        value,
+        value.toString(),
         assetData?.token,
         assetData?.decimals,
         assetData?.tokenType,
