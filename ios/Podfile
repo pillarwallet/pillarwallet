@@ -18,9 +18,7 @@ target 'pillarwallet' do
   ### Custom Pods
   # pod for splash gif
   pod 'SwiftyGif'
-  pod 'storyly-react-native', :path => '../node_modules/storyly-react-native'
   
-  pod 'rn-fetch-blob', :path => '../node_modules/rn-fetch-blob'
 
   # react-native-permissions:
   permissions_path = '../node_modules/react-native-permissions/ios'
@@ -28,8 +26,6 @@ target 'pillarwallet' do
   pod 'Permission-PhotoLibrary', :path => "#{permissions_path}/PhotoLibrary.podspec"
   pod 'Permission-FaceID', :path => "#{permissions_path}/FaceID.podspec"
 
-  pod 'RNLocalize', :path => '../node_modules/react-native-localize'
-  pod 'react-native-date-picker', :path => '../node_modules/react-native-date-picker'
 end
 
 dynamic_frameworks = ['Storyly', 'SDWebImage']

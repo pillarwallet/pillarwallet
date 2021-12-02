@@ -26,9 +26,9 @@ import isEmpty from 'lodash.isempty';
 import RNRestart from 'react-native-restart';
 import { clearWebViewCookies } from 'utils/webview';
 import { reportErrorLog, reportLog } from 'utils/common';
-import { firebaseIid } from 'services/firebase';
 import { DEVELOPMENT, STAGING, PRODUCTION } from 'constants/envConstants';
 import type { RariPool } from 'models/RariPool';
+import { firebaseAuth } from 'services/firebase';
 
 import { buildEnvironment, devOptions } from './buildConfig';
 
@@ -37,8 +37,8 @@ const storage = Storage.getInstance('db');
 const buildType = __DEV__ ? DEVELOPMENT : PRODUCTION;
 
 type CurrentEnvironment = {
-  [string]: string
-}
+  [string]: string,
+};
 
 // switchable environments constants
 const envVars = {
@@ -52,7 +52,8 @@ const envVars = {
     COLLECTIBLES_NETWORK: 'homestead',
     OPEN_SEA_API: 'https://api.opensea.io/api/v1',
     RAMPNETWORK_WIDGET_URL: 'https://buy.ramp.network/',
-    NEWSLETTER_SUBSCRIBE_URL: 'https://pillarproject.us14.list-manage.com/subscribe/post-json?u=0056162978ccced9e0e2e2939&amp;id=637ab55cf8',
+    NEWSLETTER_SUBSCRIBE_URL:
+      'https://pillarproject.us14.list-manage.com/subscribe/post-json?u=0056162978ccced9e0e2e2939&amp;id=637ab55cf8',
     SABLIER_CONTRACT_ADDRESS: '0xA4fc358455Febe425536fd1878bE67FfDBDEC59a',
     SABLIER_SUBGRAPH_NAME: 'sablierhq/sablier',
     SYNTHETIX_EXCHANGE_ADDRESS: '0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F',
@@ -81,7 +82,8 @@ const envVars = {
     COLLECTIBLES_NETWORK: 'rinkeby',
     OPEN_SEA_API: 'https://rinkeby-api.opensea.io/api/v1',
     RAMPNETWORK_WIDGET_URL: 'https://ri-widget-staging-kovan.firebaseapp.com/',
-    NEWSLETTER_SUBSCRIBE_URL: 'https://pillarproject.us14.list-manage.com/subscribe/post-json?u=0056162978ccced9e0e2e2939&amp;id=637ab55cf8',
+    NEWSLETTER_SUBSCRIBE_URL:
+      'https://pillarproject.us14.list-manage.com/subscribe/post-json?u=0056162978ccced9e0e2e2939&amp;id=637ab55cf8',
     SABLIER_CONTRACT_ADDRESS: '0xc04Ad234E01327b24a831e3718DBFcbE245904CC',
     SABLIER_SUBGRAPH_NAME: 'sablierhq/sablier-kovan',
     SYNTHETIX_EXCHANGE_ADDRESS: '0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F',
@@ -146,14 +148,16 @@ let storedEnv = buildType === PRODUCTION ? PRODUCTION : STAGING;
 
 // sets up the current stored environment on App load
 export const setupEnv = () => {
-  return storage.get('environment').then(res => {
-    if (!isEmpty(res)) {
-      storedEnv = res;
-    } else {
-      storage.save('environment', storedEnv, true);
-    }
-    return storedEnv;
-  })
+  return storage
+    .get('environment')
+    .then((res) => {
+      if (!isEmpty(res)) {
+        storedEnv = res;
+      } else {
+        storage.save('environment', storedEnv, true);
+      }
+      return storedEnv;
+    })
     .catch(() => {
       reportErrorLog('Error getting environment storage value', { buildType });
       return null;
@@ -164,7 +168,7 @@ export const switchEnvironments = () => {
   Alert.alert(
     'Warning: Environment Switch !',
     'Switching environments will DELETE THE WALLET STORAGE,' +
-    '\nmake sure to have the BACKUP available BEFORE clicking OK!!!',
+      '\nmake sure to have the BACKUP available BEFORE clicking OK!!!',
     [
       {
         text: 'Cancel',
@@ -176,8 +180,11 @@ export const switchEnvironments = () => {
         onPress: async () => {
           const newEnv = storedEnv === PRODUCTION ? STAGING : PRODUCTION;
           await AsyncStorage.clear(); // removes storage and redux persist data
-          await firebaseIid.delete()
-            .catch(e => reportLog(`Could not delete the Firebase ID when resetting app state: ${e.message}`, e));
+          if (firebaseAuth.currentUser) {
+            await firebaseAuth.currentUser
+              .delete()
+              .catch((e) => reportLog(`Could not delete the Firebase ID when resetting app state: ${e.message}`, e));
+          }
           clearWebViewCookies();
           await storage.save('environment', newEnv, true).then(async () => {
             storedEnv = newEnv;
