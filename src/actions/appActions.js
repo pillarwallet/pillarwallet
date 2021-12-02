@@ -157,8 +157,8 @@ export const initAppAndRedirectAction = () => {
       const user = storageData?.user?.user ?? {};
       dispatch({ type: SET_USER, payload: user });
 
-      const walletAfter = storageData?.wallet?.wallet?.data ?? {};
-      dispatch({ type: SET_WALLET, payload: walletAfter });
+      const walletData = storageData?.wallet?.wallet?.data ?? {};
+      dispatch({ type: SET_WALLET, payload: walletData });
 
       const { pinAttempt = {} } = get(storageData, 'pinAttempt', {});
       const { pinAttemptsCount = 0, lastPinAttempt = 0 } = pinAttempt;

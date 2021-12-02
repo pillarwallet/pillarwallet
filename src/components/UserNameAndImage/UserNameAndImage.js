@@ -58,6 +58,8 @@ const UserNameAndImage = ({ user, address }: Props) => {
 
   const canSwitchAccount = useSmartWalletAccounts().length > 1;
 
+  const showAddress = !!address && !username;
+
   const onAccountSwitchPress = () => {
     dispatch(dismissAccountSwitchTooltipAction());
     navigation.navigate(ACCOUNTS);
@@ -69,7 +71,7 @@ const UserNameAndImage = ({ user, address }: Props) => {
 
       {!!username && <UserName>{username}</UserName>}
 
-      {!!address && !username && <Address numberOfLines={1} ellipsizeMode="middle">{address}</Address>}
+      {showAddress && <Address numberOfLines={1} ellipsizeMode="middle">{address}</Address>}
 
       {canSwitchAccount && <Icon name="select" color={colors.basic020} />}
     </Wrapper>
