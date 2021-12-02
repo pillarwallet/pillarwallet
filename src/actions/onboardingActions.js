@@ -27,7 +27,6 @@ import t from 'translations/translate';
 import { SET_WALLET, UPDATE_WALLET_BACKUP_STATUS } from 'constants/walletConstants';
 import {
   APP_FLOW,
-  NEW_WALLET,
   TUTORIAL_FLOW,
   HOME,
   NEW_PROFILE,
@@ -61,7 +60,6 @@ import {
 } from 'utils/common';
 import { getAccountEnsName } from 'utils/accounts';
 import { isLogV2AppEvents } from 'utils/environment';
-import { setKeychainDataObject } from 'utils/keychain';
 
 // services
 import { navigate } from 'services/navigation';
@@ -72,7 +70,11 @@ import { getEtherspotSupportService } from 'services/etherspot';
 // actions
 import { importArchanovaAccountsIfNeededAction, managePPNInitFlagAction } from 'actions/smartWalletActions';
 import { saveDbAction } from 'actions/dbActions';
-import { checkForWalletBackupToastAction, encryptAndSaveWalletAction } from 'actions/walletActions';
+import {
+  checkForWalletBackupToastAction,
+  encryptAndSaveWalletAction,
+  enableBiometricAction,
+} from 'actions/walletActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
 import { addMissingWalletEventsIfNeededAction } from 'actions/walletEventsActions';
@@ -83,12 +85,47 @@ import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedA
 import { importEtherspotAccountsAction, initEtherspotServiceAction } from 'actions/etherspotActions';
 import { fetchSupportedAssetsAction, fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
 import { fetchTutorialDataIfNeededAction } from 'actions/cmsActions';
-import { initialDeepLinkExecutedAction, changeUseBiometricsAction } from 'actions/appSettingsActions';
+import { initialDeepLinkExecutedAction } from 'actions/appSettingsActions';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type { KeyChainData } from 'utils/keychain';
 
+export const setupAddressAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    logBreadcrumb('onboarding', 'setupAddressAction: dispatching SET_REGISTERING_USER');
+    dispatch({ type: SET_REGISTERING_USER, payload: true });
+
+    const {
+      session: { data: { isOnline } },
+    } = getState();
+
+    logBreadcrumb('onboarding', 'setupAddressAction: checking user is online');
+    if (isOnline) {
+      logBreadcrumb('onboarding', 'setupAddressAction: user is online, registering for FCM Remote Notifications');
+      // we us FCM notifications so we must register for FCM, not regular native Push-Notifications
+      await firebaseMessaging.registerForRemoteNotifications().catch((error) => {
+        reportErrorLog('firebaseMessaging.registerForRemoteNotifications failed', { error });
+      });
+      await firebaseMessaging.requestPermission().catch(() => null);
+
+      logBreadcrumb('onboarding', 'setupAddressAction: user is online, getting fcmToken for firebase messaging');
+      const fcmToken = await firebaseMessaging.getToken().catch((error) => {
+        reportErrorLog('firebaseMessaging.getToken failed', { error });
+        return null;
+      });
+
+      logBreadcrumb('onboarding', 'setupAddressAction: dispatching UPDATE_SESSION');
+      dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
+
+      logBreadcrumb('onboarding', 'setupAddressAction: dispatching logEventAction: wallet created');
+      dispatch(logEventAction('wallet_created'));
+      isLogV2AppEvents() && dispatch(logEventAction('v2_account_created'));
+    }
+
+    logBreadcrumb('onboarding', 'setupAddressAction: dispatching SET_REGISTERING_USER');
+    dispatch({ type: SET_REGISTERING_USER, payload: false });
+  };
+};
 
 export const setupUserAction = (username: ?string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -204,6 +241,58 @@ export const setupWalletAction = (enableBiometrics?: boolean) => {
     await dispatch(encryptAndSaveWalletAction(pinCode, ethersWallet, backupStatus, enableBiometrics));
 
     logBreadcrumb('onboarding', 'setupWalletAction: dispatching saveDbAction for saving app settings');
+    dispatch(saveDbAction('app_settings', { appSettings: { wallet: +new Date() } }));
+  };
+};
+
+export const walletSetupAction = (enableBiometrics?: boolean) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      onboarding: {
+        wallet: importedWallet, // wallet was already added in import step
+      },
+    } = getState();
+
+
+    const isImported = !!importedWallet;
+
+    logBreadcrumb('onboarding', 'walletSetupAction: creating new mnemonic if importedWallet is not present');
+    // will return new mnemonic if importedWallet is not present
+    const mnemonic = importedWallet?.mnemonic || generateMnemonicPhrase();
+
+    // create wallet object
+    const ethersWallet = ethers.Wallet.fromMnemonic(mnemonic);
+
+    // raw private key will be removed from reducer once registration finishes
+    const { address, privateKey } = ethersWallet;
+
+    dispatch(saveDbAction('wallet', { wallet: { data: { address, privateKey } } }));
+    logBreadcrumb('onboarding', 'walletSetupAction: dispatching SET_WALLET');
+    dispatch({ type: SET_WALLET, payload: { address, privateKey } });
+
+    logBreadcrumb('onboarding', 'walletSetupAction: checking for recovery pending and backup status');
+    const backupStatus = { isImported, isBackedUp: !!isImported };
+
+    // dispatch to reducer only, will be stored with encryptAndSaveWalletAction
+    logBreadcrumb('onboarding', 'walletSetupAction: dispatching UPDATE_WALLET_BACKUP_STATUS');
+    dispatch({ type: UPDATE_WALLET_BACKUP_STATUS, payload: backupStatus });
+
+    // encrypt and store
+    logBreadcrumb('onboarding', 'walletSetupAction: dispatching encryptAndSaveWalletAction');
+    await dispatch(enableBiometricAction(ethersWallet, backupStatus, enableBiometrics));
+
+    logBreadcrumb('onboarding', 'walletSetupAction: dispatching setupAddressAction');
+    await dispatch(setupAddressAction());
+
+    await dispatch(setupAppServicesAction(privateKey));
+
+    logBreadcrumb(
+      'onboarding',
+      'finishOnboardingAction: dispatching initialDeepLinkExecutedAction',
+    );
+    dispatch(initialDeepLinkExecutedAction());
+
+    logBreadcrumb('onboarding', 'walletSetupAction: dispatching saveDbAction for saving app settings');
     dispatch(saveDbAction('app_settings', { appSettings: { wallet: +new Date() } }));
   };
 };
@@ -406,13 +495,8 @@ export const beginOnboardingAction = (enableBiometrics?: boolean) => {
       },
     }));
 
-    navigate(NavigationActions.navigate({ routeName: NEW_WALLET }));
-
-    logBreadcrumb('onboarding', 'beginOnboardingAction: dispatching resetAppServicesAction');
-    await dispatch(resetAppServicesAction());
-
     logBreadcrumb('onboarding', 'beginOnboardingAction: dispatching setupWalletAction');
-    await dispatch(setupWalletAction(enableBiometrics));
+    await dispatch(walletSetupAction(enableBiometrics));
 
     logBreadcrumb(
       'onboarding',
@@ -593,31 +677,16 @@ export const resetOnboardingAndCreateRandomWallet = (enableBiometrics?: boolean)
     logBreadcrumb('onboarding', 'resetOnboardingAndCreateRandomWallet: dispatching resetOnboardingAction');
     dispatch(resetOnboardingAction());
 
+    logBreadcrumb('onboarding', 'beginOnboardingAction: dispatching resetAppServicesAction');
+    await dispatch(resetAppServicesAction());
+
     const etherspotService = await getEtherspotSupportService();
     if (!etherspotService) {
       reportErrorLog('getEtherspotSupportService failed');
       return false;
     }
 
-    // will return new mnemonic if importedWallet is not present
-    const mnemonic = generateMnemonicPhrase();
-    // create wallet object
-    const ethersWallet = ethers.Wallet.fromMnemonic(mnemonic);
-
-    // raw private key will be removed from reducer once registration finishes
-    const { address, privateKey } = ethersWallet;
-
-    dispatch(saveDbAction('wallet', { wallet: { data: { address, privateKey } } }));
-
-    dispatch({ type: SET_WALLET, payload: { address, privateKey } });
-
-    const keychainData: KeyChainData = { mnemonic: mnemonic || '', privateKey };
-    if (enableBiometrics) {
-      await dispatch(changeUseBiometricsAction(true, keychainData, true));
-    } else {
-      await setKeychainDataObject(keychainData);
-    }
-
+    dispatch(beginOnboardingAction(enableBiometrics));
     return true;
   };
 };

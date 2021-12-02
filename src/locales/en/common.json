@@ -121,7 +121,8 @@
     "exchange": "Exchange",
     "unlockWithBiometrics": "Unlock with biometric sensor",
     "welcome": "Welcome to Pillar Wallet!",
-    "seedPhrase": "12 words seed phrase"
+    "seedPhrase": "12 words seed phrase",
+    "registerEnsName": "Register ENS name"
   },
 
   "label": {
@@ -1444,7 +1445,8 @@
 
   "tooltip": {
     "switchAccountsByTappingHere": "You can switch accounts by tapping here",
-    "includesDeploymentFee": "One-time Smart Wallet deployment fee"
+    "includesDeploymentFee": "One-time Smart Wallet deployment fee",
+    "registerENS": "Register your unique ENS name"
   },
 
   "governanceCall": {

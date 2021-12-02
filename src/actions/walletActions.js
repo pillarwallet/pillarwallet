@@ -21,10 +21,10 @@ import { ethers } from 'ethers';
 import { NavigationActions } from 'react-navigation';
 import t from 'translations/translate';
 
-// components
+// Components
 import Toast from 'components/Toast';
 
-// constants
+// Constants
 import {
   REMOVE_WALLET_PRIVATE_KEY,
   UPDATE_PIN_ATTEMPTS,
@@ -33,20 +33,20 @@ import {
 } from 'constants/walletConstants';
 import { MENU_SETTINGS } from 'constants/navigationConstants';
 
-// utils
+// Utils
 import { getSaltedPin } from 'utils/wallet';
 import { setKeychainDataObject } from 'utils/keychain';
 import { getDeviceUniqueId } from 'utils/device';
 
-// services
+// Services
 import { navigate } from 'services/navigation';
 
-// types
+// Types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { KeyChainData } from 'utils/keychain';
 import type { BackupStatus } from 'reducers/walletReducer';
 
-// actions
+// Actions
 import { logEventAction } from './analyticsActions';
 import { saveDbAction } from './dbActions';
 import { addWalletBackupEventAction } from './walletEventsActions';
@@ -115,6 +115,38 @@ export const encryptAndSaveWalletAction = (
     // save data to keychain
     const { mnemonic, privateKey } = wallet;
     const keychainData: KeyChainData = { mnemonic: mnemonic?.phrase || '', privateKey, pin };
+    if (enableBiometrics) {
+      await dispatch(changeUseBiometricsAction(true, keychainData, true));
+    } else {
+      await setKeychainDataObject(keychainData);
+    }
+
+    dispatch({ type: SET_WALLET_IS_ENCRYPTING, payload: false });
+  };
+};
+
+export const enableBiometricAction = (
+  wallet: ethers.Wallet,
+  backupStatus: BackupStatus,
+  enableBiometrics: boolean = false,
+) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    dispatch({ type: SET_WALLET_IS_ENCRYPTING, payload: true });
+
+    const deviceUniqueId = getState().appSettings.data.deviceUniqueId ?? (await getDeviceUniqueId());
+    dispatch(setDeviceUniqueIdIfNeededAction(deviceUniqueId));
+
+    dispatch(
+      saveDbAction('wallet', {
+        wallet: {
+          backupStatus,
+        },
+      }),
+    );
+
+    // save data to keychain
+    const { mnemonic, privateKey } = wallet;
+    const keychainData: KeyChainData = { mnemonic: mnemonic?.phrase || '', privateKey };
     if (enableBiometrics) {
       await dispatch(changeUseBiometricsAction(true, keychainData, true));
     } else {

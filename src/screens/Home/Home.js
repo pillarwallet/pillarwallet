@@ -96,6 +96,7 @@ function Home() {
   const balancePerCategory = calculateTotalBalancePerCategory(accountTotalBalances);
   const balancePerChain = calculateTotalBalancePerChain(accountTotalBalances);
   const totalBalance = sumRecord(balancePerCategory);
+  const showRegisterENSTooltip = !user.username && wallet;
 
   const isRefreshing = useRootSelector(({ totalBalances }) => !!totalBalances.isFetching);
   const onRefresh = () => {
@@ -118,6 +119,14 @@ function Home() {
         <Tooltip
           isVisible={!accountSwitchTooltipDismissed}
           body={t('tooltip.switchAccountsByTappingHere')}
+          wrapperStyle={{ zIndex: 9999, top: -10, position: 'relative' }}
+        />
+      )}
+
+      {showRegisterENSTooltip && (
+        <Tooltip
+          isVisible={!accountSwitchTooltipDismissed}
+          body={t('tooltip.registerENS')}
           wrapperStyle={{ zIndex: 9999, top: -10, position: 'relative' }}
         />
       )}
