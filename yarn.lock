@@ -1375,10 +1375,10 @@
   dependencies:
     "@etherspot/archanova-contracts-migrator" "2.2.0"
 
-"@etherspot/contracts@1.3.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@etherspot/contracts/-/contracts-1.3.0.tgz#55ba17629e9bd4ab954992bbf4461d931da4d9ab"
-  integrity sha512-XAdOlpkfJKkfVF6Rep/2WJ0qTW6cpGhMOBBNLYLmvR/G9S/9ZdEY5vVIvINvglZhSGptUuDo1R904UEBUNEYxg==
+"@etherspot/contracts@1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@etherspot/contracts/-/contracts-1.4.0.tgz#6eea2de629096e613e9e40444708dd13ca77a107"
+  integrity sha512-aVIKpG7+8gJkkJZTPhImxSSEanZZW4RkFTUeHwDmdJ1zjJaE84hFAMaLNxHQjOQ+vELUV9WShUg3gs2EmfK6ZA==
 
 "@ethersproject/abi@5.0.7", "@ethersproject/abi@^5.0.5":
   version "5.0.7"
@@ -8061,20 +8061,20 @@ ethers@5.0.19:
     "@ethersproject/web" "5.0.9"
     "@ethersproject/wordlists" "5.0.5"
 
-etherspot@^1.18.5:
-  version "1.18.5"
-  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.18.5.tgz#4df6ea0ea6f7d06fe6bbd446e28aec62a7be9243"
-  integrity sha512-CVm6bc+VVsjYEB00xLgbeMcxfoNKrYogkXNGONN+R6nvon7AKFcgOxwOTEmIZ6P0IjF1lkYmcE/UnZEETKYh2g==
+etherspot@^1.24.0:
+  version "1.24.0"
+  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.24.0.tgz#8cee250e2ce5861722af67a1c135304f1ca61fa4"
+  integrity sha512-XlO1tEHBAvWdj0LUq9ZnkCZkuFX9NGzbbeGYeemHinUw/TtoYEUrSuk8awcfByytMSyDb5klSZE4fgVm+Jycig==
   dependencies:
     "@apollo/client" "3.4.0"
-    "@etherspot/contracts" "1.3.0"
+    "@etherspot/contracts" "1.4.0"
     "@nerdwallet/apollo-cache-policies" "1.2.1"
     class-transformer "0.4.0"
     class-validator "0.13.1"
     cross-fetch "3.1.4"
     graphql "15.5.3"
     subscriptions-transport-ws "0.9.18"
-    validator "13.5.2"
+    validator "13.7.0"
 
 ethjs-abi@0.2.0:
   version "0.2.0"
@@ -18200,10 +18200,10 @@ validate.io-undefined@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/validate.io-undefined/-/validate.io-undefined-1.0.3.tgz#7e27fcbb315b841e78243431897671929e20b7f4"
 
-validator@13.5.2:
-  version "13.5.2"
-  resolved "https://registry.yarnpkg.com/validator/-/validator-13.5.2.tgz#c97ae63ed4224999fb6f42c91eaca9567fe69a46"
-  integrity sha512-mD45p0rvHVBlY2Zuy3F3ESIe1h5X58GPfAtslBjY7EtTqGquZTj+VX/J4RnHWN8FKq0C9WRVt1oWAcytWRuYLQ==
+validator@13.7.0:
+  version "13.7.0"
+  resolved "https://registry.yarnpkg.com/validator/-/validator-13.7.0.tgz#4f9658ba13ba8f3d82ee881d3516489ea85c0857"
+  integrity sha512-nYXQLCBkpJ8X6ltALua9dRrZDHVYxjJ1wgskNt1lH9fzGjs3tgojGSCBjmEPwkWS1y29+DrizMTW19Pr9uB2nw==
 
 validator@^13.5.2:
   version "13.6.0"
