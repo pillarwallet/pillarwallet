@@ -36,6 +36,8 @@ import remoteConfig from '@react-native-firebase/remote-config';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import Instabug from 'instabug-reactnative';
+import appsFlyer from 'react-native-appsflyer';
+
 
 import 'services/localisation/translations';
 import localeConfig from 'configs/localeConfig';
@@ -218,6 +220,26 @@ class App extends React.Component<Props, *> {
       })
       .catch(e => reportOrWarn('Remote Config: An error occurred while activating:', e));
     logBreadcrumb('App.js', 'Remote Config: Finished activating latest values, if any.');
+
+    /**
+     * Next, lets set up AppsFlyer which allows us to monitor user
+     * aquisition and attribution.
+     */
+    logBreadcrumb('App.js', 'AppsFlyer: Running initSdk...');
+    appsFlyer.initSdk(
+      {
+        devKey: getEnv().APPSFLYER_DEVKEY,
+        isDebug: __DEV__,
+        appId: getEnv().IOS_APP_ID, // iOS only
+        onInstallConversionDataListener: true, // Optional
+        onDeepLinkListener: true, // Optional
+        timeToWaitForATTUserAuthorization: 10, // for iOS 14.5
+      },
+      (result) => {
+        logBreadcrumb('App.js', `AppsFlyer: initSdk completed successfully: ${result}`);
+      },
+      (error) => reportOrWarn('AppsFlyer reported an error whilst running initSdk', error),
+    );
 
     // hold the UI and wait until network status finished for later app connectivity checks
     await NetInfo.fetch()

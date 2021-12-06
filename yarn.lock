@@ -14896,6 +14896,11 @@ react-native-appearance@^0.3.2:
     invariant "^2.2.4"
     use-subscription "^1.0.0"
 
+react-native-appsflyer@^6.4.0:
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/react-native-appsflyer/-/react-native-appsflyer-6.4.0.tgz#8003e02295e8853a1b8367af803948a66553c2bf"
+  integrity sha512-3wOrHGoerhIWp9cgHoKFvBefFzh2K0yTHE0ejPPKJpg8wclWncfkeK3HrZW5H/zqgNUwwfYsdieEXKxxs/NQBA==
+
 react-native-background-timer@2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/react-native-background-timer/-/react-native-background-timer-2.1.1.tgz#9a2489681ab2f8033c213c73272e9d4c47572cd5"

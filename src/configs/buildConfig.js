@@ -24,6 +24,8 @@ import { DEVELOPMENT, PRODUCTION } from 'constants/envConstants';
 const buildType = __DEV__ ? DEVELOPMENT : PRODUCTION;
 
 export const buildEnvironment = {
+  APPSFLYER_DEVKEY: '_appsflyer_devkey_',
+  IOS_APP_ID: '1346582238',
   SENTRY_DSN: 'https://3ea39df26dd24e479c27642d11566e43@sentry.io/1294444',
   BUILD_NUMBER: '_build_number_',
   BUILD_TYPE: buildType,
