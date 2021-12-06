@@ -81,7 +81,7 @@ const AddCash = () => {
         text: 'No',
       },
     ]);
-  }, []);
+  });
 
   const getCryptoPurchaseAddress = (): string | null => {
     if (!activeAccount || !isSmartWalletAccount(activeAccount)) {
