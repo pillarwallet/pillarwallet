@@ -19,7 +19,7 @@
 */
 
 import React from 'react';
-import { ScrollView, Keyboard, Platform } from 'react-native';
+import { ScrollView, Keyboard, Platform, Alert } from 'react-native';
 import t from 'translations/translate';
 import styled from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
@@ -30,7 +30,7 @@ import { fontSizes, appFont } from 'utils/variables';
 import { isValidFiatValue } from 'utils/validators';
 import { getCurrencySymbol, hasTooMuchDecimals } from 'utils/common';
 import { openUrl } from 'utils/inAppBrowser';
-import { rampWidgetUrl } from 'utils/fiatToCrypto';
+import { rampWidgetUrl, wertWidgetUrl } from 'utils/fiatToCrypto';
 import { getActiveAccount, getAccountAddress, isSmartWalletAccount, isEtherspotAccount } from 'utils/accounts';
 import { useThemeColors } from 'utils/themes';
 import { isLogV2AppEvents } from 'utils/environment';
@@ -58,11 +58,30 @@ const AddCash = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [value, setValue] = React.useState('0');
+  const [inUS, setinUS] = React.useState(false);
   const fiatCurrency = useFiatCurrency();
   const colors = useThemeColors();
-  const currencySymbol = getCurrencySymbol(fiatCurrency);
+  const [currencySymbol, setCurrencySymbol] = React.useState(getCurrencySymbol(fiatCurrency));
   const accounts = useRootSelector(accountsSelector);
   const activeAccount = getActiveAccount(accounts);
+
+  React.useState(() => {
+    // eslint-disable-next-line i18next/no-literal-string
+    Alert.alert('', 'Do you live in the United States of America?', [
+      {
+        // eslint-disable-next-line i18next/no-literal-string
+        text: 'Yes',
+        onPress: () => {
+          setinUS(true);
+          setCurrencySymbol('$');
+        },
+      },
+      {
+        // eslint-disable-next-line i18next/no-literal-string
+        text: 'No',
+      },
+    ]);
+  }, []);
 
   const getCryptoPurchaseAddress = (): string | null => {
     if (!activeAccount || !isSmartWalletAccount(activeAccount)) {
@@ -84,6 +103,13 @@ const AddCash = () => {
   const onSelectValue = async (accessoryValue: string) => {
     Keyboard.dismiss();
     setValue(accessoryValue);
+  };
+
+  const openWert = () => {
+    const address = getCryptoPurchaseAddress();
+    if (address === null) return;
+    isLogV2AppEvents() && dispatch(logEventAction('v2_add_cash_started'));
+    openUrl(wertWidgetUrl(address, value));
   };
 
   const openRamp = () => {
@@ -128,7 +154,7 @@ const AddCash = () => {
       </ScrollView>
       <Footer behavior={Platform.OS === 'ios' ? 'position' : null}>
         <Button
-          onPress={openRamp}
+          onPress={inUS ? openWert : openRamp}
           title={t('button.next')}
           disabled={value !== null && (Number(value) === 0 || !isValidFiatValue(value))}
         />
