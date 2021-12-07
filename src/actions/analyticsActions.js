@@ -21,14 +21,15 @@ import { firebaseAnalytics } from 'services/firebase';
 import get from 'lodash.get';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
-const isTrackingEnabled = (
-  getState: GetState,
-): boolean => !get(getState(), 'appSettings.data.optOutTracking', false);
+const isTrackingEnabled = (getState: GetState): boolean => !get(getState(), 'appSettings.data.optOutTracking', false);
 
 export const logScreenViewAction = (screenName: string) => {
   return (dispatch: Dispatch, getState: GetState) => {
     if (!isTrackingEnabled(getState)) return;
-    firebaseAnalytics.setCurrentScreen(screenName, screenName);
+    firebaseAnalytics.logScreenView({
+      screen_name: screenName,
+      screen_class: screenName,
+    });
   };
 };
 

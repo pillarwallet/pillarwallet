@@ -17,15 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import '@react-native-firebase/app';
-import auth from '@react-native-firebase/auth';
-import analytics from '@react-native-firebase/analytics';
-import crashlytics from '@react-native-firebase/crashlytics';
-import messaging from '@react-native-firebase/messaging';
-import remoteConfig from '@react-native-firebase/remote-config';
 
-export const firebaseAuth = auth();
-export const firebaseAnalytics = analytics();
-export const firebaseCrashlytics = crashlytics();
-export const firebaseMessaging = messaging();
-export const firebaseRemoteConfig = remoteConfig();
+export const CONTAINER_ID = 'wert-widget';
+export const ORIGIN = __DEV__ ? 'https://sandbox.wert.io' : 'https://widget.wert.io';
+export const CRYPTO_CURRENCIES = 'MATIC,ETH';
+export const DEFAULT_FIAT_CURRENCY = 'USD';
+export const DEFAULT_CRYPTO_CURRENCY = 'ETH';

@@ -25,13 +25,7 @@ import t from 'translations/translate';
 
 // constants
 import { SET_WALLET, UPDATE_WALLET_BACKUP_STATUS } from 'constants/walletConstants';
-import {
-  APP_FLOW,
-  NEW_WALLET,
-  TUTORIAL_FLOW,
-  HOME,
-  NEW_PROFILE,
-} from 'constants/navigationConstants';
+import { APP_FLOW, NEW_WALLET, TUTORIAL_FLOW, HOME, NEW_PROFILE } from 'constants/navigationConstants';
 import { SET_USER } from 'constants/userConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import {
@@ -52,13 +46,7 @@ import Toast from 'components/Toast';
 
 // utils
 import { generateMnemonicPhrase } from 'utils/wallet';
-import {
-  reportErrorLog,
-  reportLog,
-  logBreadcrumb,
-  getEnsPrefix,
-  extractUsernameFromEnsName,
-} from 'utils/common';
+import { reportErrorLog, reportLog, logBreadcrumb, getEnsPrefix, extractUsernameFromEnsName } from 'utils/common';
 import { getAccountEnsName } from 'utils/accounts';
 import { isLogV2AppEvents } from 'utils/environment';
 
@@ -86,7 +74,6 @@ import { initialDeepLinkExecutedAction } from 'actions/appSettingsActions';
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
-
 export const setupUserAction = (username: ?string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     // eslint-disable-next-line i18next/no-literal-string
@@ -99,15 +86,14 @@ export const setupUserAction = (username: ?string) => {
     logBreadcrumb('onboarding', 'setupUserAction: dispatching SET_REGISTERING_USER');
     dispatch({ type: SET_REGISTERING_USER, payload: true });
 
-    logBreadcrumb(
-      'onboarding',
-      'setupUserAction: dispatching SET_ONBOARDING_USERNAME_REGISTRATION_FAILED',
-    );
+    logBreadcrumb('onboarding', 'setupUserAction: dispatching SET_ONBOARDING_USERNAME_REGISTRATION_FAILED');
     dispatch({ type: SET_ONBOARDING_USERNAME_REGISTRATION_FAILED, payload: false }); // reset
 
     const {
       wallet: { data: wallet },
-      session: { data: { isOnline } },
+      session: {
+        data: { isOnline },
+      },
     } = getState();
 
     // save for future onboarding retry in case anything fails or is offline
@@ -128,7 +114,7 @@ export const setupUserAction = (username: ?string) => {
     if (isOnline) {
       logBreadcrumb('onboarding', 'setupUserAction: user is online, registering for FCM Remote Notifications');
       // we us FCM notifications so we must register for FCM, not regular native Push-Notifications
-      await firebaseMessaging.registerForRemoteNotifications().catch((error) => {
+      await firebaseMessaging.registerDeviceForRemoteMessages().catch((error) => {
         reportErrorLog('firebaseMessaging.registerForRemoteNotifications failed', { error });
       });
       await firebaseMessaging.requestPermission().catch(() => null);
@@ -209,7 +195,9 @@ export const setupAppServicesAction = (privateKey: ?string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       wallet: { backupStatus },
-      session: { data: { isOnline } },
+      session: {
+        data: { isOnline },
+      },
     } = getState();
 
     logBreadcrumb('onboarding', 'setupAppServicesAction: checking for private key');
@@ -223,46 +211,28 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     // all the calls below require user to be online
     if (!isOnline) return;
 
-    logBreadcrumb(
-      'onboarding',
-      'setupAppServicesAction: dispatching updateFcmTokenAction',
-    );
+    logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching updateFcmTokenAction');
     await dispatch(updateFcmTokenAction());
 
     // active Etherspot service is required to proceed
-    logBreadcrumb(
-      'onboarding',
-      'setupAppServicesAction: dispatching initEtherspotServiceAction',
-    );
+    logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching initEtherspotServiceAction');
     await dispatch(initEtherspotServiceAction(privateKey));
 
     // user might not be registered at this point
     await dispatch(fetchSupportedAssetsAction());
 
     // create Archanova accounts if needed
-    logBreadcrumb(
-      'onboarding',
-      'setupAppServicesAction: dispatching importArchanovaAccountsIfNeededAction',
-    );
+    logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching importArchanovaAccountsIfNeededAction');
     await dispatch(importArchanovaAccountsIfNeededAction(privateKey));
 
     // create Etherspot accounts
-    logBreadcrumb(
-      'onboarding',
-      'setupAppServicesAction: dispatching importEtherspotAccountsAction',
-    );
+    logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching importEtherspotAccountsAction');
     await dispatch(importEtherspotAccountsAction());
 
-    logBreadcrumb(
-      'onboarding',
-      'setupAppServicesAction: dispatching fetchAllAccountsTotalBalancesAction',
-    );
+    logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching fetchAllAccountsTotalBalancesAction');
     dispatch(fetchAllAccountsTotalBalancesAction());
 
-    logBreadcrumb(
-      'onboarding',
-      'setupAppServicesAction: dispatching fetchTransactionsHistoryAction',
-    );
+    logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching fetchTransactionsHistoryAction');
     dispatch(fetchTransactionsHistoryAction());
 
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching rates action: fetchAssetsRatesAction');
@@ -272,10 +242,7 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     dispatch(managePPNInitFlagAction());
 
     // add wallet created / imported events
-    logBreadcrumb(
-      'onboarding',
-      'setupAppServicesAction: dispatching getWalletsCreationEventsAction',
-    );
+    logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching getWalletsCreationEventsAction');
     dispatch(addMissingWalletEventsIfNeededAction());
 
     // if wallet was imported let's check its balance for key based assets migration
@@ -291,10 +258,7 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching checkForWalletBackupToastAction');
     dispatch(checkForWalletBackupToastAction());
 
-    logBreadcrumb(
-      'onboarding',
-      'setupAppServicesAction: dispatching loadRemoteConfigWithUserPropertiesAction',
-    );
+    logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching loadRemoteConfigWithUserPropertiesAction');
     dispatch(loadRemoteConfigWithUserPropertiesAction());
   };
 };
@@ -337,10 +301,7 @@ export const finishOnboardingAction = (retry?: boolean) => {
      * initial deep link executed setting is used to prevent deep links from execution before PIN screen,
      * at this point user us authorized and we can let deep links to go through safely
      */
-    logBreadcrumb(
-      'onboarding',
-      'finishOnboardingAction: dispatching initialDeepLinkExecutedAction',
-    );
+    logBreadcrumb('onboarding', 'finishOnboardingAction: dispatching initialDeepLinkExecutedAction');
     dispatch(initialDeepLinkExecutedAction());
 
     let routeName = HOME;
@@ -349,7 +310,9 @@ export const finishOnboardingAction = (retry?: boolean) => {
     if (enableOnboardingTutorial) {
       logBreadcrumb('onboarding', 'finishOnboardingAction: dispatching fetchTutorialDataIfNeededAction');
       await dispatch(fetchTutorialDataIfNeededAction());
-      const { onboarding: { tutorialData } } = getState();
+      const {
+        onboarding: { tutorialData },
+      } = getState();
       if (tutorialData) routeName = TUTORIAL_FLOW;
     }
 
@@ -358,16 +321,15 @@ export const finishOnboardingAction = (retry?: boolean) => {
       'onboarding',
       'finishOnboardingAction: checking if tutorial needs to be shown and navigating accordingly',
     );
-    navigate(NavigationActions.navigate({
-      routeName: APP_FLOW,
-      params: {},
-      action: NavigationActions.navigate({ routeName }),
-    }));
-
-    logBreadcrumb(
-      'onboarding',
-      'finishOnboardingAction: completed, dispatching SET_FINISHING_ONBOARDING',
+    navigate(
+      NavigationActions.navigate({
+        routeName: APP_FLOW,
+        params: {},
+        action: NavigationActions.navigate({ routeName }),
+      }),
     );
+
+    logBreadcrumb('onboarding', 'finishOnboardingAction: completed, dispatching SET_FINISHING_ONBOARDING');
     isLogV2AppEvents() && dispatch(logEventAction('v2_account_sign_up_completed'));
     dispatch({ type: SET_FINISHING_ONBOARDING, payload: false });
   };
@@ -390,18 +352,20 @@ export const beginOnboardingAction = (enableBiometrics?: boolean) => {
     } = getState();
 
     logBreadcrumb('onboarding', 'beginOnboardingAction: dispatching resetAppStateAction');
-    dispatch(resetAppStateAction({
-      onboarding,
-      session: {
-        data: {
-          isOnline,
-          translationsInitialised,
-          fallbackLanguageVersion,
-          sessionLanguageCode,
-          sessionLanguageVersion,
+    dispatch(
+      resetAppStateAction({
+        onboarding,
+        session: {
+          data: {
+            isOnline,
+            translationsInitialised,
+            fallbackLanguageVersion,
+            sessionLanguageCode,
+            sessionLanguageVersion,
+          },
         },
-      },
-    }));
+      }),
+    );
 
     navigate(NavigationActions.navigate({ routeName: NEW_WALLET }));
 
@@ -411,10 +375,7 @@ export const beginOnboardingAction = (enableBiometrics?: boolean) => {
     logBreadcrumb('onboarding', 'beginOnboardingAction: dispatching setupWalletAction');
     await dispatch(setupWalletAction(enableBiometrics));
 
-    logBreadcrumb(
-      'onboarding',
-      'beginOnboardingAction: completed... dispatching finishOnboardingAction',
-    );
+    logBreadcrumb('onboarding', 'beginOnboardingAction: completed... dispatching finishOnboardingAction');
 
     dispatch(finishOnboardingAction());
   };
@@ -426,10 +387,7 @@ export const importWalletFromMnemonicAction = (mnemonicInput: string) => {
     dispatch({ type: SET_ONBOARDING_WALLET, payload: null });
     dispatch({ type: SET_ONBOARDING_USER, payload: null });
 
-    logBreadcrumb(
-      'onboarding',
-      'importWalletFromMnemonicAction: dispatching SET_IMPORTING_WALLET',
-    );
+    logBreadcrumb('onboarding', 'importWalletFromMnemonicAction: dispatching SET_IMPORTING_WALLET');
     dispatch({ type: SET_IMPORTING_WALLET });
 
     let importedWallet;
@@ -480,7 +438,6 @@ export const importWalletFromMnemonicAction = (mnemonicInput: string) => {
     logBreadcrumb('onboarding', 'importWalletFromMnemonicAction: wallet imported from Mnemonic Action');
     dispatch(logEventAction('wallet_imported', { method: 'Words Phrase' }));
     isLogV2AppEvents() && dispatch(logEventAction('v2_account_imported', { method: 'Seed phrase' }));
-
     navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
   };
 };
@@ -541,10 +498,7 @@ export const checkUsernameAvailabilityAction = (username: string) => {
     logBreadcrumb('onboarding', 'checkUsernameAvailabilityAction: searching for username}');
     const usernameTaken = await isUsernameTaken(username);
     if (usernameTaken) {
-      reportLog(
-        'checkUsernameAvailabilityAction failed',
-        t('auth:error.invalidUsername.taken'),
-      );
+      reportLog('checkUsernameAvailabilityAction failed', t('auth:error.invalidUsername.taken'));
       logBreadcrumb('onboarding', 'checkUsernameAvailabilityAction: dispatching SET_ONBOARDING_ERROR');
       dispatch({
         type: SET_ONBOARDING_ERROR,
@@ -553,11 +507,7 @@ export const checkUsernameAvailabilityAction = (username: string) => {
       return;
     }
 
-    logBreadcrumb(
-      'onboarding',
-      'checkUsernameAvailabilityAction: done, dispatching SET_ONBOARDING_USER',
-      username,
-    );
+    logBreadcrumb('onboarding', 'checkUsernameAvailabilityAction: done, dispatching SET_ONBOARDING_USER', username);
     dispatch({
       type: SET_ONBOARDING_USER,
       payload: { username },

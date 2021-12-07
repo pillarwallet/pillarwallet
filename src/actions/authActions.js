@@ -57,7 +57,7 @@ import { getDeviceUniqueId } from 'utils/device';
 // services
 import Storage from 'services/storage';
 import { navigate, getNavigationState } from 'services/navigation';
-import { firebaseIid, firebaseMessaging, firebaseRemoteConfig } from 'services/firebase';
+import { firebaseAuth, firebaseMessaging, firebaseRemoteConfig } from 'services/firebase';
 import etherspotService from 'services/etherspot';
 import archanovaService from 'services/archanova';
 
@@ -88,12 +88,11 @@ import { finishOnboardingAction } from './onboardingActions';
 import { addMissingWalletEventsIfNeededAction } from './walletEventsActions';
 import { fetchAllCollectiblesDataAction } from './collectiblesActions';
 
-
 const storage = Storage.getInstance('db');
 
 export const updateFcmTokenAction = () => {
   return async (dispatch: Dispatch) => {
-    const fcmToken = await firebaseMessaging.getToken().catch(e => {
+    const fcmToken = await firebaseMessaging.getToken().catch((e) => {
       // We was unable to fetch the FCM token.
       reportLog(`Unable to fetch Firebase FCM token: ${e.message}`, e);
       return null;
@@ -104,15 +103,15 @@ export const updateFcmTokenAction = () => {
   };
 };
 
-export const loginAction = (
-  pin: ?string,
-  privateKey: ?string,
-  onLoginSuccess: ?OnValidPinCallback,
-) => {
+export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?OnValidPinCallback) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
-      appSettings: { data: { blockchainNetwork } },
-      session: { data: { isOnline } },
+      appSettings: {
+        data: { blockchainNetwork },
+      },
+      session: {
+        data: { isOnline },
+      },
       accounts: { data: accounts },
       user: { data: user },
     } = getState();
@@ -159,7 +158,9 @@ export const loginAction = (
     const enableOnboardingTutorial = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ONBOARDING_TUTORIAL);
     if (enableOnboardingTutorial) {
       await dispatch(fetchTutorialDataIfNeededAction());
-      const { onboarding: { tutorialData } } = getState();
+      const {
+        onboarding: { tutorialData },
+      } = getState();
       if (tutorialData) navigateAction = NavigationActions.navigate({ routeName: TUTORIAL_FLOW });
     }
 
@@ -228,11 +229,15 @@ export const checkAuthAction = (
   withMnemonic: boolean = false,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { appSettings: { data: { useBiometrics } } } = getState();
+    const {
+      appSettings: {
+        data: { useBiometrics },
+      },
+    } = getState();
 
     dispatch({ type: SET_WALLET_IS_DECRYPTING });
 
-    const deviceUniqueId = getState().appSettings.data.deviceUniqueId ?? await getDeviceUniqueId();
+    const deviceUniqueId = getState().appSettings.data.deviceUniqueId ?? (await getDeviceUniqueId());
     dispatch(setDeviceUniqueIdIfNeededAction(deviceUniqueId));
 
     let wallet;
@@ -265,11 +270,15 @@ export const changePinAction = (newPin: string, currentPin: string) => {
     dispatch({ type: SET_WALLET_IS_CHANGING_PIN, payload: true });
 
     const { wallet: encryptedWallet } = await storage.get('wallet');
-    const { appSettings: { data: { useBiometrics } } } = getState();
+    const {
+      appSettings: {
+        data: { useBiometrics },
+      },
+    } = getState();
 
     dispatch({ type: SET_WALLET_IS_DECRYPTING, payload: true });
 
-    const deviceUniqueId = getState().appSettings.data.deviceUniqueId ?? await getDeviceUniqueId();
+    const deviceUniqueId = getState().appSettings.data.deviceUniqueId ?? (await getDeviceUniqueId());
     dispatch(setDeviceUniqueIdIfNeededAction(deviceUniqueId));
 
     const wallet = await decryptWalletFromStorage(currentPin, deviceUniqueId);
@@ -292,23 +301,22 @@ export const changePinAction = (newPin: string, currentPin: string) => {
 
 export const resetIncorrectPasswordAction = () => ({ type: RESET_WALLET_ERROR });
 
-export const lockScreenAction = (
-  onLoginSuccess: ?OnValidPinCallback,
-  errorMessage?: string,
-) => {
+export const lockScreenAction = (onLoginSuccess: ?OnValidPinCallback, errorMessage?: string) => {
   return () => {
-    navigate(NavigationActions.navigate({
-      routeName: AUTH_FLOW,
-      params: {},
-      action: NavigationActions.navigate({
-        routeName: PIN_CODE_UNLOCK,
-        params: {
-          onLoginSuccess,
-          errorMessage,
-          forcePin: true,
-        },
+    navigate(
+      NavigationActions.navigate({
+        routeName: AUTH_FLOW,
+        params: {},
+        action: NavigationActions.navigate({
+          routeName: PIN_CODE_UNLOCK,
+          params: {
+            onLoginSuccess,
+            errorMessage,
+            forcePin: true,
+          },
+        }),
       }),
-    }));
+    );
   };
 };
 
@@ -316,10 +324,7 @@ export const resetAppStateAction = (stateAfterReset: Object) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const {
       appSettings: {
-        data: {
-          localisation: savedLocalisation,
-          themeType: savedThemeType,
-        },
+        data: { localisation: savedLocalisation, themeType: savedThemeType },
       },
       cache: { cachedUrls },
     } = getState();
@@ -346,9 +351,11 @@ export const resetAppStateAction = (stateAfterReset: Object) => {
 export const resetAppServicesAction = () => {
   return async () => {
     // reset firebase fcm
-    await firebaseIid
-      .delete()
-      .catch(e => reportLog(`Could not delete the Firebase ID when resetting app state: ${e.message}`, e));
+    if (firebaseAuth.currentUser) {
+      await firebaseAuth.currentUser
+        .delete()
+        .catch((e) => reportLog(`Could not delete the Firebase ID when resetting app state: ${e.message}`, e));
+    }
 
     // reset storage, but restore previously set env
     const env = await storage.get('environment');
@@ -383,17 +390,19 @@ export const logoutAction = () => {
       sessionLanguageVersion,
     } = getState().session.data; // keep these session values state after reset
 
-    dispatch(resetAppStateAction({
-      session: {
-        data: {
-          isOnline,
-          translationsInitialised,
-          fallbackLanguageVersion,
-          sessionLanguageCode,
-          sessionLanguageVersion,
+    dispatch(
+      resetAppStateAction({
+        session: {
+          data: {
+            isOnline,
+            translationsInitialised,
+            fallbackLanguageVersion,
+            sessionLanguageCode,
+            sessionLanguageVersion,
+          },
         },
-      },
-    }));
+      }),
+    );
 
     // is cleaned up so we would not blind users after they delete wallet :)
 
