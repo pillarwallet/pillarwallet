@@ -19,10 +19,17 @@
 */
 
 import querystring from 'querystring';
+import WertWidget from '@wert-io/widget-initializer';
 
 // Config
 import { getEnv } from 'configs/envConfig';
 import { ARCHANOVA_RAMP_CURRENCY_TOKENS, ETHERSPOT_RAMP_CURRENCY_TOKENS } from 'configs/rampConfig';
+import {
+  CONTAINER_ID,
+  ORIGIN, CRYPTO_CURRENCIES,
+  DEFAULT_FIAT_CURRENCY,
+  DEFAULT_CRYPTO_CURRENCY,
+} from 'configs/wertConfig';
 
 const PILLAR = 'Pillar';
 
@@ -42,4 +49,22 @@ export function rampWidgetUrl(
   };
 
   return `${getEnv().RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params)}`;
+}
+
+export function wertWidgetUrl(
+  address: string,
+  fiatValue: string,
+) {
+  const wertWidget = new WertWidget({
+    partner_id: getEnv().WERT_ID,
+    container_id: CONTAINER_ID,
+    origin: ORIGIN,
+    commodities: CRYPTO_CURRENCIES,
+    currency: DEFAULT_FIAT_CURRENCY,
+    currency_amount: fiatValue,
+    commodity: DEFAULT_CRYPTO_CURRENCY,
+    address,
+  });
+
+  return wertWidget.getEmbedUrl();
 }

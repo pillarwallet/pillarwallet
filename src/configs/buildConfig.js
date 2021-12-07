@@ -29,6 +29,7 @@ export const buildEnvironment = {
   SENTRY_DSN: 'https://3ea39df26dd24e479c27642d11566e43@sentry.io/1294444',
   BUILD_NUMBER: '_build_number_',
   BUILD_TYPE: buildType,
+  WERT_ID: '_wert_id_',
   OPEN_SEA_API_KEY: '_open_sea_api_key_',
   INFURA_PROJECT_ID: '_infura_project_id_',
   RAMPNETWORK_API_KEY: '_rampnetwork_api_key_',
