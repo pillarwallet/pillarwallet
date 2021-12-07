@@ -1040,6 +1040,14 @@
     "title": {
       "servicesScreen": "Services"
     },
+    "wert": {
+      "locationCheck": {
+        "title": "Before you continue...",
+        "message": "Do you live in the United States of America?",
+        "yes": "Yes",
+        "no": "No"
+      }
+    },
     "ramp": {
       "addCash": {
         "title": "Buy Crypto",

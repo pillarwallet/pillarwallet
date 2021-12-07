@@ -19,7 +19,7 @@
 */
 
 export const CONTAINER_ID = 'wert-widget';
-export const ORIGIN = 'https://sandbox.wert.io';
+export const ORIGIN = __DEV__ ? 'https://sandbox.wert.io' : 'https://widget.wert.io';
 export const CRYPTO_CURRENCIES = 'MATIC,ETH';
 export const DEFAULT_FIAT_CURRENCY = 'USD';
 export const DEFAULT_CRYPTO_CURRENCY = 'ETH';

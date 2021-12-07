@@ -66,21 +66,20 @@ const AddCash = () => {
   const activeAccount = getActiveAccount(accounts);
 
   React.useState(() => {
-    // eslint-disable-next-line i18next/no-literal-string
-    Alert.alert('', 'Do you live in the United States of America?', [
-      {
-        // eslint-disable-next-line i18next/no-literal-string
-        text: 'Yes',
-        onPress: () => {
-          setinUS(true);
-          setCurrencySymbol('$');
+    Alert.alert(
+      t('servicesContent.wert.locationCheck.title'),
+      t('servicesContent.wert.locationCheck.message'), [
+        {
+          text: t('servicesContent.wert.locationCheck.no'),
         },
-      },
-      {
-        // eslint-disable-next-line i18next/no-literal-string
-        text: 'No',
-      },
-    ]);
+        {
+          text: t('servicesContent.wert.locationCheck.yes'),
+          onPress: () => {
+            setinUS(true);
+            setCurrencySymbol('$');
+          },
+        },
+      ]);
   });
 
   const getCryptoPurchaseAddress = (): string | null => {
