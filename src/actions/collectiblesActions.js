@@ -146,7 +146,7 @@ export const fetchCollectiblesAction = (defaultAccount?: Account) => {
       updatedAccountCollectibles = {
         ...updatedAccountCollectibles,
         [CHAIN.XDAI]: poapCollectiblesOnXDai,
-        [CHAIN.POLYGON]: collectibesOnPolygon.items.map(parsePolygonCollectibleFromEtherspot),
+        [CHAIN.POLYGON]: collectibesOnPolygon?.items?.map(parsePolygonCollectibleFromEtherspot),
       };
     }
 
