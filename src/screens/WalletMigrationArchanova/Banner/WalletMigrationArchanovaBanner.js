@@ -69,7 +69,7 @@ function WalletMigrationArchanovaBanner({ style }: Props) {
 
   return (
     <TouchableOpacity onPress={handlePress} style={style}>
-      <BackgroundGradient colors={GRADIENT_COLORS} locations={[0.05, 0.65]} useAngle angle={171}>
+      <BackgroundGradient colors={GRADIENT_COLORS} locations={[0.05, 0.65]} useAngle angle={284}>
         <Icon source={smartWalletIcon} />
 
         <Summary>
@@ -82,11 +82,10 @@ function WalletMigrationArchanovaBanner({ style }: Props) {
 
 export default WalletMigrationArchanovaBanner;
 
-const GRADIENT_COLORS = ['#008606', '#000100'];
+const GRADIENT_COLORS = ['#004f03', '#041c06'];
 
 const BackgroundGradient = styled(LinearGradient)`
   flex-direction: row;
-  padding: ${spacing.mediumLarge}px ${spacing.mediumLarge}px ${spacing.large}px;
   background-color: green;
   border-radius: 20px;
 `;
@@ -101,6 +100,9 @@ const Summary = styled.View`
 
 const Title = styled(Text)`
   font-family: '${appFont.medium}';
+  margin-top: ${spacing.mediumLarge}px;
   ${fontStyles.big};
   color: #fcfdff;
+  margin-bottom: ${spacing.small}px;
+  margin-right: ${spacing.small}px;
 `;

@@ -42,7 +42,7 @@ import { appFont, fontStyles, spacing } from 'utils/variables';
 import type { ViewStyleProp } from 'utils/types/react-native';
 
 // assets
-const smartWalletIcon = require('assets/icons/smart-wallet-migrate.png');
+const migrateEnsIcon = require('assets/icons/migrate_ens_name.png');
 
 
 type Props = {|
@@ -64,8 +64,8 @@ const MigrateEnsBanner = ({ style }: Props) => {
 
   return (
     <Wrapper onPress={onProceed} style={style}>
-      <BackgroundGradient colors={GRADIENT_COLORS} locations={[0.05, 0.65]} useAngle angle={171}>
-        <ContentIcon source={smartWalletIcon} />
+      <BackgroundGradient colors={GRADIENT_COLORS} locations={[0.05, 0.65]} useAngle angle={284}>
+        <ContentIcon source={migrateEnsIcon} />
         <Summary>
           <Title>{t('banner.title')}</Title>
         </Summary>
@@ -77,11 +77,10 @@ const MigrateEnsBanner = ({ style }: Props) => {
   );
 };
 
-const GRADIENT_COLORS = ['#008606', '#000100'];
+const GRADIENT_COLORS = ['#800080', '#3d113d'];
 
 const BackgroundGradient = styled(LinearGradient)`
   flex-direction: row;
-  padding: ${spacing.mediumLarge}px ${spacing.mediumLarge}px ${spacing.large}px;
   background-color: green;
   border-radius: 20px;
 `;
@@ -97,13 +96,14 @@ const Summary = styled.View`
 const Title = styled(Text)`
   font-family: '${appFont.archiaMedium}';
   ${fontStyles.big};
+  margin-top: ${spacing.mediumLarge}px;
   color: #fcfdff;
   margin-bottom: ${spacing.small}px;
 `;
 
 const CloseButton = styled.TouchableOpacity`
   position: absolute;
-  top: -5px;
+  top: -10px;
   right: 5px;
   border-radius: 15px;
   height: 60px;
