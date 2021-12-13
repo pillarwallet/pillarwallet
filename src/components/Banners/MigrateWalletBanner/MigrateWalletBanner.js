@@ -39,6 +39,7 @@ import { hasKeyBasedAssetsTransferInProgressSelector } from 'selectors/wallets';
 
 // Utils
 import { appFont, fontStyles, spacing } from 'utils/variables';
+import { useThemeColors } from 'utils/themes';
 
 // Services
 import { firebaseRemoteConfig } from 'services/firebase';
@@ -46,13 +47,14 @@ import { firebaseRemoteConfig } from 'services/firebase';
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
 
-const smartWalletIcon = require('assets/icons/smart-wallet-migrate.png');
+const smartWalletIcon = require('assets/icons/migrate_key_wallet.png');
 
 type Props = {|
   style?: ViewStyleProp,
 |};
 
 function MigrateWalletBanner({ style }: Props) {
+  const colors = useThemeColors();
   const { t } = useTranslationWithPrefix('smartWalletContent.banner');
   const navigation = useNavigation();
 
@@ -71,9 +73,11 @@ function MigrateWalletBanner({ style }: Props) {
     );
   };
 
+  const GRADIENT_COLORS = [colors.darkViolet, colors.darkBlackViolet];
+
   return (
     <TouchableOpacity onPress={handlePress} style={style}>
-      <BackgroundGradient colors={GRADIENT_COLORS} locations={[0.05, 0.65]} useAngle angle={171}>
+      <BackgroundGradient colors={GRADIENT_COLORS} locations={[0.05, 0.65]} useAngle angle={283}>
         <Icon source={smartWalletIcon} />
 
         <Summary>
@@ -84,11 +88,8 @@ function MigrateWalletBanner({ style }: Props) {
   );
 }
 
-const GRADIENT_COLORS = ['#008606', '#000100'];
-
 const BackgroundGradient = styled(LinearGradient)`
   flex-direction: row;
-  padding: ${spacing.mediumLarge}px ${spacing.mediumLarge}px ${spacing.large}px;
   background-color: green;
   border-radius: 20px;
 `;
@@ -103,8 +104,11 @@ const Summary = styled.View`
 
 const Title = styled(Text)`
   font-family: '${appFont.medium}';
+  margin-top: ${spacing.mediumLarge}px;
   ${fontStyles.big};
   color: #fcfdff;
+  margin-bottom: ${spacing.small}px;
+  margin-right: ${spacing.small}px;
 `;
 
 export default MigrateWalletBanner;
