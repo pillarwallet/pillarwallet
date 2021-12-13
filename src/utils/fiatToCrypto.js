@@ -21,15 +21,16 @@
 import querystring from 'querystring';
 import WertWidget from '@wert-io/widget-initializer';
 
+// Services
+import { firebaseRemoteConfig } from 'services/firebase';
+
+// Constants
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+
 // Config
 import { getEnv } from 'configs/envConfig';
 import { ARCHANOVA_RAMP_CURRENCY_TOKENS, ETHERSPOT_RAMP_CURRENCY_TOKENS } from 'configs/rampConfig';
-import {
-  CONTAINER_ID,
-  ORIGIN, CRYPTO_CURRENCIES,
-  DEFAULT_FIAT_CURRENCY,
-  DEFAULT_CRYPTO_CURRENCY,
-} from 'configs/wertConfig';
+import { CONTAINER_ID, ORIGIN } from 'configs/wertConfig';
 
 const PILLAR = 'Pillar';
 
@@ -59,10 +60,10 @@ export function wertWidgetUrl(
     partner_id: getEnv().WERT_ID,
     container_id: CONTAINER_ID,
     origin: ORIGIN,
-    commodities: CRYPTO_CURRENCIES,
-    currency: DEFAULT_FIAT_CURRENCY,
+    commodities: firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_WERT_COMMODITIES),
+    currency: firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_WERT_CURRENCY),
     currency_amount: fiatValue,
-    commodity: DEFAULT_CRYPTO_CURRENCY,
+    commodity: firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_WERT_COMMODITY),
     address,
   });
 
