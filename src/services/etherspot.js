@@ -764,7 +764,10 @@ export class EtherspotService {
   ): NftList | null {
     const sdk = this.getSdkForChain(chain);
 
-    if (!sdk) return null;
+    if (!sdk) {
+      reportErrorLog('EtherspotService getSdk failed', { chain });
+      return null;
+    }
 
     try {
       return sdk.getNftList({

@@ -94,17 +94,17 @@ export const parseCollectibleFromOpenSeaAsset = (asset: OpenSeaAsset): Collectib
 
 export const parsePolygonCollectibleFromEtherspot = (asset: NftList): Collectible => {
   return {
-    id: asset.items[0].tokenId,
-    name: asset.items[0].name,
+    id: asset.items[0]?.tokenId,
+    name: asset.items[0]?.name,
     description: asset.description,
-    icon: asset.items[0].image,
-    iconUrl: asset.items[0].image,
-    image: asset.items[0].image,
-    imageUrl: asset.items[0].image,
+    icon: asset.items[0]?.image,
+    iconUrl: asset.items[0]?.image,
+    image: asset.items[0]?.image,
+    imageUrl: asset.items[0]?.image,
     contractAddress: asset.contractAddress,
     tokenType: ASSET_TYPES.COLLECTIBLE,
     chain: CHAIN.POLYGON,
-    isLegacy: asset.nft_version === '1.0',
+    isLegacy: asset.nftVersion === '1.0',
   };
 };
 
