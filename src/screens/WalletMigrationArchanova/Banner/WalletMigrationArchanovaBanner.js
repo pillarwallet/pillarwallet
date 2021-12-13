@@ -40,6 +40,7 @@ import {
 
 // Utils
 import { appFont, fontStyles, spacing } from 'utils/variables';
+import { useThemeColors } from 'utils/themes';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
@@ -51,6 +52,7 @@ type Props = {|
 |};
 
 function WalletMigrationArchanovaBanner({ style }: Props) {
+  const colors = useThemeColors();
   const { t } = useTranslationWithPrefix('walletMigrationArchanova.banner');
   const navigation = useNavigation();
 
@@ -67,6 +69,8 @@ function WalletMigrationArchanovaBanner({ style }: Props) {
     }
   };
 
+  const GRADIENT_COLORS = [colors.darkLimeGreen, colors.darkBlackLimeGreen];
+
   return (
     <TouchableOpacity onPress={handlePress} style={style}>
       <BackgroundGradient colors={GRADIENT_COLORS} locations={[0.05, 0.65]} useAngle angle={284}>
@@ -81,8 +85,6 @@ function WalletMigrationArchanovaBanner({ style }: Props) {
 }
 
 export default WalletMigrationArchanovaBanner;
-
-const GRADIENT_COLORS = ['#004f03', '#041c06'];
 
 const BackgroundGradient = styled(LinearGradient)`
   flex-direction: row;

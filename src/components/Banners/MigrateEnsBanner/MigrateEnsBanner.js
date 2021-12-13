@@ -37,6 +37,7 @@ import { useRootSelector } from 'selectors';
 
 // utils
 import { appFont, fontStyles, spacing } from 'utils/variables';
+import { useThemeColors } from 'utils/themes';
 
 // types
 import type { ViewStyleProp } from 'utils/types/react-native';
@@ -50,6 +51,7 @@ type Props = {|
 |};
 
 const MigrateEnsBanner = ({ style }: Props) => {
+  const colors = useThemeColors();
   const isEnsMigrationNeeded = useRootSelector(isEnsMigrationNeededSelector);
   const [isVisible, setIsVisible] = useState(isEnsMigrationNeeded);
   const { t } = useTranslationWithPrefix('migrateENSContent');
@@ -61,6 +63,8 @@ const MigrateEnsBanner = ({ style }: Props) => {
 
   // banner is only hidden from current session, app reopen should bring banner back
   if (!isVisible) return null;
+
+  const GRADIENT_COLORS = [colors.patriarchPurple, colors.darkMagenta];
 
   return (
     <Wrapper onPress={onProceed} style={style}>
@@ -76,8 +80,6 @@ const MigrateEnsBanner = ({ style }: Props) => {
     </Wrapper>
   );
 };
-
-const GRADIENT_COLORS = ['#800080', '#3d113d'];
 
 const BackgroundGradient = styled(LinearGradient)`
   flex-direction: row;

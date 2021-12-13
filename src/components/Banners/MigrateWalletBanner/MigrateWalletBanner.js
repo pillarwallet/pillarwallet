@@ -39,6 +39,7 @@ import { hasKeyBasedAssetsTransferInProgressSelector } from 'selectors/wallets';
 
 // Utils
 import { appFont, fontStyles, spacing } from 'utils/variables';
+import { useThemeColors } from 'utils/themes';
 
 // Services
 import { firebaseRemoteConfig } from 'services/firebase';
@@ -53,6 +54,7 @@ type Props = {|
 |};
 
 function MigrateWalletBanner({ style }: Props) {
+  const colors = useThemeColors();
   const { t } = useTranslationWithPrefix('smartWalletContent.banner');
   const navigation = useNavigation();
 
@@ -71,6 +73,8 @@ function MigrateWalletBanner({ style }: Props) {
     );
   };
 
+  const GRADIENT_COLORS = [colors.darkViolet, colors.darkBlackViolet];
+
   return (
     <TouchableOpacity onPress={handlePress} style={style}>
       <BackgroundGradient colors={GRADIENT_COLORS} locations={[0.05, 0.65]} useAngle angle={283}>
@@ -83,8 +87,6 @@ function MigrateWalletBanner({ style }: Props) {
     </TouchableOpacity>
   );
 }
-
-const GRADIENT_COLORS = ['#54207d', '#230636'];
 
 const BackgroundGradient = styled(LinearGradient)`
   flex-direction: row;
