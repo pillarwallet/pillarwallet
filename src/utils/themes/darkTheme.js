@@ -92,4 +92,12 @@ export default {
   // common colors
   purple: '#A020F0',
   darkGreen: '#2e673c',
+
+  // Banner Background colors
+  patriarchPurple: '#800080',
+  darkMagenta: '#3d113d',
+  darkLimeGreen: '#004f03',
+  darkBlackLimeGreen: '#041c06',
+  darkViolet: '#54207d',
+  darkBlackViolet: '#230636',
 };
