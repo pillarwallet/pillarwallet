@@ -89,6 +89,7 @@ import type {
   TransactionFeeInfo,
 } from 'models/Transaction';
 import type { GasPrice } from 'models/GasInfo';
+import type { NftList } from 'etherspot';
 
 export class EtherspotService {
   sdk: EtherspotSdk;
@@ -755,6 +756,25 @@ export class EtherspotService {
       reportErrorLog('EtherspotService getExchangeOffers failed', { chain, error });
       return null;
     }
+  }
+
+  async getNftList(
+    chain: Chain,
+    address: string,
+  ): NftList | null {
+    const sdk = this.getSdkForChain(chain);
+
+    if (!sdk) {
+      reportErrorLog('EtherspotService getNftList getSdk failed', { chain });
+      return null;
+    }
+
+    return sdk.getNftList({
+      account: address,
+    }).catch((error) => {
+      reportErrorLog('EtherspotService getNftList failed', { chain, address, error });
+      return null;
+    });
   }
 
   async getTransaction(chain: Chain, hash: string): Promise<?EtherspotTransaction> {

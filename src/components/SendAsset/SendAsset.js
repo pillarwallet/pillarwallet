@@ -97,7 +97,8 @@ const SendAsset = ({
 }: Props) => {
   let defaultAssetData = navigation.getParam('assetData');
 
-  if (!defaultAssetData?.token && defaultAssetData?.contractAddress && defaultAssetData?.chain) {
+  if (!defaultAssetData?.token && defaultAssetData?.contractAddress &&
+    defaultAssetData?.chain && (defaultAssetData?.tokenType !== ASSET_TYPES.COLLECTIBLE)) {
     defaultAssetData = getAssetData(assetsWithBalance, defaultAssetData);
   }
 
@@ -106,7 +107,10 @@ const SendAsset = ({
     symbol: defaultAssetData.token,
   };
 
-  const [assetData, setAssetData] = useState<AssetOption | Collectible>(defaultAssetOption || assetsWithBalance[0]);
+  const [assetData, setAssetData] = useState<AssetOption | Collectible>(
+    defaultAssetData?.tokenType
+      ? defaultAssetData
+      : (defaultAssetOption || assetsWithBalance[0]));
   const [value, setValue] = useState(null);
   const [selectedContact, setSelectedContact] = useState(defaultContact);
   const [submitPressed, setSubmitPressed] = useState(false);
