@@ -765,18 +765,16 @@ export class EtherspotService {
     const sdk = this.getSdkForChain(chain);
 
     if (!sdk) {
-      reportErrorLog('EtherspotService getSdk failed', { chain });
+      reportErrorLog('EtherspotService getNftList getSdk failed', { chain });
       return null;
     }
 
-    try {
-      return sdk.getNftList({
-        account: address,
-      });
-    } catch (error) {
-      reportErrorLog('EtherspotService getNftList failed', { chain, error });
+    return sdk.getNftList({
+      account: address,
+    }).catch((error) => {
+      reportErrorLog('EtherspotService getNftList failed', { chain, address, error });
       return null;
-    }
+    });
   }
 
   async getTransaction(chain: Chain, hash: string): Promise<?EtherspotTransaction> {
