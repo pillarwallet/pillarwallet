@@ -127,7 +127,7 @@ function SendTokenTransaction() {
 
   useEffect(() => {
     const handleHashChange = async () => {
-      if (!hash) {
+      if (!hash && batchHash) {
         setisResolvingHash(true);
         setHash(await etherspotService.waitForTransactionHashFromSubmittedBatch(chain, batchHash));
         setisResolvingHash(false);
