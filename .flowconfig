@@ -56,6 +56,8 @@ esproposal.nullish_coalescing=enable
 module.file_ext=.js
 module.file_ext=.json
 module.file_ext=.ios.js
+module.file_ext=.ios.ts
+module.file_ext=.ios.tsx
 
 munge_underscores=true
 
