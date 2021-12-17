@@ -55,6 +55,7 @@ import type { GetState, Dispatch } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
 import type { OpenSeaAsset, OpenSeaHistoryItem } from 'models/OpenSea';
 import type { Chain } from 'models/Chain';
+import type { NftList } from 'etherspot';
 
 // Actions
 import { saveDbAction } from './dbActions';
@@ -88,6 +89,22 @@ export const parseCollectibleFromOpenSeaAsset = (asset: OpenSeaAsset): Collectib
     imageUrl: image,
     chain: CHAIN.ETHEREUM,
     isLegacy: contract.nft_version === '1.0',
+  };
+};
+
+export const parsePolygonCollectibleFromEtherspot = (asset: NftList): Collectible => {
+  return {
+    id: asset.items[0]?.tokenId,
+    name: asset.items[0]?.name,
+    description: asset.description,
+    icon: asset.items[0]?.image,
+    iconUrl: asset.items[0]?.image,
+    image: asset.items[0]?.image,
+    imageUrl: asset.items[0]?.image,
+    contractAddress: asset.contractAddress,
+    tokenType: ASSET_TYPES.COLLECTIBLE,
+    chain: CHAIN.POLYGON,
+    isLegacy: asset.nftVersion === '1.0',
   };
 };
 
@@ -125,7 +142,12 @@ export const fetchCollectiblesAction = (defaultAccount?: Account) => {
 
     if (isEtherspotAccount(account)) {
       const poapCollectiblesOnXDai = await getPoapCollectiblesOnXDai(walletAddress);
-      updatedAccountCollectibles = { ...updatedAccountCollectibles, [CHAIN.XDAI]: poapCollectiblesOnXDai };
+      const collectibesOnPolygon = await etherspotService.getNftList(CHAIN.POLYGON, walletAddress);
+      updatedAccountCollectibles = {
+        ...updatedAccountCollectibles,
+        [CHAIN.XDAI]: poapCollectiblesOnXDai,
+        [CHAIN.POLYGON]: collectibesOnPolygon?.items?.map(parsePolygonCollectibleFromEtherspot),
+      };
     }
 
     dispatch({ type: SET_ACCOUNT_COLLECTIBLES, payload: { accountId, collectibles: updatedAccountCollectibles } });

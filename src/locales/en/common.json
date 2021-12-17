@@ -60,14 +60,14 @@
   },
 
   "chains": {
-    "ethereum": "Ethereum Mainnet",
+    "ethereum": "Ethereum",
     "binance": "Binance Smart Chain",
     "xdai": "xDai Network",
     "polygon": "Polygon"
   },
 
   "chainsShort": {
-    "ethereum": "Mainnet",
+    "ethereum": "Ethereum",
     "binance": "BSC",
     "xdai": "xDai",
     "polygon": "Polygon"
