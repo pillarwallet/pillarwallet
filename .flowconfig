@@ -1,7 +1,6 @@
 [ignore]
 ; We fork some components by platform
 .*/*[.]android.js
-.*/*.tsx
 
 ; Ignore "BUCK" generated dirs
 <PROJECT_ROOT>/\.buckd/
@@ -22,6 +21,7 @@ node_modules/warning/.*
 
 [untyped]
 .*/node_modules/@react-native-community/cli/.*/.*
+.*/*[.]ts
 
 ; ;;; custom untyped start ;;;
 <PROJECT_ROOT>/metro.config.js
@@ -68,6 +68,9 @@ module.name_mapper.extension='\(bmp\|gif\|jpg\|jpeg\|png\|psd\|webp\|m4v\|mov\|m
 ; ;;; custom paths start ;;;
 
 module.name_mapper.extension='svg' -> '<PROJECT_ROOT>/src/utils/types/svg-stub.js'
+
+module.name_mapper='^src\/\(.*\)$' -> '<PROJECT_ROOT>/src/\1'
+module.name_mapper='^src' -> '<PROJECT_ROOT>/src'
 
 module.name_mapper='^screens\/\(.*\)$' -> '<PROJECT_ROOT>/src/screens/\1'
 module.name_mapper='^screens' -> '<PROJECT_ROOT>/src/screens'
