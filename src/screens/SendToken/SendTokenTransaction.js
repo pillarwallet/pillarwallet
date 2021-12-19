@@ -62,7 +62,7 @@ import type { TransactionPayload } from 'models/Transaction';
 import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 
 // Services
-import etherspotService from '../../services/etherspot';
+import etherspotService from 'services/etherspot';
 
 const animationSuccess = require('assets/animations/transactionSentConfirmationAnimation.json');
 const animationFailure = require('assets/animations/transactionFailureAnimation.json');
