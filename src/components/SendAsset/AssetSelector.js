@@ -19,7 +19,6 @@
 */
 
 import * as React from 'react';
-import { Keyboard } from 'react-native';
 import { BigNumber } from 'bignumber.js';
 
 // Components
@@ -115,14 +114,13 @@ const AssetSelector = ({
   };
 
   const handleSelectAsset = () => {
-    Keyboard.dismiss();
-
     Modal.open(() => (
       <AssetSelectorModal
         tokens={tokens}
         onSelectToken={handleSelectToken}
         collectibles={collectibles}
         onSelectCollectible={handleSelectCollectible}
+        autoFocus
       />
     ));
   };
