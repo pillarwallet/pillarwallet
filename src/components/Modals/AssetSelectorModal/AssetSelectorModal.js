@@ -43,9 +43,17 @@ type Props = {|
   collectibles?: Collectible[],
   onSelectCollectible?: (collectible: Collectible) => mixed,
   title?: string,
+  autoFocus?: boolean,
 |};
 
-const AssetSelectorModal = ({ tokens, collectibles, onSelectToken, onSelectCollectible, title }: Props) => {
+const AssetSelectorModal = ({
+  tokens,
+  collectibles,
+  onSelectToken,
+  onSelectCollectible,
+  title,
+  autoFocus = false,
+}: Props) => {
   const { t } = useTranslationWithPrefix('assetSelector');
   const colors = useThemeColors();
 
@@ -83,6 +91,7 @@ const AssetSelectorModal = ({ tokens, collectibles, onSelectToken, onSelectColle
           onSelectToken={selectToken}
           collectibles={collectibles}
           onSelectCollectible={selectCollectible}
+          autoFocus={autoFocus}
         />
       </Container>
     </SlideModal>

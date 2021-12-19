@@ -19,7 +19,6 @@
 */
 
 import * as React from 'react';
-import { Keyboard } from 'react-native';
 import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 
@@ -44,8 +43,7 @@ type Props = {|
 
 const ToAssetSelector = ({ assets, selectedAsset, onSelectAsset, value, style }: Props) => {
   const openSelectAsset = () => {
-    Keyboard.dismiss();
-    Modal.open(() => <AssetSelectorModal tokens={assets} onSelectToken={onSelectAsset} />);
+    Modal.open(() => <AssetSelectorModal tokens={assets} autoFocus onSelectToken={onSelectAsset} />);
   };
 
   return (
