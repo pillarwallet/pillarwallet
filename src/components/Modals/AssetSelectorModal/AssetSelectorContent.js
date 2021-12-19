@@ -38,16 +38,23 @@ type Props = {|
   onSelectToken: (token: AssetOption) => mixed,
   collectibles?: Collectible[],
   onSelectCollectible?: (collectible: Collectible) => mixed,
+  autoFocus?: boolean,
 |};
 
-const AssetSelectorContent = ({ tokens, collectibles, onSelectToken, onSelectCollectible }: Props) => {
+const AssetSelectorContent = ({
+  tokens,
+  collectibles,
+  onSelectToken,
+  onSelectCollectible,
+  autoFocus = false,
+}: Props) => {
   const [query, setQuery] = React.useState('');
 
   const showSearchResults = query.length >= 2;
 
   return (
     <Container>
-      <SearchBar query={query} onQueryChange={setQuery} placeholder={t('label.filterByName')} />
+      <SearchBar autoFocus={autoFocus} query={query} onQueryChange={setQuery} placeholder={t('label.filterByName')} />
 
       {!showSearchResults && (
         <DefaultAssetList
