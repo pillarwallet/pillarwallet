@@ -27,6 +27,7 @@ import Text from 'components/core/Text';
 // Utils
 import { useThemeColors } from 'utils/themes';
 import { useChainsConfig } from 'utils/uiConfig';
+import { isKeyBasedAccount } from 'utils/accounts';
 
 // Hooks
 import { useDeploymentStatus } from 'hooks/deploymentStatus';
@@ -34,6 +35,9 @@ import { useDeploymentStatus } from 'hooks/deploymentStatus';
 // Types
 import { type WalletEvent, EVENT_TYPE } from 'models/History';
 import type { Chain } from 'models/Chain';
+
+// Selectors
+import { useActiveAccount } from 'selectors';
 
 // Local
 import HistoryListItem from './HistoryListItem';
@@ -48,12 +52,13 @@ function WalletEventItem({ event, onPress, chain }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColors();
   const chainsConfig = useChainsConfig();
+  const activeAccount = useActiveAccount();
   const { isDeployedOnChain, showDeploymentInterjection } = useDeploymentStatus();
 
   if (event.type === EVENT_TYPE.WALLET_CREATED) {
     const { iconName, title } = chainsConfig[chain];
 
-    const subtitle = isDeployedOnChain?.[chain]
+    const subtitle = isKeyBasedAccount(activeAccount) || isDeployedOnChain?.[chain]
       ? null
       : t('label.walletNotDeployed');
 
@@ -74,7 +79,7 @@ function WalletEventItem({ event, onPress, chain }: Props) {
   if (event.type === EVENT_TYPE.WALLET_ACTIVATED) {
     const { iconName, title } = chainsConfig[chain];
 
-    const subtitle = isDeployedOnChain
+    const subtitle = isKeyBasedAccount(activeAccount) || isDeployedOnChain
       ? null
       : t('label.walletDeployment');
 

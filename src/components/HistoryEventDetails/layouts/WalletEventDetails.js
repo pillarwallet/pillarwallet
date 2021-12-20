@@ -37,13 +37,19 @@ import TransactionStatusText from 'components/display/TransactionStatusText';
 import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 
 // Selectors
-import { useSmartWalletAccounts } from 'selectors';
+import {
+  useAccounts,
+  useActiveAccount,
+} from 'selectors';
 
 // Hooks
 import { useDeploymentStatus } from 'hooks/deploymentStatus';
 
 // Utils
-import { getActiveAccountAddress } from 'utils/accounts';
+import {
+  getActiveAccountAddress,
+  isKeyBasedAccount,
+} from 'utils/accounts';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
@@ -62,10 +68,11 @@ type Props = {|
 
 function WalletEventDetails({ event, chain }: Props) {
   const { t } = useTranslation();
-  const accounts = useSmartWalletAccounts();
+  const accounts = useAccounts();
   const dispatch = useDispatch();
   const colors = useThemeColors();
   const chainsConfig = useChainsConfig();
+  const activeAccount = useActiveAccount();
   const { isDeployedOnChain, showDeploymentInterjection } = useDeploymentStatus();
 
   const openTopUp = () => {
@@ -88,7 +95,7 @@ function WalletEventDetails({ event, chain }: Props) {
   if (event.type === EVENT_TYPE.WALLET_CREATED) {
     const { iconName, title } = chainsConfig[chain];
 
-    const subtitle = isDeployedOnChain?.[chain]
+    const subtitle = isKeyBasedAccount(activeAccount) || isDeployedOnChain?.[chain]
       ? null
       : t('label.walletNotDeployed');
 
@@ -113,7 +120,7 @@ function WalletEventDetails({ event, chain }: Props) {
   if (event.type === EVENT_TYPE.WALLET_ACTIVATED) {
     const { iconName, title } = chainsConfig[chain];
 
-    const deploymentLabel = isDeployedOnChain
+    const deploymentLabel = isKeyBasedAccount(activeAccount) || isDeployedOnChain
       ? t('label.deployed')
       : t('label.walletDeployment');
 

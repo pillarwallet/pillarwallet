@@ -57,7 +57,6 @@ import {
   getActiveAccount,
   getAccountAddress,
   getAccountId,
-  isNotKeyBasedType,
   isArchanovaAccount,
   isEtherspotAccount,
   getAccountType,
@@ -464,9 +463,8 @@ export const fetchAllAccountsTotalBalancesAction = () => {
     dispatch({ type: SET_FETCHING_TOTAL_BALANCES, payload: true });
 
     const accounts = accountsSelector(getState());
-    const smartWalletAccounts = accounts.filter(isNotKeyBasedType);
 
-    await Promise.all(smartWalletAccounts.map(async (account) => {
+    await Promise.all(accounts.map(async (account) => {
       dispatch(fetchCollectiblesAction(account));
 
       const accountId = getAccountId(account);
@@ -593,19 +591,11 @@ export const fetchAllAccountsAssetsBalancesAction = () => {
 
     await dispatch(fetchSupportedAssetsAction());
 
-    const promises = accounts
-      .filter(isNotKeyBasedType)
-      .map((account) => dispatch(fetchAccountWalletBalancesAction(account)));
+    const promises = accounts.map((account) => dispatch(fetchAccountWalletBalancesAction(account)));
 
     await Promise
       .all(promises)
       .catch((error) => reportErrorLog('fetchAllAccountsAssetsBalancesAction failed', { error }));
-
-    // migration for key based blances to remove existing
-    const keyBasedAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
-    if (keyBasedAccount) {
-      dispatch(resetAccountAssetsBalancesAction(getAccountId(keyBasedAccount)));
-    }
 
     dispatch(fetchAssetsRatesAction());
 
