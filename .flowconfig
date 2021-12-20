@@ -21,6 +21,7 @@ node_modules/warning/.*
 
 [untyped]
 .*/node_modules/@react-native-community/cli/.*/.*
+.*/*[.]ts
 
 ; ;;; custom untyped start ;;;
 <PROJECT_ROOT>/metro.config.js
@@ -56,6 +57,7 @@ esproposal.nullish_coalescing=enable
 module.file_ext=.js
 module.file_ext=.json
 module.file_ext=.ios.js
+module.file_ext=.tsx
 
 munge_underscores=true
 
@@ -66,6 +68,9 @@ module.name_mapper.extension='\(bmp\|gif\|jpg\|jpeg\|png\|psd\|webp\|m4v\|mov\|m
 ; ;;; custom paths start ;;;
 
 module.name_mapper.extension='svg' -> '<PROJECT_ROOT>/src/utils/types/svg-stub.js'
+
+module.name_mapper='^src\/\(.*\)$' -> '<PROJECT_ROOT>/src/\1'
+module.name_mapper='^src' -> '<PROJECT_ROOT>/src'
 
 module.name_mapper='^screens\/\(.*\)$' -> '<PROJECT_ROOT>/src/screens/\1'
 module.name_mapper='^screens' -> '<PROJECT_ROOT>/src/screens'
