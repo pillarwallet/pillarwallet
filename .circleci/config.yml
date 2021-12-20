@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  aws-cli: circleci/aws-cli@0.1.17
+  aws-cli: circleci/aws-cli@2.0
   go: circleci/go@0.2.0
   slack: circleci/slack@3.4.2
 
@@ -23,7 +23,7 @@ executors:
   android-executor:
     working_directory: ~/pillarwallet
     docker:
-      - image: circleci/android:api-29-node
+      - image: cimg/android:2021.10.2-node
         auth:
           username: $DOCKERHUB_USER
           password: $DOCKERHUB_PASSWORD
@@ -36,10 +36,10 @@ executors:
       LC_ALL: en_US.UTF-8
       LANG: en_US.UTF-8
 
-  node10-executor:
+  node14-executor:
     working_directory: ~/pillarwallet
     docker:
-      - image: circleci/node:10.19
+      - image: cimg/node:14.18.1
         auth:
           username: $DOCKERHUB_USER
           password: $DOCKERHUB_PASSWORD
@@ -217,7 +217,7 @@ aliases:
 jobs:
 
   build-and-test:
-    executor: node10-executor
+    executor: node14-executor
     steps:
       - checkout
       - run:
@@ -301,6 +301,8 @@ jobs:
             sed -i.bak "s/_build_type_/staging/g" .env
             sed -i.bak "s/_build_number_/$buildNumber/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_build_number_/$buildNumber/g" .env
+            sed -i.bak "s/_wert_id_/$STAGING_WERT_ID/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_appsflyer_devkey_/$APPSFLYER_DEVKEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_infura_project_id_/$STAGING_INFURA_PROJECT_ID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" ./src/configs/buildConfig.js
@@ -415,6 +417,8 @@ jobs:
             sed -i.bak "s/_build_type_/staging/g" .env
             sed -i.bak "s/_build_number_/$buildNumber/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_build_number_/$buildNumber/g" .env
+            sed -i.bak "s/_wert_id_/$STAGING_WERT_ID/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_appsflyer_devkey_/$APPSFLYER_DEVKEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_infura_project_id_/$STAGING_INFURA_PROJECT_ID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" ./src/configs/buildConfig.js
@@ -538,6 +542,8 @@ jobs:
             sed -i.bak "s/_build_type_/production/g" .env
             sed -i.bak "s/_build_number_/$buildNumber/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_build_number_/$buildNumber/g" .env
+            sed -i.bak "s/_wert_id_/$PROD_WERT_ID/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_appsflyer_devkey_/$APPSFLYER_DEVKEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" ./src/configs/buildConfig.js
@@ -660,6 +666,8 @@ jobs:
             sed -i.bak "s/_build_type_/production/g" .env
             sed -i.bak "s/_build_number_/$buildNumber/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_build_number_/$buildNumber/g" .env
+            sed -i.bak "s/_wert_id_/$PROD_WERT_ID/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_appsflyer_devkey_/$APPSFLYER_DEVKEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" ./src/configs/buildConfig.js

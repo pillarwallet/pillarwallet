@@ -59,6 +59,9 @@ export const REMOTE_CONFIG = {
   EXCHANGE_FEE_BSC_CAPTURE_ADDRESS: 'exchange_fee_bsc_capture_address',
   EXCHANGE_FEE_CAPTURE_PERCENTAGE: 'exchange_fee_capture_percentage',
   EXCHANGE_AMOUNT_DECIMAL_PLACES: 'exchange_amount_decimal_places',
+  FEATURE_WERT_COMMODITIES: 'feature_wert_commodities',
+  FEATURE_WERT_CURRENCY: 'feature_wert_currency',
+  FEATURE_WERT_COMMODITY: 'feature_wert_commodity',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values
@@ -74,7 +77,8 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.APP_SOCIAL_DISCORD]: 'https://chat.pillar.fi',
   [REMOTE_CONFIG.APP_SOCIAL_TWITTER]: 'https://twitter.com/pillarwallet',
   [REMOTE_CONFIG.APP_SOCIAL_YOUTUBE]: 'https://www.youtube.com/channel/UCXIvBMfmYVmrV6dHIqIxEYA',
-  [REMOTE_CONFIG.LEGAL_HTML_ENDPOINT_PREFIX]: 'https://s3.eu-west-2.amazonaws.com/pillar-prod-core-profile-images/legal/',
+  [REMOTE_CONFIG.LEGAL_HTML_ENDPOINT_PREFIX]:
+    'https://s3.eu-west-2.amazonaws.com/pillar-prod-core-profile-images/legal/',
   [REMOTE_CONFIG.FEATURE_ONBOARDING_TUTORIAL]: false,
   [REMOTE_CONFIG.WALLET_MIGRATION_ARCHANOVA_ENABLED]: true,
   [REMOTE_CONFIG.ENS_MIGRATOR_ENABLED]: false,
@@ -92,7 +96,8 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.PRISMIC_TERMS_OF_POLICY_DOCUMENT_ID]: 'YNGo8hIAACMAsjRR',
   [REMOTE_CONFIG.PRISMIC_INTERJECTION_DOCUMENT_ID]: 'YNsHjxIAACIAw0ca',
   [REMOTE_CONFIG.FEATURE_WC_DASHBOARD_INAPPBROWSER]: false,
-  [REMOTE_CONFIG.TRANSACTION_REVERTED_ARTICLE_URL]: 'https://help.pillar.fi/en/articles/5556539-why-transactions-get-reverted',
+  [REMOTE_CONFIG.TRANSACTION_REVERTED_ARTICLE_URL]:
+    'https://help.pillar.fi/en/articles/5556539-why-transactions-get-reverted',
   [REMOTE_CONFIG.FEATURE_EXCHANGE_FEE_CAPTURE]: true,
   [REMOTE_CONFIG.EXCHANGE_FEE_MAINNET_CAPTURE_ADDRESS]: '0x5eD06523f9195bB6E69aE22040E85ae006915e7f',
   [REMOTE_CONFIG.EXCHANGE_FEE_XDAI_CAPTURE_ADDRESS]: '0xDF348Ec9742D1A94F3Cc721d85f5D8cB71292b5d',
@@ -100,4 +105,7 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.EXCHANGE_FEE_BSC_CAPTURE_ADDRESS]: '0xBda4bA77F5340c74f430d49120abfe0BDDAD122a',
   [REMOTE_CONFIG.EXCHANGE_FEE_CAPTURE_PERCENTAGE]: 0.85,
   [REMOTE_CONFIG.EXCHANGE_AMOUNT_DECIMAL_PLACES]: 4,
+  [REMOTE_CONFIG.FEATURE_WERT_COMMODITIES]: 'MATIC',
+  [REMOTE_CONFIG.FEATURE_WERT_COMMODITY]: 'MATIC',
+  [REMOTE_CONFIG.FEATURE_WERT_CURRENCY]: 'USD',
 };

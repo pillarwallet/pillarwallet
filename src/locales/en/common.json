@@ -60,14 +60,14 @@
   },
 
   "chains": {
-    "ethereum": "Ethereum Mainnet",
+    "ethereum": "Ethereum",
     "binance": "Binance Smart Chain",
     "xdai": "xDai Network",
     "polygon": "Polygon"
   },
 
   "chainsShort": {
-    "ethereum": "Mainnet",
+    "ethereum": "Ethereum",
     "binance": "BSC",
     "xdai": "xDai",
     "polygon": "Polygon"
@@ -1040,6 +1040,14 @@
   "servicesContent": {
     "title": {
       "servicesScreen": "Services"
+    },
+    "wert": {
+      "locationCheck": {
+        "title": "Before you continue...",
+        "message": "Do you live in the United States of America?",
+        "yes": "Yes",
+        "no": "No"
+      }
     },
     "ramp": {
       "addCash": {
