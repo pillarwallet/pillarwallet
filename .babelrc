@@ -14,6 +14,7 @@
           "models": ["./src/models"],
           "navigation": ["./src/navigation"],
           "reducers": ["./src/reducers"],
+          "redux": ["./src/redux"],
           "screens": ["./src/screens"],
           "services": ["./src/services"],
           "translations": ["./src/translations"],
