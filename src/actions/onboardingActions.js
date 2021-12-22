@@ -196,7 +196,7 @@ export const setupWalletAction = (enableBiometrics?: boolean) => {
 export const setupAppServicesAction = (privateKey: ?string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
-      wallet: { backupStatus, data: { address: keyWalletAddress } },
+      wallet: { backupStatus, data: walletData },
       session: {
         data: { isOnline },
       },
@@ -232,8 +232,12 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     await dispatch(importEtherspotAccountsAction());
 
     // create key based accounts
-    logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching addAccountAction for key based account');
-    dispatch(addAccountAction(keyWalletAddress, ACCOUNT_TYPES.KEY_BASED));
+    if (walletData?.address) {
+      logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching addAccountAction for key based account');
+      dispatch(addAccountAction(walletData.address, ACCOUNT_TYPES.KEY_BASED));
+    } else {
+      reportErrorLog('setupAppServicesAction: cannot find key based address');
+    }
 
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching fetchAllAccountsTotalBalancesAction');
     dispatch(fetchAllAccountsTotalBalancesAction());

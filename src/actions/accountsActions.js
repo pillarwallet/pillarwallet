@@ -79,7 +79,7 @@ export const addAccountAction = (
       ? patchArchanovaAccountExtra(accountExtra, accounts)
       : accountExtra;
 
-    const smartWalletAccount = {
+    const newAccount = {
       id: accountAddress,
       type,
       extra: patchedAccountExtra,
@@ -94,7 +94,7 @@ export const addAccountAction = (
       updatedAccounts.push({ ...existingAccount, extra: patchedAccountExtra });
     } else {
       // $FlowFixMe: flow gets confused here
-      updatedAccounts.push(smartWalletAccount);
+      updatedAccounts.push(newAccount);
     }
 
     dispatch({
