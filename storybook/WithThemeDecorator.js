@@ -29,9 +29,7 @@ import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import Button from 'components/legacy/Button';
 import { setAppThemeAction } from 'actions/appSettingsActions';
 import { getEnv } from 'configs/envConfig';
-import configureStore from '../src/configureStore';
-
-const { store } = configureStore();
+import { store } from 'src/configureStore';
 
 type Props = {
   themeType: string,
@@ -47,20 +45,22 @@ const StoryWrapper = ({ themeType, children, setAppTheme }: Props) => {
   return (
     <View style={{ height: '100%' }}>
       <ThemeProvider theme={theme}>
-        <Container style={{ flex: 1 }}>
-          {children}
-        </Container>
+        <Container style={{ flex: 1 }}>{children}</Container>
       </ThemeProvider>
-      {!!getEnv().SHOW_THEME_TOGGLE_IN_STORYBOOK && <Button
-        title={`THEME: ${current}`} // eslint-disable-line i18next/no-literal-string
-        onPress={() => setAppTheme(themeToChangeTo)}
-      />}
+      {!!getEnv().SHOW_THEME_TOGGLE_IN_STORYBOOK && (
+        <Button
+          title={`THEME: ${current}`} // eslint-disable-line i18next/no-literal-string
+          onPress={() => setAppTheme(themeToChangeTo)}
+        />
+      )}
     </View>
   );
 };
 
 const mapStateToProps = ({
-  appSettings: { data: { themeType } },
+  appSettings: {
+    data: { themeType },
+  },
 }: RootReducerState): $Shape<Props> => ({
   themeType,
 });
@@ -73,8 +73,6 @@ const StoryWrapperWithState = connect(mapStateToProps, mapDispatchToProps)(Story
 
 export default (story: Function) => (
   <Provider store={store}>
-    <StoryWrapperWithState>
-      {story()}
-    </StoryWrapperWithState>
+    <StoryWrapperWithState>{story()}</StoryWrapperWithState>
   </Provider>
 );
