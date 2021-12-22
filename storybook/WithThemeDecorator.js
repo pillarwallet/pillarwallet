@@ -29,7 +29,7 @@ import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import Button from 'components/legacy/Button';
 import { setAppThemeAction } from 'actions/appSettingsActions';
 import { getEnv } from 'configs/envConfig';
-import { store } from 'src/configureStore';
+import { store } from '../src/configureStore';
 
 type Props = {
   themeType: string,

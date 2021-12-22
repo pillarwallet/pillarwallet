@@ -34,23 +34,15 @@ import type { Asset } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
 import type { Transaction } from 'models/Transaction';
 
-const buildRariTransaction = (
-  accountAddress,
-  transaction,
-  rariTransactions,
-  hashes,
-  supportedAssets,
-): Transaction => {
+const buildRariTransaction = (accountAddress, transaction, rariTransactions, hashes, supportedAssets): Transaction => {
   if (!transaction.hash) return transaction;
 
-  const {
-    transfersOut = [], transfersIn = [], deposits = [], withdrawals = [], claims = [],
-  } = rariTransactions;
+  const { transfersOut = [], transfersIn = [], deposits = [], withdrawals = [], claims = [] } = rariTransactions;
 
   const txHash = transaction.hash.toLowerCase();
 
   const findRariPool = ({ tokenAddress }): ?RariPool =>
-    RARI_POOLS_ARRAY.find(pool => addressesEqual(getRariPoolsEnv(pool).RARI_FUND_TOKEN_ADDRESS, tokenAddress));
+    RARI_POOLS_ARRAY.find((pool) => addressesEqual(getRariPoolsEnv(pool).RARI_FUND_TOKEN_ADDRESS, tokenAddress));
 
   let rariTransaction = deposits.find(({ id }) => id === txHash) || withdrawals.find(({ id }) => id === txHash);
 
@@ -153,10 +145,11 @@ export const mapTransactionsHistoryWithRari = async (
     }
   }
   `;
-    /* eslint-enable i18next/no-literal-string */
-  const response = await callSubgraph(getEnv().RARI_SUBGRAPH_NAME, query) || {};
+  /* eslint-enable i18next/no-literal-string */
+  const response = (await callSubgraph(getEnv().RARI_SUBGRAPH_NAME, query)) || {};
 
   // currencyToken gotcha: currencyToken has an indexed string type in Rari abi
+  // eslint-disable-next-line max-len
   // that means according to solidity docs (https://docs.soliditylang.org/en/develop/abi-spec.html#encoding-of-indexed-event-parameters)
   // "Indexed event parameters that are not value types, i.e. arrays and structs
   // are not stored directly but instead a keccak256-hash of an encoding is stored."
@@ -164,7 +157,8 @@ export const mapTransactionsHistoryWithRari = async (
   // But hey, we know it's a hash of a currency code and we have all supported currency codes
   // So we calculate the hash out of every currency code and compare by hash
   const hashes = supportedAssets.map(({ symbol }) => ({
-    hash: `0x${keccak256(symbol)}`, symbol, // eslint-disable-line i18next/no-literal-string
+    hash: `0x${keccak256(symbol)}`, // eslint-disable-line i18next/no-literal-string
+    symbol, // eslint-disable-line i18next/no-literal-string
   }));
 
   const rariContracts = RARI_POOLS_ARRAY.reduce((contracts, pool) => {
@@ -172,13 +166,9 @@ export const mapTransactionsHistoryWithRari = async (
   }, []);
   rariContracts.push(getEnv().RARI_RGT_DISTRIBUTOR_CONTRACT_ADDRESS);
 
-  const mappedHistory = transactionHistory.reduce((
-    transactions,
-    transaction,
-    transactionIndex,
-  ) => {
+  const mappedHistory = transactionHistory.reduce((transactions, transaction, transactionIndex) => {
     const { to } = transaction;
-    if (rariContracts.find(contract => addressesEqual(contract, to))) {
+    if (rariContracts.find((contract) => addressesEqual(contract, to))) {
       transactions[transactionIndex] = buildRariTransaction(
         accountAddress,
         transaction,
