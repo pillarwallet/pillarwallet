@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
@@ -31,6 +31,7 @@ import Title from 'components/legacy/Title';
 import Button from 'components/core/Button';
 import Animation from 'components/Animation';
 import Toast from 'components/Toast';
+import Spinner from 'components/Spinner';
 
 // Utils
 import { fontSizes, spacing, objectFontStyles } from 'utils/variables';
@@ -60,6 +61,8 @@ import type { TransactionPayload } from 'models/Transaction';
 // Selectors
 import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 
+// Services
+import etherspotService from 'services/etherspot';
 
 const animationSuccess = require('assets/animations/transactionSentConfirmationAnimation.json');
 const animationFailure = require('assets/animations/transactionFailureAnimation.json');
@@ -103,6 +106,7 @@ function SendTokenTransaction() {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const fromAddress = useRootSelector(activeAccountAddressSelector);
+  const [isResolvingHash, setisResolvingHash] = useState(false);
 
   const isSuccess: boolean = useNavigationParam('isSuccess');
   const error: ?string = useNavigationParam('error');
@@ -111,7 +115,7 @@ function SendTokenTransaction() {
   const goBackDismiss: ?string = useNavigationParam('goBackDismiss');
   const noRetry: string = useNavigationParam('noRetry');
   const batchHash: ?string = useNavigationParam('batchHash');
-  const hash: ?string = useNavigationParam('hash');
+  const [hash, setHash] = useState(useNavigationParam('hash'));
 
   const {
     tokenType: transactionTokenType,
@@ -120,6 +124,18 @@ function SendTokenTransaction() {
   } = transactionPayload;
 
   const chainConfig = useChainConfig(chain);
+
+  useEffect(() => {
+    const handleHashChange = async () => {
+      if (!hash && batchHash) {
+        setisResolvingHash(true);
+        setHash(await etherspotService.waitForTransactionHashFromSubmittedBatch(chain, batchHash));
+        setisResolvingHash(false);
+      }
+    };
+    handleHashChange();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transactionPayload]);
 
   const viewOnBlockchain = () => {
     handleDismissal();
@@ -195,7 +211,9 @@ function SendTokenTransaction() {
         <ButtonWrapper>
           <Button onPress={handleDismissal} title={successButtonText} />
         </ButtonWrapper>
-        <Button variant="text" title={t('button.viewOnBlockchain')} onPress={viewOnBlockchain} />
+        {isResolvingHash
+        ? <LoadingSpinner size={25} />
+        : <Button variant="text" title={t('button.viewOnBlockchain')} onPress={viewOnBlockchain} />}
       </ButtonContainer>
     );
   };
@@ -263,4 +281,10 @@ const ButtonContainer = styled.View`
   justify-content: center;
   align-items: center;
   width: 100%;
+`;
+
+const LoadingSpinner = styled(Spinner)`
+  margin-top: ${spacing.large}px;
+  align-items: center;
+  justify-content: center;
 `;
