@@ -19,6 +19,11 @@
 */
 import t from 'translations/translate';
 import { getPlrAddressForChain } from 'configs/assetsConfig';
+import { BigNumber } from 'bignumber.js';
+import { BigNumber as EthersBigNumber } from 'ethers';
+
+// actions
+import { fetchGasInfoAction } from 'actions/historyActions';
 
 // components
 import Toast from 'components/Toast';
@@ -28,11 +33,19 @@ import archanovaService from 'services/archanova';
 import etherspotService from 'services/etherspot';
 
 // utils
-import { reportErrorLog, logBreadcrumb } from 'utils/common';
+import {
+  reportErrorLog,
+  logBreadcrumb,
+  getEthereumProvider,
+} from 'utils/common';
 import { buildArchanovaTxFeeInfo } from 'utils/archanova';
 import { buildEthereumTransaction } from 'utils/transactions';
 import { buildEtherspotTxFeeInfo } from 'utils/etherspot';
-import { getAccountAddress, getAccountType } from 'utils/accounts';
+import {
+  getAccountAddress,
+  getAccountType,
+  isKeyBasedAccount,
+} from 'utils/accounts';
 import { findAssetByAddress } from 'utils/assets';
 
 // selectors
@@ -195,6 +208,14 @@ export const estimateTransactionsAction = (
       return;
     }
 
+    if (isKeyBasedAccount(activeAccount) && transactions.length > 1) {
+      reportErrorLog(
+        'estimateTransactionsAction failed: too many transactions for key based estimation',
+        { chain, transactions: transactions.length },
+      );
+      return;
+    }
+
     const useGasToken = useGasTokenSelector(getState());
 
     const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
@@ -208,6 +229,58 @@ export const estimateTransactionsAction = (
     let feeInfo;
 
     switch (getAccountType(activeAccount)) {
+      case ACCOUNT_TYPES.KEY_BASED:
+        try {
+          logBreadcrumb(
+            'Send Flow',
+            'account type: key based wallet, calculateGasEstimate',
+            { chain },
+          );
+          const provider = getEthereumProvider();
+          const calculatedGasLimit = await provider.estimateGas(transactions[0]);
+          const calculatedGasLimitBN = EthersBigNumber.from(calculatedGasLimit);
+          estimated = calculatedGasLimitBN.add(calculatedGasLimitBN.div(5)); // adding 20% safe buffer for gas limit
+        } catch (error) {
+          dispatch(setTransactionsEstimateErrorAction(t('toast.transactionFeeEstimationFailed')));
+          reportErrorLog(
+            'estimateTransactionsAction failed: failed to calculateGasEstimate',
+            { chain, error },
+          );
+          break;
+        }
+
+        logBreadcrumb(
+          'Send Flow',
+          'account type: key based wallet, fetchGasInfoAction',
+          { chain, estimated },
+        );
+
+        await dispatch(fetchGasInfoAction(chain));
+
+        logBreadcrumb(
+          'Send Flow',
+          'account type: key based wallet, constructing fee info',
+          { chain, estimated },
+        );
+
+        try {
+          const chainGasInfo = getState()?.history?.gasInfo?.[chain];
+          if (!chainGasInfo?.isFetched || !chainGasInfo?.gasPrice) {
+            dispatch(setTransactionsEstimateErrorAction(t('toast.transactionFeeEstimationFailed')));
+            reportErrorLog('estimateTransactionsAction failed: no gas price', { chain, chainGasInfo });
+            break;
+          }
+
+          const gasPrice = chainGasInfo.gasPrice.instant;
+          const gasPriceBN = new BigNumber(gasPrice.toString());
+          const feeBN = new BigNumber(estimated.mul(gasPrice.toString()).toString());
+          feeInfo = { fee: feeBN, gasPrice: gasPriceBN };
+        } catch (error) {
+          dispatch(setTransactionsEstimateErrorAction(t('toast.transactionFeeEstimationFailed')));
+          reportErrorLog('estimateTransactionsAction failed: failed to construct fee info', { chain, error });
+        }
+
+        break;
       case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
         // reset batch, not a promise
         try {
