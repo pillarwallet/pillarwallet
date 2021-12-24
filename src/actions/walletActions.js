@@ -125,38 +125,6 @@ export const encryptAndSaveWalletAction = (
   };
 };
 
-export const enableBiometricAction = (
-  wallet: ethers.Wallet,
-  backupStatus: BackupStatus,
-  enableBiometrics: boolean = false,
-) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    dispatch({ type: SET_WALLET_IS_ENCRYPTING, payload: true });
-
-    const deviceUniqueId = getState().appSettings.data.deviceUniqueId ?? (await getDeviceUniqueId());
-    dispatch(setDeviceUniqueIdIfNeededAction(deviceUniqueId));
-
-    dispatch(
-      saveDbAction('wallet', {
-        wallet: {
-          backupStatus,
-        },
-      }),
-    );
-
-    // save data to keychain
-    const { mnemonic, privateKey } = wallet;
-    const keychainData: KeyChainData = { mnemonic: mnemonic?.phrase || '', privateKey };
-    if (enableBiometrics) {
-      await dispatch(changeUseBiometricsAction(true, keychainData, true));
-    } else {
-      await setKeychainDataObject(keychainData);
-    }
-
-    dispatch({ type: SET_WALLET_IS_ENCRYPTING, payload: false });
-  };
-};
-
 /**
  * wallet backup toast not needed if wallet is imported, backed up,
  * no key based account or key based account balances are 0

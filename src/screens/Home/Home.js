@@ -26,7 +26,7 @@ import { useTranslation } from 'translations/translate';
 // Actions
 import { fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
 import { refreshEtherspotAccountsAction } from 'actions/etherspotActions';
-import { resetOnboardingAndCreateRandomWallet } from 'actions/onboardingActions';
+import { beginOnboardingAction } from 'actions/onboardingActions';
 
 // Components
 import { Container, Content } from 'components/layout/Layout';
@@ -82,7 +82,7 @@ function Home() {
         if (biometryType) {
           Modal.open(() => <BiometricModal biometricType={biometryType} />);
         } else {
-          dispatch(resetOnboardingAndCreateRandomWallet());
+          dispatch(beginOnboardingAction());
         }
       });
     }

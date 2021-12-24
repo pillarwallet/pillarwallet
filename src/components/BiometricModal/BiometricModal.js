@@ -35,7 +35,7 @@ import { useThemeColors } from 'utils/themes';
 import { spacing, appFont } from 'utils/variables';
 
 // Actions
-import { resetOnboardingAndCreateRandomWallet } from 'actions/onboardingActions';
+import { beginOnboardingAction } from 'actions/onboardingActions';
 
 // Selectors
 import { useRootSelector } from 'selectors';
@@ -61,9 +61,9 @@ const BiometricModal = ({
 
   if (useBiometrics) return null;
 
-  const proceedTobeginOnboarding = (setBiometrics: boolean) => {
+  const proceedTobeginOnboarding = (setBiometrics?: boolean) => {
     close();
-    dispatch(resetOnboardingAndCreateRandomWallet(setBiometrics));
+    dispatch(beginOnboardingAction(setBiometrics));
   };
 
   return (
@@ -77,7 +77,7 @@ const BiometricModal = ({
             title={t('biometricLogin.button.cancel')}
             titleColor={colors.buttonTextTitle}
             variant="text"
-            onPress={close}
+            onPress={() => proceedTobeginOnboarding()}
           />
           <VerticalDivider />
           <ButtonText

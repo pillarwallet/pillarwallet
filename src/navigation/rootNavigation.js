@@ -20,12 +20,29 @@
 
 import * as React from 'react';
 import { createSwitchNavigator, createAppContainer } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
 
 // screens
+import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
+import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
+import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
+import ForgotPinScreen from 'screens/ForgotPin';
+
+// Utils
+import { modalTransition } from 'utils/common';
+
+// Components
 import { ModalProvider } from 'components/Modal';
 
+// Constants
 import {
   APP_FLOW,
+  ONBOARDING_FLOW,
+  AUTH_FLOW,
+  SET_WALLET_PIN_CODE,
+  PIN_CODE_CONFIRMATION,
+  PIN_CODE_UNLOCK,
+  FORGOT_PIN,
 } from 'constants/navigationConstants';
 
 import type { NavigationNavigator } from 'react-navigation';
@@ -36,7 +53,26 @@ type Props = {
   language: string,
 };
 
+const StackNavigatorConfig = {
+  defaultNavigationOptions: {
+    headerShown: false,
+    gestureEnabled: true,
+  },
+};
+
+const onBoardingFlow = createStackNavigator({
+  [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
+  [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
+}, StackNavigatorConfig);
+
+const authFlow = createStackNavigator({
+  [PIN_CODE_UNLOCK]: PinCodeUnlockScreen,
+  [FORGOT_PIN]: ForgotPinScreen,
+}, modalTransition);
+
 const RootSwitch: NavigationNavigator<any, {}, {}> = createSwitchNavigator({
+  [ONBOARDING_FLOW]: onBoardingFlow,
+  [AUTH_FLOW]: authFlow,
   [APP_FLOW]: AppFlow,
 });
 

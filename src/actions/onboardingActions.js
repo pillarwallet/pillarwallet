@@ -59,7 +59,6 @@ import { isLogV2AppEvents } from 'utils/environment';
 import { navigate } from 'services/navigation';
 import { firebaseMessaging, firebaseRemoteConfig } from 'services/firebase';
 import { getExistingServicesAccounts, isUsernameTaken } from 'services/onboarding';
-import { getEtherspotSupportService } from 'services/etherspot';
 
 // actions
 import { importArchanovaAccountsIfNeededAction, managePPNInitFlagAction } from 'actions/smartWalletActions';
@@ -67,7 +66,6 @@ import { saveDbAction } from 'actions/dbActions';
 import {
   checkForWalletBackupToastAction,
   encryptAndSaveWalletAction,
-  enableBiometricAction,
 } from 'actions/walletActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
@@ -90,8 +88,20 @@ export const setupAddressAction = () => {
     dispatch({ type: SET_REGISTERING_USER, payload: true });
 
     const {
-      session: { data: { isOnline } },
+      wallet: { data: wallet },
+      session: {
+        data: { isOnline },
+      },
     } = getState();
+
+    logBreadcrumb('onboarding', 'setupUserAction: checking for privateKey while setupUserAction');
+    const privateKey = wallet?.privateKey;
+    if (!privateKey) {
+      reportLog('setupUserAction failed: no privateKey');
+      logBreadcrumb('onboarding', 'setupUserAction: dispatching SET_REGISTERING_USER');
+      dispatch({ type: SET_REGISTERING_USER, payload: false });
+      return;
+    }
 
     logBreadcrumb('onboarding', 'setupAddressAction: checking user is online');
     if (isOnline) {
@@ -242,10 +252,16 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       onboarding: {
+        pinCode,
         wallet: importedWallet, // wallet was already added in import step
       },
     } = getState();
 
+    logBreadcrumb('onboarding', 'walletSetupAction: checking for pinCode');
+    if (!pinCode) {
+      reportLog('walletSetupAction failed: no pinCode');
+      return;
+    }
 
     const isImported = !!importedWallet;
 
@@ -272,21 +288,23 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
 
     // encrypt and store
     logBreadcrumb('onboarding', 'walletSetupAction: dispatching encryptAndSaveWalletAction');
-    await dispatch(enableBiometricAction(ethersWallet, backupStatus, enableBiometrics));
+    await dispatch(encryptAndSaveWalletAction(pinCode, ethersWallet, backupStatus, enableBiometrics));
+
+    logBreadcrumb('onboarding', 'walletSetupAction: dispatching saveDbAction for saving app settings');
+    dispatch(saveDbAction('app_settings', { appSettings: { wallet: +new Date() } }));
 
     logBreadcrumb('onboarding', 'walletSetupAction: dispatching setupAddressAction');
     await dispatch(setupAddressAction());
 
+    logBreadcrumb('onboarding', 'walletSetupAction: dispatching setupAppServicesAction');
     await dispatch(setupAppServicesAction(privateKey));
 
-    logBreadcrumb(
-      'onboarding',
-      'finishOnboardingAction: dispatching initialDeepLinkExecutedAction',
-    );
+    logBreadcrumb('onboarding', 'walletSetupAction: dispatching initialDeepLinkExecutedAction');
     dispatch(initialDeepLinkExecutedAction());
 
-    logBreadcrumb('onboarding', 'walletSetupAction: dispatching saveDbAction for saving app settings');
-    dispatch(saveDbAction('app_settings', { appSettings: { wallet: +new Date() } }));
+    logBreadcrumb('onboarding', 'walletSetupAction: completed, dispatching SET_FINISHING_ONBOARDING');
+    isLogV2AppEvents() && dispatch(logEventAction('v2_account_sign_up_completed'));
+    dispatch({ type: SET_FINISHING_ONBOARDING, payload: false });
   };
 };
 
@@ -466,12 +484,11 @@ export const beginOnboardingAction = (enableBiometrics?: boolean) => {
       }),
     );
 
+    logBreadcrumb('onboarding', 'beginOnboardingAction: dispatching resetAppServicesAction');
+    await dispatch(resetAppServicesAction());
+
     logBreadcrumb('onboarding', 'beginOnboardingAction: dispatching setupWalletAction');
     await dispatch(walletSetupAction(enableBiometrics));
-
-    logBreadcrumb('onboarding', 'beginOnboardingAction: completed... dispatching finishOnboardingAction');
-
-    dispatch(finishOnboardingAction());
   };
 };
 
@@ -629,21 +646,3 @@ export const resetWalletImportErrorAction = () => {
   };
 };
 
-export const resetOnboardingAndCreateRandomWallet = (enableBiometrics?: boolean) => {
-  return async (dispatch: Dispatch) => {
-    logBreadcrumb('onboarding', 'resetOnboardingAndCreateRandomWallet: dispatching resetOnboardingAction');
-    dispatch(resetOnboardingAction());
-
-    logBreadcrumb('onboarding', 'beginOnboardingAction: dispatching resetAppServicesAction');
-    await dispatch(resetAppServicesAction());
-
-    const etherspotService = await getEtherspotSupportService();
-    if (!etherspotService) {
-      reportErrorLog('getEtherspotSupportService failed');
-      return false;
-    }
-
-    dispatch(beginOnboardingAction(enableBiometrics));
-    return true;
-  };
-};

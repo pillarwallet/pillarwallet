@@ -24,6 +24,7 @@ import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
+import { isEmpty } from 'lodash';
 
 // Components
 import { Container, Content, Spacing } from 'components/layout/Layout';
@@ -126,7 +127,7 @@ const useWalletData = () => {
       }
 
       const keychainData = await getKeychainDataObject();
-      if (!keychainData) {
+      if (isEmpty(keychainData)) {
         setShowPinModal(true);
         return;
       }
