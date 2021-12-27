@@ -43,6 +43,7 @@ import { CHAIN } from 'constants/chainConstants';
 // services
 import etherspotService from 'services/etherspot';
 import archanovaService from 'services/archanova';
+import KeyBasedWallet from 'services/keyBasedWallet';
 
 // utils
 import { transformBalancesToObject } from 'utils/assets';
@@ -90,6 +91,7 @@ import { addEnsRegistryRecordAction } from './ensRegistryActions';
 
 export const sendAssetAction = (
   transaction: TransactionPayload,
+  privateKey: string,
   callback: (status: TransactionStatus) => void,
   waitForActualTransactionHash: boolean = false,
 ) => {
@@ -176,6 +178,16 @@ export const sendAssetAction = (
 
     try {
       switch (getAccountType(activeAccount)) {
+        case ACCOUNT_TYPES.KEY_BASED:
+          logBreadcrumb(
+            'Send Flow',
+            'sendAssetAction: account type: key based wallet sending transaction',
+            { transaction, accountAddress, chain },
+          );
+          const keyBasedWallet = new KeyBasedWallet(privateKey);
+          const { transactionEstimate: { feeInfo } } = getState();
+          transactionResult = await keyBasedWallet.sendTransaction(transaction, accountAddress, feeInfo);
+          break;
         case ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET:
           logBreadcrumb(
             'Send Flow',

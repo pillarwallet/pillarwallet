@@ -28,9 +28,11 @@ import { ETH } from 'constants/assetsConstants';
 import { getEthereumProvider } from 'utils/common';
 import { catchTransactionError } from 'utils/wallet';
 import { getAccountAddress } from 'utils/accounts';
+import { mapToEthereumTransactions } from 'utils/transactions';
 
 // services
 import {
+  sendRawTransaction,
   transferERC20,
   transferERC721,
   transferETH,
@@ -38,7 +40,11 @@ import {
 
 // types
 import type { Account } from 'models/Account';
-import type { CollectibleTransactionPayload, TransactionPayload } from 'models/Transaction';
+import type {
+  CollectibleTransactionPayload,
+  TransactionFeeInfo,
+  TransactionPayload,
+} from 'models/Transaction';
 
 
 type CalculateNonceResult = {
@@ -188,6 +194,28 @@ export default class KeyBasedWalletProvider {
         to,
         amount,
       }));
+  }
+
+  async sendTransaction(
+    transaction: TransactionPayload,
+    fromAccountAddress: string,
+    feeInfo: TransactionFeeInfo,
+  ) {
+    const mappedTransactions = await mapToEthereumTransactions(transaction, fromAccountAddress);
+
+    const transactionCount = await this.getTransactionCount(fromAccountAddress);
+    const nonce = transactionCount || 0;
+
+    const { fee, gasPrice } = feeInfo;
+    const gasPriceBN = ethers.BigNumber.from(gasPrice.toString());
+    const gasLimitBN = ethers.BigNumber.from(fee.toString()).div(gasPriceBN);
+
+    return sendRawTransaction(this.wallet, {
+      ...mappedTransactions[0], // key based always sends single
+      gasLimit: gasLimitBN,
+      gasPrice: gasPriceBN,
+      nonce,
+    });
   }
 
   async calculateNonce(
