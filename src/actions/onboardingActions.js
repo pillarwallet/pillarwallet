@@ -94,11 +94,11 @@ export const setupAddressAction = () => {
       },
     } = getState();
 
-    logBreadcrumb('onboarding', 'setupUserAction: checking for privateKey while setupUserAction');
+    logBreadcrumb('onboarding', 'setupAddressAction: checking for privateKey while setupUserAction');
     const privateKey = wallet?.privateKey;
     if (!privateKey) {
-      reportLog('setupUserAction failed: no privateKey');
-      logBreadcrumb('onboarding', 'setupUserAction: dispatching SET_REGISTERING_USER');
+      reportLog('setupAddressAction failed: no privateKey');
+      logBreadcrumb('onboarding', 'setupAddressAction: dispatching SET_REGISTERING_USER');
       dispatch({ type: SET_REGISTERING_USER, payload: false });
       return;
     }
