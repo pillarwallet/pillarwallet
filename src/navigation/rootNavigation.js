@@ -22,11 +22,13 @@ import * as React from 'react';
 import { createSwitchNavigator, createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
-// screens
+// Screens
 import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
 import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import ForgotPinScreen from 'screens/ForgotPin';
+import ImportWalletScreen from 'screens/ImportWallet';
+import ImportWalletLegalsScreen from 'screens/ImportWallet/ImportWalletLegals';
 
 // Utils
 import { modalTransition } from 'utils/common';
@@ -43,6 +45,8 @@ import {
   PIN_CODE_CONFIRMATION,
   PIN_CODE_UNLOCK,
   FORGOT_PIN,
+  IMPORT_WALLET_LEGALS,
+  IMPORT_WALLET,
 } from 'constants/navigationConstants';
 
 import type { NavigationNavigator } from 'react-navigation';
@@ -63,6 +67,8 @@ const StackNavigatorConfig = {
 const onBoardingFlow = createStackNavigator({
   [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
   [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
+  [IMPORT_WALLET_LEGALS]: ImportWalletLegalsScreen,
+  [IMPORT_WALLET]: ImportWalletScreen,
 }, StackNavigatorConfig);
 
 const authFlow = createStackNavigator({
