@@ -112,6 +112,7 @@ export class EtherspotService {
       NetworkNames.Bsc,
       NetworkNames.Matic,
       NetworkNames.Xdai,
+      isMainnet ? NetworkNames.Avalanche : NetworkNames.Fuji,
     ];
 
     const primaryNetworkName = isMainnet ? NetworkNames.Mainnet : NetworkNames.Kovan;
@@ -121,9 +122,15 @@ export class EtherspotService {
      * array of instantiated instances
      */
     await Promise.all(this.supportedNetworks.map(async (networkName) => {
-      const env = networkName !== NetworkNames.Kovan ? EnvNames.MainNets : EnvNames.TestNets;
-      this.instances[networkName] = new EtherspotSdk(privateKey, { env, networkName, projectKey: PROJECT_KEY });
-
+      const env =
+         networkName !== NetworkNames.Kovan && networkName !== NetworkNames.Matic && networkName !== NetworkNames.Fuji
+           ? EnvNames.MainNets
+           : EnvNames.TestNets;
+      this.instances[networkName] = new EtherspotSdk(privateKey, {
+        env,
+        networkName: networkName === NetworkNames.Matic ? NetworkNames.Mumbai : networkName,
+        projectKey: PROJECT_KEY,
+      });
       if (fcmToken) {
         try {
           await this.instances[networkName].createSession({ fcmToken });
@@ -196,6 +203,13 @@ export class EtherspotService {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) return null;
 
+    if (chain === CHAIN.AVALANCHE) {
+      return sdk.getAccount({ address: sdk.state.accountAddress }).catch((error) => {
+        reportErrorLog('EtherspotService getAccount failed', { error });
+        return null;
+      });
+    }
+
     return sdk.getAccount({ address: accountAddress }).catch((error) => {
       reportErrorLog('EtherspotService getAccount failed', { error });
       return null;
@@ -203,12 +217,13 @@ export class EtherspotService {
   }
 
   async getAccountPerChains(accountAddress: string): Promise<ChainRecord<?EtherspotAccount>> {
+    const avalanche = await this.getAccount(CHAIN.AVALANCHE, accountAddress);
     const ethereum = await this.getAccount(CHAIN.ETHEREUM, accountAddress);
     const binance = await this.getAccount(CHAIN.BINANCE, accountAddress);
     const polygon = await this.getAccount(CHAIN.POLYGON, accountAddress);
     const xdai = await this.getAccount(CHAIN.XDAI, accountAddress);
 
-    return { ethereum, binance, polygon, xdai };
+    return { ethereum, binance, polygon, xdai, avalanche };
   }
 
   getAccounts(): Promise<?EtherspotAccount[]> {
@@ -234,7 +249,7 @@ export class EtherspotService {
       .map(({ address }) => address);
 
     let balancesRequestPayload = {
-      account: accountAddress,
+      account: chain === CHAIN.AVALANCHE ? sdk.state.accountAddress : accountAddress,
     };
 
     if (assetAddresses.length) {
@@ -543,6 +558,9 @@ export class EtherspotService {
       case CHAIN.BINANCE:
         blockchainExplorerUrl = getEnv().TX_DETAILS_URL_BINANCE;
         break;
+      case CHAIN.AVALANCHE:
+        blockchainExplorerUrl = getEnv().TX_DETAILS_URL_AVALANCHE;
+        break;
       default:
         blockchainExplorerUrl = getEnv().TX_DETAILS_URL_ETHEREUM;
         break;
@@ -598,6 +616,16 @@ export class EtherspotService {
     if (!sdk) {
       reportErrorLog('getSupportedAssetsByChain failed: no sdk instance for chain', { chain });
       return null;
+    }
+
+    if (chain === CHAIN.AVALANCHE) {
+      return sdk
+        .getTransactions({ account: sdk.state.accountAddress })
+        .then(({ items }) => items)
+        .catch((error) => {
+          reportErrorLog('getTransactionsByAddress -> getTransactions failed', { address, chain, error });
+          return null;
+        });
     }
 
     return sdk
@@ -816,6 +844,8 @@ function networkNameFromChain(chain: Chain): ?string {
       return NetworkNames.Matic;
     case CHAIN.XDAI:
       return NetworkNames.Xdai;
+    case CHAIN.AVALANCHE:
+      return isProdEnv() ? NetworkNames.Avalanche : NetworkNames.Fuji;
     default:
       return null;
   }
@@ -832,6 +862,9 @@ function chainFromNetworkName(networkName: string): ?Chain {
       return CHAIN.POLYGON;
     case NetworkNames.Xdai:
       return CHAIN.XDAI;
+    case NetworkNames.Avalanche:
+    case NetworkNames.Fuji:
+      return CHAIN.AVALANCHE;
     default:
       return null;
   }

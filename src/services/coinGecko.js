@@ -66,6 +66,7 @@ export const chainToCoinGeckoCoinId = {
   [CHAIN.POLYGON]: 'matic-network',
   [CHAIN.BINANCE]: 'binancecoin',
   [CHAIN.XDAI]: 'xdai',
+  [CHAIN.AVALANCHE]: 'avalanche',
 };
 
 const chainToCoinGeckoNetwork = {
@@ -73,6 +74,7 @@ const chainToCoinGeckoNetwork = {
   [CHAIN.POLYGON]: 'polygon-pos',
   [CHAIN.BINANCE]: 'binance-smart-chain',
   [CHAIN.XDAI]: 'xdai',
+  [CHAIN.AVALANCHE]: 'avalanche',
 };
 /* eslint-enable i18next/no-literal-string */
 
