@@ -65,10 +65,10 @@ const StackNavigatorConfig = {
 };
 
 const onBoardingFlow = createStackNavigator({
-  [IMPORT_WALLET_LEGALS]: ImportWalletLegalsScreen,
-  [IMPORT_WALLET]: ImportWalletScreen,
   [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
   [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
+  [IMPORT_WALLET_LEGALS]: ImportWalletLegalsScreen,
+  [IMPORT_WALLET]: ImportWalletScreen,
 }, StackNavigatorConfig);
 
 const authFlow = createStackNavigator({
