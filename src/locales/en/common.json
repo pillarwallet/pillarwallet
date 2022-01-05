@@ -1223,7 +1223,8 @@
     "waitingForWalletConnectConnection": "Waiting for WalletConnect service…",
     "transactionReverted": "Something went wrong. Try again or tap this message for details.",
     "seedPhraseCopiedToClipboard": "12 words copied to clipboard",
-    "privateKeyCopiedToClipboard": "Private Key copied to clipboard"
+    "privateKeyCopiedToClipboard": "Private Key copied to clipboard",
+    "missingCopyAddress": "Sorry, Cannot copy address to clipboard"
   },
 
   "exchangeContent": {
@@ -1449,7 +1450,12 @@
   "receiveModal": {
     "etherspotSingleAddressInfo": "All chains use single wallet address.",
     "notDeployedWarning": "Receive <0>{{chain}}</0> assets",
-    "withCaution": "with caution."
+    "withCaution": "with caution.",
+    "title": "Receive",
+    "copyButton": "Address",
+    "activationText": "You need to activate your smart wallet first.",
+    "activateText": "Activate",
+    "notDeployedText": "Sending tokens is unavailable. Currently you can only receive funds in <0>{{chain}} wallet"
   },
 
   "tooltip": {
