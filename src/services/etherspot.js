@@ -618,18 +618,8 @@ export class EtherspotService {
       return null;
     }
 
-    if (chain === CHAIN.AVALANCHE) {
-      return sdk
-        .getTransactions({ account: sdk.state.accountAddress })
-        .then(({ items }) => items)
-        .catch((error) => {
-          reportErrorLog('getTransactionsByAddress -> getTransactions failed', { address, chain, error });
-          return null;
-        });
-    }
-
     return sdk
-      .getTransactions({ account: address })
+      .getTransactions({ account: sdk.state.accountAddress })
       .then(({ items }) => items)
       .catch((error) => {
         reportErrorLog('getTransactionsByAddress -> getTransactions failed', { address, chain, error });
