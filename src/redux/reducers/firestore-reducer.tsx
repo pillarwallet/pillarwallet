@@ -2,6 +2,7 @@ import { IReduxActions } from 'redux/interfaces/IReduxActions';
 import { updateObject, createReducer } from 'redux/reducers/reducer-utilities';
 import { ProcessState } from 'models/ProcessState';
 import { ReduxFirestoreType as t } from 'redux/redux-types/firestore-type';
+import { logBreadcrumb } from 'utils/common';
 
 export interface IReduxFirestoreState {
   initialised?: boolean;
@@ -16,9 +17,9 @@ const initialState: IReduxFirestoreState = {
 };
 
 const sendDataToFirestore = (state: IReduxFirestoreState, actions: IReduxActions) => {
-  console.log(TAG, 'sending data to firestore reducer');
+  logBreadcrumb(TAG, 'sending data to firestore reducer');
   if (state.lastSentDataUtc) {
-    console.log(TAG, 'last sent:', state.lastSentDataUtc);
+    logBreadcrumb(TAG, 'last sent:', state.lastSentDataUtc);
   }
   return updateObject(state, {});
 };
@@ -29,13 +30,13 @@ export interface IReduxDataSentToFireStore extends IReduxActions {
   };
 }
 const dataSentToFirestore = (state: IReduxFirestoreState, actions: IReduxDataSentToFireStore) => {
-  console.log(TAG, 'data sent to firestore');
+  logBreadcrumb(TAG, 'data sent to firestore');
   let time = actions.payload.time;
   return updateObject(state, { sendDataState: ProcessState.HANDLED, lastSentDataUtc: time });
 };
 
 const sendDataToFirestoreError = (state: IReduxFirestoreState, actions: IReduxActions) => {
-  console.log(TAG, 'send data to firestore error');
+  logBreadcrumb(TAG, 'send data to firestore error');
   return updateObject(state, { sendDataState: ProcessState.HANDLED });
 };
 
