@@ -29,6 +29,7 @@ export interface IReduxDataSentToFireStore extends IReduxActions {
     time: string;
   };
 }
+
 const dataSentToFirestore = (state: IReduxFirestoreState, actions: IReduxDataSentToFireStore) => {
   logBreadcrumb(TAG, 'data sent to firestore');
   let time = actions.payload.time;
