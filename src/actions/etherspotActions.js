@@ -63,7 +63,6 @@ import {
 import {
   findAccountById,
   findFirstEtherspotAccount,
-  getAccountAddress,
   getAccountId,
   isEtherspotAccount,
 } from 'utils/accounts';
@@ -87,8 +86,7 @@ export const connectEtherspotAccountAction = (accountId: string) => {
       return;
     }
 
-    const accountAddress = getAccountAddress(account);
-    const extra = await etherspotService.getAccountPerChains(accountAddress);
+    const extra = await etherspotService.getAccountPerChains();
 
     if (!extra?.ethereum) {
       reportErrorLog('connectEtherspotAccountAction failed: no ethereum account', { accountId, account });
@@ -149,7 +147,7 @@ export const importEtherspotAccountsAction = () => {
 
     // sync accounts with app
     await Promise.all(etherspotAccounts.map(async ({ address: etherspotAccountAddress }) => {
-      const extra = await etherspotService.getAccountPerChains(etherspotAccountAddress);
+      const extra = await etherspotService.getAccountPerChains();
       dispatch(addAccountAction(
         etherspotAccountAddress,
         ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
@@ -198,7 +196,7 @@ export const refreshEtherspotAccountsAction = () => {
     // sync accounts with app
     await Promise.all(
       etherspotAccounts.map(async ({ address: etherspotAccountAddress }) => {
-        const extra = await etherspotService.getAccountPerChains(etherspotAccountAddress);
+        const extra = await etherspotService.getAccountPerChains();
         if (isEtherspotAccount(account)) handleAccountStateChange(extra, account?.extra, dispatch);
         dispatch(updateAccountExtraIfNeededAction(etherspotAccountAddress, extra));
       }),
@@ -216,6 +214,8 @@ const getChain = (chain: Chain) => {
       return CHAIN_SHORT.XDAI.toLowerCase();
     case CHAIN_NAMES.POLYGON:
       return CHAIN_SHORT.POLYGON.toLowerCase();
+    case CHAIN_NAMES.AVALANCHE:
+      return CHAIN_SHORT.AVALANCHE.toLowerCase();
     default:
       return '';
   }

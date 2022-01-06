@@ -38,6 +38,7 @@ import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
 import IconBinance from 'assets/icons/svg/icon-24-binance.svg';
 import IconXdai from 'assets/icons/svg/icon-24-xdai.svg';
 import IconPolygon from 'assets/icons/svg/icon-24-polygon.svg';
+import IconAvalanche from 'assets/icons/svg/icon-24-avalanche.svg';
 
 type Props = {|
   url: ?string,
@@ -95,6 +96,7 @@ const IconComponentPerChain = {
   polygon: IconPolygon,
   binance: IconBinance,
   xdai: IconXdai,
+  avalanche: IconAvalanche,
 };
 
 const Container = styled.View``;
