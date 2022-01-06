@@ -22,7 +22,7 @@
 import { isProdEnv } from 'utils/environment';
 
 // Constants
-import { ETH, MATIC, BNB, XDAI, ADDRESS_ZERO } from 'constants/assetsConstants';
+import { ETH, MATIC, BNB, AVAX, XDAI, ADDRESS_ZERO } from 'constants/assetsConstants';
 import { CHAIN, CHAIN_ID } from 'constants/chainConstants';
 
 // Utils
@@ -39,6 +39,8 @@ export const chainFromChainId: { [number]: Chain } = {
   [CHAIN_ID.BINANCE]: CHAIN.BINANCE,
   [CHAIN_ID.XDAI]: CHAIN.XDAI,
   [CHAIN_ID.POLYGON]: CHAIN.POLYGON,
+  [CHAIN_ID.AVALANCHE]: CHAIN.AVALANCHE,
+  [CHAIN_ID.FUJI]: CHAIN.AVALANCHE,
 };
 
 /**
@@ -49,6 +51,7 @@ export function mapChainToChainId(chain: Chain): number {
   if (chain === CHAIN.POLYGON) return CHAIN_ID.POLYGON;
   if (chain === CHAIN.BINANCE) return CHAIN_ID.BINANCE;
   if (chain === CHAIN.XDAI) return CHAIN_ID.XDAI;
+  if (chain === CHAIN.AVALANCHE) return isProdEnv() ? CHAIN_ID.AVALANCHE : CHAIN_ID.FUJI;
 
   // Default to Ethereum, should not happen as above check is exhaustive.
   return isProdEnv() ? CHAIN_ID.ETHEREUM_MAINNET : CHAIN_ID.ETHEREUM_KOVAN;
@@ -59,7 +62,7 @@ export function getSupportedChains(account: ?Account): Chain[] {
     return [CHAIN.ETHEREUM];
   }
 
-  return [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM];
+  return [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM, CHAIN.AVALANCHE];
 }
 
 /* eslint-disable i18next/no-literal-string */
@@ -95,6 +98,14 @@ export const nativeAssetPerChain = {
     symbol: XDAI,
     decimals: 18,
     iconUrl: 'https://tokens.1inch.exchange/0x6b175474e89094c44da98b954eedeac495271d0f.png',
+  },
+  avalanche: {
+    chain: CHAIN.AVALANCHE,
+    address: ADDRESS_ZERO,
+    name: 'Avalanche',
+    symbol: AVAX,
+    decimals: 18,
+    iconUrl: 'https://image.pngaaa.com/19/5554019-middle.png',
   },
 };
 
