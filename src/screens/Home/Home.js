@@ -97,7 +97,7 @@ function Home() {
   const balancePerCategory = calculateTotalBalancePerCategory(accountTotalBalances);
   const balancePerChain = calculateTotalBalancePerChain(accountTotalBalances);
   const totalBalance = sumRecord(balancePerCategory);
-  const showRegisterENSTooltip = !user.username && accountAddress;
+  const showRegisterENSTooltip = !user.username && !!accountAddress;
 
   const isRefreshing = useRootSelector(({ totalBalances }) => !!totalBalances.isFetching);
   const onRefresh = () => {
