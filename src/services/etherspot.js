@@ -123,12 +123,12 @@ export class EtherspotService {
      */
     await Promise.all(this.supportedNetworks.map(async (networkName) => {
       const env =
-         networkName !== NetworkNames.Kovan && networkName !== NetworkNames.Matic && networkName !== NetworkNames.Fuji
+         networkName !== NetworkNames.Kovan && networkName !== NetworkNames.Fuji
            ? EnvNames.MainNets
            : EnvNames.TestNets;
       this.instances[networkName] = new EtherspotSdk(privateKey, {
         env,
-        networkName: networkName === NetworkNames.Matic ? NetworkNames.Mumbai : networkName,
+        networkName,
         projectKey: PROJECT_KEY,
       });
       if (fcmToken) {
@@ -199,29 +199,22 @@ export class EtherspotService {
     return sdk;
   }
 
-  getAccount(chain: Chain, accountAddress: string): ?Promise<?EtherspotAccount> {
+  getAccount(chain: Chain): ?Promise<?EtherspotAccount> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) return null;
 
-    if (chain === CHAIN.AVALANCHE) {
-      return sdk.getAccount({ address: sdk.state.accountAddress }).catch((error) => {
-        reportErrorLog('EtherspotService getAccount failed', { error });
-        return null;
-      });
-    }
-
-    return sdk.getAccount({ address: accountAddress }).catch((error) => {
+    return sdk.getAccount({ address: sdk.state.accountAddress }).catch((error) => {
       reportErrorLog('EtherspotService getAccount failed', { error });
       return null;
     });
   }
 
-  async getAccountPerChains(accountAddress: string): Promise<ChainRecord<?EtherspotAccount>> {
-    const avalanche = await this.getAccount(CHAIN.AVALANCHE, accountAddress);
-    const ethereum = await this.getAccount(CHAIN.ETHEREUM, accountAddress);
-    const binance = await this.getAccount(CHAIN.BINANCE, accountAddress);
-    const polygon = await this.getAccount(CHAIN.POLYGON, accountAddress);
-    const xdai = await this.getAccount(CHAIN.XDAI, accountAddress);
+  async getAccountPerChains(): Promise<ChainRecord<?EtherspotAccount>> {
+    const avalanche = await this.getAccount(CHAIN.AVALANCHE);
+    const ethereum = await this.getAccount(CHAIN.ETHEREUM);
+    const binance = await this.getAccount(CHAIN.BINANCE);
+    const polygon = await this.getAccount(CHAIN.POLYGON);
+    const xdai = await this.getAccount(CHAIN.XDAI);
 
     return { ethereum, binance, polygon, xdai, avalanche };
   }
@@ -618,18 +611,8 @@ export class EtherspotService {
       return null;
     }
 
-    if (chain === CHAIN.AVALANCHE) {
-      return sdk
-        .getTransactions({ account: sdk.state.accountAddress })
-        .then(({ items }) => items)
-        .catch((error) => {
-          reportErrorLog('getTransactionsByAddress -> getTransactions failed', { address, chain, error });
-          return null;
-        });
-    }
-
     return sdk
-      .getTransactions({ account: address })
+      .getTransactions({ account: sdk.state.accountAddress })
       .then(({ items }) => items)
       .catch((error) => {
         reportErrorLog('getTransactionsByAddress -> getTransactions failed', { address, chain, error });
