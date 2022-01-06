@@ -113,21 +113,23 @@ export class EtherspotService {
      * Cycle through the supported networks and build an
      * array of instantiated instances
      */
-    await Promise.all(this.supportedNetworks.map(async (networkName) => {
-      const env =
-         networkName !== NetworkNames.Kovan && networkName !== NetworkNames.Fuji
-           ? EnvNames.MainNets
-           : EnvNames.TestNets;
-      this.instances[networkName] = new EtherspotSdk(privateKey, {
-        env,
-        networkName,
-        projectKey: PROJECT_KEY,
-      });
-      if (fcmToken) {
-        try {
-          await this.instances[networkName].computeContractAccount({ sync: true });
-        } catch (error) {
-          reportErrorLog('EtherspotService network init failed at computeContractAccount', { networkName, error });
+    await Promise.all(
+      this.supportedNetworks.map(async (networkName) => {
+        const env =
+          networkName !== NetworkNames.Kovan && networkName !== NetworkNames.Fuji
+            ? EnvNames.MainNets
+            : EnvNames.TestNets;
+        this.instances[networkName] = new EtherspotSdk(privateKey, {
+          env,
+          networkName,
+          projectKey: PROJECT_KEY,
+        });
+        if (fcmToken) {
+          try {
+            await this.instances[networkName].computeContractAccount({ sync: true });
+          } catch (error) {
+            reportErrorLog('EtherspotService network init failed at computeContractAccount', { networkName, error });
+          }
         }
       }),
     );
