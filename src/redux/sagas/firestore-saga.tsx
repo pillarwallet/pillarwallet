@@ -1,4 +1,4 @@
-import { takeEvery, call, put, take, select } from 'redux-saga/effects';
+import { takeEvery, call, put } from 'redux-saga/effects';
 import { ReduxFirestoreType as t } from 'redux/redux-types/firestore-type';
 import { IReduxActions } from 'redux/interfaces/IReduxActions';
 import { IReduxDataSentToFireStore } from 'redux/reducers/firestore-reducer';
