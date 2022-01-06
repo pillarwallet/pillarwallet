@@ -602,7 +602,8 @@
       "viewBackupPhrase": "View 12 words",
       "viewPrivateKey": "View Private Key",
       "backupNotFinishedWarning": "Security warning",
-      "backupComplete": "Backup complete"
+      "backupComplete": "Backup complete",
+      "importWallet": "Import Wallet"
     },
     "selectLanguage": {
       "title": "Language"

@@ -54,6 +54,7 @@ import BiometricLoginSetting from './components/BiometricLoginSetting';
 import ChangePinSetting from './components/ChangePinSetting';
 import ViewBackupPhraseSetting from './components/ViewBackupPhraseSetting';
 import BackupWalletSetting from './components/BackupWalletSetting';
+import ImportFlowSetting from './components/ImportFlowSetting';
 
 const Settings = () => {
   const { t } = useTranslationWithPrefix('menu.settings');
@@ -82,6 +83,7 @@ const Settings = () => {
           <View>
             <Header>{t('walletBackup')}</Header>
             <BackupWalletSetting wallet={wallet} />
+            <ImportFlowSetting />
           </View>
         )}
 

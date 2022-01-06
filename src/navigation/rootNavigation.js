@@ -23,6 +23,7 @@ import { createSwitchNavigator, createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
 // Screens
+import NewProfileScreen from 'screens/NewProfile';
 import ImportWalletScreen from 'screens/ImportWallet';
 import ImportWalletLegalsScreen from 'screens/ImportWallet/ImportWalletLegals';
 import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
@@ -42,6 +43,7 @@ import {
   ONBOARDING_FLOW,
   AUTH_FLOW,
   SET_WALLET_PIN_CODE,
+  NEW_PROFILE,
   IMPORT_WALLET,
   PIN_CODE_CONFIRMATION,
   PIN_CODE_UNLOCK,
@@ -69,6 +71,7 @@ const onBoardingFlow = createStackNavigator({
   [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
   [IMPORT_WALLET_LEGALS]: ImportWalletLegalsScreen,
   [IMPORT_WALLET]: ImportWalletScreen,
+  [NEW_PROFILE]: NewProfileScreen,
 }, StackNavigatorConfig);
 
 const authFlow = createStackNavigator({
