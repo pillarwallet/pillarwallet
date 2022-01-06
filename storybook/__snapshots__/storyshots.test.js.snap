@@ -36767,7 +36767,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
               ]
             }
           >
-            Apr 19
+            Apr 19 2021
           </Text>
         </View>
         <View
@@ -45971,7 +45971,7 @@ exports[`Storyshots ToastCard link 1`] = `
                         "textAlignVertical": "center",
                       },
                       Object {
-                        "color": "#0A1427",
+                        "color": "#FCFDFF",
                       },
                       Object {
                         "fontSize": 14,
