@@ -50,6 +50,7 @@ flow-typed
 
 [options]
 emoji=true
+sharedmemory.hash_table_pow=21
 
 esproposal.optional_chaining=enable
 esproposal.nullish_coalescing=enable
@@ -98,6 +99,9 @@ module.name_mapper='^navigation' -> '<PROJECT_ROOT>/src/navigation'
 
 module.name_mapper='^reducers\/\(.*\)$' -> '<PROJECT_ROOT>/src/reducers/\1'
 module.name_mapper='^reducers' -> '<PROJECT_ROOT>/src/reducers'
+
+module.name_mapper='^redux\/\(.*\)$' -> '<PROJECT_ROOT>/src/redux/\1'
+module.name_mapper='^redux' -> '<PROJECT_ROOT>/src/redux'
 
 module.name_mapper='^services\/\(.*\)$' -> '<PROJECT_ROOT>/src/services/\1'
 module.name_mapper='^services' -> '<PROJECT_ROOT>/src/services'
