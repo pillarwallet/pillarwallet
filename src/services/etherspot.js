@@ -123,12 +123,12 @@ export class EtherspotService {
      */
     await Promise.all(this.supportedNetworks.map(async (networkName) => {
       const env =
-         networkName !== NetworkNames.Kovan && networkName !== NetworkNames.Matic && networkName !== NetworkNames.Fuji
+         networkName !== NetworkNames.Kovan && networkName !== NetworkNames.Fuji
            ? EnvNames.MainNets
            : EnvNames.TestNets;
       this.instances[networkName] = new EtherspotSdk(privateKey, {
         env,
-        networkName: networkName === NetworkNames.Matic ? NetworkNames.Mumbai : networkName,
+        networkName,
         projectKey: PROJECT_KEY,
       });
       if (fcmToken) {
