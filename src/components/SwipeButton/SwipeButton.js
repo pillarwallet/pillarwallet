@@ -22,13 +22,12 @@ import * as React from 'react';
 import { View } from 'react-native';
 import RnSwipeButton from 'rn-swipe-button';
 
-// components
+// Components
 import Icon from 'components/core/Icon';
 
-// utils
+// Utils
 import { fontSizes, spacing, appFont } from 'utils/variables';
 import { useThemeColors } from 'utils/themes';
-
 
 type Props = {
   confirmTitle?: string,

@@ -43,7 +43,7 @@ import Modal from 'components/Modal';
 import { MENU, HOME_HISTORY } from 'constants/navigationConstants';
 
 // Selectors
-import { useRootSelector, useSmartWalletAccounts } from 'selectors';
+import { useRootSelector, useSmartWalletAccounts, activeAccountAddressSelector } from 'selectors';
 import { accountTotalBalancesSelector } from 'selectors/totalBalances';
 import { useUser } from 'selectors/user';
 
@@ -73,6 +73,7 @@ function Home() {
   const accountCollectibleCounts = useAccountCollectibleCounts();
   const user = useUser();
   const wallet = useRootSelector((root) => root.wallet.data);
+  const accountAddress = useRootSelector(activeAccountAddressSelector);
 
   const dispatch = useDispatch();
 
@@ -96,7 +97,7 @@ function Home() {
   const balancePerCategory = calculateTotalBalancePerCategory(accountTotalBalances);
   const balancePerChain = calculateTotalBalancePerChain(accountTotalBalances);
   const totalBalance = sumRecord(balancePerCategory);
-  const showRegisterENSTooltip = !user.username && wallet;
+  const showRegisterENSTooltip = !user.username && accountAddress;
 
   const isRefreshing = useRootSelector(({ totalBalances }) => !!totalBalances.isFetching);
   const onRefresh = () => {
@@ -108,7 +109,7 @@ function Home() {
     <Container>
       <HeaderBlock
         leftItems={[{ svgIcon: 'menu', color: colors.basic020, onPress: () => navigation.navigate(MENU) }]}
-        centerItems={[{ custom: <UserNameAndImage user={user} address={wallet?.address} /> }]}
+        centerItems={[{ custom: <UserNameAndImage user={user} address={accountAddress} /> }]}
         rightItems={[{ svgIcon: 'history', color: colors.basic020, onPress: () => navigation.navigate(HOME_HISTORY) }]}
         navigation={navigation}
         noPaddingTop

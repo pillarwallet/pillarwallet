@@ -487,7 +487,7 @@ export const beginOnboardingAction = (enableBiometrics?: boolean) => {
     logBreadcrumb('onboarding', 'beginOnboardingAction: dispatching resetAppServicesAction');
     await dispatch(resetAppServicesAction());
 
-    logBreadcrumb('onboarding', 'beginOnboardingAction: dispatching setupWalletAction');
+    logBreadcrumb('onboarding', 'beginOnboardingAction: dispatching walletSetupAction');
     await dispatch(walletSetupAction(enableBiometrics));
   };
 };
