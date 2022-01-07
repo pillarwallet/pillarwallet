@@ -3,7 +3,7 @@ import type { Config } from '@jest/types';
 const config: Config.InitialOptions = {
   verbose: true,
   transform: {
-    '^.+\\.js?$': 'jest',
+    '^.+\\.js?$': 'babel-jest',
     '^.+\\.ts?$': 'ts-jest',
   },
   globals: {
