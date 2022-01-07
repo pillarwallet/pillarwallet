@@ -241,7 +241,7 @@ export const estimateTransactionsAction = (
           // only network set providers supported per implementation, no multichain
           const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
 
-          const calculatedGasLimit = await provider.estimateGas({ from: activeAccountAddress, ...transactions[0] });
+          const calculatedGasLimit = await provider.estimateGas({ ...transactions[0], from: activeAccountAddress });
           const calculatedGasLimitBN = EthersBigNumber.from(calculatedGasLimit);
           estimated = calculatedGasLimitBN.add(calculatedGasLimitBN.div(2)); // adding 50% safe buffer for gas limit
         } catch (error) {

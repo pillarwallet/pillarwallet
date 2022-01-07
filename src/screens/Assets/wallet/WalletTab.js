@@ -53,10 +53,7 @@ import { useSupportedChains } from 'selectors/chains';
 // Utils
 import { findAssetByAddress } from 'utils/assets';
 import { spacing } from 'utils/variables';
-import {
-  getAccountAddress,
-  isKeyBasedAccount,
-} from 'utils/accounts';
+import { isKeyBasedAccount } from 'utils/accounts';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
