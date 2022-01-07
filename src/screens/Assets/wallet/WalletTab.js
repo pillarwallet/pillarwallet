@@ -45,6 +45,7 @@ import {
   useIsExchangeAvailable,
   supportedAssetsPerChainSelector,
   useActiveAccount,
+  activeAccountAddressSelector,
 } from 'selectors';
 import { useIsPillarPaySupported } from 'selectors/archanova';
 import { useSupportedChains } from 'selectors/chains';
@@ -82,7 +83,7 @@ function WalletTab() {
   const supportedAssets = useRootSelector(supportedAssetsPerChainSelector);
 
   const activeAccount = useActiveAccount();
-  const accountAddress = getAccountAddress(activeAccount);
+  const accountAddress = useRootSelector(activeAccountAddressSelector);
 
   const isExchangeAvailable = useIsExchangeAvailable();
   const isPillarPaySupported = useIsPillarPaySupported();

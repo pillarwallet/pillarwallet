@@ -21,6 +21,7 @@ import t from 'translations/translate';
 import { getPlrAddressForChain } from 'configs/assetsConfig';
 import { BigNumber } from 'bignumber.js';
 import { BigNumber as EthersBigNumber } from 'ethers';
+import { getEnv } from 'configs/envConfig';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
@@ -236,10 +237,13 @@ export const estimateTransactionsAction = (
             'account type: key based wallet, calculateGasEstimate',
             { chain },
           );
-          const provider = getEthereumProvider();
+
+          // only network set providers supported per implementation, no multichain
+          const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
+
           const calculatedGasLimit = await provider.estimateGas(transactions[0]);
           const calculatedGasLimitBN = EthersBigNumber.from(calculatedGasLimit);
-          estimated = calculatedGasLimitBN.add(calculatedGasLimitBN.div(5)); // adding 20% safe buffer for gas limit
+          estimated = calculatedGasLimitBN.add(calculatedGasLimitBN.div(2)); // adding 50% safe buffer for gas limit
         } catch (error) {
           dispatch(setTransactionsEstimateErrorAction(t('toast.transactionFeeEstimationFailed')));
           reportErrorLog(
@@ -265,13 +269,14 @@ export const estimateTransactionsAction = (
 
         try {
           const chainGasInfo = getState()?.history?.gasInfo?.[chain];
-          if (!chainGasInfo?.isFetched || !chainGasInfo?.gasPrice) {
+          const gasPrice = chainGasInfo?.gasPrice?.instant;
+
+          if (!chainGasInfo?.isFetched || !gasPrice) {
             dispatch(setTransactionsEstimateErrorAction(t('toast.transactionFeeEstimationFailed')));
             reportErrorLog('estimateTransactionsAction failed: no gas price', { chain, chainGasInfo });
             break;
           }
 
-          const gasPrice = chainGasInfo.gasPrice.instant;
           const gasPriceBN = new BigNumber(gasPrice.toString());
           const feeBN = new BigNumber(estimated.mul(gasPrice.toString()).toString());
           feeInfo = { fee: feeBN, gasPrice: gasPriceBN };

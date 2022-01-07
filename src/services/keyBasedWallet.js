@@ -25,7 +25,10 @@ import { getEnv } from 'configs/envConfig';
 import { ETH } from 'constants/assetsConstants';
 
 // utils
-import { getEthereumProvider } from 'utils/common';
+import {
+  getEthereumProvider,
+  reportErrorLog,
+} from 'utils/common';
 import { catchTransactionError } from 'utils/wallet';
 import { getAccountAddress } from 'utils/accounts';
 import { mapToEthereumTransactions } from 'utils/transactions';
@@ -44,6 +47,7 @@ import type {
   CollectibleTransactionPayload,
   TransactionFeeInfo,
   TransactionPayload,
+  TransactionResult,
 } from 'models/Transaction';
 
 
@@ -199,14 +203,23 @@ export default class KeyBasedWalletProvider {
   async sendTransaction(
     transaction: TransactionPayload,
     fromAccountAddress: string,
-    feeInfo: TransactionFeeInfo,
-  ) {
+    feeInfo: ?TransactionFeeInfo,
+  ): Promise<?TransactionResult> {
     const mappedTransactions = await mapToEthereumTransactions(transaction, fromAccountAddress);
 
     const transactionCount = await this.getTransactionCount(fromAccountAddress);
     const nonce = transactionCount || 0;
 
-    const { fee, gasPrice } = feeInfo;
+    const { fee, gasPrice } = feeInfo ?? {};
+    if (!fee || !gasPrice) {
+      reportErrorLog('Exception in wallet transaction', {
+        transaction,
+        feeInfo,
+        error: 'failed to parse feeInfo',
+      });
+      return null;
+    }
+
     const gasPriceBN = ethers.BigNumber.from(gasPrice.toString());
     const gasLimitBN = ethers.BigNumber.from(fee.toString()).div(gasPriceBN);
 
