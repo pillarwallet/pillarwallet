@@ -63,14 +63,16 @@
     "ethereum": "Ethereum",
     "binance": "Binance Smart Chain",
     "xdai": "xDai Network",
-    "polygon": "Polygon"
+    "polygon": "Polygon",
+    "avalanche": "Avalanche"
   },
 
   "chainsShort": {
     "ethereum": "Ethereum",
     "binance": "BSC",
     "xdai": "xDai",
-    "polygon": "Polygon"
+    "polygon": "Polygon",
+    "avalanche": "Avalanche"
   },
 
   "assetCategories": {
