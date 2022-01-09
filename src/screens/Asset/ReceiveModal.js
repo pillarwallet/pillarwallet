@@ -35,7 +35,6 @@ import QRCodeWithTheme from 'components/QRCode';
 import Toast from 'components/Toast';
 import ProfileImage from 'components/ProfileImage';
 import TextWithCopy from 'components/display/TextWithCopy';
-import Icon from 'components/core/Icon';
 import TokenIcon from 'components/display/TokenIcon';
 
 // Utils
@@ -91,6 +90,7 @@ const ReceiveModal = ({
   user,
   theme,
 }: Props) => {
+  const [closeFlag, setCloseFlag] = React.useState(false);
   const handleAddressShare = useCallback(() => {
     Share.share({ title: t('title.publicAddress'), message: address });
   }, [address]);
@@ -105,6 +105,7 @@ const ReceiveModal = ({
       if (activeAccount?.extra[chain]?.address) {
         Clipboard.setString(activeAccount?.extra[chain]?.address);
         Toast.show({ message: t('toast.addressCopiedToClipboard'), emoji: 'ok_hand' });
+        setCloseFlag(true);
       } else {
         Toast.show({ message: t('toast.missingCopyAddress'), emoji: 'hushed', autoClose: false });
       }
@@ -123,20 +124,20 @@ const ReceiveModal = ({
       <Container key={`${chain}`}>
         <ContainerView>
           <RowContainer>
-            <TokenIcon url={iconUrl} />
+            <TokenIcon size={24} style={IconContainer} url={iconUrl} />
             <Title>{title}</Title>
             <CopyButtonFromChain>
               <Button
-                title={t('receiveModal.copyButton')}
                 width="100%"
-                height="50"
+                height="48"
+                style={{ borderRadius: 14 }}
+                title={t('receiveModal.copyButton')}
                 onPress={() => handleCopyFromChain(chain)}
               />
             </CopyButtonFromChain>
           </RowContainer>
           {!isDeployedOnChain[chain] && (
             <DeployText>
-              <Icon name="warning" color="yellow" />
               {t('receiveModal.notDeployedText', {
                 chain: title,
                 mediumText: true,
@@ -147,9 +148,11 @@ const ReceiveModal = ({
                 mediumText: true,
                 color: colors.recieveModalWarningText,
               })}{' '}
-              <Text color={colors.link} onPress={() => showDeploymentInterjection(chain)}>
-                {t('receiveModal.activateText')}
-              </Text>
+              <ActivateText onPress={() => showDeploymentInterjection(chain)}>
+                {t('receiveModal.activateText', {
+                  mediumText: true,
+                })}
+              </ActivateText>
             </DeployText>
           )}
         </ContainerView>
@@ -163,6 +166,7 @@ const ReceiveModal = ({
       noPadding
       noClose
       showHeader
+      closeFlag={closeFlag}
       // TODO : The label itself will be revisited later on the direction of the product team
       // headerLeftItems={showErc20Note ? [{
       //   custom: (
@@ -307,7 +311,8 @@ const CopyButtonFromChain = styled.View`
   flex-direction: column;
   text-align: center;
   align-items: center;
-  width: 30%;
+  width: 40%;
+  border-radius: 14px;
 `;
 
 const ShareButton = styled.View`
@@ -334,35 +339,47 @@ const WarningText = styled(Text)`
   text-align: center;
 `;
 
+const ActivateText = styled(Text)`
+  ${fontStyles.small};
+  color: ${({ theme }) => theme.colors.link};
+  text-align: center;
+`;
+
 const DeployText = styled(Text)`
-  ${fontStyles.regular};
+  ${fontStyles.small};
   color: ${({ theme }) => theme.colors.secondaryText};
-  padding: ${spacing.medium}px;
+  justify-content: center;
+  margin: ${spacing.medium}px 0 0;
+  padding: 0 ${spacing.medium}px 0 ${spacing.medium}px;
+`;
+
+const IconContainer = styled.View`
+  align-items: center;
   justify-content: center;
 `;
 
 const Container = styled.View`
-  background-color: ${({ theme }) => theme.colors.basic070};
+  background-color: ${({ theme }) => theme.colors.basic080};
   flex-direction: row;
-  margin-top: ${spacing.small}px;
-  border-radius: 20px;
+  margin: ${spacing.small}px 0;
+  padding: ${spacing.medium}px;
+  border-radius: 22.5px;
 `;
 
 const Title = styled(Text)`
   flex: 1;
   flex-direction: row;
   ${fontStyles.medium};
-  padding-left: 15px;
+  padding: 0 ${spacing.medium}px 0 ${spacing.medium}px;
 `;
 
 const ReceiveTitle = styled.Text`
-  color: ${({ theme }) => theme.colors.text};
-  font-weight: 700;
   text-align: center;
+  ${fontStyles.big};
   justify-content: center;
   align-items: center;
-  ${fontStyles.large}
-  margin: 10px;
+  margin: ${spacing.large}px ${spacing.largePlus}px ${spacing.mediumLarge}px;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const ContainerView = styled.View`
@@ -373,5 +390,5 @@ const ContainerView = styled.View`
 const RowContainer = styled.View`
   align-items: center;
   flex-direction: row;
-  padding: ${spacing.medium}px;
+  padding: ${spacing.small}px;
 `;

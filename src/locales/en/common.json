@@ -1455,7 +1455,7 @@
     "copyButton": "Address",
     "activationText": "You need to activate your smart wallet first.",
     "activateText": "Activate",
-    "notDeployedText": "Sending tokens is unavailable. Currently you can only receive funds in <0>{{chain}} wallet"
+    "notDeployedText": "⚠️ Sending tokens is unavailable. Currently you can only receive tokens in <0>{{chain}}</0> wallet"
   },
 
   "tooltip": {
