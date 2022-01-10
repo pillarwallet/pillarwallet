@@ -25,6 +25,9 @@ import { RESET_APP_STATE } from 'constants/authConstants';
 // types
 import type { DbAction } from 'models/DbAction';
 
+// reducers - absolte imports
+import firestoreReducer, { IReduxFirestoreState } from 'redux/reducers/firestore-reducer';
+
 // reducers
 import offlineQueueReducer from './offlineQueueReducer';
 import walletReducer from './walletReducer';
@@ -135,6 +138,7 @@ export type RootReducerState = {|
   transactionEstimate: TransactionEstimateReducerState,
   liquidityPools: LiquidityPoolsReducerState,
   totalBalances: TotalBalancesReducerState,
+  firestore: IReduxFirestoreState,
 |};
 
 type RootReducerAction =
@@ -166,13 +170,8 @@ type RootReducerAction =
   | RatesReducerAction;
 
 export type GetState = () => RootReducerState;
-export type ThunkAction = (
-  dispatch: Dispatch,
-  getState: GetState,
-) => any;
-export type Dispatch = (
-  action: RootReducerAction | Promise<RootReducerAction> | ThunkAction,
-) => void;
+export type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
+export type Dispatch = (action: RootReducerAction | Promise<RootReducerAction> | ThunkAction) => void;
 
 // Note: this intended as temporary solution for typing reselect selectors
 // real solution would be apply reselect flow typing.
@@ -211,6 +210,7 @@ const appReducer = combineReducers({
   transactionEstimate: transactionEstimateReducer,
   liquidityPools: liquidityPoolsReducer,
   totalBalances: totalBalancesReducer,
+  firestore: firestoreReducer,
 });
 
 export const initialState = appReducer(undefined, {});
