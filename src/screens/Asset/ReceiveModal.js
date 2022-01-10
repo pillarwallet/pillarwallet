@@ -104,7 +104,7 @@ const ReceiveModal = ({
     if (isEtherspotAccount(activeAccount)) {
       if (activeAccount?.extra[chain]?.address) {
         Clipboard.setString(activeAccount?.extra[chain]?.address);
-        Toast.show({ message: t('toast.addressCopiedToClipboard'), emoji: 'ok_hand' });
+        Toast.show({ message: t('toast.chainAddressCopiedToClipboard'), emoji: 'ok_hand' });
         setCloseFlag(true);
       } else {
         Toast.show({ message: t('toast.missingCopyAddress'), emoji: 'hushed', autoClose: false });

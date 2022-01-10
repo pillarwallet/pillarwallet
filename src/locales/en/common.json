@@ -385,6 +385,7 @@
   },
 
   "paragraph": {
+    "chainAddressCopiedToClipboard": "<0>{{chain}}</0> wallet address copied to clipboard.",
     "addressCopiedToClipboard": "Address copied to clipboard.",
     "doNotSendRealEthOrTokens": "Do not send real ETH or ERC20 tokens.",
     "ensNameCopiedToClipboard": "ENS name copied to clipboard.",
