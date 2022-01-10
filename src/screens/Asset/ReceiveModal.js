@@ -38,7 +38,7 @@ import TextWithCopy from 'components/display/TextWithCopy';
 import TokenIcon from 'components/display/TokenIcon';
 
 // Utils
-import { spacing, fontStyles, fontSizes } from 'utils/variables';
+import { spacing, fontStyles, fontSizes, borderRadiusSizes } from 'utils/variables';
 import { getAccountEnsName, isEtherspotAccount } from 'utils/accounts';
 import { getThemeColors } from 'utils/themes';
 import { useChainsConfig } from 'utils/uiConfig';
@@ -311,7 +311,7 @@ const CopyButtonFromChain = styled.View`
   text-align: center;
   align-items: center;
   width: 40%;
-  border-radius: 14px;
+  border-radius: ${borderRadiusSizes.defaultButton}px;
 `;
 
 const ShareButton = styled.View`
@@ -362,7 +362,7 @@ const Container = styled.View`
   flex-direction: row;
   margin: ${spacing.small}px 0;
   padding: ${spacing.medium}px;
-  border-radius: 22.5px;
+  border-radius: ${borderRadiusSizes.defaultContainer}px;
 `;
 
 const Title = styled(Text)`
