@@ -186,19 +186,6 @@ export const fetchTransactionsHistoryAction = () => {
       },
     } = getState();
 
-    // TODO: key based history
-    // key based history migration: clean existing
-    // const keyBasedAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
-    // if (keyBasedAccount) {
-    //   const keyBasedAccountId = getAccountId(keyBasedAccount);
-    //   const currentHistory = historySelector(getState());
-    //   if (!isEmpty(currentHistory[keyBasedAccountId])) {
-    //     const updatedHistory = updateAccountHistoryForChain(currentHistory, keyBasedAccountId, CHAIN.ETHEREUM, []);
-    //     await dispatch(saveDbAction('history', { history: updatedHistory }, true));
-    //     dispatch({ type: SET_HISTORY, payload: updatedHistory });
-    //   }
-    // }
-
     if (!isOnline) return;
 
     dispatch(setFetchingHistoryAction(true));
