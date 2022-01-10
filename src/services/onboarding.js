@@ -45,7 +45,7 @@ export const getExistingServicesAccounts = async (privateKey: string): Promise<A
   if (etherspotAccounts) {
     etherspotMappedAccounts = await Promise.all(etherspotAccounts.map(async ({ address }) => {
       // $FlowFixMe: Account extras
-      let extra = await etherspotService.getAccountPerChains(address);
+      let extra = await etherspotService.getAccountPerChains();
 
       // if no actual ENS name set for Etherspot account let's try fetch reserved one
       if (!extra.ethereum?.ensNode) {

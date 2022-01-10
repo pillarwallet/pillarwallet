@@ -301,6 +301,14 @@ export async function transferETH(options: ETHTransferOptions) {
   return { signedHash, value };
 }
 
+export async function sendRawTransaction(
+  walletInstance: ethers.Wallet,
+  transaction: ethers.Transaction,
+) {
+  const wallet = walletInstance.connect(getEthereumProvider(getEnv().NETWORK_PROVIDER));
+  return wallet.sendTransaction(transaction);
+}
+
 export function fetchRinkebyETHBalance(walletAddress: Address): Promise<string> {
   const provider = getEthereumProvider('rinkeby');
   return provider.getBalance(walletAddress).then(utils.formatEther);

@@ -41,7 +41,10 @@ import Tooltip from 'components/Tooltip';
 import { MENU, HOME_HISTORY } from 'constants/navigationConstants';
 
 // Selectors
-import { useRootSelector, useSmartWalletAccounts } from 'selectors';
+import {
+  useAccounts,
+  useRootSelector,
+} from 'selectors';
 import { accountTotalBalancesSelector } from 'selectors/totalBalances';
 import { useUser } from 'selectors/user';
 
@@ -71,7 +74,7 @@ function Home() {
   const dispatch = useDispatch();
   const { accountSwitchTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
 
-  const canSwitchAccount = useSmartWalletAccounts().length > 1;
+  const canSwitchAccount = useAccounts().length > 1;
 
   const balancePerCategory = calculateTotalBalancePerCategory(accountTotalBalances);
   const balancePerChain = calculateTotalBalancePerChain(accountTotalBalances);

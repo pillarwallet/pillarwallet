@@ -23,6 +23,7 @@ export const CHAIN = {
   POLYGON: ('polygon': 'polygon'),
   BINANCE: ('binance': 'binance'),
   XDAI: ('xdai': 'xdai'),
+  AVALANCHE: ('avalanche': 'avalanche'),
 };
 
 export const CHAIN_NAMES = {
@@ -30,6 +31,7 @@ export const CHAIN_NAMES = {
   POLYGON: 'polygon',
   BINANCE: 'binance',
   XDAI: 'xdai',
+  AVALANCHE: 'avalanche',
 };
 
 export const CHAIN_SHORT = {
@@ -37,6 +39,7 @@ export const CHAIN_SHORT = {
   POLYGON: 'Polygon',
   BINANCE: 'BSC',
   XDAI: 'xDai',
+  AVALANCHE: 'AVAX',
 };
 
 // Based on: https://chainid.network/
@@ -46,4 +49,6 @@ export const CHAIN_ID = {
   POLYGON: 137,
   BINANCE: 56,
   XDAI: 100,
+  AVALANCHE: 43114,
+  FUJI: 43113,
 };

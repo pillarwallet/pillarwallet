@@ -43,8 +43,9 @@ import {
   useRootSelector,
   useFiatCurrency,
   useIsExchangeAvailable,
-  activeAccountAddressSelector,
   supportedAssetsPerChainSelector,
+  useActiveAccount,
+  activeAccountAddressSelector,
 } from 'selectors';
 import { useIsPillarPaySupported } from 'selectors/archanova';
 import { useSupportedChains } from 'selectors/chains';
@@ -52,6 +53,7 @@ import { useSupportedChains } from 'selectors/chains';
 // Utils
 import { findAssetByAddress } from 'utils/assets';
 import { spacing } from 'utils/variables';
+import { isKeyBasedAccount } from 'utils/accounts';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
@@ -77,6 +79,7 @@ function WalletTab() {
 
   const supportedAssets = useRootSelector(supportedAssetsPerChainSelector);
 
+  const activeAccount = useActiveAccount();
   const accountAddress = useRootSelector(activeAccountAddressSelector);
 
   const isExchangeAvailable = useIsExchangeAvailable();
@@ -149,7 +152,7 @@ function WalletTab() {
       iconName: 'send',
       onPress: () => navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW),
     },
-    !hasPositiveBalance && {
+    !isKeyBasedAccount(activeAccount) && !hasPositiveBalance && {
       title: tRoot('button.addCash'),
       iconName: 'plus',
       onPress: () => navigation.navigate(ADD_CASH),

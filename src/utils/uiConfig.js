@@ -26,6 +26,7 @@ import {
   MATIC,
   BNB,
   XDAI,
+  AVAX,
   ASSET_CATEGORY,
 } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
@@ -82,6 +83,13 @@ export function useChainsConfig(): { [key: Chain]: ChainConfig} {
       iconName: 'ethereum',
       color: colors.ethereum,
       gasSymbol: ETH,
+    },
+    [CHAIN.AVALANCHE]: {
+      title: t('chains.avalanche'),
+      titleShort: t('chainsShort.avalanche'),
+      iconName: 'avalanche',
+      color: colors.ethereum,
+      gasSymbol: AVAX,
     },
   };
 }

@@ -53,7 +53,10 @@ import { mapNotNil } from 'utils/array';
 import { appFont, fontStyles, spacing } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
 import { openUrl, showServiceLaunchErrorToast } from 'utils/inAppBrowser';
-import { isArchanovaAccount } from 'utils/accounts';
+import {
+  isArchanovaAccount,
+  isKeyBasedAccount,
+} from 'utils/accounts';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
@@ -85,7 +88,9 @@ function WalletConnectHome() {
   const { numberOfColumns, columnWidth } = useColumnDimensions();
   const { data: sections, isFetching } = useSectionData(activeChain, numberOfColumns);
 
-  const showDeployBanner = activeChain != null && !isDeployedOnChain[activeChain];
+  const showDeployBanner = !isKeyBasedAccount(activeAccount)
+    && activeChain != null
+    && !isDeployedOnChain[activeChain];
 
   const renderListHeader = () => {
     return (

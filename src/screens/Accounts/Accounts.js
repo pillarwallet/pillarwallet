@@ -32,7 +32,7 @@ import { ScrollWrapper } from 'components/legacy/Layout';
 import Button from 'components/legacy/Button';
 
 // utils
-import { getAccountName, isNotKeyBasedType } from 'utils/accounts';
+import { getAccountName } from 'utils/accounts';
 import { calculateTotalBalance } from 'utils/totalBalances';
 import { spacing } from 'utils/variables';
 import { images } from 'utils/images';
@@ -158,25 +158,23 @@ const AccountsScreen = ({
     ({ type }) => type === ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET ? -1 : 1,
   );
 
-  const accountsList: ListItem[] = sortedAccounts
-    .filter(isNotKeyBasedType) // filter key based due deprecation
-    .map((account: Account): ListItem => {
-      const { id, isActive, type } = account;
-      const isActiveWallet = !!isActive && isEthereumActive;
+  const accountsList: ListItem[] = sortedAccounts.map((account: Account): ListItem => {
+    const { id, isActive, type } = account;
+    const isActiveWallet = !!isActive && isEthereumActive;
 
-      const totalBalance = calculateTotalBalance(totalBalances[id] ?? {});
-      const totalBalanceFormatted = formatFiat(totalBalance, fiatCurrency);
+    const totalBalance = calculateTotalBalance(totalBalances[id] ?? {});
+    const totalBalanceFormatted = formatFiat(totalBalance, fiatCurrency);
 
-      return {
-        id: `ACCOUNT_${id}`,
-        type: ITEM_TYPE.ACCOUNT,
-        title: getAccountName(type),
-        balance: totalBalanceFormatted,
-        mainAction: () => setAccountActive(account),
-        isActive: isActiveWallet,
-        iconSource: smartWalletIcon,
-      };
-    });
+    return {
+      id: `ACCOUNT_${id}`,
+      type: ITEM_TYPE.ACCOUNT,
+      title: getAccountName(type),
+      balance: totalBalanceFormatted,
+      mainAction: () => setAccountActive(account),
+      isActive: isActiveWallet,
+      iconSource: smartWalletIcon,
+    };
+  });
 
   const isKeyBasedAssetsMigrationEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.KEY_BASED_ASSETS_MIGRATION);
   if (isKeyBasedAssetsMigrationEnabled && keyBasedWalletHasPositiveBalance) {

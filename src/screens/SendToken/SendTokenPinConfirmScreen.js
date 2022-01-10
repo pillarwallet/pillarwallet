@@ -45,6 +45,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   sendAsset: (
     transactionPayload: TransactionPayload,
+    privateKey: string,
     callback: (status: TransactionStatus) => void,
   ) => void,
   resetIncorrectPassword: () => void,
@@ -76,7 +77,7 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
     };
   }
 
-  handleTransaction = async () => {
+  handleTransaction = async (pin, wallet) => {
     const {
       sendAsset,
       isOnline,
@@ -89,6 +90,13 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
     if (!isOnline) {
       this.setState({
         errorMessage: t('error.transactionFailed.offline'),
+      });
+      return;
+    }
+
+    if (!wallet?.privateKey) {
+      this.setState({
+        errorMessage: t('error.transactionFailed.unableToAccessWallet'),
       });
       return;
     }
@@ -110,7 +118,7 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
             amount,
             chain,
           });
-        sendAsset(transactionPayload, this.navigateToTransactionState);
+        sendAsset(transactionPayload, wallet.privateKey, this.navigateToTransactionState);
       },
     );
   };
@@ -163,8 +171,9 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   sendAsset: (
     transaction: TransactionPayload,
+    privateKey: string,
     callback: (status: TransactionStatus) => void,
-  ) => dispatch(sendAssetAction(transaction, callback)),
+  ) => dispatch(sendAssetAction(transaction, privateKey, callback)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   logEvent: (name: string, properties: Object) => dispatch(logEventAction(name, properties)),
 });

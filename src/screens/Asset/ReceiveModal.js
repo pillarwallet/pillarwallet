@@ -38,7 +38,11 @@ import TextWithCopy from 'components/display/TextWithCopy';
 
 // Utils
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
-import { getAccountEnsName, isEtherspotAccount } from 'utils/accounts';
+import {
+  getAccountEnsName,
+  isEtherspotAccount,
+  isKeyBasedAccount,
+} from 'utils/accounts';
 import { getThemeColors } from 'utils/themes';
 
 // Types
@@ -91,6 +95,7 @@ const ReceiveModal = ({
 
   const colors = getThemeColors(theme);
   const { isDeployedOnChain, showDeploymentInterjection } = useDeploymentStatus();
+  const showWarning = !isKeyBasedAccount(activeAccount) && !isDeployedOnChain.ethereum;
 
   const { username } = user;
   const ensName = getAccountEnsName(activeAccount);
@@ -157,7 +162,7 @@ const ReceiveModal = ({
             {t('receiveModal.etherspotSingleAddressInfo')}
           </WarningText>
         )}
-        {!isDeployedOnChain.ethereum && (
+        {showWarning && (
           <WarningText>
             {t('receiveModal.notDeployedWarning', {
               chain: t('chains.ethereum'),
