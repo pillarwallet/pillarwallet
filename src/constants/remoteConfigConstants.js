@@ -62,6 +62,7 @@ export const REMOTE_CONFIG = {
   FEATURE_WERT_COMMODITIES: 'feature_wert_commodities',
   FEATURE_WERT_CURRENCY: 'feature_wert_currency',
   FEATURE_WERT_COMMODITY: 'feature_wert_commodity',
+  INFURA_PROJECT_ID: 'infura_project_id',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values
@@ -108,4 +109,5 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.FEATURE_WERT_COMMODITIES]: 'MATIC',
   [REMOTE_CONFIG.FEATURE_WERT_COMMODITY]: 'MATIC',
   [REMOTE_CONFIG.FEATURE_WERT_CURRENCY]: 'USD',
+  [REMOTE_CONFIG.INFURA_PROJECT_ID]: '',
 };

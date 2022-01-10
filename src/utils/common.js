@@ -396,7 +396,9 @@ export const smallScreen = () => {
 
 export const getEthereumProvider = (network: string) => {
   // Connect to INFURA
-  const infuraProvider = new providers.InfuraProvider(network, getEnv().INFURA_PROJECT_ID);
+  const infuraProjectId = firebaseRemoteConfig.getString(REMOTE_CONFIG.INFURA_PROJECT_ID)
+    || getEnv().INFURA_PROJECT_ID;
+  const infuraProvider = new providers.InfuraProvider(network, infuraProjectId);
 
   // Connect to Etherscan
   const etherscanProvider = new providers.EtherscanProvider(network);

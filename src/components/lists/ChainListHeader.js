@@ -28,7 +28,10 @@ import { useTranslation } from 'translations/translate';
 import Text from 'components/core/Text';
 
 // Selectors
-import { useFiatCurrency } from 'selectors';
+import {
+  useActiveAccount,
+  useFiatCurrency,
+} from 'selectors';
 
 // Hooks
 import { useDeploymentStatus } from 'hooks/deploymentStatus';
@@ -37,6 +40,7 @@ import { useDeploymentStatus } from 'hooks/deploymentStatus';
 import { formatFiatValue } from 'utils/format';
 import { fontStyles, spacing } from 'utils/variables';
 import { useChainConfig } from 'utils/uiConfig';
+import { isKeyBasedAccount } from 'utils/accounts';
 
 // Types
 import { type Chain } from 'models/Chain';
@@ -52,11 +56,13 @@ function ChainListHeader({ chain, onPress, balance }: Props) {
   const { title, color } = useChainConfig(chain);
 
   const currency = useFiatCurrency();
-  const { isDeployedOnChain, showDeploymentInterjection } = useDeploymentStatus();
 
   const fiatValue = formatFiatValue(balance, currency, { stripTrailingZeros: true });
   const titleSegments = fiatValue != null ? [title, fiatValue] : [title];
-  const isDeployed = isDeployedOnChain[chain];
+
+  const activeAccount = useActiveAccount();
+  const { isDeployedOnChain, showDeploymentInterjection } = useDeploymentStatus();
+  const isDeployed = isKeyBasedAccount(activeAccount) || isDeployedOnChain[chain];
 
   return (
     <Container>
