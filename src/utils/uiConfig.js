@@ -95,7 +95,8 @@ export function useChainsConfig(): { [key: Chain]: ChainConfig} {
       iconName: 'avalanche',
       color: colors.ethereum,
       gasSymbol: AVAX,
-      iconUrl: 'https://image.pngaaa.com/19/5554019-middle.png',
+      iconUrl:
+        'https://firebasestorage.googleapis.com/v0/b/pillar-project-1506420699556.appspot.com/o/app%2Fchains%2Favalanche%2Fassets%2Fassets%2FAvalanche_AVAX_RedWhite.png?alt=media&token=8e3bb7ba-76ac-4e64-a56e-d8623ab7a657',
     },
   };
 }

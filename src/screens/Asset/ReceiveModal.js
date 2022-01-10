@@ -82,7 +82,6 @@ const handleCopyToClipboard = (addressName: string) => {
   Toast.show({ message: t('toast.addressCopiedToClipboard'), emoji: 'ok_hand' });
 };
 
-
 const ReceiveModal = ({
   activeAccount,
   address,

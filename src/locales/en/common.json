@@ -1225,7 +1225,7 @@
     "transactionReverted": "Something went wrong. Try again or tap this message for details.",
     "seedPhraseCopiedToClipboard": "12 words copied to clipboard",
     "privateKeyCopiedToClipboard": "Private Key copied to clipboard",
-    "missingCopyAddress": "Sorry, Cannot copy address to clipboard"
+    "missingCopyAddress": "Sorry, cannot copy address to the clipboard"
   },
 
   "exchangeContent": {
