@@ -38,6 +38,7 @@ import UserNameAndImage from 'components/UserNameAndImage';
 import WalletConnectRequests from 'screens/WalletConnect/Requests';
 import Tooltip from 'components/Tooltip';
 import Modal from 'components/Modal';
+import Spinner from 'components/Spinner';
 
 // Constants
 import { MENU, HOME_HISTORY } from 'constants/navigationConstants';
@@ -74,20 +75,24 @@ function Home() {
   const user = useUser();
   const wallet = useRootSelector((root) => root.wallet.data);
   const accountAddress = useRootSelector(activeAccountAddressSelector);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const dispatch = useDispatch();
 
   React.useEffect(() => {
-    if (!wallet) {
-      getSupportedBiometryType((biometryType) => {
-        if (biometryType) {
-          Modal.open(() => <BiometricModal biometricType={biometryType} />);
-        } else {
-          dispatch(beginOnboardingAction());
-        }
-      });
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    setTimeout(() => {
+      if (!wallet) {
+        getSupportedBiometryType((biometryType) => {
+          if (biometryType) {
+            Modal.open(() => <BiometricModal biometricType={biometryType} />);
+          } else {
+            dispatch(beginOnboardingAction());
+            setIsLoading(true);
+          }
+        });
+      }
+    }, 2000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const { accountSwitchTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
@@ -111,12 +116,7 @@ function Home() {
         leftItems={[{ svgIcon: 'menu', color: colors.basic020, onPress: () => navigation.navigate(MENU) }]}
         centerItems={[
           {
-            custom: (
-              <UserNameAndImage
-                user={user?.username}
-                address={accountAddress}
-              />
-            ),
+            custom: <UserNameAndImage user={user?.username} address={accountAddress} />,
           },
         ]}
         rightItems={[{ svgIcon: 'history', color: colors.basic020, onPress: () => navigation.navigate(HOME_HISTORY) }]}
@@ -140,7 +140,7 @@ function Home() {
           wrapperStyle={{ zIndex: 9999, top: -10, position: 'relative' }}
         />
       )}
-
+      {(useAccounts().length === 0 || isLoading) && <Spinner size={20} />}
       <Content
         contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
         paddingHorizontal={0}

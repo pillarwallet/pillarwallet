@@ -61,7 +61,7 @@ const BiometricModal = ({
 
   if (useBiometrics) return null;
 
-  const proceedTobeginOnboarding = (setBiometrics?: boolean) => {
+  const proceedToBeginOnboarding = (setBiometrics?: boolean) => {
     close();
     dispatch(beginOnboardingAction(setBiometrics));
   };
@@ -77,7 +77,7 @@ const BiometricModal = ({
             title={t('biometricLogin.button.cancel')}
             titleColor={colors.buttonTextTitle}
             variant="text"
-            onPress={() => proceedTobeginOnboarding()}
+            onPress={() => proceedToBeginOnboarding()}
           />
           <VerticalDivider />
           <ButtonText
@@ -85,7 +85,7 @@ const BiometricModal = ({
             variant="text"
             style={styles.button}
             titleColor={colors.buttonTextTitle}
-            onPress={() => proceedTobeginOnboarding(true)}
+            onPress={() => proceedToBeginOnboarding(true)}
           />
         </ButtonWrapper>
       </View>
