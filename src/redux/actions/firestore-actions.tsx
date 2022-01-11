@@ -1,11 +1,11 @@
-import { IReduxActions } from 'redux/interfaces/IReduxActions';
+import { IReduxAction } from 'redux/interfaces/IReduxAction';
 import { ReduxFirestoreType as t } from 'redux/redux-types/firestore-type';
 import { logBreadcrumb } from 'utils/common';
 
-export const sendDataToFirestore = (): IReduxActions => {
-  logBreadcrumb(TAG, 'send data to firestore action');
+export const syncStateWithFirestore = (): IReduxAction => {
+  logBreadcrumb(TAG, 'sync state firestore action');
 
-  return { type: t.SEND_DATA_TO_FIRESTORE };
+  return { type: t.FIRESTORE_SYNC_STATE };
 };
 
 const TAG = 'ReduxFirestoreActions';
