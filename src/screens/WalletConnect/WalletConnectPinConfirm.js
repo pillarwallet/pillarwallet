@@ -63,6 +63,7 @@ import type { Account } from 'models/Account';
 type Props = {
   sendAsset: (
     payload: TransactionPayload,
+    privateKey: string,
     callback: (status: TransactionStatus) => void,
     waitForActualTransactionHash: boolean,
   ) => void,
@@ -91,7 +92,7 @@ const WalletConnectPinConfirmScreeen = ({
     navigation.dismiss();
   };
 
-  const handleSendTransaction = (): void => {
+  const handleSendTransaction = (privateKey): void => {
     const statusCallback = (transactionStatus: TransactionStatus) => {
       if (transactionStatus.isSuccess && transactionStatus.hash) {
         approveCallRequest(callRequest, transactionStatus.hash);
@@ -109,7 +110,7 @@ const WalletConnectPinConfirmScreeen = ({
       });
     };
 
-    sendAsset(transactionPayload, statusCallback, true);
+    sendAsset(transactionPayload, privateKey, statusCallback, true);
   };
 
   const handleSignTransaction = async (wallet: Wallet): Promise<?string> => {
@@ -151,8 +152,17 @@ const WalletConnectPinConfirmScreeen = ({
     setIsChecking(true);
     const { method } = callRequest;
 
+    if (!wallet?.privateKey) {
+      rejectCallRequest(callRequest);
+      Toast.show({
+        message: t('error.transactionFailed.unableToAccessWallet'),
+        emoji: 'eyes',
+      });
+      return;
+    }
+
     if (method === ETH_SEND_TX) {
-      handleSendTransaction();
+      handleSendTransaction(wallet.privateKey);
       return;
     }
 
@@ -210,9 +220,10 @@ const combinedMapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   sendAsset: (
     transaction: TransactionPayload,
+    privateKey: string,
     callback: (status: TransactionStatus) => void,
     waitForActualTransactionHash: boolean = false,
-  ) => dispatch(sendAssetAction(transaction, callback, waitForActualTransactionHash)),
+  ) => dispatch(sendAssetAction(transaction, privateKey, callback, waitForActualTransactionHash)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });
 

@@ -89,9 +89,7 @@ import type { I18n } from 'models/Translations';
 // other
 import RootNavigation from 'navigation/rootNavigation';
 import Storybook from 'screens/Storybook';
-import configureStore from 'src/configureStore';
-
-const { store, persistor } = configureStore();
+import { store, persistor } from 'src/configureStore';
 
 const queryClient = new QueryClient();
 

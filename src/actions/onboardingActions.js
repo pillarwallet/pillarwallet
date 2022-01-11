@@ -45,6 +45,7 @@ import {
   SET_REGISTERING_USER,
 } from 'constants/onboardingConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -83,6 +84,7 @@ import { importEtherspotAccountsAction, initEtherspotServiceAction } from 'actio
 import { fetchSupportedAssetsAction, fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
 import { fetchTutorialDataIfNeededAction } from 'actions/cmsActions';
 import { initialDeepLinkExecutedAction } from 'actions/appSettingsActions';
+import { addAccountAction } from 'actions/accountsActions';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -322,7 +324,7 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
 export const setupAppServicesAction = (privateKey: ?string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
-      wallet: { backupStatus },
+      wallet: { backupStatus, data: walletData },
       session: {
         data: { isOnline },
       },
@@ -356,6 +358,14 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     // create Etherspot accounts
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching importEtherspotAccountsAction');
     await dispatch(importEtherspotAccountsAction());
+
+    // create key based accounts
+    if (walletData?.address) {
+      logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching addAccountAction for key based account');
+      dispatch(addAccountAction(walletData.address, ACCOUNT_TYPES.KEY_BASED));
+    } else {
+      reportErrorLog('setupAppServicesAction: cannot find key based address');
+    }
 
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching fetchAllAccountsTotalBalancesAction');
     dispatch(fetchAllAccountsTotalBalancesAction());

@@ -27,9 +27,11 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { persistStore, persistReducer, createMigrate } from 'redux-persist';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import thunk from 'redux-thunk';
+import createSagaMiddleware from 'redux-saga';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { createReactNavigationReduxMiddleware } from 'react-navigation-redux-helpers';
 import ReduxAsyncQueue from 'redux-async-queue';
+import rootSaga from 'redux/sagas/root-saga';
 import offlineMiddleware from 'utils/offlineMiddleware';
 import rootReducer from './reducers/rootReducer';
 
@@ -61,31 +63,23 @@ const persistConfig = {
 };
 const pReducer = persistReducer(persistConfig, rootReducer);
 
-const navigationMiddleware = createReactNavigationReduxMiddleware(
-  'root',
-  state => state.navigation,
-);
+const navigationMiddleware = createReactNavigationReduxMiddleware('root', (state) => state.navigation);
 
-const middlewares = [
-  thunk,
-  navigationMiddleware,
-  ReduxAsyncQueue,
-  offlineMiddleware,
-];
+const initialiseSagaMiddleware = createSagaMiddleware();
+
+const middlewares = [thunk, navigationMiddleware, ReduxAsyncQueue, offlineMiddleware, initialiseSagaMiddleware];
 const enhancer = composeWithDevTools({
   // Options: https://github.com/jhen0409/react-native-debugger#options
 })(applyMiddleware(...middlewares));
 
-const configureStore = (initialState: ?Object): Object => {
-  const store = createStore(
-    pReducer,
-    initialState,
-    enhancer,
-  );
+const configureStore = (): Object => {
+  const store = createStore(pReducer, enhancer);
 
   const persistor = persistStore(store);
+
+  initialiseSagaMiddleware.run(rootSaga);
 
   return { store, persistor };
 };
 
-export default configureStore;
+export const { store, persistor } = configureStore();

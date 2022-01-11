@@ -34,7 +34,10 @@ import { isDeployedOnChainSelector } from 'selectors/chains';
 import { useThemeColors } from 'utils/themes';
 import { useChainConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
-import { isArchanovaAccount } from 'utils/accounts';
+import {
+  isArchanovaAccount,
+  isKeyBasedAccount,
+} from 'utils/accounts';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
@@ -56,8 +59,15 @@ function TransactionDeploymentWarning({ chain, style }: Props) {
 
   const isDeployed = useRootSelector(isDeployedOnChainSelector)[chain];
 
-  // no warning for Archanova as it won't deploy on transaction
-  if (isDeployed || isArchanovaAccount(activeAccount)) return null;
+  /**
+   *  - No warning for key based since no deployments
+   *  - No warning for Archanova as it won't deploy on transaction
+   */
+  if (isDeployed
+    || isKeyBasedAccount(activeAccount)
+    || isArchanovaAccount(activeAccount)) {
+    return null;
+  }
 
   return (
     <Container style={style}>

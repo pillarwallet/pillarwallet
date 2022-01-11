@@ -104,6 +104,9 @@ export const isAccountType = (account: ?Account, type: AccountTypes): boolean %c
   // Note: null checks has to be done separately or flow predicate function is not working correctly.
   account != null && account.type === type;
 
+export const isKeyBasedAccount = (account: ?Account): boolean %checks =>
+  isAccountType(account, ACCOUNT_TYPES.KEY_BASED);
+
 export const isArchanovaAccount = (account: ?Account): boolean %checks =>
   isAccountType(account, ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET);
 
@@ -116,6 +119,8 @@ export const getAccountName = (accountType: AccountTypes | TranslatedString): st
       return t('legacySmartWallet');
     case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
       return t('smartWallet');
+    case ACCOUNT_TYPES.KEY_BASED:
+      return t('keyWallet');
     default:
       return '';
   }
@@ -167,8 +172,6 @@ export const getInitials = (fullName: string = '') => {
     .join('')
     .toUpperCase();
 };
-
-export const isNotKeyBasedType = ({ type }: Account) => type !== ACCOUNT_TYPES.KEY_BASED;
 
 export const isArchanovaAccountAddress = (address: string, accounts: Account[]): boolean =>
   getAccountTypeByAddress(address, accounts) === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET;
