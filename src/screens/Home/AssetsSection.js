@@ -43,7 +43,7 @@ import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
 import { calculateTotalBalancePerCategory } from 'utils/totalBalances';
 import { useChainsConfig, useAssetCategoriesConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
-import { isArchanovaAccount } from 'utils/accounts';
+import { isArchanovaAccount, isKeyBasedAccount } from 'utils/accounts';
 
 // Types
 import type { AssetCategory, AssetCategoryRecordKeys } from 'models/AssetCategory';
@@ -133,7 +133,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts }: Props
         key={`${category}-${chain}`}
         title={title}
         value={formattedBalance}
-        isDeployed={isDeployedOnChain[chain]}
+        isDeployed={isKeyBasedAccount(activeAccount) || isDeployedOnChain[chain]}
         onPress={() => navigateToAssetDetails(category, chain)}
         onPressDeploy={() => showDeploymentInterjection(chain)}
       />
@@ -163,7 +163,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts }: Props
         key={`collectibles-${chain}`}
         title={chainsConfig[chain].title}
         value={formatValue(accountCollectibleCounts[chain] ?? 0)}
-        isDeployed={isDeployedOnChain[chain]}
+        isDeployed={isKeyBasedAccount(activeAccount) || isDeployedOnChain[chain]}
         onPress={() => navigateToAssetDetails(ASSET_CATEGORY.COLLECTIBLES, chain)}
         onPressDeploy={() => showDeploymentInterjection(chain)}
       />

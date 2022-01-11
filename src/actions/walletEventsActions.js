@@ -49,7 +49,7 @@ export const addWalletCreationEventIfNeededAction = (account: Account) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const { walletEvents: { data: walletEvents } } = getState();
 
-    // key based not supported
+    // key based creation date not supported
     if (isAccountType(account, ACCOUNT_TYPES.KEY_BASED)) return;
 
     // keep as it is to not break existing events

@@ -26,9 +26,6 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 // selectors
 import { useRootSelector } from 'selectors';
 
-// utils
-import { isSmartWalletAccount } from 'utils/accounts';
-
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
 
@@ -46,17 +43,10 @@ export const availableWalletsSelector = createSelector(
   accountsSelector,
   activeBlockchainSelector,
   (accounts) => {
-    const availableWallets = [];
-
-    const keyWallet = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
-    if (keyWallet) availableWallets.push(keyWallet);
-
-    accounts.filter(isSmartWalletAccount).forEach((smartWallet) => {
-      availableWallets.push({
-        ...smartWallet,
-        isActive: smartWallet.isActive,
-      });
-    });
+    const availableWallets = accounts.map((wallet) => ({
+      ...wallet,
+      isActive: !!wallet.isActive,
+    }));
 
     // etherspot account first
     return sortBy(

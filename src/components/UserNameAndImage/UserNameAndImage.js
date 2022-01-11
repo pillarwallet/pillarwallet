@@ -35,7 +35,7 @@ import Text from 'components/core/Text';
 import { ACCOUNTS } from 'constants/navigationConstants';
 
 // Selectors
-import { useSmartWalletAccounts } from 'selectors';
+import { useAccounts } from 'selectors';
 
 // Utils
 import { fontStyles, spacing } from 'utils/variables';
@@ -56,7 +56,7 @@ const UserNameAndImage = ({ user }: Props) => {
   const dispatch = useDispatch();
   const { username } = user;
 
-  const canSwitchAccount = useSmartWalletAccounts().length > 1;
+  const canSwitchAccount = useAccounts().length > 1;
 
   const onAccountSwitchPress = () => {
     dispatch(dismissAccountSwitchTooltipAction());
