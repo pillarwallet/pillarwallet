@@ -71,6 +71,7 @@ type OwnProps = {|
   headerProps?: HeaderProps,
   insetTop?: boolean,
   onDismiss?: () => mixed,
+  closeFlag?: boolean,
 |};
 
 type Props = {|
@@ -159,6 +160,7 @@ class SlideModal extends React.Component<Props, State> {
       headerProps = {},
       insetTop,
       centerFloatingItem,
+      closeFlag = false,
     } = this.props;
 
     const customTheme = getTheme(this.props);
@@ -177,6 +179,8 @@ class SlideModal extends React.Component<Props, State> {
     if (headerLeftItems) {
       leftItems = [...leftItems, ...headerLeftItems];
     }
+
+    if (closeFlag) this.handleDismiss();
 
     const modalInner = (
       <React.Fragment>

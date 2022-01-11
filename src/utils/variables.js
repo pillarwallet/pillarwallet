@@ -257,3 +257,8 @@ export const appFont = {
   // When designs specify Archia-Medium use this replacement font
   archiaMedium: 'SpaceGrotesk-Medium',
 };
+
+export const borderRadiusSizes = {
+  defaultContainer: 22.5,
+  defaultButton: 14,
+};
