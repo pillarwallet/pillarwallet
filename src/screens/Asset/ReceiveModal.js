@@ -35,24 +35,28 @@ import QRCodeWithTheme from 'components/QRCode';
 import Toast from 'components/Toast';
 import ProfileImage from 'components/ProfileImage';
 import TextWithCopy from 'components/display/TextWithCopy';
+import TokenIcon from 'components/display/TokenIcon';
 
 // Utils
-import { spacing, fontStyles, fontSizes } from 'utils/variables';
+import { spacing, fontStyles, fontSizes, borderRadiusSizes } from 'utils/variables';
 import {
   getAccountEnsName,
   isEtherspotAccount,
   isKeyBasedAccount,
 } from 'utils/accounts';
 import { getThemeColors } from 'utils/themes';
+import { useChainsConfig } from 'utils/uiConfig';
 
 // Types
 import type { Account } from 'models/Account';
+import type { Chain } from 'models/Chain';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { User } from 'models/User';
 import type { Theme } from 'models/Theme';
 
 // Selectors
 import { activeAccountSelector } from 'selectors';
+import { useSupportedChains } from 'selectors/chains';
 
 // Hooks
 import { useDeploymentStatus } from 'hooks/deploymentStatus';
@@ -89,22 +93,84 @@ const ReceiveModal = ({
   user,
   theme,
 }: Props) => {
+  const [closeFlag, setCloseFlag] = React.useState(false);
   const handleAddressShare = useCallback(() => {
     Share.share({ title: t('title.publicAddress'), message: address });
   }, [address]);
 
   const colors = getThemeColors(theme);
   const { isDeployedOnChain, showDeploymentInterjection } = useDeploymentStatus();
-  const showWarning = !isKeyBasedAccount(activeAccount) && !isDeployedOnChain.ethereum;
+  const chains = useSupportedChains();
+  const chainsConfig = useChainsConfig();
 
+  const handleCopyFromChain = (chain: Chain) => {
+    if (isEtherspotAccount(activeAccount)) {
+      if (activeAccount?.extra[chain]?.address) {
+        Clipboard.setString(activeAccount?.extra[chain]?.address);
+        Toast.show({ message: t('toast.chainAddressCopiedToClipboard'), emoji: 'ok_hand' });
+        setCloseFlag(true);
+      } else {
+        Toast.show({ message: t('toast.missingCopyAddress'), emoji: 'hushed', autoClose: false });
+      }
+    } else {
+      handleCopyToClipboard(address);
+    }
+  };
+
+  const showWarning = !isKeyBasedAccount(activeAccount) && !isDeployedOnChain.ethereum;
   const { username } = user;
   const ensName = getAccountEnsName(activeAccount);
+
+  const renderChainAddress = (chain: Chain) => {
+    const { title, iconUrl } = chainsConfig[chain];
+
+    return (
+      <Container key={`${chain}`}>
+        <ContainerView>
+          <RowContainer>
+            <TokenIcon size={24} style={IconContainer} url={iconUrl} />
+            <Title>{title}</Title>
+            <CopyButtonFromChain>
+              <Button
+                width="100%"
+                height="48"
+                style={{ borderRadius: 14 }}
+                title={t('receiveModal.copyButton')}
+                onPress={() => handleCopyFromChain(chain)}
+              />
+            </CopyButtonFromChain>
+          </RowContainer>
+          {!isDeployedOnChain[chain] && (
+            <DeployText>
+              {t('receiveModal.notDeployedText', {
+                chain: title,
+                mediumText: true,
+                color: colors.recieveModalWarningText,
+              })}{' '}
+              {t('receiveModal.activationText', {
+                chain: title,
+                mediumText: true,
+                color: colors.recieveModalWarningText,
+              })}{' '}
+              <ActivateText onPress={() => showDeploymentInterjection(chain)}>
+                {t('receiveModal.activateText', {
+                  mediumText: true,
+                })}
+              </ActivateText>
+            </DeployText>
+          )}
+        </ContainerView>
+      </Container>
+    );
+  };
 
   return (
     <SlideModal
       onModalHide={onModalHide}
       noPadding
       noClose
+      showHeader
+      closeFlag={closeFlag}
       // TODO : The label itself will be revisited later on the direction of the product team
       // headerLeftItems={showErc20Note ? [{
       //   custom: (
@@ -116,71 +182,81 @@ const ReceiveModal = ({
       //   ),
       // }] : undefined}
       centerFloatingItem={
-        <ImageWrapper style={{ position: 'absolute', marginTop: -24 }}>
-          <ProfileImage userName={username} diameter={48} />
-        </ImageWrapper>
+        !isEtherspotAccount(activeAccount) ? (
+          <ImageWrapper style={{ position: 'absolute', marginTop: -24 }}>
+            <ProfileImage userName={username} diameter={48} />
+          </ImageWrapper>
+        ) : (
+          <ReceiveTitle>{t('receiveModal.title')}</ReceiveTitle>
+        )
       }
     >
-      <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
-        <InfoView>
-          {!!ensName && (
-            <TextWithCopy
-              textToCopy={ensName}
-              toastText={t('toast.ensNameCopiedToClipboard')}
-              iconColor={colors.link}
-              textStyle={styles.ensName}
-              adjustsFontSizeToFit
-              numberOfLines={1}
-            >
-              {ensName}
-            </TextWithCopy>
+      {isEtherspotAccount(activeAccount) ? (
+        <ContentWrapper forceInset={{ bottom: 'always' }}>
+          <InfoView>{chains.map((chain) => renderChainAddress(chain))}</InfoView>
+        </ContentWrapper>
+      ) : (
+        <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
+          <InfoView>
+            {!!ensName && (
+              <TextWithCopy
+                textToCopy={ensName}
+                toastText={t('toast.ensNameCopiedToClipboard')}
+                iconColor={colors.link}
+                textStyle={styles.ensName}
+                adjustsFontSizeToFit
+                numberOfLines={1}
+              >
+                {ensName}
+              </TextWithCopy>
+            )}
+            {ensName ? (
+              <WalletAddress numberOfLines={1} adjustsFontSizeToFit>
+                {address}
+              </WalletAddress>
+            ) : (
+              <TextWithCopy
+                toastText={t('toast.addressCopiedToClipboard')}
+                textToCopy={address}
+                textStyle={[styles.address, { color: colors.secondaryText }]}
+                iconColor={colors.link}
+                adjustsFontSizeToFit
+                numberOfLines={1}
+              >
+                {address}
+              </TextWithCopy>
+            )}
+          </InfoView>
+          {!!address && (
+            <QRCodeWrapper>
+              <QRCodeWithTheme value={address} size={104} />
+            </QRCodeWrapper>
           )}
-          {ensName ? (
-            <WalletAddress numberOfLines={1} adjustsFontSizeToFit>
-              {address}
-            </WalletAddress>
-          ) : (
-            <TextWithCopy
-              toastText={t('toast.addressCopiedToClipboard')}
-              textToCopy={address}
-              textStyle={[styles.address, { color: colors.secondaryText }]}
-              iconColor={colors.link}
-              adjustsFontSizeToFit
-              numberOfLines={1}
-            >
-              {address}
-            </TextWithCopy>
+          {isEtherspotAccount(activeAccount) && (
+            <WarningText style={styles.singleAddressInfo}>
+              {t('receiveModal.etherspotSingleAddressInfo')}
+            </WarningText>
           )}
-        </InfoView>
-        {!!address && (
-          <QRCodeWrapper>
-            <QRCodeWithTheme value={address} size={104} />
-          </QRCodeWrapper>
-        )}
-        {isEtherspotAccount(activeAccount) && (
-          <WarningText style={styles.singleAddressInfo}>
-            {t('receiveModal.etherspotSingleAddressInfo')}
-          </WarningText>
-        )}
-        {showWarning && (
-          <WarningText>
-            {t('receiveModal.notDeployedWarning', {
-              chain: t('chains.ethereum'),
-              mediumText: true,
-              color: colors.recieveModalWarningText,
-            })}{' '}
-            <Text color={colors.link} onPress={() => showDeploymentInterjection(CHAIN.ETHEREUM)}>
-              {t('receiveModal.withCaution')}
-            </Text>
-          </WarningText>
-        )}
-        <CopyButton>
-          <Button title={t('button.copyAddress')} onPress={() => handleCopyToClipboard(address)} />
-        </CopyButton>
-        <ShareButton>
-          <Button title={t('button.shareAddress')} onPress={handleAddressShare} secondary />
-        </ShareButton>
-      </ContentWrapper>
+          {showWarning && (
+            <WarningText>
+              {t('receiveModal.notDeployedWarning', {
+                chain: t('chains.ethereum'),
+                mediumText: true,
+                color: colors.recieveModalWarningText,
+              })}{' '}
+              <Text color={colors.link} onPress={() => showDeploymentInterjection(CHAIN.ETHEREUM)}>
+                {t('receiveModal.withCaution')}
+              </Text>
+            </WarningText>
+          )}
+          <CopyButton>
+            <Button title={t('button.copyAddress')} onPress={() => handleCopyToClipboard(address)} />
+          </CopyButton>
+          <ShareButton>
+            <Button title={t('button.shareAddress')} onPress={handleAddressShare} secondary />
+          </ShareButton>
+        </ContentWrapper>
+      )}
     </SlideModal>
   );
 };
@@ -240,6 +316,14 @@ const CopyButton = styled.View`
   margin-bottom: ${spacing.small}px;
 `;
 
+const CopyButtonFromChain = styled.View`
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+  width: 40%;
+  border-radius: ${borderRadiusSizes.defaultButton}px;
+`;
+
 const ShareButton = styled.View`
   width: 100%;
   justify-content: space-between;
@@ -262,4 +346,58 @@ const WarningText = styled(Text)`
   ${fontStyles.regular};
   color: ${({ theme }) => theme.colors.secondaryText};
   text-align: center;
+`;
+
+const ActivateText = styled(Text)`
+  ${fontStyles.small};
+  color: ${({ theme }) => theme.colors.link};
+  text-align: center;
+`;
+
+const DeployText = styled(Text)`
+  ${fontStyles.small};
+  color: ${({ theme }) => theme.colors.secondaryText};
+  justify-content: center;
+  margin: ${spacing.medium}px 0 0;
+  padding: 0 ${spacing.medium}px 0 ${spacing.medium}px;
+`;
+
+const IconContainer = styled.View`
+  align-items: center;
+  justify-content: center;
+`;
+
+const Container = styled.View`
+  background-color: ${({ theme }) => theme.colors.basic080};
+  flex-direction: row;
+  margin: ${spacing.small}px 0;
+  padding: ${spacing.medium}px;
+  border-radius: ${borderRadiusSizes.defaultContainer}px;
+`;
+
+const Title = styled(Text)`
+  flex: 1;
+  flex-direction: row;
+  ${fontStyles.medium};
+  padding: 0 ${spacing.medium}px 0 ${spacing.medium}px;
+`;
+
+const ReceiveTitle = styled.Text`
+  text-align: center;
+  ${fontStyles.big};
+  justify-content: center;
+  align-items: center;
+  margin: ${spacing.large}px ${spacing.largePlus}px ${spacing.mediumLarge}px;
+  color: ${({ theme }) => theme.colors.text};
+`;
+
+const ContainerView = styled.View`
+  flex: 1;
+  flex-direction: column;
+`;
+
+const RowContainer = styled.View`
+  align-items: center;
+  flex-direction: row;
+  padding: ${spacing.small}px;
 `;

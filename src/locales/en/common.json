@@ -385,6 +385,7 @@
   },
 
   "paragraph": {
+    "chainAddressCopiedToClipboard": "<0>{{chain}}</0> wallet address copied to clipboard.",
     "addressCopiedToClipboard": "Address copied to clipboard.",
     "doNotSendRealEthOrTokens": "Do not send real ETH or ERC20 tokens.",
     "ensNameCopiedToClipboard": "ENS name copied to clipboard.",
@@ -1224,7 +1225,8 @@
     "waitingForWalletConnectConnection": "Waiting for WalletConnect service…",
     "transactionReverted": "Something went wrong. Try again or tap this message for details.",
     "seedPhraseCopiedToClipboard": "12 words copied to clipboard",
-    "privateKeyCopiedToClipboard": "Private Key copied to clipboard"
+    "privateKeyCopiedToClipboard": "Private Key copied to clipboard",
+    "missingCopyAddress": "Sorry, cannot copy address to the clipboard"
   },
 
   "exchangeContent": {
@@ -1450,7 +1452,12 @@
   "receiveModal": {
     "etherspotSingleAddressInfo": "All chains use single wallet address.",
     "notDeployedWarning": "Receive <0>{{chain}}</0> assets",
-    "withCaution": "with caution."
+    "withCaution": "with caution.",
+    "title": "Receive",
+    "copyButton": "Address",
+    "activationText": "You need to activate your smart wallet first.",
+    "activateText": "Activate",
+    "notDeployedText": "⚠️ Sending tokens is unavailable. Currently you can only receive tokens in <0>{{chain}}</0> wallet"
   },
 
   "tooltip": {
