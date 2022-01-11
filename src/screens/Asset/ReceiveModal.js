@@ -116,7 +116,7 @@ const ReceiveModal = ({
       handleCopyToClipboard(address);
     }
   };
-  
+
   const showWarning = !isKeyBasedAccount(activeAccount) && !isDeployedOnChain.ethereum;
   const { username } = user;
   const ensName = getAccountEnsName(activeAccount);
@@ -226,36 +226,37 @@ const ReceiveModal = ({
                 {address}
               </TextWithCopy>
             )}
-        </InfoView>
-        {!!address && (
-          <QRCodeWrapper>
-            <QRCodeWithTheme value={address} size={104} />
-          </QRCodeWrapper>
-        )}
-        {isEtherspotAccount(activeAccount) && (
-          <WarningText style={styles.singleAddressInfo}>
-            {t('receiveModal.etherspotSingleAddressInfo')}
-          </WarningText>
-        )}
-        {showWarning && (
-          <WarningText>
-            {t('receiveModal.notDeployedWarning', {
-              chain: t('chains.ethereum'),
-              mediumText: true,
-              color: colors.recieveModalWarningText,
-            })}{' '}
-            <Text color={colors.link} onPress={() => showDeploymentInterjection(CHAIN.ETHEREUM)}>
-              {t('receiveModal.withCaution')}
-            </Text>
-          </WarningText>
-        )}
-        <CopyButton>
-          <Button title={t('button.copyAddress')} onPress={() => handleCopyToClipboard(address)} />
-        </CopyButton>
-        <ShareButton>
-          <Button title={t('button.shareAddress')} onPress={handleAddressShare} secondary />
-        </ShareButton>
-      </ContentWrapper>
+          </InfoView>
+          {!!address && (
+            <QRCodeWrapper>
+              <QRCodeWithTheme value={address} size={104} />
+            </QRCodeWrapper>
+          )}
+          {isEtherspotAccount(activeAccount) && (
+            <WarningText style={styles.singleAddressInfo}>
+              {t('receiveModal.etherspotSingleAddressInfo')}
+            </WarningText>
+          )}
+          {showWarning && (
+            <WarningText>
+              {t('receiveModal.notDeployedWarning', {
+                chain: t('chains.ethereum'),
+                mediumText: true,
+                color: colors.recieveModalWarningText,
+              })}{' '}
+              <Text color={colors.link} onPress={() => showDeploymentInterjection(CHAIN.ETHEREUM)}>
+                {t('receiveModal.withCaution')}
+              </Text>
+            </WarningText>
+          )}
+          <CopyButton>
+            <Button title={t('button.copyAddress')} onPress={() => handleCopyToClipboard(address)} />
+          </CopyButton>
+          <ShareButton>
+            <Button title={t('button.shareAddress')} onPress={handleAddressShare} secondary />
+          </ShareButton>
+        </ContentWrapper>
+      )}
     </SlideModal>
   );
 };
