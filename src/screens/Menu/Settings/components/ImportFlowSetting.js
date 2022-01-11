@@ -25,14 +25,23 @@ import { useTranslationWithPrefix } from 'translations/translate';
 // Constants
 import { IMPORT_WALLET } from 'constants/navigationConstants';
 
+// Types
+import type { WalletObject } from 'models/Wallet';
+
 // Local
 import SettingsItem from './SettingsItem';
 
-function ImportFlowSetting() {
+type Props = {
+  wallet: ?WalletObject,
+};
+
+function ImportFlowSetting({ wallet }: Props) {
   const navigation = useNavigation();
   const { t } = useTranslationWithPrefix('menu.settings');
 
-  const goToImportWallet = () => navigation.navigate(IMPORT_WALLET);
+  if (!wallet) return null;
+
+  const goToImportWallet = () => navigation.navigate(IMPORT_WALLET, { wallet });
 
   return (
     <SettingsItem

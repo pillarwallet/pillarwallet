@@ -83,7 +83,7 @@ const Settings = () => {
           <View>
             <Header>{t('walletBackup')}</Header>
             <BackupWalletSetting wallet={wallet} />
-            <ImportFlowSetting />
+            <ImportFlowSetting wallet={wallet} />
           </View>
         )}
 
@@ -101,7 +101,7 @@ const Settings = () => {
           <View>
             <Header>{t('walletBackup')}</Header>
             <ViewBackupPhraseSetting wallet={wallet} />
-            <ImportFlowSetting />
+            <ImportFlowSetting wallet={wallet} />
           </View>
         )}
       </Content>

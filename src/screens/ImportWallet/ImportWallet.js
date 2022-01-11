@@ -62,12 +62,13 @@ type State = {
   backupPhrase: Object,
   currentWordIndex: number,
   currentBPWord: string,
+  importError: string,
 };
 
 const DEV = 'DEV';
 
-const getButtonLabel = (currentWordIndex, error) => {
-  if (error && currentWordIndex === 12) {
+const getButtonLabel = (currentWordIndex, error, importError) => {
+  if ((error || importError) && currentWordIndex === 12) {
     return { text: t('auth:button.tryAgain'), showArrow: false };
   } else if (currentWordIndex < 12) {
     return { text: t('auth:button.next'), showArrow: true };
@@ -85,21 +86,27 @@ class ImportWallet extends React.Component<Props, State> {
     currentBPWord: '',
     currentWordIndex: 1,
     activeTab: TWORDSPHRASE,
+    importError: '',
   };
 
   handleImportSubmit = () => {
     requestAnimationFrame(() => {
       Keyboard.dismiss();
-      const { importWalletFromMnemonic } = this.props;
-      const {
-        tWordsPhrase,
-        activeTab,
-        backupPhrase,
-      } = this.state;
+      const { importWalletFromMnemonic, navigation } = this.props;
+      const { tWordsPhrase, activeTab, backupPhrase } = this.state;
+
+      const wallet = navigation.getParam('wallet', null);
 
       if (activeTab === TWORDSPHRASE) {
         const trimmedPhrase = Object.values(backupPhrase).join(' ');
-        importWalletFromMnemonic(trimmedPhrase);
+        if (wallet?.mnemonic !== trimmedPhrase) {
+          importWalletFromMnemonic(trimmedPhrase);
+        } else {
+          this.setState({
+            importError: t('auth:error.incorrectBackupPhrase.importWalletError'),
+          });
+        }
+        //  importWalletFromMnemonic(trimmedPhrase);
       } else if (activeTab === DEV) {
         const trimmedPhrase = tWordsPhrase.split(' ').filter(Boolean).join(' ');
         importWalletFromMnemonic(trimmedPhrase);
@@ -126,7 +133,7 @@ class ImportWallet extends React.Component<Props, State> {
 
   renderForm = (tabsInfo) => {
     const { errorMessage } = this.props;
-    const { activeTab, backupPhrase, currentWordIndex } = this.state;
+    const { activeTab, backupPhrase, currentWordIndex, importError } = this.state;
     const inputProps = {
       onChange: this.handleValueChange(tabsInfo[activeTab].changeName),
       value: tabsInfo[activeTab].value,
@@ -170,7 +177,7 @@ class ImportWallet extends React.Component<Props, State> {
             onSubmit: this.showNextWord,
           }}
           additionalStyle={{ textAlign: 'center' }}
-          errorMessage={errorMessage}
+          errorMessage={errorMessage || importError}
           onLayout={() => {
             if (!this.backupPhraseInput) return;
             this.backupPhraseInput.focus();
@@ -185,23 +192,30 @@ class ImportWallet extends React.Component<Props, State> {
       activeTab,
       currentBPWord,
       currentWordIndex,
+      importError,
     } = this.state;
     const { isImportingWallet } = this.props;
 
     if (activeTab === TWORDSPHRASE) {
       const { errorMessage } = this.props;
       const showPrev = currentWordIndex > 1 && !isImportingWallet;
-      const { text: nextButtonText, showArrow: showBackArrow } = getButtonLabel(currentWordIndex, errorMessage);
+      const { text: nextButtonText, showArrow: showBackArrow } = getButtonLabel(
+        currentWordIndex,
+        errorMessage,
+        importError,
+      );
       return (
         <ButtonsWrapper isRow>
-          {!!showPrev && <StyledButton
-            title={t('auth:button.prev')}
-            onPress={this.showPrevWord}
-            leftIconName="back"
-            disabled={isImportingWallet}
-            secondary
-            block={false}
-          />}
+          {!!showPrev && (
+            <StyledButton
+              title={t('auth:button.prev')}
+              onPress={this.showPrevWord}
+              leftIconName="back"
+              disabled={isImportingWallet}
+              secondary
+              block={false}
+            />
+          )}
           <StyledButton
             title={nextButtonText}
             onPress={this.showNextWord}
