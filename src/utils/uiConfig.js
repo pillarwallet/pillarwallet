@@ -46,6 +46,7 @@ type ChainConfig = {|
   iconName: IconName,
   color: string,
   gasSymbol: string,
+  iconUrl: string,
 |};
 
 /**
@@ -62,6 +63,7 @@ export function useChainsConfig(): { [key: Chain]: ChainConfig} {
       iconName: 'polygon',
       color: colors.polygon,
       gasSymbol: MATIC,
+      iconUrl: 'https://tokens.1inch.exchange/0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0.png',
     },
     [CHAIN.BINANCE]: {
       title: t('chains.binance'),
@@ -69,6 +71,7 @@ export function useChainsConfig(): { [key: Chain]: ChainConfig} {
       iconName: 'binance',
       color: colors.binance,
       gasSymbol: BNB,
+      iconUrl: 'https://tokens.1inch.exchange/0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c.png',
     },
     [CHAIN.XDAI]: {
       title: t('chains.xdai'),
@@ -76,6 +79,7 @@ export function useChainsConfig(): { [key: Chain]: ChainConfig} {
       iconName: 'xdai',
       color: colors.xdai,
       gasSymbol: XDAI,
+      iconUrl: 'https://tokens.1inch.exchange/0x6b175474e89094c44da98b954eedeac495271d0f.png',
     },
     [CHAIN.ETHEREUM]: {
       title: t('chains.ethereum'),
@@ -83,6 +87,7 @@ export function useChainsConfig(): { [key: Chain]: ChainConfig} {
       iconName: 'ethereum',
       color: colors.ethereum,
       gasSymbol: ETH,
+      iconUrl: 'https://tokens.1inch.exchange/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png',
     },
     [CHAIN.AVALANCHE]: {
       title: t('chains.avalanche'),
@@ -90,6 +95,8 @@ export function useChainsConfig(): { [key: Chain]: ChainConfig} {
       iconName: 'avalanche',
       color: colors.ethereum,
       gasSymbol: AVAX,
+      iconUrl:
+        'https://firebasestorage.googleapis.com/v0/b/pillar-project-1506420699556.appspot.com/o/app%2Fchains%2Favalanche%2Fassets%2Fassets%2FAvalanche_AVAX_RedWhite.png?alt=media&token=8e3bb7ba-76ac-4e64-a56e-d8623ab7a657',
     },
   };
 }
