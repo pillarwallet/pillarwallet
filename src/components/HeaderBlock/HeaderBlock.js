@@ -381,7 +381,11 @@ class HeaderBlock extends React.Component<Props> {
       return (<HeaderActionButton {...item.actionButton} wrapperStyle={[commonStyle, itemStyle]} />);
     }
     if (item.custom) {
-      return <View key={item.key || 'custom'} style={[commonStyle, itemStyle]}>{item.custom}</View>;
+      return (
+        <TouchableOpacity key={item.key || 'custom'} style={[commonStyle, itemStyle]} onPress={item.onPress}>
+          {item.custom}
+        </TouchableOpacity>
+      );
     }
     return null;
   };
