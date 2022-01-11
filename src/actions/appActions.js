@@ -36,7 +36,7 @@ import { AUTH_FLOW, ONBOARDING_FLOW, PIN_CODE_UNLOCK } from 'constants/navigatio
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { SET_SUPPORTED_ASSETS } from 'constants/assetsConstants';
 import { SET_ASSETS_BALANCES } from 'constants/assetsBalancesConstants';
-import { UPDATE_PIN_ATTEMPTS, UPDATE_WALLET_BACKUP_STATUS, SET_WALLET } from 'constants/walletConstants';
+import { UPDATE_PIN_ATTEMPTS, UPDATE_WALLET_BACKUP_STATUS } from 'constants/walletConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { SET_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'constants/collectiblesConstants';
 import { SET_RATES } from 'constants/ratesConstants';
@@ -156,9 +156,6 @@ export const initAppAndRedirectAction = () => {
 
       const user = storageData?.user?.user ?? {};
       dispatch({ type: SET_USER, payload: user });
-
-      const walletData = storageData?.wallet?.wallet?.data ?? {};
-      dispatch({ type: SET_WALLET, payload: walletData });
 
       const { pinAttempt = {} } = get(storageData, 'pinAttempt', {});
       const { pinAttemptsCount = 0, lastPinAttempt = 0 } = pinAttempt;
