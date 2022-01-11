@@ -490,7 +490,8 @@
       "notOwnedCollectible": "You no longer own this NFT",
       "collectibleCantBeTransferred": "This NFT can't be transferred",
       "notEnoughStake": "Not enough PLR in tank",
-      "cantCalculateFee": "Unable to calculate transaction fee"
+      "cantCalculateFee": "Unable to calculate transaction fee",
+      "unableToAccessWallet": "Unable to access wallet"
     },
     "emptyAddress": "Address cannot be empty",
     "contactWithAddressExists": "Contact with this address already exists",

@@ -48,7 +48,6 @@ import {
   getAccountId,
   getActiveAccountType,
   isArchanovaAccount,
-  isSupportedAccountType,
   getActiveAccount,
   isEtherspotAccount,
   findFirstEtherspotAccount,
@@ -61,7 +60,7 @@ import { patchArchanovaAccountExtra } from 'utils/archanova';
 import { navigate } from 'services/navigation';
 
 // selectors
-import { accountsSelector, activeAccountSelector } from 'selectors';
+import { accountsSelector } from 'selectors';
 
 // types
 import type { AccountTypes } from 'models/Account';
@@ -80,7 +79,7 @@ export const addAccountAction = (
       ? patchArchanovaAccountExtra(accountExtra, accounts)
       : accountExtra;
 
-    const smartWalletAccount = {
+    const newAccount = {
       id: accountAddress,
       type,
       extra: patchedAccountExtra,
@@ -95,7 +94,7 @@ export const addAccountAction = (
       updatedAccounts.push({ ...existingAccount, extra: patchedAccountExtra });
     } else {
       // $FlowFixMe: flow gets confused here
-      updatedAccounts.push(smartWalletAccount);
+      updatedAccounts.push(newAccount);
     }
 
     dispatch({
@@ -247,18 +246,6 @@ export const initOnLoginArchanovaAccountAction = (privateKey: string) => {
         type: SET_ACTIVE_NETWORK,
         payload: shouldChangeNetwork ? BLOCKCHAIN_NETWORK_TYPES.ETHEREUM : blockchainNetwork,
       });
-    }
-  };
-};
-
-export const fallbackToSmartAccountAction = () => {
-  return (dispatch: Dispatch, getState: GetState) => {
-    const activeAccount = activeAccountSelector(getState());
-    const { accounts: { data: accounts } } = getState();
-    if (activeAccount && !isSupportedAccountType(activeAccount.type)) {
-      const switchToAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET)
-     || accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
-      if (switchToAccount) dispatch(switchAccountAction(switchToAccount.id));
     }
   };
 };

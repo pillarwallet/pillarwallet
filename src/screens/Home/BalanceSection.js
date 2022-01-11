@@ -27,12 +27,16 @@ import { useNavigation } from 'react-navigation-hooks';
 import Text from 'components/core/Text';
 
 // Selectors
-import { useFiatCurrency } from 'selectors';
+import {
+  useActiveAccount,
+  useFiatCurrency,
+} from 'selectors';
 
 // Utils
 import { formatFiatValue, formatFiatChangeExtended } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
+import { isKeyBasedAccount } from 'utils/accounts';
 
 // Constants
 import {
@@ -54,6 +58,7 @@ function BalanceSection({ balanceInFiat, changeInFiat }: Props) {
   const navigation = useNavigation();
 
   const fiatCurrency = useFiatCurrency();
+  const activeAccount = useActiveAccount();
 
   const initialBalance = changeInFiat ? balanceInFiat.minus(changeInFiat) : null;
   const formattedChange = formatFiatChangeExtended(changeInFiat, initialBalance, fiatCurrency);
@@ -72,15 +77,17 @@ function BalanceSection({ balanceInFiat, changeInFiat }: Props) {
         )}
       </FirstColumn>
 
-      <SecondColumn>
-        <SpecialButton
-          title={tRoot('button.addCash')}
-          iconName="add-cash"
-          onPress={() => {
-            navigation.navigate(ADD_CASH);
-          }}
-        />
-      </SecondColumn>
+      {!isKeyBasedAccount(activeAccount) && (
+        <SecondColumn>
+          <SpecialButton
+            title={tRoot('button.addCash')}
+            iconName="add-cash"
+            onPress={() => {
+              navigation.navigate(ADD_CASH);
+            }}
+          />
+        </SecondColumn>
+        )}
     </Container>
   );
 }

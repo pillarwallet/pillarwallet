@@ -27,7 +27,10 @@ import {
   ARCHANOVA_WALLET_UPGRADE_STATUSES,
 } from 'constants/archanovaConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
+import {
+  ACCOUNT_TYPES,
+  UPDATE_ACCOUNTS,
+} from 'constants/accountsConstants';
 import { SET_CHAIN_SUPPORTED_ASSETS } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { SET_FETCHING_ASSETS_BALANCES } from 'constants/assetsBalancesConstants';
@@ -66,6 +69,12 @@ const mockUser: Object = {
 };
 
 const mockNewEtherspotAccount = { ...mockEtherspotAccount, extra: mockEtherspotAccountExtra };
+const mockNewKeyBasedAccount = {
+  id: '0x9c',
+  type: ACCOUNT_TYPES.KEY_BASED,
+  isActive: false,
+  extra: undefined,
+};
 const mockActiveSmartWalletAccount = { ...mockArchanovaAccount, isActive: true };
 
 Object.defineProperty(mockWallet, 'encrypt', {
@@ -122,6 +131,9 @@ describe('Auth actions', () => {
 
       // appends new Etherspot account to reducer
       { type: UPDATE_ACCOUNTS, payload: [mockActiveSmartWalletAccount, mockNewEtherspotAccount] },
+
+      // appends new key based account to reducer
+      { type: UPDATE_ACCOUNTS, payload: [mockActiveSmartWalletAccount, mockNewKeyBasedAccount] },
 
       { type: SET_FETCHING_AVAILABLE_KEY_BASED_COLLECTIBLES_TO_TRANSFER },
       { type: SET_FETCHING_ASSETS_BALANCES, payload: true },
