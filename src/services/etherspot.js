@@ -33,7 +33,6 @@ import {
   GatewayTransactionStates,
   Transaction as EtherspotTransaction,
   Currencies as EtherspotCurrencies,
-  ENSNodeStates,
   AccountStates,
 } from 'etherspot';
 import { map } from 'rxjs/operators';
@@ -351,14 +350,6 @@ export class EtherspotService {
        * regardless of our state check and either skips or adds deployment transaction.
        */
       await sdk.batchDeployAccount();
-    }
-
-    // check if ENS setup transaction needs to be included
-    if (isProdEnv() && chain === CHAIN.ETHEREUM && !etherspotAccount?.ensNode) {
-      const ensNode = await this.getEnsNode(etherspotAccount.address);
-      if (ensNode && ensNode.state === ENSNodeStates.Reserved) {
-        await sdk.batchClaimENSNode({ nameOrHashOrAddress: ensNode.name });
-      }
     }
 
     return Promise.all(transactions.map((transaction) => sdk.batchExecuteAccountTransaction(transaction)));
