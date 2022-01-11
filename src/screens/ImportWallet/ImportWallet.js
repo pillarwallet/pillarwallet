@@ -66,55 +66,6 @@ type State = {
 
 const DEV = 'DEV';
 
-const InputWrapper = styled.View`
-  flex-direction: row;
-  align-items: flex-start;
-  width: 100%;
-  margin-top: 20px;
-`;
-
-const FooterWrapper = styled.View`
-  justify-content: center;
-  align-items: center;
-  padding: ${spacing.large}px;
-  width: 100%;
-`;
-
-const ButtonsWrapper = styled.View`
-  justify-content: center;
-  align-items: center;
-  flex-direction: ${props => props.isRow ? 'row' : 'column'};
-`;
-
-const StyledButton = styled(Button)`
-  margin: 0 6px;
-`;
-
-const Label = styled(BaseText)`
-  color: ${themedColors.accent};
-  width: 100%;
-  text-align: center;
-  margin-bottom: 10px;
-`;
-
-const FormWrapper = styled.View`
-  flex-direction: column;
-  width: 100%;
-`;
-
-const Row = styled.View`
-  flex-direction: row;
-  flex-wrap: wrap;
-  margin-bottom: ${spacing.large}px;
-`;
-
-const BackupWordText = styled(BaseText)`
-  ${fontStyles.regular};
-  margin: 4px 2px;
-  align-items: flex-start;
-  color: ${themedColors.secondaryText};
-`;
-
 const getButtonLabel = (currentWordIndex, error) => {
   if (error && currentWordIndex === 12) {
     return { text: t('auth:button.tryAgain'), showArrow: false };
@@ -344,29 +295,21 @@ class ImportWallet extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        headerProps={({ centerItems: [{ title: t('auth:title.reimportWallet') }] })}
-        footer={(
-          <FooterWrapper>
-            {this.renderFooterButtons(tabsInfo)}
-          </FooterWrapper>
-        )}
+        headerProps={{
+          centerItems: [{ title: t('auth:title.reimportWallet') }],
+        }}
+        footer={<FooterWrapper>{this.renderFooterButtons(tabsInfo)}</FooterWrapper>}
       >
-        <ScrollWrapper
-          contentContainerStyle={{ flex: 1 }}
-          disableAutomaticScroll
-          keyboardShouldPersistTaps="always"
-        >
+        <ScrollWrapper contentContainerStyle={{ flex: 1 }} disableAutomaticScroll keyboardShouldPersistTaps="always">
           {__DEV__ && <Tabs tabs={restoreWalletTabs} wrapperStyle={{ marginTop: 16 }} activeTab={activeTab} />}
           <Wrapper regularPadding>
-            {!__DEV__ &&
-            <MediumText center style={{ marginTop: spacing.large }}>
-              {t('auth:label.enterSeedPhrase')}
-            </MediumText>
-            }
+            {!__DEV__ && (
+              <MediumText center style={{ marginTop: spacing.large }}>
+                {t('auth:label.enterSeedPhrase')}
+              </MediumText>
+            )}
             <InputWrapper ref={excludeFromMonitoring}>
-              <FormWrapper>
-                {this.renderForm(tabsInfo)}
-              </FormWrapper>
+              <FormWrapper>{this.renderForm(tabsInfo)}</FormWrapper>
             </InputWrapper>
           </Wrapper>
         </ScrollWrapper>
@@ -393,3 +336,52 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ImportWallet);
+
+const InputWrapper = styled.View`
+  flex-direction: row;
+  align-items: flex-start;
+  width: 100%;
+  margin-top: 20px;
+`;
+
+const FooterWrapper = styled.View`
+  justify-content: center;
+  align-items: center;
+  padding: ${spacing.large}px;
+  width: 100%;
+`;
+
+const ButtonsWrapper = styled.View`
+  justify-content: center;
+  align-items: center;
+  flex-direction: ${props => props.isRow ? 'row' : 'column'};
+`;
+
+const StyledButton = styled(Button)`
+  margin: 0 6px;
+`;
+
+const Label = styled(BaseText)`
+  color: ${themedColors.accent};
+  width: 100%;
+  text-align: center;
+  margin-bottom: 10px;
+`;
+
+const FormWrapper = styled.View`
+  flex-direction: column;
+  width: 100%;
+`;
+
+const Row = styled.View`
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-bottom: ${spacing.large}px;
+`;
+
+const BackupWordText = styled(BaseText)`
+  ${fontStyles.regular};
+  margin: 4px 2px;
+  align-items: flex-start;
+  color: ${themedColors.secondaryText};
+`;

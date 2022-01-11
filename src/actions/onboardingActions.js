@@ -72,7 +72,12 @@ import { logEventAction } from 'actions/analyticsActions';
 import { addMissingWalletEventsIfNeededAction } from 'actions/walletEventsActions';
 import { loadRemoteConfigWithUserPropertiesAction } from 'actions/remoteConfigActions';
 import { fetchAssetsRatesAction } from 'actions/ratesActions';
-import { resetAppServicesAction, resetAppStateAction, updateFcmTokenAction } from 'actions/authActions';
+import {
+  resetAppServicesAction,
+  resetAppStateAction,
+  updateFcmTokenAction,
+  resetAndStartImportWalletAction,
+} from 'actions/authActions';
 import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedAssetTransferActions';
 import { importEtherspotAccountsAction, initEtherspotServiceAction } from 'actions/etherspotActions';
 import { fetchSupportedAssetsAction, fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
@@ -94,7 +99,7 @@ export const setupAddressAction = () => {
       },
     } = getState();
 
-    logBreadcrumb('onboarding', 'setupAddressAction: checking for privateKey while setupUserAction');
+    logBreadcrumb('onboarding', 'setupAddressAction: checking for privateKey');
     const privateKey = wallet?.privateKey;
     if (!privateKey) {
       reportLog('setupAddressAction failed: no privateKey');
@@ -254,6 +259,7 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
       onboarding: {
         pinCode,
         wallet: importedWallet, // wallet was already added in import step
+        user: onboardingUsername,
       },
     } = getState();
 
@@ -278,6 +284,7 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
     dispatch(saveDbAction('wallet', { wallet: { data: { address, privateKey } } }));
     logBreadcrumb('onboarding', 'walletSetupAction: dispatching SET_WALLET');
     dispatch({ type: SET_WALLET, payload: { address, privateKey } });
+    dispatch({ type: SET_USER, payload: onboardingUsername });
 
     logBreadcrumb('onboarding', 'walletSetupAction: checking for recovery pending and backup status');
     const backupStatus = { isImported, isBackedUp: !!isImported };
@@ -293,8 +300,12 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
     logBreadcrumb('onboarding', 'walletSetupAction: dispatching saveDbAction for saving app settings');
     dispatch(saveDbAction('app_settings', { appSettings: { wallet: +new Date() } }));
 
-    logBreadcrumb('onboarding', 'walletSetupAction: dispatching setupAddressAction');
-    await dispatch(setupAddressAction());
+    if (onboardingUsername) {
+      await dispatch(setupUserAction(onboardingUsername?.username));
+    } else {
+      logBreadcrumb('onboarding', 'walletSetupAction: dispatching setupAddressAction');
+      await dispatch(setupAddressAction());
+    }
 
     logBreadcrumb('onboarding', 'walletSetupAction: dispatching setupAppServicesAction');
     await dispatch(setupAppServicesAction(privateKey));
@@ -518,6 +529,8 @@ export const importWalletFromMnemonicAction = (mnemonicInput: string) => {
       return;
     }
 
+    dispatch(resetAndStartImportWalletAction());
+
     logBreadcrumb('onboarding', 'importWalletFromMnemonicAction: Trying to validate registered user');
     const existingAccounts = await getExistingServicesAccounts(importedWallet.privateKey);
     const existingAccountWithPillarEns = existingAccounts.find((account) => {
@@ -535,7 +548,7 @@ export const importWalletFromMnemonicAction = (mnemonicInput: string) => {
         { username },
       );
       dispatch({ type: SET_ONBOARDING_USER, payload: { username, isExisting: true } });
-    }
+    } else dispatch({ type: SET_ONBOARDING_USER, payload: { isExisting: true } });
 
     const {
       mnemonic: { phrase: mnemonic },

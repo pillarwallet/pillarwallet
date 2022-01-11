@@ -97,7 +97,7 @@ function Home() {
   const balancePerCategory = calculateTotalBalancePerCategory(accountTotalBalances);
   const balancePerChain = calculateTotalBalancePerChain(accountTotalBalances);
   const totalBalance = sumRecord(balancePerCategory);
-  const showRegisterENSTooltip = !user.username && !!accountAddress;
+  const showRegisterENSTooltip = user?.username == null && !!accountAddress;
 
   const isRefreshing = useRootSelector(({ totalBalances }) => !!totalBalances.isFetching);
   const onRefresh = () => {
@@ -109,7 +109,16 @@ function Home() {
     <Container>
       <HeaderBlock
         leftItems={[{ svgIcon: 'menu', color: colors.basic020, onPress: () => navigation.navigate(MENU) }]}
-        centerItems={[{ custom: <UserNameAndImage user={user} address={accountAddress} /> }]}
+        centerItems={[
+          {
+            custom: (
+              <UserNameAndImage
+                user={user?.username}
+                address={accountAddress}
+              />
+            ),
+          },
+        ]}
         rightItems={[{ svgIcon: 'history', color: colors.basic020, onPress: () => navigation.navigate(HOME_HISTORY) }]}
         navigation={navigation}
         noPaddingTop

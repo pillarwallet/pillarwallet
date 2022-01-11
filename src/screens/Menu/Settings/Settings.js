@@ -101,6 +101,7 @@ const Settings = () => {
           <View>
             <Header>{t('walletBackup')}</Header>
             <ViewBackupPhraseSetting wallet={wallet} />
+            <ImportFlowSetting />
           </View>
         )}
       </Content>

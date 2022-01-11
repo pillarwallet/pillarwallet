@@ -38,4 +38,3 @@ export const getBiometryType = (biometryType?: string) => {
       return t('auth:biometryType.genericBiometricLogin');
   }
 };
-

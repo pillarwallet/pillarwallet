@@ -18,12 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React, { useEffect, useState } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
-
-// Actions
-import { resetOnboardingAction } from 'actions/onboardingActions';
 
 // Components
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
@@ -59,11 +56,8 @@ const SetWalletPinCode = ({
   const [errorMessage, setErrorMessage] = useState(null);
   const maxPinCodeLength = useRootSelector(maxPinCodeLengthSelector);
 
-  const dispatch = useDispatch();
-
   useEffect(() => {
     if (errorMessage) setErrorMessage(null);
-    dispatch(resetOnboardingAction());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pinCode]);
 

@@ -42,11 +42,8 @@ import { fontStyles, spacing } from 'utils/variables';
 import { hitSlop20 } from 'utils/common';
 import { useThemeColors } from 'utils/themes';
 
-// Types
-import type { User } from 'models/User';
-
 type Props = {
-  user: User,
+  user: ?string,
   address?: string,
 };
 
@@ -54,11 +51,8 @@ const UserNameAndImage = ({ user, address }: Props) => {
   const navigation = useNavigation();
   const colors = useThemeColors();
   const dispatch = useDispatch();
-  const { username } = user;
 
   const canSwitchAccount = useSmartWalletAccounts().length > 1;
-
-  const showAddress = !!address && !username;
 
   const onAccountSwitchPress = () => {
     dispatch(dismissAccountSwitchTooltipAction());
@@ -67,11 +61,11 @@ const UserNameAndImage = ({ user, address }: Props) => {
 
   return (
     <Wrapper onPress={canSwitchAccount ? onAccountSwitchPress : null} hitSlop={hitSlop20}>
-      <ProfileImage userName={username} diameter={24} />
+      <ProfileImage userName={!user ? address : user} diameter={24} />
 
-      {!!username && <UserName>{username}</UserName>}
+      {user && <UserName>{user}</UserName>}
 
-      {showAddress && <Address numberOfLines={1} ellipsizeMode="middle">{address}</Address>}
+      {!user && <Address numberOfLines={1} ellipsizeMode="middle">{address}</Address>}
 
       {canSwitchAccount && <Icon name="select" color={colors.basic020} />}
     </Wrapper>
