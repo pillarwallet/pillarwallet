@@ -62,11 +62,6 @@ const SocialMediaLinks = () => {
   );
 };
 
-export const OpenKnowledgebase = () => {
-  const knowledgebaseUrl = firebaseRemoteConfig.getString(REMOTE_CONFIG.KNOWLEDGE_BASE_URL);
-  Linking.openURL(knowledgebaseUrl);
-};
-
 export default SocialMediaLinks;
 
 const discordColors = {
