@@ -62,7 +62,7 @@ export const REMOTE_CONFIG = {
   FEATURE_WERT_COMMODITIES: 'feature_wert_commodities',
   FEATURE_WERT_CURRENCY: 'feature_wert_currency',
   FEATURE_WERT_COMMODITY: 'feature_wert_commodity',
-  FIRESTORE_SYNC_URL: 'app_api_user_endpoint',
+  APP_API_USER_ENDPOINT: 'app_api_user_endpoint',
   INFURA_PROJECT_ID: 'infura_project_id',
 };
 
@@ -110,6 +110,6 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.FEATURE_WERT_COMMODITIES]: 'MATIC',
   [REMOTE_CONFIG.FEATURE_WERT_COMMODITY]: 'MATIC',
   [REMOTE_CONFIG.FEATURE_WERT_CURRENCY]: 'USD',
-  [REMOTE_CONFIG.FIRESTORE_SYNC_URL]: 'https://us-central1-pillar-project-1506420699556.cloudfunctions.net/api',
+  [REMOTE_CONFIG.APP_API_USER_ENDPOINT]: 'https://us-central1-pillar-project-1506420699556.cloudfunctions.net/api',
   [REMOTE_CONFIG.INFURA_PROJECT_ID]: '',
 };

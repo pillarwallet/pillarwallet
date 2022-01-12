@@ -53,22 +53,15 @@ const syncStateWithFirestore = async (
 ): Promise<IReduxFirestoreSyncedState> => {
   logBreadcrumb(TAG, 'Attempting to sync state with Firestore', state.firestore);
 
-  // Check if recently synced
-  if (lastSyncedUtc) {
-    const now = new Date();
-    const lastSynced = new Date(lastSyncedUtc);
-    if (isBefore(now, addHours(lastSynced, 1))) throw new Error('State has recently been synced');
-  }
-
   // Purge sensitive data from the redux state
   let mutatedState = purgeSensitiveDataFromState(state);
   if (!validateStateToSync(mutatedState)) throw new Error('State still contains sensitive data');
 
-  const firestoreUrl = firebaseRemoteConfig.getString(REMOTE_CONFIG.FIRESTORE_SYNC_URL);
+  const firestoreUrl = firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_API_USER_ENDPOINT);
   logBreadcrumb(TAG, 'Firestore url:', firestoreUrl);
 
   // Attempt sync reqeuest to Firebase
-  const { data } = await httpRequest.post(firestoreUrl, mutatedState, requestConfig);
+  const { data } = await httpRequest.post(firestoreUrl, mutatedState, requestConfig).catch(() => null);
   if (!data) throw new Error('No response from firestore request');
 
   let timeUtc = new Date().toUTCString();
