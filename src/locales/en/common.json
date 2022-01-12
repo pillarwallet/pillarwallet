@@ -585,7 +585,8 @@
       "addressBook": "Address book",
       "supportChat": "Support",
       "storybook": "Storybook",
-      "supportConversations": "Support conversations"
+      "supportConversations": "Support conversations",
+      "knowledgebase": "Knowledgebase"
     },
     "footer": {
       "privacyPolicy": "Privacy Policy",

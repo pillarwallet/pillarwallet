@@ -37,7 +37,7 @@ export const REMOTE_CONFIG = {
   FEATURE_ONBOARDING_TUTORIAL: 'feature_onboarding_tutorial',
   WALLET_MIGRATION_ARCHANOVA_ENABLED: 'feature_archanova_migrator_tool',
   ENS_MIGRATOR_ENABLED: 'ens_migrator_enabled',
-  KNOWLEDGE_BASE_URL: 'knowlegebase_url',
+  KNOWLEDGE_BASE_URL: 'knowledgebase_url',
   FEATURE_STORIES_ANDROID_HEIGHT: 'feature_stories_android_height',
   FEATURE_STORIES_ANDROID_WIDTH: 'feature_stories_android_width',
   FEATURE_STORIES_ANDROID_CORNER_RADIUS: 'feature_stories_android_corner_radius',

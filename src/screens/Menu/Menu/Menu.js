@@ -48,7 +48,7 @@ import PillarLogoDark from 'assets/images/pillar-logo-small-dark.svg';
 // Local
 import MenuItem from './components/MenuItem';
 import MenuFooter from './components/MenuFooter';
-import SocialMediaLinks from './components/SocialMediaLinks';
+import SocialMediaLinks, { OpenKnowledgebase } from './components/SocialMediaLinks';
 
 const Menu = () => {
   const { t, tRoot } = useTranslationWithPrefix('menu');
@@ -90,9 +90,11 @@ const Menu = () => {
         />
         <MenuItem title={t('item.addressBook')} icon="contacts" onPress={goToInviteFriends} />
         <MenuItem title={t('item.supportChat')} icon="message" onPress={goToSupportChat} />
-        {repliesFlag &&
-        <MenuItem title={t('item.supportConversations')} icon="message" onPress={goToSupportConversations} />}
+        {repliesFlag && (
+          <MenuItem title={t('item.supportConversations')} icon="message" onPress={goToSupportConversations} />
+        )}
         {__DEV__ && <MenuItem title={t('item.storybook')} icon="lifebuoy" onPress={goToStorybook} />}
+        <MenuItem title={t('item.knowledgebase')} icon="info" onPress={OpenKnowledgebase} />
 
         <SocialMediaLinks />
 
