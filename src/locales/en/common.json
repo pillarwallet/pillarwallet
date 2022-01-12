@@ -123,7 +123,8 @@
     "exchange": "Exchange",
     "unlockWithBiometrics": "Unlock with biometric sensor",
     "welcome": "Welcome to Pillar Wallet!",
-    "seedPhrase": "12 words seed phrase"
+    "seedPhrase": "12 words seed phrase",
+    "registerEnsName": "Register ENS name"
   },
 
   "label": {
@@ -605,7 +606,8 @@
       "viewBackupPhrase": "View 12 words",
       "viewPrivateKey": "View Private Key",
       "backupNotFinishedWarning": "Security warning",
-      "backupComplete": "Backup complete"
+      "backupComplete": "Backup complete",
+      "importWallet": "Import Wallet"
     },
     "selectLanguage": {
       "title": "Language"
@@ -1462,13 +1464,23 @@
 
   "tooltip": {
     "switchAccountsByTappingHere": "You can switch accounts by tapping here",
-    "includesDeploymentFee": "One-time Smart Wallet deployment fee"
+    "includesDeploymentFee": "One-time Smart Wallet deployment fee",
+    "registerENS": "Register your unique ENS name"
   },
 
   "governanceCall": {
     "banner": {
       "title": "Governance Call",
       "live": "LIVE"
+    }
+  },
+
+  "biometricLogin": {
+    "title": "Sign in with {{biometryType}}",
+    "description": "Enable biometric login instead of typing PIN every time?",
+    "button": {
+      "enable": "Enable",
+      "cancel": "Cancel"
     }
   },
 

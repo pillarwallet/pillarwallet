@@ -23,6 +23,7 @@ import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 import Instabug, { Replies } from 'instabug-reactnative';
 import { useTranslationWithPrefix } from 'translations/translate';
+import { switchEnvironments } from 'configs/envConfig';
 
 // Components
 import { Container, Content } from 'components/layout/Layout';
@@ -71,11 +72,21 @@ const Menu = () => {
   const goToStorybook = () => navigation.navigate(STORYBOOK);
   const goToSupportConversations = () => Replies.show();
 
+  let clickCount = 0;
+  const handleSecretClick = () => {
+    clickCount++;
+    if (clickCount === 16) {
+      // on the 16th click switch network and reset.
+      clickCount = 0;
+      switchEnvironments();
+    }
+  };
+
   return (
     <Container>
       <HeaderBlock
         leftItems={[{ close: true }]}
-        centerItems={[{ custom: isDarkTheme ? <PillarLogoDark /> : <PillarLogo /> }]}
+        centerItems={[{ custom: isDarkTheme ? <PillarLogoDark /> : <PillarLogo />, onPress: handleSecretClick }]}
         navigation={navigation}
         noPaddingTop
       />

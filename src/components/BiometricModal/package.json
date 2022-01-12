@@ -1,0 +1,6 @@
+{
+  "name": "BiometricModal",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./BiometricModal.js"
+}

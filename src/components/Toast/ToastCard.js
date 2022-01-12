@@ -60,7 +60,7 @@ const ToastCard = ({
         <Spacing w={18} />
         <Text color={colors.toastTextColor} style={{ flex: 1 }}>
           {message}
-          {!!link && <Text onPress={onLinkPress}>{link}</Text>}
+          {!!link && <Text color={colors.toastTextColor} onPress={onLinkPress}>{link}</Text>}
         </Text>
       </ContentWrapper>
       <CloseIconWrapper onPress={onClose}>
