@@ -73,13 +73,21 @@ function Home() {
   const accountTotalBalances = useRootSelector(accountTotalBalancesSelector);
   const accountCollectibleCounts = useAccountCollectibleCounts();
   const user = useUser();
+  const dispatch = useDispatch();
   const wallet = useRootSelector((root) => root.wallet.data);
   const accountAddress = useRootSelector(activeAccountAddressSelector);
   const [isLoading, setIsLoading] = React.useState(false);
   const [showAccountSwitchTooltip, setShowAccountSwitchTooltip] = React.useState(false);
   const [showENSTooltip, setShowENSSwitchTooltip] = React.useState(false);
   const canSwitchAccount = useAccounts().length > 1;
-  const dispatch = useDispatch();
+
+  const { accountSwitchTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
+  const balancePerCategory = calculateTotalBalancePerCategory(accountTotalBalances);
+  const balancePerChain = calculateTotalBalancePerChain(accountTotalBalances);
+  const totalBalance = sumRecord(balancePerCategory);
+  const showRegisterENSTooltip = user?.username == null && !!accountAddress;
+
+  const isRefreshing = useRootSelector(({ totalBalances }) => !!totalBalances.isFetching);
 
   React.useEffect(() => {
     setTimeout(() => {
@@ -100,24 +108,22 @@ function Home() {
 
   React.useEffect(() => {
     if (canSwitchAccount) {
-      setTimeout(() => {
-        setShowAccountSwitchTooltip(true);
-      }, 3000);
-      setTimeout(() => {
-        setShowAccountSwitchTooltip(false);
-        setShowENSSwitchTooltip(true);
-      }, 10000);
+      if (!accountSwitchTooltipDismissed) {
+        setTimeout(() => {
+          setShowAccountSwitchTooltip(true);
+        }, 3000);
+        setTimeout(() => {
+          setShowAccountSwitchTooltip(false);
+          setShowENSSwitchTooltip(true);
+        }, 10000);
+      } else {
+        setTimeout(() => {
+          setShowENSSwitchTooltip(true);
+        }, 4000);
+      }
     }
-  }, [canSwitchAccount]);
+  }, [canSwitchAccount, accountSwitchTooltipDismissed]);
 
-  const { accountSwitchTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
-
-  const balancePerCategory = calculateTotalBalancePerCategory(accountTotalBalances);
-  const balancePerChain = calculateTotalBalancePerChain(accountTotalBalances);
-  const totalBalance = sumRecord(balancePerCategory);
-  const showRegisterENSTooltip = user?.username == null && !!accountAddress;
-
-  const isRefreshing = useRootSelector(({ totalBalances }) => !!totalBalances.isFetching);
   const onRefresh = () => {
     dispatch(refreshEtherspotAccountsAction());
     dispatch(fetchAllAccountsTotalBalancesAction());
