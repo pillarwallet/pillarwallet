@@ -104,7 +104,7 @@ const showFaceIDFailed = () => {
 };
 
 class BiometricsPrompt extends React.Component<Props> {
-  proceedTobeginOnboarding = (setBiometrics: boolean) => {
+  proceedToBeginOnboarding = (setBiometrics: boolean) => {
     const { beginOnboarding, navigation } = this.props;
 
     /**
@@ -142,13 +142,13 @@ class BiometricsPrompt extends React.Component<Props> {
             <ButtonsWrapper>
               <Button
                 title={t('auth:button.yesPlease')}
-                onPress={() => this.proceedTobeginOnboarding(true)}
+                onPress={() => this.proceedToBeginOnboarding(true)}
                 marginBottom={4}
               />
               <Button
                 transparent
                 title={t('auth:button.okToUsePinCodeOnly')}
-                onPress={() => this.proceedTobeginOnboarding(false)}
+                onPress={() => this.proceedToBeginOnboarding(false)}
               />
             </ButtonsWrapper>
           </ContentInnerWrapper>

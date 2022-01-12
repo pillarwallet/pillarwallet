@@ -19,8 +19,6 @@
 */
 
 import * as React from 'react';
-import { View } from 'react-native';
-import SwipeButton from 'rn-swipe-button';
 import styled, { useTheme } from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 import { useTranslation } from 'translations/translate';
@@ -33,6 +31,7 @@ import LargeFiatTokenValueView from 'components/display/LargeFiatTokenValueView'
 import Text from 'components/core/Text';
 import TransactionDeploymentWarning from 'components/other/TransactionDeploymentWarning';
 import Icon from 'components/core/Icon';
+import SwipeButton from 'components/SwipeButton/SwipeButton';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
@@ -74,14 +73,6 @@ type Props = {|
   onConfirm: (transactionPayload: TransactionPayload) => mixed,
   onReject: () => mixed,
 |};
-
-const SwiperIconComponent = () => {
-  return (
-    <View style={styles.swiperView}>
-      <Icon name="arrow-right" />
-    </View>
-  );
-};
 
 function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
   const [sdkInstances, setSdkInstances] = React.useState(Object.keys(etherspotService.instances));
@@ -175,25 +166,7 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
       {!!errorMessage && <ErrorMessage variant="small">{errorMessage}</ErrorMessage>}
 
       {!isConfirmDisabled ? (
-        <SwipeButton
-          width="100%"
-          height={72}
-          title={confirmTitle}
-          titleFontSize={fontSizes.medium}
-          titleColor={colors.buttonPrimaryTitle}
-          titleStyles={styles.swiperButtonTitle}
-          containerStyles={styles.swiperButtonContainer}
-          railBorderColor={colors.swiperButtonTrack}
-          railBackgroundColor={colors.swiperButtonTrack}
-          railFillBackgroundColor="transparent"
-          railFillBorderColor={colors.swiperButtonTrack}
-          thumbIconComponent={SwiperIconComponent}
-          thumbIconWidth={84}
-          thumbIconBackgroundColor={colors.swiperButtonThumb}
-          thumbIconBorderColor={colors.swiperButtonThumb}
-          thumbIconStyles={styles.swiperBtnthumbIcon}
-          onSwipeSuccess={handleConfirm}
-        />
+        <SwipeButton confirmTitle={confirmTitle} onPress={handleConfirm} />
       ) : (
         <Button title={confirmTitle} disabled size="large" />
       )}

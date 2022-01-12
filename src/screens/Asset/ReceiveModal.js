@@ -184,7 +184,7 @@ const ReceiveModal = ({
       centerFloatingItem={
         !isEtherspotAccount(activeAccount) ? (
           <ImageWrapper style={{ position: 'absolute', marginTop: -24 }}>
-            <ProfileImage userName={username} diameter={48} />
+            <ProfileImage userName={username == null ? address : username} diameter={48} />
           </ImageWrapper>
         ) : (
           <ReceiveTitle>{t('receiveModal.title')}</ReceiveTitle>

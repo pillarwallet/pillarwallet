@@ -24,6 +24,7 @@ import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
+import { isEmpty } from 'lodash';
 
 // Components
 import { Container, Content, Spacing } from 'components/layout/Layout';
@@ -53,6 +54,7 @@ import BiometricLoginSetting from './components/BiometricLoginSetting';
 import ChangePinSetting from './components/ChangePinSetting';
 import ViewBackupPhraseSetting from './components/ViewBackupPhraseSetting';
 import BackupWalletSetting from './components/BackupWalletSetting';
+import ImportFlowSetting from './components/ImportFlowSetting';
 
 const Settings = () => {
   const { t } = useTranslationWithPrefix('menu.settings');
@@ -81,6 +83,7 @@ const Settings = () => {
           <View>
             <Header>{t('walletBackup')}</Header>
             <BackupWalletSetting wallet={wallet} />
+            <ImportFlowSetting wallet={wallet} />
           </View>
         )}
 
@@ -98,6 +101,7 @@ const Settings = () => {
           <View>
             <Header>{t('walletBackup')}</Header>
             <ViewBackupPhraseSetting wallet={wallet} />
+            <ImportFlowSetting wallet={wallet} />
           </View>
         )}
       </Content>
@@ -126,7 +130,7 @@ const useWalletData = () => {
       }
 
       const keychainData = await getKeychainDataObject();
-      if (!keychainData) {
+      if (isEmpty(keychainData)) {
         setShowPinModal(true);
         return;
       }
