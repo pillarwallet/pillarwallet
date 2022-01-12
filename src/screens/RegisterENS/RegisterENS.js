@@ -53,11 +53,9 @@ import type { OnboardingUser } from 'models/User';
 
 const RegisterENS = () => {
   const navigation = useNavigation();
-  console.log('navigation', navigation)
   const dispatch = useDispatch();
   const colors = useThemeColors();
   const user = useRootSelector((root) => root.onboarding.user);
-  console.log('user', user)
   const errorMessage = useRootSelector((root) => root.onboarding.errorMessage);
   const [usernameValue, setUsernameValue] = useState('');
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
@@ -65,7 +63,6 @@ const RegisterENS = () => {
   const isUsernameInputDirty = usernameValue !== null;
 
   const usernameValidationErrorMessage = isUsernameInputDirty ? validateUsername(usernameValue) : null;
-  console.log('usernameValidationErrorMessage', usernameValidationErrorMessage)
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const onValidUsername = useCallback(

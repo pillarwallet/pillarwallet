@@ -54,7 +54,7 @@ import Toast from 'components/Toast';
 // utils
 import { generateMnemonicPhrase } from 'utils/wallet';
 import { reportErrorLog, reportLog, logBreadcrumb, getEnsPrefix, extractUsernameFromEnsName } from 'utils/common';
-import { getAccountEnsName, findFirstEtherspotAccount, getActiveAccount, isEtherspotAccount, getAccountAddress } from 'utils/accounts';
+import { getAccountEnsName, findFirstEtherspotAccount, getAccountAddress } from 'utils/accounts';
 import { isLogV2AppEvents } from 'utils/environment';
 
 // services
