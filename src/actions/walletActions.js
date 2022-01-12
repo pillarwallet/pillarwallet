@@ -140,7 +140,7 @@ export const checkForWalletBackupToastAction = () => {
     Toast.show({
       message: t('toast.ensureBackup'),
       emoji: 'point_up',
-      autoClose: false,
+      autoClose: true,
       onPress: () => {
         const action = NavigationActions.navigate({
           routeName: MENU_SETTINGS,

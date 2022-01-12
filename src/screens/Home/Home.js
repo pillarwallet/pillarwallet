@@ -76,7 +76,9 @@ function Home() {
   const wallet = useRootSelector((root) => root.wallet.data);
   const accountAddress = useRootSelector(activeAccountAddressSelector);
   const [isLoading, setIsLoading] = React.useState(false);
-
+  const [showAccountSwitchTooltip, setShowAccountSwitchTooltip] = React.useState(false);
+  const [showENSTooltip, setShowENSSwitchTooltip] = React.useState(false);
+  const canSwitchAccount = useAccounts().length > 1;
   const dispatch = useDispatch();
 
   React.useEffect(() => {
@@ -95,9 +97,20 @@ function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const { accountSwitchTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
 
-  const canSwitchAccount = useAccounts().length > 1;
+  React.useEffect(() => {
+    if (canSwitchAccount) {
+      setTimeout(() => {
+        setShowAccountSwitchTooltip(true);
+      }, 3000);
+      setTimeout(() => {
+        setShowAccountSwitchTooltip(false);
+        setShowENSSwitchTooltip(true);
+      }, 10000);
+    }
+  }, [canSwitchAccount]);
+
+  const { accountSwitchTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
 
   const balancePerCategory = calculateTotalBalancePerCategory(accountTotalBalances);
   const balancePerChain = calculateTotalBalancePerChain(accountTotalBalances);
@@ -127,7 +140,7 @@ function Home() {
       {/* this should stay first element, avoid putting it inside UserNameAndImage */}
       {canSwitchAccount && (
         <Tooltip
-          isVisible={!accountSwitchTooltipDismissed}
+          isVisible={!accountSwitchTooltipDismissed && showAccountSwitchTooltip}
           body={t('tooltip.switchAccountsByTappingHere')}
           wrapperStyle={{ zIndex: 9999, top: -10, position: 'relative' }}
         />
@@ -135,7 +148,7 @@ function Home() {
 
       {showRegisterENSTooltip && (
         <Tooltip
-          isVisible={!accountSwitchTooltipDismissed}
+          isVisible={!user?.username && showENSTooltip}
           body={t('tooltip.registerENS')}
           wrapperStyle={{ zIndex: 9999, top: -10, position: 'relative' }}
         />
