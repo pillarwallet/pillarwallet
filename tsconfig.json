@@ -10,7 +10,6 @@
     "moduleResolution": "node",
     "noEmit": true,
     "paths": {
-      "src/*": ["src/*"],
       "actions/*": ["src/actions/*"],
       "components/*": ["src/components/*"],
       "configs/*": ["src/configs/*"],
@@ -22,7 +21,8 @@
       "screens/*": ["src/screens/*"],
       "services/*": ["src/services/*"],
       "translations/*": ["src/translations/*"],
-      "utils/*": ["src/utils/*"]
+      "utils/*": ["src/utils/*"],
+      "src/*": ["src/*"]
     },
     "resolveJsonModule": true,
     "skipLibCheck": true,

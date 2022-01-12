@@ -1,50 +1,49 @@
-import { IReduxActions } from 'redux/interfaces/IReduxActions';
+import { IReduxAction } from 'redux/interfaces/IReduxAction';
 import { updateObject, createReducer } from 'redux/reducers/reducer-utilities';
 import { ProcessState } from 'models/ProcessState';
 import { ReduxFirestoreType as t } from 'redux/redux-types/firestore-type';
 import { logBreadcrumb } from 'utils/common';
 
 export interface IReduxFirestoreState {
-  initialised?: boolean;
-  sendDataState?: ProcessState;
-  lastSentDataUtc?: string;
+  syncDataState?: ProcessState;
+  lastSyncedUtc?: string;
+  error?: string | null;
 }
 
 const initialState: IReduxFirestoreState = {
-  initialised: false,
-  sendDataState: ProcessState.READY,
-  lastSentDataUtc: null,
+  syncDataState: ProcessState.READY,
+  lastSyncedUtc: null,
+  error: null,
 };
 
-const sendDataToFirestore = (state: IReduxFirestoreState, actions: IReduxActions) => {
-  logBreadcrumb(TAG, 'sending data to firestore reducer');
-  if (state.lastSentDataUtc) {
-    logBreadcrumb(TAG, 'last sent:', state.lastSentDataUtc);
+const syncState = (state: IReduxFirestoreState, actions: IReduxAction) => {
+  if (state.lastSyncedUtc) {
+    logBreadcrumb(TAG, 'last sent:', state.lastSyncedUtc);
   }
-  return updateObject(state, {});
+  return updateObject(state, { syncDataState: ProcessState.PROCESSING });
 };
 
-export interface IReduxDataSentToFireStore extends IReduxActions {
+export interface IReduxFirestoreSyncedState extends IReduxAction {
+  type: t.FIRESTORE_STATE_SYNCED;
   payload: {
     time: string;
   };
 }
 
-const dataSentToFirestore = (state: IReduxFirestoreState, actions: IReduxDataSentToFireStore) => {
-  logBreadcrumb(TAG, 'data sent to firestore');
+const stateSynced = (state: IReduxFirestoreState, actions: IReduxFirestoreSyncedState) => {
   let time = actions.payload.time;
-  return updateObject(state, { sendDataState: ProcessState.HANDLED, lastSentDataUtc: time });
+  return updateObject(state, { syncDataState: ProcessState.HANDLED, lastSyncedUtc: time, error: null });
 };
 
-const sendDataToFirestoreError = (state: IReduxFirestoreState, actions: IReduxActions) => {
-  logBreadcrumb(TAG, 'send data to firestore error');
-  return updateObject(state, { sendDataState: ProcessState.HANDLED });
+const syncStateError = (state: IReduxFirestoreState, actions: IReduxAction) => {
+  let error = actions.error.toString() ?? null;
+  return updateObject(state, { syncDataState: ProcessState.HANDLED, error: error });
 };
 
 const firestoreReducer = createReducer(initialState, {
-  [t.DATA_SENT_TO_FIRESTORE]: dataSentToFirestore,
-  [t.SEND_DATA_TO_FIRESTORE]: sendDataToFirestore,
-  [t.SEND_DATA_TO_FIRESTORE_ERROR]: sendDataToFirestoreError,
+  [t.FIRESTORE_SYNC_STATE]: syncState,
+  [t.FIRESTORE_STATE_SYNCED]: stateSynced,
+  [t.FIRESTORE_SYNC_STATE_ERROR]: syncStateError,
 });
 
 export default firestoreReducer;

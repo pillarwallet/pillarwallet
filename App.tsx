@@ -90,6 +90,7 @@ import type { I18n } from 'models/Translations';
 import RootNavigation from 'navigation/rootNavigation';
 import Storybook from 'screens/Storybook';
 import { store, persistor } from 'src/configureStore';
+import { syncStateWithFirestore } from 'src/redux/actions/firestore-actions';
 
 const queryClient = new QueryClient();
 
@@ -125,6 +126,7 @@ interface Props extends WithTranslation {
   sessionLanguageVersion: string | null;
   logScreenView: (screenName: string) => void;
   initWalletConnectSessionsWithoutReset: () => void;
+  syncReduxStateWithFirestore: () => void;
 }
 
 class App extends React.Component<Props, any> {
@@ -253,10 +255,11 @@ class App extends React.Component<Props, any> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { isFetched, handleSystemDefaultThemeChange, themeType } = this.props;
+    const { isFetched, handleSystemDefaultThemeChange, themeType, syncReduxStateWithFirestore } = this.props;
     const { isFetched: prevIsFetched, themeType: prevThemeType } = prevProps;
     if (isFetched && !prevIsFetched) {
       handleSystemDefaultThemeChange();
+      syncReduxStateWithFirestore();
     }
 
     if (themeType !== prevThemeType) {
@@ -420,6 +423,7 @@ const mapDispatchToProps = (dispatch: Dispatch): Partial<Props> => ({
   updateTranslationResourceOnContextChange: () => dispatch(updateTranslationResourceOnContextChangeAction()),
   logScreenView: (screenName: string) => dispatch(logScreenViewAction(screenName)),
   initWalletConnectSessionsWithoutReset: () => dispatch(initWalletConnectSessionsAction(false)),
+  syncReduxStateWithFirestore: () => dispatch(syncStateWithFirestore()),
 });
 
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(withTranslation()(App));
