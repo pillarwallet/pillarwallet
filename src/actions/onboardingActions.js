@@ -283,7 +283,7 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
     // raw private key will be removed from reducer once registration finishes
     const { address, privateKey } = ethersWallet;
 
-    dispatch(saveDbAction('wallet', { wallet: { data: { address, privateKey } } }));
+    dispatch(saveDbAction('wallet', { wallet: { data: { address } } }));
     logBreadcrumb('onboarding', 'walletSetupAction: dispatching SET_WALLET');
     dispatch({ type: SET_WALLET, payload: { address, privateKey } });
     dispatch({ type: SET_USER, payload: onboardingUsername });
