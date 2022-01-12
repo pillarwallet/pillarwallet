@@ -63,6 +63,7 @@ const NewProfile = () => {
   const dispatch = useDispatch();
 
   const user = useRootSelector(root => root.onboarding.user);
+  const wallet = useRootSelector(root => root.onboarding.wallet);
   const errorMessage = useRootSelector(root => root.onboarding.errorMessage);
 
   const [usernameValue, setUsernameValue] = useState(null);
@@ -171,7 +172,7 @@ const NewProfile = () => {
       <ProfileImage
         diameter={PROFILE_IMAGE_WIDTH}
         style={{ marginBottom: 47 }}
-        userName={user?.username}
+        userName={!user?.username ? wallet?.address : user?.username}
       />
       <UsernameWrapper>
         <Text>{t('auth:title.welcomeBack', { username: user?.username })}</Text>

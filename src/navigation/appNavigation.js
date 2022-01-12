@@ -104,6 +104,10 @@ import AddCashScreen from 'screens/AddCash/AddCash';
 import LegalScreen from 'screens/LegalScreen/LegalScreen';
 import BackupWalletIntro from 'screens/BackupWallet/Intro';
 import BackupPhraseValidateScreen from 'screens/BackupWallet/BackupPhraseValidate';
+import NewProfileScreen from 'screens/NewProfile';
+import ImportWalletScreen from 'screens/ImportWallet';
+import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
+import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
 
 // components
 import Toast from 'components/Toast';
@@ -223,6 +227,11 @@ import {
   ENS_MIGRATION_FLOW,
   ADD_CASH,
   LEGAL_SCREEN,
+  SET_WALLET_PIN_CODE,
+  NEW_PROFILE,
+  IMPORT_WALLET,
+  PIN_CODE_CONFIRMATION,
+  IMPORT_FLOW_FROM_SETTINGS,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -445,6 +454,20 @@ const menuFlow = createStackNavigator(
     [MENU_SELECT_LANGUAGE]: MenuSelectLanguageScreen,
     [MENU_SELECT_CURRENCY]: MenuSelectCurrencyScreen,
     [MENU_SYSTEM_INFORMATION]: MenuSystemInformationScreen,
+    [IMPORT_WALLET]: ImportWalletScreen,
+    [NEW_PROFILE]: NewProfileScreen,
+    [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
+    [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
+  },
+  StackNavigatorConfig,
+);
+
+const ImportFlowFromSettings = createStackNavigator(
+  {
+    [IMPORT_WALLET]: ImportWalletScreen,
+    [NEW_PROFILE]: NewProfileScreen,
+    [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
+    [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
   },
   StackNavigatorConfig,
 );
@@ -559,6 +582,7 @@ const AppFlowNavigation = createStackNavigator(
     [ADD_CASH]: addCashFlow,
     [WEB_VIEW]: WebViewScreen,
     [LEGAL_SCREEN]: LegalScreen,
+    [IMPORT_FLOW_FROM_SETTINGS]: ImportFlowFromSettings,
   },
   modalTransition,
 );

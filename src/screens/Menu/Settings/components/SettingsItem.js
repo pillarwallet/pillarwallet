@@ -30,7 +30,7 @@ import { fontStyles, spacing } from 'utils/variables';
 
 type Props = {|
   title: string,
-  icon: IconName,
+  icon?: IconName,
   onPress: () => mixed,
   value?: string,
   valueColor?: string,
@@ -42,13 +42,9 @@ const SettingsItem = ({ title, icon, onPress, value, valueColor, size, color }: 
   return (
     <Container>
       <TouchableContainer onPress={onPress}>
-        <Icon
-          name={icon}
-          width={!size ? 16 : size}
-          height={!size ? 16 : size}
-          color={color}
-          style={styles.icon}
-        />
+        {icon && (
+          <Icon name={icon} width={!size ? 16 : size} height={!size ? 16 : size} color={color} style={styles.icon} />
+        )}
         <Title>{title}</Title>
         <Value $color={valueColor}>{value}</Value>
       </TouchableContainer>

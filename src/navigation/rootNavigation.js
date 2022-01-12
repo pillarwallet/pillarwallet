@@ -22,39 +22,33 @@ import * as React from 'react';
 import { createSwitchNavigator, createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
-// screens
-import NewWalletScreen from 'screens/NewWallet';
+// Screens
 import NewProfileScreen from 'screens/NewProfile';
-import PermissionsScreen from 'screens/Permissions';
 import ImportWalletScreen from 'screens/ImportWallet';
 import ImportWalletLegalsScreen from 'screens/ImportWallet/ImportWalletLegals';
 import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
 import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
-import WelcomeScreen from 'screens/Welcome';
 import ForgotPinScreen from 'screens/ForgotPin';
-import BiometricsPromptScreen from 'screens/BiometricsPrompt';
-import LegalScreen from 'screens/LegalScreen/LegalScreen';
 
+// Utils
 import { modalTransition } from 'utils/common';
+
+// Components
 import { ModalProvider } from 'components/Modal';
 
+// Constants
 import {
   APP_FLOW,
   ONBOARDING_FLOW,
   AUTH_FLOW,
   SET_WALLET_PIN_CODE,
-  NEW_WALLET,
   NEW_PROFILE,
   IMPORT_WALLET,
   PIN_CODE_CONFIRMATION,
   PIN_CODE_UNLOCK,
-  WELCOME,
   FORGOT_PIN,
-  PERMISSIONS,
   IMPORT_WALLET_LEGALS,
-  LEGAL_SCREEN,
-  BIOMETRICS_PROMPT,
 } from 'constants/navigationConstants';
 
 import type { NavigationNavigator } from 'react-navigation';
@@ -73,26 +67,11 @@ const StackNavigatorConfig = {
 };
 
 const onBoardingFlow = createStackNavigator({
-  [WELCOME]: {
-    screen: WelcomeScreen,
-    defaultNavigationOptions: {
-      headerShown: false,
-    },
-  },
-  [PERMISSIONS]: PermissionsScreen,
-  [NEW_WALLET]: {
-    screen: NewWalletScreen,
-    defaultNavigationOptions: {
-      headerShown: false,
-    },
-  },
-  [IMPORT_WALLET_LEGALS]: ImportWalletLegalsScreen,
-  [IMPORT_WALLET]: ImportWalletScreen,
   [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
   [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
-  [BIOMETRICS_PROMPT]: BiometricsPromptScreen,
+  [IMPORT_WALLET_LEGALS]: ImportWalletLegalsScreen,
+  [IMPORT_WALLET]: ImportWalletScreen,
   [NEW_PROFILE]: NewProfileScreen,
-  [LEGAL_SCREEN]: LegalScreen,
 }, StackNavigatorConfig);
 
 const authFlow = createStackNavigator({

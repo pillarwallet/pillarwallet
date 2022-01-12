@@ -423,3 +423,36 @@ export const logoutAction = () => {
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
   };
 };
+
+export const resetAndStartImportWalletAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    // reset services
+    await dispatch(resetAppServicesAction());
+
+    // reset reducer state
+    const {
+      isOnline,
+      translationsInitialised,
+      fallbackLanguageVersion,
+      sessionLanguageCode,
+      sessionLanguageVersion,
+    } = getState().session.data; // keep these session values state after reset
+
+    dispatch(
+      resetAppStateAction({
+        session: {
+          data: {
+            isOnline,
+            translationsInitialised,
+            fallbackLanguageVersion,
+            sessionLanguageCode,
+            sessionLanguageVersion,
+          },
+        },
+      }),
+    );
+
+    // leave translation initialised flag in place
+    if (getState()?.session?.data?.translationsInitialised) dispatch(setSessionTranslationBundleInitialisedAction());
+  };
+};

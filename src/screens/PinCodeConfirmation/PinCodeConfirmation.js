@@ -23,28 +23,27 @@ import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
-// actions
+// Actions
 import { beginOnboardingAction, setOnboardingPinCodeAction } from 'actions/onboardingActions';
 
-// components
+// Components
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import PinCode from 'components/PinCode';
 import ErrorMessage from 'components/ErrorMessage';
 import { MediumText } from 'components/legacy/Typography';
 
-// constants
-import { BIOMETRICS_PROMPT } from 'constants/navigationConstants';
+// Constants
+import { HOME } from 'constants/navigationConstants';
 
-// selectors
+// Selectors
 import { useRootSelector } from 'selectors';
 import { maxPinCodeLengthSelector } from 'selectors/appSettings';
 
-// utils
+// Utils
 import { validatePinWithConfirmation } from 'utils/validators';
 import { fontStyles, spacing } from 'utils/variables';
-import { getSupportedBiometryType } from 'utils/keychain';
 
-// types
+// Types
 import type { Dispatch } from 'reducers/rootReducer';
 
 
@@ -55,19 +54,8 @@ type Props = {
   wallet: Object,
 };
 
-const ContentWrapper = styled.ScrollView`
-  flex: 1;
-`;
-
-const HeaderText = styled(MediumText)`
-  ${fontStyles.large};
-  text-align: center;
-  margin: ${spacing.large}px 0;
-`;
-
 const PinCodeConfirmation = ({
   setOnboardingPinCode,
-  beginOnboarding,
   navigation,
 }) => {
   const [errorMessage, setErrorMessage] = useState(null);
@@ -83,14 +71,8 @@ const PinCodeConfirmation = ({
       return;
     }
 
-    getSupportedBiometryType((biometryType) => {
-      setOnboardingPinCode(pinCode);
-      if (biometryType) {
-        navigation.navigate(BIOMETRICS_PROMPT, { biometryType });
-      } else {
-        beginOnboarding();
-      }
-    });
+    setOnboardingPinCode(pinCode);
+    navigation.navigate(HOME);
   };
 
   return (
@@ -124,3 +106,13 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
 });
 
 export default connect(null, mapDispatchToProps)(PinCodeConfirmation);
+
+const ContentWrapper = styled.ScrollView`
+  flex: 1;
+`;
+
+const HeaderText = styled(MediumText)`
+  ${fontStyles.large};
+  text-align: center;
+  margin: ${spacing.large}px 0;
+`;
