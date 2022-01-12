@@ -216,6 +216,18 @@ export class EtherspotService {
       });
   }
 
+  async estimateBatch(chain: Chain, username: ?string): Promise<?GatewayEstimatedBatch> {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      reportErrorLog('estimateTransactionsBatch failed: no SDK for chain set', { chain });
+      throw new Error(t('error.unableToEstimateTransaction'));
+    }
+    return sdk.batchClaimENSNode(username).catch((error) => {
+      reportErrorLog('EtherspotService batchClaimENSNode failed', { error });
+      return null;
+    });
+  }
+
   async getBalances(chain: Chain, accountAddress: string, supportedAssets: Asset[]): Promise<WalletAssetBalance[]> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) return [];

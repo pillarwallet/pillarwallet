@@ -41,7 +41,7 @@ import Modal from 'components/Modal';
 import Spinner from 'components/Spinner';
 
 // Constants
-import { MENU, HOME_HISTORY } from 'constants/navigationConstants';
+import { MENU, HOME_HISTORY, REGISTER_ENS } from 'constants/navigationConstants';
 
 // Selectors
 import { useRootSelector, useAccounts, activeAccountAddressSelector } from 'selectors';
@@ -157,6 +157,9 @@ function Home() {
           isVisible={!user?.username && showENSTooltip}
           body={t('tooltip.registerENS')}
           wrapperStyle={{ zIndex: 9999, top: -10, position: 'relative' }}
+          onPress={() => {
+            navigation.navigate(REGISTER_ENS);
+          }}
         />
       )}
       {(useAccounts().length === 0 || isLoading) && <Spinner size={20} />}

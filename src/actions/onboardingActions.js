@@ -46,6 +46,7 @@ import {
 } from 'constants/onboardingConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -53,13 +54,14 @@ import Toast from 'components/Toast';
 // utils
 import { generateMnemonicPhrase } from 'utils/wallet';
 import { reportErrorLog, reportLog, logBreadcrumb, getEnsPrefix, extractUsernameFromEnsName } from 'utils/common';
-import { getAccountEnsName } from 'utils/accounts';
+import { getAccountEnsName, findFirstEtherspotAccount, getActiveAccount, isEtherspotAccount, getAccountAddress } from 'utils/accounts';
 import { isLogV2AppEvents } from 'utils/environment';
 
 // services
 import { navigate } from 'services/navigation';
 import { firebaseMessaging, firebaseRemoteConfig } from 'services/firebase';
 import { getExistingServicesAccounts, isUsernameTaken } from 'services/onboarding';
+import etherspotService from 'services/etherspot';
 
 // actions
 import { importArchanovaAccountsIfNeededAction, managePPNInitFlagAction } from 'actions/smartWalletActions';
@@ -85,6 +87,9 @@ import { fetchSupportedAssetsAction, fetchAllAccountsTotalBalancesAction } from 
 import { fetchTutorialDataIfNeededAction } from 'actions/cmsActions';
 import { initialDeepLinkExecutedAction } from 'actions/appSettingsActions';
 import { addAccountAction } from 'actions/accountsActions';
+
+// Selectors
+import { accountsSelector } from 'selectors';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -646,6 +651,14 @@ export const checkUsernameAvailabilityAction = (username: string) => {
       type: SET_ONBOARDING_USER,
       payload: { username },
     });
+
+    const accounts = accountsSelector(getState());
+
+    const etherspotAccount = findFirstEtherspotAccount(accounts);
+    const etherspotAccountAddress = etherspotAccount ? getAccountAddress(etherspotAccount) : null;
+    if (etherspotAccountAddress) {
+      await etherspotService.estimateBatch(CHAIN.ETHEREUM, username);
+    }
   };
 };
 
