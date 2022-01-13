@@ -71,7 +71,7 @@ function SwitchChainModal({ items, activeItem, updateActiveChain, updateActiveIt
       const chainId = mapChainToChainId(chain?.key);
       connectedApps.map((item) => {
         const connector = item?.connector;
-        connector.updateSession({ chainId, accounts: item?.accounts });
+        if (connector) connector.updateSession({ chainId, accounts: item?.accounts });
         return item;
       });
     }
@@ -81,7 +81,7 @@ function SwitchChainModal({ items, activeItem, updateActiveChain, updateActiveIt
     const { title, key } = chain;
     let balance;
     if (!chain.key) {
-      balance = balancePerCategory?.wallet ?? BigNumber(0);
+      balance = balancePerCategory.wallet ?? BigNumber(0);
     } else {
       balance = balancePerChain[chain.key] ?? BigNumber(0);
     }
