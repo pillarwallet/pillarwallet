@@ -37,7 +37,7 @@ export const REMOTE_CONFIG = {
   FEATURE_ONBOARDING_TUTORIAL: 'feature_onboarding_tutorial',
   WALLET_MIGRATION_ARCHANOVA_ENABLED: 'feature_archanova_migrator_tool',
   ENS_MIGRATOR_ENABLED: 'ens_migrator_enabled',
-  KNOWLEDGE_BASE_URL: 'knowlegebase_url',
+  KNOWLEDGEBASE_URL: 'knowledgebase_url',
   FEATURE_STORIES_ANDROID_HEIGHT: 'feature_stories_android_height',
   FEATURE_STORIES_ANDROID_WIDTH: 'feature_stories_android_width',
   FEATURE_STORIES_ANDROID_CORNER_RADIUS: 'feature_stories_android_corner_radius',
@@ -62,6 +62,7 @@ export const REMOTE_CONFIG = {
   FEATURE_WERT_COMMODITIES: 'feature_wert_commodities',
   FEATURE_WERT_CURRENCY: 'feature_wert_currency',
   FEATURE_WERT_COMMODITY: 'feature_wert_commodity',
+  APP_API_USER_ENDPOINT: 'app_api_user_endpoint',
   INFURA_PROJECT_ID: 'infura_project_id',
 };
 
@@ -83,7 +84,7 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.FEATURE_ONBOARDING_TUTORIAL]: false,
   [REMOTE_CONFIG.WALLET_MIGRATION_ARCHANOVA_ENABLED]: true,
   [REMOTE_CONFIG.ENS_MIGRATOR_ENABLED]: false,
-  [REMOTE_CONFIG.KNOWLEDGE_BASE_URL]: 'https://help.pillarproject.io/',
+  [REMOTE_CONFIG.KNOWLEDGEBASE_URL]: 'https://help.pillarproject.io/',
   [REMOTE_CONFIG.FEATURE_STORIES_ANDROID_HEIGHT]: '200',
   [REMOTE_CONFIG.FEATURE_STORIES_ANDROID_WIDTH]: '200',
   [REMOTE_CONFIG.FEATURE_STORIES_ANDROID_CORNER_RADIUS]: '40',
@@ -109,5 +110,6 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.FEATURE_WERT_COMMODITIES]: 'MATIC',
   [REMOTE_CONFIG.FEATURE_WERT_COMMODITY]: 'MATIC',
   [REMOTE_CONFIG.FEATURE_WERT_CURRENCY]: 'USD',
+  [REMOTE_CONFIG.APP_API_USER_ENDPOINT]: 'https://us-central1-pillar-project-1506420699556.cloudfunctions.net/api',
   [REMOTE_CONFIG.INFURA_PROJECT_ID]: '',
 };

@@ -34,7 +34,49 @@ type Props = {|
   showModalClose?: boolean,
   noBoxMinHeight?: boolean,
   onModalHide?: () => void,
+  backdropDismissable?: boolean,
 |};
+
+export type ModalBoxInstance = {
+  close: () => void,
+};
+
+const ModalBox = React.forwardRef<Props, ModalBoxInstance>(({
+  modalStyle,
+  children,
+  showModalClose,
+  noBoxMinHeight,
+  onModalHide,
+  backdropDismissable,
+}: Props, ref) => {
+  const modalRef = useRef();
+
+  const close = useCallback(() => {
+    if (modalRef.current) modalRef.current.close();
+  }, []);
+
+  useImperativeHandle(ref, () => ({ close }), [close]);
+
+  return (
+    <Modal
+      ref={modalRef}
+      onModalHide={onModalHide}
+      style={[{ justifyContent: 'center' }, modalStyle]}
+      backdropDismissable={backdropDismissable}
+    >
+      {showModalClose && (
+        <ModalCloseButton onPress={close}>
+          <Icon name="rounded-close" style={{ color: '#fff', fontSize: 25 }} />
+        </ModalCloseButton>
+      )}
+      <Box noBoxMinHeight={noBoxMinHeight}>
+        {children}
+      </Box>
+    </Modal>
+  );
+});
+
+export default ModalBox;
 
 const Box = styled.View`
   flex-direction: column;
@@ -58,42 +100,3 @@ const ModalCloseButton = styled.TouchableOpacity`
   align-items: center;
   opacity: 0.5;
 `;
-
-export type ModalBoxInstance = {
-  close: () => void,
-};
-
-const ModalBox = React.forwardRef<Props, ModalBoxInstance>(({
-  modalStyle,
-  children,
-  showModalClose,
-  noBoxMinHeight,
-  onModalHide,
-}: Props, ref) => {
-  const modalRef = useRef();
-
-  const close = useCallback(() => {
-    if (modalRef.current) modalRef.current.close();
-  }, []);
-
-  useImperativeHandle(ref, () => ({ close }), [close]);
-
-  return (
-    <Modal
-      ref={modalRef}
-      onModalHide={onModalHide}
-      style={[{ justifyContent: 'center' }, modalStyle]}
-    >
-      {showModalClose && (
-        <ModalCloseButton onPress={close}>
-          <Icon name="rounded-close" style={{ color: '#fff', fontSize: 25 }} />
-        </ModalCloseButton>
-      )}
-      <Box noBoxMinHeight={noBoxMinHeight}>
-        {children}
-      </Box>
-    </Modal>
-  );
-});
-
-export default ModalBox;

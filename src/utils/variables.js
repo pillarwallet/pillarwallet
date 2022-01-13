@@ -261,4 +261,5 @@ export const appFont = {
 export const borderRadiusSizes = {
   defaultContainer: 22.5,
   defaultButton: 14,
+  medium: 24,
 };

@@ -45971,7 +45971,7 @@ exports[`Storyshots ToastCard link 1`] = `
                         "textAlignVertical": "center",
                       },
                       Object {
-                        "color": "#0A1427",
+                        "color": "#FCFDFF",
                       },
                       Object {
                         "fontSize": 14,

@@ -30,11 +30,12 @@ import { chunk } from 'lodash';
 // Components
 import { Container, Center } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
-import TabBar from 'components/layout/TabBar';
 import Text from 'components/core/Text';
 import FloatingButtons from 'components/FloatingButtons';
 import Spinner from 'components/Spinner';
 import WalletConnectRequests from 'screens/WalletConnect/Requests';
+import Modal from 'components/Modal';
+import Icon from 'components/core/Icon';
 
 // Selectors
 import { useActiveAccount } from 'selectors';
@@ -50,7 +51,7 @@ import { firebaseRemoteConfig } from 'services/firebase';
 
 // Utils
 import { mapNotNil } from 'utils/array';
-import { appFont, fontStyles, spacing } from 'utils/variables';
+import { appFont, fontStyles, spacing, borderRadiusSizes } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
 import { openUrl, showServiceLaunchErrorToast } from 'utils/inAppBrowser';
 import {
@@ -71,6 +72,7 @@ import WalletConnectListItem from './components/WalletConnectListItem';
 import ConnectFloatingButton from './components/ConnectFloatingButton';
 import ConnectedAppsFloatingButton from './components/ConnectedAppsFloatingButton';
 import DeployBanner from './components/DeployBanner';
+import SwitchChainModal from './components/SwitchChainModal';
 
 function WalletConnectHome() {
   const { t } = useTranslationWithPrefix('walletConnect.home');
@@ -82,6 +84,7 @@ function WalletConnectHome() {
   const activeAccount = useActiveAccount();
   const tabItems = useTabItems();
   const [activeChain, setActiveChain] = React.useState<?Chain>(null);
+  const [activeItem, setActiveItem] = React.useState(tabItems[0]);
 
   const { isDeployedOnChain } = useDeploymentStatus();
 
@@ -92,12 +95,45 @@ function WalletConnectHome() {
     && activeChain != null
     && !isDeployedOnChain[activeChain];
 
+  const updateActiveChain = (chain) => {
+    setActiveChain(chain);
+  };
+
+  const updateActiveItem = (item) => {
+    setActiveItem(item);
+  };
+
+  const closeModal = () => Modal.closeAll();
+
+  const openSwitchChainModal = () => {
+    Modal.open(() => {
+      return (
+        <SwitchChainModal
+          items={tabItems}
+          activeItem={activeItem}
+          updateActiveChain={updateActiveChain}
+          updateActiveItem={updateActiveItem}
+          closeModal={closeModal}
+        />
+      );
+    });
+  };
+
   const renderListHeader = () => {
+    const { key, title } = activeItem;
     return (
       <ListHeader>
         <WalletConnectRequests />
         {!isArchanovaAccount(activeAccount) && (
-          <TabBar items={tabItems} activeTab={activeChain} onActiveTabChange={setActiveChain} style={styles.tabs} />
+          <ContainerView isSelected>
+            <RowContainer>
+              <ChainViewIcon size={24} style={IconContainer} name={key ?? 'all-networks'} />
+              <Title>{title}</Title>
+              <TouchableContainer>
+                <ChainViewIcon name="chevron-down" onPress={() => openSwitchChainModal()} />
+              </TouchableContainer>
+            </RowContainer>
+          </ContainerView>
         )}
 
         {showDeployBanner && activeChain != null && <DeployBanner chain={activeChain} style={styles.banner} />}
@@ -265,4 +301,42 @@ const ListRow = styled.View`
   flex-direction: row;
   align-items: stretch;
   padding: 0 ${spacing.layoutSides}px;
+`;
+
+const ContainerView = styled.View`
+  background-color: ${({ theme, isSelected }) => (isSelected ? theme.colors.basic080 : theme.colors.basic050)};
+  margin: 0 ${spacing.layoutSides}px;
+  padding: ${spacing.large}px;
+  border-radius: ${borderRadiusSizes.medium}px;
+`;
+
+const RowContainer = styled.View`
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  padding: ${spacing.small}px;
+`;
+
+const IconContainer = styled.View`
+  align-items: center;
+  justify-content: center;
+`;
+
+const Title = styled(Text)`
+  flex: 1;
+  flex-direction: row;
+  ${fontStyles.medium};
+  padding: 0 ${spacing.medium}px 0 ${spacing.medium}px;
+`;
+
+const ChainViewIcon = styled(Icon)`
+  height: 24px;
+  width: 24px;
+  background-color: ${({ theme }) => theme.colors.basic050};
+  border-radius: ${borderRadiusSizes.medium}px;
+`;
+
+const TouchableContainer = styled.TouchableOpacity`
+  align-items: center;
+  justify-content: center;
 `;
