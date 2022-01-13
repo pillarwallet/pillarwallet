@@ -95,12 +95,12 @@ function WalletConnectHome() {
     && activeChain != null
     && !isDeployedOnChain[activeChain];
 
-  const updateActiveChain = (chain) => {
-    setActiveChain(chain);
+  const updateActiveChain = (chain?) => {
+    if (chain) setActiveChain(chain);
   };
 
-  const updateActiveItem = (item) => {
-    setActiveItem(item);
+  const updateActiveItem = (item?) => {
+    if (item) setActiveItem(item);
   };
 
   const closeModal = () => Modal.closeAll();
@@ -208,6 +208,11 @@ type Section = {
   title: string,
 };
 
+type itemType = {|
+  key: ?Chain,
+  title: ?string,
+|};
+
 const useColumnDimensions = () => {
   const { width } = useWindowDimensions();
   const availableWidth = width - (2 * spacing.layoutSides);
@@ -218,7 +223,7 @@ const useColumnDimensions = () => {
   return { numberOfColumns, columnWidth };
 };
 
-const useTabItems = () => {
+const useTabItems = (): itemType[] => {
   const { t } = useTranslation();
   const chains = useSupportedChains();
   const config = useChainsConfig();

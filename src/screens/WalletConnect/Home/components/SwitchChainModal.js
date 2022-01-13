@@ -37,14 +37,21 @@ import { calculateTotalBalancePerCategory, calculateTotalBalancePerChain } from 
 import { formatFiatValue } from 'utils/format';
 import { mapChainToChainId } from 'utils/chains';
 
+import { type Chain } from 'models/Chain';
+
 // Local
 import { useConnectedAppItems } from '../selectors';
 
+type itemType = {|
+  key: ?Chain,
+  title: ?string,
+|};
+
 type Props = {|
-  items: ?{},
-  activeItem: ?{},
-  updateActiveChain: () => void,
-  updateActiveItem: () => void,
+  items: ?itemType[],
+  activeItem: ?itemType,
+  updateActiveChain: (Chain) => void,
+  updateActiveItem: (itemType) => void,
   closeModal: () => void,
 |};
 
@@ -56,12 +63,12 @@ function SwitchChainModal({ items, activeItem, updateActiveChain, updateActiveIt
   const balancePerChain = calculateTotalBalancePerChain(accountTotalBalances);
   const fiatCurrency = useFiatCurrency();
 
-  const handleChains = (chain) => {
+  const handleChains = (chain: itemType) => {
     updateActiveItem(chain);
-    updateActiveChain(chain.key);
+    if (chain?.key) updateActiveChain(chain?.key);
     closeModal();
-    if (chain.key) {
-      const chainId = mapChainToChainId(chain.key);
+    if (chain?.key) {
+      const chainId = mapChainToChainId(chain?.key);
       connectedApps.map((item) => {
         const connector = item?.connector;
         connector.updateSession({ chainId, accounts: item?.accounts });
@@ -70,7 +77,7 @@ function SwitchChainModal({ items, activeItem, updateActiveChain, updateActiveIt
     }
   };
 
-  const renderChainAddress = (chain) => {
+  const renderChainAddress = (chain: itemType) => {
     const { title, key } = chain;
     let balance;
     if (!chain.key) {
@@ -82,7 +89,7 @@ function SwitchChainModal({ items, activeItem, updateActiveChain, updateActiveIt
     const isSelected = activeItem?.title === title;
 
     return (
-      <Container key={`${key}`} onPress={() => handleChains(chain)}>
+      <Container key={`${key ?? 'all'}`} onPress={() => handleChains(chain)}>
         <ContainerView isSelected={isSelected}>
           <RowContainer>
             {isSelected && (
@@ -103,7 +110,7 @@ function SwitchChainModal({ items, activeItem, updateActiveChain, updateActiveIt
   return (
     <SlideModal noPadding noClose showHeader centerTitle title={t('switch-title')}>
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
-        <InfoView>{items.map((item) => renderChainAddress(item))}</InfoView>
+        <InfoView>{items?.map((item) => renderChainAddress(item))}</InfoView>
       </ContentWrapper>
     </SlideModal>
   );

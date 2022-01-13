@@ -36,6 +36,7 @@ export type AppItem = {|
   chain: Chain,
   iconUrl: ?string,
   connector: WalletConnectConnector,
+  accounts: string[],
 |};
 
 export function useConnectedAppItems(): AppItem[] {
