@@ -26,6 +26,7 @@ import {
   Accounts as EtherspotAccounts,
   EnvNames,
   ENSNode,
+  ENSNodeStates,
   GatewaySubmittedBatch,
   Notification as EtherspotNotification,
   IncreaseP2PPaymentChannelAmountDto,
@@ -216,16 +217,38 @@ export class EtherspotService {
       });
   }
 
-  async estimateBatch(chain: Chain, username: ?string): Promise<?GatewayEstimatedBatch> {
+  async estimateBatch(chain: Chain): Promise<?GatewayEstimatedBatch> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {
-      reportErrorLog('estimateTransactionsBatch failed: no SDK for chain set', { chain });
-      throw new Error(t('error.unableToEstimateTransaction'));
+      reportErrorLog('setTransactionsBatch failed: no SDK for chain set');
+      throw new Error(t('error.unableToSetTransaction'));
     }
-    return sdk.batchClaimENSNode(username).catch((error) => {
-      reportErrorLog('EtherspotService batchClaimENSNode failed', { error });
+    const { account: etherspotAccount } = sdk.state;
+    if (isProdEnv() && chain === CHAIN.ETHEREUM && !etherspotAccount?.ensNode) {
+      const ensNode = await this.getEnsNode(etherspotAccount.address);
+      if (ensNode && ensNode.state === ENSNodeStates.Reserved) {
+        await sdk.batchClaimENSNode({ nameOrHashOrAddress: ensNode.name });
+      }
+    }
+    let batch: ?GatewayEstimatedBatch = null;
+    try {
+      batch = await this.estimateTransactionsBatch(chain);
+    } catch (error) {
+      reportErrorLog('setTransactionsBatchAndEstimate -> estimateTransactionsBatch failed', {
+        error,
+        chain,
+      });
+      throw error;
+    }
+
+    if (!batch) {
+      reportErrorLog('setTransactionsBatchAndEstimate -> estimateTransactionsBatch returned null', {
+        batch,
+        chain,
+      });
       return null;
-    });
+    }
+    return batch;
   }
 
   async getBalances(chain: Chain, accountAddress: string, supportedAssets: Asset[]): Promise<WalletAssetBalance[]> {

@@ -82,7 +82,10 @@ import {
   resetAndStartImportWalletAction,
 } from 'actions/authActions';
 import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedAssetTransferActions';
-import { importEtherspotAccountsAction, initEtherspotServiceAction } from 'actions/etherspotActions';
+import {
+  importEtherspotAccountsAction,
+  initEtherspotServiceAction,
+} from 'actions/etherspotActions';
 import { fetchSupportedAssetsAction, fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
 import { fetchTutorialDataIfNeededAction } from 'actions/cmsActions';
 import { initialDeepLinkExecutedAction } from 'actions/appSettingsActions';
@@ -651,14 +654,20 @@ export const checkUsernameAvailabilityAction = (username: string) => {
       type: SET_ONBOARDING_USER,
       payload: { username },
     });
+  };
+};
 
+export const claimENSNameAction = (username: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const accounts = accountsSelector(getState());
 
     const etherspotAccount = findFirstEtherspotAccount(accounts);
-    const etherspotAccountAddress = etherspotAccount ? getAccountAddress(etherspotAccount) : null;
-    if (etherspotAccountAddress) {
-      await etherspotService.estimateBatch(CHAIN.ETHEREUM, username);
+    if (!etherspotAccount) {
+      reportErrorLog('claimENSNameAction failed: no Etherspot account found');
+      return;
     }
+    await etherspotService.reserveEnsName(username);
+    await etherspotService.estimateBatch(CHAIN.ETHEREUM);
   };
 };
 

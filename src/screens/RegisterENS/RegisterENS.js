@@ -27,7 +27,11 @@ import { useDispatch } from 'react-redux';
 import { debounce } from 'lodash';
 
 // Actions
-import { checkUsernameAvailabilityAction, resetUsernameCheckAction } from 'actions/onboardingActions';
+import {
+  checkUsernameAvailabilityAction,
+  resetUsernameCheckAction,
+  claimENSNameAction,
+} from 'actions/onboardingActions';
 
 // Utils
 import { appFont, spacing, fontSizes } from 'utils/variables';
@@ -39,13 +43,12 @@ import { getEnsPrefix } from 'utils/common';
 import { useRootSelector } from 'selectors';
 
 // Components
-import { Container } from 'components/layout/Layout';
+import { Container, Content } from 'components/layout/Layout';
+import Text from 'components/core/Text';
 import TextInput from 'components/legacy/TextInput';
 import HeaderBlock from 'components/HeaderBlock';
-import SwipeButton from 'components/SwipeButton/SwipeButton';
 
-// Constants
-// import { CHAIN } from 'constants/chainConstants';
+import Button from 'components/core/Button';
 
 // Types
 import type { OnboardingUser } from 'models/User';
@@ -57,12 +60,21 @@ const RegisterENS = () => {
   const colors = useThemeColors();
   const user = useRootSelector((root) => root.onboarding.user);
   const errorMessage = useRootSelector((root) => root.onboarding.errorMessage);
-  const [usernameValue, setUsernameValue] = useState('');
+  const [usernameValue, setUsernameValue] = useState(null);
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
-
   const isUsernameInputDirty = usernameValue !== null;
-
   const usernameValidationErrorMessage = isUsernameInputDirty ? validateUsername(usernameValue) : null;
+  const buttonDisable = !!usernameValidationErrorMessage || !!errorMessage || isCheckingUsername;
+
+  const getButtonName = () => {
+    if (!!usernameValidationErrorMessage && !errorMessage) return usernameValidationErrorMessage;
+    if (!usernameValidationErrorMessage && errorMessage) return errorMessage;
+    return t('button.save');
+  };
+
+  const reserveENSName = () => {
+    if (user?.username) dispatch(claimENSNameAction(user?.username));
+  };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const onValidUsername = useCallback(
@@ -109,11 +121,6 @@ const RegisterENS = () => {
     errorMessage,
   );
 
-  const handleChangeText = (text: string) => {
-    const ensName = text.replace(getEnsPrefix(), '');
-    setUsernameValue(ensName);
-  };
-
   return (
     <Container>
       <HeaderBlock
@@ -122,29 +129,46 @@ const RegisterENS = () => {
         navigation={navigation}
         noPaddingTop
       />
-      <StyledWrapper>
-        <TextInput
-          errorMessage={usernameValidationErrorMessage}
-          loading={isCheckingUsername}
-          iconProps={{
-            icon: statusIcon,
-            color: iconColor,
-          }}
-          inputProps={{
-            value: `${usernameValue}`,
-            autoCapitalize: 'none',
-            autoFocus: true,
-            onChangeText: handleChangeText,
-          }}
-          rightPlaceholder={getEnsPrefix()}
-          inputWrapperStyle={styles.inputWrapperStyles}
-          itemHolderStyle={styles.itemHolderStyles}
-          additionalStyle={styles.additionalStyle}
-        />
-      </StyledWrapper>
-      <Footer behavior={Platform.OS === 'ios' ? 'position' : null}>
-        <SwipeButton confirmTitle={t('button.swipeConfirm')} />
-      </Footer>
+      <Content paddingHorizontal={0} paddingVertical={0}>
+        <StyledWrapper>
+          <TextInput
+            loading={isCheckingUsername}
+            iconProps={{
+              icon: statusIcon,
+              color: iconColor,
+            }}
+            inputProps={{
+              value: `${usernameValue || ''}`,
+              autoCapitalize: 'none',
+              autoFocus: true,
+              onChange: setUsernameValue,
+              placeholder: t('label.username'),
+            }}
+            placeholderTextColor={colors.tertiaryText}
+            inputWrapperStyle={styles.inputWrapperStyles}
+            itemHolderStyle={styles.itemHolderStyles}
+            additionalStyle={styles.additionalStyle}
+          />
+          <Text variant="medium" style={{ textAlign: 'center' }}>
+            {getEnsPrefix()}
+          </Text>
+        </StyledWrapper>
+        <Footer behavior={Platform.OS === 'ios' ? 'position' : null}>
+          {!buttonDisable && !!usernameValue && (
+            <Text color={colors.negative}>{t('auth:label.ensNameWarningMessage')}</Text>
+          )}
+          {!!usernameValue && (
+            <Button
+              title={buttonDisable ? getButtonName() : t('button.save')}
+              size="large"
+              disabled={buttonDisable}
+              onPress={reserveENSName}
+              style={styles.buttonStyle}
+            />
+          )}
+          {/* <SwipeButton confirmTitle={t('button.swipeConfirm')} /> */}
+        </Footer>
+      </Content>
     </Container>
   );
 };
@@ -160,9 +184,15 @@ const styles = {
     backgroundColor: 'transparent',
   },
   additionalStyle: {
-    fontSize: fontSizes.jumbo,
+    fontSize: fontSizes.giant,
     fontFamily: appFont.regular,
     textAlign: 'center',
+  },
+  placeholderStyle: {
+    fontSize: fontSizes.giant,
+  },
+  buttonStyle: {
+    marginTop: 8,
   },
 };
 
