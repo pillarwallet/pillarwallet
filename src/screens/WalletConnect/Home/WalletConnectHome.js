@@ -96,7 +96,7 @@ function WalletConnectHome() {
     && !isDeployedOnChain[activeChain];
 
   const updateActiveChain = (chain?) => {
-    if (chain) setActiveChain(chain);
+    setActiveChain(chain ?? null);
   };
 
   const updateActiveItem = (item?) => {

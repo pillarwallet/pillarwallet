@@ -50,7 +50,7 @@ type itemType = {|
 type Props = {|
   items: ?itemType[],
   activeItem: ?itemType,
-  updateActiveChain: (Chain) => void,
+  updateActiveChain: (?Chain) => void,
   updateActiveItem: (itemType) => void,
   closeModal: () => void,
 |};
@@ -65,7 +65,7 @@ function SwitchChainModal({ items, activeItem, updateActiveChain, updateActiveIt
 
   const handleChains = (chain: itemType) => {
     updateActiveItem(chain);
-    if (chain?.key) updateActiveChain(chain?.key);
+    updateActiveChain(chain?.key);
     closeModal();
     if (chain?.key) {
       const chainId = mapChainToChainId(chain?.key);
