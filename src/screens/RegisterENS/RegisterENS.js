@@ -66,20 +66,25 @@ const RegisterENS = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const colors = useThemeColors();
-  const user = useRootSelector((root) => root.onboarding.user);
   const ensName = useUser();
+  const { gasSymbol } = useChainConfig(CHAIN.ETHEREUM);
+
+  const user = useRootSelector((root) => root.onboarding.user);
   const errorMessage = useRootSelector((root) => root.onboarding.errorMessage);
   const feeInfo = useRootSelector((root) => root.transactionEstimate.feeInfo);
   const isEstimating = useRootSelector((root) => root.transactionEstimate.isEstimating);
   const estimationErrorMessage = useRootSelector((root) => root.transactionEstimate.errorMessage);
-  const { gasSymbol } = useChainConfig(CHAIN.ETHEREUM);
-  const gasAddress = getGasAddress(CHAIN.ETHEREUM, feeInfo?.gasToken);
+
   const [usernameValue, setUsernameValue] = useState(!ensName?.username ? null : ensName?.username);
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
+
+  const gasAddress = getGasAddress(CHAIN.ETHEREUM, feeInfo?.gasToken);
   const isUsernameInputDirty = usernameValue !== null;
   const usernameValidationErrorMessage = isUsernameInputDirty ? validateUsername(usernameValue) : null;
   const buttonDisable = !!usernameValidationErrorMessage || !!errorMessage || isCheckingUsername;
   const isEditable = ensName?.username;
+  const showFeeValue = !estimationErrorMessage && !!user;
+  const showENSSaveButton = !!usernameValue && !feeInfo;
 
   const getButtonName = () => {
     if (!!usernameValidationErrorMessage && !errorMessage) return usernameValidationErrorMessage;
@@ -184,7 +189,7 @@ const RegisterENS = () => {
           </Text>
         </StyledWrapper>
         <Footer behavior={Platform.OS === 'ios' ? 'position' : null}>
-          {!estimationErrorMessage && !!user && (
+          {showFeeValue && (
             <FeeView>
               <FeeLabel
                 value={feeInfo?.fee}
@@ -200,10 +205,10 @@ const RegisterENS = () => {
               )}
             </FeeView>
           )}
-          {!buttonDisable && !!usernameValue && !feeInfo && (
+          {!buttonDisable && showENSSaveButton && (
             <Text color={colors.negative}>{t('auth:label.ensNameWarningMessage')}</Text>
           )}
-          {!!usernameValue && !feeInfo && (
+          {showENSSaveButton && (
             <Button
               title={buttonDisable ? getButtonName() : t('button.save')}
               size="large"
