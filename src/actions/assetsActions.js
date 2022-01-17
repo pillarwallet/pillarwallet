@@ -88,6 +88,83 @@ import { fetchVirtualAccountBalanceAction } from './smartWalletActions';
 import { fetchAssetsRatesAction } from './ratesActions';
 import { addEnsRegistryRecordAction } from './ensRegistryActions';
 
+export const sendENSTransactionAction = (
+  callback: (status: TransactionStatus) => void,
+  waitForActualTransactionHash: boolean = false,
+) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    logBreadcrumb('Send Flow', 'sendENSTransactionAction: checking for active account');
+    const activeAccount = activeAccountSelector(getState());
+    if (!activeAccount) {
+      reportErrorLog('sendENSTransactionAction failed: no active account');
+      return;
+    }
+
+    let transactionResult: ?TransactionResult;
+    let transactionErrorMessage: ?string;
+    if (isEtherspotAccount(activeAccount)) {
+      try {
+        transactionResult = await etherspotService.sendENSTransaction(CHAIN.ETHEREUM);
+      } catch (error) {
+        reportErrorLog('Send Flow:- sendENSTransactionAction transaction failed', {
+          error,
+        });
+        transactionErrorMessage = error;
+      }
+    }
+
+    if (!transactionResult || transactionErrorMessage) {
+      logBreadcrumb('Send Flow', 'sendENSTransactionAction: transaction failed', { error: transactionErrorMessage });
+      callback({
+        isSuccess: false,
+        error: transactionErrorMessage || t('error.transactionFailed.default'),
+      });
+      return;
+    }
+    // console.log('transactionResult', transactionResult);
+
+    let transactionHash = transactionResult?.hash;
+    const transactionBatchHash = transactionResult?.batchHash;
+
+    if (isEtherspotAccount(activeAccount) && waitForActualTransactionHash && !transactionHash && transactionBatchHash) {
+      try {
+        logBreadcrumb('Send Flow', 'sendENSTransactionAction: etherspot account fetching transaction hash', {
+          batchHash: transactionBatchHash,
+        });
+        transactionHash = await etherspotService.waitForTransactionHashFromSubmittedBatch(
+          CHAIN.ETHEREUM,
+          transactionBatchHash,
+        );
+      } catch (error) {
+        reportErrorLog('Exception in wallet transaction: waitForTransactionHashFromSubmittedBatch failed', { error });
+      }
+    }
+
+    if (!transactionHash && !transactionBatchHash) {
+      logBreadcrumb(
+        'Send Flow',
+        'sendENSTransactionAction: transaction failed as transactionHash and transactionBatchHash is not available',
+      );
+      callback({
+        isSuccess: false,
+        error: t('error.transactionFailed.default'),
+      });
+      return;
+    }
+
+    logBreadcrumb(
+      'Send Flow',
+      'sendAssetAction transaction sent',
+      { transactionHash, transactionBatchHash },
+    );
+    callback({
+      isSuccess: true,
+      error: null,
+      hash: transactionHash,
+      batchHash: transactionBatchHash,
+    });
+  };
+};
 
 export const sendAssetAction = (
   transaction: TransactionPayload,

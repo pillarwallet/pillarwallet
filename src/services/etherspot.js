@@ -217,7 +217,7 @@ export class EtherspotService {
       });
   }
 
-  async estimateBatch(chain: Chain): Promise<?GatewayEstimatedBatch> {
+  async estimateBatch(chain: Chain): Promise<?TransactionFeeInfo> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {
       reportErrorLog('setTransactionsBatch failed: no SDK for chain set');
@@ -233,6 +233,7 @@ export class EtherspotService {
     let batch: ?GatewayEstimatedBatch = null;
     try {
       batch = await this.estimateTransactionsBatch(chain);
+      // console.log('batch', batch)
     } catch (error) {
       reportErrorLog('setTransactionsBatchAndEstimate -> estimateTransactionsBatch failed', {
         error,
@@ -248,7 +249,9 @@ export class EtherspotService {
       });
       return null;
     }
-    return batch;
+
+    // const feeinfo = buildTransactionFeeInfo(batch);
+    return buildTransactionFeeInfo(batch);
   }
 
   async getBalances(chain: Chain, accountAddress: string, supportedAssets: Asset[]): Promise<WalletAssetBalance[]> {
@@ -522,6 +525,23 @@ export class EtherspotService {
 
     return this.setTransactionsBatchAndSend(etherspotTransactions, chain);
   }
+
+  async sendENSTransaction(
+    chain: Chain,
+  ): Promise<?TransactionResult> {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      reportErrorLog('setTransactionsBatchAndSend failed: no SDK for chain set', { chain });
+      throw new Error(t('error.unableToSendTransaction'));
+    }
+
+    // submit current batch
+    const { hash: batchHash } = await sdk.submitGatewayBatch();
+    // console.log('batchHash', batchHash)
+
+    return { batchHash };
+  }
+
 
   getSubmittedBatchByHash(chain: Chain, hash: string): ?Promise<?GatewaySubmittedBatch> {
     const sdk = this.getSdkForChain(chain);

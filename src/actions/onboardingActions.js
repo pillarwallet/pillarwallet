@@ -90,6 +90,12 @@ import { fetchSupportedAssetsAction, fetchAllAccountsTotalBalancesAction } from 
 import { fetchTutorialDataIfNeededAction } from 'actions/cmsActions';
 import { initialDeepLinkExecutedAction } from 'actions/appSettingsActions';
 import { addAccountAction } from 'actions/accountsActions';
+import {
+  setEstimatingTransactionAction,
+  setTransactionsEstimateErrorAction,
+  setTransactionsEstimateFeeAction,
+} from 'actions/transactionEstimateActions';
+
 
 // Selectors
 import { accountsSelector } from 'selectors';
@@ -666,8 +672,27 @@ export const claimENSNameAction = (username: string) => {
       reportErrorLog('claimENSNameAction failed: no Etherspot account found');
       return;
     }
-    await etherspotService.reserveEnsName(username);
-    await etherspotService.estimateBatch(CHAIN.ETHEREUM);
+    const reserved = await etherspotService.reserveEnsName(username);
+    if (!reserved) {
+      reportErrorLog('reserveEtherspotENSNameAction reserveENSName failed', { username });
+    }
+    let errorMessage;
+    let feeInfo;
+    dispatch(setEstimatingTransactionAction(true));
+    try {
+      feeInfo = await etherspotService.estimateBatch(CHAIN.ETHEREUM);
+      // console.log('feeInfo', feeInfo);
+      dispatch(setEstimatingTransactionAction(false));
+      dispatch(setTransactionsEstimateFeeAction(feeInfo));
+    } catch (error) {
+      errorMessage = error?.message;
+    }
+    if (!feeInfo || errorMessage) {
+      reportErrorLog('estimateEnsMigrationFromArchanovaToEtherspotAction -> estimateAccountRawTransactions failed', {
+        errorMessage,
+      });
+      dispatch(setTransactionsEstimateErrorAction(errorMessage || t('toast.transactionFeeEstimationFailed')));
+    }
   };
 };
 

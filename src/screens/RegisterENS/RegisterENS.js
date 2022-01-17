@@ -33,11 +33,17 @@ import {
   claimENSNameAction,
 } from 'actions/onboardingActions';
 
+// Constants
+import { CHAIN } from 'constants/chainConstants';
+// import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
+
 // Utils
 import { appFont, spacing, fontSizes } from 'utils/variables';
 import { useThemeColors } from 'utils/themes';
 import { validateUsername } from 'utils/validators';
 import { getEnsPrefix } from 'utils/common';
+import { useChainConfig } from 'utils/uiConfig';
+import { getGasAddress } from 'utils/transactions';
 
 // Selectors
 import { useRootSelector } from 'selectors';
@@ -47,11 +53,17 @@ import { Container, Content } from 'components/layout/Layout';
 import Text from 'components/core/Text';
 import TextInput from 'components/legacy/TextInput';
 import HeaderBlock from 'components/HeaderBlock';
-
+import Icon from 'components/core/Icon';
+import SwipeButton from 'components/SwipeButton/SwipeButton';
 import Button from 'components/core/Button';
+import FeeLabel from 'components/display/FeeLabel';
 
 // Types
 import type { OnboardingUser } from 'models/User';
+// import type { TransactionStatus } from 'models/History';
+
+// Actions
+// import { sendENSTransactionAction } from 'actions/assetsActions';
 
 
 const RegisterENS = () => {
@@ -60,6 +72,16 @@ const RegisterENS = () => {
   const colors = useThemeColors();
   const user = useRootSelector((root) => root.onboarding.user);
   const errorMessage = useRootSelector((root) => root.onboarding.errorMessage);
+
+  const feeInfo = useRootSelector((root) => root.transactionEstimate.feeInfo);
+  // console.log('feeInfo', feeInfo);
+  const isEstimating = useRootSelector((root) => root.transactionEstimate.isEstimating);
+  // console.log('isEstimating', isEstimating);
+
+  const estimationErrorMessage = useRootSelector((root) => root.transactionEstimate.errorMessage);
+  // console.log('estimationErrorMessage', estimationErrorMessage)
+  const { gasSymbol } = useChainConfig(CHAIN.ETHEREUM);
+  const gasAddress = getGasAddress(CHAIN.ETHEREUM, feeInfo?.gasToken);
   const [usernameValue, setUsernameValue] = useState(null);
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
   const isUsernameInputDirty = usernameValue !== null;
@@ -74,6 +96,19 @@ const RegisterENS = () => {
 
   const reserveENSName = () => {
     if (user?.username) dispatch(claimENSNameAction(user?.username));
+  };
+
+  const sendENSTransaction = () => {
+    // const statusCallback = (transactionStatus: TransactionStatus) => {
+    //   // console.log('statusCallback', statusCallback)
+
+    //   navigation.navigate(SEND_TOKEN_TRANSACTION, {
+    //     ...transactionStatus,
+    //     noRetry: true,
+    //     goBackDismiss: true,
+    //   });
+    // };
+    // dispatch(sendENSTransactionAction(statusCallback));
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -154,10 +189,26 @@ const RegisterENS = () => {
           </Text>
         </StyledWrapper>
         <Footer behavior={Platform.OS === 'ios' ? 'position' : null}>
-          {!buttonDisable && !!usernameValue && (
+          {!estimationErrorMessage && !!user && (
+            <FeeView>
+              <FeeLabel
+                value={feeInfo?.fee}
+                assetSymbol={gasSymbol}
+                assetAddress={gasAddress}
+                isLoading={isEstimating}
+                isNotEnough={false}
+                chain={CHAIN.ETHEREUM}
+                mode="actual"
+              />
+              {!isEstimating && (
+                <Icon name="info" width={16} height={16} color={colors.buttonTextTitle} style={styles.infoIcon} />
+              )}
+            </FeeView>
+          )}
+          {!buttonDisable && !!usernameValue && !feeInfo && (
             <Text color={colors.negative}>{t('auth:label.ensNameWarningMessage')}</Text>
           )}
-          {!!usernameValue && (
+          {!!usernameValue && !feeInfo && (
             <Button
               title={buttonDisable ? getButtonName() : t('button.save')}
               size="large"
@@ -166,7 +217,7 @@ const RegisterENS = () => {
               style={styles.buttonStyle}
             />
           )}
-          {/* <SwipeButton confirmTitle={t('button.swipeConfirm')} /> */}
+          {!!feeInfo && <SwipeButton confirmTitle={t('button.swipeConfirm')} onPress={sendENSTransaction} />}
         </Footer>
       </Content>
     </Container>
@@ -194,7 +245,13 @@ const styles = {
   buttonStyle: {
     marginTop: 8,
   },
+  infoIcon: {
+    justifyContent: 'center',
+    paddingLeft: spacing.medium,
+  },
 };
+
+export default RegisterENS;
 
 const Footer = styled.KeyboardAvoidingView`
   padding: 20px 20px 20px;
@@ -205,7 +262,14 @@ const StyledWrapper = styled.View`
   padding: 32px ${spacing.layoutSides}px ${spacing.layoutSides}px;
 `;
 
-export default RegisterENS;
+const FeeView = styled.View`
+  flex-direction: row;
+  margin-top: ${spacing.largePlus}px;
+  margin-bottom: ${spacing.large}px;
+  justify-content: center;
+  align-items: center;
+`;
+
 
 export const getUsernameInputIcon = (
   colors: Object,
@@ -227,6 +291,5 @@ export const getUsernameInputIcon = (
       iconColor = colors.positive;
     }
   }
-
   return { statusIcon, iconColor };
 };
