@@ -675,6 +675,9 @@ export const claimENSNameAction = (username: string) => {
     const reserved = await etherspotService.reserveEnsName(username);
     if (!reserved) {
       reportErrorLog('reserveEtherspotENSNameAction reserveENSName failed', { username });
+    } else {
+      dispatch({ type: SET_USER, payload: { username } });
+      dispatch(saveDbAction('user', { user: { data: { username } } }));
     }
     let errorMessage;
     let feeInfo;

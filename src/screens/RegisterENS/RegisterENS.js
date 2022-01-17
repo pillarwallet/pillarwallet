@@ -35,7 +35,6 @@ import {
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
-// import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
 
 // Utils
 import { appFont, spacing, fontSizes } from 'utils/variables';
@@ -47,6 +46,7 @@ import { getGasAddress } from 'utils/transactions';
 
 // Selectors
 import { useRootSelector } from 'selectors';
+import { useUser } from 'selectors/user';
 
 // Components
 import { Container, Content } from 'components/layout/Layout';
@@ -60,10 +60,6 @@ import FeeLabel from 'components/display/FeeLabel';
 
 // Types
 import type { OnboardingUser } from 'models/User';
-// import type { TransactionStatus } from 'models/History';
-
-// Actions
-// import { sendENSTransactionAction } from 'actions/assetsActions';
 
 
 const RegisterENS = () => {
@@ -71,22 +67,19 @@ const RegisterENS = () => {
   const dispatch = useDispatch();
   const colors = useThemeColors();
   const user = useRootSelector((root) => root.onboarding.user);
+  const ensName = useUser();
   const errorMessage = useRootSelector((root) => root.onboarding.errorMessage);
-
   const feeInfo = useRootSelector((root) => root.transactionEstimate.feeInfo);
-  // console.log('feeInfo', feeInfo);
   const isEstimating = useRootSelector((root) => root.transactionEstimate.isEstimating);
-  // console.log('isEstimating', isEstimating);
-
   const estimationErrorMessage = useRootSelector((root) => root.transactionEstimate.errorMessage);
-  // console.log('estimationErrorMessage', estimationErrorMessage)
   const { gasSymbol } = useChainConfig(CHAIN.ETHEREUM);
   const gasAddress = getGasAddress(CHAIN.ETHEREUM, feeInfo?.gasToken);
-  const [usernameValue, setUsernameValue] = useState(null);
+  const [usernameValue, setUsernameValue] = useState(!ensName?.username ? null : ensName?.username);
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
   const isUsernameInputDirty = usernameValue !== null;
   const usernameValidationErrorMessage = isUsernameInputDirty ? validateUsername(usernameValue) : null;
   const buttonDisable = !!usernameValidationErrorMessage || !!errorMessage || isCheckingUsername;
+  const isEditable = ensName?.username;
 
   const getButtonName = () => {
     if (!!usernameValidationErrorMessage && !errorMessage) return usernameValidationErrorMessage;
@@ -101,14 +94,14 @@ const RegisterENS = () => {
   const sendENSTransaction = () => {
     // const statusCallback = (transactionStatus: TransactionStatus) => {
     //   // console.log('statusCallback', statusCallback)
-
+    //   navigation.dismiss();
     //   navigation.navigate(SEND_TOKEN_TRANSACTION, {
     //     ...transactionStatus,
     //     noRetry: true,
     //     goBackDismiss: true,
     //   });
     // };
-    // dispatch(sendENSTransactionAction(statusCallback));
+    // dispatch(sendENSTransaction(statusCallback));
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -122,6 +115,7 @@ const RegisterENS = () => {
   useEffect(() => {
     // prepare for username check if no user set
     if (!user) dispatch(resetUsernameCheckAction(true));
+    if (ensName?.username) dispatch(claimENSNameAction(ensName?.username));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -178,6 +172,7 @@ const RegisterENS = () => {
               autoFocus: true,
               onChange: setUsernameValue,
               placeholder: t('label.username'),
+              editable: isEditable,
             }}
             placeholderTextColor={colors.tertiaryText}
             inputWrapperStyle={styles.inputWrapperStyles}

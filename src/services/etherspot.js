@@ -233,7 +233,6 @@ export class EtherspotService {
     let batch: ?GatewayEstimatedBatch = null;
     try {
       batch = await this.estimateTransactionsBatch(chain);
-      // console.log('batch', batch)
     } catch (error) {
       reportErrorLog('setTransactionsBatchAndEstimate -> estimateTransactionsBatch failed', {
         error,

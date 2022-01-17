@@ -42,11 +42,15 @@ import Spinner from 'components/Spinner';
 
 // Constants
 import { MENU, HOME_HISTORY, REGISTER_ENS } from 'constants/navigationConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
 import { useRootSelector, useAccounts, activeAccountAddressSelector } from 'selectors';
 import { accountTotalBalancesSelector } from 'selectors/totalBalances';
 import { useUser } from 'selectors/user';
+
+// Services
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // Screens
 import GovernanceCallBanner from 'screens/GovernanceCall/GovernanceCallBanner';
@@ -81,11 +85,13 @@ function Home() {
   const [showENSTooltip, setShowENSSwitchTooltip] = React.useState(false);
   const canSwitchAccount = useAccounts().length > 1;
 
+  const showENStooltip = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ONBOARDING_ENS);
+
   const { accountSwitchTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
   const balancePerCategory = calculateTotalBalancePerCategory(accountTotalBalances);
   const balancePerChain = calculateTotalBalancePerChain(accountTotalBalances);
   const totalBalance = sumRecord(balancePerCategory);
-  const showRegisterENSTooltip = user?.username == null && !!accountAddress;
+  // const showRegisterENSTooltip = user?.username == null && !!accountAddress;
 
   const isRefreshing = useRootSelector(({ totalBalances }) => !!totalBalances.isFetching);
 
@@ -152,7 +158,7 @@ function Home() {
         />
       )}
 
-      {showRegisterENSTooltip && (
+      {showENStooltip && (
         <Tooltip
           isVisible={!user?.username && showENSTooltip}
           body={t('tooltip.registerENS')}
