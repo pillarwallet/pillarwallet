@@ -35,7 +35,7 @@ import QRCodeWithTheme from 'components/QRCode';
 import Toast from 'components/Toast';
 import ProfileImage from 'components/ProfileImage';
 import TextWithCopy from 'components/display/TextWithCopy';
-import TokenIcon from 'components/display/TokenIcon';
+import Icon from 'components/core/Icon';
 
 // Utils
 import { spacing, fontStyles, fontSizes, borderRadiusSizes } from 'utils/variables';
@@ -122,13 +122,13 @@ const ReceiveModal = ({
   const ensName = getAccountEnsName(activeAccount);
 
   const renderChainAddress = (chain: Chain) => {
-    const { title, iconUrl } = chainsConfig[chain];
+    const { title } = chainsConfig[chain];
 
     return (
       <Container key={`${chain}`}>
         <ContainerView>
           <RowContainer>
-            <TokenIcon size={24} style={IconContainer} url={iconUrl} />
+            <ChainViewIcon size={24} style={IconContainer} name={chain} />
             <Title>{title}</Title>
             <CopyButtonFromChain>
               <Button
@@ -400,4 +400,11 @@ const RowContainer = styled.View`
   align-items: center;
   flex-direction: row;
   padding: ${spacing.small}px;
+`;
+
+const ChainViewIcon = styled(Icon)`
+  height: 24px;
+  width: 24px;
+  background-color: ${({ theme }) => theme.colors.basic050};
+  border-radius: ${borderRadiusSizes.medium}px;
 `;
