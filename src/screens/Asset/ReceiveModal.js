@@ -103,11 +103,11 @@ const ReceiveModal = ({
   const chains = useSupportedChains();
   const chainsConfig = useChainsConfig();
 
-  const handleCopyFromChain = (chain: Chain) => {
+  const handleCopyFromChain = (chain: Chain, title: string) => {
     if (isEtherspotAccount(activeAccount)) {
       if (activeAccount?.extra[chain]?.address) {
         Clipboard.setString(activeAccount?.extra[chain]?.address);
-        Toast.show({ message: t('toast.chainAddressCopiedToClipboard'), emoji: 'ok_hand' });
+        Toast.show({ message: t('toast.chainAddressCopiedToClipboard', { chain: title }), emoji: 'ok_hand' });
         setCloseFlag(true);
       } else {
         Toast.show({ message: t('toast.missingCopyAddress'), emoji: 'hushed', autoClose: false });
@@ -136,7 +136,7 @@ const ReceiveModal = ({
                 height="48"
                 style={{ borderRadius: 14 }}
                 title={t('receiveModal.copyButton')}
-                onPress={() => handleCopyFromChain(chain)}
+                onPress={() => handleCopyFromChain(chain, title)}
               />
             </CopyButtonFromChain>
           </RowContainer>
