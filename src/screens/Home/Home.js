@@ -22,6 +22,7 @@ import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'translations/translate';
+import { ENSNodeStates } from 'etherspot';
 
 // Actions
 import { fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
@@ -48,6 +49,7 @@ import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { useRootSelector, useAccounts, activeAccountAddressSelector } from 'selectors';
 import { accountTotalBalancesSelector } from 'selectors/totalBalances';
 import { useUser } from 'selectors/user';
+import { etherspotAccountSelector } from 'selectors/accounts';
 
 // Services
 import { firebaseRemoteConfig } from 'services/firebase';
@@ -60,6 +62,7 @@ import { sumRecord } from 'utils/bigNumber';
 import { calculateTotalBalancePerCategory, calculateTotalBalancePerChain } from 'utils/totalBalances';
 import { useThemeColors } from 'utils/themes';
 import { getSupportedBiometryType } from 'utils/keychain';
+import { getEnsNodeState } from 'utils/accounts';
 
 // Local
 import BalanceSection from './BalanceSection';
@@ -78,14 +81,17 @@ function Home() {
   const accountCollectibleCounts = useAccountCollectibleCounts();
   const user = useUser();
   const dispatch = useDispatch();
+  const etherspotAccount = useRootSelector(etherspotAccountSelector);
   const wallet = useRootSelector((root) => root.wallet.data);
   const accountAddress = useRootSelector(activeAccountAddressSelector);
   const [isLoading, setIsLoading] = React.useState(false);
   const [showAccountSwitchTooltip, setShowAccountSwitchTooltip] = React.useState(false);
   const [showENSTooltip, setShowENSSwitchTooltip] = React.useState(false);
   const canSwitchAccount = useAccounts().length > 1;
-
-  const showENStooltip = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ONBOARDING_ENS);
+  const ensNodeState = getEnsNodeState(etherspotAccount);
+  const isEnsNodeCliamed = ensNodeState === ENSNodeStates.Claimed;
+  const featureOnboardingENS = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ONBOARDING_ENS);
+  const showEnsTooltip = featureOnboardingENS && !isEnsNodeCliamed;
 
   const { accountSwitchTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
   const balancePerCategory = calculateTotalBalancePerCategory(accountTotalBalances);
@@ -157,7 +163,7 @@ function Home() {
         />
       )}
 
-      {showENStooltip && (
+      {showEnsTooltip && (
         <Tooltip
           isVisible={!user?.username && showENSTooltip}
           body={t('tooltip.registerENS')}
