@@ -386,7 +386,6 @@
   },
 
   "paragraph": {
-    "chainAddressCopiedToClipboard": "<0>{{chain}}</0> wallet address copied to clipboard.",
     "addressCopiedToClipboard": "Address copied to clipboard.",
     "doNotSendRealEthOrTokens": "Do not send real ETH or ERC20 tokens.",
     "ensNameCopiedToClipboard": "ENS name copied to clipboard.",
@@ -1166,6 +1165,7 @@
     "incorrectQRCode": "QR code is incorrect.",
     "transactionFeeEstimationFailed": "Can't estimate transaction fee. Please try again.",
     "walkthroughFailed": "Something went wrong. Please try again.",
+    "chainAddressCopiedToClipboard": "{{chain}} wallet address copied to clipboard.",
     "addressCopiedToClipboard": "Address copied to clipboard.",
     "ensNameCopiedToClipboard": "ENS name copied to clipboard.",
     "forbiddenToRemoveAsset": "{{assetName}} ({{assetSymbol}}) can't be removed. It's essential for Pillar.",
