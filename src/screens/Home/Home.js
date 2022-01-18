@@ -91,7 +91,6 @@ function Home() {
   const balancePerCategory = calculateTotalBalancePerCategory(accountTotalBalances);
   const balancePerChain = calculateTotalBalancePerChain(accountTotalBalances);
   const totalBalance = sumRecord(balancePerCategory);
-  // const showRegisterENSTooltip = user?.username == null && !!accountAddress;
 
   const isRefreshing = useRootSelector(({ totalBalances }) => !!totalBalances.isFetching);
 
@@ -163,9 +162,7 @@ function Home() {
           isVisible={!user?.username && showENSTooltip}
           body={t('tooltip.registerENS')}
           wrapperStyle={{ zIndex: 9999, top: -10, position: 'relative' }}
-          onPress={() => {
-            navigation.navigate(REGISTER_ENS);
-          }}
+          onPress={() => navigation.navigate(REGISTER_ENS)}
         />
       )}
       {(useAccounts().length === 0 || isLoading) && <Spinner size={20} />}

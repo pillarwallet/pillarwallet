@@ -96,7 +96,6 @@ import {
   setTransactionsEstimateFeeAction,
 } from 'actions/transactionEstimateActions';
 
-
 // Selectors
 import { accountsSelector } from 'selectors';
 
@@ -683,8 +682,7 @@ export const claimENSNameAction = (username: string) => {
     let feeInfo;
     dispatch(setEstimatingTransactionAction(true));
     try {
-      feeInfo = await etherspotService.estimateBatch(CHAIN.ETHEREUM);
-      // console.log('feeInfo', feeInfo);
+      feeInfo = await etherspotService.estimateENSTransactionFee(CHAIN.ETHEREUM);
       dispatch(setEstimatingTransactionAction(false));
       dispatch(setTransactionsEstimateFeeAction(feeInfo));
     } catch (error) {

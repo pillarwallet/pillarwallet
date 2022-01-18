@@ -61,7 +61,6 @@ import FeeLabel from 'components/display/FeeLabel';
 // Types
 import type { OnboardingUser } from 'models/User';
 
-
 const RegisterENS = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -94,19 +93,6 @@ const RegisterENS = () => {
 
   const reserveENSName = () => {
     if (user?.username) dispatch(claimENSNameAction(user?.username));
-  };
-
-  const sendENSTransaction = () => {
-    // const statusCallback = (transactionStatus: TransactionStatus) => {
-    //   // console.log('statusCallback', statusCallback)
-    //   navigation.dismiss();
-    //   navigation.navigate(SEND_TOKEN_TRANSACTION, {
-    //     ...transactionStatus,
-    //     noRetry: true,
-    //     goBackDismiss: true,
-    //   });
-    // };
-    // dispatch(sendENSTransaction(statusCallback));
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -217,7 +203,7 @@ const RegisterENS = () => {
               style={styles.buttonStyle}
             />
           )}
-          {!!feeInfo && <SwipeButton confirmTitle={t('button.swipeConfirm')} onPress={sendENSTransaction} />}
+          {!!feeInfo && <SwipeButton confirmTitle={t('button.swipeConfirm')} />}
         </Footer>
       </Content>
     </Container>

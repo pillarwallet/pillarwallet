@@ -217,24 +217,39 @@ export class EtherspotService {
       });
   }
 
-  async estimateBatch(chain: Chain): Promise<?TransactionFeeInfo> {
+  async estimateENSTransactionFee(chain: Chain): Promise<?TransactionFeeInfo> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {
       reportErrorLog('setTransactionsBatch failed: no SDK for chain set');
       throw new Error(t('error.unableToSetTransaction'));
     }
     const { account: etherspotAccount } = sdk.state;
+    let ensNode;
     if (isProdEnv() && chain === CHAIN.ETHEREUM && !etherspotAccount?.ensNode) {
-      const ensNode = await this.getEnsNode(etherspotAccount.address);
+      try {
+        ensNode = await this.getEnsNode(etherspotAccount.address);
+      } catch (error) {
+        reportErrorLog('estimateENSTransactionFee -> getEnsNode failed', {
+          error,
+          chain,
+        });
+      }
       if (ensNode && ensNode.state === ENSNodeStates.Reserved) {
-        await sdk.batchClaimENSNode({ nameOrHashOrAddress: ensNode.name });
+        try {
+          await sdk.batchClaimENSNode({ nameOrHashOrAddress: ensNode.name });
+        } catch (error) {
+          reportErrorLog('estimateENSTransactionFee -> batchClaimENSNode failed', {
+            error,
+            chain,
+          });
+        }
       }
     }
     let batch: ?GatewayEstimatedBatch = null;
     try {
       batch = await this.estimateTransactionsBatch(chain);
     } catch (error) {
-      reportErrorLog('setTransactionsBatchAndEstimate -> estimateTransactionsBatch failed', {
+      reportErrorLog('estimateENSTransactionFee -> estimateTransactionsBatch failed', {
         error,
         chain,
       });
@@ -249,7 +264,6 @@ export class EtherspotService {
       return null;
     }
 
-    // const feeinfo = buildTransactionFeeInfo(batch);
     return buildTransactionFeeInfo(batch);
   }
 
@@ -536,11 +550,9 @@ export class EtherspotService {
 
     // submit current batch
     const { hash: batchHash } = await sdk.submitGatewayBatch();
-    // console.log('batchHash', batchHash)
 
     return { batchHash };
   }
-
 
   getSubmittedBatchByHash(chain: Chain, hash: string): ?Promise<?GatewaySubmittedBatch> {
     const sdk = this.getSdkForChain(chain);

@@ -121,7 +121,6 @@ export const sendENSTransactionAction = (
       });
       return;
     }
-    // console.log('transactionResult', transactionResult);
 
     let transactionHash = transactionResult?.hash;
     const transactionBatchHash = transactionResult?.batchHash;
