@@ -82,8 +82,8 @@ const RegisterENS = () => {
   const usernameValidationErrorMessage = isUsernameInputDirty ? validateUsername(usernameValue) : null;
   const buttonDisable = !!usernameValidationErrorMessage || !!errorMessage || isCheckingUsername;
   const isEditable = ensName?.username;
-  const showFeeValue = !estimationErrorMessage && !!user;
-  const showENSSaveButton = !!usernameValue && !feeInfo;
+  const showFeeValue = !estimationErrorMessage && !!feeInfo;
+  const showENSSaveButton = !!usernameValue && !feeInfo && !estimationErrorMessage;
 
   const getButtonName = () => {
     if (!!usernameValidationErrorMessage && !errorMessage) return usernameValidationErrorMessage;
@@ -98,20 +98,20 @@ const RegisterENS = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const onValidUsername = useCallback(
     debounce(() => {
-      if (usernameValue) dispatch(checkUsernameAvailabilityAction(usernameValue));
+      if (usernameValue && !ensName?.username) dispatch(checkUsernameAvailabilityAction(usernameValue));
     }, 200),
     [usernameValue],
   );
 
   useEffect(() => {
     // prepare for username check if no user set
-    if (!user) dispatch(resetUsernameCheckAction(true));
+    if (!user && !ensName?.username) dispatch(resetUsernameCheckAction(true));
     if (ensName?.username) dispatch(claimENSNameAction(ensName?.username));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (!isCheckingUsername && !usernameValidationErrorMessage && !errorMessage && isUsernameInputDirty) {
+    if (!isCheckingUsername && !usernameValidationErrorMessage && !errorMessage && isUsernameInputDirty && !ensName) {
       setIsCheckingUsername(true);
     } else if (isCheckingUsername && (usernameValidationErrorMessage || errorMessage)) {
       // reset if error occurred during update
@@ -154,8 +154,8 @@ const RegisterENS = () => {
           <TextInput
             loading={isCheckingUsername}
             iconProps={{
-              icon: statusIcon,
-              color: iconColor,
+              icon: !ensName?.username ? statusIcon : null,
+              color: !ensName?.username ? iconColor : null,
             }}
             inputProps={{
               value: `${usernameValue || ''}`,
@@ -168,7 +168,8 @@ const RegisterENS = () => {
             placeholderTextColor={colors.tertiaryText}
             inputWrapperStyle={styles.inputWrapperStyles}
             itemHolderStyle={styles.itemHolderStyles}
-            additionalStyle={styles.additionalStyle}
+            additionalStyle={[styles.additionalStyle]}
+            inputError={!!usernameValidationErrorMessage || !!errorMessage}
           />
           <Text variant="medium" style={{ textAlign: 'center' }}>
             {getEnsPrefix()}
@@ -203,7 +204,9 @@ const RegisterENS = () => {
               style={styles.buttonStyle}
             />
           )}
-          {!!feeInfo && <SwipeButton confirmTitle={t('button.swipeConfirm')} />}
+          {(!!feeInfo || !!ensName?.username) && (
+            <SwipeButton confirmTitle={t('button.swipeConfirm')} disabled={!showFeeValue} />
+          )}
         </Footer>
       </Content>
     </Container>

@@ -220,11 +220,12 @@ export class EtherspotService {
   async estimateENSTransactionFee(chain: Chain): Promise<?TransactionFeeInfo> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {
-      reportErrorLog('setTransactionsBatch failed: no SDK for chain set');
+      reportErrorLog('estimateENSTransactionFee failed: no SDK for chain set');
       throw new Error(t('error.unableToSetTransaction'));
     }
     const { account: etherspotAccount } = sdk.state;
     let ensNode;
+    let batch: ?GatewayEstimatedBatch = null;
     if (isProdEnv() && chain === CHAIN.ETHEREUM && !etherspotAccount?.ensNode) {
       try {
         ensNode = await this.getEnsNode(etherspotAccount.address);
@@ -244,26 +245,31 @@ export class EtherspotService {
           });
         }
       }
-    }
-    let batch: ?GatewayEstimatedBatch = null;
-    try {
-      batch = await this.estimateTransactionsBatch(chain);
-    } catch (error) {
-      reportErrorLog('estimateENSTransactionFee -> estimateTransactionsBatch failed', {
-        error,
-        chain,
-      });
-      throw error;
-    }
+      try {
+        const result = await sdk.estimateGatewayBatch();
+        batch = result?.estimation;
+      } catch (error) {
+        let etherspotErrorMessage;
+        try {
+          // parsing etherspot estimate error based on return scheme
+          const errorMessageJson = JSON.parse(error.message.trim());
+          [etherspotErrorMessage] = Object.values(errorMessageJson[0].constraints);
+        } catch (e) {
+          // unable to parse json
+        }
+        const errorMessage = etherspotErrorMessage || error?.message || t('error.unableToEstimateTransaction');
+        reportErrorLog('estimateENSTransactionFee -> estimateGatewayBatch failed', { errorMessage, chain });
+        throw new Error(errorMessage);
+      }
 
-    if (!batch) {
-      reportErrorLog('setTransactionsBatchAndEstimate -> estimateTransactionsBatch returned null', {
-        batch,
-        chain,
-      });
-      return null;
+      if (!batch) {
+        reportErrorLog('estimateENSTransactionFee -> estimateTransactionsBatch returned null', {
+          batch,
+          chain,
+        });
+        return null;
+      }
     }
-
     return buildTransactionFeeInfo(batch);
   }
 

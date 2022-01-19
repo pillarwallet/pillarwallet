@@ -74,6 +74,7 @@ type Props = {
   onLeftSideTextPress?: () => void,
   onRightAddonPress?: () => void,
   leftSideSymbol?: string,
+  inputError?: boolean,
 };
 
 type State = {
@@ -334,6 +335,7 @@ class TextInput extends React.Component<Props, State> {
       itemHolderStyle,
       leftSideSymbol,
       onRightAddonPress,
+      inputError = false,
     } = this.props;
     let { fallbackSource, hasError } = this.props;
 
@@ -419,6 +421,7 @@ class TextInput extends React.Component<Props, State> {
                           customStyle,
                           additionalStyle,
                           !editable && { color: colors.basic010 },
+                          inputError && { color: colors.secondaryAccent240 },
                         ]}
                       onLayout={onLayout}
                       placeholderTextColor={colors.basic030}
