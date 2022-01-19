@@ -171,7 +171,7 @@ const RegisterENS = () => {
             additionalStyle={[styles.additionalStyle]}
             inputError={!!usernameValidationErrorMessage || !!errorMessage}
           />
-          <Text variant="medium" style={{ textAlign: 'center' }}>
+          <Text variant="medium" style={styles.textStyle}>
             {getEnsPrefix()}
           </Text>
         </StyledWrapper>
@@ -193,7 +193,9 @@ const RegisterENS = () => {
             </FeeView>
           )}
           {!buttonDisable && showENSSaveButton && (
-            <Text color={colors.negative}>{t('auth:label.ensNameWarningMessage')}</Text>
+            <Text color={colors.negative} style={styles.textStyle}>
+              {t('auth:label.ensNameWarningMessage')}
+            </Text>
           )}
           {showENSSaveButton && (
             <Button
@@ -237,6 +239,9 @@ const styles = {
   infoIcon: {
     justifyContent: 'center',
     paddingLeft: spacing.medium,
+  },
+  textStyle: {
+    textAlign: 'center',
   },
 };
 
