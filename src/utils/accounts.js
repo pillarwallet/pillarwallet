@@ -161,6 +161,14 @@ export const getAccountEnsName = (account: ?Account): ?string => {
   }
 };
 
+export const getEnsNodeState = (account: ?Account): ?string => {
+  if (!account) return null;
+  if (isEtherspotAccount(account)) {
+    return account.extra?.[CHAIN.ETHEREUM]?.ensNode?.state;
+  }
+  return '';
+};
+
 const getSupportedAccountTypes = () => Object.values(ACCOUNT_TYPES);
 
 export const isSupportedAccountType = (accountType: string) => getSupportedAccountTypes().includes(accountType);

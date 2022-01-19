@@ -108,6 +108,7 @@ import NewProfileScreen from 'screens/NewProfile';
 import ImportWalletScreen from 'screens/ImportWallet';
 import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
 import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
+import RegisterENSScreen from 'screens/RegisterENS';
 
 // components
 import Toast from 'components/Toast';
@@ -232,6 +233,7 @@ import {
   IMPORT_WALLET,
   PIN_CODE_CONFIRMATION,
   IMPORT_FLOW_FROM_SETTINGS,
+  REGISTER_ENS,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -337,6 +339,7 @@ const homeFlow = createStackNavigator(
     [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+    [REGISTER_ENS]: RegisterENSScreen,
   },
   StackNavigatorConfig,
 );

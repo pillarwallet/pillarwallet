@@ -269,7 +269,8 @@
     "pleaseSelect": "Please select",
     "balanceFiatTokenFormat": "Balance {{balanceInFiat}} ({{balance}})",
     "balanceTokenFormat": "Balance {{balance}}",
-    "filterByName": "Filter by name"
+    "filterByName": "Filter by name",
+    "username": "username"
   },
 
   "button": {

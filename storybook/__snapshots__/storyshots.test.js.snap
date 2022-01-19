@@ -44268,6 +44268,7 @@ exports[`Storyshots TextInput default 1`] = `
                         Object {},
                         undefined,
                         false,
+                        false,
                       ]
                     }
                     underlineColorAndroid="transparent"
@@ -44508,6 +44509,7 @@ exports[`Storyshots TextInput multiline 1`] = `
                           "paddingTop": 10,
                         },
                         undefined,
+                        false,
                         false,
                       ]
                     }
@@ -44797,6 +44799,7 @@ exports[`Storyshots TextInput numeric 1`] = `
                         Object {},
                         undefined,
                         false,
+                        false,
                       ]
                     }
                     underlineColorAndroid="transparent"
@@ -45055,6 +45058,7 @@ exports[`Storyshots TextInput numeric with all addons 1`] = `
                         },
                         Object {},
                         undefined,
+                        false,
                         false,
                       ]
                     }
@@ -45547,6 +45551,7 @@ exports[`Storyshots TextInput with button 1`] = `
                         },
                         Object {},
                         undefined,
+                        false,
                         false,
                       ]
                     }
@@ -46836,6 +46841,7 @@ exports[`Storyshots Value Input default 1`] = `
                         },
                         Object {},
                         undefined,
+                        false,
                         false,
                       ]
                     }
