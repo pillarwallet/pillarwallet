@@ -26,6 +26,7 @@ import {
   Accounts as EtherspotAccounts,
   EnvNames,
   ENSNode,
+  ENSNodeStates,
   GatewaySubmittedBatch,
   Notification as EtherspotNotification,
   IncreaseP2PPaymentChannelAmountDto,
@@ -214,6 +215,62 @@ export class EtherspotService {
         reportErrorLog('EtherspotService getAccounts -> getConnectedAccounts failed', { error });
         return null;
       });
+  }
+
+  async estimateENSTransactionFee(chain: Chain): Promise<?TransactionFeeInfo> {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      reportErrorLog('estimateENSTransactionFee failed: no SDK for chain set');
+      throw new Error(t('error.unableToSetTransaction'));
+    }
+    const { account: etherspotAccount } = sdk.state;
+    let ensNode;
+    let batch: ?GatewayEstimatedBatch = null;
+    if (isProdEnv() && chain === CHAIN.ETHEREUM && !etherspotAccount?.ensNode) {
+      try {
+        ensNode = await this.getEnsNode(etherspotAccount.address);
+      } catch (error) {
+        reportErrorLog('estimateENSTransactionFee -> getEnsNode failed', {
+          error,
+          chain,
+        });
+      }
+      if (ensNode && ensNode.state === ENSNodeStates.Reserved) {
+        try {
+          await sdk.batchClaimENSNode({ nameOrHashOrAddress: ensNode.name });
+        } catch (error) {
+          reportErrorLog('estimateENSTransactionFee -> batchClaimENSNode failed', {
+            error,
+            chain,
+          });
+        }
+      }
+      try {
+        const result = await sdk.estimateGatewayBatch();
+        batch = result?.estimation;
+      } catch (error) {
+        let etherspotErrorMessage;
+        try {
+          // parsing etherspot estimate error based on return scheme
+          const errorMessageJson = JSON.parse(error.message.trim());
+          [etherspotErrorMessage] = Object.values(errorMessageJson[0].constraints);
+        } catch (e) {
+          // unable to parse json
+        }
+        const errorMessage = etherspotErrorMessage || error?.message || t('error.unableToEstimateTransaction');
+        reportErrorLog('estimateENSTransactionFee -> estimateGatewayBatch failed', { errorMessage, chain });
+        throw new Error(errorMessage);
+      }
+
+      if (!batch) {
+        reportErrorLog('estimateENSTransactionFee -> estimateTransactionsBatch returned null', {
+          batch,
+          chain,
+        });
+        return null;
+      }
+    }
+    return buildTransactionFeeInfo(batch);
   }
 
   async getBalances(chain: Chain, accountAddress: string, supportedAssets: Asset[]): Promise<WalletAssetBalance[]> {
@@ -486,6 +543,21 @@ export class EtherspotService {
     const etherspotTransactions = await mapToEthereumTransactions(transaction, fromAccountAddress);
 
     return this.setTransactionsBatchAndSend(etherspotTransactions, chain);
+  }
+
+  async sendENSTransaction(
+    chain: Chain,
+  ): Promise<?TransactionResult> {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      reportErrorLog('setTransactionsBatchAndSend failed: no SDK for chain set', { chain });
+      throw new Error(t('error.unableToSendTransaction'));
+    }
+
+    // submit current batch
+    const { hash: batchHash } = await sdk.submitGatewayBatch();
+
+    return { batchHash };
   }
 
   getSubmittedBatchByHash(chain: Chain, hash: string): ?Promise<?GatewaySubmittedBatch> {

@@ -32,9 +32,10 @@ import { useThemeColors } from 'utils/themes';
 type Props = {
   confirmTitle?: string,
   onPress?: () => void,
+  disabled?: boolean,
 };
 
-const SwipeButton = ({ onPress, confirmTitle }: Props) => {
+const SwipeButton = ({ onPress, confirmTitle, disabled }: Props) => {
   const colors = useThemeColors();
 
   const SwiperIconComponent = () => {
@@ -64,6 +65,7 @@ const SwipeButton = ({ onPress, confirmTitle }: Props) => {
       thumbIconBorderColor={colors.swiperButtonThumb}
       thumbIconStyles={styles.swiperBtnthumbIcon}
       onSwipeSuccess={onPress}
+      disabled={disabled}
     />
   );
 };

@@ -35,7 +35,7 @@ import QRCodeWithTheme from 'components/QRCode';
 import Toast from 'components/Toast';
 import ProfileImage from 'components/ProfileImage';
 import TextWithCopy from 'components/display/TextWithCopy';
-import TokenIcon from 'components/display/TokenIcon';
+import Icon from 'components/core/Icon';
 
 // Utils
 import { spacing, fontStyles, fontSizes, borderRadiusSizes } from 'utils/variables';
@@ -103,11 +103,11 @@ const ReceiveModal = ({
   const chains = useSupportedChains();
   const chainsConfig = useChainsConfig();
 
-  const handleCopyFromChain = (chain: Chain) => {
+  const handleCopyFromChain = (chain: Chain, title: string) => {
     if (isEtherspotAccount(activeAccount)) {
       if (activeAccount?.extra[chain]?.address) {
         Clipboard.setString(activeAccount?.extra[chain]?.address);
-        Toast.show({ message: t('toast.chainAddressCopiedToClipboard'), emoji: 'ok_hand' });
+        Toast.show({ message: t('toast.chainAddressCopiedToClipboard', { chain: title }), emoji: 'ok_hand' });
         setCloseFlag(true);
       } else {
         Toast.show({ message: t('toast.missingCopyAddress'), emoji: 'hushed', autoClose: false });
@@ -122,13 +122,13 @@ const ReceiveModal = ({
   const ensName = getAccountEnsName(activeAccount);
 
   const renderChainAddress = (chain: Chain) => {
-    const { title, iconUrl } = chainsConfig[chain];
+    const { title } = chainsConfig[chain];
 
     return (
       <Container key={`${chain}`}>
         <ContainerView>
           <RowContainer>
-            <TokenIcon size={24} style={IconContainer} url={iconUrl} />
+            <ChainViewIcon size={24} style={IconContainer} name={chain} />
             <Title>{title}</Title>
             <CopyButtonFromChain>
               <Button
@@ -136,7 +136,7 @@ const ReceiveModal = ({
                 height="48"
                 style={{ borderRadius: 14 }}
                 title={t('receiveModal.copyButton')}
-                onPress={() => handleCopyFromChain(chain)}
+                onPress={() => handleCopyFromChain(chain, title)}
               />
             </CopyButtonFromChain>
           </RowContainer>
@@ -400,4 +400,11 @@ const RowContainer = styled.View`
   align-items: center;
   flex-direction: row;
   padding: ${spacing.small}px;
+`;
+
+const ChainViewIcon = styled(Icon)`
+  height: 24px;
+  width: 24px;
+  background-color: ${({ theme }) => theme.colors.basic050};
+  border-radius: ${borderRadiusSizes.medium}px;
 `;

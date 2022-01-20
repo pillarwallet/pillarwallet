@@ -46,6 +46,7 @@ import {
 } from 'constants/onboardingConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -53,13 +54,14 @@ import Toast from 'components/Toast';
 // utils
 import { generateMnemonicPhrase } from 'utils/wallet';
 import { reportErrorLog, reportLog, logBreadcrumb, getEnsPrefix, extractUsernameFromEnsName } from 'utils/common';
-import { getAccountEnsName } from 'utils/accounts';
+import { getAccountEnsName, findFirstEtherspotAccount } from 'utils/accounts';
 import { isLogV2AppEvents } from 'utils/environment';
 
 // services
 import { navigate } from 'services/navigation';
 import { firebaseMessaging, firebaseRemoteConfig } from 'services/firebase';
 import { getExistingServicesAccounts, isUsernameTaken } from 'services/onboarding';
+import etherspotService from 'services/etherspot';
 
 // actions
 import { importArchanovaAccountsIfNeededAction, managePPNInitFlagAction } from 'actions/smartWalletActions';
@@ -80,11 +82,22 @@ import {
   resetAndStartImportWalletAction,
 } from 'actions/authActions';
 import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedAssetTransferActions';
-import { importEtherspotAccountsAction, initEtherspotServiceAction } from 'actions/etherspotActions';
+import {
+  importEtherspotAccountsAction,
+  initEtherspotServiceAction,
+} from 'actions/etherspotActions';
 import { fetchSupportedAssetsAction, fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
 import { fetchTutorialDataIfNeededAction } from 'actions/cmsActions';
 import { initialDeepLinkExecutedAction } from 'actions/appSettingsActions';
 import { addAccountAction } from 'actions/accountsActions';
+import {
+  setEstimatingTransactionAction,
+  setTransactionsEstimateErrorAction,
+  setTransactionsEstimateFeeAction,
+} from 'actions/transactionEstimateActions';
+
+// Selectors
+import { accountsSelector } from 'selectors';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -646,6 +659,41 @@ export const checkUsernameAvailabilityAction = (username: string) => {
       type: SET_ONBOARDING_USER,
       payload: { username },
     });
+  };
+};
+
+export const claimENSNameAction = (username: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const accounts = accountsSelector(getState());
+
+    const etherspotAccount = findFirstEtherspotAccount(accounts);
+    if (!etherspotAccount) {
+      reportErrorLog('claimENSNameAction failed: no Etherspot account found');
+      return;
+    }
+    const reserved = await etherspotService.reserveEnsName(username);
+    if (!reserved) {
+      reportErrorLog('reserveEtherspotENSNameAction reserveENSName failed', { username });
+    } else {
+      dispatch({ type: SET_USER, payload: { username } });
+      dispatch(saveDbAction('user', { user: { data: { username } } }));
+    }
+    let errorMessage;
+    let feeInfo;
+    dispatch(setEstimatingTransactionAction(true));
+    try {
+      feeInfo = await etherspotService.estimateENSTransactionFee(CHAIN.ETHEREUM);
+      dispatch(setEstimatingTransactionAction(false));
+      dispatch(setTransactionsEstimateFeeAction(feeInfo));
+    } catch (error) {
+      errorMessage = error?.message;
+    }
+    if (!feeInfo || errorMessage) {
+      reportErrorLog('estimateEnsMigrationFromArchanovaToEtherspotAction -> estimateAccountRawTransactions failed', {
+        errorMessage,
+      });
+      dispatch(setTransactionsEstimateErrorAction(errorMessage || t('toast.transactionFeeEstimationFailed')));
+    }
   };
 };
 
