@@ -382,7 +382,8 @@
     "notNow": "Not now",
     "copyToClipboard": "Copy to clipboard",
     "savedPhrase": "I have saved my 12 words",
-    "savedPrivateKey": "I have saved my private key"
+    "savedPrivateKey": "I have saved my private key",
+    "openInBrowser": "Open in browser"
   },
 
   "paragraph": {

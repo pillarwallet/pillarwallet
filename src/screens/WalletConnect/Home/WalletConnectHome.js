@@ -19,13 +19,16 @@
 */
 
 import * as React from 'react';
-import { SectionList, Linking, useWindowDimensions } from 'react-native';
+import { SectionList, useWindowDimensions } from 'react-native';
+import { NavigationActions } from 'react-navigation';
 import { useNavigation } from 'react-navigation-hooks';
 import { useInteractionManager } from '@react-native-community/hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 import { useTranslation, useTranslationWithPrefix } from 'translations/translate';
 import { chunk } from 'lodash';
+
+import { WALLETCONNECT_BROWSER } from 'constants/navigationConstants';
 
 // Components
 import { Container, Center } from 'components/layout/Layout';
@@ -47,25 +50,19 @@ import { useDeploymentStatus } from 'hooks/deploymentStatus';
 // Services
 import { useFetchWalletConnectCategoriesQuery } from 'services/cms/WalletConnectCategories';
 import { useFetchWalletConnectAppsQuery } from 'services/cms/WalletConnectApps';
-import { firebaseRemoteConfig } from 'services/firebase';
+import { navigate } from 'services/navigation';
 
 // Utils
 import { mapNotNil } from 'utils/array';
 import { appFont, fontStyles, spacing, borderRadiusSizes } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
-import { openUrl, showServiceLaunchErrorToast } from 'utils/inAppBrowser';
-import {
-  isArchanovaAccount,
-  isKeyBasedAccount,
-} from 'utils/accounts';
+import { showServiceLaunchErrorToast } from 'utils/inAppBrowser';
+import { isArchanovaAccount, isKeyBasedAccount } from 'utils/accounts';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
 import { type Chain } from 'models/Chain';
 import type { WalletConnectCmsApp } from 'models/WalletConnectCms';
-
-// Constants
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Local
 import WalletConnectListItem from './components/WalletConnectListItem';
@@ -79,7 +76,6 @@ function WalletConnectHome() {
   const navigation = useNavigation();
   const safeArea = useSafeAreaInsets();
   const isReady = useInteractionManager(); // Used to prevent jank on screen entry animation
-  const enableURLInAppBrowser = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_WC_DASHBOARD_INAPPBROWSER);
 
   const activeAccount = useActiveAccount();
   const tabItems = useTabItems();
@@ -91,9 +87,7 @@ function WalletConnectHome() {
   const { numberOfColumns, columnWidth } = useColumnDimensions();
   const { data: sections, isFetching } = useSectionData(activeChain, numberOfColumns);
 
-  const showDeployBanner = !isKeyBasedAccount(activeAccount)
-    && activeChain != null
-    && !isDeployedOnChain[activeChain];
+  const showDeployBanner = !isKeyBasedAccount(activeAccount) && activeChain != null && !isDeployedOnChain[activeChain];
 
   const updateActiveChain = (chain?) => {
     setActiveChain(chain ?? null);
@@ -144,13 +138,18 @@ function WalletConnectHome() {
   // Note: in order to achieve multicolumn layout, we group n normal items into one list row item.
   const renderListRow = (items: WalletConnectCmsApp[]) => <ListRow>{items.map(renderItem)}</ListRow>;
 
-  const openAppUrl = (url: string | null) => {
+  const openAppUrl = (url: string, title: string, iconUrl: ?string) => {
     if (url) {
-      if (enableURLInAppBrowser) {
-        openUrl(url);
-      } else {
-        Linking.openURL(url);
-      }
+      navigate(
+        NavigationActions.navigate({
+          routeName: WALLETCONNECT_BROWSER,
+          params: {
+            url,
+            title,
+            iconUrl,
+          },
+        }),
+      );
     } else {
       showServiceLaunchErrorToast();
     }
@@ -162,7 +161,7 @@ function WalletConnectHome() {
       title={item.title}
       iconUrl={item.iconUrl}
       width={columnWidth}
-      onPress={() => openAppUrl(item.url)}
+      onPress={() => openAppUrl(item.url, item.title, item.iconUrl)}
     />
   );
 

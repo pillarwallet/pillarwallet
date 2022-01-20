@@ -45,6 +45,8 @@ import IconCheckmark from 'assets/icons/svg/icon-24-checkmark.svg';
 import IconChevronDown from 'assets/icons/svg/icon-24-chevron-down.svg';
 import IconChevronRight from 'assets/icons/svg/icon-24-chevron-right.svg';
 import IconChevronUp from 'assets/icons/svg/icon-24-chevron-up.svg';
+import IconChevronLeftLarge from 'assets/icons/svg/icon-24-chevron-left-large.svg';
+import IconChevronRightLarge from 'assets/icons/svg/icon-24-chevron-right-large.svg';
 import IconCloseCircle from 'assets/icons/svg/icon-24-close-circle.svg';
 import IconClose from 'assets/icons/svg/icon-24-close.svg';
 import IconCollectible from 'assets/icons/svg/icon-24-collectible.svg';
@@ -104,6 +106,8 @@ import IconWithdraw from 'assets/icons/svg/icon-24-withdraw.svg';
 import IconAlert from 'assets/icons/svg/icon-24-circle-filled-alert.svg';
 import IconCheckedRadio from 'assets/icons/svg/x-masters-form-radio-button-focus.svg';
 import IconUncheckedRadio from 'assets/icons/svg/x-masters-form-radio-button-normal.svg';
+import IconPillarBrowser from 'assets/icons/svg/icon-24-pillar-browser.svg';
+import IconPillarBrowserDark from 'assets/icons/svg/icon-24-pillar-browser-dark.svg';
 
 // Assets: services icons
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
@@ -130,6 +134,8 @@ const components: Record<SvgImage> = {
   'chevron-down': IconChevronDown,
   'chevron-right': IconChevronRight,
   'chevron-up': IconChevronUp,
+  'chevron-left-large': IconChevronLeftLarge,
+  'chevron-right-large': IconChevronRightLarge,
   'close-circle': IconCloseCircle,
   close: IconClose,
   collectible: IconCollectible,
@@ -189,6 +195,8 @@ const components: Record<SvgImage> = {
   alert: IconAlert,
   'checked-radio': IconCheckedRadio,
   'unchecked-radio': IconUncheckedRadio,
+  'pillar-browser': IconPillarBrowser,
+  'pillar-browser-dark': IconPillarBrowserDark,
 
   // Service icons
   binance: IconBinance,
