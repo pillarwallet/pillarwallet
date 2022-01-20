@@ -261,5 +261,11 @@ export const appFont = {
 export const borderRadiusSizes = {
   defaultContainer: 22.5,
   defaultButton: 14,
+  small: 16,
+  mediumSmall: 20,
   medium: 24,
+};
+
+export const shadowColors = {
+  black: '#000',
 };

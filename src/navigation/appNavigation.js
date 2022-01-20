@@ -108,6 +108,7 @@ import NewProfileScreen from 'screens/NewProfile';
 import ImportWalletScreen from 'screens/ImportWallet';
 import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
 import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
+import WalletConnectBrowser from 'screens/WalletConnect/WalletConnectBrowser';
 import RegisterENSScreen from 'screens/RegisterENS';
 
 // components
@@ -158,6 +159,7 @@ import {
   WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
   WALLETCONNECT_CALL_REQUEST_SCREEN,
   WALLETCONNECT_PIN_CONFIRM_SCREEN,
+  WALLETCONNECT_BROWSER,
   TANK_SETTLE_FLOW,
   TANK_FUND_FLOW,
   FUND_TANK,
@@ -325,6 +327,7 @@ const walletConnectFlow = createStackNavigator(
   {
     [WALLETCONNECT]: WalletConnectHomeScreen,
     [WALLETCONNECT_CONNECTED_APPS]: WalletConnectConnectedAppsScreen,
+    [WALLETCONNECT_BROWSER]: WalletConnectBrowser,
   },
   StackNavigatorConfig,
 );
@@ -626,11 +629,7 @@ class AppFlow extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const {
-      startListeningNotifications,
-      initWalletConnectSessions,
-      checkArchanovaSession,
-    } = this.props;
+    const { startListeningNotifications, initWalletConnectSessions, checkArchanovaSession } = this.props;
 
     startListeningNotifications();
     addAppStateChangeListener(this.handleAppStateChange);
