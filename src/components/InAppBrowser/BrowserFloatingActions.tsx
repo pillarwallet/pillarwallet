@@ -4,7 +4,7 @@ import SafeAreaView, { ForceInsetProp } from 'react-native-safe-area-view';
 import styled from 'styled-components/native';
 
 // Utils
-import { spacing, borderRadiusSizes } from 'utils/variables';
+import { spacing, borderRadiusSizes, shadowColors } from 'utils/variables';
 
 // Local
 import BrowserFloatingButton from './BrowserFloatingButton';
@@ -43,7 +43,7 @@ const ActionsContainer = styled.View`
   border-radius: ${borderRadiusSizes.mediumSmall}px;
   margin-horizontal: ${spacing.extraLarge}px;
   shadow-opacity: 0.1;
-  shadow-color: #000;
+  shadow-color: ${shadowColors.black};
   shadow-radius: ${borderRadiusSizes.small}px;
   shadow-offset: 0 ${spacing.small}px;
   elevation: 6;

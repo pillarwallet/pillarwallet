@@ -39,7 +39,7 @@ const InAppBrowser: FC<IInAppBrowser> = ({ initialUrl = '', iconUrl }) => {
   const [canGoForward, setCanGoForward] = useState(false);
 
   useEffect(() => {
-    if (!initialUrl || initialUrl === '') setUrl(DEFAULT_URL);
+    if (!initialUrl) setUrl(DEFAULT_URL);
   }, []);
 
   // Prepends 'https://' if not part of the url

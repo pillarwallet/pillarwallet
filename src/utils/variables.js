@@ -265,3 +265,7 @@ export const borderRadiusSizes = {
   mediumSmall: 20,
   medium: 24,
 };
+
+export const shadowColors = {
+  black: '#000',
+};
