@@ -127,6 +127,7 @@ describe('Assets actions', () => {
       { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.POLYGON, rates: mockNativeAssetExchangeRates } },
       { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.BINANCE, rates: mockNativeAssetExchangeRates } },
       { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.XDAI, rates: mockNativeAssetExchangeRates } },
+      { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.AVALANCHE, rates: mockNativeAssetExchangeRates } },
       { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.ETHEREUM, rates: mockExchangeRates } },
       { type: SET_FETCHING_RATES, payload: false },
       { type: SET_FETCHING_ASSETS_BALANCES, payload: false },

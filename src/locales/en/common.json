@@ -60,17 +60,19 @@
   },
 
   "chains": {
-    "ethereum": "Ethereum Mainnet",
+    "ethereum": "Ethereum",
     "binance": "Binance Smart Chain",
     "xdai": "xDai Network",
-    "polygon": "Polygon"
+    "polygon": "Polygon",
+    "avalanche": "Avalanche"
   },
 
   "chainsShort": {
-    "ethereum": "Mainnet",
+    "ethereum": "Ethereum",
     "binance": "BSC",
     "xdai": "xDai",
-    "polygon": "Polygon"
+    "polygon": "Polygon",
+    "avalanche": "Avalanche"
   },
 
   "assetCategories": {
@@ -121,7 +123,8 @@
     "exchange": "Exchange",
     "unlockWithBiometrics": "Unlock with biometric sensor",
     "welcome": "Welcome to Pillar Wallet!",
-    "seedPhrase": "12 words seed phrase"
+    "seedPhrase": "12 words seed phrase",
+    "registerEnsName": "Register ENS name"
   },
 
   "label": {
@@ -266,7 +269,8 @@
     "pleaseSelect": "Please select",
     "balanceFiatTokenFormat": "Balance {{balanceInFiat}} ({{balance}})",
     "balanceTokenFormat": "Balance {{balance}}",
-    "filterByName": "Filter by name"
+    "filterByName": "Filter by name",
+    "username": "username"
   },
 
   "button": {
@@ -379,7 +383,8 @@
     "notNow": "Not now",
     "copyToClipboard": "Copy to clipboard",
     "savedPhrase": "I have saved my 12 words",
-    "savedPrivateKey": "I have saved my private key"
+    "savedPrivateKey": "I have saved my private key",
+    "openInBrowser": "Open in browser"
   },
 
   "paragraph": {
@@ -487,7 +492,8 @@
       "notOwnedCollectible": "You no longer own this NFT",
       "collectibleCantBeTransferred": "This NFT can't be transferred",
       "notEnoughStake": "Not enough PLR in tank",
-      "cantCalculateFee": "Unable to calculate transaction fee"
+      "cantCalculateFee": "Unable to calculate transaction fee",
+      "unableToAccessWallet": "Unable to access wallet"
     },
     "emptyAddress": "Address cannot be empty",
     "contactWithAddressExists": "Contact with this address already exists",
@@ -581,7 +587,8 @@
       "addressBook": "Address book",
       "supportChat": "Support",
       "storybook": "Storybook",
-      "supportConversations": "Support conversations"
+      "supportConversations": "Support conversations",
+      "knowledgebase": "Knowledgebase"
     },
     "footer": {
       "privacyPolicy": "Privacy Policy",
@@ -601,7 +608,8 @@
       "viewBackupPhrase": "View 12 words",
       "viewPrivateKey": "View Private Key",
       "backupNotFinishedWarning": "Security warning",
-      "backupComplete": "Backup complete"
+      "backupComplete": "Backup complete",
+      "importWallet": "Import Wallet"
     },
     "selectLanguage": {
       "title": "Language"
@@ -658,6 +666,7 @@
   "walletConnect": {
     "home": {
       "title": "WalletConnect",
+      "switch-title": "Switch Network",
       "headerStories": "New and Noteworthy",
       "deployOnChainFormat": "Deploy this wallet to take full advantage of using {{chain}}.",
       "toast": {
@@ -1158,6 +1167,7 @@
     "incorrectQRCode": "QR code is incorrect.",
     "transactionFeeEstimationFailed": "Can't estimate transaction fee. Please try again.",
     "walkthroughFailed": "Something went wrong. Please try again.",
+    "chainAddressCopiedToClipboard": "{{chain}} wallet address copied to clipboard.",
     "addressCopiedToClipboard": "Address copied to clipboard.",
     "ensNameCopiedToClipboard": "ENS name copied to clipboard.",
     "forbiddenToRemoveAsset": "{{assetName}} ({{assetSymbol}}) can't be removed. It's essential for Pillar.",
@@ -1221,7 +1231,8 @@
     "waitingForWalletConnectConnection": "Waiting for WalletConnect service…",
     "transactionReverted": "Something went wrong. Try again or tap this message for details.",
     "seedPhraseCopiedToClipboard": "12 words copied to clipboard",
-    "privateKeyCopiedToClipboard": "Private Key copied to clipboard"
+    "privateKeyCopiedToClipboard": "Private Key copied to clipboard",
+    "missingCopyAddress": "Sorry, cannot copy address to the clipboard"
   },
 
   "exchangeContent": {
@@ -1447,18 +1458,33 @@
   "receiveModal": {
     "etherspotSingleAddressInfo": "All chains use single wallet address.",
     "notDeployedWarning": "Receive <0>{{chain}}</0> assets",
-    "withCaution": "with caution."
+    "withCaution": "with caution.",
+    "title": "Receive",
+    "copyButton": "Address",
+    "activationText": "You need to activate your smart wallet first.",
+    "activateText": "Activate",
+    "notDeployedText": "⚠️ Sending tokens is unavailable. Currently you can only receive tokens in <0>{{chain}}</0> wallet"
   },
 
   "tooltip": {
     "switchAccountsByTappingHere": "You can switch accounts by tapping here",
-    "includesDeploymentFee": "One-time Smart Wallet deployment fee"
+    "includesDeploymentFee": "One-time Smart Wallet deployment fee",
+    "registerENS": "Register your unique ENS name"
   },
 
   "governanceCall": {
     "banner": {
       "title": "Governance Call",
       "live": "LIVE"
+    }
+  },
+
+  "biometricLogin": {
+    "title": "Sign in with {{biometryType}}",
+    "description": "Enable biometric login instead of typing PIN every time?",
+    "button": {
+      "enable": "Enable",
+      "cancel": "Cancel"
     }
   },
 

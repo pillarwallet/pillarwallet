@@ -22,23 +22,23 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
-// components
+// Components
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import PinCode from 'components/PinCode';
 import { MediumText, Paragraph } from 'components/legacy/Typography';
 
-// constants
+// Constants
 import { PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
 
-// selectors
+// Selectors
 import { useRootSelector } from 'selectors';
 import { maxPinCodeLengthSelector } from 'selectors/appSettings';
 
-// utils
+// Utils
 import { validatePin } from 'utils/validators';
 import { fontStyles, spacing } from 'utils/variables';
 
-// types
+// Types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 
@@ -47,17 +47,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   wallet: ?Object,
 };
-
-const ContentWrapper = styled.ScrollView`
-  flex: 1;
-`;
-
-const HeaderText = styled(MediumText)`
-  ${fontStyles.large};
-  text-align: center;
-  margin-top: ${spacing.large}px;
-  margin-bottom: 9px;
-`;
 
 const SetWalletPinCode = ({
   navigation,
@@ -117,3 +106,14 @@ const mapStateToProps = ({
 });
 
 export default connect(mapStateToProps)(SetWalletPinCode);
+
+const ContentWrapper = styled.ScrollView`
+  flex: 1;
+`;
+
+const HeaderText = styled(MediumText)`
+  ${fontStyles.large};
+  text-align: center;
+  margin-top: ${spacing.large}px;
+  margin-bottom: 9px;
+`;

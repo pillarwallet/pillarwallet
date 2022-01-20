@@ -19,7 +19,8 @@
 */
 
 import * as React from 'react';
-import { SectionList, Linking, useWindowDimensions } from 'react-native';
+import { SectionList, useWindowDimensions } from 'react-native';
+import { NavigationActions } from 'react-navigation';
 import { useNavigation } from 'react-navigation-hooks';
 import { useInteractionManager } from '@react-native-community/hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -27,14 +28,17 @@ import styled from 'styled-components/native';
 import { useTranslation, useTranslationWithPrefix } from 'translations/translate';
 import { chunk } from 'lodash';
 
+import { WALLETCONNECT_BROWSER } from 'constants/navigationConstants';
+
 // Components
 import { Container, Center } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
-import TabBar from 'components/layout/TabBar';
 import Text from 'components/core/Text';
 import FloatingButtons from 'components/FloatingButtons';
 import Spinner from 'components/Spinner';
 import WalletConnectRequests from 'screens/WalletConnect/Requests';
+import Modal from 'components/Modal';
+import Icon from 'components/core/Icon';
 
 // Selectors
 import { useActiveAccount } from 'selectors';
@@ -46,53 +50,84 @@ import { useDeploymentStatus } from 'hooks/deploymentStatus';
 // Services
 import { useFetchWalletConnectCategoriesQuery } from 'services/cms/WalletConnectCategories';
 import { useFetchWalletConnectAppsQuery } from 'services/cms/WalletConnectApps';
-import { firebaseRemoteConfig } from 'services/firebase';
+import { navigate } from 'services/navigation';
 
 // Utils
 import { mapNotNil } from 'utils/array';
-import { appFont, fontStyles, spacing } from 'utils/variables';
+import { appFont, fontStyles, spacing, borderRadiusSizes } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
-import { openUrl, showServiceLaunchErrorToast } from 'utils/inAppBrowser';
-import { isArchanovaAccount } from 'utils/accounts';
+import { showServiceLaunchErrorToast } from 'utils/inAppBrowser';
+import { isArchanovaAccount, isKeyBasedAccount } from 'utils/accounts';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
 import { type Chain } from 'models/Chain';
 import type { WalletConnectCmsApp } from 'models/WalletConnectCms';
 
-// Constants
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
-
 // Local
 import WalletConnectListItem from './components/WalletConnectListItem';
 import ConnectFloatingButton from './components/ConnectFloatingButton';
 import ConnectedAppsFloatingButton from './components/ConnectedAppsFloatingButton';
 import DeployBanner from './components/DeployBanner';
+import SwitchChainModal from './components/SwitchChainModal';
 
 function WalletConnectHome() {
   const { t } = useTranslationWithPrefix('walletConnect.home');
   const navigation = useNavigation();
   const safeArea = useSafeAreaInsets();
   const isReady = useInteractionManager(); // Used to prevent jank on screen entry animation
-  const enableURLInAppBrowser = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_WC_DASHBOARD_INAPPBROWSER);
 
   const activeAccount = useActiveAccount();
   const tabItems = useTabItems();
   const [activeChain, setActiveChain] = React.useState<?Chain>(null);
+  const [activeItem, setActiveItem] = React.useState(tabItems[0]);
 
   const { isDeployedOnChain } = useDeploymentStatus();
 
   const { numberOfColumns, columnWidth } = useColumnDimensions();
   const { data: sections, isFetching } = useSectionData(activeChain, numberOfColumns);
 
-  const showDeployBanner = activeChain != null && !isDeployedOnChain[activeChain];
+  const showDeployBanner = !isKeyBasedAccount(activeAccount) && activeChain != null && !isDeployedOnChain[activeChain];
+
+  const updateActiveChain = (chain?) => {
+    setActiveChain(chain ?? null);
+  };
+
+  const updateActiveItem = (item?) => {
+    if (item) setActiveItem(item);
+  };
+
+  const closeModal = () => Modal.closeAll();
+
+  const openSwitchChainModal = () => {
+    Modal.open(() => {
+      return (
+        <SwitchChainModal
+          items={tabItems}
+          activeItem={activeItem}
+          updateActiveChain={updateActiveChain}
+          updateActiveItem={updateActiveItem}
+          closeModal={closeModal}
+        />
+      );
+    });
+  };
 
   const renderListHeader = () => {
+    const { key, title } = activeItem;
     return (
       <ListHeader>
         <WalletConnectRequests />
         {!isArchanovaAccount(activeAccount) && (
-          <TabBar items={tabItems} activeTab={activeChain} onActiveTabChange={setActiveChain} style={styles.tabs} />
+          <ContainerView isSelected>
+            <RowContainer>
+              <ChainViewIcon size={24} style={IconContainer} name={key ?? 'all-networks'} />
+              <Title>{title}</Title>
+              <TouchableContainer>
+                <ChainViewIcon name="chevron-down" onPress={() => openSwitchChainModal()} />
+              </TouchableContainer>
+            </RowContainer>
+          </ContainerView>
         )}
 
         {showDeployBanner && activeChain != null && <DeployBanner chain={activeChain} style={styles.banner} />}
@@ -103,13 +138,18 @@ function WalletConnectHome() {
   // Note: in order to achieve multicolumn layout, we group n normal items into one list row item.
   const renderListRow = (items: WalletConnectCmsApp[]) => <ListRow>{items.map(renderItem)}</ListRow>;
 
-  const openAppUrl = (url: string | null) => {
+  const openAppUrl = (url: string, title: string, iconUrl: ?string) => {
     if (url) {
-      if (enableURLInAppBrowser) {
-        openUrl(url);
-      } else {
-        Linking.openURL(url);
-      }
+      navigate(
+        NavigationActions.navigate({
+          routeName: WALLETCONNECT_BROWSER,
+          params: {
+            url,
+            title,
+            iconUrl,
+          },
+        }),
+      );
     } else {
       showServiceLaunchErrorToast();
     }
@@ -121,7 +161,7 @@ function WalletConnectHome() {
       title={item.title}
       iconUrl={item.iconUrl}
       width={columnWidth}
-      onPress={() => openAppUrl(item.url)}
+      onPress={() => openAppUrl(item.url, item.title, item.iconUrl)}
     />
   );
 
@@ -167,6 +207,11 @@ type Section = {
   title: string,
 };
 
+type itemType = {|
+  key: ?Chain,
+  title: ?string,
+|};
+
 const useColumnDimensions = () => {
   const { width } = useWindowDimensions();
   const availableWidth = width - (2 * spacing.layoutSides);
@@ -177,7 +222,7 @@ const useColumnDimensions = () => {
   return { numberOfColumns, columnWidth };
 };
 
-const useTabItems = () => {
+const useTabItems = (): itemType[] => {
   const { t } = useTranslation();
   const chains = useSupportedChains();
   const config = useChainsConfig();
@@ -260,4 +305,42 @@ const ListRow = styled.View`
   flex-direction: row;
   align-items: stretch;
   padding: 0 ${spacing.layoutSides}px;
+`;
+
+const ContainerView = styled.View`
+  background-color: ${({ theme, isSelected }) => (isSelected ? theme.colors.basic080 : theme.colors.basic050)};
+  margin: 0 ${spacing.layoutSides}px;
+  padding: ${spacing.large}px;
+  border-radius: ${borderRadiusSizes.medium}px;
+`;
+
+const RowContainer = styled.View`
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  padding: ${spacing.small}px;
+`;
+
+const IconContainer = styled.View`
+  align-items: center;
+  justify-content: center;
+`;
+
+const Title = styled(Text)`
+  flex: 1;
+  flex-direction: row;
+  ${fontStyles.medium};
+  padding: 0 ${spacing.medium}px 0 ${spacing.medium}px;
+`;
+
+const ChainViewIcon = styled(Icon)`
+  height: 24px;
+  width: 24px;
+  background-color: ${({ theme }) => theme.colors.basic050};
+  border-radius: ${borderRadiusSizes.medium}px;
+`;
+
+const TouchableContainer = styled.TouchableOpacity`
+  align-items: center;
+  justify-content: center;
 `;

@@ -96,7 +96,7 @@ exports[`Storyshots ActionModal default 1`] = `
                   "paddingLeft": 16,
                   "paddingRight": 16,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -20035,7 +20035,7 @@ exports[`Storyshots DetailModal Layout L 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -20428,7 +20428,7 @@ exports[`Storyshots DetailModal Layout M 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -20839,7 +20839,7 @@ exports[`Storyshots DetailModal Layout S 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -21189,7 +21189,7 @@ exports[`Storyshots DetailModal Paragraph Child 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -21518,7 +21518,7 @@ exports[`Storyshots DetailModal Pending Fee 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -22012,7 +22012,7 @@ exports[`Storyshots DetailModal Plain Text Child 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -22300,7 +22300,7 @@ exports[`Storyshots EventDetail Liquidity added 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -22772,7 +22772,7 @@ exports[`Storyshots EventDetail Liquidity removed 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -23244,7 +23244,7 @@ exports[`Storyshots EventDetail Liquidity reward claimed 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -23585,7 +23585,7 @@ exports[`Storyshots EventDetail Liquidity staked 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -23925,7 +23925,7 @@ exports[`Storyshots EventDetail Liquidity unstaked 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -24266,7 +24266,7 @@ exports[`Storyshots EventDetail Pillar Network Activated 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -24814,7 +24814,7 @@ exports[`Storyshots EventDetail Pillar Network Created 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -25301,7 +25301,7 @@ exports[`Storyshots EventDetail Pillar Network Received 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -25583,7 +25583,7 @@ exports[`Storyshots EventDetail Pillar Network Sent 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -25865,7 +25865,7 @@ exports[`Storyshots EventDetail Pillar Network Settle (PPN <-> SW) 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -26489,7 +26489,7 @@ exports[`Storyshots EventDetail Pillar Network Top Up (PPN <- SW) 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -26831,7 +26831,7 @@ exports[`Storyshots EventDetail Pillar Network Top Up (SW -> PPN) 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -27173,7 +27173,7 @@ exports[`Storyshots EventDetail Pillar Network Withdrawal (PPN -> SW) 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -27515,7 +27515,7 @@ exports[`Storyshots EventDetail Pillar Network Withdrawal (SW <- PPN) 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -27857,7 +27857,7 @@ exports[`Storyshots EventDetail PoolTogether Deposit DAI 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -28155,7 +28155,7 @@ exports[`Storyshots EventDetail PoolTogether Deposit USDC 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -28453,7 +28453,7 @@ exports[`Storyshots EventDetail PoolTogether Withdraw DAI 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -28751,7 +28751,7 @@ exports[`Storyshots EventDetail PoolTogether Withdraw USDC 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -29049,7 +29049,7 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact (Pending) 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -29341,7 +29341,7 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -29682,7 +29682,7 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact (Pending) 1`] 
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -30002,7 +30002,7 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -30371,7 +30371,7 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact (Pending) 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -30663,7 +30663,7 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -31004,7 +31004,7 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact (Pending) 1`] 
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -31324,7 +31324,7 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -31693,7 +31693,7 @@ exports[`Storyshots EventDetail Smart Wallet Top up | KW -> SW 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -32035,7 +32035,7 @@ exports[`Storyshots EventDetail Smart Wallet Top up | SW <- KW 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -32377,7 +32377,7 @@ exports[`Storyshots EventDetail Smart wallet activated | Needs to activate PPN 1
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -32702,7 +32702,7 @@ exports[`Storyshots EventDetail Smart wallet activated 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -32966,7 +32966,7 @@ exports[`Storyshots EventDetail Smart wallet created | Needs to activate 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -36767,7 +36767,7 @@ exports[`Storyshots HistoryList basic transactions 1`] = `
               ]
             }
           >
-            Apr 19
+            Apr 19 2021
           </Text>
         </View>
         <View
@@ -43267,7 +43267,7 @@ exports[`Storyshots SlideModal default 1`] = `
                   "paddingLeft": 16,
                   "paddingRight": 16,
                   "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowColor": "rgba(0,0,0,0.1)",
                   "shadowOffset": Object {
                     "height": 2,
                     "width": 0,
@@ -44268,6 +44268,7 @@ exports[`Storyshots TextInput default 1`] = `
                         Object {},
                         undefined,
                         false,
+                        false,
                       ]
                     }
                     underlineColorAndroid="transparent"
@@ -44508,6 +44509,7 @@ exports[`Storyshots TextInput multiline 1`] = `
                           "paddingTop": 10,
                         },
                         undefined,
+                        false,
                         false,
                       ]
                     }
@@ -44797,6 +44799,7 @@ exports[`Storyshots TextInput numeric 1`] = `
                         Object {},
                         undefined,
                         false,
+                        false,
                       ]
                     }
                     underlineColorAndroid="transparent"
@@ -45055,6 +45058,7 @@ exports[`Storyshots TextInput numeric with all addons 1`] = `
                         },
                         Object {},
                         undefined,
+                        false,
                         false,
                       ]
                     }
@@ -45548,6 +45552,7 @@ exports[`Storyshots TextInput with button 1`] = `
                         Object {},
                         undefined,
                         false,
+                        false,
                       ]
                     }
                     underlineColorAndroid="transparent"
@@ -45971,7 +45976,7 @@ exports[`Storyshots ToastCard link 1`] = `
                         "textAlignVertical": "center",
                       },
                       Object {
-                        "color": "#0A1427",
+                        "color": "#FCFDFF",
                       },
                       Object {
                         "fontSize": 14,
@@ -46836,6 +46841,7 @@ exports[`Storyshots Value Input default 1`] = `
                         },
                         Object {},
                         undefined,
+                        false,
                         false,
                       ]
                     }

@@ -43,6 +43,7 @@ import { CHAIN } from 'constants/chainConstants';
 // services
 import etherspotService from 'services/etherspot';
 import archanovaService from 'services/archanova';
+import KeyBasedWallet from 'services/keyBasedWallet';
 
 // utils
 import { transformBalancesToObject } from 'utils/assets';
@@ -57,7 +58,6 @@ import {
   getActiveAccount,
   getAccountAddress,
   getAccountId,
-  isNotKeyBasedType,
   isArchanovaAccount,
   isEtherspotAccount,
   getAccountType,
@@ -88,9 +88,86 @@ import { fetchVirtualAccountBalanceAction } from './smartWalletActions';
 import { fetchAssetsRatesAction } from './ratesActions';
 import { addEnsRegistryRecordAction } from './ensRegistryActions';
 
+export const sendENSTransactionAction = (
+  callback: (status: TransactionStatus) => void,
+  waitForActualTransactionHash: boolean = false,
+) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    logBreadcrumb('Send Flow', 'sendENSTransactionAction: checking for active account');
+    const activeAccount = activeAccountSelector(getState());
+    if (!activeAccount) {
+      reportErrorLog('sendENSTransactionAction failed: no active account');
+      return;
+    }
+
+    let transactionResult: ?TransactionResult;
+    let transactionErrorMessage: ?string;
+    if (isEtherspotAccount(activeAccount)) {
+      try {
+        transactionResult = await etherspotService.sendENSTransaction(CHAIN.ETHEREUM);
+      } catch (error) {
+        reportErrorLog('Send Flow:- sendENSTransactionAction transaction failed', {
+          error,
+        });
+        transactionErrorMessage = error;
+      }
+    }
+
+    if (!transactionResult || transactionErrorMessage) {
+      logBreadcrumb('Send Flow', 'sendENSTransactionAction: transaction failed', { error: transactionErrorMessage });
+      callback({
+        isSuccess: false,
+        error: transactionErrorMessage || t('error.transactionFailed.default'),
+      });
+      return;
+    }
+
+    let transactionHash = transactionResult?.hash;
+    const transactionBatchHash = transactionResult?.batchHash;
+
+    if (isEtherspotAccount(activeAccount) && waitForActualTransactionHash && !transactionHash && transactionBatchHash) {
+      try {
+        logBreadcrumb('Send Flow', 'sendENSTransactionAction: etherspot account fetching transaction hash', {
+          batchHash: transactionBatchHash,
+        });
+        transactionHash = await etherspotService.waitForTransactionHashFromSubmittedBatch(
+          CHAIN.ETHEREUM,
+          transactionBatchHash,
+        );
+      } catch (error) {
+        reportErrorLog('Exception in wallet transaction: waitForTransactionHashFromSubmittedBatch failed', { error });
+      }
+    }
+
+    if (!transactionHash && !transactionBatchHash) {
+      logBreadcrumb(
+        'Send Flow',
+        'sendENSTransactionAction: transaction failed as transactionHash and transactionBatchHash is not available',
+      );
+      callback({
+        isSuccess: false,
+        error: t('error.transactionFailed.default'),
+      });
+      return;
+    }
+
+    logBreadcrumb(
+      'Send Flow',
+      'sendAssetAction transaction sent',
+      { transactionHash, transactionBatchHash },
+    );
+    callback({
+      isSuccess: true,
+      error: null,
+      hash: transactionHash,
+      batchHash: transactionBatchHash,
+    });
+  };
+};
 
 export const sendAssetAction = (
   transaction: TransactionPayload,
+  privateKey: string,
   callback: (status: TransactionStatus) => void,
   waitForActualTransactionHash: boolean = false,
 ) => {
@@ -177,6 +254,16 @@ export const sendAssetAction = (
 
     try {
       switch (getAccountType(activeAccount)) {
+        case ACCOUNT_TYPES.KEY_BASED:
+          logBreadcrumb(
+            'Send Flow',
+            'sendAssetAction: account type: key based wallet sending transaction',
+            { transaction, accountAddress, chain },
+          );
+          const keyBasedWallet = new KeyBasedWallet(privateKey);
+          const { transactionEstimate: { feeInfo } } = getState();
+          transactionResult = await keyBasedWallet.sendTransaction(transaction, accountAddress, feeInfo);
+          break;
         case ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET:
           logBreadcrumb(
             'Send Flow',
@@ -244,14 +331,6 @@ export const sendAssetAction = (
           'sendAssetAction: etherspot account fetching transaction hash',
           { chain, batchHash: transactionBatchHash },
         );
-        transactionHash = await etherspotService.waitForTransactionHashFromSubmittedBatch(chain, transactionBatchHash);
-      } catch (error) {
-        reportErrorLog('Exception in wallet transaction: waitForTransactionHashFromSubmittedBatch failed', { error });
-      }
-    }
-
-    if (!transactionHash && transactionBatchHash) {
-      try {
         transactionHash = await etherspotService.waitForTransactionHashFromSubmittedBatch(chain, transactionBatchHash);
       } catch (error) {
         reportErrorLog('Exception in wallet transaction: waitForTransactionHashFromSubmittedBatch failed', { error });
@@ -464,9 +543,8 @@ export const fetchAllAccountsTotalBalancesAction = () => {
     dispatch({ type: SET_FETCHING_TOTAL_BALANCES, payload: true });
 
     const accounts = accountsSelector(getState());
-    const smartWalletAccounts = accounts.filter(isNotKeyBasedType);
 
-    await Promise.all(smartWalletAccounts.map(async (account) => {
+    await Promise.all(accounts.map(async (account) => {
       dispatch(fetchCollectiblesAction(account));
 
       const accountId = getAccountId(account);
@@ -593,19 +671,11 @@ export const fetchAllAccountsAssetsBalancesAction = () => {
 
     await dispatch(fetchSupportedAssetsAction());
 
-    const promises = accounts
-      .filter(isNotKeyBasedType)
-      .map((account) => dispatch(fetchAccountWalletBalancesAction(account)));
+    const promises = accounts.map((account) => dispatch(fetchAccountWalletBalancesAction(account)));
 
     await Promise
       .all(promises)
       .catch((error) => reportErrorLog('fetchAllAccountsAssetsBalancesAction failed', { error }));
-
-    // migration for key based blances to remove existing
-    const keyBasedAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
-    if (keyBasedAccount) {
-      dispatch(resetAccountAssetsBalancesAction(getAccountId(keyBasedAccount)));
-    }
 
     dispatch(fetchAssetsRatesAction());
 

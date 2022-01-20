@@ -22,13 +22,7 @@ import * as Sentry from '@sentry/react-native';
 import isEmpty from 'lodash.isempty';
 import orderBy from 'lodash.orderby';
 import { BigNumber } from 'bignumber.js';
-import {
-  Dimensions,
-  Platform,
-  Linking,
-  PixelRatio,
-  AppState,
-} from 'react-native';
+import { Dimensions, Platform, Linking, PixelRatio, AppState, StatusBar } from 'react-native';
 import { providers, utils, BigNumber as EthersBigNumber } from 'ethers';
 import { CardStyleInterpolators } from 'react-navigation-stack';
 import t from 'translations/translate';
@@ -89,11 +83,7 @@ export const printLog = (...params: any) => {
   console.log(...params); // eslint-disable-line
 };
 
-export const reportLog = (
-  message: string,
-  extra?: Object,
-  level: Sentry.Severity = Sentry.Severity.Info,
-) => {
+export const reportLog = (message: string, extra?: Object, level: Sentry.Severity = Sentry.Severity.Info) => {
   Sentry.withScope((scope) => {
     scope.setExtras({ extra, level });
     if (level === Sentry.Severity.Info) {
@@ -105,10 +95,7 @@ export const reportLog = (
   printLog(`${level}: ${message}`, extra);
 };
 
-export const reportErrorLog = (
-  message: string,
-  extra?: Object,
-) => {
+export const reportErrorLog = (message: string, extra?: Object) => {
   reportLog(message, extra, Sentry.Severity.Error);
 };
 
@@ -125,15 +112,14 @@ export const logBreadcrumb = (
 
   const data = extra != null && typeof extra === 'object' ? extra : { extra };
   Sentry.addBreadcrumb({
-    category, message, level, data,
+    category,
+    message,
+    level,
+    data,
   });
 };
 
-export const reportOrWarn = (
-  message: string,
-  extra?: Object,
-  level: Sentry.Severity = Sentry.Severity.Info,
-) => {
+export const reportOrWarn = (message: string, extra?: Object, level: Sentry.Severity = Sentry.Severity.Info) => {
   if (__DEV__) {
     console.error(message, extra); // eslint-disable-line no-console
     return;
@@ -142,7 +128,7 @@ export const reportOrWarn = (
 };
 
 export const delay = async (ms: number) => {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const timeout = setTimeout(() => {
       clearTimeout(timeout);
       resolve();
@@ -308,9 +294,7 @@ export const getCurrencySymbol = (currency: string): string => {
   return CURRENCY_SYMBOLS[currency] || '';
 };
 
-export const commify = (
-  src: Value, options?: { skipCents?: boolean },
-): string => {
+export const commify = (src: Value, options?: { skipCents?: boolean }): string => {
   const REGEX = '\\d(?=(\\d{3})+\\D)';
   const num = wrapBigNumber(src).toFixed(2);
   let formatedValue = num.replace(new RegExp(REGEX, 'g'), '$&,');
@@ -338,7 +322,7 @@ export const partial = (fn: Function, ...fixedArgs: any) => {
 
 export const uniqBy = (collection: Object[] = [], key: string): Object[] => {
   return collection.filter((item, i, arr) => {
-    return arr.map(it => it[key]).indexOf(item[key]) === i;
+    return arr.map((it) => it[key]).indexOf(item[key]) === i;
   });
 };
 
@@ -376,7 +360,7 @@ export const handleUrlPress = (url: string) => {
     handleUrlPress(`http://${url}`);
   } else {
     Linking.canOpenURL(url)
-      .then(supported => {
+      .then((supported) => {
         if (supported) Linking.openURL(url);
       })
       .catch(() => null);
@@ -396,7 +380,8 @@ export const smallScreen = () => {
 
 export const getEthereumProvider = (network: string) => {
   // Connect to INFURA
-  const infuraProvider = new providers.InfuraProvider(network, getEnv().INFURA_PROJECT_ID);
+  const infuraProjectId = firebaseRemoteConfig.getString(REMOTE_CONFIG.INFURA_PROJECT_ID) || getEnv().INFURA_PROJECT_ID;
+  const infuraProvider = new providers.InfuraProvider(network, infuraProjectId);
 
   // Connect to Etherscan
   const etherscanProvider = new providers.EtherscanProvider(network);
@@ -405,7 +390,6 @@ export const getEthereumProvider = (network: string) => {
   // if INFURA is down
   return new providers.FallbackProvider([infuraProvider, etherscanProvider]);
 };
-
 
 export const resolveEnsName = async (ensName: string): Promise<?string> => {
   const resolved = await etherspotService.getEnsNode(ensName);
@@ -496,11 +480,14 @@ export const getDeviceWidth = () => {
   return Dimensions.get('window').width;
 };
 
-export const getFormattedTransactionFeeValue = (
-  chain: Chain,
-  feeInWei: ?Value,
-  gasToken: ?GasToken,
-): string => {
+export const getDeviceHeightWithoutNotch = () => {
+  const deviceHeight = getDeviceHeight();
+  if (Platform.OS === 'ios') return deviceHeight - 100;
+  else if (Platform.OS === 'android') return deviceHeight - (StatusBar.currentHeight || 0);
+  return deviceHeight;
+};
+
+export const getFormattedTransactionFeeValue = (chain: Chain, feeInWei: ?Value, gasToken: ?GasToken): string => {
   if (!feeInWei) return '';
 
   const parsedFeeInWei = wrapBigNumber(feeInWei).toFixed();
@@ -546,14 +533,15 @@ export const humanizeHexString = (hexString: ?string) => {
 };
 
 export const findEnsNameCaseInsensitive = (ensRegistry: EnsRegistry, address: string): ?string => {
-  const addressMixedCase = Object.keys(ensRegistry).find(key => isCaseInsensitiveMatch(key, address));
+  const addressMixedCase = Object.keys(ensRegistry).find((key) => isCaseInsensitiveMatch(key, address));
   if (!addressMixedCase) return null;
   return ensRegistry[addressMixedCase];
 };
 
-export const getEnsPrefix = () => isProdEnv()
-  ? '.pillar.eth' // eslint-disable-line i18next/no-literal-string
-  : '.pillar'; // eslint-disable-line i18next/no-literal-string
+export const getEnsPrefix = () =>
+  isProdEnv()
+    ? '.pillar.eth' // eslint-disable-line i18next/no-literal-string
+    : '.pillar'; // eslint-disable-line i18next/no-literal-string
 
 export const hitSlop10 = {
   top: 10,
@@ -613,10 +601,7 @@ export const extractUsernameFromEnsName = (ensName: string) => ensName.replace(g
 
 export const addressAsKey = (address: ?string): string => address?.toLowerCase() ?? '';
 
-export const valueForAddress = <V>(
-  record: ?Record<V>,
-  address: ?string,
-): ?V => record?.[addressAsKey(address)];
+export const valueForAddress = <V>(record: ?Record<V>, address: ?string): ?V => record?.[addressAsKey(address)];
 
 export const setValueForAddress = <V>(record: Record<V>, address: string, value: V) => {
   record[addressAsKey(address)] = value;

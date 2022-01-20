@@ -22,10 +22,12 @@ import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'translations/translate';
+import { ENSNodeStates } from 'etherspot';
 
 // Actions
 import { fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
 import { refreshEtherspotAccountsAction } from 'actions/etherspotActions';
+import { beginOnboardingAction } from 'actions/onboardingActions';
 
 // Components
 import { Container, Content } from 'components/layout/Layout';
@@ -36,14 +38,21 @@ import Stories from 'components/Stories';
 import UserNameAndImage from 'components/UserNameAndImage';
 import WalletConnectRequests from 'screens/WalletConnect/Requests';
 import Tooltip from 'components/Tooltip';
+import Modal from 'components/Modal';
+import Spinner from 'components/Spinner';
 
 // Constants
-import { MENU, HOME_HISTORY } from 'constants/navigationConstants';
+import { MENU, HOME_HISTORY, REGISTER_ENS } from 'constants/navigationConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
-import { useRootSelector, useSmartWalletAccounts } from 'selectors';
+import { useRootSelector, useAccounts, activeAccountAddressSelector } from 'selectors';
 import { accountTotalBalancesSelector } from 'selectors/totalBalances';
 import { useUser } from 'selectors/user';
+import { etherspotAccountSelector } from 'selectors/accounts';
+
+// Services
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // Screens
 import GovernanceCallBanner from 'screens/GovernanceCall/GovernanceCallBanner';
@@ -52,6 +61,8 @@ import GovernanceCallBanner from 'screens/GovernanceCall/GovernanceCallBanner';
 import { sumRecord } from 'utils/bigNumber';
 import { calculateTotalBalancePerCategory, calculateTotalBalancePerChain } from 'utils/totalBalances';
 import { useThemeColors } from 'utils/themes';
+import { getSupportedBiometryType } from 'utils/keychain';
+import { getEnsNodeState } from 'utils/accounts';
 
 // Local
 import BalanceSection from './BalanceSection';
@@ -59,6 +70,7 @@ import ChartsSection from './ChartsSection';
 import AssetsSection from './AssetsSection';
 import FloatingActions from './FloatingActions';
 import { useAccountCollectibleCounts } from './utils';
+import BiometricModal from '../../components/BiometricModal/BiometricModal';
 
 function Home() {
   const navigation = useNavigation();
@@ -69,26 +81,74 @@ function Home() {
   const accountCollectibleCounts = useAccountCollectibleCounts();
   const user = useUser();
   const dispatch = useDispatch();
+  const etherspotAccount = useRootSelector(etherspotAccountSelector);
+  const wallet = useRootSelector((root) => root.wallet.data);
+  const accountAddress = useRootSelector(activeAccountAddressSelector);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [showAccountSwitchTooltip, setShowAccountSwitchTooltip] = React.useState(false);
+  const [showENSTooltip, setShowENSSwitchTooltip] = React.useState(false);
+  const canSwitchAccount = useAccounts().length > 1;
+  const ensNodeState = getEnsNodeState(etherspotAccount);
+  const isEnsNodeCliamed = ensNodeState === ENSNodeStates.Claimed;
+  const featureOnboardingENS = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ONBOARDING_ENS);
+  const showEnsTooltip = featureOnboardingENS && !isEnsNodeCliamed;
+
   const { accountSwitchTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
-
-  const canSwitchAccount = useSmartWalletAccounts().length > 1;
-
   const balancePerCategory = calculateTotalBalancePerCategory(accountTotalBalances);
   const balancePerChain = calculateTotalBalancePerChain(accountTotalBalances);
   const totalBalance = sumRecord(balancePerCategory);
 
   const isRefreshing = useRootSelector(({ totalBalances }) => !!totalBalances.isFetching);
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      if (!wallet) {
+        getSupportedBiometryType((biometryType) => {
+          if (biometryType) {
+            Modal.open(() => <BiometricModal biometricType={biometryType} />);
+          } else {
+            dispatch(beginOnboardingAction());
+            setIsLoading(true);
+          }
+        });
+      }
+    }, 2000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
+  React.useEffect(() => {
+    if (canSwitchAccount) {
+      if (!accountSwitchTooltipDismissed) {
+        setTimeout(() => {
+          setShowAccountSwitchTooltip(true);
+        }, 3000);
+        setTimeout(() => {
+          setShowAccountSwitchTooltip(false);
+          setShowENSSwitchTooltip(true);
+        }, 10000);
+      } else {
+        setTimeout(() => {
+          setShowENSSwitchTooltip(true);
+        }, 4000);
+      }
+    }
+  }, [canSwitchAccount, accountSwitchTooltipDismissed]);
+
   const onRefresh = () => {
     dispatch(refreshEtherspotAccountsAction());
     dispatch(fetchAllAccountsTotalBalancesAction());
   };
 
-
   return (
     <Container>
       <HeaderBlock
         leftItems={[{ svgIcon: 'menu', color: colors.basic020, onPress: () => navigation.navigate(MENU) }]}
-        centerItems={[{ custom: <UserNameAndImage user={user} /> }]}
+        centerItems={[
+          {
+            custom: <UserNameAndImage user={user?.username} address={accountAddress} />,
+          },
+        ]}
         rightItems={[{ svgIcon: 'history', color: colors.basic020, onPress: () => navigation.navigate(HOME_HISTORY) }]}
         navigation={navigation}
         noPaddingTop
@@ -97,12 +157,21 @@ function Home() {
       {/* this should stay first element, avoid putting it inside UserNameAndImage */}
       {canSwitchAccount && (
         <Tooltip
-          isVisible={!accountSwitchTooltipDismissed}
+          isVisible={!accountSwitchTooltipDismissed && showAccountSwitchTooltip}
           body={t('tooltip.switchAccountsByTappingHere')}
           wrapperStyle={{ zIndex: 9999, top: -10, position: 'relative' }}
         />
       )}
 
+      {showEnsTooltip && (
+        <Tooltip
+          isVisible={!user?.username && showENSTooltip}
+          body={t('tooltip.registerENS')}
+          wrapperStyle={{ zIndex: 9999, top: -10, position: 'relative' }}
+          onPress={() => navigation.navigate(REGISTER_ENS)}
+        />
+      )}
+      {(useAccounts().length === 0 || isLoading) && <Spinner size={20} />}
       <Content
         contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
         paddingHorizontal={0}

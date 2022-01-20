@@ -18,10 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {
-  utils as EthersUtils,
-  Wallet as EthersWallet,
-} from 'ethers';
+import { utils as EthersUtils, Wallet as EthersWallet } from 'ethers';
 import {
   Sdk as EtherspotSdk,
   NetworkNames,
@@ -29,6 +26,7 @@ import {
   Accounts as EtherspotAccounts,
   EnvNames,
   ENSNode,
+  ENSNodeStates,
   GatewaySubmittedBatch,
   Notification as EtherspotNotification,
   IncreaseP2PPaymentChannelAmountDto,
@@ -36,7 +34,6 @@ import {
   GatewayTransactionStates,
   Transaction as EtherspotTransaction,
   Currencies as EtherspotCurrencies,
-  ENSNodeStates,
   AccountStates,
 } from 'etherspot';
 import { map } from 'rxjs/operators';
@@ -46,12 +43,7 @@ import t from 'translations/translate';
 import { isValidAddress, toChecksumAddress } from 'ethereumjs-util';
 
 // utils
-import {
-  BigNumber,
-  getEnsName,
-  parseTokenAmount,
-  reportErrorLog,
-} from 'utils/common';
+import { BigNumber, getEnsName, parseTokenAmount, reportErrorLog } from 'utils/common';
 import { isProdEnv } from 'utils/environment';
 import {
   parseTokenListToken,
@@ -89,6 +81,7 @@ import type {
   TransactionFeeInfo,
 } from 'models/Transaction';
 import type { GasPrice } from 'models/GasInfo';
+import type { NftList } from 'etherspot';
 
 export class EtherspotService {
   sdk: EtherspotSdk;
@@ -111,6 +104,7 @@ export class EtherspotService {
       NetworkNames.Bsc,
       NetworkNames.Matic,
       NetworkNames.Xdai,
+      isMainnet ? NetworkNames.Avalanche : NetworkNames.Fuji,
     ];
 
     const primaryNetworkName = isMainnet ? NetworkNames.Mainnet : NetworkNames.Kovan;
@@ -119,24 +113,26 @@ export class EtherspotService {
      * Cycle through the supported networks and build an
      * array of instantiated instances
      */
-    await Promise.all(this.supportedNetworks.map(async (networkName) => {
-      const env = networkName !== NetworkNames.Kovan ? EnvNames.MainNets : EnvNames.TestNets;
-      this.instances[networkName] = new EtherspotSdk(privateKey, { env, networkName, projectKey: PROJECT_KEY });
-
-      if (fcmToken) {
-        try {
-          await this.instances[networkName].createSession({ fcmToken });
-        } catch (error) {
-          reportErrorLog('EtherspotService network init failed at createSession', { networkName, error });
+    await Promise.all(
+      this.supportedNetworks.map(async (networkName) => {
+        const env =
+          networkName !== NetworkNames.Kovan && networkName !== NetworkNames.Fuji
+            ? EnvNames.MainNets
+            : EnvNames.TestNets;
+        this.instances[networkName] = new EtherspotSdk(privateKey, {
+          env,
+          networkName,
+          projectKey: PROJECT_KEY,
+        });
+        if (fcmToken) {
+          try {
+            await this.instances[networkName].computeContractAccount({ sync: true });
+          } catch (error) {
+            reportErrorLog('EtherspotService network init failed at computeContractAccount', { networkName, error });
+          }
         }
-      }
-
-      try {
-        await this.instances[networkName].computeContractAccount({ sync: true });
-      } catch (error) {
-        reportErrorLog('EtherspotService network init failed at computeContractAccount', { networkName, error });
-      }
-    }));
+      }),
+    );
 
     // Assign the primary instance of the default networkName to `sdk`
     this.sdk = this.instances[primaryNetworkName];
@@ -159,7 +155,7 @@ export class EtherspotService {
       }
 
       this.subscriptions[networkName] = sdk.notifications$
-        .pipe(map(((notification) => callback(chain, notification))))
+        .pipe(map((notification) => callback(chain, notification)))
         .subscribe();
     });
   }
@@ -191,27 +187,29 @@ export class EtherspotService {
     return sdk;
   }
 
-  getAccount(chain: Chain, accountAddress: string): ?Promise<?EtherspotAccount> {
+  getAccount(chain: Chain): ?Promise<?EtherspotAccount> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) return null;
 
-    return sdk.getAccount({ address: accountAddress }).catch((error) => {
+    return sdk.getAccount({ address: sdk.state.accountAddress }).catch((error) => {
       reportErrorLog('EtherspotService getAccount failed', { error });
       return null;
     });
   }
 
-  async getAccountPerChains(accountAddress: string): Promise<ChainRecord<?EtherspotAccount>> {
-    const ethereum = await this.getAccount(CHAIN.ETHEREUM, accountAddress);
-    const binance = await this.getAccount(CHAIN.BINANCE, accountAddress);
-    const polygon = await this.getAccount(CHAIN.POLYGON, accountAddress);
-    const xdai = await this.getAccount(CHAIN.XDAI, accountAddress);
+  async getAccountPerChains(): Promise<ChainRecord<?EtherspotAccount>> {
+    const avalanche = await this.getAccount(CHAIN.AVALANCHE);
+    const ethereum = await this.getAccount(CHAIN.ETHEREUM);
+    const binance = await this.getAccount(CHAIN.BINANCE);
+    const polygon = await this.getAccount(CHAIN.POLYGON);
+    const xdai = await this.getAccount(CHAIN.XDAI);
 
-    return { ethereum, binance, polygon, xdai };
+    return { ethereum, binance, polygon, xdai, avalanche };
   }
 
-  getAccounts(): Promise<?EtherspotAccount[]> {
-    return this.sdk.getConnectedAccounts()
+  getAccounts(): Promise<?(EtherspotAccount[])> {
+    return this.sdk
+      .getConnectedAccounts()
       .then(({ items }: EtherspotAccounts) => items)
       .catch((error) => {
         reportErrorLog('EtherspotService getAccounts -> getConnectedAccounts failed', { error });
@@ -219,11 +217,63 @@ export class EtherspotService {
       });
   }
 
-  async getBalances(
-    chain: Chain,
-    accountAddress: string,
-    supportedAssets: Asset[],
-  ): Promise<WalletAssetBalance[]> {
+  async estimateENSTransactionFee(chain: Chain): Promise<?TransactionFeeInfo> {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      reportErrorLog('estimateENSTransactionFee failed: no SDK for chain set');
+      throw new Error(t('error.unableToSetTransaction'));
+    }
+    const { account: etherspotAccount } = sdk.state;
+    let ensNode;
+    let batch: ?GatewayEstimatedBatch = null;
+    if (isProdEnv() && chain === CHAIN.ETHEREUM && !etherspotAccount?.ensNode) {
+      try {
+        ensNode = await this.getEnsNode(etherspotAccount.address);
+      } catch (error) {
+        reportErrorLog('estimateENSTransactionFee -> getEnsNode failed', {
+          error,
+          chain,
+        });
+      }
+      if (ensNode && ensNode.state === ENSNodeStates.Reserved) {
+        try {
+          await sdk.batchClaimENSNode({ nameOrHashOrAddress: ensNode.name });
+        } catch (error) {
+          reportErrorLog('estimateENSTransactionFee -> batchClaimENSNode failed', {
+            error,
+            chain,
+          });
+        }
+      }
+      try {
+        const result = await sdk.estimateGatewayBatch();
+        batch = result?.estimation;
+      } catch (error) {
+        let etherspotErrorMessage;
+        try {
+          // parsing etherspot estimate error based on return scheme
+          const errorMessageJson = JSON.parse(error.message.trim());
+          [etherspotErrorMessage] = Object.values(errorMessageJson[0].constraints);
+        } catch (e) {
+          // unable to parse json
+        }
+        const errorMessage = etherspotErrorMessage || error?.message || t('error.unableToEstimateTransaction');
+        reportErrorLog('estimateENSTransactionFee -> estimateGatewayBatch failed', { errorMessage, chain });
+        throw new Error(errorMessage);
+      }
+
+      if (!batch) {
+        reportErrorLog('estimateENSTransactionFee -> estimateTransactionsBatch returned null', {
+          batch,
+          chain,
+        });
+        return null;
+      }
+    }
+    return buildTransactionFeeInfo(batch);
+  }
+
+  async getBalances(chain: Chain, accountAddress: string, supportedAssets: Asset[]): Promise<WalletAssetBalance[]> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) return [];
 
@@ -233,7 +283,7 @@ export class EtherspotService {
       .map(({ address }) => address);
 
     let balancesRequestPayload = {
-      account: accountAddress,
+      account: chain === CHAIN.AVALANCHE ? sdk.state.accountAddress : accountAddress,
     };
 
     if (assetAddresses.length) {
@@ -258,10 +308,7 @@ export class EtherspotService {
     return accountBalances.items.reduce((positiveBalances, asset) => {
       const { balance, token } = asset;
 
-      const supportedAsset = supportedAssets.find(({
-        symbol: supportedSymbol,
-        address: supportedAddress,
-      }) => {
+      const supportedAsset = supportedAssets.find(({ symbol: supportedSymbol, address: supportedAddress }) => {
         // `token === null` means it's chain native token
         if (token === null) return supportedSymbol === nativeSymbol;
         return addressesEqual(supportedAddress, token);
@@ -284,10 +331,7 @@ export class EtherspotService {
         return positiveBalances;
       }
 
-      return [
-        ...positiveBalances,
-        { symbol, address, balance: positiveBalance },
-      ];
+      return [...positiveBalances, { symbol, address, balance: positiveBalance }];
     }, []);
   }
 
@@ -301,9 +345,10 @@ export class EtherspotService {
 
   getEnsNode(nameOrHashOrAddress: string): Promise<?ENSNode> {
     // if it's address – getENSNode accepts only checksum addresses
-    const nameOrHashOrChecksumAddress = nameOrHashOrAddress.startsWith('0x') && isValidAddress(nameOrHashOrAddress)
-      ? toChecksumAddress(nameOrHashOrAddress)
-      : nameOrHashOrAddress;
+    const nameOrHashOrChecksumAddress =
+      nameOrHashOrAddress.startsWith('0x') && isValidAddress(nameOrHashOrAddress)
+        ? toChecksumAddress(nameOrHashOrAddress)
+        : nameOrHashOrAddress;
 
     return this.sdk.getENSNode({ nameOrHashOrAddress: nameOrHashOrChecksumAddress }).catch((error) => {
       reportErrorLog('getENSNode failed', { nameOrHashOrAddress, nameOrHashOrChecksumAddress, error });
@@ -314,6 +359,7 @@ export class EtherspotService {
   isValidEnsName(name: string): Promise<boolean> {
     return this.sdk.validateENSName({ name }).catch((error) => {
       try {
+        // eslint-disable-next-line max-len
         // ref https://github.com/etherspot/etherspot-backend-monorepo/blob/f879c0817aa18faa4f75c148131ecb9278184a2c/apps/ms-ens/src/ens.service.spec.ts#L163
         // eslint-disable-next-line i18next/no-literal-string
         const invalidUsernameErrorProperties = ['name', 'address', 'rootNode'];
@@ -361,14 +407,6 @@ export class EtherspotService {
        * regardless of our state check and either skips or adds deployment transaction.
        */
       await sdk.batchDeployAccount();
-    }
-
-    // check if ENS setup transaction needs to be included
-    if (isProdEnv() && chain === CHAIN.ETHEREUM && !etherspotAccount?.ensNode) {
-      const ensNode = await this.getEnsNode(etherspotAccount.address);
-      if (ensNode && ensNode.state === ENSNodeStates.Reserved) {
-        await sdk.batchClaimENSNode({ nameOrHashOrAddress: ensNode.name });
-      }
     }
 
     return Promise.all(transactions.map((transaction) => sdk.batchExecuteAccountTransaction(transaction)));
@@ -507,6 +545,21 @@ export class EtherspotService {
     return this.setTransactionsBatchAndSend(etherspotTransactions, chain);
   }
 
+  async sendENSTransaction(
+    chain: Chain,
+  ): Promise<?TransactionResult> {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      reportErrorLog('setTransactionsBatchAndSend failed: no SDK for chain set', { chain });
+      throw new Error(t('error.unableToSendTransaction'));
+    }
+
+    // submit current batch
+    const { hash: batchHash } = await sdk.submitGatewayBatch();
+
+    return { batchHash };
+  }
+
   getSubmittedBatchByHash(chain: Chain, hash: string): ?Promise<?GatewaySubmittedBatch> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {
@@ -542,6 +595,9 @@ export class EtherspotService {
       case CHAIN.BINANCE:
         blockchainExplorerUrl = getEnv().TX_DETAILS_URL_BINANCE;
         break;
+      case CHAIN.AVALANCHE:
+        blockchainExplorerUrl = getEnv().TX_DETAILS_URL_AVALANCHE;
+        break;
       default:
         blockchainExplorerUrl = getEnv().TX_DETAILS_URL_ETHEREUM;
         break;
@@ -565,29 +621,31 @@ export class EtherspotService {
 
     return new Promise((resolve, reject) => {
       temporaryBatchSubscription = sdk.notifications$
-        .pipe(map(async (notification) => {
-          if (notification.type === NotificationTypes.GatewayBatchUpdated) {
-            const submittedBatch = await sdk.getGatewaySubmittedBatch({ hash: batchHash });
+        .pipe(
+          map(async (notification) => {
+            if (notification.type === NotificationTypes.GatewayBatchUpdated) {
+              const submittedBatch = await sdk.getGatewaySubmittedBatch({ hash: batchHash });
 
-            const failedStates = [
-              GatewayTransactionStates.Canceling,
-              GatewayTransactionStates.Canceled,
-              GatewayTransactionStates.Reverted,
-            ];
+              const failedStates = [
+                GatewayTransactionStates.Canceling,
+                GatewayTransactionStates.Canceled,
+                GatewayTransactionStates.Reverted,
+              ];
 
-            let finishSubscription;
-            if (submittedBatch?.transaction?.state && failedStates.includes(submittedBatch?.transaction?.state)) {
-              finishSubscription = () => reject(submittedBatch.transaction.state);
-            } else if (submittedBatch?.transaction?.hash) {
-              finishSubscription = () => resolve(submittedBatch.transaction.hash);
+              let finishSubscription;
+              if (submittedBatch?.transaction?.state && failedStates.includes(submittedBatch?.transaction?.state)) {
+                finishSubscription = () => reject(submittedBatch.transaction.state);
+              } else if (submittedBatch?.transaction?.hash) {
+                finishSubscription = () => resolve(submittedBatch.transaction.hash);
+              }
+
+              if (finishSubscription) {
+                if (temporaryBatchSubscription) temporaryBatchSubscription.unsubscribe();
+                finishSubscription();
+              }
             }
-
-            if (finishSubscription) {
-              if (temporaryBatchSubscription) temporaryBatchSubscription.unsubscribe();
-              finishSubscription();
-            }
-          }
-        }))
+          }),
+        )
         .subscribe();
     });
   }
@@ -600,7 +658,7 @@ export class EtherspotService {
     }
 
     return sdk
-      .getTransactions({ account: address })
+      .getTransactions({ account: sdk.state.accountAddress })
       .then(({ items }) => items)
       .catch((error) => {
         reportErrorLog('getTransactionsByAddress -> getTransactions failed', { address, chain, error });
@@ -646,7 +704,7 @@ export class EtherspotService {
         tokens = []; // let append native assets
       }
 
-      let supportedAssets = tokens.map(token => parseTokenListToken(token));
+      let supportedAssets = tokens.map((token) => parseTokenListToken(token));
 
       supportedAssets = appendNativeAssetIfNeeded(chain, supportedAssets);
 
@@ -654,12 +712,7 @@ export class EtherspotService {
       if (chain !== CHAIN.ETHEREUM || !isProdEnv()) return supportedAssets;
 
       // add LP tokens from our own list, later this can be replaced with Etherspot list for LP tokens
-      LIQUIDITY_POOLS().forEach(({
-        uniswapPairAddress: address,
-        name,
-        symbol,
-        iconUrl,
-      }) => {
+      LIQUIDITY_POOLS().forEach(({ uniswapPairAddress: address, name, symbol, iconUrl }) => {
         const existingAsset = findAssetByAddress(supportedAssets, address);
         if (!existingAsset) {
           supportedAssets.push({
@@ -667,6 +720,7 @@ export class EtherspotService {
             address,
             name,
             symbol,
+            // eslint-disable-next-line max-len
             decimals: 18, // ref https://raw.githubusercontent.com/jab416171/uniswap-pairtokens/master/uniswap_pair_tokens.json
             iconUrl,
           });
@@ -707,14 +761,7 @@ export class EtherspotService {
         fromAmount: fromAmountEthers,
       });
 
-      return offers.map((offer) => buildExchangeOffer(
-        chain,
-        fromAsset,
-        toAsset,
-        fromAmount,
-        offer,
-        captureFee,
-      ));
+      return offers.map((offer) => buildExchangeOffer(chain, fromAsset, toAsset, fromAmount, offer, captureFee));
     } catch (error) {
       reportErrorLog('EtherspotService getExchangeOffers failed', { chain, error });
       return [];
@@ -740,11 +787,7 @@ export class EtherspotService {
     }
   }
 
-  getContract<T>(
-    chain: Chain,
-    abi: Object[],
-    address: string,
-  ): T | null {
+  getContract<T>(chain: Chain, abi: Object[], address: string): T | null {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) return null;
 
@@ -755,6 +798,24 @@ export class EtherspotService {
       reportErrorLog('EtherspotService getExchangeOffers failed', { chain, error });
       return null;
     }
+  }
+
+  async getNftList(chain: Chain, address: string): NftList | null {
+    const sdk = this.getSdkForChain(chain);
+
+    if (!sdk) {
+      reportErrorLog('EtherspotService getNftList getSdk failed', { chain });
+      return null;
+    }
+
+    return sdk
+      .getNftList({
+        account: address,
+      })
+      .catch((error) => {
+        reportErrorLog('EtherspotService getNftList failed', { chain, address, error });
+        return null;
+      });
   }
 
   async getTransaction(chain: Chain, hash: string): Promise<?EtherspotTransaction> {
@@ -796,6 +857,8 @@ function networkNameFromChain(chain: Chain): ?string {
       return NetworkNames.Matic;
     case CHAIN.XDAI:
       return NetworkNames.Xdai;
+    case CHAIN.AVALANCHE:
+      return isProdEnv() ? NetworkNames.Avalanche : NetworkNames.Fuji;
     default:
       return null;
   }
@@ -812,6 +875,9 @@ function chainFromNetworkName(networkName: string): ?Chain {
       return CHAIN.POLYGON;
     case NetworkNames.Xdai:
       return CHAIN.XDAI;
+    case NetworkNames.Avalanche:
+    case NetworkNames.Fuji:
+      return CHAIN.AVALANCHE;
     default:
       return null;
   }

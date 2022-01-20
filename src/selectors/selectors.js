@@ -26,7 +26,7 @@ import { get } from 'lodash';
 import { ADDRESS_ZERO, defaultFiatCurrency, USD } from 'constants/assetsConstants';
 
 // utils
-import { isEtherspotAccount, getAccountAddress, isNotKeyBasedType } from 'utils/accounts';
+import { isEtherspotAccount, getAccountAddress } from 'utils/accounts';
 import { valueForAddress, EMPTY_OBJECT, EMPTY_ARRAY } from 'utils/common';
 
 // types
@@ -110,8 +110,6 @@ export const contactsSelector = ({ contacts }: RootReducerState) => contacts.dat
 export const liquidityPoolsSelector = ({ liquidityPools }: RootReducerState) => liquidityPools;
 
 export const useAccounts = (): Account[] => useRootSelector(accountsSelector);
-
-export const useSmartWalletAccounts = (): Account[] => useAccounts().filter(isNotKeyBasedType);
 
 export const useActiveAccount = (): ?Account => useRootSelector(activeAccountSelector);
 

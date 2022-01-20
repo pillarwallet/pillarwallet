@@ -33,6 +33,7 @@ import HeaderBlock from 'components/HeaderBlock';
 // Utils
 import { spacing } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
+import { getDeviceHeightWithoutNotch } from 'utils/common';
 
 // Types
 import type { ScrollToProps } from 'components/Modal';
@@ -49,7 +50,7 @@ type ModalProps = {|
   scrollOffset?: number,
   scrollOffsetMax?: number,
   scrollTo?: (_: ScrollToProps) => void,
-|}
+|};
 
 type OwnProps = {|
   ...ModalProps,
@@ -71,6 +72,8 @@ type OwnProps = {|
   headerProps?: HeaderProps,
   insetTop?: boolean,
   onDismiss?: () => mixed,
+  closeFlag?: boolean,
+  fillHeight?: boolean,
 |};
 
 type Props = {|
@@ -123,7 +126,7 @@ class SlideModal extends React.Component<Props, State> {
 
   close: () => void = () => {
     this._modalRef.current?.close();
-  }
+  };
 
   onModalBoxLayout = (event: LayoutEvent) => {
     const height = event.nativeEvent?.layout?.height || 0;
@@ -132,12 +135,12 @@ class SlideModal extends React.Component<Props, State> {
         contentHeight: height,
       });
     }
-  }
+  };
 
   handleDismiss = () => {
     this.props.onDismiss?.();
     this.close();
-  }
+  };
 
   render() {
     const {
@@ -159,6 +162,8 @@ class SlideModal extends React.Component<Props, State> {
       headerProps = {},
       insetTop,
       centerFloatingItem,
+      closeFlag = false,
+      fillHeight,
     } = this.props;
 
     const customTheme = getTheme(this.props);
@@ -168,15 +173,19 @@ class SlideModal extends React.Component<Props, State> {
     const showModalHeader = ((!fullScreen || showHeader) && !hideHeader) || !isEmpty(headerProps);
     let leftItems = [];
     const centerItems = centerTitle ? [{ title }] : [];
-    const rightItems = [{
-      close: !noClose,
-    }];
+    const rightItems = [
+      {
+        close: !noClose,
+      },
+    ];
     if (!centerTitle) {
       leftItems.push({ title });
     }
     if (headerLeftItems) {
       leftItems = [...leftItems, ...headerLeftItems];
     }
+
+    if (closeFlag) this.handleDismiss();
 
     const modalInner = (
       <React.Fragment>
@@ -199,16 +208,12 @@ class SlideModal extends React.Component<Props, State> {
 
         {!showModalHeader && !fullScreen && <HandleBar />}
 
-        <ModalContent
-          fullScreen={fullScreen}
-          showHeader={showHeader}
-        >
+        <ModalContent fullScreen={fullScreen} showHeader={showHeader} fillHeight={fillHeight}>
           {children}
         </ModalContent>
         <ModalOverflow />
       </React.Fragment>
     );
-
 
     const modalContent = () => {
       if (fullScreen) {
@@ -222,14 +227,14 @@ class SlideModal extends React.Component<Props, State> {
       if (eventDetail) {
         return (
           <ModalBackground onLayout={this.onModalBoxLayout} customTheme={customTheme} sideMargins={sideMargins}>
-            { children }
+            {children}
           </ModalBackground>
         );
       }
 
       return (
         <ModalBackground onLayout={this.onModalBoxLayout} customTheme={customTheme} sideMargins={sideMargins}>
-          { modalInner }
+          {modalInner}
         </ModalBackground>
       );
     };
@@ -306,8 +311,8 @@ const getModalContentPadding = (showHeader: boolean) => {
 const ContentWrapper = styled.View`
   width: 100%;
   height: 100%;
-  ${props => props.fullScreen && !props.noTopPadding ? 'padding-top: 20px;' : ''}
-  ${props => props.bgColor && props.fullScreen ? `background-color: ${props.bgColor};` : ''}
+  ${(props) => (props.fullScreen && !props.noTopPadding ? 'padding-top: 20px;' : '')}
+  ${(props) => (props.bgColor && props.fullScreen ? `background-color: ${props.bgColor};` : '')}
 `;
 
 const FillSpacer = styled.View`
@@ -321,24 +326,34 @@ const Backdrop = styled.View`
 `;
 
 const ModalBackground = styled.View`
-  border-top-left-radius: ${props => props.customTheme.borderRadius};
-  border-top-right-radius: ${props => props.customTheme.borderRadius};
+  border-top-left-radius: ${(props) => props.customTheme.borderRadius};
+  border-top-right-radius: ${(props) => props.customTheme.borderRadius};
   overflow: hidden;
-  padding: ${props => props.customTheme.padding};
-  box-shadow: 0px 2px 7px rgba(0,0,0,.1);
+  padding: ${(props) => props.customTheme.padding};
+  box-shadow: 0px 2px 7px rgba(0, 0, 0, 0.1);
   elevation: 1;
   margin-top: auto;
-  background-color: ${({ customTheme, theme }) => customTheme.isTransparent ? 'transparent' : theme.colors.basic050};
+  background-color: ${({ customTheme, theme }) => (customTheme.isTransparent ? 'transparent' : theme.colors.basic050)};
   margin-horizontal: ${({ sideMargins }) => sideMargins || 0}px;
 `;
 
 const ModalContent = styled.View`
   flex-direction: column;
-  ${({ fullScreen, showHeader }) => fullScreen && showHeader && `
+  ${({ fullScreen, showHeader }) =>
+    fullScreen &&
+    showHeader &&
+    `
     padding: ${getModalContentPadding(showHeader)};
   `}
-  ${({ fullScreen }) => fullScreen && `
+  ${({ fullScreen }) =>
+    fullScreen &&
+    `
     flex: 1;
+  `}
+  ${({ fillHeight }) =>
+    fillHeight &&
+    `
+    height: ${getDeviceHeightWithoutNotch()}px;
   `}
 `;
 

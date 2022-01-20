@@ -29,7 +29,7 @@ import styled, { ThemeProvider } from 'styled-components/native';
 import { AppearanceProvider } from 'react-native-appearance';
 import NetInfo, { NetInfoState, NetInfoSubscription } from '@react-native-community/netinfo';
 import DeviceInfo from 'react-native-device-info';
-import { withTranslation } from 'react-i18next';
+import { WithTranslation, withTranslation } from 'react-i18next';
 import t from 'translations/translate';
 import { NavigationActions } from 'react-navigation';
 import remoteConfig from '@react-native-firebase/remote-config';
@@ -37,7 +37,6 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import Instabug from 'instabug-reactnative';
 import appsFlyer from 'react-native-appsflyer';
-
 
 import 'services/localisation/translations';
 import localeConfig from 'configs/localeConfig';
@@ -90,9 +89,8 @@ import type { I18n } from 'models/Translations';
 // other
 import RootNavigation from 'navigation/rootNavigation';
 import Storybook from 'screens/Storybook';
-import configureStore from './src/configureStore';
-
-const { store, persistor } = configureStore();
+import { store, persistor } from 'src/configureStore';
+import { syncStateWithFirestore } from 'src/redux/actions/firestore-actions';
 
 const queryClient = new QueryClient();
 
@@ -106,32 +104,32 @@ export const LoadingSpinner = styled(Spinner)`
   justify-content: center;
 `;
 
-type Props = {
-  dispatch: Dispatch,
-  isFetched: boolean,
-  fetchAppSettingsAndRedirect: () => void,
-  updateSessionNetworkStatus: (isOnline: boolean) => void,
-  updateOfflineQueueNetworkStatus: (isOnline: boolean) => void,
-  startListeningOnOpenNotification: () => void,
-  stopListeningOnOpenNotification: () => void,
-  executeDeepLink: (deepLinkUrl: string) => void,
-  activeWalkthroughSteps: Steps,
-  themeType: string,
-  setAppTheme: (themeType: string) => void,
-  isManualThemeSelection: boolean,
-  handleSystemDefaultThemeChange: () => void,
-  i18n: I18n,
-  changeLanguage: (language: string) => void,
-  translationsInitialised: boolean,
-  updateTranslationResourceOnContextChange: () => void,
-  initialDeepLinkExecuted: boolean,
-  sessionLanguageVersion: ?string,
-  logScreenView: (screenName: string) => void,
-  initWalletConnectSessionsWithoutReset: () => void,
+interface Props extends WithTranslation {
+  dispatch: Dispatch;
+  isFetched: boolean;
+  fetchAppSettingsAndRedirect: () => void;
+  updateSessionNetworkStatus: (isOnline: boolean) => void;
+  updateOfflineQueueNetworkStatus: (isOnline: boolean) => void;
+  startListeningOnOpenNotification: () => void;
+  stopListeningOnOpenNotification: () => void;
+  executeDeepLink: (deepLinkUrl: string) => void;
+  activeWalkthroughSteps: Steps;
+  themeType: string;
+  setAppTheme: (themeType: string) => void;
+  isManualThemeSelection: boolean;
+  handleSystemDefaultThemeChange: () => void;
+  i18n: I18n;
+  changeLanguage: (language: string) => void;
+  translationsInitialised: boolean;
+  updateTranslationResourceOnContextChange: () => void;
+  initialDeepLinkExecuted: boolean;
+  sessionLanguageVersion: string | null;
+  logScreenView: (screenName: string) => void;
+  initWalletConnectSessionsWithoutReset: () => void;
+  syncReduxStateWithFirestore: () => void;
 }
 
-
-class App extends React.Component<Props, *> {
+class App extends React.Component<Props, any> {
   removeNetInfoEventListener: NetInfoSubscription;
   offlineToastId: null | string = null;
 
@@ -189,14 +187,14 @@ class App extends React.Component<Props, *> {
     remoteConfig()
       .setDefaults(INITIAL_REMOTE_CONFIG)
       .then(() => logBreadcrumb('App.js ', 'Remote Config: Defaults loaded and available'))
-      .catch(e => reportOrWarn('Remote Config: An error occurred loading defaults:', e, 'error'));
+      .catch((e) => reportOrWarn('Remote Config: An error occurred loading defaults:', e, 'error'));
     logBreadcrumb('App.js', 'Remote Config: Finished setting up default values.');
 
     logBreadcrumb('App.js', 'Remote Config: Ensuring last activated values are available...');
     remoteConfig()
       .ensureInitialized()
       .then(() => logBreadcrumb('App.js ', 'Remote Config: Defaults loaded and available'))
-      .catch(e => reportOrWarn('Remote Config: An error occurred loading defaults:', e, 'error'));
+      .catch((e) => reportOrWarn('Remote Config: An error occurred loading defaults:', e, 'error'));
     logBreadcrumb('App.js', 'Remote Config: Finished ensuring last activated values are available.');
 
     /**
@@ -218,7 +216,7 @@ class App extends React.Component<Props, *> {
           updateTranslationResourceOnContextChange();
         }
       })
-      .catch(e => reportOrWarn('Remote Config: An error occurred while activating:', e));
+      .catch((e) => reportOrWarn('Remote Config: An error occurred while activating:', e));
     logBreadcrumb('App.js', 'Remote Config: Finished activating latest values, if any.');
 
     /**
@@ -257,10 +255,11 @@ class App extends React.Component<Props, *> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { isFetched, handleSystemDefaultThemeChange, themeType } = this.props;
+    const { isFetched, handleSystemDefaultThemeChange, themeType, syncReduxStateWithFirestore } = this.props;
     const { isFetched: prevIsFetched, themeType: prevThemeType } = prevProps;
     if (isFetched && !prevIsFetched) {
       handleSystemDefaultThemeChange();
+      syncReduxStateWithFirestore();
     }
 
     if (themeType !== prevThemeType) {
@@ -274,11 +273,8 @@ class App extends React.Component<Props, *> {
     }
   }
 
-  setOnlineStatus = isOnline => {
-    const {
-      updateSessionNetworkStatus,
-      updateOfflineQueueNetworkStatus,
-    } = this.props;
+  setOnlineStatus = (isOnline) => {
+    const { updateSessionNetworkStatus, updateOfflineQueueNetworkStatus } = this.props;
     updateSessionNetworkStatus(isOnline);
     updateOfflineQueueNetworkStatus(isOnline);
   };
@@ -294,7 +290,9 @@ class App extends React.Component<Props, *> {
           message: t('toast.userIsOffline'),
           emoji: 'satellite_antenna',
           autoClose: false,
-          onClose: () => { this.offlineToastId = null; },
+          onClose: () => {
+            this.offlineToastId = null;
+          },
         });
       }
     } else {
@@ -324,7 +322,7 @@ class App extends React.Component<Props, *> {
     }
 
     Instabug.onNavigationStateChange(prevState, nextState, action);
-  }
+  };
 
   render() {
     const {
@@ -355,28 +353,31 @@ class App extends React.Component<Props, *> {
                 language={i18next.language}
                 onNavigationStateChange={this.handleNavigationStateChange}
               />
-              {!!getEnv().SHOW_THEME_TOGGLE &&
-              <Button
-                title={`THEME: ${current}`} // eslint-disable-line i18next/no-literal-string
-                onPress={() => {
-                  const themeToChangeTo = current === LIGHT_THEME ? DARK_THEME : LIGHT_THEME;
-                  setAppTheme(themeToChangeTo);
-                }}
-              />}
-              {!!getEnv().SHOW_LANG_TOGGLE && <Button
-                title={`Change lang (current: ${i18next.language})`} // eslint-disable-line i18next/no-literal-string
-                // eslint-disable-next-line i18next/no-literal-string
-                onPress={() => changeLanguage(i18next.language === 'am' ? localeConfig.defaultLanguage : 'am')}
-              />}
+              {!!getEnv().SHOW_THEME_TOGGLE && (
+                <Button
+                  title={`THEME: ${current}`} // eslint-disable-line i18next/no-literal-string
+                  onPress={() => {
+                    const themeToChangeTo = current === LIGHT_THEME ? DARK_THEME : LIGHT_THEME;
+                    setAppTheme(themeToChangeTo);
+                  }}
+                />
+              )}
+              {!!getEnv().SHOW_LANG_TOGGLE && (
+                <Button
+                  title={`Change lang (current: ${i18next.language})`} // eslint-disable-line i18next/no-literal-string
+                  // eslint-disable-next-line i18next/no-literal-string
+                  onPress={() => changeLanguage(i18next.language === 'am' ? localeConfig.defaultLanguage : 'am')}
+                />
+              )}
               {!!activeWalkthroughSteps.length && <Walkthrough steps={activeWalkthroughSteps} />}
-              {this.state.env === STAGING &&
+              {this.state.env === STAGING && (
                 <Button
                   title={`Environment: ${this.state.env}`} // eslint-disable-line i18next/no-literal-string
                   onPress={() => switchEnvironments()}
                 />
-              }
+              )}
               <PercentsInputAccessoryHolder
-                ref={c => {
+                ref={(c) => {
                   if (c && !PercentsInputAccessoryHolder.instances.includes(c)) {
                     PercentsInputAccessoryHolder.instances.push(c);
                   }
@@ -391,10 +392,15 @@ class App extends React.Component<Props, *> {
 }
 
 const mapStateToProps = ({
-  appSettings: { isFetched, data: { themeType, isManualThemeSelection, initialDeepLinkExecuted } },
+  appSettings: {
+    isFetched,
+    data: { themeType, isManualThemeSelection, initialDeepLinkExecuted },
+  },
   walkthroughs: { steps: activeWalkthroughSteps },
-  session: { data: { translationsInitialised, sessionLanguageVersion } },
-}: RootReducerState): $Shape<Props> => ({
+  session: {
+    data: { translationsInitialised, sessionLanguageVersion },
+  },
+}: RootReducerState): Partial<Props> => ({
   isFetched,
   themeType,
   isManualThemeSelection,
@@ -404,7 +410,7 @@ const mapStateToProps = ({
   sessionLanguageVersion,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+const mapDispatchToProps = (dispatch: Dispatch): Partial<Props> => ({
   fetchAppSettingsAndRedirect: () => dispatch(initAppAndRedirectAction()),
   updateSessionNetworkStatus: (isOnline: boolean) => dispatch(updateSessionNetworkStatusAction(isOnline)),
   updateOfflineQueueNetworkStatus: (isOnline: boolean) => dispatch(updateOfflineQueueNetworkStatusAction(isOnline)),
@@ -417,22 +423,27 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   updateTranslationResourceOnContextChange: () => dispatch(updateTranslationResourceOnContextChangeAction()),
   logScreenView: (screenName: string) => dispatch(logScreenViewAction(screenName)),
   initWalletConnectSessionsWithoutReset: () => dispatch(initWalletConnectSessionsAction(false)),
+  syncReduxStateWithFirestore: () => dispatch(syncStateWithFirestore()),
 });
 
-const AppWithNavigationState = withTranslation()(connect(mapStateToProps, mapDispatchToProps)(App));
+const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(withTranslation()(App));
 
 const AppRoot = () => (
   <Suspense
-    fallback={(
+    fallback={
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Spinner theme={defaultTheme} />
       </View>
-    )}
+    }
   >
     <SafeAreaProvider>
       <Provider store={store}>
         <PersistGate
-          loading={<Container defaultTheme={defaultTheme}><LoadingSpinner theme={defaultTheme} /></Container>}
+          loading={
+            <Container defaultTheme={defaultTheme}>
+              <LoadingSpinner theme={defaultTheme} />
+            </Container>
+          }
           persistor={persistor}
         >
           <QueryClientProvider client={queryClient}>

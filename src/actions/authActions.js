@@ -44,6 +44,7 @@ import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { SET_CACHED_URLS } from 'constants/cacheConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // utils
 import { reportErrorLog, reportLog } from 'utils/common';
@@ -51,7 +52,11 @@ import { decryptWalletFromStorage, getDecryptedWallet } from 'utils/wallet';
 import { clearWebViewCookies } from 'utils/webview';
 import { resetKeychainDataObject } from 'utils/keychain';
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
-import { findFirstArchanovaAccount, findFirstEtherspotAccount } from 'utils/accounts';
+import {
+  findFirstArchanovaAccount,
+  findFirstEtherspotAccount,
+  findKeyBasedAccount,
+} from 'utils/accounts';
 import { getDeviceUniqueId } from 'utils/device';
 
 // services
@@ -68,7 +73,10 @@ import type { OnValidPinCallback } from 'models/Wallet';
 // actions
 import { saveDbAction } from './dbActions';
 import { setupLoggingServicesAction } from './appActions';
-import { initOnLoginArchanovaAccountAction } from './accountsActions';
+import {
+  addAccountAction,
+  initOnLoginArchanovaAccountAction,
+} from './accountsActions';
 import { encryptAndSaveWalletAction, checkForWalletBackupToastAction, updatePinAttemptsAction } from './walletActions';
 import { fetchTransactionsHistoryAction } from './historyActions';
 import { setAppThemeAction, setAppLanguageAction, setDeviceUniqueIdIfNeededAction } from './appSettingsActions';
@@ -211,6 +219,10 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
     if (!etherspotAccount) {
       await dispatch(importEtherspotAccountsAction()); // imports and sets as active
     }
+
+    // create key based account if does not exist
+    const keyBasedAccount = findKeyBasedAccount(accounts);
+    if (!keyBasedAccount) dispatch(addAccountAction(address, ACCOUNT_TYPES.KEY_BASED));
 
     dispatch(fetchTransactionsHistoryAction());
     dispatch(setEnsNameIfNeededAction());
@@ -409,5 +421,38 @@ export const logoutAction = () => {
     // leave translation initialised flag in place
     if (getState()?.session?.data?.translationsInitialised) dispatch(setSessionTranslationBundleInitialisedAction());
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
+  };
+};
+
+export const resetAndStartImportWalletAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    // reset services
+    await dispatch(resetAppServicesAction());
+
+    // reset reducer state
+    const {
+      isOnline,
+      translationsInitialised,
+      fallbackLanguageVersion,
+      sessionLanguageCode,
+      sessionLanguageVersion,
+    } = getState().session.data; // keep these session values state after reset
+
+    dispatch(
+      resetAppStateAction({
+        session: {
+          data: {
+            isOnline,
+            translationsInitialised,
+            fallbackLanguageVersion,
+            sessionLanguageCode,
+            sessionLanguageVersion,
+          },
+        },
+      }),
+    );
+
+    // leave translation initialised flag in place
+    if (getState()?.session?.data?.translationsInitialised) dispatch(setSessionTranslationBundleInitialisedAction());
   };
 };

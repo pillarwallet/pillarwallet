@@ -35,6 +35,7 @@ export const PLR = 'PLR';
 export const MATIC = 'MATIC';
 export const BNB = 'BNB';
 export const XDAI = 'xDAI';
+export const AVAX = 'AVAX';
 
 export const SNX = 'SNX';
 export const RSPT = 'RSPT';
@@ -141,3 +142,4 @@ export const PLR_ADDRESS_POLYGON = '0xa6b37fc85d870711c56fbcb8afe2f8db049ae774';
 export const PLR_ADDRESS_XDAI = ''; // TODO: to be added when available
 export const PLR_ADDRESS_ETHEREUM_MAINNET = '0xe3818504c1b32bf1557b16c238b2e01fd3149c17';
 export const PLR_ADDRESS_ETHEREUM_KOVAN_TESTNET = '0xdd3122831728404a7234e5981677a5fd0a9727fe';
+export const PLR_ADDRESS_AVALANCHE = ''; // TODO: to be added when available

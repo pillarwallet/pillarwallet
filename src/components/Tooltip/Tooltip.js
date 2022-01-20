@@ -18,13 +18,16 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { View, Animated } from 'react-native';
+import { View, Animated, TouchableOpacity } from 'react-native';
 
 import styled from 'styled-components/native';
 
-import { Paragraph } from 'components/legacy/Typography';
-import { spacing, fontStyles } from 'utils/variables';
-import { getColorByTheme, themedColors } from 'utils/themes';
+// Components
+import Text from 'components/core/Text';
+
+// Utils
+import { spacing } from 'utils/variables';
+import { useThemeColors } from 'utils/themes';
 import { getDeviceWidth, reportLog } from 'utils/common';
 import { measure } from 'utils/ui';
 
@@ -47,49 +50,8 @@ type Props = {
   isVisible: boolean,
   wrapperStyle?: Object,
   children?: React.Node,
+  onPress?: () => void,
 };
-
-const TooltipParagraph = styled(Paragraph)`
-  color: ${themedColors.control};
-  ${fontStyles.regular};
-  margin: 0;
-`;
-
-const TooltipWrapper = styled(Animated.View)`
-  width: ${TOOLTIP_WIDTH}px;
-  position: absolute;
-`;
-
-const TooltipArrowHolder = styled.View`
-  position: absolute;
-  width: ${ARROW_SIZE * 2}px;
-  height: ${ARROW_SIZE}px;
-  overflow: hidden;
-`;
-
-const TooltipArrow = styled.View`
-  width: ${ARROW_SIZE}px;
-  height: ${ARROW_SIZE}px;
-  border-radius: 2px;
-  transform: rotate(45deg);
-  background-color: ${getColorByTheme({ lightCustom: '#060f1e', darkKey: 'basic040' })};
-  opacity: 0.8;
-  left: 4px;
-`;
-
-const BalloonWrapper = styled.View`
-  width: 100%;
-  margin: ${ARROW_SIZE}px 0;
-  align-items: center;
-`;
-
-const TooltipBalloon = styled.View`
-  background-color: ${getColorByTheme({ lightCustom: '#060f1e', darkKey: 'basic040' })};
-  opacity: 0.8;
-  padding: ${spacing.medium}px ${spacing.mediumLarge}px;
-  border-radius: 21px;
-  align-items: center;
-`;
 
 const Tooltip = (props: Props) => {
   const {
@@ -98,7 +60,10 @@ const Tooltip = (props: Props) => {
     positionOnBottom = true,
     isVisible,
     wrapperStyle,
+    onPress,
   } = props;
+
+  const colors = useThemeColors();
 
   const [wrapperLayout, setWrapperLayout] = React.useState<$ReadOnly<Layout>>({
     width: 0, height: 0, x: 0, y: 0,
@@ -189,15 +154,23 @@ const Tooltip = (props: Props) => {
     <View onLayout={onWrapperLayout} style={wrapperStyle} ref={balloonRef}>
       {children}
       {visibilityState && (
-        <TooltipWrapper onLayout={onTooltipLayout} {...wrapperPosition} style={{ opacity: opacityAnim }}>
-          <TooltipArrowHolder {...arrowHolderPosition}>
-            <TooltipArrow {...arrowPosition} />
-          </TooltipArrowHolder>
-          <BalloonWrapper>
-            <TooltipBalloon onLayout={onBalloonLayout}>
-              <TooltipParagraph>{body}</TooltipParagraph>
-            </TooltipBalloon>
-          </BalloonWrapper>
+        <TooltipWrapper
+          onLayout={onTooltipLayout}
+          {...wrapperPosition}
+          style={{ opacity: opacityAnim }}
+        >
+          <TouchableOpacity onPress={onPress}>
+            <TooltipArrowHolder {...arrowHolderPosition}>
+              <TooltipArrow {...arrowPosition} />
+            </TooltipArrowHolder>
+            <BalloonWrapper>
+              <TooltipBalloon onLayout={onBalloonLayout}>
+                <Text color={colors.control} variant="small">
+                  {body}
+                </Text>
+              </TooltipBalloon>
+            </BalloonWrapper>
+          </TouchableOpacity>
         </TooltipWrapper>
       )}
     </View>
@@ -205,3 +178,37 @@ const Tooltip = (props: Props) => {
 };
 
 export default Tooltip;
+
+const TooltipWrapper = styled(Animated.View)`
+  width: ${TOOLTIP_WIDTH}px;
+  position: absolute;
+`;
+
+const TooltipArrowHolder = styled.View`
+  position: absolute;
+  width: ${ARROW_SIZE * 2}px;
+  height: ${ARROW_SIZE}px;
+  overflow: hidden;
+`;
+
+const TooltipArrow = styled.View`
+  width: ${ARROW_SIZE}px;
+  height: ${ARROW_SIZE}px;
+  border-radius: 2px;
+  transform: rotate(45deg);
+  background: ${({ theme }) => theme.colors.toastBackgroundColor};
+  left: 4px;
+`;
+
+const BalloonWrapper = styled.View`
+  width: 100%;
+  margin: ${ARROW_SIZE}px 0;
+  align-items: center;
+`;
+
+const TooltipBalloon = styled.View`
+  padding: ${spacing.medium}px ${spacing.mediumLarge}px;
+  border-radius: 21px;
+  align-items: center;
+  background: ${({ theme }) => theme.colors.toastBackgroundColor};
+`;

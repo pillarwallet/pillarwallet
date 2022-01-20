@@ -104,6 +104,12 @@ import AddCashScreen from 'screens/AddCash/AddCash';
 import LegalScreen from 'screens/LegalScreen/LegalScreen';
 import BackupWalletIntro from 'screens/BackupWallet/Intro';
 import BackupPhraseValidateScreen from 'screens/BackupWallet/BackupPhraseValidate';
+import NewProfileScreen from 'screens/NewProfile';
+import ImportWalletScreen from 'screens/ImportWallet';
+import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
+import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
+import WalletConnectBrowser from 'screens/WalletConnect/WalletConnectBrowser';
+import RegisterENSScreen from 'screens/RegisterENS';
 
 // components
 import Toast from 'components/Toast';
@@ -153,6 +159,7 @@ import {
   WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
   WALLETCONNECT_CALL_REQUEST_SCREEN,
   WALLETCONNECT_PIN_CONFIRM_SCREEN,
+  WALLETCONNECT_BROWSER,
   TANK_SETTLE_FLOW,
   TANK_FUND_FLOW,
   FUND_TANK,
@@ -223,6 +230,12 @@ import {
   ENS_MIGRATION_FLOW,
   ADD_CASH,
   LEGAL_SCREEN,
+  SET_WALLET_PIN_CODE,
+  NEW_PROFILE,
+  IMPORT_WALLET,
+  PIN_CODE_CONFIRMATION,
+  IMPORT_FLOW_FROM_SETTINGS,
+  REGISTER_ENS,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -314,6 +327,7 @@ const walletConnectFlow = createStackNavigator(
   {
     [WALLETCONNECT]: WalletConnectHomeScreen,
     [WALLETCONNECT_CONNECTED_APPS]: WalletConnectConnectedAppsScreen,
+    [WALLETCONNECT_BROWSER]: WalletConnectBrowser,
   },
   StackNavigatorConfig,
 );
@@ -328,6 +342,7 @@ const homeFlow = createStackNavigator(
     [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+    [REGISTER_ENS]: RegisterENSScreen,
   },
   StackNavigatorConfig,
 );
@@ -445,6 +460,20 @@ const menuFlow = createStackNavigator(
     [MENU_SELECT_LANGUAGE]: MenuSelectLanguageScreen,
     [MENU_SELECT_CURRENCY]: MenuSelectCurrencyScreen,
     [MENU_SYSTEM_INFORMATION]: MenuSystemInformationScreen,
+    [IMPORT_WALLET]: ImportWalletScreen,
+    [NEW_PROFILE]: NewProfileScreen,
+    [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
+    [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
+  },
+  StackNavigatorConfig,
+);
+
+const ImportFlowFromSettings = createStackNavigator(
+  {
+    [IMPORT_WALLET]: ImportWalletScreen,
+    [NEW_PROFILE]: NewProfileScreen,
+    [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
+    [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
   },
   StackNavigatorConfig,
 );
@@ -559,6 +588,7 @@ const AppFlowNavigation = createStackNavigator(
     [ADD_CASH]: addCashFlow,
     [WEB_VIEW]: WebViewScreen,
     [LEGAL_SCREEN]: LegalScreen,
+    [IMPORT_FLOW_FROM_SETTINGS]: ImportFlowFromSettings,
   },
   modalTransition,
 );
@@ -599,11 +629,7 @@ class AppFlow extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const {
-      startListeningNotifications,
-      initWalletConnectSessions,
-      checkArchanovaSession,
-    } = this.props;
+    const { startListeningNotifications, initWalletConnectSessions, checkArchanovaSession } = this.props;
 
     startListeningNotifications();
     addAppStateChangeListener(this.handleAppStateChange);

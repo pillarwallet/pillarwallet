@@ -45,6 +45,8 @@ import IconCheckmark from 'assets/icons/svg/icon-24-checkmark.svg';
 import IconChevronDown from 'assets/icons/svg/icon-24-chevron-down.svg';
 import IconChevronRight from 'assets/icons/svg/icon-24-chevron-right.svg';
 import IconChevronUp from 'assets/icons/svg/icon-24-chevron-up.svg';
+import IconChevronLeftLarge from 'assets/icons/svg/icon-24-chevron-left-large.svg';
+import IconChevronRightLarge from 'assets/icons/svg/icon-24-chevron-right-large.svg';
 import IconCloseCircle from 'assets/icons/svg/icon-24-close-circle.svg';
 import IconClose from 'assets/icons/svg/icon-24-close.svg';
 import IconCollectible from 'assets/icons/svg/icon-24-collectible.svg';
@@ -102,13 +104,19 @@ import IconWallet from 'assets/icons/svg/icon-24-wallet.svg';
 import IconWarning from 'assets/icons/svg/icon-24-warning.svg';
 import IconWithdraw from 'assets/icons/svg/icon-24-withdraw.svg';
 import IconAlert from 'assets/icons/svg/icon-24-circle-filled-alert.svg';
+import IconCheckedRadio from 'assets/icons/svg/x-masters-form-radio-button-focus.svg';
+import IconUncheckedRadio from 'assets/icons/svg/x-masters-form-radio-button-normal.svg';
+import IconPillarBrowser from 'assets/icons/svg/icon-24-pillar-browser.svg';
+import IconPillarBrowserDark from 'assets/icons/svg/icon-24-pillar-browser-dark.svg';
 
 // Assets: services icons
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
 import IconBinance from 'assets/icons/svg/icon-24-binance.svg';
 import IconXdai from 'assets/icons/svg/icon-24-xdai.svg';
 import IconPolygon from 'assets/icons/svg/icon-24-polygon.svg';
+import IconAvalanche from 'assets/icons/svg/icon-24-avalanche.svg';
 import IconWalletConnect from 'assets/icons/svg/icon-24-wallet-connect.svg';
+import IconAllNetworks from 'assets/icons/svg/services-48-circle-pillar-exchange.svg';
 
 const components: Record<SvgImage> = {
   // Generic icons
@@ -126,6 +134,8 @@ const components: Record<SvgImage> = {
   'chevron-down': IconChevronDown,
   'chevron-right': IconChevronRight,
   'chevron-up': IconChevronUp,
+  'chevron-left-large': IconChevronLeftLarge,
+  'chevron-right-large': IconChevronRightLarge,
   'close-circle': IconCloseCircle,
   close: IconClose,
   collectible: IconCollectible,
@@ -183,13 +193,19 @@ const components: Record<SvgImage> = {
   warning: IconWarning,
   withdraw: IconWithdraw,
   alert: IconAlert,
+  'checked-radio': IconCheckedRadio,
+  'unchecked-radio': IconUncheckedRadio,
+  'pillar-browser': IconPillarBrowser,
+  'pillar-browser-dark': IconPillarBrowserDark,
 
   // Service icons
   binance: IconBinance,
   ethereum: IconEthereum,
   polygon: IconPolygon,
   xdai: IconXdai,
+  avalanche: IconAvalanche,
   'wallet-connect': IconWalletConnect,
+  'all-networks': IconAllNetworks,
 };
 
 export type IconName = $Keys<typeof components>;
