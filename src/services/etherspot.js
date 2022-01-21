@@ -189,7 +189,7 @@ export class EtherspotService {
 
   getAccountAddress(chain: Chain): ?string {
     const sdk = this.getSdkForChain(chain);
-    if(!sdk) return null;
+    if (!sdk) return null;
 
     return sdk.state.accountAddress;
   }
