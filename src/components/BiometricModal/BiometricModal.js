@@ -67,7 +67,14 @@ const BiometricModal = ({
   };
 
   return (
-    <ModalBox ref={modalRef} onModalHide={onModalHide} noBoxMinHeight modalStyle={styles.modal} backdropDismissable>
+    <ModalBox
+      ref={modalRef}
+      onModalHide={onModalHide}
+      noBoxMinHeight
+      modalStyle={styles.modal}
+      backdropDismissable
+      isSwipeClose
+    >
       <View>
         <Title variant="big">{t('biometricLogin.title', { biometryType: biometricType })}</Title>
         <Description color={colors.secondaryText}>{t('biometricLogin.description')}</Description>
