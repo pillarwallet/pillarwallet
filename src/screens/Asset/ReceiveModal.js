@@ -58,6 +58,9 @@ import type { Theme } from 'models/Theme';
 import { activeAccountSelector } from 'selectors';
 import { useSupportedChains } from 'selectors/chains';
 
+// Services
+import etherspotService from 'services/etherspot';
+
 // Hooks
 import { useDeploymentStatus } from 'hooks/deploymentStatus';
 
@@ -105,9 +108,10 @@ const ReceiveModal = ({
 
   const handleCopyFromChain = (chain: Chain, title: string) => {
     if (isEtherspotAccount(activeAccount)) {
-      if (activeAccount?.extra[chain]?.address) {
-        Clipboard.setString(activeAccount?.extra[chain]?.address);
-        Toast.show({ message: t('toast.chainAddressCopiedToClipboard', { chain: title }), emoji: 'ok_hand' });
+      const address = etherspotService.getAccountAddress(chain);
+      if (address) {
+        Clipboard.setString(address);
+        Toast.show({ message: t('toast.chainAddressCopiedToClipboard', { chain: title }), emoji: 'ok_hand', autoClose: true });
         setCloseFlag(true);
       } else {
         Toast.show({ message: t('toast.missingCopyAddress'), emoji: 'hushed', autoClose: false });
