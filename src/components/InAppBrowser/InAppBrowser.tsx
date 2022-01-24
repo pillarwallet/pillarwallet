@@ -12,7 +12,6 @@ import { useThemeColors, useIsDarkTheme } from 'utils/themes';
 
 // Local
 import AddressBar from './AddressBar';
-import BrowserFloatingActions from './BrowserFloatingActions';
 import BrowserOptionsModal from './BrowserOptionsModal';
 
 const DEFAULT_URL = 'https://www.pillar.fi/';
@@ -101,7 +100,16 @@ const InAppBrowser: FC<IInAppBrowser> = ({ initialUrl = '', iconUrl }) => {
   };
   //#endregion
 
-  const forceInset = { bottom: 'always' };
+  const buttonActions = {
+    goToUrl,
+    refreshUrl,
+    stopLoading,
+    openOptionsMenu,
+    canGoBack,
+    canGoForward,
+    goBack,
+    goForward,
+  };
 
   return (
     <Container>
@@ -112,18 +120,13 @@ const InAppBrowser: FC<IInAppBrowser> = ({ initialUrl = '', iconUrl }) => {
         url={url}
         urlValue={urlValue}
         onUrlChange={onUrlChange}
-        goToUrl={goToUrl}
         isTyping={isTyping}
         onBlur={onBlur}
         isLoading={isLoading}
-        stopLoading={stopLoading}
-        refreshUrl={refreshUrl}
-        openOptionsMenu={openOptionsMenu}
+        buttonActions={buttonActions}
       />
 
       <WebView ref={webviewRef} source={{ uri: url }} onLoad={onLoad} onLoadEnd={onLoadEnd} />
-
-      <BrowserFloatingActions canGoBack={canGoBack} canGoForward={canGoForward} goBack={goBack} goForward={goForward} />
     </Container>
   );
 };

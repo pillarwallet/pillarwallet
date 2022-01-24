@@ -10,13 +10,14 @@ import { spacing } from 'utils/variables';
 interface IAddressBarButton {
   icon?: string | null;
   onPress?: () => void;
-  color?: string | null;
+  iconColor?: string | null;
+  disabled?: boolean;
 }
 
-const AddressBarButton: FC<IAddressBarButton> = ({ icon, onPress, color }) => {
+const AddressBarButton: FC<IAddressBarButton> = ({ icon, onPress, iconColor, disabled }) => {
   return (
-    <Button onPress={onPress}>
-      <Icon name={icon} color={color} />
+    <Button onPress={onPress} disabled={disabled}>
+      <Icon name={icon} color={iconColor} />
     </Button>
   );
 };
@@ -24,6 +25,7 @@ const AddressBarButton: FC<IAddressBarButton> = ({ icon, onPress, color }) => {
 const Button = styled.TouchableOpacity`
   justify-content: center;
   padding-horizontal: ${spacing.medium}px;
+  opacity: ${({ disabled }) => (disabled ? 0.05 : 1)};
 `;
 
 export default AddressBarButton;
