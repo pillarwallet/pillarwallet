@@ -107,12 +107,12 @@ function Home() {
           if (biometryType) {
             Modal.open(() => <BiometricModal biometricType={biometryType} />);
           } else {
-            dispatch(beginOnboardingAction());
             setIsLoading(true);
+            dispatch(beginOnboardingAction());
           }
         });
       }
-    }, 2000);
+    }, 1000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -171,7 +171,7 @@ function Home() {
           onPress={() => navigation.navigate(REGISTER_ENS)}
         />
       )}
-      {(useAccounts().length === 0 || isLoading) && <Spinner size={20} />}
+      {(useAccounts().length === 0 && isLoading) && <Spinner size={20} />}
       <Content
         contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
         paddingHorizontal={0}

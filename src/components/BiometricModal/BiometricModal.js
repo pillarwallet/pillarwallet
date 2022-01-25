@@ -29,6 +29,7 @@ import { useDispatch } from 'react-redux';
 import Button from 'components/core/Button';
 import ModalBox from 'components/ModalBox';
 import Text from 'components/core/Text';
+import Spinner from 'components/Spinner';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
@@ -52,6 +53,7 @@ const BiometricModal = ({
   const modalRef = useRef();
   const colors = useThemeColors();
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const useBiometrics = useRootSelector((root) => root.appSettings.data.useBiometrics);
 
@@ -61,9 +63,10 @@ const BiometricModal = ({
 
   if (useBiometrics) return null;
 
-  const proceedToBeginOnboarding = (setBiometrics?: boolean) => {
+  const proceedToBeginOnboarding = async (setBiometrics?: boolean) => {
+    setIsLoading(true);
+    await dispatch(beginOnboardingAction(setBiometrics));
     close();
-    dispatch(beginOnboardingAction(setBiometrics));
   };
 
   return (
@@ -75,27 +78,33 @@ const BiometricModal = ({
       backdropDismissable
       isSwipeClose
     >
-      <View>
-        <Title variant="big">{t('biometricLogin.title', { biometryType: biometricType })}</Title>
-        <Description color={colors.secondaryText}>{t('biometricLogin.description')}</Description>
-        <HorizontalDivider />
-        <ButtonWrapper>
-          <ButtonText
-            title={t('biometricLogin.button.cancel')}
-            titleColor={colors.buttonTextTitle}
-            variant="text"
-            onPress={() => proceedToBeginOnboarding()}
-          />
-          <VerticalDivider />
-          <ButtonText
-            title={t('biometricLogin.button.enable')}
-            variant="text"
-            style={styles.button}
-            titleColor={colors.buttonTextTitle}
-            onPress={() => proceedToBeginOnboarding(true)}
-          />
-        </ButtonWrapper>
-      </View>
+      {isLoading ? (
+        <SpinnerWrapper>
+          <Spinner size={20} />
+        </SpinnerWrapper>
+      ) : (
+        <View>
+          <Title variant="big">{t('biometricLogin.title', { biometryType: biometricType })}</Title>
+          <Description color={colors.secondaryText}>{t('biometricLogin.description')}</Description>
+          <HorizontalDivider />
+          <ButtonWrapper>
+            <ButtonText
+              title={t('biometricLogin.button.cancel')}
+              titleColor={colors.buttonTextTitle}
+              variant="text"
+              onPress={() => proceedToBeginOnboarding()}
+            />
+            <VerticalDivider />
+            <ButtonText
+              title={t('biometricLogin.button.enable')}
+              variant="text"
+              style={styles.button}
+              titleColor={colors.buttonTextTitle}
+              onPress={() => proceedToBeginOnboarding(true)}
+            />
+          </ButtonWrapper>
+        </View>
+      )}
     </ModalBox>
   );
 };
@@ -110,6 +119,10 @@ const styles = {
     marginLeft: spacing.extraSmall,
   },
 };
+
+const SpinnerWrapper = styled.View`
+  flex: 1;
+`;
 
 const Title = styled(Text)`
   text-align: center;
