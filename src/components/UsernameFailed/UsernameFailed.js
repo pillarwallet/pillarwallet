@@ -36,7 +36,7 @@ import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import { BaseText } from 'components/legacy/Typography';
 import Button from 'components/legacy/Button';
 import TextInput from 'components/legacy/TextInput';
-import { getUsernameInputIcon } from 'screens/NewProfile';
+import { getUsernameInputIcon } from 'screens/WelcomeBack';
 
 // utils
 import { spacing } from 'utils/variables';
