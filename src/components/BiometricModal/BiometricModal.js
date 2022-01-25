@@ -70,7 +70,14 @@ const BiometricModal = ({
   };
 
   return (
-    <ModalBox ref={modalRef} onModalHide={onModalHide} noBoxMinHeight modalStyle={styles.modal} backdropDismissable>
+    <ModalBox
+      ref={modalRef}
+      onModalHide={onModalHide}
+      noBoxMinHeight
+      modalStyle={styles.modal}
+      backdropDismissable
+      isSwipeClose
+    >
       {isLoading ? (
         <SpinnerWrapper>
           <Spinner size={20} />

@@ -19,17 +19,19 @@
 */
 
 import * as React from 'react';
+import { Platform } from 'react-native';
 import { createSwitchNavigator, createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
 // Screens
-import NewProfileScreen from 'screens/NewProfile';
+import WelcomeBackScreen from 'screens/WelcomeBack';
 import ImportWalletScreen from 'screens/ImportWallet';
 import ImportWalletLegalsScreen from 'screens/ImportWallet/ImportWalletLegals';
 import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
 import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import ForgotPinScreen from 'screens/ForgotPin';
+import PermissionScreen from 'screens/Permissions';
 
 // Utils
 import { modalTransition } from 'utils/common';
@@ -43,12 +45,13 @@ import {
   ONBOARDING_FLOW,
   AUTH_FLOW,
   SET_WALLET_PIN_CODE,
-  NEW_PROFILE,
+  WELCOME_BACK,
   IMPORT_WALLET,
   PIN_CODE_CONFIRMATION,
   PIN_CODE_UNLOCK,
   FORGOT_PIN,
   IMPORT_WALLET_LEGALS,
+  PERMISSIONS,
 } from 'constants/navigationConstants';
 
 import type { NavigationNavigator } from 'react-navigation';
@@ -64,15 +67,20 @@ const StackNavigatorConfig = {
     headerShown: false,
     gestureEnabled: true,
   },
+  initialRouteName: Platform.OS === 'android' ? PERMISSIONS : SET_WALLET_PIN_CODE,
 };
 
-const onBoardingFlow = createStackNavigator({
-  [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
-  [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
-  [IMPORT_WALLET_LEGALS]: ImportWalletLegalsScreen,
-  [IMPORT_WALLET]: ImportWalletScreen,
-  [NEW_PROFILE]: NewProfileScreen,
-}, StackNavigatorConfig);
+const onBoardingFlow = createStackNavigator(
+  {
+    [PERMISSIONS]: PermissionScreen,
+    [IMPORT_WALLET]: ImportWalletScreen,
+    [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
+    [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
+    [WELCOME_BACK]: WelcomeBackScreen,
+    [IMPORT_WALLET_LEGALS]: ImportWalletLegalsScreen,
+  },
+  StackNavigatorConfig,
+);
 
 const authFlow = createStackNavigator({
   [PIN_CODE_UNLOCK]: PinCodeUnlockScreen,

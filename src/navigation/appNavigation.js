@@ -104,7 +104,7 @@ import AddCashScreen from 'screens/AddCash/AddCash';
 import LegalScreen from 'screens/LegalScreen/LegalScreen';
 import BackupWalletIntro from 'screens/BackupWallet/Intro';
 import BackupPhraseValidateScreen from 'screens/BackupWallet/BackupPhraseValidate';
-import NewProfileScreen from 'screens/NewProfile';
+import WelcomeBackScreen from 'screens/WelcomeBack';
 import ImportWalletScreen from 'screens/ImportWallet';
 import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
 import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
@@ -231,7 +231,7 @@ import {
   ADD_CASH,
   LEGAL_SCREEN,
   SET_WALLET_PIN_CODE,
-  NEW_PROFILE,
+  WELCOME_BACK,
   IMPORT_WALLET,
   PIN_CODE_CONFIRMATION,
   IMPORT_FLOW_FROM_SETTINGS,
@@ -461,7 +461,7 @@ const menuFlow = createStackNavigator(
     [MENU_SELECT_CURRENCY]: MenuSelectCurrencyScreen,
     [MENU_SYSTEM_INFORMATION]: MenuSystemInformationScreen,
     [IMPORT_WALLET]: ImportWalletScreen,
-    [NEW_PROFILE]: NewProfileScreen,
+    [WELCOME_BACK]: WelcomeBackScreen,
     [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
     [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
   },
@@ -471,7 +471,7 @@ const menuFlow = createStackNavigator(
 const ImportFlowFromSettings = createStackNavigator(
   {
     [IMPORT_WALLET]: ImportWalletScreen,
-    [NEW_PROFILE]: NewProfileScreen,
+    [WELCOME_BACK]: WelcomeBackScreen,
     [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
     [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
   },
