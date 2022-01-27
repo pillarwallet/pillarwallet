@@ -38,7 +38,6 @@ import UserNameAndImage from 'components/UserNameAndImage';
 import WalletConnectRequests from 'screens/WalletConnect/Requests';
 import Tooltip from 'components/Tooltip';
 import Modal from 'components/Modal';
-import Spinner from 'components/Spinner';
 
 // Constants
 import { MENU, HOME_HISTORY, REGISTER_ENS } from 'constants/navigationConstants';
@@ -83,7 +82,6 @@ function Home() {
   const etherspotAccount = useRootSelector(etherspotAccountSelector);
   const wallet = useRootSelector((root) => root.wallet.data);
   const accountAddress = useRootSelector(activeAccountAddressSelector);
-  const [isLoading, setIsLoading] = React.useState(false);
   const [showAccountSwitchTooltip, setShowAccountSwitchTooltip] = React.useState(false);
   const [showENSTooltip, setShowENSSwitchTooltip] = React.useState(false);
   const canSwitchAccount = useAccounts().length > 1;
@@ -106,7 +104,6 @@ function Home() {
           if (biometryType) {
             Modal.open(() => <BiometricModal biometricType={biometryType} />);
           } else {
-            setIsLoading(true);
             Modal.open(() => <BiometricModal hasNoBiometrics />);
           }
         });
@@ -169,7 +166,6 @@ function Home() {
           onPress={() => navigation.navigate(REGISTER_ENS)}
         />
       )}
-      {useAccounts().length === 0 && isLoading && <Spinner size={20} />}
       <Content
         contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
         paddingHorizontal={0}
