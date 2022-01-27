@@ -27,7 +27,6 @@ import { ENSNodeStates } from 'etherspot';
 // Actions
 import { fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
 import { refreshEtherspotAccountsAction } from 'actions/etherspotActions';
-import { beginOnboardingAction } from 'actions/onboardingActions';
 
 // Components
 import { Container, Content } from 'components/layout/Layout';
@@ -108,14 +107,13 @@ function Home() {
             Modal.open(() => <BiometricModal biometricType={biometryType} />);
           } else {
             setIsLoading(true);
-            dispatch(beginOnboardingAction());
+            Modal.open(() => <BiometricModal hasNoBiometrics />);
           }
         });
       }
     }, 1000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
 
   React.useEffect(() => {
     if (canSwitchAccount) {
@@ -171,7 +169,7 @@ function Home() {
           onPress={() => navigation.navigate(REGISTER_ENS)}
         />
       )}
-      {(useAccounts().length === 0 && isLoading) && <Spinner size={20} />}
+      {useAccounts().length === 0 && isLoading && <Spinner size={20} />}
       <Content
         contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
         paddingHorizontal={0}
@@ -199,4 +197,3 @@ function Home() {
 }
 
 export default Home;
-

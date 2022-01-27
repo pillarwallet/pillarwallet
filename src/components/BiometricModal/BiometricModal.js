@@ -19,7 +19,7 @@
 */
 /* eslint-disable i18next/no-literal-string */
 
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import { View } from 'react-native';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
@@ -43,17 +43,26 @@ import { useRootSelector } from 'selectors';
 
 type Props = {|
   onModalHide?: () => void,
-  biometricType: string,
+  biometricType?: string,
+  hasNoBiometrics?: boolean,
 |};
 
-const BiometricModal = ({
-  onModalHide,
-  biometricType,
-}: Props) => {
+const BiometricModal = ({ onModalHide, biometricType, hasNoBiometrics = false }: Props) => {
   const modalRef = useRef();
   const colors = useThemeColors();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = React.useState(false);
+
+  const proceedToBeginOnboarding = async (setBiometrics?: boolean) => {
+    setIsLoading(true);
+    await dispatch(beginOnboardingAction(setBiometrics));
+    close();
+  };
+
+  useEffect(() => {
+    if (hasNoBiometrics) proceedToBeginOnboarding();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const useBiometrics = useRootSelector((root) => root.appSettings.data.useBiometrics);
 
@@ -62,12 +71,6 @@ const BiometricModal = ({
   }, []);
 
   if (useBiometrics) return null;
-
-  const proceedToBeginOnboarding = async (setBiometrics?: boolean) => {
-    setIsLoading(true);
-    await dispatch(beginOnboardingAction(setBiometrics));
-    close();
-  };
 
   return (
     <ModalBox
@@ -78,11 +81,13 @@ const BiometricModal = ({
       backdropDismissable
       isSwipeClose
     >
-      {isLoading ? (
+      {isLoading && (
         <SpinnerWrapper>
           <Spinner size={20} />
         </SpinnerWrapper>
-      ) : (
+      )}
+
+      {!isLoading && !hasNoBiometrics && biometricType && (
         <View>
           <Title variant="big">{t('biometricLogin.title', { biometryType: biometricType })}</Title>
           <Description color={colors.secondaryText}>{t('biometricLogin.description')}</Description>
