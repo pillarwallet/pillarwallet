@@ -29,7 +29,7 @@ import {
   APP_FLOW,
   TUTORIAL_FLOW,
   HOME,
-  NEW_PROFILE,
+  WELCOME_BACK,
 } from 'constants/navigationConstants';
 import { SET_USER } from 'constants/userConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
@@ -585,7 +585,7 @@ export const importWalletFromMnemonicAction = (mnemonicInput: string) => {
     logBreadcrumb('onboarding', 'importWalletFromMnemonicAction: wallet imported from Mnemonic Action');
     dispatch(logEventAction('wallet_imported', { method: 'Words Phrase' }));
     isLogV2AppEvents() && dispatch(logEventAction('v2_account_imported', { method: 'Seed phrase' }));
-    navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
+    navigate(NavigationActions.navigate({ routeName: WELCOME_BACK }));
   };
 };
 
