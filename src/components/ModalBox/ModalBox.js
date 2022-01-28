@@ -35,6 +35,7 @@ type Props = {|
   noBoxMinHeight?: boolean,
   onModalHide?: () => void,
   backdropDismissable?: boolean,
+  isSwipeClose?: boolean,
 |};
 
 export type ModalBoxInstance = {
@@ -48,6 +49,7 @@ const ModalBox = React.forwardRef<Props, ModalBoxInstance>(({
   noBoxMinHeight,
   onModalHide,
   backdropDismissable,
+  isSwipeClose,
 }: Props, ref) => {
   const modalRef = useRef();
 
@@ -63,6 +65,7 @@ const ModalBox = React.forwardRef<Props, ModalBoxInstance>(({
       onModalHide={onModalHide}
       style={[{ justifyContent: 'center' }, modalStyle]}
       backdropDismissable={backdropDismissable}
+      isSwipeClose={isSwipeClose}
     >
       {showModalClose && (
         <ModalCloseButton onPress={close}>

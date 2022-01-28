@@ -19,7 +19,7 @@
 */
 /* eslint-disable i18next/no-literal-string */
 
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import { View } from 'react-native';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
@@ -29,6 +29,7 @@ import { useDispatch } from 'react-redux';
 import Button from 'components/core/Button';
 import ModalBox from 'components/ModalBox';
 import Text from 'components/core/Text';
+import Spinner from 'components/Spinner';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
@@ -42,16 +43,26 @@ import { useRootSelector } from 'selectors';
 
 type Props = {|
   onModalHide?: () => void,
-  biometricType: string,
+  biometricType?: string,
+  hasNoBiometrics?: boolean,
 |};
 
-const BiometricModal = ({
-  onModalHide,
-  biometricType,
-}: Props) => {
+const BiometricModal = ({ onModalHide, biometricType, hasNoBiometrics = false }: Props) => {
   const modalRef = useRef();
   const colors = useThemeColors();
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  const proceedToBeginOnboarding = async (setBiometrics?: boolean) => {
+    setIsLoading(true);
+    await dispatch(beginOnboardingAction(setBiometrics));
+    close();
+  };
+
+  useEffect(() => {
+    if (hasNoBiometrics) proceedToBeginOnboarding();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const useBiometrics = useRootSelector((root) => root.appSettings.data.useBiometrics);
 
@@ -61,34 +72,44 @@ const BiometricModal = ({
 
   if (useBiometrics) return null;
 
-  const proceedToBeginOnboarding = (setBiometrics?: boolean) => {
-    close();
-    dispatch(beginOnboardingAction(setBiometrics));
-  };
-
   return (
-    <ModalBox ref={modalRef} onModalHide={onModalHide} noBoxMinHeight modalStyle={styles.modal} backdropDismissable>
-      <View>
-        <Title variant="big">{t('biometricLogin.title', { biometryType: biometricType })}</Title>
-        <Description color={colors.secondaryText}>{t('biometricLogin.description')}</Description>
-        <HorizontalDivider />
-        <ButtonWrapper>
-          <ButtonText
-            title={t('biometricLogin.button.cancel')}
-            titleColor={colors.buttonTextTitle}
-            variant="text"
-            onPress={() => proceedToBeginOnboarding()}
-          />
-          <VerticalDivider />
-          <ButtonText
-            title={t('biometricLogin.button.enable')}
-            variant="text"
-            style={styles.button}
-            titleColor={colors.buttonTextTitle}
-            onPress={() => proceedToBeginOnboarding(true)}
-          />
-        </ButtonWrapper>
-      </View>
+    <ModalBox
+      ref={modalRef}
+      onModalHide={onModalHide}
+      noBoxMinHeight
+      modalStyle={styles.modal}
+      backdropDismissable
+      isSwipeClose
+    >
+      {isLoading && (
+        <SpinnerWrapper>
+          <Spinner size={20} />
+        </SpinnerWrapper>
+      )}
+
+      {!isLoading && !hasNoBiometrics && biometricType && (
+        <View>
+          <Title variant="big">{t('biometricLogin.title', { biometryType: biometricType })}</Title>
+          <Description color={colors.secondaryText}>{t('biometricLogin.description')}</Description>
+          <HorizontalDivider />
+          <ButtonWrapper>
+            <ButtonText
+              title={t('biometricLogin.button.cancel')}
+              titleColor={colors.buttonTextTitle}
+              variant="text"
+              onPress={() => proceedToBeginOnboarding()}
+            />
+            <VerticalDivider />
+            <ButtonText
+              title={t('biometricLogin.button.enable')}
+              variant="text"
+              style={styles.button}
+              titleColor={colors.buttonTextTitle}
+              onPress={() => proceedToBeginOnboarding(true)}
+            />
+          </ButtonWrapper>
+        </View>
+      )}
     </ModalBox>
   );
 };
@@ -103,6 +124,10 @@ const styles = {
     marginLeft: spacing.extraSmall,
   },
 };
+
+const SpinnerWrapper = styled.View`
+  flex: 1;
+`;
 
 const Title = styled(Text)`
   text-align: center;

@@ -40,7 +40,7 @@ import { images } from 'utils/images';
 import { getThemeByType } from 'utils/themes';
 
 // constants
-import { IMPORT_WALLET_LEGALS, NEW_PROFILE } from 'constants/navigationConstants';
+import { IMPORT_WALLET_LEGALS, WELCOME_BACK } from 'constants/navigationConstants';
 import { LIGHT_CONTENT, LIGHT_THEME, DARK_THEME } from 'constants/appSettingsConstants';
 
 const LOGO_HEIGHT = 56;
@@ -88,7 +88,7 @@ const Welcome = () => {
             <ButtonsWrapper>
               <Button
                 title={t('auth:button.createAccount')}
-                onPress={() => dispatch(resetOnboardingAndNavigateAction(NEW_PROFILE))}
+                onPress={() => dispatch(resetOnboardingAndNavigateAction(WELCOME_BACK))}
                 marginBottom={4}
               />
               <Button
