@@ -146,3 +146,26 @@ export const getIdenticonImageUrl = (input: ?string, size: number): ?string => {
   // Note: using `f` to always force default identicon image
   return `https://www.gravatar.com/avatar/${hash}?default=identicon&s=${size}&f=y`;
 };
+
+/**
+ * @name interpretNftMedia
+ * @description Attempts to parse the mediaUri parameter
+ * and, if needed, returns a web friendly URI
+ *
+ * @param {string} mediaUri
+ * @returns {string}
+ */
+export const interpretNftMedia = (mediaUri: string): string => {
+  // If we have an IPFS asset, load from HTTP wrapper service
+  // Note: right now we're only interpreting ipfs locators.
+  if (mediaUri.startsWith('ipfs://')) {
+    const ipfsAsset = mediaUri.split('//')[1];
+    const newUri = `https://cloudflare-ipfs.com/ipfs/${ipfsAsset}`;
+
+    // Return the new mediaUri
+    return newUri;
+  }
+
+  // Otherwise return the original mediaUri
+  return mediaUri;
+};
