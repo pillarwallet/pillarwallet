@@ -155,7 +155,9 @@ export const getIdenticonImageUrl = (input: ?string, size: number): ?string => {
  * @param {string} mediaUri
  * @returns {string}
  */
-export const interpretNftMedia = (mediaUri: string): string => {
+export const interpretNftMedia = (mediaUri: ?string): ?string => {
+  // If falsey, return back whatever falsey value we was given
+  if (!mediaUri) return mediaUri;
   // If we have an IPFS asset, load from HTTP wrapper service
   // Note: right now we're only interpreting ipfs locators.
   if (mediaUri.startsWith('ipfs://')) {
