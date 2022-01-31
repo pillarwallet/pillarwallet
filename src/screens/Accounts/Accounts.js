@@ -19,6 +19,7 @@
 */
 import React, { useEffect } from 'react';
 import styled from 'styled-components/native';
+import { useNavigation } from 'react-navigation-hooks';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { sortBy } from 'lodash';
@@ -62,7 +63,6 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 import type { TotalBalancesPerAccount } from 'models/TotalBalances';
 
-
 const ITEM_TYPE = {
   ACCOUNT: 'ACCOUNT',
   BUTTON: 'BUTTON',
@@ -76,10 +76,13 @@ type ListItem = {|
   balance?: string,
   isActive?: boolean,
   iconSource?: string,
+  showKeyBasedAssetMigrationButton: boolean,
+  address: string,
+  username?: string,
+  showEnsMigrationBanner: boolean,
 |};
 
 type Props = {|
-  navigation: NavigationScreenProp<*>,
   blockchainNetworks: BlockchainNetwork[],
   accounts: Account[],
   switchAccount: (accountId: string) => void,
@@ -89,7 +92,6 @@ type Props = {|
 |};
 
 const AccountsScreen = ({
-  navigation,
   fetchAllAccountsTotalBalances,
   accounts,
   switchAccount,
@@ -97,6 +99,7 @@ const AccountsScreen = ({
   keyBasedWalletHasPositiveBalance,
   totalBalances,
 }: Props) => {
+  const navigation = useNavigation();
   const name = navigation.getParam('user');
   const theme = useTheme();
   const colors = getThemeColors(theme);
@@ -164,7 +167,7 @@ const AccountsScreen = ({
           >
             {showKeyBasedAssetMigrationButton && (
               <RowContainer>
-                <Icon
+                <IconContainer
                   name={isDarkTheme ? 'asset-migration-dark' : 'asset-migration'}
                   onPress={() => navigation.navigate(KEY_BASED_ASSET_TRANSFER_INTRO)}
                 />
@@ -178,7 +181,7 @@ const AccountsScreen = ({
             )}
             {showEnsMigrationBanner && (
               <RowContainer>
-                <Icon
+                <IconContainer
                   name={isDarkTheme ? 'ens-migration-dark' : 'ens-migration'}
                   onPress={() => navigation.navigate(ENS_MIGRATION_CONFIRM)}
                 />
@@ -280,6 +283,9 @@ const RowContainer = styled.View`
 const TextContent = styled(Text)`
   ${fontStyles.big};
   padding: 0 ${spacing.medium}px 0 ${spacing.medium}px;
+`;
+
+const IconContainer = styled(Icon)`
 `;
 
 const RadioIcon = styled(Icon)`
