@@ -25,15 +25,38 @@ import type { FastImageProps, FastImageSource } from 'react-native-fast-image';
 // Types
 import type { ImageSource } from 'utils/types/react-native';
 
+// Utils
+import { interpretNftMedia } from 'utils/images';
+
 export type ImageProps = {|
   ...FastImageProps,
   fallbackSource?: ImageSource,
 |};
 
+/**
+ * @name getValidSource
+ * @description Determines if the incoming source is valid.
+ * If the source is of a non-standard type, it is converted
+ * here.
+ *
+ * @param {FastImageSource | number} source
+ * @returns {FastImageSource | number}
+ */
 const getValidSource = (source: FastImageSource | number) => {
   if (typeof source?.uri !== 'string') return source;
-
   const { uri } = source;
+  const interpretedNftMedia = interpretNftMedia(uri);
+
+  // The interpreted uri was different to the original uri
+  if (interpretedNftMedia !== uri) {
+    // Rebuild the FastImageSource object with the new URI
+    return {
+      ...source,
+      uri: interpretedNftMedia,
+    };
+  }
+
+  // Otherwise continue as normal
   const isValidSource = uri.startsWith('https://') || uri.startsWith('http://');
   return isValidSource ? source : null;
 };
