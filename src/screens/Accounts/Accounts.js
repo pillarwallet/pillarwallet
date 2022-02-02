@@ -152,7 +152,7 @@ const AccountsScreen = ({
               <TextContent>{title}</TextContent>
               <TextContent style={{ fontSize: 14 }}>
                 {`${address.substring(0, 4)}...${
-                  address.substring(address.length - 4)}${isActive && username ? `(${username})` : ''}`}
+                  address.substring(address.length - 4)}${isActive && username ? ` (${username})` : ''}`}
               </TextContent>
             </TitleContainer>
             <Value>{balance}</Value>
