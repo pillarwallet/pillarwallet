@@ -49,35 +49,37 @@ export type KeyChainData = {
 
 const handleCatch = () => {
   const colors = getThemeColors();
-  let buttons;
-  buttons[0] = {
+  const buttons = [];
+  buttons.push({
     text: t('error.failedKeychain.exitButtonText'),
     onPress: () => RNExitApp.exitApp(),
-  };
+  });
   const accountAddress = etherspotService.getAccountAddress(CHAIN.ETHEREUM);
   if (accountAddress) {
-    buttons[1] = {
+    buttons.push({
       text: t('error.failedKeychain.supportButtonText'),
       onPress: () => {
         BugReporting.showWithOptions(BugReporting.reportType.feedback, [BugReporting.option.emailFieldOptional]);
       },
-    };
+    });
   }
 
   Alert.alert(
     t('error.failedKeychain.title', {
       color: colors.basic010,
     }),
-    t('error.failedKeychain.nonEtherspotMessage', {
-      mediumText: true,
+    `${t('error.failedKeychain.nonEtherspotMessage', {
       color: colors.basic030,
-    }) + (
+    })}${(
       accountAddress ? t('error.failedKeychain.etherspotMessage', {
-        mediumText: true,
         color: colors.basic030,
+        address: accountAddress,
       }) : ''
-    ),
-    buttons,
+    )}`,
+    [{
+      text: t('error.failedKeychain.exitButtonText'),
+      onPress: () => RNExitApp.exitApp(),
+    }],
   );
 };
 
