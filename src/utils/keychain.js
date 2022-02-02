@@ -47,14 +47,14 @@ export type KeyChainData = {
   pin?: ?string,
 };
 
-const handleCatch = () => {
+export const handleCatch = (accountAddress: ?string) => {
   const colors = getThemeColors();
   const buttons = [];
   buttons.push({
     text: t('error.failedKeychain.exitButtonText'),
     onPress: () => RNExitApp.exitApp(),
   });
-  const accountAddress = etherspotService.getAccountAddress(CHAIN.ETHEREUM);
+  accountAddress = accountAddress ?? etherspotService?.getAccountAddress(CHAIN.ETHEREUM);
   if (accountAddress) {
     buttons.push({
       text: t('error.failedKeychain.supportButtonText'),

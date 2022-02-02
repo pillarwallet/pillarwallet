@@ -19,9 +19,20 @@
 */
 /* eslint-disable i18next/no-literal-string */
 
+// Core
 import { useTheme } from 'styled-components/native';
 import MD5 from 'crypto-js/md5';
+
+// Constants
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+
+// Models
 import type { Theme } from 'models/Theme';
+
+// Services
+import { firebaseRemoteConfig } from 'services/firebase';
+
+// Themes
 import { getThemeType } from './themes';
 
 const patternPlaceholderLight = require('assets/images/no_logo.png');
@@ -54,7 +65,7 @@ const infoIconDark = require('assets/icons/icon_info_dark.png');
 const copyIconLight = require('assets/icons/icon_copy.png');
 const copyIconDark = require('assets/icons/icon_copy_dark.png');
 
-// patterns
+// Patterns
 const landingPattern = require('assets/images/patterns/onboarding_pattern_top.png');
 
 function getImageByTheme(currentTheme, values) {
@@ -145,4 +156,29 @@ export const getIdenticonImageUrl = (input: ?string, size: number): ?string => {
   // Params explained: https://en.gravatar.com/site/implement/images/
   // Note: using `f` to always force default identicon image
   return `https://www.gravatar.com/avatar/${hash}?default=identicon&s=${size}&f=y`;
+};
+
+/**
+ * @name interpretNftMedia
+ * @description Attempts to parse the mediaUri parameter
+ * and, if needed, returns a web friendly URI
+ *
+ * @param {string} mediaUri
+ * @returns {string}
+ */
+export const interpretNftMedia = (mediaUri: ?string): ?string => {
+  // If falsey, return back whatever falsey value we was given
+  if (!mediaUri) return mediaUri;
+  // If we have an IPFS asset, load from HTTP wrapper service
+  // Note: right now we're only interpreting ipfs locators.
+  if (mediaUri.startsWith('ipfs://')) {
+    const ipfsAsset = mediaUri.split('//')[1];
+    const newUri = `${firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_IPFS_SERVICE_URL)}/${ipfsAsset}`;
+
+    // Return the new mediaUri
+    return newUri;
+  }
+
+  // Otherwise return the original mediaUri
+  return mediaUri;
 };

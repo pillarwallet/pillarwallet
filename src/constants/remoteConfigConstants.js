@@ -65,6 +65,7 @@ export const REMOTE_CONFIG = {
   APP_API_USER_ENDPOINT: 'app_api_user_endpoint',
   INFURA_PROJECT_ID: 'infura_project_id',
   FEATURE_ONBOARDING_ENS: 'feature_onboarding_ens',
+  APP_IPFS_SERVICE_URL: 'app_ipfs_service_url',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values
@@ -114,4 +115,5 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.APP_API_USER_ENDPOINT]: 'https://us-central1-pillar-project-1506420699556.cloudfunctions.net/api',
   [REMOTE_CONFIG.INFURA_PROJECT_ID]: '',
   [REMOTE_CONFIG.FEATURE_ONBOARDING_ENS]: false,
+  [REMOTE_CONFIG.APP_IPFS_SERVICE_URL]: 'https://ipfs.io/ipfs',
 };

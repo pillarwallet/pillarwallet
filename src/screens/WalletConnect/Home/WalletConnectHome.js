@@ -123,8 +123,8 @@ function WalletConnectHome() {
             <RowContainer>
               <ChainViewIcon size={24} style={IconContainer} name={key ?? 'all-networks'} />
               <Title>{title}</Title>
-              <TouchableContainer>
-                <ChainViewIcon name="chevron-down" onPress={() => openSwitchChainModal()} />
+              <TouchableContainer onPress={() => openSwitchChainModal()}>
+                <ChainViewIcon name="chevron-down" />
               </TouchableContainer>
             </RowContainer>
           </ContainerView>

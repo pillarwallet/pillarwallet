@@ -27,7 +27,6 @@ import { ENSNodeStates } from 'etherspot';
 // Actions
 import { fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
 import { refreshEtherspotAccountsAction } from 'actions/etherspotActions';
-import { beginOnboardingAction } from 'actions/onboardingActions';
 
 // Components
 import { Container, Content } from 'components/layout/Layout';
@@ -39,7 +38,6 @@ import UserNameAndImage from 'components/UserNameAndImage';
 import WalletConnectRequests from 'screens/WalletConnect/Requests';
 import Tooltip from 'components/Tooltip';
 import Modal from 'components/Modal';
-import Spinner from 'components/Spinner';
 
 // Constants
 import { MENU, HOME_HISTORY, REGISTER_ENS } from 'constants/navigationConstants';
@@ -84,7 +82,6 @@ function Home() {
   const etherspotAccount = useRootSelector(etherspotAccountSelector);
   const wallet = useRootSelector((root) => root.wallet.data);
   const accountAddress = useRootSelector(activeAccountAddressSelector);
-  const [isLoading, setIsLoading] = React.useState(false);
   const [showAccountSwitchTooltip, setShowAccountSwitchTooltip] = React.useState(false);
   const [showENSTooltip, setShowENSSwitchTooltip] = React.useState(false);
   const canSwitchAccount = useAccounts().length > 1;
@@ -107,15 +104,13 @@ function Home() {
           if (biometryType) {
             Modal.open(() => <BiometricModal biometricType={biometryType} />);
           } else {
-            dispatch(beginOnboardingAction());
-            setIsLoading(true);
+            Modal.open(() => <BiometricModal hasNoBiometrics />);
           }
         });
       }
-    }, 2000);
+    }, 1000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
 
   React.useEffect(() => {
     if (canSwitchAccount) {
@@ -171,7 +166,6 @@ function Home() {
           onPress={() => navigation.navigate(REGISTER_ENS)}
         />
       )}
-      {(useAccounts().length === 0 || isLoading) && <Spinner size={20} />}
       <Content
         contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
         paddingHorizontal={0}
@@ -199,4 +193,3 @@ function Home() {
 }
 
 export default Home;
-

@@ -27,11 +27,11 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 import t from 'translations/translate';
 import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 
-// constants
+// Constants
 import { SEND_COLLECTIBLE_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
-// components
+// Components
 import ActivityFeed from 'components/legacy/ActivityFeed';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import { ScrollWrapper, Wrapper } from 'components/legacy/Layout';
@@ -42,12 +42,12 @@ import HistoryList from 'components/HistoryList';
 import SlideModal from 'components/Modals/SlideModal';
 import Modal from 'components/Modal';
 
-// utils
+// Utils
 import { getDeviceHeight, getDeviceWidth } from 'utils/common';
 import { spacing } from 'utils/variables';
 import { mapTransactionsHistory } from 'utils/feedData';
 import { getThemeColors, themedColors, useTheme } from 'utils/themes';
-import { images, isSvgImage } from 'utils/images';
+import { images, isSvgImage, interpretNftMedia } from 'utils/images';
 import { isMatchingCollectible } from 'utils/assets';
 import {
   getAccountAddress,
@@ -56,17 +56,16 @@ import {
 } from 'utils/accounts';
 import { getHistoryEventsFromCollectiblesTransactions } from 'utils/history';
 
-// selectors
+// Selectors
 import { accountCollectiblesHistorySelector, accountCollectiblesSelector } from 'selectors/collectibles';
 import { activeAccountSelector } from 'selectors';
 
-// types
+// Types
 import type { Collectible, CollectibleTransaction } from 'models/Collectible';
 import type { Account } from 'models/Account';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { ChainRecord } from 'models/Chain';
-
 
 type Props = {
   collectibles: ChainRecord<Collectible[]>,
@@ -136,7 +135,7 @@ const CollectibleScreen = ({
     const colors = getThemeColors(theme);
 
     const imageViewImage = {
-      url: imageUrl,
+      url: interpretNftMedia(imageUrl),
       width: null,
       height: null,
     };
