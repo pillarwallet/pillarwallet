@@ -60,7 +60,7 @@ export function buildCollectibleFromCollectibleItem(
   };
 }
 
-export function calculateTotalCollectibleCount(accountCollectibleCounts: ChainRecord<number>): number {
+export function calculateTotalCollectibleCount(accountCollectibleCounts: ChainRecord<any[]>): number {
   const counts = recordValues(mapRecordValues(accountCollectibleCounts, (collectibles) => collectibles?.length ?? 0));
   return counts.reduce((total, count) => (count != null ? total + count : total), 0);
 }

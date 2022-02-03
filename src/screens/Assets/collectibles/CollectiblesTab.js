@@ -149,6 +149,7 @@ export default CollectiblesTab;
 type Section = {
   ...SectionBase<CollectibleItem[]>,
   chain: Chain,
+  totalCollectibleCount: number
 };
 
 const useSectionData = (numberOfColumns: number, expandItemsPerChain: FlagPerChain): Section[] => {
