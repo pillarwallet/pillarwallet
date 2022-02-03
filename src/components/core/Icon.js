@@ -108,6 +108,10 @@ import IconCheckedRadio from 'assets/icons/svg/x-masters-form-radio-button-focus
 import IconUncheckedRadio from 'assets/icons/svg/x-masters-form-radio-button-normal.svg';
 import IconPillarBrowser from 'assets/icons/svg/icon-24-pillar-browser.svg';
 import IconPillarBrowserDark from 'assets/icons/svg/icon-24-pillar-browser-dark.svg';
+import IconEnsMigration from 'assets/icons/svg/icon-24-ens.svg';
+import IconAssetMigration from 'assets/icons/svg/icon-24-assets.svg';
+import IconEnsMigrationDark from 'assets/icons/svg/icon-24-ens-dark.svg';
+import IconAssetMigrationDark from 'assets/icons/svg/icon-24-assets-dark.svg';
 
 // Assets: services icons
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
@@ -197,6 +201,10 @@ const components: Record<SvgImage> = {
   'unchecked-radio': IconUncheckedRadio,
   'pillar-browser': IconPillarBrowser,
   'pillar-browser-dark': IconPillarBrowserDark,
+  'ens-migration': IconEnsMigration,
+  'asset-migration': IconAssetMigration,
+  'ens-migration-dark': IconEnsMigrationDark,
+  'asset-migration-dark': IconAssetMigrationDark,
 
   // Service icons
   binance: IconBinance,

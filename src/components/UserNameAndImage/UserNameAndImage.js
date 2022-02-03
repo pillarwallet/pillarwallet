@@ -56,7 +56,7 @@ const UserNameAndImage = ({ user, address }: Props) => {
 
   const onAccountSwitchPress = () => {
     dispatch(dismissAccountSwitchTooltipAction());
-    navigation.navigate(ACCOUNTS);
+    navigation.navigate(ACCOUNTS, { user });
   };
 
   return (
