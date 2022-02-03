@@ -278,8 +278,8 @@ const TextContent = styled(Text)`
 `;
 
 const BannerText = styled(Text)`
-${fontStyles.medium};
-padding-left: ${spacing.small}px;
+  ${fontStyles.medium};
+  padding-left: ${spacing.small}px;
 `;
 
 const IconContainer = styled(Icon)`
