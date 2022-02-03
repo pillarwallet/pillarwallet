@@ -76,10 +76,7 @@ export const handleCatch = (accountAddress: ?string) => {
         address: accountAddress,
       }) : ''
     )}`,
-    [{
-      text: t('error.failedKeychain.exitButtonText'),
-      onPress: () => RNExitApp.exitApp(),
-    }],
+    buttons,
   );
 };
 
