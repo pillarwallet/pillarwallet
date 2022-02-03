@@ -50,8 +50,12 @@ import type { Chain } from 'models/Chain';
 // Local
 import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
 import { type CollectibleItem, useCollectibleAssets } from './selectors';
-import { buildCollectibleFromCollectibleItem } from './utils';
+import { buildCollectibleFromCollectibleItem, calculateTotalCollectibleCount } from './utils';
 import CollectibleListItem from './CollectibleListItem';
+
+// assets
+const collectibleBanner = require('assets/images/banners-collectibles.png');
+
 
 function CollectiblesTab() {
   const { t } = useTranslation();
@@ -65,6 +69,10 @@ function CollectiblesTab() {
   const numberOfColumns = 2;
 
   const sections = useSectionData(numberOfColumns, expandItemsPerChain);
+  const [totalCollectibleCount, setTotalCollectibleCount] = React.useState(0);
+  React.useEffect(() => {
+    setTotalCollectibleCount(sections[0]?.totalCollectibleCount ?? 0);
+  }, [sections]);
   const accountAddress = useRootSelector(activeAccountAddressSelector);
 
   const showReceiveModal = () => {
@@ -77,7 +85,13 @@ function CollectiblesTab() {
   };
 
   const renderSectionHeader = ({ chain }: Section) => {
-    return <ChainListHeader chain={chain} onPress={() => toggleExpandItems(chain)} />;
+    return (
+      <ChainListHeader
+        chain={chain}
+        isExpanded={expandItemsPerChain[chain] ?? null}
+        onPress={() => toggleExpandItems(chain)}
+      />
+    );
   };
 
   const renderItem = (items: CollectibleItem[], chain: Chain) => {
@@ -113,6 +127,9 @@ function CollectiblesTab() {
 
   return (
     <Container>
+      <ImageContainer>
+        {(totalCollectibleCount === 0) && <ContentIcon source={collectibleBanner} />}
+      </ImageContainer>
       <SectionList
         sections={sections}
         renderSectionHeader={({ section }) => renderSectionHeader(section)}
@@ -137,11 +154,12 @@ type Section = {
 const useSectionData = (numberOfColumns: number, expandItemsPerChain: FlagPerChain): Section[] => {
   const chains = useSupportedChains();
   const assetsPerChain = useCollectibleAssets();
+  const totalCollectibleCount = calculateTotalCollectibleCount(assetsPerChain);
 
   return chains.map((chain) => {
     const items = assetsPerChain[chain] ?? [];
     const data = expandItemsPerChain[chain] ? chunk(items, numberOfColumns) : [];
-    return { key: chain, chain, data };
+    return { key: chain, chain, data, totalCollectibleCount };
   });
 };
 
@@ -153,4 +171,14 @@ const ListRow = styled.View`
   flex-direction: row;
   align-items: stretch;
   padding: 0 ${spacing.mediumLarge}px;
+`;
+
+const ContentIcon = styled.Image`
+  margin-right: ${spacing.mediumLarge}px;
+`;
+
+const ImageContainer = styled.View`
+  align-items: center;
+  justify-content: center;
+  margin: ${spacing.extraLarge}px ${spacing.small}px ${spacing.largePlus}px ${spacing.large}px;
 `;

@@ -22,22 +22,20 @@ import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
-import { useTranslation } from 'translations/translate';
 
 // Components
 import Text from 'components/core/Text';
+import Icon from 'components/core/Icon';
 
 // Selectors
 import {
   useActiveAccount,
-  useFiatCurrency,
 } from 'selectors';
 
 // Hooks
 import { useDeploymentStatus } from 'hooks/deploymentStatus';
 
 // Utils
-import { formatFiatValue } from 'utils/format';
 import { fontStyles, spacing } from 'utils/variables';
 import { useChainConfig } from 'utils/uiConfig';
 import { isKeyBasedAccount } from 'utils/accounts';
@@ -49,16 +47,11 @@ type Props = {|
   chain: Chain,
   onPress?: () => mixed,
   balance?: ?BigNumber,
+  isExpanded: ?boolean,
 |};
 
-function ChainListHeader({ chain, onPress, balance }: Props) {
-  const { t } = useTranslation();
-  const { title, color } = useChainConfig(chain);
-
-  const currency = useFiatCurrency();
-
-  const fiatValue = formatFiatValue(balance, currency, { stripTrailingZeros: true });
-  const titleSegments = fiatValue != null ? [title, fiatValue] : [title];
+function ChainListHeader({ chain, onPress, isExpanded }: Props) {
+  const { title } = useChainConfig(chain);
 
   const activeAccount = useActiveAccount();
   const { isDeployedOnChain, showDeploymentInterjection } = useDeploymentStatus();
@@ -67,12 +60,16 @@ function ChainListHeader({ chain, onPress, balance }: Props) {
   return (
     <Container>
       <TouchableOpacity onPress={onPress} disabled={!onPress}>
-        <Title color={color}>{titleSegments.join(t('label.dotSeparator'))}</Title>
+        <Title>{title}</Title>
       </TouchableOpacity>
-
       {!isDeployed && (
         <TouchableOpacity onPress={() => showDeploymentInterjection(chain)}>
-          <WalletNotDeployed>{t('label.walletNotDeployed')}</WalletNotDeployed>
+          <WalletNotDeployed name="alert" />
+        </TouchableOpacity>
+      )}
+      {isDeployed && (
+        <TouchableOpacity onPress={onPress}>
+          <WalletNotDeployed name={isExpanded ? 'chevron-down' : 'chevron-right'} />
         </TouchableOpacity>
       )}
     </Container>
@@ -83,16 +80,21 @@ export default ChainListHeader;
 
 const Container = styled.View`
   background-color: ${({ theme }) => theme.colors.background};
-  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
 `;
 
 const Title = styled(Text)`
+  align-items: flex-start;
   margin: ${spacing.mediumLarge}px ${spacing.large}px;
-  ${fontStyles.medium};
+  ${fontStyles.big};
+  justify-content: center;
 `;
 
-const WalletNotDeployed = styled(Text)`
-  padding-bottom: ${spacing.mediumLarge}px;
-  ${fontStyles.small};
-  color: ${({ theme }) => theme.colors.link};
+const WalletNotDeployed = styled(Icon)`
+  align-items: flex-end;
+  // flex:1;
+  margin: ${spacing.mediumLarge}px ${spacing.large}px;
+  ${fontStyles.medium};
+  justify-content: center;
 `;
