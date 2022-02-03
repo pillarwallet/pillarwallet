@@ -157,26 +157,18 @@ const AccountsScreen = ({
             </TitleContainer>
             <Value>{balance}</Value>
           </RowContainer>
-          <RowContainer
-            style={{
-              flexDirection: 'column',
-              marginLeft: 20,
-              alignItems: 'flex-start',
-              justifyContent: 'flex-start',
-            }}
-          >
+          <MigrationButtons>
             {showKeyBasedAssetMigrationButton && (
               <RowContainer>
                 <IconContainer
                   name={isDarkTheme ? 'asset-migration-dark' : 'asset-migration'}
                   onPress={() => navigation.navigate(KEY_BASED_ASSET_TRANSFER_INTRO)}
                 />
-                <TextContent
+                <BannerText
                   color={colors.link}
-                  style={fontStyles.medium}
                   onPress={() => navigation.navigate(KEY_BASED_ASSET_TRANSFER_INTRO)}
                 > {t('label.assetMigrate', { mediumText: true, color: colors.link })}
-                </TextContent>
+                </BannerText>
               </RowContainer>
             )}
             {showEnsMigrationBanner && (
@@ -185,14 +177,14 @@ const AccountsScreen = ({
                   name={isDarkTheme ? 'ens-migration-dark' : 'ens-migration'}
                   onPress={() => navigation.navigate(ENS_MIGRATION_CONFIRM)}
                 />
-                <TextContent
+                <BannerText
                   color={colors.link}
                   onPress={() => navigation.navigate(ENS_MIGRATION_CONFIRM)}
                 > {t('label.ensMigrate', { mediumText: true, color: colors.link })}
-                </TextContent>
+                </BannerText>
               </RowContainer>
               )}
-          </RowContainer>
+          </MigrationButtons>
         </ContainerView>
       </Container>
     );
@@ -285,6 +277,11 @@ const TextContent = styled(Text)`
   padding: 0 ${spacing.medium}px 0 ${spacing.medium}px;
 `;
 
+const BannerText = styled(Text)`
+${fontStyles.medium};
+padding-left: ${spacing.small}px;
+`;
+
 const IconContainer = styled(Icon)`
 `;
 
@@ -294,6 +291,13 @@ const RadioIcon = styled(Icon)`
   background-color: ${({ theme }) => theme.colors.basic050};
   border-radius: ${borderRadiusSizes.medium}px;
   padding-right: ${spacing.medium}px;
+`;
+
+const MigrationButtons = styled.View`
+  flex-direction: column;
+  margin-left: 20px;
+  align-items: flex-start;
+  justify-content: flex-start;
 `;
 
 const mapStateToProps = ({
