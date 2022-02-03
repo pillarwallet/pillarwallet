@@ -3,13 +3,13 @@
   "ensName": "ENS name",
   "ethereum": "Ethereum",
   "facebook": "Facebook",
-  "keyWallet": "Key wallet",
+  "keyWallet": "Original key based",
   "medium": "Medium",
   "pillarNetwork": "Pillar Network",
   "pillarTank": "Pillar Tank",
   "poolTogether": "Pool Together",
-  "smartWallet": "Smart Wallet",
-  "legacySmartWallet": "Smart Wallet (legacy)",
+  "smartWallet": "Pillar v2 (Etherspot)",
+  "legacySmartWallet": "Pillar v1",
   "telegram": "Telegram",
   "twitter": "Twitter",
   "youtube": "Youtube",
@@ -96,7 +96,7 @@
   },
 
   "title": {
-    "accounts": "Accounts",
+    "accounts": "Switch account",
     "addFundsToWallet": "Add funds to Pillar",
     "mainActivityFeed": "History",
     "publicAddress": "Public address",
@@ -270,7 +270,9 @@
     "balanceFiatTokenFormat": "Balance {{balanceInFiat}} ({{balance}})",
     "balanceTokenFormat": "Balance {{balance}}",
     "filterByName": "Filter by name",
-    "username": "username"
+    "username": "username",
+    "assetMigrate": "Migrate assets to Etherspot",
+    "ensMigrate": "Migrate ENS to Etherspot"
   },
 
   "button": {
