@@ -93,7 +93,6 @@ const Title = styled(Text)`
 
 const WalletNotDeployed = styled(Icon)`
   align-items: flex-end;
-  // flex:1;
   margin: ${spacing.mediumLarge}px ${spacing.large}px;
   ${fontStyles.medium};
   justify-content: center;

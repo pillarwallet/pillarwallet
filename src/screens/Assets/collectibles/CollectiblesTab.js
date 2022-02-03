@@ -53,9 +53,6 @@ import { type CollectibleItem, useCollectibleAssets } from './selectors';
 import { buildCollectibleFromCollectibleItem, calculateTotalCollectibleCount } from './utils';
 import CollectibleListItem from './CollectibleListItem';
 
-// assets (Temporarily removed banner for empty wallets until design change)
-// const collectibleBanner = require('assets/images/banners-collectibles.png');
-
 
 function CollectiblesTab() {
   const { t } = useTranslation();
