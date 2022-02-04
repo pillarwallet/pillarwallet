@@ -29,7 +29,7 @@ import { BigNumber } from 'bignumber.js';
 import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 
 // Constants
-import { SEND_COLLECTIBLE_CONFIRM, SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
+import { SEND_COLLECTIBLE_CONFIRM, SEND_TOKEN_CONFIRM, UNSUPPORTED_EXCHANGES } from 'constants/navigationConstants';
 import { ASSET_TYPES } from 'constants/assetsConstants';
 
 // Components
@@ -48,11 +48,7 @@ import { accountAssetsWithBalanceSelector } from 'selectors/assets';
 
 // Types
 import type { NavigationScreenProp } from 'react-navigation';
-import type {
-  TransactionPayload,
-  TransactionFeeInfo,
-  TransactionToEstimate,
-} from 'models/Transaction';
+import type { TransactionPayload, TransactionFeeInfo, TransactionToEstimate } from 'models/Transaction';
 import type { AssetData, AssetOption } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -97,8 +93,12 @@ const SendAsset = ({
 }: Props) => {
   let defaultAssetData = navigation.getParam('assetData');
 
-  if (!defaultAssetData?.token && defaultAssetData?.contractAddress &&
-    defaultAssetData?.chain && (defaultAssetData?.tokenType !== ASSET_TYPES.COLLECTIBLE)) {
+  if (
+    !defaultAssetData?.token &&
+    defaultAssetData?.contractAddress &&
+    defaultAssetData?.chain &&
+    defaultAssetData?.tokenType !== ASSET_TYPES.COLLECTIBLE
+  ) {
     defaultAssetData = getAssetData(assetsWithBalance, defaultAssetData);
   }
 
@@ -108,9 +108,8 @@ const SendAsset = ({
   };
 
   const [assetData, setAssetData] = useState<AssetOption | Collectible>(
-    defaultAssetData?.tokenType
-      ? defaultAssetData
-      : (defaultAssetOption || assetsWithBalance[0]));
+    defaultAssetData?.tokenType ? defaultAssetData : defaultAssetOption || assetsWithBalance[0],
+  );
   const [value, setValue] = useState(null);
   const [selectedContact, setSelectedContact] = useState(defaultContact);
   const [submitPressed, setSubmitPressed] = useState(false);
@@ -142,10 +141,12 @@ const SendAsset = ({
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const updateTxFeeDebounced = useCallback(
-    debounce(updateTxFee, 100),
-    [value, selectedContact, useGasToken, assetData],
-  );
+  const updateTxFeeDebounced = useCallback(debounce(updateTxFee, 100), [
+    value,
+    selectedContact,
+    useGasToken,
+    assetData,
+  ]);
 
   useEffect(() => {
     updateTxFeeDebounced();
@@ -212,8 +213,8 @@ const SendAsset = ({
   const showFee = isCollectible ? hasAllFeeData : showFeeForAsset;
 
   const hasAllData = isCollectible
-    ? (!!selectedContact && !!assetData)
-    : (isValidValue && !!selectedContact && !!currentValue);
+    ? !!selectedContact && !!assetData
+    : isValidValue && !!selectedContact && !!currentValue;
 
   // perform actual balance check only if all values set
   let enoughBalanceForTransaction = true;
@@ -227,21 +228,17 @@ const SendAsset = ({
       // $FlowFixMe: collectible does not have `token`
       symbol: assetData.token,
     };
-    enoughBalanceForTransaction = isEnoughBalanceForTransactionFee(
-      balances,
-      balanceCheckTransaction,
-      chain,
-    );
+    enoughBalanceForTransaction = isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction, chain);
   }
 
-  const errorMessage = !enoughBalanceForTransaction
-    ? t('label.notEnoughGas')
-    : estimateErrorMessage;
+  const errorMessage = !enoughBalanceForTransaction ? t('label.notEnoughGas') : estimateErrorMessage;
 
   // note: fee toggle component renders one more button on error message, no need to show disabled next button
   const showNextButton = hasAllData && (!errorMessage || isEstimating);
 
   const isNextButtonDisabled = !session.isOnline || !feeInfo || !!errorMessage || !isValidValue;
+
+  const openUnsupportedExchanges = () => navigation.navigate(UNSUPPORTED_EXCHANGES);
 
   return (
     <SendContainer
@@ -249,6 +246,7 @@ const SendAsset = ({
         contacts,
         selectedContact,
         onSelectContact: setSelectedContact,
+        openUnsupportedExchanges,
       }}
       assetData={assetData}
       onAssetDataChange={(asset) => setAssetData(asset)}
@@ -282,11 +280,7 @@ const getAssetData = (tokens, selectedToken) => {
 };
 
 const mapStateToProps = ({
-  transactionEstimate: {
-    feeInfo,
-    isEstimating,
-    errorMessage: estimateErrorMessage,
-  },
+  transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
 }: RootReducerState): $Shape<Props> => ({
   feeInfo,
   isEstimating,
@@ -306,10 +300,8 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
-  estimateTransaction: (
-    transaction: TransactionToEstimate,
-    chain: Chain,
-  ) => dispatch(estimateTransactionAction(transaction, chain)),
+  estimateTransaction: (transaction: TransactionToEstimate, chain: Chain) =>
+    dispatch(estimateTransactionAction(transaction, chain)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(SendAsset);

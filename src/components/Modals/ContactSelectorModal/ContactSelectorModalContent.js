@@ -49,11 +49,15 @@ import { spacing } from 'utils/variables';
 // Types
 import type { Contact } from 'models/Contact';
 
+// Local
+import SendWarning from './SendWarning';
+
 type Props = {|
   contacts: Contact[],
   onSelectContact: (contact: Contact) => mixed,
   query: string,
   onQueryChange: (query: string) => mixed,
+  openUnsupportedExchanges?: () => mixed,
 |};
 
 /**
@@ -61,11 +65,19 @@ type Props = {|
  *
  * Screen using it should implement it's own header.
  */
-const ContactSelectorModalContent = ({ contacts = [], onSelectContact, query, onQueryChange }: Props) => {
+const ContactSelectorModalContent = ({
+  contacts = [],
+  onSelectContact,
+  query,
+  onQueryChange,
+  openUnsupportedExchanges,
+}: Props) => {
   const { t, tRoot } = useTranslationWithPrefix('contactSelector');
   const dispatch = useDispatch();
 
   const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
+
+  const [warningAccepted, setWarningAccepted] = React.useState(false);
 
   const handleAddToContactsPress = async (contact: Contact) => {
     Modal.open(() => (
@@ -123,14 +135,42 @@ const ContactSelectorModalContent = ({ contacts = [], onSelectContact, query, on
     if (customContact) {
       return (
         <>
-          <Button title={t('button.addContact')} onPress={() => handleAddToContactsPress(customContact)} size="large" />
+          <Button
+            title={t('button.addContact')}
+            onPress={() => handleAddToContactsPress(customContact)}
+            size="large"
+            disabled={!warningAccepted}
+          />
           <Spacing h={spacing.small} />
-          <Button title={t('button.skip')} onPress={() => onSelectContact(customContact)} size="large" variant="text" />
+          <Button
+            title={t('button.skip')}
+            onPress={() => onSelectContact(customContact)}
+            size="large"
+            variant="text"
+            disabled={!warningAccepted}
+          />
         </>
       );
     }
 
     return <Button title={tRoot('button.paste')} onPress={handlePaste} size="large" />;
+  };
+
+  const handleUnsupportedExchanges = () => openUnsupportedExchanges && openUnsupportedExchanges();
+
+  const renderSendWarning = () => {
+    if (!errorMessage && customContact) {
+      return (
+        <SendWarning
+          warningAccepted={warningAccepted}
+          setWarningAccepted={setWarningAccepted}
+          style={{ marginTop: spacing.large }}
+          handleUnsupportedExchanges={handleUnsupportedExchanges}
+        />
+      );
+    }
+
+    return null;
   };
 
   return (
@@ -142,6 +182,8 @@ const ContactSelectorModalContent = ({ contacts = [], onSelectContact, query, on
         error={!!errorMessage}
         autoFocus
       />
+
+      {renderSendWarning()}
 
       <FlatList
         data={items}

@@ -110,6 +110,7 @@ import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
 import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
 import WalletConnectBrowser from 'screens/WalletConnect/WalletConnectBrowser';
 import RegisterENSScreen from 'screens/RegisterENS';
+import UnsupportedExchanges from 'screens/SendToken/UnsupportedExchanges';
 
 // components
 import Toast from 'components/Toast';
@@ -236,6 +237,7 @@ import {
   PIN_CODE_CONFIRMATION,
   IMPORT_FLOW_FROM_SETTINGS,
   REGISTER_ENS,
+  UNSUPPORTED_EXCHANGES,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -355,6 +357,7 @@ const sendTokenFlow = createStackNavigator(
     [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+    [UNSUPPORTED_EXCHANGES]: UnsupportedExchanges,
   },
   StackNavigatorModalConfig,
 );
