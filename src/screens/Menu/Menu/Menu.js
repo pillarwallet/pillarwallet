@@ -18,11 +18,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Linking } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
-import Instabug, { Replies } from 'instabug-reactnative';
+import { Replies, BugReporting } from 'instabug-reactnative';
 import { useTranslationWithPrefix } from 'translations/translate';
 import { switchEnvironments } from 'configs/envConfig';
 
@@ -39,6 +39,9 @@ import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
 import { useIsWalletBackedUp } from 'selectors/wallets';
+import { useRootSelector } from 'selectors';
+import { accountAssetsBalancesSelector } from 'selectors/balances';
+import { useSupportedChains } from 'selectors/chains';
 
 // Services
 import { firebaseRemoteConfig } from 'services/firebase';
@@ -46,6 +49,8 @@ import { firebaseRemoteConfig } from 'services/firebase';
 // Utils
 import { useIsDarkTheme, useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
+import { getWalletPlrBalance } from 'utils/balances';
+import { sum } from 'utils/bigNumber';
 
 // Assets
 import PillarLogo from 'assets/images/pillar-logo-small.svg';
@@ -62,23 +67,20 @@ const Menu = () => {
   const navigation = useNavigation();
   const colors = useThemeColors();
   const isBackedUp = useIsWalletBackedUp();
+  const accountBalances = useRootSelector(accountAssetsBalancesSelector);
+  const chains = useSupportedChains();
+  const plrbalance = getWalletPlrBalance(accountBalances, chains);
+  const enoughPlrBalance = sum(plrbalance).gt(9999);
 
   const knowledgebaseUrl = firebaseRemoteConfig.getString(REMOTE_CONFIG.KNOWLEDGEBASE_URL);
 
-  const [repliesFlag, setRepliesFlag] = useState(false);
-
-  Replies.hasChats(previousChat => {
-    if (previousChat) {
-      setRepliesFlag(true);
-    }
-  });
-
   const goToSettings = () => navigation.navigate(MENU_SETTINGS);
   const goToInviteFriends = () => navigation.navigate(CONTACTS_FLOW);
-  const goToSupportChat = () => Instabug.show();
   const goToStorybook = () => navigation.navigate(STORYBOOK);
   const goToSupportConversations = () => Replies.show();
   const goToKnowledgebase = () => Linking.openURL(knowledgebaseUrl);
+  const goToEmailSupport = () =>
+    BugReporting.showWithOptions(BugReporting.reportType.feedback, [BugReporting.option.emailFieldOptional]);
 
   let clickCount = 0;
   const handleSecretClick = () => {
@@ -108,9 +110,15 @@ const Menu = () => {
           onPress={goToSettings}
         />
         <MenuItem title={t('item.addressBook')} icon="contacts" onPress={goToInviteFriends} />
-        <MenuItem title={t('item.supportChat')} icon="message" onPress={goToSupportChat} />
-        {repliesFlag && (
-          <MenuItem title={t('item.supportConversations')} icon="message" onPress={goToSupportConversations} />
+        {enoughPlrBalance ? (
+          <MenuItem title={t('item.liveChatSupport')} icon="message" onPress={goToSupportConversations} />
+        ) : (
+          <MenuItem
+            title={t('item.emailSupport')}
+            subtitle={t('item.liveChatActivate')}
+            icon="message"
+            onPress={goToEmailSupport}
+          />
         )}
         {__DEV__ && <MenuItem title={t('item.storybook')} icon="lifebuoy" onPress={goToStorybook} />}
         <MenuItem title={t('item.knowledgebase')} icon="info" onPress={goToKnowledgebase} />

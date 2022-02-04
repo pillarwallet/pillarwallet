@@ -88,7 +88,14 @@ function InvestmentsTab() {
   };
 
   const renderSectionHeader = ({ chain, balance }: Section) => {
-    return <ChainListHeader chain={chain} balance={balance} onPress={() => toggleExpandItems(chain)} />;
+    return (
+      <ChainListHeader
+        chain={chain}
+        balance={balance}
+        isExpanded={expandItemsPerChain[chain] ?? null}
+        onPress={() => toggleExpandItems(chain)}
+      />
+    );
   };
 
   const renderItem = (headerListItem: HeaderListItem<ServiceAssetBalance>) => {
