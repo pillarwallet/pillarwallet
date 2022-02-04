@@ -595,9 +595,12 @@
       "settings": "Settings",
       "addressBook": "Address book",
       "supportChat": "Support",
+      "emailSupport": "Email support",
+      "liveChatSupport": "Live chat support",
       "storybook": "Storybook",
       "supportConversations": "Support conversations",
-      "knowledgebase": "Knowledgebase"
+      "knowledgebase": "Knowledgebase",
+      "liveChatActivate": "Hold 10,000 PLR tokens to activate live chat support"
     },
     "footer": {
       "privacyPolicy": "Privacy Policy",
