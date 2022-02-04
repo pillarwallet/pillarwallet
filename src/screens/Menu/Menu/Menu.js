@@ -22,7 +22,7 @@ import React, { useState } from 'react';
 import { Linking } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
-import Instabug, { Replies, BugReporting } from 'instabug-reactnative';
+import { Replies, BugReporting } from 'instabug-reactnative';
 import { useTranslationWithPrefix } from 'translations/translate';
 import { switchEnvironments } from 'configs/envConfig';
 
@@ -42,7 +42,6 @@ import { useIsWalletBackedUp } from 'selectors/wallets';
 import { useRootSelector } from 'selectors';
 import { accountAssetsBalancesSelector } from 'selectors/balances';
 import { useSupportedChains } from 'selectors/chains';
-
 
 // Services
 import { firebaseRemoteConfig } from 'services/firebase';
@@ -71,7 +70,6 @@ const Menu = () => {
   const accountBalances = useRootSelector(accountAssetsBalancesSelector);
   const chains = useSupportedChains();
   const plrbalance = getWalletPlrBalance(accountBalances, chains);
-  const isPlrBalanceZero = sum(plrbalance).isEqualTo(0);
   const enoughPlrBalance = sum(plrbalance).gt(10000);
 
   const knowledgebaseUrl = firebaseRemoteConfig.getString(REMOTE_CONFIG.KNOWLEDGEBASE_URL);
@@ -86,7 +84,6 @@ const Menu = () => {
 
   const goToSettings = () => navigation.navigate(MENU_SETTINGS);
   const goToInviteFriends = () => navigation.navigate(CONTACTS_FLOW);
-  const goToSupportChat = () => Instabug.show();
   const goToStorybook = () => navigation.navigate(STORYBOOK);
   const goToSupportConversations = () => Replies.show();
   const goToKnowledgebase = () => Linking.openURL(knowledgebaseUrl);
@@ -121,11 +118,18 @@ const Menu = () => {
           onPress={goToSettings}
         />
         <MenuItem title={t('item.addressBook')} icon="contacts" onPress={goToInviteFriends} />
-        {isPlrBalanceZero && <MenuItem title={t('item.supportChat')} icon="message" onPress={goToSupportChat} />}
-        {repliesFlag && (
-          <MenuItem title={t('item.supportConversations')} icon="message" onPress={goToSupportConversations} />
-        )}
-        {!isPlrBalanceZero &&
+        {repliesFlag &&
+          (enoughPlrBalance ? (
+            <MenuItem title={t('item.liveChatSupport')} icon="message" onPress={goToSupportConversations} />
+          ) : (
+            <MenuItem
+              title={t('item.emailSupport')}
+              subtitle={t('item.liveChatActivate')}
+              icon="message"
+              onPress={goToEmailSupport}
+            />
+          ))}
+        {!repliesFlag &&
           (enoughPlrBalance ? (
             <MenuItem title={t('item.liveChatSupport')} icon="message" onPress={goToSupportConversations} />
           ) : (
