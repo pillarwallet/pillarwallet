@@ -70,7 +70,7 @@ const Menu = () => {
   const accountBalances = useRootSelector(accountAssetsBalancesSelector);
   const chains = useSupportedChains();
   const plrbalance = getWalletPlrBalance(accountBalances, chains);
-  const enoughPlrBalance = sum(plrbalance).gt(10000);
+  const enoughPlrBalance = sum(plrbalance).gt(9999);
 
   const knowledgebaseUrl = firebaseRemoteConfig.getString(REMOTE_CONFIG.KNOWLEDGEBASE_URL);
 
