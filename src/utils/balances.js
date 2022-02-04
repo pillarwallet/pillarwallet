@@ -26,6 +26,9 @@ import { addressesEqual } from 'utils/assets';
 import { mapChainRecordValues } from 'utils/chains';
 import { valueForAddress } from 'utils/common';
 
+// Configs
+import { getPlrAddressForChain } from 'configs/assetsConfig';
+
 // Types
 import type {
   AccountAssetBalances,
@@ -34,7 +37,7 @@ import type {
   ServiceAssetBalance,
   CategoryAssetsBalances,
 } from 'models/Balances';
-import type { ChainRecord } from 'models/Chain';
+import type { ChainRecord, Chain } from 'models/Chain';
 
 
 export const getChainWalletAssetsBalances = (
@@ -85,4 +88,13 @@ export const getWalletBalanceForAsset = (balances: ?WalletAssetsBalances, assetA
 
   const balance = valueForAddress(balances, assetAddress)?.balance;
   return BigNumber(balance ?? 0);
+};
+
+export const getWalletPlrBalance = (balances: ?AccountAssetBalances, chains: ?Chain[]): Array<BigNumber> => {
+  if (!balances || !chains) return [];
+  const plrBalance = chains.map(chain => {
+    const walletBalances = balances[chain]?.wallet;
+    return getWalletBalanceForAsset(walletBalances, getPlrAddressForChain(chain));
+  });
+  return plrBalance;
 };

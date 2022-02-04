@@ -17,15 +17,24 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Platform } from 'react-native';
+import { Platform, Alert } from 'react-native';
 import * as Keychain from 'react-native-keychain';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 import { getEnv } from 'configs/envConfig';
+import { BugReporting } from 'instabug-reactnative';
+import RNExitApp from 'react-native-exit-app';
 
 // constants
 import { STAGING } from 'constants/envConstants';
+import { CHAIN } from 'constants/chainConstants';
+
+// services
+import etherspotService from 'services/etherspot';
+
+// utils
+import { getThemeColors } from 'utils/themes';
 
 
 const KEYCHAIN_SERVICE = `com.pillarproject.wallet${getEnv().BUILD_TYPE === STAGING ? '.staging' : ''}`;
@@ -38,10 +47,43 @@ export type KeyChainData = {
   pin?: ?string,
 };
 
+export const handleCatch = (accountAddress: ?string) => {
+  const colors = getThemeColors();
+  const buttons = [];
+  buttons.push({
+    text: t('error.failedKeychain.exitButtonText'),
+    onPress: () => RNExitApp.exitApp(),
+  });
+  accountAddress = accountAddress ?? etherspotService?.getAccountAddress(CHAIN.ETHEREUM);
+  if (accountAddress) {
+    buttons.push({
+      text: t('error.failedKeychain.supportButtonText'),
+      onPress: () => {
+        BugReporting.showWithOptions(BugReporting.reportType.feedback, [BugReporting.option.emailFieldOptional]);
+      },
+    });
+  }
+
+  Alert.alert(
+    t('error.failedKeychain.title', {
+      color: colors.basic010,
+    }),
+    `${t('error.failedKeychain.nonEtherspotMessage', {
+      color: colors.basic030,
+    })}${(
+      accountAddress ? t('error.failedKeychain.etherspotMessage', {
+        color: colors.basic030,
+        address: accountAddress,
+      }) : ''
+    )}`,
+    buttons,
+  );
+};
+
 export const resetKeychainDataObject = () =>
   Keychain.resetGenericPassword({
     service: KEYCHAIN_SERVICE,
-  }).catch(() => null);
+  }).catch(() => handleCatch());
 
 export const setKeychainDataObject = async (data: KeyChainData, biometry?: ?boolean) => {
   await resetKeychainDataObject();
@@ -60,7 +102,7 @@ export const setKeychainDataObject = async (data: KeyChainData, biometry?: ?bool
 
   const options = biometry ? { ...basicOptions, ...biometryOptions } : basicOptions;
 
-  return Keychain.setGenericPassword(KEYCHAIN_DATA_KEY, JSON.stringify(data), options).catch(() => null);
+  return Keychain.setGenericPassword(KEYCHAIN_DATA_KEY, JSON.stringify(data), options).catch(() => handleCatch());
 };
 
 export const getKeychainDataObject = (errorHandler?: Function): Promise<KeyChainData> =>
@@ -73,12 +115,12 @@ export const getKeychainDataObject = (errorHandler?: Function): Promise<KeyChain
     },
   })
     .then(({ password = '{}' }) => JSON.parse(password))
-    .catch(errorHandler || (() => null));
+    .catch(errorHandler || (() => handleCatch()));
 
 export const getSupportedBiometryType = (resHandler: (biometryType?: string) => void, errorHandler?: Function) => {
   Keychain.getSupportedBiometryType()
     .then(resHandler)
-    .catch(errorHandler || (() => null));
+    .catch(errorHandler || (() => handleCatch()));
 };
 
 export const getPrivateKeyFromKeychainData = (data?: KeyChainData) => {

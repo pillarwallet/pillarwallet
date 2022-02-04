@@ -21,9 +21,12 @@
 // constants
 import { ASSET_TYPES } from 'constants/assetsConstants';
 
+// utils
+import { mapRecordValues, recordValues } from 'utils/object';
+
 // types
 import type { Collectible } from 'models/Collectible';
-import type { Chain } from 'models/Chain';
+import type { Chain, ChainRecord } from 'models/Chain';
 import type { CollectibleItem } from './selectors';
 
 export function buildCollectibleFromCollectibleItem(
@@ -55,4 +58,9 @@ export function buildCollectibleFromCollectibleItem(
     tokenType: ASSET_TYPES.COLLECTIBLE,
     isLegacy,
   };
+}
+
+export function calculateTotalCollectibleCount(accountCollectibleCounts: ChainRecord<any[]>): number {
+  const counts = recordValues(mapRecordValues(accountCollectibleCounts, (collectibles) => collectibles?.length ?? 0));
+  return counts.reduce((total, count) => (count != null ? total + count : total), 0);
 }

@@ -17,8 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { useEffect, useState } from 'react';
-import { FlatList } from 'react-native';
+import React, { useEffect } from 'react';
+import styled from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -26,22 +26,20 @@ import { sortBy } from 'lodash';
 import t from 'translations/translate';
 
 // components
-import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
-import SettingsItemCarded from 'components/legacy/ListItem/SettingsItemCarded';
-import { ScrollWrapper } from 'components/legacy/Layout';
-import Button from 'components/legacy/Button';
+import SlideModal from 'components/Modals/SlideModal';
+import Text from 'components/core/Text';
+import Icon from 'components/core/Icon';
 
 // utils
-import { getAccountName } from 'utils/accounts';
+import { getAccountName, isEtherspotAccount } from 'utils/accounts';
 import { calculateTotalBalance } from 'utils/totalBalances';
-import { spacing } from 'utils/variables';
+import { fontStyles, spacing, borderRadiusSizes } from 'utils/variables';
 import { images } from 'utils/images';
-import { responsiveSize } from 'utils/ui';
-import { useTheme } from 'utils/themes';
-import { formatFiat } from 'utils/common';
+import { useTheme, getThemeColors, useIsDarkTheme } from 'utils/themes';
+import { formatFiat, getEnsPrefix } from 'utils/common';
 
 // constants
-import { KEY_BASED_ASSET_TRANSFER_INTRO } from 'constants/navigationConstants';
+import { KEY_BASED_ASSET_TRANSFER_INTRO, ENS_MIGRATION_CONFIRM } from 'constants/navigationConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -51,20 +49,19 @@ import { switchAccountAction } from 'actions/accountsActions';
 import { fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
 
 // selectors
-import { useFiatCurrency } from 'selectors';
+import { useFiatCurrency, useRootSelector } from 'selectors';
 import { keyBasedWalletHasPositiveBalanceSelector } from 'selectors/balances';
 import { totalBalancesPerAccountSelector } from 'selectors/totalBalances';
+import { isEnsMigrationNeededSelector } from 'selectors/archanova';
 
 // services
 import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
-import type { RenderItemProps } from 'utils/types/react-native';
 import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 import type { TotalBalancesPerAccount } from 'models/TotalBalances';
-
 
 const ITEM_TYPE = {
   ACCOUNT: 'ACCOUNT',
@@ -79,6 +76,10 @@ type ListItem = {|
   balance?: string,
   isActive?: boolean,
   iconSource?: string,
+  showKeyBasedAssetMigrationButton: boolean,
+  address: string,
+  username?: string,
+  showEnsMigrationBanner: boolean,
 |};
 
 type Props = {|
@@ -99,13 +100,15 @@ const AccountsScreen = ({
   totalBalances,
 }: Props) => {
   const navigation = useNavigation();
+  const name = navigation.getParam('user');
   const theme = useTheme();
+  const colors = getThemeColors(theme);
+  const isDarkTheme = useIsDarkTheme();
   const fiatCurrency = useFiatCurrency();
+  const isEnsMigrationNeeded = useRootSelector(isEnsMigrationNeededSelector);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { fetchAllAccountsTotalBalances(); }, []);
-
-  const [switchingToAccountId, setSwitchingToAccountId] = useState(false);
 
   const { smartWalletIcon } = images(theme);
   const activeBlockchainNetwork = blockchainNetworks.find(({ isActive }) => !!isActive);
@@ -116,39 +119,74 @@ const AccountsScreen = ({
     navigation.goBack(null);
   };
 
-  const renderListItem = ({ item }: RenderItemProps<ListItem>) => {
+  const renderListItem = (item) => {
     const {
       title,
       balance,
       mainAction,
       isActive,
-      iconSource,
       id,
-      type,
+      showKeyBasedAssetMigrationButton,
+      address,
+      username,
+      showEnsMigrationBanner,
     } = item;
 
-    if (type === ITEM_TYPE.BUTTON) {
-      return (
-        <Button
-          title={title}
-          onPress={mainAction}
-          style={{ marginBottom: responsiveSize(15) }}
-        />
-      );
-    }
-
     return (
-      <SettingsItemCarded
-        isLoading={id === switchingToAccountId}
-        title={title}
-        subtitle={balance}
+      <Container
+        key={`${id}`}
         onPress={() => {
-          setSwitchingToAccountId(id);
-          mainAction();
+          if (isActive) navigation.goBack(null);
+          else mainAction();
         }}
-        isActive={isActive}
-        iconSource={iconSource}
-      />
+      >
+        <ContainerView isSelected={isActive}>
+          <RowContainer>
+            {isActive && (
+              <RadioIcon name="checked-radio" />
+            )}
+            {!isActive && (
+              <RadioIcon name="unchecked-radio" />
+            )}
+            <TitleContainer>
+              <TextContent>{title}</TextContent>
+              <TextContent style={{ fontSize: 14 }}>
+                {`${address.substring(0, 4)}...${
+                  address.substring(address.length - 4)}${isActive && username ? ` (${username})` : ''}`}
+              </TextContent>
+            </TitleContainer>
+            <Value>{balance}</Value>
+          </RowContainer>
+          <MigrationButtons>
+            {showKeyBasedAssetMigrationButton && (
+              <RowContainer>
+                <IconContainer
+                  name={isDarkTheme ? 'asset-migration-dark' : 'asset-migration'}
+                  onPress={() => navigation.navigate(KEY_BASED_ASSET_TRANSFER_INTRO)}
+                />
+                <BannerText
+                  color={colors.link}
+                  onPress={() => navigation.navigate(KEY_BASED_ASSET_TRANSFER_INTRO)}
+                > {t('label.assetMigrate', { mediumText: true, color: colors.link })}
+                </BannerText>
+              </RowContainer>
+            )}
+            {showEnsMigrationBanner && (
+              <RowContainer>
+                <IconContainer
+                  name={isDarkTheme ? 'ens-migration-dark' : 'ens-migration'}
+                  onPress={() => navigation.navigate(ENS_MIGRATION_CONFIRM)}
+                />
+                <BannerText
+                  color={colors.link}
+                  onPress={() => navigation.navigate(ENS_MIGRATION_CONFIRM)}
+                > {t('label.ensMigrate', { mediumText: true, color: colors.link })}
+                </BannerText>
+              </RowContainer>
+              )}
+          </MigrationButtons>
+        </ContainerView>
+      </Container>
     );
   };
 
@@ -157,6 +195,8 @@ const AccountsScreen = ({
     accounts,
     ({ type }) => type === ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET ? -1 : 1,
   );
+
+  const isKeyBasedAssetsMigrationEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.KEY_BASED_ASSETS_MIGRATION);
 
   const accountsList: ListItem[] = sortedAccounts.map((account: Account): ListItem => {
     const { id, isActive, type } = account;
@@ -173,40 +213,92 @@ const AccountsScreen = ({
       mainAction: () => setAccountActive(account),
       isActive: isActiveWallet,
       iconSource: smartWalletIcon,
+      showKeyBasedAssetMigrationButton: isKeyBasedAssetsMigrationEnabled && keyBasedWalletHasPositiveBalance,
+      address: id,
+      username: name ? `${name}${getEnsPrefix()}` : '',
+      showEnsMigrationBanner: isEtherspotAccount(account) && isEnsMigrationNeeded,
     };
   });
 
-  const isKeyBasedAssetsMigrationEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.KEY_BASED_ASSETS_MIGRATION);
-  if (isKeyBasedAssetsMigrationEnabled && keyBasedWalletHasPositiveBalance) {
-    accountsList.push({
-      id: 'KEY_BASED',
-      type: ITEM_TYPE.BUTTON,
-      title: t('button.migrateAssetsToSmartWallet'),
-      mainAction: () => {
-        navigation.navigate(KEY_BASED_ASSET_TRANSFER_INTRO);
-      },
-    });
-  }
-
   return (
-    <ContainerWithHeader
-      headerProps={{
-        centerItems: [{ title: t('title.accounts') }],
-        leftItems: [{ close: true, dismiss: true }],
-      }}
-    >
-      <ScrollWrapper contentContainerStyle={{ flexGrow: 1 }}>
-        <FlatList
-          data={accountsList}
-          keyExtractor={(item) => item.id || item.type}
-          style={{ width: '100%', flexGrow: 0 }}
-          contentContainerStyle={{ width: '100%', padding: spacing.large }}
-          renderItem={renderListItem}
-        />
-      </ScrollWrapper>
-    </ContainerWithHeader>
+    <SlideModal noPadding noClose showHeader centerTitle title={t('title.accounts')}>
+      <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
+        {accountsList.map(item => renderListItem(item))}
+      </ContentWrapper>
+    </SlideModal>
   );
 };
+
+const ContentWrapper = styled.View`
+  padding: ${spacing.medium}px 0px;
+  align-items: center;
+`;
+
+const TitleContainer = styled.View`
+  flex-direction: column;
+  flex:1;
+
+`;
+
+const ContainerView = styled.View`
+  background-color: ${({ theme, isSelected }) => (isSelected ? theme.colors.basic080 : theme.colors.basic050)};
+  margin: 0 ${spacing.layoutSides}px;
+  padding: ${spacing.large}px;
+  border-radius: ${borderRadiusSizes.medium}px;
+  flex-direction: column;
+  flex: 1;
+`;
+
+const TouchableContainer = styled.TouchableOpacity`
+  align-items: center;
+  justify-content: center;
+`;
+
+const Container = styled(TouchableContainer)`
+  background-color: ${({ theme }) => theme.colors.basic050};
+  flex-direction: row;
+  border-radius: ${borderRadiusSizes.defaultContainer}px;
+`;
+
+const Value = styled(Text)`
+  ${fontStyles.medium};
+  font-variant: tabular-nums;
+`;
+
+const RowContainer = styled.View`
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  padding: ${spacing.small}px;
+`;
+
+const TextContent = styled(Text)`
+  ${fontStyles.big};
+  padding: 0 ${spacing.medium}px 0 ${spacing.medium}px;
+`;
+
+const BannerText = styled(Text)`
+  ${fontStyles.medium};
+  padding-left: ${spacing.small}px;
+`;
+
+const IconContainer = styled(Icon)`
+`;
+
+const RadioIcon = styled(Icon)`
+  height: 24px;
+  width: 24px;
+  background-color: ${({ theme }) => theme.colors.basic050};
+  border-radius: ${borderRadiusSizes.medium}px;
+  padding-right: ${spacing.medium}px;
+`;
+
+const MigrationButtons = styled.View`
+  flex-direction: column;
+  margin-left: 20px;
+  align-items: flex-start;
+  justify-content: flex-start;
+`;
 
 const mapStateToProps = ({
   accounts: { data: accounts },
