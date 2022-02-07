@@ -35,6 +35,7 @@ import etherspotService from 'services/etherspot';
 
 // utils
 import { getThemeColors } from 'utils/themes';
+import { reportErrorLog } from 'utils/common';
 
 
 const KEYCHAIN_SERVICE = `com.pillarproject.wallet${getEnv().BUILD_TYPE === STAGING ? '.staging' : ''}`;
@@ -47,7 +48,8 @@ export type KeyChainData = {
   pin?: ?string,
 };
 
-export const handleCatch = (accountAddress: ?string) => {
+export const handleCatch = (accountAddress: ?string, error: ?any) => {
+  reportErrorLog('Exception caught on keychain: ', error);
   const colors = getThemeColors();
   const buttons = [];
   buttons.push({
@@ -83,7 +85,7 @@ export const handleCatch = (accountAddress: ?string) => {
 export const resetKeychainDataObject = () =>
   Keychain.resetGenericPassword({
     service: KEYCHAIN_SERVICE,
-  }).catch(() => handleCatch());
+  }).catch((error) => handleCatch(null, error));
 
 export const setKeychainDataObject = async (data: KeyChainData, biometry?: ?boolean) => {
   await resetKeychainDataObject();
@@ -102,7 +104,8 @@ export const setKeychainDataObject = async (data: KeyChainData, biometry?: ?bool
 
   const options = biometry ? { ...basicOptions, ...biometryOptions } : basicOptions;
 
-  return Keychain.setGenericPassword(KEYCHAIN_DATA_KEY, JSON.stringify(data), options).catch(() => handleCatch());
+  return Keychain.setGenericPassword(KEYCHAIN_DATA_KEY, JSON.stringify(data), options)
+    .catch((error) => handleCatch(null, error));
 };
 
 export const getKeychainDataObject = (errorHandler?: Function): Promise<KeyChainData> =>
@@ -115,12 +118,12 @@ export const getKeychainDataObject = (errorHandler?: Function): Promise<KeyChain
     },
   })
     .then(({ password = '{}' }) => JSON.parse(password))
-    .catch(errorHandler || (() => handleCatch()));
+    .catch(errorHandler || ((error) => handleCatch(null, error)));
 
 export const getSupportedBiometryType = (resHandler: (biometryType?: string) => void, errorHandler?: Function) => {
   Keychain.getSupportedBiometryType()
     .then(resHandler)
-    .catch(errorHandler || (() => handleCatch()));
+    .catch(errorHandler || ((error) => handleCatch(null, error)));
 };
 
 export const getPrivateKeyFromKeychainData = (data?: KeyChainData) => {
