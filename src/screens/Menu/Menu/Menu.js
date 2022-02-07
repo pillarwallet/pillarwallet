@@ -119,22 +119,17 @@ const Menu = () => {
           onPress={goToSettings}
         />
         <MenuItem title={t('item.addressBook')} icon="contacts" onPress={goToInviteFriends} />
-        {enoughPlrBalance ? (
-          <MenuItem title={t('item.liveChatSupport')} icon="message" onPress={goToEmailSupport} />
-        ) : null}
+        <MenuItem
+          title={enoughPlrBalance ? t('item.liveChatSupport') : t('item.emailSupport')}
+          subtitle={!enoughPlrBalance ? t('item.liveChatActivate') : null}
+          icon="message"
+          onPress={goToEmailSupport}
+        />
         {repliesFlag && enoughPlrBalance ? (
           <MenuItem title={t('item.supportConversations')} icon="message" onPress={goToSupportConversations} />
         ) : null}
-        {!enoughPlrBalance ? (
-          <MenuItem
-            title={t('item.emailSupport')}
-            subtitle={t('item.liveChatActivate')}
-            icon="message"
-            onPress={goToEmailSupport}
-          />
-        ) : null}
-        {__DEV__ && <MenuItem title={t('item.storybook')} icon="lifebuoy" onPress={goToStorybook} />}
         <MenuItem title={t('item.knowledgebase')} icon="info" onPress={goToKnowledgebase} />
+        {__DEV__ && <MenuItem title={t('item.storybook')} icon="lifebuoy" onPress={goToStorybook} />}
 
         <SocialMediaLinks />
 
