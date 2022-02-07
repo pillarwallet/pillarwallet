@@ -121,7 +121,7 @@ const Menu = () => {
         <MenuItem title={t('item.addressBook')} icon="contacts" onPress={goToInviteFriends} />
         <MenuItem
           title={enoughPlrBalance ? t('item.liveChatSupport') : t('item.emailSupport')}
-          subtitle={!enoughPlrBalance ? t('item.liveChatActivate') : null}
+          subtitle={!enoughPlrBalance ? t('item.liveChatActivate') : ''}
           icon="message"
           onPress={goToEmailSupport}
         />
