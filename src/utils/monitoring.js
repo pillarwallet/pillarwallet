@@ -26,7 +26,7 @@ import { DARK_THEME } from 'constants/appSettingsConstants';
 import type { ElementRef } from 'react';
 
 export const initInstabug = () => {
-  Instabug.startWithToken(getEnv().INSTABUG_TOKEN, [Instabug.invocationEvent.shake]);
+  Instabug.startWithToken(getEnv().INSTABUG_TOKEN, [Instabug.invocationEvent.none]);
 
   // Temporary workaround: In dev mode, the app crashes while loading
   // the home screen if network logging is enabled.
