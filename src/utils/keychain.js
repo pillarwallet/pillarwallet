@@ -49,9 +49,9 @@ export type KeyChainData = {
 };
 
 export const handleCatch = (accountAddress: ?string, error: ?any[]) => {
+  reportErrorLog('Exception caught on keychain: ', error);
   const msg = error ? error[0]?.Error?.msg : '';
   if (msg && !/cancel/gi.exec(msg)) {
-    reportErrorLog('Exception caught on keychain: ', error);
     const colors = getThemeColors();
     const buttons = [];
     buttons.push({
