@@ -35,9 +35,10 @@ type Props = {|
   onPress: () => mixed,
   value?: string,
   valueColor?: string,
+  subtitle?: string
 |};
 
-const MenuItem = ({ title, icon, onPress, value, valueColor }: Props) => {
+const MenuItem = ({ title, icon, onPress, value, valueColor, subtitle }: Props) => {
   return (
     <Container>
       <TouchableContainer onPress={onPress}>
@@ -45,6 +46,7 @@ const MenuItem = ({ title, icon, onPress, value, valueColor }: Props) => {
         <Title>{title}</Title>
         {!!value && <Value $color={valueColor}>{value}</Value>}
       </TouchableContainer>
+      {!!subtitle && <SubTitle>{subtitle}</SubTitle>}
     </Container>
   );
 };
@@ -70,4 +72,8 @@ const Title = styled(Text)`
 
 const Value = styled(Text)`
   color: ${({ theme, $color }) => $color || theme.colors.secondaryText};
+`;
+
+const SubTitle = styled(Text)`
+  margin-left: ${spacing.large}px;
 `;

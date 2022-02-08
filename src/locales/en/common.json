@@ -3,13 +3,13 @@
   "ensName": "ENS name",
   "ethereum": "Ethereum",
   "facebook": "Facebook",
-  "keyWallet": "Key wallet",
+  "keyWallet": "Original key based",
   "medium": "Medium",
   "pillarNetwork": "Pillar Network",
   "pillarTank": "Pillar Tank",
   "poolTogether": "Pool Together",
-  "smartWallet": "Smart Wallet",
-  "legacySmartWallet": "Smart Wallet (legacy)",
+  "smartWallet": "Pillar v2 (Etherspot)",
+  "legacySmartWallet": "Pillar v1",
   "telegram": "Telegram",
   "twitter": "Twitter",
   "youtube": "Youtube",
@@ -96,7 +96,7 @@
   },
 
   "title": {
-    "accounts": "Accounts",
+    "accounts": "Switch account",
     "addFundsToWallet": "Add funds to Pillar",
     "mainActivityFeed": "History",
     "publicAddress": "Public address",
@@ -270,7 +270,9 @@
     "balanceFiatTokenFormat": "Balance {{balanceInFiat}} ({{balance}})",
     "balanceTokenFormat": "Balance {{balance}}",
     "filterByName": "Filter by name",
-    "username": "username"
+    "username": "username",
+    "assetMigrate": "Migrate assets to Etherspot",
+    "ensMigrate": "Migrate ENS to Etherspot"
   },
 
   "button": {
@@ -562,7 +564,14 @@
     "failedToSignMessage": "Failed to sign message",
     "failedToBuildTransaction": "Failed to build transaction",
     "failedToEstimateTransaction": "Failed to estimate transaction",
-    "failedToSubmitTransaction": "Failed to submit transaction"
+    "failedToSubmitTransaction": "Failed to submit transaction",
+    "failedKeychain": {
+      "title": "Your device is not supported",
+      "nonEtherspotMessage": "Due to security concerns, we don’t support devices with disabled keychain access.",
+      "etherspotMessage": "\n\nYour Etherspot wallet address: {{address}}",
+      "exitButtonText": "Exit",
+      "supportButtonText": "Support"
+    }
   },
 
   "home": {
@@ -586,9 +595,12 @@
       "settings": "Settings",
       "addressBook": "Address book",
       "supportChat": "Support",
+      "emailSupport": "Email support",
+      "liveChatSupport": "Live chat support",
       "storybook": "Storybook",
       "supportConversations": "Support conversations",
-      "knowledgebase": "Knowledgebase"
+      "knowledgebase": "Knowledgebase",
+      "liveChatActivate": "Hold 10,000 PLR tokens to activate live chat support"
     },
     "footer": {
       "privacyPolicy": "Privacy Policy",

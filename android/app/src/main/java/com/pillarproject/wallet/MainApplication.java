@@ -55,7 +55,7 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
 
         new RNInstabugReactnativePackage
             .Builder(getString(R.string.instabug_token), MainApplication.this)
-            .setInvocationEvent("shake")
+            .setInvocationEvent("none")
             .build();
     }
 }
