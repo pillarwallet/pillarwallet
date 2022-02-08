@@ -23,7 +23,8 @@ import { firebaseRemoteConfig } from 'services/firebase';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import * as parse from 'utils/parse';
 
-const TYPE = 'unsupported_exchanges';
+const TYPE_UNSUPPORTED_EXCHANGES = 'unsupported_exchanges';
+const TYPE_GOVERNANCE_CALL = 'governance-calls';
 
 type CategoryDto = {
   name?: [{ text: string | null } | null];
@@ -41,11 +42,11 @@ function parseCategory(item: Prismic.Document<CategoryDto>) {
   return { id, title, order };
 }
 
-async function fetchWalletConnectCategoriesApiCall() {
-  const data = await Prismic.queryDocumentsByType<CategoryDto>(TYPE, { pageSize: 100 });
+export const fetchWalletConnectCategoriesApiCall = async () => {
+  const data = await Prismic.queryDocumentsByType(TYPE_GOVERNANCE_CALL);
   const parseData = parse.mapArrayOrEmpty(data.results, parseCategory);
   return orderBy(parseData, ['order']);
-}
+};
 
 const UnsupportedExchanges: FC = () => {
   const navigation = useNavigation();
@@ -60,18 +61,21 @@ const UnsupportedExchanges: FC = () => {
   useEffect(() => {
     const fetchPrismicData = async () => {
       try {
-        const prismicDocuments = await fetchWalletConnectCategoriesApiCall();
+        const prismicDocument = await Prismic.queryDocumentsByType(TYPE_UNSUPPORTED_EXCHANGES);
+        // const prismicDocuments = await fetchWalletConnectCategoriesApiCall();
         const prismicContent = [];
-        prismicDocuments.forEach((prismicDocument, i) => {
-          mapFromDocumentDataToString(prismicDocument?.subtitle, prismicContent, true);
-          mapFromDocumentDataToString(prismicDocument?.content, prismicContent, true);
+        if (!prismicDocument.results) throw new Error('failed to load documents from prismic');
+
+        prismicDocument.results.forEach((doc, i) => {
+          if (!doc?.data?.unsupported_exchange_name) return;
+          mapFromDocumentDataToString(doc.data.unsupported_exchange_name, prismicContent, true);
         });
         const prismicHTMLResponse = prismicContent.join('');
         setDocumentHTMLData(prismicHTMLResponse);
         setIsPrismicHTMLFetched(true);
         setIsLoading(false);
       } catch (error) {
-        reportErrorLog('Prismic content fetch failed', { error, documentId: TYPE });
+        reportErrorLog('Prismic content fetch failed', { error, documentId: TYPE_UNSUPPORTED_EXCHANGES });
         setErrorMessage(t('error.prismicDataFetchFailed', { prismicDocument: t('title') }));
       }
     };
