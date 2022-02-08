@@ -49,37 +49,40 @@ export type KeyChainData = {
 };
 
 export const handleCatch = (accountAddress: ?string, error: ?any) => {
-  reportErrorLog('Exception caught on keychain: ', error);
-  const colors = getThemeColors();
-  const buttons = [];
-  buttons.push({
-    text: t('error.failedKeychain.exitButtonText'),
-    onPress: () => RNExitApp.exitApp(),
-  });
-  accountAddress = accountAddress ?? etherspotService?.getAccountAddress(CHAIN.ETHEREUM);
-  if (accountAddress) {
+  const msg = error[0]?.Error?.msg;
+  if (msg && !/cancel/gi.exec(msg)) {
+    reportErrorLog('Exception caught on keychain: ', error);
+    const colors = getThemeColors();
+    const buttons = [];
     buttons.push({
-      text: t('error.failedKeychain.supportButtonText'),
-      onPress: () => {
-        BugReporting.showWithOptions(BugReporting.reportType.feedback, [BugReporting.option.emailFieldOptional]);
-      },
+      text: t('error.failedKeychain.exitButtonText'),
+      onPress: () => RNExitApp.exitApp(),
     });
-  }
+    accountAddress = accountAddress ?? etherspotService?.getAccountAddress(CHAIN.ETHEREUM);
+    if (accountAddress) {
+      buttons.push({
+        text: t('error.failedKeychain.supportButtonText'),
+        onPress: () => {
+          BugReporting.showWithOptions(BugReporting.reportType.feedback, [BugReporting.option.emailFieldOptional]);
+        },
+      });
+    }
 
-  Alert.alert(
-    t('error.failedKeychain.title', {
-      color: colors.basic010,
-    }),
-    `${t('error.failedKeychain.nonEtherspotMessage', {
-      color: colors.basic030,
-    })}${(
-      accountAddress ? t('error.failedKeychain.etherspotMessage', {
+    Alert.alert(
+      t('error.failedKeychain.title', {
+        color: colors.basic010,
+      }),
+      `${t('error.failedKeychain.nonEtherspotMessage', {
         color: colors.basic030,
-        address: accountAddress,
-      }) : ''
-    )}`,
-    buttons,
-  );
+      })}${(
+        accountAddress ? t('error.failedKeychain.etherspotMessage', {
+          color: colors.basic030,
+          address: accountAddress,
+        }) : ''
+      )}`,
+      buttons,
+    );
+  }
 };
 
 export const resetKeychainDataObject = () =>
