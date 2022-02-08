@@ -44,7 +44,6 @@ export type ContactSelectorProps = {|
   onSelectContact?: (contact: ?Contact) => mixed,
   placeholder?: string,
   disabled?: boolean,
-  openUnsupportedExchanges?: () => mixed,
 |};
 
 const SelectorPill = styled.TouchableOpacity`
@@ -66,7 +65,6 @@ const ContactSelector = ({
   onSelectContact,
   placeholder = t('label.whereToSend'),
   disabled,
-  openUnsupportedExchanges,
 }: ContactSelectorProps) => {
   const [isResolvingContact, setIsResolvingContact] = React.useState(false);
 
@@ -79,13 +77,7 @@ const ContactSelector = ({
   };
 
   const openOptions = () => {
-    Modal.open(() => (
-      <ContactSelectorModal
-        contacts={contacts}
-        onSelectContact={handleSelectContact}
-        openUnsupportedExchanges={openUnsupportedExchanges}
-      />
-    ));
+    Modal.open(() => <ContactSelectorModal contacts={contacts} onSelectContact={handleSelectContact} />);
   };
 
   const renderContact = () => {

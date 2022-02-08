@@ -29,7 +29,7 @@ import { BigNumber } from 'bignumber.js';
 import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 
 // Constants
-import { SEND_COLLECTIBLE_CONFIRM, SEND_TOKEN_CONFIRM, UNSUPPORTED_EXCHANGES } from 'constants/navigationConstants';
+import { SEND_COLLECTIBLE_CONFIRM, SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
 import { ASSET_TYPES } from 'constants/assetsConstants';
 
 // Components
@@ -102,7 +102,8 @@ const SendAsset = ({
     defaultAssetData = getAssetData(assetsWithBalance, defaultAssetData);
   }
 
-  const defaultAssetOption = defaultAssetData && defaultAssetData?.token && {
+  const defaultAssetOption = defaultAssetData &&
+  defaultAssetData?.token && {
     ...defaultAssetData,
     symbol: defaultAssetData.token,
   };
@@ -238,15 +239,12 @@ const SendAsset = ({
 
   const isNextButtonDisabled = !session.isOnline || !feeInfo || !!errorMessage || !isValidValue;
 
-  const openUnsupportedExchanges = () => navigation.navigate(UNSUPPORTED_EXCHANGES);
-
   return (
     <SendContainer
       customSelectorProps={{
         contacts,
         selectedContact,
         onSelectContact: setSelectedContact,
-        openUnsupportedExchanges,
       }}
       assetData={assetData}
       onAssetDataChange={(asset) => setAssetData(asset)}

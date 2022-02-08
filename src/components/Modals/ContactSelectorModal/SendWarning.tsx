@@ -7,6 +7,8 @@ import Text from 'components/core/Text';
 import CheckBoxWithText from 'components/core/CheckBoxWithText';
 import { Spacing } from 'components/layout/Layout';
 import Icon from 'components/core/Icon';
+import Modal from 'components/Modal';
+import UnsupportedExchangesModal from 'components/Modals/ContactSelectorModal/UnsupportedExchangesModal';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
@@ -19,10 +21,9 @@ interface ISendWarning {
   warningAccepted: boolean;
   setWarningAccepted: (value: boolean) => void;
   style?: ViewStyleProp;
-  handleUnsupportedExchanges?: () => any;
 }
 
-const SendWarning: FC<ISendWarning> = ({ warningAccepted, setWarningAccepted, style, handleUnsupportedExchanges }) => {
+const SendWarning: FC<ISendWarning> = ({ warningAccepted, setWarningAccepted, style }) => {
   const colors = useThemeColors();
   const { t } = useTranslationWithPrefix('contactSelector');
 
@@ -32,6 +33,10 @@ const SendWarning: FC<ISendWarning> = ({ warningAccepted, setWarningAccepted, st
 
   const linkTextStyle = {
     color: colors.primaryAccent130,
+  };
+
+  const openUnsupportedExchanges = () => {
+    Modal.open(() => <UnsupportedExchangesModal />);
   };
 
   return (
@@ -46,7 +51,7 @@ const SendWarning: FC<ISendWarning> = ({ warningAccepted, setWarningAccepted, st
 
         <Spacing h={spacing.large} />
 
-        <LinkTouchable onPress={handleUnsupportedExchanges}>
+        <LinkTouchable onPress={openUnsupportedExchanges}>
           <TextRow>
             <Text style={linkTextStyle}>{t('sendWarning.unsupportedExchanges')}</Text>
             <Spacing w={spacing.small} />

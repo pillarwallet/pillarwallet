@@ -46,15 +46,9 @@ type Props = {|
   contacts?: Contact[],
   onSelectContact?: (contact: ?Contact) => mixed,
   title?: string,
-  openUnsupportedExchanges?: () => mixed,
 |};
 
-const ContactSelectorModal = ({
-  contacts = [],
-  onSelectContact,
-  title = t('label.sendTo'),
-  openUnsupportedExchanges,
-}: Props) => {
+const ContactSelectorModal = ({ contacts = [], onSelectContact, title = t('label.sendTo') }: Props) => {
   const colors = useThemeColors();
 
   const modalRef = React.useRef(null);
@@ -114,7 +108,6 @@ const ContactSelectorModal = ({
           onSelectContact={handleSelectContact}
           query={query}
           onQueryChange={setQuery}
-          openUnsupportedExchanges={openUnsupportedExchanges}
         />
       </Container>
     </SlideModal>

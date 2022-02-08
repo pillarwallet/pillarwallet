@@ -57,7 +57,6 @@ type Props = {|
   onSelectContact: (contact: Contact) => mixed,
   query: string,
   onQueryChange: (query: string) => mixed,
-  openUnsupportedExchanges?: () => mixed,
 |};
 
 /**
@@ -65,13 +64,7 @@ type Props = {|
  *
  * Screen using it should implement it's own header.
  */
-const ContactSelectorModalContent = ({
-  contacts = [],
-  onSelectContact,
-  query,
-  onQueryChange,
-  openUnsupportedExchanges,
-}: Props) => {
+const ContactSelectorModalContent = ({ contacts = [], onSelectContact, query, onQueryChange }: Props) => {
   const { t, tRoot } = useTranslationWithPrefix('contactSelector');
   const dispatch = useDispatch();
 
@@ -156,8 +149,6 @@ const ContactSelectorModalContent = ({
     return <Button title={tRoot('button.paste')} onPress={handlePaste} size="large" />;
   };
 
-  const handleUnsupportedExchanges = () => openUnsupportedExchanges && openUnsupportedExchanges();
-
   const renderSendWarning = () => {
     if (!errorMessage && customContact) {
       return (
@@ -165,7 +156,6 @@ const ContactSelectorModalContent = ({
           warningAccepted={warningAccepted}
           setWarningAccepted={setWarningAccepted}
           style={{ marginTop: spacing.large }}
-          handleUnsupportedExchanges={handleUnsupportedExchanges}
         />
       );
     }

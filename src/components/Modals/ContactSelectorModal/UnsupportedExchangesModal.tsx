@@ -1,15 +1,15 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect, useRef } from 'react';
 import HTML from 'react-native-render-html';
 import { useTranslationWithPrefix } from 'translations/translate';
 import styled from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
-import { orderBy } from 'lodash';
 
 // Components
-import { Container, Content, Footer } from 'components/layout/Layout';
+import { Container, Content } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import Text from 'components/core/Text';
 import Spinner from 'components/Spinner';
+import SlideModal from 'components/Modals/SlideModal';
 
 // Services
 import * as Prismic from 'services/prismic';
@@ -19,36 +19,10 @@ import { useThemeColors } from 'utils/themes';
 import { mapFromDocumentDataToString } from 'utils/prismic';
 import { reportErrorLog } from 'utils/common';
 import { spacing } from 'utils/variables';
-import { firebaseRemoteConfig } from 'services/firebase';
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
-import * as parse from 'utils/parse';
 
 const TYPE_UNSUPPORTED_EXCHANGES = 'unsupported_exchanges';
-const TYPE_GOVERNANCE_CALL = 'governance-calls';
 
-type CategoryDto = {
-  name?: [{ text: string | null } | null];
-  order?: number;
-};
-
-function parseCategory(item: Prismic.Document<CategoryDto>) {
-  if (!item) return null;
-
-  const id = parse.stringOrNull(item.id);
-  const title = parse.stringOrNull(item.data?.name?.[0]?.text);
-  const order = parse.numberOrNull(item.data?.order) ?? Infinity;
-  if (!id || !title) return null;
-
-  return { id, title, order };
-}
-
-export const fetchWalletConnectCategoriesApiCall = async () => {
-  const data = await Prismic.queryDocumentsByType(TYPE_GOVERNANCE_CALL);
-  const parseData = parse.mapArrayOrEmpty(data.results, parseCategory);
-  return orderBy(parseData, ['order']);
-};
-
-const UnsupportedExchanges: FC = () => {
+const UnsupportedExchangesModal: FC = () => {
   const navigation = useNavigation();
   const colors = useThemeColors();
   const { t } = useTranslationWithPrefix('unsupportedExchanges');
@@ -58,11 +32,16 @@ const UnsupportedExchanges: FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
 
+  const modalRef = useRef(null);
+
+  const close = () => {
+    modalRef.current?.close();
+  };
+
   useEffect(() => {
     const fetchPrismicData = async () => {
       try {
         const prismicDocument = await Prismic.queryDocumentsByType(TYPE_UNSUPPORTED_EXCHANGES);
-        // const prismicDocuments = await fetchWalletConnectCategoriesApiCall();
         const prismicContent = [];
         if (!prismicDocument.results) throw new Error('failed to load documents from prismic');
 
@@ -84,25 +63,28 @@ const UnsupportedExchanges: FC = () => {
   }, []);
 
   return (
-    <Container>
-      <HeaderBlock
-        centerItems={[{ title: t('title') }]}
-        leftItems={[{ close: true }]}
-        navigation={navigation}
-        noPaddingTop
-      />
-      {!isPrismicHTMLFetched && <ErrorMessage>{errorMessage}</ErrorMessage>}
-      <Content>
-        {isLoading && <Spinner size={30} />}
-        {!!isPrismicHTMLFetched && !isLoading && (
-          <HTML source={{ html: documentHTMLData }} baseFontStyle={{ color: colors.text }} />
-        )}
-      </Content>
-    </Container>
+    <SlideModal ref={modalRef} fullScreen noSwipeToDismiss noClose noTopPadding avoidKeyboard={false}>
+      <Container>
+        <HeaderBlock
+          centerItems={[{ title: t('title') }]}
+          leftItems={[{ close: true }]}
+          navigation={navigation}
+          onClose={close}
+          noPaddingTop
+        />
+        {!isPrismicHTMLFetched && <ErrorMessage>{errorMessage}</ErrorMessage>}
+        <Content>
+          {isLoading && <Spinner size={30} />}
+          {!!isPrismicHTMLFetched && !isLoading && (
+            <HTML source={{ html: documentHTMLData }} baseFontStyle={{ color: colors.text }} />
+          )}
+        </Content>
+      </Container>
+    </SlideModal>
   );
 };
 
-export default UnsupportedExchanges;
+export default UnsupportedExchangesModal;
 
 const ErrorMessage = styled(Text)`
   margin: ${spacing.large}px;
