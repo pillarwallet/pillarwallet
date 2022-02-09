@@ -30,14 +30,15 @@ import { fromBaseUnit } from 'utils/bigNumber';
 // Types
 import type { Chain } from 'models/Chain';
 import type { RatesByAssetAddress, Currency } from 'models/Rates';
-import type { GasInfoPerChain } from 'models/GasInfo';
+import type { GasInfo } from 'models/GasInfo';
 
 export function calculateDeploymentFee(
-  chain?: Chain,
-  chainRates?: RatesByAssetAddress,
-  fiatCurrency?: Currency,
-  gasInfo?: GasInfoPerChain,
+  chain: Chain,
+  chainRates: RatesByAssetAddress,
+  fiatCurrency: Currency,
+  gasInfo: GasInfo,
 ) {
+  if (!gasInfo?.gasPrice?.fast) return null;
   const { address: assetAddress, symbol, decimals } = nativeAssetPerChain[chain];
 
   const deploymentFeeWei = gasInfo.gasPrice.fast // fast is strategy on Etherspot back-end (ref – Jegor)
