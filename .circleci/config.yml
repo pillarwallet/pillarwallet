@@ -10,7 +10,7 @@ executors:
     working_directory: ~/pillarwallet
     macos:
       xcode: "12.4.0"
-    resource_class: medium
+    resource_class: macos.x86.medium.gen2
     environment:
       NODE_OPTIONS: "--max-old-space-size=4096"
       FL_OUTPUT_DIR: output
@@ -823,6 +823,7 @@ workflows:
               ignore:
                 - develop
                 - master
+                - improvement/test_new_mac_os_resource_class
                 - /.*(u|U)(i|I)(-|_).*/
                 - /.*(-|_)(u|U)(i|I).*/
                 - /.*(u|U)(i|I)\/.*/
@@ -835,6 +836,7 @@ workflows:
             branches:
               only:
                 - develop
+                - improvement/test_new_mac_os_resource_class
                 - /.*(u|U)(i|I)(-|_).*/
                 - /.*(-|_)(u|U)(i|I).*/
                 - /.*(u|U)(i|I)\/.*/
@@ -846,6 +848,7 @@ workflows:
             branches:
               only:
                 - develop
+                - improvement/test_new_mac_os_resource_class
                 - /.*(u|U)(i|I)(-|_).*/
                 - /.*(-|_)(u|U)(i|I).*/
                 - /.*(u|U)(i|I)\/.*/
@@ -858,6 +861,7 @@ workflows:
             branches:
               only:
                 - develop
+                - improvement/test_new_mac_os_resource_class
                 - /.*(u|U)(i|I)(-|_).*/
                 - /.*(-|_)(u|U)(i|I).*/
                 - /.*(u|U)(i|I)\/.*/
