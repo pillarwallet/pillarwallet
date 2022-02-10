@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Linking } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
@@ -74,13 +74,22 @@ const Menu = () => {
 
   const knowledgebaseUrl = firebaseRemoteConfig.getString(REMOTE_CONFIG.KNOWLEDGEBASE_URL);
 
+  const [repliesFlag, setRepliesFlag] = useState(false);
+
+  Replies.hasChats(previousChat => {
+    if (previousChat) {
+      setRepliesFlag(true);
+    }
+  });
+
   const goToSettings = () => navigation.navigate(MENU_SETTINGS);
   const goToInviteFriends = () => navigation.navigate(CONTACTS_FLOW);
   const goToStorybook = () => navigation.navigate(STORYBOOK);
+
   const goToSupportConversations = () => Replies.show();
   const goToKnowledgebase = () => Linking.openURL(knowledgebaseUrl);
   const goToEmailSupport = () =>
-    BugReporting.showWithOptions(BugReporting.reportType.feedback, [BugReporting.option.emailFieldOptional]);
+    BugReporting.showWithOptions(BugReporting.reportType.question, [BugReporting.option.emailFieldOptional]);
 
   let clickCount = 0;
   const handleSecretClick = () => {
@@ -110,18 +119,17 @@ const Menu = () => {
           onPress={goToSettings}
         />
         <MenuItem title={t('item.addressBook')} icon="contacts" onPress={goToInviteFriends} />
-        {enoughPlrBalance ? (
-          <MenuItem title={t('item.liveChatSupport')} icon="message" onPress={goToSupportConversations} />
-        ) : (
-          <MenuItem
-            title={t('item.emailSupport')}
-            subtitle={t('item.liveChatActivate')}
-            icon="message"
-            onPress={goToEmailSupport}
-          />
-        )}
-        {__DEV__ && <MenuItem title={t('item.storybook')} icon="lifebuoy" onPress={goToStorybook} />}
+        <MenuItem
+          title={enoughPlrBalance ? t('item.liveChatSupport') : t('item.emailSupport')}
+          subtitle={!enoughPlrBalance ? t('item.liveChatActivate') : ''}
+          icon="message"
+          onPress={goToEmailSupport}
+        />
+        {repliesFlag && enoughPlrBalance ? (
+          <MenuItem title={t('item.supportConversations')} icon="message" onPress={goToSupportConversations} />
+        ) : null}
         <MenuItem title={t('item.knowledgebase')} icon="info" onPress={goToKnowledgebase} />
+        {__DEV__ && <MenuItem title={t('item.storybook')} icon="lifebuoy" onPress={goToStorybook} />}
 
         <SocialMediaLinks />
 
