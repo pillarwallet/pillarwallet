@@ -32,10 +32,10 @@ import Button from 'components/core/Button';
 import { fontStyles, spacing, borderRadiusSizes, appFont } from 'utils/variables';
 
 type Props = {|
-  selectedResident: (isUsResident: boolean) => void,
+  residentSelected: (isUsResident: boolean) => void,
 |};
 
-const SelectResidentModal = ({ selectedResident }: Props) => {
+const SelectResidentModal = ({ residentSelected }: Props) => {
   const modalRef = useRef();
   const { t, tRoot } = useTranslationWithPrefix('servicesContent.ramp.addCash.selectResidentModal');
   const [usResident, setUsResident] = React.useState(true);
@@ -54,9 +54,9 @@ const SelectResidentModal = ({ selectedResident }: Props) => {
   const onSubmit = () => {
     modalRef.current?.close();
     if (usResident) {
-      selectedResident(true);
+      residentSelected(true);
     } else {
-      selectedResident(false);
+      residentSelected(false);
     }
   };
 

@@ -68,7 +68,7 @@ const AddCash = () => {
   const accounts = useRootSelector(accountsSelector);
   const activeAccount = getActiveAccount(accounts);
 
-  const selectedResident = (isUsResident: boolean) => {
+  const residentSelected = (isUsResident: boolean) => {
     if (isUsResident) {
       setinUS(true);
       setCurrencySymbol('$');
@@ -94,8 +94,8 @@ const AddCash = () => {
   React.useState(() => {
     Modal.open(() => (
       <SelectResidentModal
-        selectedResident={(isUsResident: boolean) => {
-          selectedResident(isUsResident);
+        residentSelected={(isUsResident: boolean) => {
+          residentSelected(isUsResident);
         }}
       />
     ));

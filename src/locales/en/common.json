@@ -1063,7 +1063,7 @@
     },
     "alert": {
       "title": "Your wallet is not deployed",
-      "subtitle": "Please confirm that you are willing to pay {{deploymentCost}} fee for  smart wallet deployment on Ethereum network",
+      "subtitle": "Please confirm that you are willing to pay {{deploymentCost}} fee for smart wallet deployment on Ethereum network",
       "buttons": {
         "confirm": "I confirm",
         "cancel": "Cancel"
@@ -1088,9 +1088,9 @@
             "recommended": "Recommended",
             "highGasPrice": "High gas price 🔥",
             "ethereum": "Ethereum", 
-            "chainName": "Polygon, BSC, Dal"
+            "chainName": "Polygon, BSC, xDai, Avalanche"
           },
-          "warningMessage": "Your smart wallet is not deployed on Ethereum. \n {{deploymentCost}} smart wallet deployment cost will be added to this transaction. No action required."
+          "warningMessage": "Your smart wallet is not deployed on Ethereum.\n{{deploymentCost}} smart wallet deployment cost will be added to this transaction. No action required."
         }
       }
     },
