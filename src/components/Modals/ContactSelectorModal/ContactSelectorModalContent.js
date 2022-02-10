@@ -49,6 +49,9 @@ import { spacing } from 'utils/variables';
 // Types
 import type { Contact } from 'models/Contact';
 
+// Local
+import SendWarning from './SendWarning';
+
 type Props = {|
   contacts: Contact[],
   onSelectContact: (contact: Contact) => mixed,
@@ -66,6 +69,8 @@ const ContactSelectorModalContent = ({ contacts = [], onSelectContact, query, on
   const dispatch = useDispatch();
 
   const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
+
+  const [warningAccepted, setWarningAccepted] = React.useState(false);
 
   const handleAddToContactsPress = async (contact: Contact) => {
     Modal.open(() => (
@@ -121,6 +126,8 @@ const ContactSelectorModalContent = ({ contacts = [], onSelectContact, query, on
     }
 
     if (customContact) {
+      if (!warningAccepted) return null;
+
       return (
         <>
           <Button title={t('button.addContact')} onPress={() => handleAddToContactsPress(customContact)} size="large" />
@@ -133,6 +140,20 @@ const ContactSelectorModalContent = ({ contacts = [], onSelectContact, query, on
     return <Button title={tRoot('button.paste')} onPress={handlePaste} size="large" />;
   };
 
+  const renderSendWarning = () => {
+    if (!errorMessage && customContact) {
+      return (
+        <SendWarning
+          warningAccepted={warningAccepted}
+          setWarningAccepted={setWarningAccepted}
+          style={styles.sendWarning}
+        />
+      );
+    }
+
+    return null;
+  };
+
   return (
     <KeyboardAvoidingView behavior="height" style={styles.container}>
       <SearchBar
@@ -142,6 +163,8 @@ const ContactSelectorModalContent = ({ contacts = [], onSelectContact, query, on
         error={!!errorMessage}
         autoFocus
       />
+
+      {renderSendWarning()}
 
       <FlatList
         data={items}
@@ -164,6 +187,9 @@ const styles = {
   },
   flatListContantContainer: {
     paddingVertical: spacing.small,
+  },
+  sendWarning: {
+    marginTop: spacing.large,
   },
 };
 
