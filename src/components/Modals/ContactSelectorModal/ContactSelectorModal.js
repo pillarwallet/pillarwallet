@@ -48,11 +48,7 @@ type Props = {|
   title?: string,
 |};
 
-const ContactSelectorModal = ({
-  contacts = [],
-  onSelectContact,
-  title = t('label.sendTo'),
-}: Props) => {
+const ContactSelectorModal = ({ contacts = [], onSelectContact, title = t('label.sendTo') }: Props) => {
   const colors = useThemeColors();
 
   const modalRef = React.useRef(null);

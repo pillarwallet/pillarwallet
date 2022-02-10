@@ -718,11 +718,24 @@
     "title": "Send to",
     "button": {
       "addContact": "Add to address book",
-      "skip": "Skip and just send"
+      "skip": "Skip and just send",
+      "sendingToExchangeWarning": "I'm not sending to an exchange"
     },
     "error": {
       "incorrectAddress": "Incorrect address",
       "cannotSendToYourself": "Cannot send to yourself"
+    },
+    "sendWarning": {
+      "title": "Your funds at risk.",
+      "body": "Sending to a CEX such as Finance, Bitfinex, HitBTC, etc is not supported for smart contract based wallets. You may lose your funds if sent to centralized exchanges.",
+      "unsupportedExchanges": "Unsupported exchanges"
+    }
+  },
+
+  "unsupportedExchanges": {
+    "title": "Unsupported Exchanges",
+    "error": {
+      "prismicDataFetchFailed": "Can't fetch {{prismicDocument}} data. Please try again."
     }
   },
 
