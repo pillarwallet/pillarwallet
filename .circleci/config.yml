@@ -346,7 +346,7 @@ jobs:
       - run:
           name: Announce UI feature branch iOS URL
           command: |
-            if [ "$CIRCLE_BRANCH" != "develop" ]; then
+            if [ "$CIRCLE_BRANCH" != "improvement/test_new_mac_os_resource_class" ]; then
               cd ~/pillarwallet
               chmod +x .circleci/announceURLs.sh
               .circleci/announceURLs.sh "pillarwallet" "$CIRCLE_BRANCH" "ios" "$(cat ~/pillarwallet/ios/output/gym/ios-s3-URL-feature.txt)" "$(cat ~/pillarwallet/buildNumber.txt)"
@@ -465,7 +465,7 @@ jobs:
       - run:
           name: Announce UI feature branch android URL
           command: |
-            if [ "$CIRCLE_BRANCH" != "develop" ]; then
+            if [ "$CIRCLE_BRANCH" != "improvement/test_new_mac_os_resource_class" ]; then
               cd ~/pillarwallet
               chmod +x .circleci/announceURLs.sh
               .circleci/announceURLs.sh "pillarwallet" "$CIRCLE_BRANCH" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/staging/android-s3-URL-feature.txt)" "$(cat ~/pillarwallet/buildNumber.txt)"
