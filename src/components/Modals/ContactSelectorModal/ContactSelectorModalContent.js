@@ -126,22 +126,13 @@ const ContactSelectorModalContent = ({ contacts = [], onSelectContact, query, on
     }
 
     if (customContact) {
+      if (!warningAccepted) return null;
+
       return (
         <>
-          <Button
-            title={t('button.addContact')}
-            onPress={() => handleAddToContactsPress(customContact)}
-            size="large"
-            disabled={!warningAccepted}
-          />
+          <Button title={t('button.addContact')} onPress={() => handleAddToContactsPress(customContact)} size="large" />
           <Spacing h={spacing.small} />
-          <Button
-            title={t('button.skip')}
-            onPress={() => onSelectContact(customContact)}
-            size="large"
-            variant="text"
-            disabled={!warningAccepted}
-          />
+          <Button title={t('button.skip')} onPress={() => onSelectContact(customContact)} size="large" variant="text" />
         </>
       );
     }
@@ -155,7 +146,7 @@ const ContactSelectorModalContent = ({ contacts = [], onSelectContact, query, on
         <SendWarning
           warningAccepted={warningAccepted}
           setWarningAccepted={setWarningAccepted}
-          style={{ marginTop: spacing.large }}
+          style={styles.sendWarning}
         />
       );
     }
@@ -196,6 +187,9 @@ const styles = {
   },
   flatListContantContainer: {
     paddingVertical: spacing.small,
+  },
+  sendWarning: {
+    marginTop: spacing.large,
   },
 };
 
