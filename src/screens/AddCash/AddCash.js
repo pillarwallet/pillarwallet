@@ -88,7 +88,7 @@ const AddCash = () => {
     return getAccountAddress(activeAccount);
   };
 
-  React.useState(() => {
+  React.useEffect(() => {
     Modal.open(() => (
       <SelectResidentModal
         residentSelected={(isUsResident: boolean) => {
@@ -96,7 +96,7 @@ const AddCash = () => {
         }}
       />
     ));
-  });
+  }, []);
 
   const handleChangeText = (text: string) => {
     const amount = text.replace(currencySymbol, '');

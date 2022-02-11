@@ -73,8 +73,6 @@ const SelectNetworkModal : FC<ISelectNetworkModal> = ({ networkSelected }) => {
     return calculateDeploymentFee(CHAIN.ETHEREUM, chainRates, fiatCurrency, gasInfo);
   }, [gasInfo, chainRates, fiatCurrency]);
 
-  console.log('deploymentFee', deploymentFee)
-
   const selectSideChains = () => {
     setIsSideChains(true);
     setIsEthereumChain(false);
@@ -89,19 +87,24 @@ const SelectNetworkModal : FC<ISelectNetworkModal> = ({ networkSelected }) => {
     if (isSideChains) {
       networkSelected();
     } else {
-      Alert.alert(tRoot('servicesContent.alert.title'), tRoot('servicesContent.alert.subtitle',
-        deploymentFee && { deploymentCost: deploymentFee?.fiatValue }), [
-        {
-          text: tRoot('servicesContent.alert.buttons.cancel'),
-        },
-        {
-          text: tRoot('servicesContent.alert.buttons.confirm'),
-          onPress: () => {
-            networkSelected();
-          },
-          style: 'destructive',
-        },
-      ]);
+      if (!isDeployedOnEthereum) {
+        Alert.alert(
+          tRoot('servicesContent.alert.title'),
+          tRoot('servicesContent.alert.subtitle', deploymentFee && { deploymentCost: deploymentFee?.fiatValue }),
+          [
+            {
+              text: tRoot('servicesContent.alert.buttons.cancel'),
+            },
+            {
+              text: tRoot('servicesContent.alert.buttons.confirm'),
+              onPress: () => {
+                networkSelected();
+              },
+              style: 'destructive',
+            },
+          ],
+        );
+      } else  networkSelected();
       if (modalRef.current) modalRef.current.close();
     }
   };
