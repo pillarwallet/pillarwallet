@@ -76,11 +76,8 @@ const AddCash = () => {
   };
 
   const networkSelected = () => {
-    if (inUS) {
-      openWert();
-    } else {
-      openRamp();
-    }
+    if (inUS) openWert();
+    else openRamp();
   };
 
   const getCryptoPurchaseAddress = (): string | null => {

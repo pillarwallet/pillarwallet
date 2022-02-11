@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { useRef } from 'react';
+import React, { FC, useRef } from 'react';
 import { Alert } from 'react-native';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
@@ -42,17 +42,17 @@ import { calculateDeploymentFee } from 'utils/deploymentCost';
 import { useDeploymentStatus } from 'hooks/deploymentStatus';
 
 // Selectors
-import { useChainGasInfo, useChainRates, useFiatCurrency } from 'selectors';
+import { useChainGasInfo, useChainRates, useFiatCurrency } from 'selectors/selectors';
 
 // Actions
 import { fetchGasInfoAction } from 'actions/historyActions';
 
-type Props = {|
+interface ISelectNetworkModal {
   networkSelected: () => void,
-|};
+}
 
-const SelectNetworkModal = ({ networkSelected }: Props) => {
-  const modalRef = useRef();
+const SelectNetworkModal : FC<ISelectNetworkModal> = ({ networkSelected }) => {
+  const modalRef = useRef(null);
   const dispatch = useDispatch();
   const colors = useThemeColors();
   const fiatCurrency = useFiatCurrency();
@@ -72,6 +72,8 @@ const SelectNetworkModal = ({ networkSelected }: Props) => {
     if (!gasInfo?.gasPrice?.fast) return null;
     return calculateDeploymentFee(CHAIN.ETHEREUM, chainRates, fiatCurrency, gasInfo);
   }, [gasInfo, chainRates, fiatCurrency]);
+
+  console.log('deploymentFee', deploymentFee)
 
   const selectSideChains = () => {
     setIsSideChains(true);

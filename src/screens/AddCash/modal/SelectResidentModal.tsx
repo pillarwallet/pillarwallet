@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { useRef } from 'react';
+import React, { FC, useRef } from 'react';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
@@ -31,12 +31,12 @@ import Button from 'components/core/Button';
 // Utils
 import { fontStyles, spacing, borderRadiusSizes, appFont } from 'utils/variables';
 
-type Props = {|
+interface ISelectResidentModal {
   residentSelected: (isUsResident: boolean) => void,
-|};
+}
 
-const SelectResidentModal = ({ residentSelected }: Props) => {
-  const modalRef = useRef();
+const SelectResidentModal : FC<ISelectResidentModal> = ({ residentSelected }) => {
+  const modalRef = useRef(null);
   const { t, tRoot } = useTranslationWithPrefix('servicesContent.ramp.addCash.selectResidentModal');
   const [usResident, setUsResident] = React.useState(true);
   const [nonUsResident, setNonUsResident] = React.useState(false);
