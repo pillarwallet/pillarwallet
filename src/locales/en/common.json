@@ -1074,18 +1074,37 @@
     "title": {
       "servicesScreen": "Services"
     },
-    "wert": {
-      "locationCheck": {
-        "title": "Before you continue...",
-        "message": "Do you live in the United States of America?",
-        "yes": "Yes",
-        "no": "No"
+    "alert": {
+      "title": "Your wallet is not deployed",
+      "subtitle": "Please confirm that you are willing to pay {{deploymentCost}} fee for smart wallet deployment on Ethereum network",
+      "buttons": {
+        "confirm": "I confirm",
+        "cancel": "Cancel"
       }
     },
     "ramp": {
       "addCash": {
         "title": "Buy Crypto",
-        "subTitle": "You pay with card"
+        "subTitle": "You pay with card",
+        "selectResidentModal": {
+          "title": "Specify residence",
+          "options": {
+            "usResident": "US resident",
+            "nonUsResident": "Non-US resident"
+          }
+        },
+        "selectNetworkModal": {
+          "title": "Select Network",
+          "subtitle": "We recommend using sidechains with low-to-no network fees DeFi, NFTs and more.",
+          "options": {
+            "sidechains": "Sidechains",
+            "recommended": "Recommended",
+            "highGasPrice": "High gas price 🔥",
+            "ethereum": "Ethereum", 
+            "chainName": "Polygon, BSC, xDai, Avalanche"
+          },
+          "warningMessage": "Your smart wallet is not deployed on Ethereum.\n{{deploymentCost}} smart wallet deployment cost will be added to this transaction. No action required."
+        }
       }
     },
     "liquidityPools": {

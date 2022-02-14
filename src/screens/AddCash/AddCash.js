@@ -19,7 +19,7 @@
 */
 
 import React from 'react';
-import { ScrollView, Keyboard, Platform, Alert } from 'react-native';
+import { ScrollView, Keyboard, Platform } from 'react-native';
 import t from 'translations/translate';
 import styled from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
@@ -53,6 +53,8 @@ import { logEventAction } from 'actions/analyticsActions';
 import AddCashValueInputAccessoryHolder, {
   INPUT_ACCESSORY_NATIVE_ID,
 } from './components/AddCashAccessory/AddCashValueInputAccessoryHolder';
+import SelectResidentModal from './modal/SelectResidentModal';
+import SelectNetworkModal from './modal/SelectNetworkModal';
 
 const AddCash = () => {
   const navigation = useNavigation();
@@ -62,34 +64,39 @@ const AddCash = () => {
   const fiatCurrency = useFiatCurrency();
   const colors = useThemeColors();
   const [currencySymbol, setCurrencySymbol] = React.useState(getCurrencySymbol(fiatCurrency));
+  const buttonDisable = value !== null && (Number(value) === 0 || !isValidFiatValue(value));
   const accounts = useRootSelector(accountsSelector);
   const activeAccount = getActiveAccount(accounts);
 
-  React.useState(() => {
-    Alert.alert(
-      t('servicesContent.wert.locationCheck.title'),
-      t('servicesContent.wert.locationCheck.message'), [
-        {
-          text: t('servicesContent.wert.locationCheck.no'),
-        },
-        {
-          text: t('servicesContent.wert.locationCheck.yes'),
-          onPress: () => {
-            setinUS(true);
-            setCurrencySymbol('$');
-          },
-        },
-      ]);
-  });
+  const residentSelected = (isUsResident: boolean) => {
+    if (isUsResident) {
+      setinUS(true);
+      setCurrencySymbol('$');
+    }
+  };
+
+  const networkSelected = () => {
+    if (inUS) openWert();
+    else openRamp();
+  };
 
   const getCryptoPurchaseAddress = (): string | null => {
     if (!activeAccount || !isSmartWalletAccount(activeAccount)) {
       Modal.open(() => <BuyCryptoAccountNotActiveModal />);
       return null;
     }
-
     return getAccountAddress(activeAccount);
   };
+
+  React.useEffect(() => {
+    Modal.open(() => (
+      <SelectResidentModal
+        residentSelected={(isUsResident: boolean) => {
+          residentSelected(isUsResident);
+        }}
+      />
+    ));
+  }, []);
 
   const handleChangeText = (text: string) => {
     const amount = text.replace(currencySymbol, '');
@@ -98,10 +105,19 @@ const AddCash = () => {
     setValue(updatedAmount);
   };
 
-
   const onSelectValue = async (accessoryValue: string) => {
     Keyboard.dismiss();
     setValue(accessoryValue);
+  };
+
+  const openSelectNetworkModal = () => {
+    Modal.open(() => (
+      <SelectNetworkModal
+        networkSelected={() => {
+          networkSelected();
+        }}
+      />
+    ));
   };
 
   const openWert = () => {
@@ -117,7 +133,6 @@ const AddCash = () => {
     isLogV2AppEvents() && dispatch(logEventAction('v2_add_cash_started'));
     openUrl(rampWidgetUrl(address, fiatCurrency, value, isEtherspotAccount(activeAccount)));
   };
-
 
   return (
     <Container>
@@ -152,11 +167,7 @@ const AddCash = () => {
         </AddCashView>
       </ScrollView>
       <Footer behavior={Platform.OS === 'ios' ? 'position' : null}>
-        <Button
-          onPress={inUS ? openWert : openRamp}
-          title={t('button.next')}
-          disabled={value !== null && (Number(value) === 0 || !isValidFiatValue(value))}
-        />
+        <Button onPress={openSelectNetworkModal} title={t('button.continue')} disabled={buttonDisable} />
       </Footer>
       <AddCashValueInputAccessoryHolder
         ref={(c) => {
