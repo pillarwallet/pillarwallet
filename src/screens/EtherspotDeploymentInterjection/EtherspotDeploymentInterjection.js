@@ -38,7 +38,6 @@ import Tooltip from 'components/Tooltip';
 // Constants
 import { CHAIN } from 'constants/chainConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
-import { ETHERSPOT_WALLET_DEPLOYMENT_GAS_AMOUNT } from 'constants/etherspotConstants';
 
 // Actions
 import { fetchGasInfoAction } from 'actions/historyActions';
@@ -57,10 +56,7 @@ import { useChainConfig } from 'utils/uiConfig';
 import { spacing, fontSizes } from 'utils/variables';
 import { mapFromDocumentDataToString } from 'utils/prismic';
 import { hitSlop10, reportErrorLog } from 'utils/common';
-import { getAssetValueInFiat } from 'utils/rates';
-import { nativeAssetPerChain } from 'utils/chains';
-import { fromBaseUnit } from 'utils/bigNumber';
-import { formatFiatValue, formatTokenValue } from 'utils/format';
+import { calculateDeploymentFee } from 'utils/deploymentCost';
 
 // Types
 import type { Chain } from 'models/Chain';
@@ -95,25 +91,8 @@ function EtherspotDeploymentInterjection() {
   const prismicInterjectionDocumentId = firebaseRemoteConfig.getString(REMOTE_CONFIG.PRISMIC_INTERJECTION_DOCUMENT_ID);
 
   const deploymentFee = React.useMemo(() => {
-    if (!gasInfo?.gasPrice?.fast) return null; // fast used by Etherspot
-
-    const { address: assetAddress, symbol, decimals } = nativeAssetPerChain[chain];
-
-    const deploymentFeeWei = gasInfo.gasPrice.fast // fast is strategy on Etherspot back-end (ref – Jegor)
-      .times(1.1) // 10% to price is added on Etherspot back-end (ref – Jegor)
-      .times(ETHERSPOT_WALLET_DEPLOYMENT_GAS_AMOUNT);
-
-    const deploymentFeeBN = fromBaseUnit(deploymentFeeWei, decimals);
-    const fiatValue = getAssetValueInFiat(deploymentFeeBN, assetAddress, chainRates, fiatCurrency);
-
-    // covers scenario per Dmitry's request show <0.01 in case it's lower than that
-    const isInvisibleFiatValue = fiatValue && fiatValue < 0.01;
-    let formattedFiatValue = formatFiatValue(isInvisibleFiatValue ? 0.01 : fiatValue, fiatCurrency);
-    if (isInvisibleFiatValue && formattedFiatValue) formattedFiatValue = `<${formattedFiatValue}`;
-
-    const tokenValue = formatTokenValue(deploymentFeeBN, symbol);
-
-    return { tokenValue, fiatValue: formattedFiatValue };
+    if (!gasInfo?.gasPrice?.fast) return null;
+    return calculateDeploymentFee(chain, chainRates, fiatCurrency, gasInfo);
   }, [gasInfo, chainRates, chain, fiatCurrency]);
 
   const address = useRootSelector(activeAccountAddressSelector);
