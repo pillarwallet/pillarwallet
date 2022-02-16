@@ -124,7 +124,7 @@ import IconAvalanche from 'assets/icons/svg/icon-24-avalanche.svg';
 import IconWalletConnect from 'assets/icons/svg/icon-24-wallet-connect.svg';
 import IconAllNetworks from 'assets/icons/svg/services-48-circle-pillar-exchange.svg';
 
-const components: Record<SvgImage> = {
+const components = {
   // Generic icons
   'add-cash': IconAddCash,
   'add-contact': IconAddContact,
@@ -220,15 +220,15 @@ const components: Record<SvgImage> = {
   'all-networks': IconAllNetworks,
 };
 
-export type IconName = $Keys<typeof components>;
+export type IconName = keyof typeof components;
 
-type Props = {|
-  name: string,
-  color?: string,
-  width?: number,
-  height?: number,
-  style?: ViewStyleProp,
-|};
+type Props = {
+  name: IconName;
+  color?: string;
+  width?: number;
+  height?: number;
+  style?: ViewStyleProp;
+};
 
 /**
  * Modern component to display SVG icons.
@@ -241,15 +241,15 @@ type Props = {|
  * @note Use it only for small icon-like images.
  * @note Be aware that the #000 will be replaced by `basic010` color by default or by `color` prop.
  */
-function Icon({ name, color, style, ...rest }: Props) {
+const Icon: React.FC<Props> = ({ name, color, style, ...rest }) => {
   const colors = useThemeColors();
 
   const Component = components[name];
   return Component ? (
-    <View style={style}>
+    <View style={{ justifyContent: 'center', alignItems: 'center', ...style }}>
       <Component fill={color ?? colors.basic010} {...rest} />
     </View>
   ) : null;
-}
+};
 
 export default Icon;

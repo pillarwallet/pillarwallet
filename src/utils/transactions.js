@@ -34,9 +34,10 @@ import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 // Utils
 import { getBalance } from 'utils/assets';
 import { fromEthersBigNumber } from 'utils/bigNumber';
-import { nativeAssetPerChain } from 'utils/chains';
-import { reportErrorLog } from 'utils/common';
+import { nativeAssetPerChain, mapChainToChainId } from 'utils/chains';
+import { reportErrorLog, getFormattedTransactionFeeValue } from 'utils/common';
 import { openUrl } from 'utils/inAppBrowser';
+import { getAssetRateInFiat } from 'utils/rates';
 
 // Services
 import { buildERC721TransactionData, encodeContractMethod } from 'services/assets';
@@ -51,6 +52,10 @@ import type { FeeInfo } from 'models/PaymentNetwork';
 import type { EthereumTransaction, GasToken, TransactionPayload } from 'models/Transaction';
 import type { WalletAssetsBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
+import type { Currency, RatesByAssetAddress } from 'models/Rates';
+
+// Redux
+import type { IGasThresholds } from 'redux/reducers/gas-threshold-reducer';
 
 export const getTxFeeInWei = (useGasToken: boolean, feeInfo: ?FeeInfo): BigNumber | number => {
   const gasTokenCost = get(feeInfo, 'gasTokenCost');
@@ -69,9 +74,7 @@ export const calculateETHTransactionAmountAfterFee = (
   totalFeeInEth: BigNumber,
 ): BigNumber => {
   const ethBalance = new BigNumber(getBalance(balances, nativeAssetPerChain.ethereum.address));
-  const ethBalanceLeftAfterTransaction = ethBalance
-    .minus(totalFeeInEth)
-    .minus(ethAmount);
+  const ethBalanceLeftAfterTransaction = ethBalance.minus(totalFeeInEth).minus(ethAmount);
 
   // check if not enough ETH left to cover fees and adjust ETH amount by calculating max available after fees
   if (!ethBalanceLeftAfterTransaction.isPositive()) {
@@ -157,16 +160,13 @@ export const mapToEthereumTransactions = async (
   let transactions = [transaction];
 
   // important: maintain array sequence, this gets mapped into arrays as well by reusing same method
-  const mappedSequential = await Promise.all(sequentialTransactions.map((sequential) =>
-    mapToEthereumTransactions(sequential, fromAddress),
-  ));
+  const mappedSequential = await Promise.all(
+    sequentialTransactions.map((sequential) => mapToEthereumTransactions(sequential, fromAddress)),
+  );
 
   // append sequential to transactions batch
   mappedSequential.forEach((sequential) => {
-    transactions = [
-      ...transactions,
-      ...sequential,
-    ];
+    transactions = [...transactions, ...sequential];
   });
 
   return transactions;
@@ -182,9 +182,9 @@ export const mapTransactionsToTransactionPayload = (
   if (transactions.length > 1) {
     transactionPayload = {
       ...transactionPayload,
-      sequentialTransactions: transactions.slice(1).map((
-        transaction,
-      ) => mapTransactionToTransactionPayload(chain, transaction)),
+      sequentialTransactions: transactions
+        .slice(1)
+        .map((transaction) => mapTransactionToTransactionPayload(chain, transaction)),
     };
   }
 
@@ -192,10 +192,7 @@ export const mapTransactionsToTransactionPayload = (
 };
 
 // TODO: gas token support
-const mapTransactionToTransactionPayload = (
-  chain: Chain,
-  transaction: EthereumTransaction,
-): TransactionPayload => {
+const mapTransactionToTransactionPayload = (chain: Chain, transaction: EthereumTransaction): TransactionPayload => {
   const { symbol, decimals } = nativeAssetPerChain[chain];
   const { to, value, data } = transaction;
   const amount = fromEthersBigNumber(value, decimals).toFixed();
@@ -263,4 +260,40 @@ export const showTransactionRevertedToast = () => {
       openUrl(transactionRevertedAricleURL);
     },
   });
+};
+
+export const getTxFeeInFiat = (
+  chain: Chain,
+  feeInWei: ?BigNumber | string | number,
+  gasToken: ?GasToken,
+  rates: RatesByAssetAddress,
+  fiatCurrency: Currency,
+) => {
+  const feeValue = getFormattedTransactionFeeValue(chain, feeInWei, gasToken);
+  const gasAddress = getGasAddress(chain, gasToken);
+  const feeInFiat = parseFloat(feeValue) * getAssetRateInFiat(rates, gasAddress, fiatCurrency);
+  return feeInFiat;
+};
+
+export const isHighGasFee = (
+  chain: Chain,
+  feeInWei: ?BigNumber | string | number,
+  gasToken: ?GasToken,
+  rates: RatesByAssetAddress,
+  fiatCurrency: Currency,
+  gasThresholds?: IGasThresholds,
+) => {
+  return true;
+
+  // if (!chain) return false;
+
+  // const fiatGasFee = getTxFeeInFiat(chain, feeInWei, gasToken, rates, fiatCurrency);
+  // const chainId = mapChainToChainId(chain);
+  // const threshold = gasThresholds?.[chainId]?.threshold || 0;
+
+  // if (!threshold) return false;
+
+  // if (fiatGasFee >= threshold) return true;
+
+  // return false;
 };

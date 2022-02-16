@@ -7,6 +7,7 @@
         "extensions": [".ios.ts", ".android.ts", ".ts", ".tsx", ".ios.tsx", ".android.tsx", ".jsx", ".js", ".json"],
         "alias": {
           "actions": ["./src/actions"],
+          "assets": ["./src/assets"],
           "components": ["./src/components"],
           "configs": ["./src/configs"],
           "constants": ["./src/constants"],
@@ -15,6 +16,7 @@
           "reducers": ["./src/reducers"],
           "redux": ["./src/redux"],
           "screens": ["./src/screens"],
+          "selectors": ["./src/selectors", "./src/selectors/selectors.js"],
           "services": ["./src/services"],
           "translations": ["./src/translations"],
           "utils": ["./src/utils"],

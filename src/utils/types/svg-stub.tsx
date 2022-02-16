@@ -24,13 +24,13 @@ import * as React from 'react';
 import type { ViewStyleProp } from 'utils/types/react-native';
 
 // Note: add more props from real Svg component if needed.
-export type SvgProps = {|
-  width?: number,
-  height?: number,
-  fill?: string,
-  style?: ViewStyleProp,
-|};
+export type SvgProps = {
+  width?: number;
+  height?: number;
+  fill?: string;
+  style?: ViewStyleProp;
+};
 
-export type SvgImage = React.AbstractComponent<SvgProps>;
+export type SvgImage = React.FC<SvgProps>;
 
-declare export default SvgImage;
+export default SvgImage;

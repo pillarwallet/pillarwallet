@@ -29,16 +29,13 @@
  */
 
 import * as React from 'react';
-import { TouchableOpacity, ScrollView } from 'react-native';
+import { ScrollViewProps } from 'react-native';
 
 // Props
-export type { Props as ViewProps } from 'react-native/Libraries/Components/View/View';
-export type { TextProps } from 'react-native/Libraries/Text/TextProps';
-export type { Props as TextInputProps, FocusEvent, BlurEvent } from 'react-native/Libraries/Components/TextInput/TextInput';
+export type { TouchableOpacityProps, ViewProps, TextProps, TextInputProps } from 'react-native';
+export type { FocusEvent, BlurEvent } from 'react-native/Libraries/Components/TextInput/TextInput';
 
 export type { ImageProps } from 'react-native/Libraries/Image/ImageProps';
-
-export type TouchableOpacityProps = React.ElementConfig<typeof TouchableOpacity>;
 
 export type { Props as SectionListProps, SectionBase } from 'react-native/Libraries/Lists/SectionList';
 
@@ -57,7 +54,7 @@ export type { RenderItemProps } from 'react-native/Libraries/Lists/VirtualizedLi
 
 export type { StatusBarStyle } from 'react-native/Libraries/Components/StatusBar/StatusBar';
 
-export type KeyboardShouldPersistTaps = $PropertyType<React.ElementConfig<typeof ScrollView>, 'keyboardShouldPersistTaps'>;
+export type KeyboardShouldPersistTaps = ScrollViewProps['keyboardShouldPersistTaps'];
 
 // Events
 export type { SyntheticEvent, LayoutEvent, ScrollEvent } from 'react-native/Libraries/Types/CoreEventTypes';

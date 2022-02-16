@@ -1,5 +1,5 @@
 {
-  "name": "CheckBox.js",
+  "name": "CheckBox.tsx",
   "version": "0.0.0",
-  "main": "./CheckBox.js"
+  "main": "./CheckBox.tsx"
 }

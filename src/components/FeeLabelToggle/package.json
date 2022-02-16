@@ -1,5 +1,5 @@
 {
-  "name": "FeeLabelToggle.js",
+  "name": "FeeLabelToggle.tsx",
   "version": "0.0.0",
-  "main": "./FeeLabelToggle.js"
+  "main": "./FeeLabelToggle.tsx"
 }

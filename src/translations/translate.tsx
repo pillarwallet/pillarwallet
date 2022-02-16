@@ -1,4 +1,3 @@
-// @flow
 /*
     Pillar Wallet: the personal data locker
     Copyright (C) 2019 Stiftung Pillar Project
@@ -26,10 +25,8 @@ import type { TranslationOptions, TranslatedString } from 'models/Translations';
 
 export { useTranslation } from 'react-i18next';
 
-const t = (key: string | string[], options?: TranslationOptions = {}): TranslatedString => {
-  const {
-    linkedText, primaryText, mediumText, onPress, ...values
-  } = options;
+const t = (key: string, options: TranslationOptions = {}): TranslatedString => {
+  const { linkedText, primaryText, mediumText, onPress, ...values } = options;
   if (linkedText) {
     return (
       <Trans
@@ -64,7 +61,6 @@ const t = (key: string | string[], options?: TranslationOptions = {}): Translate
 };
 
 export default t;
-
 
 export type TFunction = (key: string, options?: any) => string;
 

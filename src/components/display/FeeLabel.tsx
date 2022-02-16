@@ -47,26 +47,17 @@ type Mode = 'actual' | 'estimate';
  * instead of performing expensive search on whole assets array
  */
 type Props = {
-  value: ?BigNumber,
-  assetSymbol: string,
-  assetAddress: string,
-  chain: Chain,
-  mode?: Mode,
-  isLoading?: boolean,
-  isNotEnough?: boolean,
-  style?: ViewStyleProp,
+  value: BigNumber | null;
+  assetSymbol: string;
+  assetAddress: string;
+  chain: Chain;
+  mode?: Mode;
+  isLoading?: boolean;
+  isNotEnough?: boolean;
+  style?: ViewStyleProp;
 };
 
-function FeeLabel({
-  value,
-  assetSymbol,
-  assetAddress,
-  mode,
-  isLoading,
-  isNotEnough,
-  style,
-  chain,
-}: Props) {
+function FeeLabel({ value, assetSymbol, assetAddress, mode, isLoading, isNotEnough, style, chain }: Props) {
   const { t } = useTranslation();
 
   const [showFiatValue, setShowFiatValue] = React.useState(true);
@@ -80,7 +71,7 @@ function FeeLabel({
     return <Spinner size={20} trackWidth={2} style={style} />;
   }
 
-  const valueInFiat = BigNumber(getBalanceInFiat(currency, value, chainRates, assetAddress));
+  const valueInFiat = new BigNumber(getBalanceInFiat(currency, value, chainRates, assetAddress));
   const labelValue = showFiatValue ? formatFiatValue(valueInFiat, currency) : formatTokenValue(value, assetSymbol);
 
   return (
