@@ -74,6 +74,7 @@ type OwnProps = {|
   onDismiss?: () => mixed,
   closeFlag?: boolean,
   fillHeight?: boolean,
+  isSwipeClose?: boolean,
 |};
 
 type Props = {|
@@ -164,6 +165,7 @@ class SlideModal extends React.Component<Props, State> {
       centerFloatingItem,
       closeFlag = false,
       fillHeight,
+      isSwipeClose,
     } = this.props;
 
     const customTheme = getTheme(this.props);
@@ -263,7 +265,7 @@ class SlideModal extends React.Component<Props, State> {
         animationOutTiming={animationTiming}
         swipeDirection={noSwipeToDismiss ? undefined : 'down'}
         onBackButtonPress={this.handleDismiss}
-        onSwipeComplete={this.handleDismiss}
+        onSwipeComplete={!isSwipeClose ? this.handleDismiss : undefined}
         style={{
           margin: 0,
           position: 'relative',
