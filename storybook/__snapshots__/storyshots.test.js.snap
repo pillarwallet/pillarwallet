@@ -33453,12 +33453,12 @@ exports[`Storyshots FeeLabelToggle default 1`] = `
           }
         >
           <Text
-            color="#ffffff"
+            color="#FFFFFF"
             small={true}
             style={
               Array [
                 Object {
-                  "color": "#ffffff",
+                  "color": "#FFFFFF",
                   "fontFamily": "EuclidCircularB-Regular",
                   "fontSize": 12,
                   "lineHeight": 18,
@@ -33571,12 +33571,12 @@ exports[`Storyshots FeeLabelToggle not enough token 1`] = `
           }
         >
           <Text
-            color="#ffffff"
+            color="#FFFFFF"
             small={true}
             style={
               Array [
                 Object {
-                  "color": "#ffffff",
+                  "color": "#FFFFFF",
                   "fontFamily": "EuclidCircularB-Regular",
                   "fontSize": 12,
                   "lineHeight": 18,
