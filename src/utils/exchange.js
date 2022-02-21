@@ -168,6 +168,10 @@ export const getCaptureFeeDestinationAddress = (chain: Chain): ?string => {
     return firebaseRemoteConfig.getString(REMOTE_CONFIG.EXCHANGE_FEE_BSC_CAPTURE_ADDRESS);
   }
 
+  if (chain === CHAIN.AVALANCHE) {
+    return firebaseRemoteConfig.getString(REMOTE_CONFIG.EXCHANGE_FEE_AVAX_CAPTURE_ADDRESS);
+  }
+
   return null;
 };
 
