@@ -83,11 +83,16 @@ const SelectNetworkModal : FC<ISelectNetworkModal> = ({ networkSelected }) => {
     setIsSideChains(false);
   };
 
+  const close = React.useCallback(() => {
+    if (modalRef.current) modalRef.current.close();
+  }, []);
+
   const onSubmit = () => {
     if (isSideChains) {
       networkSelected();
     } else {
       if (!isDeployedOnEthereum) {
+        close();
         Alert.alert(
           tRoot('servicesContent.alert.title'),
           tRoot('servicesContent.alert.subtitle', deploymentFee && { deploymentCost: deploymentFee?.fiatValue }),
@@ -104,8 +109,9 @@ const SelectNetworkModal : FC<ISelectNetworkModal> = ({ networkSelected }) => {
             },
           ],
         );
-      } else  networkSelected();
-      if (modalRef.current) modalRef.current.close();
+      } else {
+        networkSelected();
+      }
     }
   };
 

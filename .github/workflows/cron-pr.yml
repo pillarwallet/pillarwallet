@@ -53,12 +53,23 @@ jobs:
       - name: output-url
         run: |
           echo "PR_URL=${{steps.open-pr.outputs.pr_url}}" >> $GITHUB_ENV && echo "PR_NUMBER=${{steps.open-pr.outputs.pr_number}}" >> $GITHUB_ENV
-          echo $PR_URL $PR_NUMBER
+          echo "HAS_CHANGES=${{steps.open-pr.outputs.has_changed_files}}" >> $GITHUB_ENV
       - name: Send Slack Notification
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
         run: |
-          if [ ! -z $PR_URL ]
+          echo "PR url: $PR_URL" 
+          echo "PR number: $PR_NUMBER"
+          echo "Milestone title: $MILESTONE_TITLE"
+          echo "New commits in develop branch: $HAS_CHANGES"
+
+          if [ $HAS_CHANGES = false ]
+          then
+            curl -X POST -d '{"text":"'"Pull Request can't be created, there are no new commits in develop branch!"'"}' $SLACK_WEBHOOK
+          elif [[ -z $MILESTONE_TITLE || $MILESTONE_TITLE = "null" ]]
+          then
+            curl -X POST -d '{"text":"'"Pull Request can't be created, no milestone title found!"'"}' $SLACK_WEBHOOK
+          elif [ ! -z $PR_URL ]
           then
             curl -X POST -d '{"text":"'"Pull Request #$PR_NUMBER for new $MILESTONE_TITLE is created! $PR_URL "'"}' $SLACK_WEBHOOK
           else 
