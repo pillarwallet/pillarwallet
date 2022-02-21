@@ -148,7 +148,7 @@ const FeeLabelToggle: FC<IFeeLabelToggle> = ({
       <Spacing w={spacing.small} />
 
       <FeePill onPress={() => setIsFiatValueVisible(!isFiatValueVisible)} hasError={hasError} highFee={highFee}>
-        <BaseText small color="#ffffff">
+        <BaseText small color={colors.white}>
           {labelValue}
         </BaseText>
       </FeePill>

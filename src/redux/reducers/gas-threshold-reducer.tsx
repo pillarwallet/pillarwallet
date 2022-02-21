@@ -25,9 +25,8 @@ const initialState: IReduxGasThresholdState = {
   error: null,
 };
 
-const fetchGasThresholds = (state: IReduxGasThresholdState, actions: IReduxAction) => {
-  return updateObject(state, { fetchState: ProcessState.PROCESSING });
-};
+const fetchGasThresholds = (state: IReduxGasThresholdState, actions: IReduxAction) =>
+  updateObject(state, { fetchState: ProcessState.PROCESSING });
 
 export interface IReduxGasThresholdsFetched extends IReduxAction {
   type: t.GAS_THRESHOLDS_FETCHED;
@@ -36,16 +35,14 @@ export interface IReduxGasThresholdsFetched extends IReduxAction {
   };
 }
 
-const gasThresholdsFetched = (state: IReduxGasThresholdState, actions: IReduxGasThresholdsFetched) => {
-  return updateObject(state, {
+const gasThresholdsFetched = (state: IReduxGasThresholdState, actions: IReduxGasThresholdsFetched) =>
+  updateObject(state, {
     fetchState: ProcessState.HANDLED,
     gasThresholds: actions.payload.gasThresholds || null,
   });
-};
 
-const fetchGasThresholdsError = (state: IReduxGasThresholdState, actions: IReduxAction) => {
-  return updateObject(state, { fetchState: ProcessState.HANDLED, error: actions.payload.error?.toString() || null });
-};
+const fetchGasThresholdsError = (state: IReduxGasThresholdState, actions: IReduxAction) =>
+  updateObject(state, { fetchState: ProcessState.HANDLED, error: actions.payload.error?.toString() || null });
 
 const gasThresholdReducer = createReducer(initialState, {
   [t.FETCH_GAS_THRESHOLDS]: fetchGasThresholds,

@@ -32,7 +32,7 @@ const fetchGasThresholds = async (): Promise<IReduxGasThresholdsFetched> => {
   let thresholds: IGasThresholds = {};
 
   const prismicData = await Prismic.queryDocumentsByType(TYPE_HIGH_GAS_THRESHOLD);
-  if (!prismicData.results) throw new Error('failed to load documents from prismic');
+  if (!prismicData?.results) throw new Error('failed to load documents from prismic');
 
   prismicData.results.forEach((result, i) => {
     if (!result.data?.chain_id || !result.data.threshold) return;
@@ -44,10 +44,19 @@ const fetchGasThresholds = async (): Promise<IReduxGasThresholdsFetched> => {
       networkName: data.network_name[0].text || null,
     };
 
-    // Create data for Kovan using Eth params
+    // Create data for Kovan using ETH params
     if (data.chain_id === 1) {
       thresholds[42] = {
-        chainId: data.chain_id || 0,
+        chainId: 42 || 0,
+        threshold: data.threshold || 0,
+        networkName: data.network_name[0].text || null,
+      };
+    }
+
+    // Create data for Mumbai using MATIC params
+    if (data.chain_id === 137) {
+      thresholds[80001] = {
+        chainId: 80001 || 0,
         threshold: data.threshold || 0,
         networkName: data.network_name[0].text || null,
       };
