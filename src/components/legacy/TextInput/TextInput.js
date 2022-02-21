@@ -75,87 +75,13 @@ type Props = {
   onRightAddonPress?: () => void,
   leftSideSymbol?: string,
   inputError?: boolean,
+  avoidAutoFocus?: boolean,
 };
 
 type State = {
   isFocused: boolean,
   selectionStart: Object,
 };
-
-const InputField = styled(Input)`
-  color: ${({ theme }) => theme.colors.basic010};
-  ${({ smallPadding }) => `padding: 0 ${smallPadding ? 6 : 14}px`};
-  align-self: stretch;
-  margin: 0;
-  text-align: ${({ alignTextOnRight }) => alignTextOnRight ? 'right' : 'auto'};
-`;
-
-const IosFocusInput = styled(RNInput)`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 1px;
-`;
-
-const Item = styled(NBItem)`
-  border-bottom-color: transparent;
-  border-bottom-width: 0;
-  flex-direction: row;
-  min-height: 0;
-  height: ${({ height }) => height}px;
-  width: 100%;
-  margin: 0;
-`;
-
-const InputBorder = styled.View`
-  border-radius: 4px;
-  border: 1px;
-  border-color: ${({ error, theme }) => error ? theme.colors.secondaryAccent240 : 'transparent'};
-`;
-
-const ItemHolder = styled.View`
-  position: relative;
-  background-color: ${({ theme }) => theme.colors.inputField};
-  border-radius: 4px;
-`;
-
-const ButtonWrapper = styled.View`
-  padding: 4px;
-`;
-
-const LeftSideWrapper = styled.View`
-  padding-left: 14px;
-  flex-direction: row;
-  align-items: center;
-`;
-
-const RightSideWrapper = styled.TouchableOpacity`
-  padding-right: 14px;
-  flex-direction: row;
-  align-items: center;
-`;
-
-const AddonRegularText = styled(BaseText)`
-  color: ${({ theme }) => theme.colors.basic030};
-  flex-wrap: wrap;
-  max-width: 80px;
-`;
-
-const AddonIcon = styled(Icon)`
-  font-size: 16px;
-  color: ${({ theme }) => theme.colors.basic010};
-  margin-right: 9px;
-`;
-
-const PlaceholderRight = styled(MediumText)`
-  ${fontStyles.big};
-  ${({ addMargin }) => !!addMargin && 'margin-right: 8px;'}
-`;
-
-const InputLabel = styled(MediumText)`
-  margin-bottom: 8px;
-`;
-
 
 /**
  * @deprecated This compontent is considered legacy and should not be used in new code
@@ -336,6 +262,7 @@ class TextInput extends React.Component<Props, State> {
       leftSideSymbol,
       onRightAddonPress,
       inputError = false,
+      avoidAutoFocus = false,
     } = this.props;
     let { fallbackSource, hasError } = this.props;
 
@@ -402,7 +329,6 @@ class TextInput extends React.Component<Props, State> {
                 {/* $FlowFixMe: incorrect RN flow types */}
                 <TouchableWithoutFeedback style={{ flex: 1 }} onPress={this.focusMultilineInput}>
                   <View style={{ flex: 1 }}>
-
                     <InputField
                       {...inputProps}
                       ref={(input) => {
@@ -427,7 +353,7 @@ class TextInput extends React.Component<Props, State> {
                       placeholderTextColor={colors.basic030}
                       alignTextOnRight={!!numeric}
                       smallPadding={!!onRightAddonPress}
-                      autoFocus
+                      autoFocus={!avoidAutoFocus}
                       selection={selectionStart}
                     />
                   </View>
@@ -462,3 +388,78 @@ class TextInput extends React.Component<Props, State> {
 }
 
 export default withTheme(TextInput);
+
+
+const InputField = styled(Input)`
+  color: ${({ theme }) => theme.colors.basic010};
+  ${({ smallPadding }) => `padding: 0 ${smallPadding ? 6 : 14}px`};
+  align-self: stretch;
+  margin: 0;
+  text-align: ${({ alignTextOnRight }) => alignTextOnRight ? 'right' : 'auto'};
+`;
+
+const IosFocusInput = styled(RNInput)`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+`;
+
+const Item = styled(NBItem)`
+  border-bottom-color: transparent;
+  border-bottom-width: 0;
+  flex-direction: row;
+  min-height: 0;
+  height: ${({ height }) => height}px;
+  width: 100%;
+  margin: 0;
+`;
+
+const InputBorder = styled.View`
+  border-radius: 4px;
+  border: 1px;
+  border-color: ${({ error, theme }) => error ? theme.colors.secondaryAccent240 : 'transparent'};
+`;
+
+const ItemHolder = styled.View`
+  position: relative;
+  background-color: ${({ theme }) => theme.colors.inputField};
+  border-radius: 4px;
+`;
+
+const ButtonWrapper = styled.View`
+  padding: 4px;
+`;
+
+const LeftSideWrapper = styled.View`
+  padding-left: 14px;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const RightSideWrapper = styled.TouchableOpacity`
+  padding-right: 14px;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const AddonRegularText = styled(BaseText)`
+  color: ${({ theme }) => theme.colors.basic030};
+  flex-wrap: wrap;
+  max-width: 80px;
+`;
+
+const AddonIcon = styled(Icon)`
+  font-size: 16px;
+  color: ${({ theme }) => theme.colors.basic010};
+  margin-right: 9px;
+`;
+
+const PlaceholderRight = styled(MediumText)`
+  ${fontStyles.big};
+  ${({ addMargin }) => !!addMargin && 'margin-right: 8px;'}
+`;
+
+const InputLabel = styled(MediumText)`
+  margin-bottom: 8px;
+`;

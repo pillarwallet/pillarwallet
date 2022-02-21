@@ -61,7 +61,7 @@ const SelectResidentModal : FC<ISelectResidentModal> = ({ residentSelected }) =>
   };
 
   return (
-    <SlideModal noSwipeToDismiss ref={modalRef} hideHeader noClose>
+    <SlideModal isSwipeClose noSwipeToDismiss ref={modalRef} hideHeader noClose>
       <ModalTitle>{t('title')}</ModalTitle>
       <Container onPress={selectUsResident}>
         <ContainerView isSelected={usResident}>
@@ -90,7 +90,7 @@ export default SelectResidentModal;
 
 const styles = {
   buttonStyle: {
-    marginBottom: spacing.large,
+    marginBottom: spacing.extraLarge,
   },
   titleStyle: {
     fontFamily: appFont.medium,
