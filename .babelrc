@@ -11,6 +11,7 @@
           "components": ["./src/components"],
           "configs": ["./src/configs"],
           "constants": ["./src/constants"],
+          "hooks": ["./src/hooks"],
           "models": ["./src/models"],
           "navigation": ["./src/navigation"],
           "reducers": ["./src/reducers"],
