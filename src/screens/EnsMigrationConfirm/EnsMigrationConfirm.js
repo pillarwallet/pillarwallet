@@ -204,14 +204,10 @@ const EnsMigrationConfirm = () => {
           onPress={onSubmit}
           disabled={submitDisabled}
         />
-        {highFee && (
-          <>
-            <Spacing h={spacing.medium} />
-            <BaseText small secondary center>
-              {tRoot('transactions.highGasFee.pillarEthFeeDisclaimer')}
-            </BaseText>
-          </>
-        )}
+        <Spacing h={spacing.medium} />
+        <BaseText small secondary center>
+          {tRoot('transactions.highGasFee.pillarEthFeeDisclaimer')}
+        </BaseText>
       </ScrollWrapper>
     </ContainerWithHeader>
   );
