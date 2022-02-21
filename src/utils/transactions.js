@@ -283,17 +283,15 @@ export const isHighGasFee = (
   fiatCurrency: Currency,
   gasThresholds?: IGasThresholds,
 ) => {
-  return true;
+  if (!chain || !feeInWei || !rates) return false;
 
-  // if (!chain) return false;
+  const fiatGasFee = getTxFeeInFiat(chain, feeInWei, gasToken, rates, fiatCurrency);
+  const chainId = mapChainToChainId(chain);
+  const threshold = gasThresholds?.[chainId]?.threshold || 0;
 
-  // const fiatGasFee = getTxFeeInFiat(chain, feeInWei, gasToken, rates, fiatCurrency);
-  // const chainId = mapChainToChainId(chain);
-  // const threshold = gasThresholds?.[chainId]?.threshold || 0;
+  if (!threshold) return false;
 
-  // if (!threshold) return false;
+  if (fiatGasFee >= threshold) return true;
 
-  // if (fiatGasFee >= threshold) return true;
-
-  // return false;
+  return false;
 };

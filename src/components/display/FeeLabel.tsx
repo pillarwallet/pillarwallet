@@ -27,18 +27,23 @@ import { useTranslation } from 'translations/translate';
 import Text from 'components/core/Text';
 import Spinner from 'components/Spinner';
 import { Spacing } from 'components/legacy/Layout';
+import Modal from 'components/Modal';
 
 // Selectors
-import { useFiatCurrency, useChainRates } from 'selectors';
+import { useRootSelector, useFiatCurrency, useChainRates } from 'selectors';
+import { gasThresholdsSelector } from 'redux/selectors/gas-threshold-selector';
 
 // Utils
 import { getBalanceInFiat } from 'utils/assets';
 import { formatTokenValue, formatFiatValue } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
+import { isHighGasFee } from 'utils/transactions';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
 import type { Chain } from 'models/Chain';
+import { spacing } from 'utils/variables';
+import Icon from 'components/core/Icon';
 
 type Mode = 'actual' | 'estimate';
 
@@ -55,12 +60,25 @@ type Props = {
   isLoading?: boolean;
   isNotEnough?: boolean;
   style?: ViewStyleProp;
+  highGasFeeModal?: JSX.Element;
 };
 
-function FeeLabel({ value, assetSymbol, assetAddress, mode, isLoading, isNotEnough, style, chain }: Props) {
+function FeeLabel({
+  value,
+  assetSymbol,
+  assetAddress,
+  mode,
+  isLoading,
+  isNotEnough,
+  style,
+  chain,
+  highGasFeeModal,
+}: Props) {
   const { t } = useTranslation();
 
   const [showFiatValue, setShowFiatValue] = React.useState(true);
+
+  const gasThresholds = useRootSelector(gasThresholdsSelector);
 
   const chainRates = useChainRates(chain);
   const currency = useFiatCurrency();
@@ -74,16 +92,30 @@ function FeeLabel({ value, assetSymbol, assetAddress, mode, isLoading, isNotEnou
   const valueInFiat = new BigNumber(getBalanceInFiat(currency, value, chainRates, assetAddress));
   const labelValue = showFiatValue ? formatFiatValue(valueInFiat, currency) : formatTokenValue(value, assetSymbol);
 
+  const highFee = isHighGasFee(chain, value, null, chainRates, currency, gasThresholds);
+
+  const onHighFeeInfoPress = () => {
+    if (!highGasFeeModal) return;
+
+    Modal.open(() => highGasFeeModal);
+  };
+
   return (
     <LabelWrapper style={style}>
-      <Text color={isNotEnough ? colors.negative : colors.basic030}>
+      <Text color={isNotEnough || highFee ? colors.negative : colors.basic030}>
         {mode === 'actual' ? t('label.fee') : t('label.estimatedFee')}
       </Text>
 
-      <Spacing w={8} />
+      <Spacing w={spacing.small} />
 
       <FeeValue onPress={() => setShowFiatValue(!showFiatValue)} $isNotEnough={isNotEnough}>
-        <Text color={isNotEnough ? colors.negative : colors.secondaryText}>{labelValue}</Text>
+        <Text color={isNotEnough || highFee ? colors.negative : colors.secondaryText}>{labelValue}</Text>
+        {highFee && <Text color={colors.negative}>{t('label.highGasFee')}</Text>}
+        {highFee && highGasFeeModal && (
+          <HighGasFeeButton onPress={onHighFeeInfoPress} padding={spacing.small}>
+            <Icon name={'info'} color={colors.primary} />
+          </HighGasFeeButton>
+        )}
       </FeeValue>
     </LabelWrapper>
   );
@@ -98,4 +130,10 @@ const LabelWrapper = styled.View`
 
 const FeeValue = styled.TouchableOpacity`
   justify-content: center;
+  flex-direction: row;
+`;
+
+const HighGasFeeButton = styled.TouchableOpacity`
+  padding: ${({ padding }) => padding}px
+  flex-direction: row;
 `;

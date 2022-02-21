@@ -27,12 +27,15 @@ import * as Table from 'components/layout/Table';
 import Tooltip from 'components/Tooltip';
 
 // Selectors
-import { useFiatCurrency, useChainRates } from 'selectors';
+import { useRootSelector, useFiatCurrency, useChainRates } from 'selectors';
+import { gasThresholdsSelector } from 'redux/selectors/gas-threshold-selector';
 
 // Utils
 import { getFormattedBalanceInFiat } from 'utils/assets';
 import { formatTokenAmount, hitSlop20 } from 'utils/common';
 import { nativeAssetPerChain } from 'utils/chains';
+import { isHighGasFee } from 'utils/transactions';
+import { ethToWei } from '@netgum/utils';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
@@ -69,13 +72,7 @@ function FeeTable({ fee, assetSymbol, assetAddress, style, chain }: Props) {
         chain={chain}
       />
       <Table.Row title={t('pillarFee')} value={tRoot('label.free')} variant="positive" />
-      <FeeRow
-        title={t('totalFee')}
-        assetSymbol={assetSymbol}
-        assetAddress={assetAddress}
-        fee={fee}
-        chain={chain}
-      />
+      <FeeRow title={t('totalFee')} assetSymbol={assetSymbol} assetAddress={assetAddress} fee={fee} chain={chain} />
     </View>
   );
 }
@@ -95,23 +92,20 @@ type FeeItemProps = {|
   separator?: boolean,
 |};
 
-export function FeeRow({
-  title,
-  assetSymbol,
-  assetAddress,
-  fee,
-  separator,
-  chain,
-}: FeeItemProps) {
+export function FeeRow({ title, assetSymbol, assetAddress, fee, separator, chain }: FeeItemProps) {
   const { t } = useTranslation();
 
   const [showTooltip, setShowTooltip] = React.useState(false);
 
   const chainRates = useChainRates(chain);
   const fiatCurrency = useFiatCurrency();
+  const gasThresholds = useRootSelector(gasThresholdsSelector);
 
   const formattedFee = fee ? t('tokenValue', { value: formatTokenAmount(fee, assetSymbol), token: assetSymbol }) : '';
   const formattedFeeInFiat = getFormattedBalanceInFiat(fiatCurrency, fee, chainRates, assetAddress);
+
+  const feeInWei = ethToWei(fee).toString();
+  const highFee = isHighGasFee(chain, feeInWei, null, chainRates, fiatCurrency, gasThresholds);
 
   return (
     <Table.RowContainer separator={separator}>
@@ -119,7 +113,9 @@ export function FeeRow({
 
       <Tooltip body={formattedFee} isVisible={showTooltip} positionOnBottom={false}>
         <TouchableOpacity hitSlop={hitSlop20} activeOpacity={1} onPress={() => setShowTooltip(!showTooltip)}>
-          <Table.RowValue fontVariant="tabular-nums">{formattedFeeInFiat}</Table.RowValue>
+          <Table.RowValue fontVariant="tabular-nums" variant={highFee && 'negative'}>
+            {formattedFeeInFiat}
+          </Table.RowValue>
         </TouchableOpacity>
       </Tooltip>
     </Table.RowContainer>

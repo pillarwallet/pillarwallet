@@ -131,7 +131,6 @@ const FeeLabelToggle: FC<IFeeLabelToggle> = ({
   const renderHighGasFeeWarning = () => {
     return (
       <>
-        <Spacing w={spacing.mediumLarge} />
         <Label color={highFee && colors.negative}>{labelText || t('label.highGasFee')}&nbsp;</Label>
         {highGasFeeModal && (
           <HighGasFeeButton onPress={onHighFeeInfoPress} padding={spacing.small}>

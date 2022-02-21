@@ -27,6 +27,9 @@ import { maxBy } from 'lodash';
 import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 
+// Actions
+import { fetchGasThresholds } from 'redux/actions/gas-threshold-actions';
+
 // Configs
 import { getPlrAddressForChain } from 'configs/assetsConfig';
 
@@ -68,7 +71,6 @@ import ToAssetSelector from './ToAssetSelector';
 import OfferCard from './OfferCard';
 import { useFromAssets, useToAssets, useOffersQuery, sortOffers } from './utils';
 
-
 function Exchange() {
   const { t } = useTranslation();
   const navigation = useNavigation();
@@ -106,6 +108,11 @@ function Exchange() {
 
   const offersQuery = useOffersQuery(chain, fromAsset, toAsset, debouncedFromValue);
   const offers = sortOffers(offersQuery.data);
+
+  React.useEffect(() => {
+    dispatch(fetchGasThresholds());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Focus on from amount input after user changes fromAsset
   React.useEffect(() => {
@@ -168,7 +175,7 @@ function Exchange() {
 
   const toValue = maxBy(offers, (offer) => offer.toAmount)?.toAmount.precision(6);
   const customTitle =
-    (nativeAssetPerChain[CHAIN.ETHEREUM]?.address === fromAddress) && (chain === CHAIN.ETHEREUM)
+    nativeAssetPerChain[CHAIN.ETHEREUM]?.address === fromAddress && chain === CHAIN.ETHEREUM
       ? t('exchangeContent.title.initialExchange')
       : t('exchangeContent.title.exchange', { chain: chainConfig.titleShort });
 

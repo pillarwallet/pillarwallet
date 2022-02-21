@@ -108,10 +108,10 @@ const SendAsset = ({
   }
 
   const defaultAssetOption = defaultAssetData &&
-    defaultAssetData?.token && {
-      ...defaultAssetData,
-      symbol: defaultAssetData.token,
-    };
+  defaultAssetData?.token && {
+    ...defaultAssetData,
+    symbol: defaultAssetData.token,
+  };
 
   const [assetData, setAssetData] = useState<AssetOption | Collectible>(
     defaultAssetData?.tokenType ? defaultAssetData : defaultAssetOption || assetsWithBalance[0],
