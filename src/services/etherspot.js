@@ -102,7 +102,7 @@ export class EtherspotService {
     this.supportedNetworks = [
       isMainnet ? NetworkNames.Mainnet : NetworkNames.Kovan,
       NetworkNames.Bsc,
-      NetworkNames.Matic,
+      isMainnet ? NetworkNames.Matic : NetworkNames.Mumbai,
       NetworkNames.Xdai,
       isMainnet ? NetworkNames.Avalanche : NetworkNames.Fuji,
     ];
@@ -116,7 +116,7 @@ export class EtherspotService {
     await Promise.all(
       this.supportedNetworks.map(async (networkName) => {
         const env =
-          networkName !== NetworkNames.Kovan && networkName !== NetworkNames.Fuji
+          networkName !== NetworkNames.Kovan && networkName !== NetworkNames.Fuji && networkName !== NetworkNames.Mumbai
             ? EnvNames.MainNets
             : EnvNames.TestNets;
         this.instances[networkName] = new EtherspotSdk(privateKey, {
@@ -861,7 +861,7 @@ function networkNameFromChain(chain: Chain): ?string {
     case CHAIN.BINANCE:
       return NetworkNames.Bsc;
     case CHAIN.POLYGON:
-      return NetworkNames.Matic;
+      return isProdEnv() ? NetworkNames.Matic : NetworkNames.Mumbai;
     case CHAIN.XDAI:
       return NetworkNames.Xdai;
     case CHAIN.AVALANCHE:
@@ -879,6 +879,7 @@ function chainFromNetworkName(networkName: string): ?Chain {
     case NetworkNames.Bsc:
       return CHAIN.BINANCE;
     case NetworkNames.Matic:
+    case NetworkNames.Mumbai:
       return CHAIN.POLYGON;
     case NetworkNames.Xdai:
       return CHAIN.XDAI;
