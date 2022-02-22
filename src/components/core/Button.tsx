@@ -24,7 +24,7 @@ import styled from 'styled-components/native';
 
 // Components
 import Text from 'components/core/Text';
-import Icon, { type IconName } from 'components/core/Icon';
+import Icon, { IconName } from 'components/core/Icon';
 
 // Utils
 import { fontStyles, appFont, spacing } from 'utils/variables';
@@ -34,23 +34,22 @@ import { useThemeColors } from 'utils/themes';
 import type { ViewStyleProp, TextStyleProp } from 'utils/types/react-native';
 import type { ThemeColors } from 'models/Theme';
 
-
 type Variant = 'primary' | 'secondary' | 'text' | 'destructive';
 
 type Size = 'regular' | 'large' | 'compact';
 
-type Props = {|
-  title?: string,
-  leftIcon?: IconName,
-  onPress?: () => mixed,
-  variant?: Variant,
-  size?: Size,
-  disabled?: boolean,
-  style?: ViewStyleProp,
-  titleColor?: string,
-  titleStyle?: TextStyleProp,
-  leftIconStyle?: ViewStyleProp,
-|};
+type Props = {
+  title?: string;
+  leftIcon?: IconName;
+  onPress?: () => any;
+  variant?: Variant;
+  size?: Size;
+  disabled?: boolean;
+  style?: ViewStyleProp;
+  titleColor?: string;
+  titleStyle?: TextStyleProp;
+  leftIconStyle?: ViewStyleProp;
+};
 
 function Button({
   title,
@@ -124,7 +123,8 @@ const TouchableContainer = styled(TouchableOpacity)`
   ${({ disabled }) => disabled && 'opacity: 0.5;'}
   ${({ $size }) => $size === 'regular' && `width: 100%; height: 72px; padding: 14px ${spacing.large}px`}
   ${({ $size }) =>
-    $size === 'large' && `width: 100%; height: 72px;
+    $size === 'large' &&
+    `width: 100%; height: 72px;
     padding:${spacing.largePlus}px ${spacing.large}px; border-radius: 14px;`}
   ${({ $size }) => $size === 'compact' && `padding: 6px ${spacing.medium}px;`}
   ${({ theme, $variant }) => $variant === 'primary' && `background-color: ${theme.colors.buttonPrimaryBackground}`};

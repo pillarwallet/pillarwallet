@@ -42,9 +42,10 @@ import type { TransactionFeeInfo } from 'models/Transaction';
 type Props = {
   offer: ExchangeOffer,
   feeInfo: ?TransactionFeeInfo,
+  highFee?: boolean,
 };
 
-const DetailsTable = ({ offer, feeInfo }: Props) => {
+const DetailsTable = ({ offer, feeInfo, highFee = false }: Props) => {
   const { exchangeRate, fromAsset, toAsset, chain, captureFee } = offer;
 
   const chainConfig = useChainConfig(chain);
@@ -80,7 +81,7 @@ const DetailsTable = ({ offer, feeInfo }: Props) => {
           <TableLabel tooltip={t('exchangeContent.tooltip.feeFormat', { provider: providerName })}>
             {t('transactions.label.allowancePlusEthFee')}
           </TableLabel>
-          <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={chain} />
+          <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={chain} highFee={highFee} />
         </TableRow>
         <TableRow>
           <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
@@ -88,7 +89,7 @@ const DetailsTable = ({ offer, feeInfo }: Props) => {
         </TableRow>
         <TableRow>
           <TableLabel>{t('transactions.label.totalFee')}</TableLabel>
-          <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={chain} />
+          <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={chain} highFee={highFee} />
         </TableRow>
       </Table>
     </>

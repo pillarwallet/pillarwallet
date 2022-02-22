@@ -159,6 +159,7 @@
     "keyWalletVisibilityToggle": "Legacy wallet (advanced)",
     "loadingDefaultAssets": "Loading default assets",
     "needToActivate": "Need to activate",
+    "network": "Network",
     "newSmartWalletAccountDevice": "New Smart Wallet account device",
     "notApplicable": "N/A",
     "notEnoughGas": "Insufficient gas",
@@ -184,7 +185,9 @@
     "smartWalletAccountDeviceRemoved": "Account device removed",
     "smartWalletGasRelayerPLR": "Smart Wallet fees with PLR token",
     "started": "Started",
+    "swapping": "Swapping",
     "transactionDeploymentWarning": "Don't proceed if you don't want to deploy {{chain}} Smart Wallet.",
+    "transactionFee": "Transaction fee",
     "today": "Today",
     "toKeyWallet": "to Key wallet",
     "toPPN": "to Pillar Network",
@@ -219,6 +222,7 @@
     "free": "Free",
     "estimatedFee": "Est. fee",
     "estFee": "Est. fee",
+    "highGasFee": "  ·  High gas price",
     "nothingFound": "Nothing found",
     "verified": "Verified",
     "select": "Select",
@@ -328,6 +332,7 @@
     "support": "Support",
     "swap": "Swap",
     "swipeConfirm": "Swipe to confirm",
+    "swipeSend": "Swipe to send",
     "topUp": "Top up",
     "topUpMore": "Top up more",
     "topUpPLRTank": "Top up PLR Tank",
@@ -1169,8 +1174,7 @@
       "youAreSending": "You are sending",
       "fees": "Fees",
       "allowancePlusEthFee": "Allowance + Maximum Fee",
-      "migratingFrom": "migrating from",
-      "network": "Network"
+      "migratingFrom": "migrating from"
     },
     "paragraph": {
       "exchangeTransactionSuccess": "It may take some time for this transaction to complete",
@@ -1182,6 +1186,10 @@
         "title": "No assets found",
         "paragraph": "Check if the name was entered correctly"
       }
+    },
+    "highGasFee": {
+      "ethereumNetworkFees": "Ethereum network fees are currently high. Consider using sidechains for low-to-no transaction costs.\nPillar is free and does not charge any extra fees.",
+      "pillarEthFeeDisclaimer": "Pillar does not charge any fees.\nFee displayed is the current Ethereum network fee."
     }
   },
 

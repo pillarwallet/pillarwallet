@@ -33402,6 +33402,7 @@ exports[`Storyshots FeeLabelToggle default 1`] = `
         }
       >
         <Text
+          color={false}
           style={
             Array [
               Object {
@@ -33452,12 +33453,12 @@ exports[`Storyshots FeeLabelToggle default 1`] = `
           }
         >
           <Text
-            color="#ffffff"
+            color="#FFFFFF"
             small={true}
             style={
               Array [
                 Object {
-                  "color": "#ffffff",
+                  "color": "#FFFFFF",
                   "fontFamily": "EuclidCircularB-Regular",
                   "fontSize": 12,
                   "lineHeight": 18,
@@ -33469,17 +33470,6 @@ exports[`Storyshots FeeLabelToggle default 1`] = `
             £17562.40
           </Text>
         </View>
-        <View
-          style={
-            Array [
-              Object {
-                "height": 0,
-                "width": 8,
-              },
-            ]
-          }
-          w={8}
-        />
       </View>
     </View>
   </View>
@@ -33530,6 +33520,7 @@ exports[`Storyshots FeeLabelToggle not enough token 1`] = `
         }
       >
         <Text
+          color={false}
           style={
             Array [
               Object {
@@ -33580,12 +33571,12 @@ exports[`Storyshots FeeLabelToggle not enough token 1`] = `
           }
         >
           <Text
-            color="#ffffff"
+            color="#FFFFFF"
             small={true}
             style={
               Array [
                 Object {
-                  "color": "#ffffff",
+                  "color": "#FFFFFF",
                   "fontFamily": "EuclidCircularB-Regular",
                   "fontSize": 12,
                   "lineHeight": 18,
@@ -33597,17 +33588,6 @@ exports[`Storyshots FeeLabelToggle not enough token 1`] = `
             £17562.40
           </Text>
         </View>
-        <View
-          style={
-            Array [
-              Object {
-                "height": 0,
-                "width": 8,
-              },
-            ]
-          }
-          w={8}
-        />
       </View>
     </View>
   </View>

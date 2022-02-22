@@ -27,10 +27,10 @@ import { BigNumber } from 'bignumber.js';
 // Components
 import { Spacing } from 'components/legacy/Layout';
 import ArrowIcon from 'components/ArrowIcon';
-import Button from 'components/legacy/Button';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import ContactSelector from 'components/ContactSelector';
 import Spinner from 'components/Spinner';
+import SwipeButton from 'components/SwipeButton/SwipeButton';
 
 // Constants
 import { ASSET_TYPES } from 'constants/assetsConstants';
@@ -62,6 +62,7 @@ type Props = {
   children?: React.Node,
   isLoading?: boolean,
   customScreenTitle?: string,
+  isHighGasFee?: boolean,
 };
 
 const SendContainer = ({
@@ -76,6 +77,7 @@ const SendContainer = ({
   children,
   isLoading,
   customScreenTitle,
+  isHighGasFee,
 }: Props) => {
   const chain = assetData?.chain ?? CHAIN.ETHEREUM;
   const { titleShort: chainTitle } = useChainConfig(chain);
@@ -133,7 +135,7 @@ const SendContainer = ({
           <ContactSelector {...customSelectorProps} />
         </Wrapper>
 
-        <SendFooter {...footerProps} />
+        <SendFooter isHighGasFee={isHighGasFee} {...footerProps} />
 
         {children}
       </ScrollView>
@@ -150,10 +152,11 @@ type FooterProps = {
   buttonProps?: ButtonWithoutTitle,
   footerTopAddon?: React.Node,
   isLoading?: boolean,
+  isHighGasFee?: boolean,
 };
 
 const SendFooter = (props: FooterProps) => {
-  const { isNextButtonVisible, buttonProps = {}, footerTopAddon, isLoading } = props;
+  const { isNextButtonVisible, buttonProps = {}, footerTopAddon, isLoading, isHighGasFee } = props;
   if (!footerTopAddon && !isNextButtonVisible) return null;
   if (isLoading) {
     return (
@@ -166,8 +169,7 @@ const SendFooter = (props: FooterProps) => {
     <FooterInner>
       {footerTopAddon}
       {isNextButtonVisible && (
-        // $FlowFixMe: flow update to 0.122
-        <Button title={t('button.next')} marginTop={spacing.medium} {...buttonProps} />
+        <SwipeButton confirmTitle={t('button.swipeSend')} warning={isHighGasFee} {...buttonProps} />
       )}
     </FooterInner>
   );

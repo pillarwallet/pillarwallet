@@ -1,4 +1,3 @@
-// @flow
 /*
     Pillar Wallet: the personal data locker
     Copyright (C) 2019 Stiftung Pillar Project
@@ -40,6 +39,8 @@ const commonColors = {
   binance: '#f3ba2f',
   xdai: '#62a7a5',
   polygon: '#8247e5',
+  white: '#FFFFFF',
+  black: '#000000',
 };
 
 export const semanticLightThemeColors = {

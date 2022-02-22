@@ -27,6 +27,7 @@ import { BigNumber } from 'bignumber.js';
 
 // Actions
 import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
+import { fetchGasThresholds } from 'redux/actions/gas-threshold-actions';
 
 // Constants
 import { SEND_COLLECTIBLE_CONFIRM, SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
@@ -35,16 +36,18 @@ import { ASSET_TYPES } from 'constants/assetsConstants';
 // Components
 import Button from 'components/legacy/Button';
 import FeeLabelToggle from 'components/FeeLabelToggle';
+import SendHighGasModal from 'components/HighGasFeeModals/SendHighGasModal';
 
 // Utils
 import { truncateAmount, reportErrorLog, lookupAddress } from 'utils/common';
 import { getBalanceBN, isEnoughBalanceForTransactionFee } from 'utils/assets';
-import { isValidValueForTransfer, showTransactionRevertedToast } from 'utils/transactions';
+import { isValidValueForTransfer, showTransactionRevertedToast, isHighGasFee } from 'utils/transactions';
 
 // Selectors
 import { useGasTokenSelector } from 'selectors/archanova';
-import { contactsSelector } from 'selectors';
+import { useRootSelector, contactsSelector, useFiatCurrency, useChainRates } from 'selectors';
 import { accountAssetsWithBalanceSelector } from 'selectors/assets';
+import { gasThresholdsSelector } from 'redux/selectors/gas-threshold-selector';
 
 // Types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -74,6 +77,7 @@ type Props = {
   estimateErrorMessage: ?string,
   resetEstimateTransaction: () => void,
   estimateTransaction: (transaction: TransactionToEstimate, chain: Chain) => void,
+  reduxFetchGasThresholds: () => void,
 };
 
 const SendAsset = ({
@@ -90,6 +94,7 @@ const SendAsset = ({
   estimateErrorMessage,
   estimateTransaction,
   resetEstimateTransaction,
+  reduxFetchGasThresholds,
 }: Props) => {
   let defaultAssetData = navigation.getParam('assetData');
 
@@ -115,10 +120,15 @@ const SendAsset = ({
   const [selectedContact, setSelectedContact] = useState(defaultContact);
   const [submitPressed, setSubmitPressed] = useState(false);
 
+  const gasThresholds = useRootSelector(gasThresholdsSelector);
+
   const assetAddress = assetData?.contractAddress;
   const chain = assetData?.chain;
   const balances = accountAssetsBalances?.[chain]?.wallet ?? {};
   const balance = getBalanceBN(balances, assetAddress);
+
+  const chainRates = useChainRates(chain);
+  const fiatCurrency = useFiatCurrency();
 
   const isCollectible = assetData?.tokenType === ASSET_TYPES.COLLECTIBLE;
   const isValidValue = isCollectible || isValidValueForTransfer(value, balance);
@@ -157,6 +167,7 @@ const SendAsset = ({
   // initial
   useEffect(() => {
     resetEstimateTransaction();
+    reduxFetchGasThresholds();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -239,6 +250,12 @@ const SendAsset = ({
 
   const isNextButtonDisabled = !session.isOnline || !feeInfo || !!errorMessage || !isValidValue;
 
+  const highFee = isHighGasFee(chain, feeInfo?.fee, feeInfo?.gasToken, chainRates, fiatCurrency, gasThresholds);
+
+  const highGasFeeModal = highFee ? (
+    <SendHighGasModal value={value} contact={selectedContact} chain={chain} txFeeInfo={feeInfo} />
+  ) : null;
+
   return (
     <SendContainer
       customSelectorProps={{
@@ -261,9 +278,18 @@ const SendAsset = ({
         },
         footerTopAddon:
           !!selectedContact &&
-          renderFeeToggle(feeInfo, showFee, chain, errorMessage, isEstimating, enoughBalanceForTransaction),
+          renderFeeToggle(
+            feeInfo,
+            showFee,
+            chain,
+            errorMessage,
+            isEstimating,
+            enoughBalanceForTransaction,
+            highGasFeeModal,
+          ),
         isLoading: isEstimating,
       }}
+      isHighGasFee={highFee}
     />
   );
 };
@@ -300,6 +326,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
   estimateTransaction: (transaction: TransactionToEstimate, chain: Chain) =>
     dispatch(estimateTransactionAction(transaction, chain)),
+  reduxFetchGasThresholds: () => dispatch(fetchGasThresholds()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(SendAsset);
@@ -311,6 +338,7 @@ const renderFeeToggle = (
   feeError: ?string,
   isLoading: boolean,
   enoughBalance: boolean,
+  highGasFeeModal?: any,
 ) => {
   if (!showFee || !txFeeInfo) return null;
 
@@ -324,6 +352,7 @@ const renderFeeToggle = (
         chain={chain}
         isLoading={isLoading}
         hasError={!enoughBalance}
+        highGasFeeModal={highGasFeeModal}
       />
       {!!feeError && <Button disabled title={feeError} style={{ marginTop: 15 }} />}
     </>

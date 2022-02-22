@@ -26,9 +26,10 @@ import { useTranslation } from 'translations/translate';
 // Components
 import { Container, Content, Spacing } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
-import Button from 'components/core/Button';
 import Text from 'components/core/Text';
 import TransactionDeploymentWarning from 'components/other/TransactionDeploymentWarning';
+import SwipeButton from 'components/SwipeButton/SwipeButton';
+import WarningBlock from 'components/HighGasFeeModals/WarningBlock';
 
 // Constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
@@ -38,17 +39,15 @@ import { TRANSACTION_TYPE } from 'constants/transactionsConstants';
 import { useTransactionsEstimate, useTransactionFeeCheck } from 'hooks/transactions';
 
 // Selectors
-import {
-  useRootSelector,
-  useFiatCurrency,
-  useChainRates,
-} from 'selectors';
+import { useRootSelector, useFiatCurrency, useChainRates } from 'selectors';
+import { gasThresholdsSelector } from 'redux/selectors/gas-threshold-selector';
 
 // Utils
 import { getFormattedBalanceInFiat } from 'utils/assets';
 import { useProviderConfig } from 'utils/exchange';
-import { mapTransactionsToTransactionPayload, showTransactionRevertedToast } from 'utils/transactions';
+import { mapTransactionsToTransactionPayload, showTransactionRevertedToast, isHighGasFee } from 'utils/transactions';
 import { spacing } from 'utils/variables';
+import { useThemeColors } from 'utils/themes';
 
 // Types
 import type { ExchangeOffer } from 'models/Exchange';
@@ -57,8 +56,8 @@ import type { ExchangeOffer } from 'models/Exchange';
 import ExchangeScheme from './ExchangeScheme';
 import DetailsTable from './DetailsTable';
 
-
 const ExchangeConfirmScreen = () => {
+  const colors = useThemeColors();
   const { t } = useTranslation();
   const navigation = useNavigation();
 
@@ -66,8 +65,9 @@ const ExchangeConfirmScreen = () => {
   const { fromAsset, toAsset, fromAmount, toAmount, provider, chain } = offer;
   const toAssetSymbol = toAsset.symbol;
 
-  const fiatCurrency = useFiatCurrency();
   const isOnline = useRootSelector((root) => root.session.data.isOnline);
+  const fiatCurrency = useFiatCurrency();
+  const gasThresholds = useRootSelector(gasThresholdsSelector);
 
   const chainRates = useChainRates(chain);
 
@@ -99,6 +99,8 @@ const ExchangeConfirmScreen = () => {
 
   const errorMessage = estimationErrorMessage || notEnoughForFeeErrorMessage;
 
+  const highFee = isHighGasFee(chain, feeInfo?.fee, feeInfo?.gasToken, chainRates, fiatCurrency, gasThresholds);
+
   return (
     <Container>
       <HeaderBlock centerItems={[{ title: t('exchangeContent.title.confirm') }]} navigation={navigation} noPaddingTop />
@@ -114,7 +116,16 @@ const ExchangeConfirmScreen = () => {
         />
 
         <ContentWrapper>
-          <DetailsTable offer={offer} feeInfo={feeInfo} />
+          <DetailsTable offer={offer} feeInfo={feeInfo} highFee={highFee} />
+
+          {highFee && (
+            <WarningBlock
+              text={t('transactions.highGasFee.ethereumNetworkFees')}
+              icon="small-warning"
+              backgroundColor={colors.negative}
+              right={10}
+            />
+          )}
 
           <Spacing h={24} />
 
@@ -122,8 +133,9 @@ const ExchangeConfirmScreen = () => {
 
           {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
 
-          <Button
-            title={isEstimating ? t('label.gettingFee') : t('button.next')}
+          <SwipeButton
+            confirmTitle={isEstimating ? t('label.gettingFee') : t('button.swap')}
+            warning={highFee}
             onPress={confirmTransaction}
             disabled={!isOnline || !feeInfo || !!errorMessage || isEstimating}
           />

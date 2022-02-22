@@ -564,6 +564,12 @@ export const hitSlop50w20h = {
   right: 50,
 };
 
+export const truncateAddress = (address: string) => {
+  if (address.length < 13) return address;
+
+  return `${address.substring(0, 6)}...${address.substring(address.length - 6)}`;
+};
+
 export const formatBigAmount = (value: Value) => {
   const _value = wrapBigNumber(value);
 
