@@ -27,6 +27,7 @@ import t from 'translations/translate';
 import { loginAction } from 'actions/authActions';
 import { initArchanovaSdkWithPrivateKeyOrPinAction } from 'actions/smartWalletActions';
 import { switchAccountAction } from 'actions/accountsActions';
+import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 
 // configs
 import { getEnv } from 'configs/envConfig';
@@ -74,6 +75,7 @@ type Props = {
   initSmartWalletSdkWithPrivateKeyOrPin: (initProps: InitArchanovaProps) => void,
   switchAccount: (accountId: string) => void,
   isAuthorizing: boolean,
+  removePrivateKeyFromMemory: Function,
 };
 
 type State = {
@@ -109,7 +111,9 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   componentDidMount() {
     addAppStateChangeListener(this.handleAppStateChange);
-    const { navigation } = this.props;
+    const { navigation, wallet, removePrivateKeyFromMemory } = this.props;
+    if (wallet?.data?.privateKey) removePrivateKeyFromMemory();
+
     const { lastAppState } = this.state;
 
     if (navigation.getParam('forcePin')) return;
@@ -319,6 +323,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     initProps: InitArchanovaProps,
   ) => dispatch(initArchanovaSdkWithPrivateKeyOrPinAction(initProps)),
   switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
+  removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PinCodeUnlock);
