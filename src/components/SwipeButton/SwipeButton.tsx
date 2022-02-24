@@ -1,4 +1,3 @@
-// @flow
 /*
     Pillar Wallet: the personal data locker
     Copyright (C) 2021 Stiftung Pillar Project
@@ -19,7 +18,7 @@
 */
 
 import * as React from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import RnSwipeButton from 'rn-swipe-button';
 
 // Components
@@ -30,12 +29,13 @@ import { fontSizes, spacing, appFont } from 'utils/variables';
 import { useThemeColors } from 'utils/themes';
 
 type Props = {
-  confirmTitle?: string,
-  onPress?: () => void,
-  disabled?: boolean,
+  confirmTitle?: string;
+  onPress?: () => void;
+  disabled?: boolean;
+  warning?: boolean;
 };
 
-const SwipeButton = ({ onPress, confirmTitle, disabled }: Props) => {
+const SwipeButton = ({ onPress, confirmTitle, disabled, warning }: Props) => {
   const colors = useThemeColors();
 
   const SwiperIconComponent = () => {
@@ -46,6 +46,8 @@ const SwipeButton = ({ onPress, confirmTitle, disabled }: Props) => {
     );
   };
 
+  const fillColor = warning ? colors.negative : colors.swiperButtonTrack;
+
   return (
     <RnSwipeButton
       width="100%"
@@ -55,10 +57,11 @@ const SwipeButton = ({ onPress, confirmTitle, disabled }: Props) => {
       titleColor={colors.buttonPrimaryTitle}
       titleStyles={styles.swiperButtonTitle}
       containerStyles={styles.swiperButtonContainer}
-      railBorderColor={colors.swiperButtonTrack}
-      railBackgroundColor={colors.swiperButtonTrack}
+      railBorderColor={fillColor}
+      railBackgroundColor={fillColor}
       railFillBackgroundColor="transparent"
-      railFillBorderColor={colors.swiperButtonTrack}
+      railFillBorderColor={fillColor}
+      // @ts-ignore
       thumbIconComponent={SwiperIconComponent}
       thumbIconWidth={84}
       thumbIconBackgroundColor={colors.swiperButtonThumb}
@@ -72,7 +75,7 @@ const SwipeButton = ({ onPress, confirmTitle, disabled }: Props) => {
 
 export default SwipeButton;
 
-const styles = {
+const styles = StyleSheet.create({
   swiperButtonTitle: {
     paddingLeft: spacing.extraPlusLarge,
     fontFamily: appFont.medium,
@@ -87,4 +90,4 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
   },
-};
+});

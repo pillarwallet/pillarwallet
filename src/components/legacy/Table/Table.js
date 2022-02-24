@@ -41,7 +41,6 @@ import TableAmount from './TableAmount';
 
 export { default as TableAmount } from './TableAmount';
 
-
 type Props = {
   children?: React.Node,
   title?: string,
@@ -57,6 +56,7 @@ type TableFeeProps = {
   txFeeInWei: ?(BigNumber | string | number),
   gasToken: ?GasToken,
   chain: Chain,
+  highFee?: boolean,
 };
 
 export const TableRow = styled.View`
@@ -76,15 +76,13 @@ export const TableLabel = withTheme(({ children, tooltip, theme }) => {
   const colors = getThemeColors(theme);
   return (
     <Row>
-      <BaseText regular secondary>{children}</BaseText>
+      <BaseText regular secondary>
+        {children}
+      </BaseText>
       {!!tooltip && (
         <>
           <Spacing w={4} />
-          <Tooltip
-            isVisible={isTooltipVisible}
-            body={tooltip}
-            positionOnBottom={false}
-          >
+          <Tooltip isVisible={isTooltipVisible} body={tooltip} positionOnBottom={false}>
             <IconButton
               icon="question"
               fontSize={16}
@@ -116,24 +114,28 @@ export const TableUser = ({ ensName, address }: TableUserProps) => {
 
   return (
     <TableUserWrapper>
-      <ProfileImage
-        userName={ensName || address}
-        diameter={16}
-        borderWidth={0}
-      />
+      <ProfileImage userName={ensName || address} diameter={16} borderWidth={0} />
       <Spacing w={8} />
       <BaseText regular>{ensName || address}</BaseText>
     </TableUserWrapper>
   );
 };
 
-export const TableFee = ({ txFeeInWei, gasToken, chain }: TableFeeProps) => {
+export const TableFee = ({ txFeeInWei, gasToken, chain, highFee }: TableFeeProps) => {
   const decimals = getGasDecimals(chain, gasToken);
   const gasAddress = getGasAddress(chain, gasToken);
   const formattedFee = txFeeInWei ? formatUnits(txFeeInWei.toString(), decimals) : '0';
   const gasSymbol = getGasSymbol(chain, gasToken);
 
-  return <TableAmount amount={formattedFee} assetSymbol={gasSymbol} assetAddress={gasAddress} chain={chain} />;
+  return (
+    <TableAmount
+      amount={formattedFee}
+      assetSymbol={gasSymbol}
+      assetAddress={gasAddress}
+      chain={chain}
+      highFee={highFee}
+    />
+  );
 };
 
 const Divider = styled.View`

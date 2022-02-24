@@ -27,6 +27,7 @@ import type { DbAction } from 'models/DbAction';
 
 // reducers - absolte imports
 import firestoreReducer, { IReduxFirestoreState } from 'redux/reducers/firestore-reducer';
+import gasThresholdReducer, { IReduxGasThresholdState } from 'redux/reducers/gas-threshold-reducer';
 
 // reducers
 import offlineQueueReducer from './offlineQueueReducer';
@@ -139,6 +140,7 @@ export type RootReducerState = {|
   liquidityPools: LiquidityPoolsReducerState,
   totalBalances: TotalBalancesReducerState,
   firestore: IReduxFirestoreState,
+  gasThreshold: IReduxGasThresholdState,
 |};
 
 type RootReducerAction =
@@ -211,6 +213,7 @@ const appReducer = combineReducers({
   liquidityPools: liquidityPoolsReducer,
   totalBalances: totalBalancesReducer,
   firestore: firestoreReducer,
+  gasThreshold: gasThresholdReducer,
 });
 
 export const initialState = appReducer(undefined, {});

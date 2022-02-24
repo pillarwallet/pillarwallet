@@ -1,4 +1,3 @@
-// @flow
 /*
     Pillar Wallet: the personal data locker
     Copyright (C) 2021 Stiftung Pillar Project
@@ -28,20 +27,14 @@ import { appFont, objectFontStyles } from 'utils/variables';
 // Types
 import type { TextProps, TextStyleProp } from 'utils/types/react-native';
 
-export type TextVariant = $Keys<typeof objectFontStyles>
+export type TextVariant = keyof typeof objectFontStyles;
 
-type Props = {|
-  ...TextProps,
-  variant?: TextVariant,
-  color?: string,
-|};
+type Props = TextProps & {
+  variant?: TextVariant;
+  color?: string;
+};
 
-function Text({
-  variant,
-  color,
-  style,
-  ...rest
-}: Props) {
+function Text({ variant, color, style, ...rest }: Props) {
   const colors = useThemeColors();
   const propStyle = StyleSheet.flatten(style);
 

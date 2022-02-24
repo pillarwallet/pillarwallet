@@ -1,4 +1,3 @@
-// @flow
 /*
     Pillar Wallet: the personal data locker
     Copyright (C) 2019 Stiftung Pillar Project
@@ -34,25 +33,26 @@ i18n
   .use(PunctuationPostProcessor)
   .use(SuffixPrefixPostProcessor)
   .use(CapitalizationPostProcessor)
-  .init({
-    interpolation: { escapeValue: false },
-    transSupportBasicHtmlNodes: false,
-    ns: localeConfig.namespaces,
-    defaultNS: localeConfig.defaultNameSpace,
-    postProcess: localeConfig.postProcessors,
-    fallbackLng: localeConfig.defaultLanguage,
-    supportedLngs: Object.keys(localeConfig.supportedLanguages),
-    debug: !!__DEV__,
-    react: {
-      wait: true,
-      nsMode: 'common',
-      useSuspense: true,
+  .init(
+    {
+      interpolation: { escapeValue: false },
+      ns: localeConfig.namespaces,
+      defaultNS: localeConfig.defaultNameSpace,
+      postProcess: localeConfig.postProcessors,
+      fallbackLng: localeConfig.defaultLanguage,
+      supportedLngs: Object.keys(localeConfig.supportedLanguages),
+      debug: !!__DEV__,
+      react: {
+        wait: true,
+        nsMode: 'default',
+        useSuspense: true,
+      },
+      lng: localeConfig.defaultLanguage,
+      resources: {
+        [localeConfig.defaultLanguage]: {},
+      },
     },
-    lng: localeConfig.defaultLanguage,
-    resources: {
-      [localeConfig.defaultLanguage]: {},
-    },
-  }, () => {},
+    () => {},
   );
 /* eslint-enable i18next/no-literal-string */
 
@@ -70,9 +70,9 @@ export const addResourceBundles = (lng: string, nameSpaces: string[], translatio
   i18n.reloadResources();
 };
 
-
 export const setLanguage = async (lng: string) => {
-  i18n.changeLanguage(lng)
+  i18n
+    .changeLanguage(lng)
     .then(() => Promise.resolve())
     .catch(() => Promise.reject());
 };
@@ -81,8 +81,9 @@ export const getDefaultSupportedUserLanguage = () => {
   const userPreferredLocales = RNLocalize.getLocales();
   const userPreferredLanguages = userPreferredLocales.map(({ languageCode }) => languageCode);
 
-  const userPreferredSupportedLanguage = userPreferredLanguages
-    .find((languageCode) => Object.keys(localeConfig.supportedLanguages).includes(languageCode));
+  const userPreferredSupportedLanguage = userPreferredLanguages.find((languageCode) =>
+    Object.keys(localeConfig.supportedLanguages).includes(languageCode),
+  );
 
   return userPreferredSupportedLanguage || localeConfig.defaultLanguage;
 };

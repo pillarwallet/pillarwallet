@@ -30,18 +30,13 @@ import Icon from 'components/legacy/Icon';
 import type { ViewStyleProp } from 'utils/types/react-native';
 
 type Props = {
-  value: boolean,
-  onValueChange?: (value: boolean) => mixed,
-  disabled?: boolean,
-  style?: ViewStyleProp
+  value: boolean;
+  onValueChange?: (value: boolean) => any;
+  disabled?: boolean;
+  style?: ViewStyleProp;
 };
 
-const Checkbox = ({
-  value,
-  onValueChange,
-  disabled,
-  style,
-}: Props) => {
+const Checkbox = ({ value, onValueChange, disabled, style }: Props) => {
   const handlePress = () => {
     if (disabled) return;
 

@@ -50,10 +50,10 @@ type Props = {
   chain: Chain,
   assetSymbol?: string,
   assetAddress?: string,
-  highFees?: boolean,
+  highFee?: boolean,
 };
 
-const HighFeesIcon = styled(Image)`
+const HighFeeIcon = styled(Image)`
   height: 16px;
   width: 16px;
   margin-right: 4px;
@@ -64,7 +64,7 @@ const Row = styled.View`
   align-items: center;
 `;
 
-const TableAmount = ({ amount, assetSymbol, assetAddress, chain, highFees }: Props) => {
+const TableAmount = ({ amount, assetSymbol, assetAddress, chain, highFee }: Props) => {
   const theme = useTheme();
   const chainRates = useChainRates(chain);
   const fiatCurrency = useFiatCurrency();
@@ -87,12 +87,16 @@ const TableAmount = ({ amount, assetSymbol, assetAddress, chain, highFees }: Pro
 
   const { highFeesIcon } = images(theme);
 
+  const highFeeText = `color: ${theme.colors.negative}`;
+
   return (
     <Tooltip body={tooltipText} isVisible={showTokenAmount} positionOnBottom={false}>
       <Row>
-        {!!highFees && <HighFeesIcon source={highFeesIcon} />}
+        {!!highFee && <HighFeeIcon source={highFeesIcon} />}
         <TouchableOpacity hitSlop={hitSlop10} activeOpacity={1} onPress={() => setShowTokenAmount(!showTokenAmount)}>
-          <BaseText regular>{fiatAmount}</BaseText>
+          <BaseText regular css={highFee && highFeeText}>
+            {fiatAmount}
+          </BaseText>
         </TouchableOpacity>
       </Row>
     </Tooltip>

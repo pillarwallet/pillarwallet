@@ -163,6 +163,7 @@ const AddCash = () => {
             itemHolderStyle={styles.itemHolderStyles}
             additionalStyle={styles.additionalStyle}
             errorMessage={value && !isValidFiatValue(value) && t('error.invalid.fiatValue')}
+            avoidAutoFocus
           />
         </AddCashView>
       </ScrollView>

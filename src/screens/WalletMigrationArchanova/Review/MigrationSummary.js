@@ -29,6 +29,7 @@ import BalanceView from 'components/BalanceView';
 import FeeTable from 'components/display/FeeTable';
 import Image from 'components/Image';
 import Text from 'components/core/Text';
+import WarningBlock from 'components/HighGasFeeModals/WarningBlock';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
@@ -42,6 +43,7 @@ import { formatTokenValue, formatFiatValue } from 'utils/format';
 import { useThemedImages } from 'utils/images';
 import { sumBy } from 'utils/number';
 import { spacing } from 'utils/variables';
+import { useThemeColors } from 'utils/themes';
 
 // Types
 import type { Account } from 'models/Account';
@@ -50,21 +52,24 @@ import type { Collectible } from 'models/Collectible';
 // Local
 import { type AssetItem, type TokenItem } from './utils';
 
-
 type Props = {|
   etherspotAccount: ?Account,
   archanovaAccount: ?Account,
   items: AssetItem[],
   feeInEth: ?BigNumber,
+  highFee?: boolean,
 |};
 
-function MigrationSummary({ etherspotAccount, archanovaAccount, items, feeInEth }: Props) {
+function MigrationSummary({ etherspotAccount, archanovaAccount, items, feeInEth, highFee = false }: Props) {
+  const chain = CHAIN.ETHEREUM;
+
   const { t, tRoot } = useTranslationWithPrefix('walletMigrationArchanova.review');
   const images = useThemedImages();
+  const colors = useThemeColors();
 
   const currency = useFiatCurrency();
 
-  const totalValue = sumBy(items, item => item.token ? item.balanceInFiat : 0);
+  const totalValue = sumBy(items, (item) => (item.token ? item.balanceInFiat : 0));
 
   const renderItem = (item: AssetItem, index: number) =>
     item.collectible ? renderCollectibleItem(item.collectible, index) : renderTokenItem(item, index);
@@ -115,7 +120,16 @@ function MigrationSummary({ etherspotAccount, archanovaAccount, items, feeInEth 
       <Table.Header>{t('assets.header')}</Table.Header>
       {items.map(renderItem)}
 
-      {feeInEth && <FeeTable fee={feeInEth} chain={CHAIN.ETHEREUM} />}
+      {feeInEth && <FeeTable fee={feeInEth} chain={chain} />}
+
+      {feeInEth && highFee && (
+        <WarningBlock
+          text={tRoot('transactions.highGasFee.ethereumNetworkFees')}
+          icon="small-warning"
+          backgroundColor={colors.negative}
+          right={10}
+        />
+      )}
     </Container>
   );
 }

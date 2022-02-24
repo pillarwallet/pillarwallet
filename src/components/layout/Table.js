@@ -44,13 +44,7 @@ type RowProps = {|
   separator?: boolean,
 |};
 
-export function Row({
-  title,
-  value,
-  variant,
-  fontVariant,
-  separator,
-}: RowProps) {
+export function Row({ title, value, variant, fontVariant, separator }: RowProps) {
   return (
     <RowContainer separator={separator}>
       <RowTitle>{title}</RowTitle>
@@ -79,7 +73,7 @@ export const RowTitle: React.ComponentType<TextProps> = styled(Text)`
   color: ${({ theme }) => theme.colors.basic030};
 `;
 
-type RowValueVariant = 'primary' | 'secondary' | 'positive';
+type RowValueVariant = 'primary' | 'secondary' | 'positive' | 'negative';
 
 type RowValueProps = {|
   ...TextProps,
@@ -92,5 +86,5 @@ export const RowValue: React.ComponentType<RowValueProps> = styled(Text)`
   ${({ fontVariant }) => (fontVariant ? `font-variant: ${fontVariant}` : '')};
   ${({ variant, theme }) => (variant === 'secondary' ? `color: ${theme.colors.secondaryText}` : '')};
   ${({ variant, theme }) => (variant === 'positive' ? `color: ${theme.colors.positive}` : '')};
+  ${({ variant, theme }) => (variant === 'negative' ? `color: ${theme.colors.negative}` : '')};
 `;
-

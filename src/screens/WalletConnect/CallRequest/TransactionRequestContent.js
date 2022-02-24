@@ -41,10 +41,13 @@ import {
   useRootSelector,
   supportedAssetsPerChainSelector,
   useActiveAccount,
+  useFiatCurrency,
+  useChainRates,
 } from 'selectors';
 import { accountAssetsPerChainSelector } from 'selectors/assets';
 import { accountAssetsBalancesSelector } from 'selectors/balances';
 import { isArchanovaAccountDeployedSelector } from 'selectors/archanova';
+import { gasThresholdsSelector } from 'redux/selectors/gas-threshold-selector';
 
 // Hooks
 import useWalletConnect from 'hooks/useWalletConnect';
@@ -61,7 +64,7 @@ import { useChainsConfig } from 'utils/uiConfig';
 import { fontSizes, spacing, appFont } from 'utils/variables';
 import { parsePeerName, mapCallRequestToTransactionPayload } from 'utils/walletConnect';
 import { isArchanovaAccount } from 'utils/accounts';
-import { getGasAddress, getGasSymbol } from 'utils/transactions';
+import { getGasAddress, getGasSymbol, isHighGasFee } from 'utils/transactions';
 import { getThemeColors } from 'utils/themes';
 
 // Types
@@ -81,6 +84,9 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
   const chainConfigs = useChainsConfig();
   const theme = useTheme();
   const colors = getThemeColors(theme);
+  const fiatCurrency = useFiatCurrency();
+
+  const gasThresholds = useRootSelector(gasThresholdsSelector);
 
   const { estimateCallRequestTransaction, callRequests } = useWalletConnect();
 
@@ -100,14 +106,9 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
   }, [request, estimateCallRequestTransaction, callRequests, sdkInstances.length]);
 
   const { iconUrl, chain, errorMessage } = useViewData(request);
-  const {
-    fee,
-    gasSymbol,
-    gasAddress,
-    hasNotEnoughGas,
-    isEstimating,
-    estimationErrorMessage,
-  } = useTransactionFee(request);
+  const { fee, gasSymbol, gasAddress, hasNotEnoughGas, isEstimating, estimationErrorMessage } = useTransactionFee(
+    request,
+  );
   const transactionPayload = useTransactionPayload(request);
 
   const handleConfirm = () => {
@@ -122,6 +123,10 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
   const confirmTitle = !hasNotEnoughGas ? t('button.swipeConfirm') : t('label.notEnoughGas');
   const isConfirmDisabled = isEstimating || hasNotEnoughGas || !!errorMessage || isLoading;
   const loadFeeValue = isEstimating || isLoading;
+
+  const chainRates = useChainRates(chain);
+
+  const highFee = isHighGasFee(chain, fee, null, chainRates, fiatCurrency, gasThresholds);
 
   return (
     <>
@@ -165,11 +170,7 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
 
       {!!errorMessage && <ErrorMessage variant="small">{errorMessage}</ErrorMessage>}
 
-      {!isConfirmDisabled ? (
-        <SwipeButton confirmTitle={confirmTitle} onPress={handleConfirm} />
-      ) : (
-        <Button title={confirmTitle} disabled size="large" />
-      )}
+      <SwipeButton confirmTitle={confirmTitle} onPress={handleConfirm} warning={highFee} />
 
       {!loadFeeValue ? (
         <Button title={t('button.reject')} size="large" onPress={onReject} variant="text" style={styles.buttonStyle} />
@@ -321,7 +322,7 @@ const ErrorMessage = styled(Text)`
 const IconView = styled.View`
   margin-top: ${spacing.largePlus}px;
   text-align: center;
-  flexDirection: row;
+  flexdirection: row;
 `;
 
 const ServiceIcon = styled(Image)`
@@ -329,8 +330,8 @@ const ServiceIcon = styled(Image)`
   height: 76px;
   border-radius: 39px;
   margin-left: -48px;
-  borderWidth: 6px;
-  borderColor: ${({ theme }) => theme.colors.basic050};
+  borderwidth: 6px;
+  bordercolor: ${({ theme }) => theme.colors.basic050};
   overflow: hidden;
 `;
 

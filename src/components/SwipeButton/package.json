@@ -1,5 +1,5 @@
 {
-    "name": "SwipeButton",
-    "version": "0.0.0",
-    "main": "./SwipeButton.js"
+  "name": "SwipeButton",
+  "version": "0.0.0",
+  "main": "./SwipeButton.tsx"
 }

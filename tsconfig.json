@@ -11,6 +11,7 @@
     "noEmit": true,
     "paths": {
       "actions/*": ["src/actions/*"],
+      "assets/*": ["src/assets/*"],
       "components/*": ["src/components/*"],
       "configs/*": ["src/configs/*"],
       "constants/*": ["src/constants/*"],
@@ -19,6 +20,8 @@
       "reducers/*": ["src/reducers/*"],
       "redux/*": ["src/redux/*"],
       "screens/*": ["src/screens/*"],
+      "selectors": ["src/selectors"],
+      "selectors/*": ["src/selectors/*"],
       "services/*": ["src/services/*"],
       "translations/*": ["src/translations/*"],
       "utils/*": ["src/utils/*"],

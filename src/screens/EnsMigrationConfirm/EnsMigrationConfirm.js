@@ -31,6 +31,7 @@ import {
   migrateEnsFromArchanovaToEtherspotAction,
 } from 'actions/smartWalletActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
+import { fetchGasThresholds } from 'redux/actions/gas-threshold-actions';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
@@ -41,20 +42,22 @@ import { CHAIN } from 'constants/chainConstants';
 import { ScrollWrapper, Spacing } from 'components/legacy/Layout';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import { BaseText, MediumText } from 'components/legacy/Typography';
-import Button from 'components/legacy/Button';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import CheckAuth from 'components/CheckAuth';
+import SwipeButton from 'components/SwipeButton/SwipeButton';
 
 // utils
 import { fontStyles, spacing } from 'utils/variables';
 import { findFirstArchanovaAccount, getAccountAddress, getAccountEnsName } from 'utils/accounts';
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { buildEnsMigrationRawTransactions } from 'utils/archanova';
+import { isHighGasFee } from 'utils/transactions';
 
 // selectors
-import { accountsSelector, useRootSelector } from 'selectors';
+import { accountsSelector, useRootSelector, useFiatCurrency, useChainRates } from 'selectors';
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import { useBiometricsSelector } from 'selectors/appSettings';
+import { gasThresholdsSelector } from 'redux/selectors/gas-threshold-selector';
 
 // types
 import type { TransactionStatus } from 'models/Transaction';
@@ -82,6 +85,17 @@ const EnsMigrationConfirm = () => {
     ({ transactionEstimate }) => transactionEstimate,
   );
 
+  const chain = CHAIN.ETHEREUM;
+
+  const chainRates = useChainRates(chain);
+  const fiatCurrency = useFiatCurrency();
+  const gasThresholds = useRootSelector(gasThresholdsSelector);
+
+  useEffect(() => {
+    dispatch(fetchGasThresholds());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     const buildRawTransactions = async () => {
       const transactions = await buildEnsMigrationRawTransactions(accounts, wallet);
@@ -106,7 +120,7 @@ const EnsMigrationConfirm = () => {
     gasToken: feeInfo?.gasToken,
   };
 
-  const isEnoughForFee = isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction, CHAIN.ETHEREUM);
+  const isEnoughForFee = isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction, chain);
 
   let errorMessage = isEnoughForFee
     ? estimateErrorMessage
@@ -149,6 +163,8 @@ const EnsMigrationConfirm = () => {
     );
   }
 
+  const highFee = isHighGasFee(chain, feeInfo?.fee, feeInfo?.gasToken, chainRates, fiatCurrency, gasThresholds);
+
   return (
     <ContainerWithHeader headerProps={{ floating: true }}>
       <ScrollWrapper regularPadding contentContainerStyle={{ paddingTop: 80 }}>
@@ -168,7 +184,7 @@ const EnsMigrationConfirm = () => {
             <FeeLabelToggle
               labelText={tRoot('label.fee')}
               txFeeInWei={feeInfo?.fee}
-              chain={CHAIN.ETHEREUM}
+              chain={chain}
               isLoading={isEstimating}
               gasToken={feeInfo?.gasToken}
               hasError={!!errorMessage}
@@ -181,7 +197,17 @@ const EnsMigrationConfirm = () => {
             {errorMessage}
           </BaseText>
         )}
-        <Button disabled={submitDisabled} title={submitTitle} isLoading={isSubmitting} onPress={onSubmit} />
+        <SwipeButton
+          confirmTitle={submitTitle}
+          warning={highFee}
+          isLoading={isSubmitting}
+          onPress={onSubmit}
+          disabled={submitDisabled}
+        />
+        <Spacing h={spacing.medium} />
+        <BaseText small secondary center>
+          {tRoot('transactions.highGasFee.pillarEthFeeDisclaimer')}
+        </BaseText>
       </ScrollWrapper>
     </ContainerWithHeader>
   );

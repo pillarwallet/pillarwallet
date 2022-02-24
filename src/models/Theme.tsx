@@ -1,4 +1,3 @@
-// @flow
 /*
     Pillar Wallet: the personal data locker
     Copyright (C) 2019 Stiftung Pillar Project
@@ -21,21 +20,23 @@
 import lightThemeColors from 'utils/themes/lightTheme';
 import { semanticLightThemeColors } from 'utils/themes';
 
-export type ColorKeyModern = $Keys<typeof lightThemeColors>;
-export type ColorKeyOld = $Keys<typeof semanticLightThemeColors>;
+export type ColorKeyModern = keyof typeof lightThemeColors;
+export type ColorKeyOld = keyof typeof semanticLightThemeColors;
 
 export type ColorKey = ColorKeyOld | ColorKeyModern;
+
 export type ThemeColors = {
-  [ColorKey]: string,
-};
-export type Theme = {
-  current: string,
-  colors: ThemeColors,
+  [key in ColorKey]: string;
 };
 
-export type ColorsByThemeProps = {|
-  lightKey?: ColorKeyModern,
-  darkKey?: ColorKeyModern,
-  lightCustom?: string,
-  darkCustom?: string,
-|};
+export type Theme = {
+  current: string;
+  colors: ThemeColors;
+};
+
+export type ColorsByThemeProps = {
+  lightKey?: ColorKeyModern;
+  darkKey?: ColorKeyModern;
+  lightCustom?: string;
+  darkCustom?: string;
+};
