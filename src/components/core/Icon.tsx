@@ -246,7 +246,7 @@ const Icon: React.FC<Props> = ({ name, color, style, ...rest }) => {
 
   const Component = components[name];
   return Component ? (
-    <View style={{ justifyContent: 'center', alignItems: 'center', ...style }}>
+    <View style={style}>
       <Component fill={color ?? colors.basic010} {...rest} />
     </View>
   ) : null;
