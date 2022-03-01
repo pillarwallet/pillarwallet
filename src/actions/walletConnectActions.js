@@ -59,7 +59,7 @@ import { isNavigationAllowed } from 'utils/navigation';
 import { getAccountAddress } from 'utils/accounts';
 import { chainFromChainId } from 'utils/chains';
 import { isSupportedDappUrl, mapCallRequestToTransactionPayload, pickPeerIcon } from 'utils/walletConnect';
-import { reportErrorLog } from 'utils/common';
+import { reportErrorLog, logBreadcrumb } from 'utils/common';
 import { isLogV2AppEvents } from 'utils/environment';
 
 // models, types
@@ -348,7 +348,7 @@ export const subscribeToWalletConnectConnectorEventsAction = (connector: WalletC
       }
 
       if (!connector?.peerId) {
-        reportErrorLog('subscribeToWalletConnectConnectorEventsAction -> disconnect failed: no peerId', { connector });
+        logBreadcrumb('subscribeToWalletConnectConnectorEventsAction', 'disconnect failed: no peerId', { connector });
         return;
       }
 

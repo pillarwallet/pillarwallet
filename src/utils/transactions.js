@@ -35,7 +35,7 @@ import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { getBalance } from 'utils/assets';
 import { fromEthersBigNumber } from 'utils/bigNumber';
 import { nativeAssetPerChain, mapChainToChainId } from 'utils/chains';
-import { reportErrorLog, getFormattedTransactionFeeValue } from 'utils/common';
+import { logBreadcrumb, getFormattedTransactionFeeValue } from 'utils/common';
 import { openUrl } from 'utils/inAppBrowser';
 import { getAssetRateInFiat } from 'utils/rates';
 
@@ -205,7 +205,7 @@ export const getGasDecimals = (chain: Chain, gasToken: ?GasToken): number => {
 
   const chainNativeAsset = nativeAssetPerChain[chain];
   if (!chainNativeAsset) {
-    reportErrorLog('getGasDecimals failed: no native asset for chain', { chain });
+    logBreadcrumb('getGasDecimals', 'failed: no native asset for chain', { chain });
     return 18;
   }
 
@@ -217,7 +217,7 @@ export const getGasAddress = (chain: Chain, gasToken: ?GasToken): string => {
 
   const chainNativeAsset = nativeAssetPerChain[chain];
   if (!chainNativeAsset) {
-    reportErrorLog('getGasAddress failed: no native asset for chain', { chain });
+    logBreadcrumb('getGasAddress', 'failed: no native asset for chain', { chain });
     return ADDRESS_ZERO;
   }
 
@@ -229,7 +229,7 @@ export const getGasSymbol = (chain: Chain, gasToken: ?GasToken): string => {
 
   const chainNativeAsset = nativeAssetPerChain[chain];
   if (!chainNativeAsset) {
-    reportErrorLog('getGasSymbol failed: no native asset for chain', { chain });
+    logBreadcrumb('getGasSymbol', 'failed: no native asset for chain', { chain });
     return nativeAssetPerChain.ethereum.symbol;
   }
 

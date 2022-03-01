@@ -17,7 +17,7 @@ import * as Prismic from 'services/prismic';
 // Utils
 import { useThemeColors } from 'utils/themes';
 import { mapFromDocumentDataToString } from 'utils/prismic';
-import { reportErrorLog } from 'utils/common';
+import { logBreadcrumb } from 'utils/common';
 import { spacing } from 'utils/variables';
 
 const TYPE_UNSUPPORTED_EXCHANGES = 'unsupported_exchanges';
@@ -54,7 +54,7 @@ const UnsupportedExchangesModal: FC = () => {
         setIsPrismicHTMLFetched(true);
         setIsLoading(false);
       } catch (error) {
-        reportErrorLog('Prismic content fetch failed', { error, documentId: TYPE_UNSUPPORTED_EXCHANGES });
+        logBreadcrumb('Prismic content', 'fetch failed', { error, documentId: TYPE_UNSUPPORTED_EXCHANGES });
         setErrorMessage(t('error.prismicDataFetchFailed', { prismicDocument: t('title') }));
       }
     };

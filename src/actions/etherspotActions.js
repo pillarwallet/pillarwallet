@@ -59,6 +59,7 @@ import {
   formatUnits,
   isCaseInsensitiveMatch,
   reportErrorLog,
+  logBreadcrumb,
 } from 'utils/common';
 import {
   findAccountById,
@@ -82,14 +83,14 @@ export const connectEtherspotAccountAction = (accountId: string) => {
 
     const account = findAccountById(accountId, accounts);
     if (!account) {
-      reportErrorLog('connectEtherspotAccountAction failed: no account', { accountId });
+      logBreadcrumb('connectEtherspotAccountAction', 'failed: no account', { accountId });
       return;
     }
 
     const extra = await etherspotService.getAccountPerChains();
 
     if (!extra?.ethereum) {
-      reportErrorLog('connectEtherspotAccountAction failed: no ethereum account', { accountId, account });
+      logBreadcrumb('connectEtherspotAccountAction', 'failed: no ethereum account', { accountId, account });
       return;
     }
 
@@ -129,19 +130,22 @@ export const importEtherspotAccountsAction = () => {
     if (!session.isOnline) return; // offline, nothing to dp
 
     if (!etherspotService?.sdk) {
-      reportErrorLog('importEtherspotAccountsAction failed: action dispatched when Etherspot SDK was not initialized');
+      logBreadcrumb(
+        'importEtherspotAccountsAction',
+        'failed: action dispatched when Etherspot SDK was not initialized',
+      );
       return;
     }
 
     if (!user) {
-      reportErrorLog('importEtherspotAccountsAction failed: no user');
+      logBreadcrumb('importEtherspotAccountsAction', 'failed: no user');
       return;
     }
 
     const etherspotAccounts = await etherspotService.getAccounts();
     if (!etherspotAccounts) {
       // Note: there should be always at least one account, it syncs on Etherspot SDK init, otherwise it's failure
-      reportErrorLog('importEtherspotAccountsAction failed: no accounts', { etherspotAccounts });
+      logBreadcrumb('importEtherspotAccountsAction', 'failed: no etherspot accounts', { etherspotAccounts });
       return;
     }
 
@@ -177,19 +181,22 @@ export const refreshEtherspotAccountsAction = () => {
     if (!session.isOnline) return; // offline, nothing to dp
 
     if (!etherspotService?.sdk) {
-      reportErrorLog('refreshEtherspotAccountsAction failed: action dispatched when Etherspot SDK was not initialized');
+      logBreadcrumb(
+        'refreshEtherspotAccountsAction',
+        'failed: action dispatched when Etherspot SDK was not initialized',
+      );
       return;
     }
 
     if (!user) {
-      reportErrorLog('refreshEtherspotAccountsAction failed: no user');
+      logBreadcrumb('refreshEtherspotAccountsAction', 'failed: no user');
       return;
     }
 
     const etherspotAccounts = await etherspotService.getAccounts();
     if (!etherspotAccounts) {
       // Note: there should be always at least one account, it syncs on Etherspot SDK init, otherwise it's failure
-      reportErrorLog('refreshEtherspotAccountsAction failed: no accounts', { etherspotAccounts });
+      logBreadcrumb('refreshEtherspotAccountsAction', 'failed: no etherspot accounts', { etherspotAccounts });
       return;
     }
 
@@ -248,13 +255,13 @@ export const reserveEtherspotEnsNameAction = (username: string) => {
 
     const etherspotAccount = findFirstEtherspotAccount(accounts);
     if (!etherspotAccount) {
-      reportErrorLog('reserveEtherspotENSNameAction failed: no Etherspot account found');
+      logBreadcrumb('reserveEtherspotENSNameAction', 'failed: no Etherspot account found');
       return;
     }
 
     const reserved = await etherspotService.reserveEnsName(username);
     if (!reserved) {
-      reportErrorLog('reserveEtherspotENSNameAction reserveENSName failed', { username });
+      logBreadcrumb('reserveEtherspotENSNameAction', 'reserveENSName failed', { username });
     }
   };
 };
@@ -344,7 +351,7 @@ const handleGatewayBatchUpdatedNotification = async (
 
   // check if submitted hash exists within Etherspot otherwise it's a failure
   if (!submittedBatch) {
-    reportErrorLog('handleGatewayBatchUpdatedNotification failed: no matching batch', { notification });
+    logBreadcrumb('handleGatewayBatchUpdatedNotification', 'failed: no matching batch', { notification });
     return;
   }
 

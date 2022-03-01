@@ -53,7 +53,7 @@ import Toast from 'components/Toast';
 
 // utils
 import { generateMnemonicPhrase } from 'utils/wallet';
-import { reportErrorLog, reportLog, logBreadcrumb, getEnsPrefix, extractUsernameFromEnsName } from 'utils/common';
+import { reportErrorLog, logBreadcrumb, getEnsPrefix, extractUsernameFromEnsName } from 'utils/common';
 import { getAccountEnsName, findFirstEtherspotAccount } from 'utils/accounts';
 import { isLogV2AppEvents } from 'utils/environment';
 
@@ -117,7 +117,7 @@ export const setupAddressAction = () => {
     logBreadcrumb('onboarding', 'setupAddressAction: checking for privateKey');
     const privateKey = wallet?.privateKey;
     if (!privateKey) {
-      reportLog('setupAddressAction failed: no privateKey');
+      logBreadcrumb('onboarding', 'setupAddressAction: failed: no privateKey');
       logBreadcrumb('onboarding', 'setupAddressAction: dispatching SET_REGISTERING_USER');
       dispatch({ type: SET_REGISTERING_USER, payload: false });
       return;
@@ -128,7 +128,9 @@ export const setupAddressAction = () => {
       logBreadcrumb('onboarding', 'setupAddressAction: user is online, registering for FCM Remote Notifications');
       // we us FCM notifications so we must register for FCM, not regular native Push-Notifications
       await firebaseMessaging.registerForRemoteNotifications().catch((error) => {
-        reportErrorLog('firebaseMessaging.registerForRemoteNotifications failed', { error });
+        logBreadcrumb('onboarding', 'setupAddressAction: firebaseMessaging.registerForRemoteNotifications failed', {
+          error,
+        });
       });
       await firebaseMessaging.requestPermission().catch(() => null);
 
@@ -156,7 +158,7 @@ export const setupUserAction = (username: ?string) => {
     // eslint-disable-next-line i18next/no-literal-string
     logBreadcrumb('onboarding', 'setupUserAction: checking for username');
     if (!username) {
-      reportLog('setupUserAction failed: no username');
+      logBreadcrumb('onboarding', 'setupUserAction failed: no username');
       return;
     }
 
@@ -181,7 +183,7 @@ export const setupUserAction = (username: ?string) => {
     logBreadcrumb('onboarding', 'setupUserAction: checking for privateKey while setupUserAction');
     const privateKey = wallet?.privateKey;
     if (!privateKey) {
-      reportLog('setupUserAction failed: no privateKey', { username });
+      logBreadcrumb('onboarding', 'setupUserAction: failed: no privateKey', { username });
       logBreadcrumb('onboarding', 'setupUserAction: dispatching SET_REGISTERING_USER');
       dispatch({ type: SET_REGISTERING_USER, payload: false });
       return;
@@ -233,7 +235,7 @@ export const setupWalletAction = (enableBiometrics?: boolean) => {
 
     logBreadcrumb('onboarding', 'setupWalletAction: checking for pinCode');
     if (!pinCode) {
-      reportLog('setupWalletAction failed: no pinCode');
+      logBreadcrumb('onboarding', 'setupWalletAction failed: no pinCode');
       return;
     }
 
@@ -280,7 +282,7 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
 
     logBreadcrumb('onboarding', 'walletSetupAction: checking for pinCode');
     if (!pinCode) {
-      reportLog('walletSetupAction failed: no pinCode');
+      logBreadcrumb('onboarding', 'walletSetupAction failed: no pinCode');
       return;
     }
 
@@ -345,7 +347,7 @@ export const setupAppServicesAction = (privateKey: ?string) => {
 
     logBreadcrumb('onboarding', 'setupAppServicesAction: checking for private key');
     if (!privateKey) {
-      reportLog('setupAppServicesAction failed: no private key');
+      logBreadcrumb('onboarding', 'setupAppServicesAction failed: no private key');
       return;
     }
 
@@ -377,7 +379,7 @@ export const setupAppServicesAction = (privateKey: ?string) => {
       logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching addAccountAction for key based account');
       dispatch(addAccountAction(walletData.address, ACCOUNT_TYPES.KEY_BASED));
     } else {
-      reportErrorLog('setupAppServicesAction: cannot find key based address');
+      logBreadcrumb('onboarding', 'setupAppServicesAction: cannot find key based address');
     }
 
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching fetchAllAccountsTotalBalancesAction');
@@ -445,7 +447,7 @@ export const finishOnboardingAction = (retry?: boolean) => {
       logBreadcrumb('onboarding', 'finishOnboardingAction: no errors recieved, dispatching RESET_ONBOARDING');
       dispatch({ type: RESET_ONBOARDING });
     } else {
-      reportErrorLog('finishOnboardingAction: errors recieved retry will happen in application', errorMessage);
+      logBreadcrumb('finishOnboardingAction', 'errors recieved retry will happen in application', errorMessage);
     }
 
     /**
@@ -645,7 +647,7 @@ export const checkUsernameAvailabilityAction = (username: string) => {
     logBreadcrumb('onboarding', 'checkUsernameAvailabilityAction: searching for username}');
     const usernameTaken = await isUsernameTaken(username);
     if (usernameTaken) {
-      reportLog('checkUsernameAvailabilityAction failed', t('auth:error.invalidUsername.taken'));
+      logBreadcrumb('onboarding', 'checkUsernameAvailabilityAction failed', t('auth:error.invalidUsername.taken'));
       logBreadcrumb('onboarding', 'checkUsernameAvailabilityAction: dispatching SET_ONBOARDING_ERROR');
       dispatch({
         type: SET_ONBOARDING_ERROR,
@@ -668,12 +670,12 @@ export const claimENSNameAction = (username: string) => {
 
     const etherspotAccount = findFirstEtherspotAccount(accounts);
     if (!etherspotAccount) {
-      reportErrorLog('claimENSNameAction failed: no Etherspot account found');
+      logBreadcrumb('claimENSNameAction', 'failed: no Etherspot account found');
       return;
     }
     const reserved = await etherspotService.reserveEnsName(username);
     if (!reserved) {
-      reportErrorLog('reserveEtherspotENSNameAction reserveENSName failed', { username });
+      logBreadcrumb('reserveEtherspotENSNameAction', 'reserveENSName failed', { username });
     } else {
       dispatch({ type: SET_USER, payload: { username } });
       dispatch(saveDbAction('user', { user: { data: { username } } }));
@@ -689,7 +691,7 @@ export const claimENSNameAction = (username: string) => {
       errorMessage = error?.message;
     }
     if (!feeInfo || errorMessage) {
-      reportErrorLog('estimateEnsMigrationFromArchanovaToEtherspotAction -> estimateAccountRawTransactions failed', {
+      logBreadcrumb('estimateEnsMigrationFromArchanovaToEtherspotAction', 'estimateAccountRawTransactions failed', {
         errorMessage,
       });
       dispatch(setTransactionsEstimateErrorAction(errorMessage || t('toast.transactionFeeEstimationFailed')));

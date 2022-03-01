@@ -35,7 +35,7 @@ import {
   getAssetsAsList,
   mapWalletAssetsBalancesIntoAssetsByAddress,
 } from 'utils/assets';
-import { reportErrorLog } from 'utils/common';
+import { reportErrorLog, logBreadcrumb } from 'utils/common';
 
 // selectors
 import { supportedAssetsPerChainSelector } from 'selectors';
@@ -147,7 +147,7 @@ export const fetchSingleChainAssetRatesAction = (
     const asset = findAssetByAddress(chainSupportedAssets, assetAddress);
     if (!asset) {
       dispatch(setIsFetchingRatesAction(false));
-      reportErrorLog('fetchSingleChainAssetRatesAction failed: cannot find asset', { assetAddress });
+      logBreadcrumb('fetchSingleChainAssetRatesAction', 'failed: cannot find asset', { assetAddress });
       return;
     }
 

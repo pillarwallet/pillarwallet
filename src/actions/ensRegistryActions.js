@@ -33,7 +33,7 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import {
   getEnsName,
   lookupAddress,
-  reportErrorLog,
+  logBreadcrumb,
   resolveEnsName,
 } from 'utils/common';
 import { findFirstArchanovaAccount, getAccountEnsName } from 'utils/accounts';
@@ -51,7 +51,7 @@ export const setEnsNameIfNeededAction = () => {
     const { username } = user;
 
     if (!username) {
-      reportErrorLog('checkUserENSNameAction failed: no username', { user });
+      logBreadcrumb('setEnsNameIfNeededAction', 'checkUserENSNameAction failed: no username', { user });
       return;
     }
 
