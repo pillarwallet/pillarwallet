@@ -29,7 +29,7 @@ import { EtherspotService, getEtherspotSupportService } from 'services/etherspot
 import {
   getEnsName,
   isCaseInsensitiveMatch,
-  reportErrorLog,
+  logBreadcrumb,
 } from 'utils/common';
 
 // types
@@ -93,7 +93,7 @@ export const getExistingServicesAccounts = async (privateKey: string): Promise<A
 export const isUsernameTaken = async (username: string): Promise<boolean> => {
   const etherspotService = await getEtherspotSupportService();
   if (!etherspotService) {
-    reportErrorLog('isUsernameTaken -> getEtherspotSupportService failed', { username });
+    logBreadcrumb('isUsernameTaken', 'getEtherspotSupportService failed', { username });
     return false;
   }
 

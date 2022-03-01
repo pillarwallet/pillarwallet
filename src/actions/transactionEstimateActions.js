@@ -171,7 +171,7 @@ export const estimateTransactionsAction = (
     );
     const activeAccount = activeAccountSelector(getState());
     if (!activeAccount) {
-      reportErrorLog('estimateTransactionsAction failed: no active account');
+      logBreadcrumb('estimateTransactionsAction', 'failed: no active account');
       return;
     }
 
@@ -210,8 +210,8 @@ export const estimateTransactionsAction = (
     }
 
     if (isKeyBasedAccount(activeAccount) && transactions.length > 1) {
-      reportErrorLog(
-        'estimateTransactionsAction failed: too many transactions for key based estimation',
+      logBreadcrumb(
+        'estimateTransactionsAction', 'failed: too many transactions for key based estimation',
         { chain, transactions: transactions.length },
       );
       return;
@@ -273,7 +273,7 @@ export const estimateTransactionsAction = (
 
           if (!chainGasInfo?.isFetched || !gasPrice) {
             dispatch(setTransactionsEstimateErrorAction(t('toast.transactionFeeEstimationFailed')));
-            reportErrorLog('estimateTransactionsAction failed: no gas price', { chain, chainGasInfo });
+            logBreadcrumb('estimateTransactionsAction', 'no gas price', { chain, chainGasInfo });
             break;
           }
 
@@ -336,7 +336,7 @@ export const estimateTransactionsAction = (
         feeInfo = buildArchanovaTxFeeInfo(estimated, useGasToken);
         break;
       default:
-        reportErrorLog('estimateTransactionsAction failed: unsupported account type', { activeAccount });
+        logBreadcrumb('estimateTransactionsAction', 'failed: unsupported account type', { activeAccount });
         break;
     }
 

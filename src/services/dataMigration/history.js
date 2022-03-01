@@ -38,7 +38,7 @@ import {
   transactionStoreHasOldStructure,
   updateAccountHistoryForChain,
 } from 'utils/history';
-import { reportLog } from 'utils/common';
+import { logBreadcrumb } from 'utils/common';
 
 
 export default async function (storageData: Object, dispatch: Function, getState: Function) {
@@ -51,7 +51,7 @@ export default async function (storageData: Object, dispatch: Function, getState
 
   // check if the data was migrated, but the current state is empty and history from storage is not empty
   if (isMigratedToReduxPersist && isEmpty(stateHistory) && !isEmpty(history)) {
-    reportLog('Possible redux-persist crash');
+    logBreadcrumb('redux-persist', 'Possible redux-persist crash');
   }
 
   if (transactionStoreHasOldStructure(history)) {

@@ -47,7 +47,7 @@ import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // utils
-import { reportErrorLog, reportLog } from 'utils/common';
+import { logBreadcrumb, reportLog } from 'utils/common';
 import { decryptWalletFromStorage, getDecryptedWallet } from 'utils/wallet';
 import { clearWebViewCookies } from 'utils/webview';
 import { resetKeychainDataObject } from 'utils/keychain';
@@ -130,14 +130,14 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
 
     const wallet = getState().wallet.data;
     if (!wallet) {
-      reportErrorLog('loginAction failed: no wallet', { user });
+      logBreadcrumb('loginAction', 'failed: no wallet', { user });
       dispatch({ type: UPDATE_SESSION, payload: { isAuthorizing: false } });
       return;
     }
 
     const decryptedPrivateKey = wallet?.privateKey;
     if (!decryptedPrivateKey) {
-      reportErrorLog('loginAction failed: no private key', { user });
+      logBreadcrumb('loginAction', 'failed: no private key', { user });
       dispatch({ type: UPDATE_SESSION, payload: { isAuthorizing: false } });
       return;
     }
@@ -263,7 +263,7 @@ export const checkAuthAction = (
     dispatch({ type: SET_WALLET_IS_DECRYPTING, payload: false });
 
     if (!wallet || decryptError) {
-      reportErrorLog('checkAuthAction failed: failed to get decrypted wallet', { decryptError });
+      logBreadcrumb('checkAuthAction', 'failed to get decrypted wallet', { decryptError });
       dispatch({ type: SET_WALLET_ERROR, payload: t('auth:error.invalidPin.default') });
       return;
     }

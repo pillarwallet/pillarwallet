@@ -22,7 +22,7 @@ import { Vibration, Dimensions, Platform } from 'react-native';
 import throttle from 'lodash.throttle';
 import { PERMISSIONS, RESULTS, request as requestPermission } from 'react-native-permissions';
 import t from 'translations/translate';
-import { noop, reportLog } from 'utils/common';
+import { noop, logBreadcrumb } from 'utils/common';
 import CameraView from 'components/QRCodeScanner/CameraView';
 import NoPermissions from 'components/QRCodeScanner/NoPermissions';
 import type { Barcode, Point, Size } from 'react-native-camera';
@@ -128,7 +128,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     }
 
     if (typeof code !== 'string') {
-      reportLog('Wrong data from QR scanner received', { data: code });
+      logBreadcrumb('handleQRRead', 'Wrong data from QR scanner received', { data: code });
       return;
     }
 

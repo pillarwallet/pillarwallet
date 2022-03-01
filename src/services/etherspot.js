@@ -43,7 +43,7 @@ import t from 'translations/translate';
 import { isValidAddress, toChecksumAddress } from 'ethereumjs-util';
 
 // utils
-import { BigNumber, getEnsName, parseTokenAmount, reportErrorLog } from 'utils/common';
+import { BigNumber, getEnsName, parseTokenAmount, reportErrorLog, logBreadcrumb } from 'utils/common';
 import { isProdEnv } from 'utils/environment';
 import {
   parseTokenListToken,
@@ -142,7 +142,7 @@ export class EtherspotService {
     this.supportedNetworks.forEach((networkName) => {
       const sdk = this.instances[networkName];
       if (!sdk) {
-        reportErrorLog('EtherspotService subscribe failed: no sdk instance for network name', { networkName });
+        logBreadcrumb('EtherspotService', 'subscribe failed: no sdk instance for network name', { networkName });
         return;
       }
 
@@ -150,7 +150,7 @@ export class EtherspotService {
 
       const chain = chainFromNetworkName(networkName);
       if (!chain) {
-        reportErrorLog('EtherspotService subscribe failed: no chain for network name', { networkName });
+        logBreadcrumb('EtherspotService', 'subscribe failed: no chain for network name', { networkName });
         return;
       }
 
@@ -174,13 +174,13 @@ export class EtherspotService {
   getSdkForChain(chain: Chain): ?EtherspotSdk {
     const network = networkNameFromChain(chain);
     if (!network) {
-      reportErrorLog('EtherspotService getSdkForChain failed: no network', { chain });
+      logBreadcrumb('EtherspotService', 'getSdkForChain failed: no network', { chain });
       return null;
     }
 
     const sdk = this.instances[network];
     if (!sdk) {
-      reportErrorLog('EtherspotService getSdkForChain failed: cannot get SDK instance', { chain, network });
+      logBreadcrumb('EtherspotService', 'getSdkForChain failed: cannot get SDK instance', { chain, network });
       return null;
     }
 
@@ -227,7 +227,7 @@ export class EtherspotService {
   async estimateENSTransactionFee(chain: Chain): Promise<?TransactionFeeInfo> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {
-      reportErrorLog('estimateENSTransactionFee failed: no SDK for chain set');
+      logBreadcrumb('estimateENSTransactionFee', 'failed: no SDK for chain set');
       throw new Error(t('error.unableToSetTransaction'));
     }
     const { account: etherspotAccount } = sdk.state;
@@ -270,7 +270,7 @@ export class EtherspotService {
       }
 
       if (!batch) {
-        reportErrorLog('estimateENSTransactionFee -> estimateTransactionsBatch returned null', {
+        logBreadcrumb('estimateENSTransactionFee', 'estimateTransactionsBatch returned null', {
           batch,
           chain,
         });
@@ -322,7 +322,7 @@ export class EtherspotService {
       });
 
       if (!supportedAsset) {
-        reportErrorLog('EtherspotService getBalances asset mapping failed', {
+        logBreadcrumb('EtherspotService', 'getBalances asset mapping failed', {
           chain,
           token,
         });
@@ -375,7 +375,7 @@ export class EtherspotService {
         const { property } = errorMessageJson[0];
 
         if (!invalidUsernameErrorProperties.includes(property)) {
-          reportErrorLog('EtherspotService isValidEnsName failed with unknown property', { property, error });
+          logBreadcrumb('EtherspotService', 'isValidEnsName failed with unknown property', { property, error });
         }
       } catch (messageParseError) {
         reportErrorLog('EtherspotService isValidEnsName failed and error message parse failed', {
@@ -392,7 +392,7 @@ export class EtherspotService {
     const sdk = this.getSdkForChain(chain);
 
     if (!sdk) {
-      reportErrorLog('clearTransactionsBatch failed: no SDK for chain set', { chain });
+      logBreadcrumb('clearTransactionsBatch', 'failed: no SDK for chain set', { chain });
       throw new Error(t('error.unableToResetTransactions'));
     }
 
@@ -403,7 +403,7 @@ export class EtherspotService {
     const sdk = this.getSdkForChain(chain);
 
     if (!sdk) {
-      reportErrorLog('setTransactionsBatch failed: no SDK for chain set', { transactions, chain });
+      logBreadcrumb('setTransactionsBatch', 'failed: no SDK for chain set', { transactions, chain });
       throw new Error(t('error.unableToSetTransaction'));
     }
 
@@ -422,7 +422,7 @@ export class EtherspotService {
   estimateTransactionsBatch(chain: Chain, useGasTokenAddress?: string): Promise<?GatewayEstimatedBatch> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {
-      reportErrorLog('estimateTransactionsBatch failed: no SDK for chain set', { chain });
+      logBreadcrumb('estimateTransactionsBatch', 'failed: no SDK for chain set', { chain });
       throw new Error(t('error.unableToEstimateTransaction'));
     }
 
@@ -482,7 +482,7 @@ export class EtherspotService {
     }
 
     if (!batch) {
-      reportErrorLog('setTransactionsBatchAndEstimate -> estimateTransactionsBatch returned null', {
+      logBreadcrumb('setTransactionsBatchAndEstimate', 'estimateTransactionsBatch returned null', {
         batch,
         chain,
         transactions,
@@ -512,7 +512,7 @@ export class EtherspotService {
 
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {
-      reportErrorLog('setTransactionsBatchAndSend failed: no SDK for chain set', { transactions, chain });
+      logBreadcrumb('setTransactionsBatchAndSend', 'failed: no SDK for chain set', { transactions, chain });
       throw new Error(t('error.unableToSendTransaction'));
     }
 
@@ -557,7 +557,7 @@ export class EtherspotService {
   ): Promise<?TransactionResult> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {
-      reportErrorLog('setTransactionsBatchAndSend failed: no SDK for chain set', { chain });
+      logBreadcrumb('setTransactionsBatchAndSend', 'failed: no SDK for chain set', { chain });
       throw new Error(t('error.unableToSendTransaction'));
     }
 
@@ -570,7 +570,7 @@ export class EtherspotService {
   getSubmittedBatchByHash(chain: Chain, hash: string): ?Promise<?GatewaySubmittedBatch> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {
-      reportErrorLog('getSubmittedBatchByHash failed: no SDK for chain set', { chain });
+      logBreadcrumb('getSubmittedBatchByHash', 'failed: no SDK for chain set', { chain });
       return null;
     }
 
@@ -616,8 +616,8 @@ export class EtherspotService {
   waitForTransactionHashFromSubmittedBatch(chain: Chain, batchHash: string): Promise<string> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {
-      reportErrorLog(
-        'EtherspotService waitForTransactionHashFromSubmittedBatch failed: no sdk instance for network name',
+      logBreadcrumb(
+        'EtherspotService', 'waitForTransactionHashFromSubmittedBatch failed: no sdk instance for network name',
         { chain },
       );
       // fail gracefully as transaction has been sent anyway
@@ -660,7 +660,9 @@ export class EtherspotService {
   async getTransactionsByAddress(chain: Chain, address: string): Promise<?(EtherspotTransaction[])> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {
-      reportErrorLog('getSupportedAssetsByChain failed: no sdk instance for chain', { chain });
+      logBreadcrumb('getTransactionsByAddress', 'getSupportedAssetsByChain failed: no sdk instance for chain', {
+        chain,
+      });
       return null;
     }
 
@@ -697,7 +699,7 @@ export class EtherspotService {
   async getSupportedAssets(chain: Chain): Promise<?(Asset[])> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {
-      reportErrorLog('getSupportedAssetsByChain failed: no sdk instance for chain', { chain });
+      logBreadcrumb('getSupportedAssetsByChain', 'failed: no sdk instance for chain', { chain });
       return null;
     }
 
@@ -707,7 +709,9 @@ export class EtherspotService {
       let tokens: TokenListToken[] = await sdk.getTokenListTokens({ name: tokenListName });
 
       if (!tokens) {
-        reportErrorLog('EtherspotService getSupportedAssets failed: no tokens returned', { tokenListName });
+        logBreadcrumb('getSupportedAssetsByChain', 'EtherspotService getSupportedAssets failed: no tokens returned', {
+          tokenListName,
+        });
         tokens = []; // let append native assets
       }
 
@@ -811,7 +815,7 @@ export class EtherspotService {
     const sdk = this.getSdkForChain(chain);
 
     if (!sdk) {
-      reportErrorLog('EtherspotService getNftList getSdk failed', { chain });
+      logBreadcrumb('getNftList', 'EtherspotService getNftList getSdk failed', { chain });
       return null;
     }
 

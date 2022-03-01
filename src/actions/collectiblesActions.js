@@ -43,7 +43,7 @@ import {
   getActiveAccountId,
   isEtherspotAccount,
 } from 'utils/accounts';
-import { isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
+import { isCaseInsensitiveMatch, logBreadcrumb } from 'utils/common';
 import { parseEtherspotTransactionStatus } from 'utils/etherspot';
 
 // Selectors
@@ -119,7 +119,7 @@ export const fetchCollectiblesAction = (defaultAccount?: Account) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const account = defaultAccount ?? activeAccountSelector(getState());
     if (!account) {
-      reportErrorLog('fetchCollectiblesAction failed: no account', { defaultAccount });
+      logBreadcrumb('fetchCollectiblesAction', 'failed: no account', { defaultAccount });
       return;
     }
 
@@ -128,7 +128,7 @@ export const fetchCollectiblesAction = (defaultAccount?: Account) => {
 
     const openSeaCollectibles = await fetchCollectibles(walletAddress);
     if (!openSeaCollectibles) {
-      reportErrorLog('fetchCollectiblesAction failed: fetchCollectibles response not valid', {
+      logBreadcrumb('fetchCollectiblesAction', 'failed: fetchCollectibles response not valid', {
         openSeaCollectibles,
         accountId,
         walletAddress,
@@ -224,7 +224,7 @@ export const fetchCollectiblesHistoryAction = (account?: Account) => {
       : getActiveAccountId(accounts);
 
     if (!walletAddress || !accountId) {
-      reportErrorLog('fetchCollectiblesHistoryAction failed: no walletAddress or accountId', {
+      logBreadcrumb('fetchCollectiblesHistoryAction', 'failed: no walletAddress or accountId', {
         accountId,
         walletAddress,
         defaultAccount: account,
@@ -234,7 +234,7 @@ export const fetchCollectiblesHistoryAction = (account?: Account) => {
 
     const openSeaHistory = await fetchCollectiblesTransactionHistory(walletAddress);
     if (!openSeaHistory) {
-      reportErrorLog('fetchCollectiblesHistoryAction failed: response not valid', {
+      logBreadcrumb('fetchCollectiblesHistoryAction', 'failed: response not valid', {
         openSeaHistory,
         accountId,
         walletAddress,
