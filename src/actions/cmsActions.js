@@ -51,7 +51,7 @@ export const fetchTutorialDataIfNeededAction = () => {
       const response: CmsData = await prismicClient.query(Predicates.any(DOCUMENT_TYPE, [NATIVES, NEWBIES]));
       const tutorialData = getTutorialDataObject(response);
       if (!isValidTutorialData(tutorialData)) {
-        reportErrorLog('fetchTutorialDataIfNeededAction tutorialData bot valid: ', { tutorialData });
+        logBreadcrumb('fetchTutorialDataIfNeededAction', 'tutorialData bot valid: ', { tutorialData });
         return;
       }
 

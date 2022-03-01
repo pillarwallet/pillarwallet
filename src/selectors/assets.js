@@ -30,7 +30,7 @@ import {
   getFormattedBalanceInFiat,
   mapWalletAssetsBalancesIntoAssetsByAddress,
 } from 'utils/assets';
-import { reportErrorLog } from 'utils/common';
+import { logBreadcrumb } from 'utils/common';
 
 // Selectors
 import {
@@ -179,8 +179,8 @@ export const accountAssetsWithBalanceSelector = createSelector(
 
         const relatedAsset = findAssetByAddress(chainSupportedAssets, assetAddress);
         if (!relatedAsset) {
-          reportErrorLog(
-            'accountAssetsWithBalanceSelector failed: no supported asset found for existing balance',
+          logBreadcrumb(
+            'accountAssetsWithBalanceSelector', 'failed: no supported asset found for existing balance',
             { assetAddress },
           );
           return;

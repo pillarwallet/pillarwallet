@@ -27,6 +27,7 @@ import {
   parseTokenBigNumberAmount,
   formatUnits,
   reportErrorLog,
+  logBreadcrumb,
 } from 'utils/common';
 
 // services
@@ -50,7 +51,7 @@ export const getStakedAmount = async (unipoolAddress: string, userAddress: strin
   );
 
   if (!unipoolContract) {
-    reportErrorLog('getStakedAmount failed: no unipoolContract', { unipoolAddress });
+    logBreadcrumb('getStakedAmount', 'failed: no unipoolContract', { unipoolAddress });
     return null;
   }
 
@@ -71,7 +72,7 @@ export const getEarnedAmount = async (unipoolAddress: string, userAddress: strin
   );
 
   if (!unipoolContract) {
-    reportErrorLog('getEarnedAmount failed: no unipoolContract', { unipoolAddress });
+    logBreadcrumb('getEarnedAmount', 'failed: no unipoolContract', { unipoolAddress });
     return null;
   }
 
@@ -106,7 +107,7 @@ export const getStakeTransactions = async (
 
   const erc20Contract = etherspotService.getContract(CHAIN.ETHEREUM, ERC20_CONTRACT_ABI, token.address);
   if (!erc20Contract) {
-    reportErrorLog('getStakeTransactions failed: no erc20Contract', { token });
+    logBreadcrumb('getStakeTransactions', 'failed: no erc20Contract', { token });
     return stakeTransactions;
   }
 

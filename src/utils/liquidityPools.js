@@ -46,6 +46,7 @@ import {
   parseTokenBigNumberAmount,
   formatUnits,
   reportErrorLog,
+  logBreadcrumb,
 } from 'utils/common';
 import { addressesEqual, isSupportedAssetAddress } from 'utils/assets';
 import {
@@ -151,7 +152,7 @@ export const getAddLiquidityTransactions = async (
     );
 
     if (!erc20Contract) {
-      reportErrorLog('getAddLiquidityTransactions failed: no erc20Contract on addApproveTransaction', {
+      logBreadcrumb('getAddLiquidityTransactions', 'failed: no erc20Contract on addApproveTransaction', {
         tokenAsset,
       });
       return;
@@ -309,7 +310,7 @@ export const getRemoveLiquidityTransactions = async (
   );
 
   if (!erc20Contract) {
-    reportErrorLog('getRemoveLiquidityTransactions: no erc20Contract', { poolToken });
+    logBreadcrumb('getRemoveLiquidityTransactions', 'no erc20Contract', { poolToken });
     return removeLiquidityTransactions;
   }
 

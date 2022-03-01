@@ -29,7 +29,7 @@ import { TypedDataUtils, signTypedData_v4 } from 'eth-sig-util';
 import { saveDbAction } from 'actions/dbActions';
 
 // utils
-import { getRandomInt, printLog, reportLog, reportErrorLog } from 'utils/common';
+import { getRandomInt, printLog, reportLog, reportErrorLog, logBreadcrumb } from 'utils/common';
 import { getKeychainDataObject, setKeychainDataObject } from 'utils/keychain';
 
 // services
@@ -59,7 +59,7 @@ export function generateWordsToValidate(numWordsToGenerate: number, maxWords: nu
 export async function getSaltedPin(pin: string, deviceUniqueId: ?string): Promise<string> {
   if (!deviceUniqueId) {
     // report and return unsalted
-    reportErrorLog('getSaltedPin failed: no deviceUniqueId');
+    logBreadcrumb('getSaltedPin', 'failed: no deviceUniqueId');
     // eslint-disable-next-line i18next/no-literal-string
     throw new Error('Unable to get deviceUniqueId.');
   }

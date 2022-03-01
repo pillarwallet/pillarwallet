@@ -53,7 +53,7 @@ import {
   findFirstEtherspotAccount,
 } from 'utils/accounts';
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
-import { reportErrorLog, isCaseInsensitiveMatch } from 'utils/common';
+import { logBreadcrumb, isCaseInsensitiveMatch } from 'utils/common';
 import { patchArchanovaAccountExtra } from 'utils/archanova';
 
 // services
@@ -262,7 +262,7 @@ export const switchToArchanovaAccountIfNeededAction = () => {
 
     const archanovaAccount = findFirstArchanovaAccount(accounts);
     if (!archanovaAccount) {
-      reportErrorLog('switchToArchanovaAccountIfNeeded: no archanova account found', { accounts });
+      logBreadcrumb('switchToArchanovaAccountIfNeededAction', 'no archanova account found', { accounts });
       return;
     }
 
@@ -282,7 +282,7 @@ export const switchToEtherspotAccountIfNeededAction = () => {
 
     const etherspotAccount = findFirstEtherspotAccount(accounts);
     if (!etherspotAccount) {
-      reportErrorLog('switchToEtherspotAccountIfNeededAction: no Eterspot account found', { accounts });
+      logBreadcrumb('switchToEtherspotAccountIfNeededAction', 'no Eterspot account found', { accounts });
       return;
     }
 

@@ -27,7 +27,7 @@ import { ETH } from 'constants/assetsConstants';
 // utils
 import {
   getEthereumProvider,
-  reportErrorLog,
+  logBreadcrumb,
 } from 'utils/common';
 import { catchTransactionError } from 'utils/wallet';
 import { getAccountAddress } from 'utils/accounts';
@@ -212,7 +212,7 @@ export default class KeyBasedWalletProvider {
 
     const { fee, gasPrice } = feeInfo ?? {};
     if (!fee || !gasPrice) {
-      reportErrorLog('Exception in wallet transaction', {
+      logBreadcrumb('sendTransaction', 'Exception in wallet transaction', {
         transaction,
         feeInfo,
         error: 'failed to parse feeInfo',

@@ -35,7 +35,7 @@ import {
 } from 'constants/notificationConstants';
 
 // Utils
-import { reportLog } from 'utils/common';
+import { logBreadcrumb } from 'utils/common';
 import { addressesEqual } from 'utils/assets';
 
 // Models
@@ -55,7 +55,7 @@ const validBcxTransaction = (transaction: ?Object): boolean => {
   if (!transaction || !transaction.fromAddress || !transaction.toAddress) return false;
   if (!transaction.status || !transaction.asset) return false;
   if (transaction.value === undefined) {
-    reportLog('Wrong BCX tx notification received', { transaction });
+    logBreadcrumb('validBcxTransaction', 'Wrong BCX tx notification received', { transaction });
     return false;
   }
   return true;

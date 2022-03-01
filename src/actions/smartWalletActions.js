@@ -144,7 +144,7 @@ import {
   parseTokenAmount,
   printLog,
   reportErrorLog,
-  reportLog,
+  logBreadcrumb,
 } from 'utils/common';
 import {
   formatToRawPrivateKey,
@@ -207,7 +207,7 @@ export const loadSmartWalletAccountsAction = (privateKey?: string) => {
     }
 
     if (!archanovaAccounts?.length) {
-      reportErrorLog('loadSmartWalletAccountsAction failed: no archanovaAccounts');
+      logBreadcrumb('loadSmartWalletAccountsAction', 'failed: no archanovaAccounts');
       return;
     }
 
@@ -379,7 +379,7 @@ export const fetchVirtualAccountBalanceAction = () => {
 
     const ppnAsset = findAssetByAddress(supportedAssets, plrAddress);
     if (!ppnAsset) {
-      reportErrorLog('fetchVirtualAccountBalanceAction failed: no PPN asset found', {
+      logBreadcrumb('fetchVirtualAccountBalanceAction', 'failed: no PPN asset found', {
         PPN_TOKEN,
         plrAddress,
       });
@@ -521,7 +521,13 @@ export const syncVirtualAccountTransactionsAction = () => {
             };
           } else {
             // there shouldn't be any case where synthetic asset address is not supported by wallet
-            reportLog('Unable to get wallet supported asset from synthetic asset address', { syntheticAssetAddress });
+            logBreadcrumb(
+              'syncVirtualAccountTransactionsAction',
+              'Unable to get wallet supported asset from synthetic asset address',
+              {
+                syntheticAssetAddress,
+              },
+            );
           }
 
           recipientAddress = syntheticRecipient;
@@ -611,7 +617,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       if (!ACCOUNT_TRANSACTION_UPDATED) path = 'sdkModules.Api.EventNames.AccountTransactionUpdated';
       if (!TRANSACTION_COMPLETED) path = 'sdkConstants.AccountTransactionStates.Completed';
       /* eslint-enable i18next/no-literal-string */
-      reportLog('Missing Smart Wallet SDK constant', { path });
+      logBreadcrumb('onSmartWalletSdkEventAction', 'Missing Smart Wallet SDK constant', { path });
     }
 
     /**
@@ -897,7 +903,7 @@ export const estimateTopUpVirtualAccountAction = (amount: string = '1') => {
 
     const ppnAsset = findAssetByAddress(supportedAssets, plrAddress);
     if (!ppnAsset) {
-      reportErrorLog('estimateTopUpVirtualAccountAction failed: no PPN asset found', {
+      logBreadcrumb('estimateTopUpVirtualAccountAction', 'failed: no PPN asset found', {
         PPN_TOKEN,
         plrAddress,
       });
@@ -951,7 +957,7 @@ export const topUpVirtualAccountAction = (amount: string, payForGasWithToken: bo
 
     const ppnAsset = findAssetByAddress(supportedAssets, plrAddress);
     if (!ppnAsset) {
-      reportErrorLog('topUpVirtualAccountAction failed: no PPN asset found', {
+      logBreadcrumb('topUpVirtualAccountAction', 'failed: no PPN asset found', {
         PPN_TOKEN,
         plrAddress,
       });
@@ -1044,7 +1050,7 @@ export const estimateWithdrawFromVirtualAccountAction = (amount: string) => {
 
     const ppnAsset = findAssetByAddress(supportedAssets, plrAddress);
     if (!ppnAsset) {
-      reportErrorLog('estimateWithdrawFromVirtualAccountAction failed: no PPN asset found', {
+      logBreadcrumb('estimateWithdrawFromVirtualAccountAction', 'failed: no PPN asset found', {
         PPN_TOKEN,
         plrAddress,
       });
@@ -1093,7 +1099,7 @@ export const withdrawFromVirtualAccountAction = (amount: string, payForGasWithTo
 
     const ppnAsset = findAssetByAddress(supportedAssets, plrAddress);
     if (!ppnAsset) {
-      reportErrorLog('withdrawFromVirtualAccountAction failed: no PPN asset found', {
+      logBreadcrumb('withdrawFromVirtualAccountAction', 'failed: no PPN asset found', {
         PPN_TOKEN,
         plrAddress,
       });
@@ -1509,12 +1515,15 @@ export const checkArchanovaSessionIfNeededAction = () => {
         smartWalletNeedsInit = isEmpty(connectedAccount) || isEmpty(connectedAccount?.devices);
       } else {
         // log to collect feedback for initial fix release, remove if causes too much noise
-        reportLog('Detected Archanova Smart Wallet expired session');
+        logBreadcrumb('checkArchanovaSessionIfNeededAction', 'Detected Archanova Smart Wallet expired session');
         smartWalletNeedsInit = true;
       }
     } else {
       // log to collect feedback for initial fix release, remove if causes too much noise
-      reportLog('Archanova Smart Wallet SDK initialization lost or never initialized');
+      logBreadcrumb(
+        'checkArchanovaSessionIfNeededAction',
+        'Archanova Smart Wallet SDK initialization lost or never initialized',
+      );
       smartWalletNeedsInit = true;
     }
 
@@ -1563,7 +1572,7 @@ export const estimateEnsMigrationFromArchanovaToEtherspotAction = (rawTransactio
 
     const feeInfo = buildArchanovaTxFeeInfo(estimated, false);
     if (!feeInfo || errorMessage) {
-      reportErrorLog('estimateEnsMigrationFromArchanovaToEtherspotAction -> estimateAccountRawTransactions failed', {
+      logBreadcrumb('estimateEnsMigrationFromArchanovaToEtherspotAction', 'estimateAccountRawTransactions failed', {
         errorMessage,
         archanovaAccount,
       });

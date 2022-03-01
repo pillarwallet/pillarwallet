@@ -87,7 +87,7 @@ import {
 } from './accounts';
 import { addressesEqual, findAssetByAddress } from './assets';
 import { fromBaseUnit } from './bigNumber';
-import { isCaseInsensitiveMatch, reportErrorLog } from './common';
+import { isCaseInsensitiveMatch, reportErrorLog, logBreadcrumb } from './common';
 import { buildHistoryTransaction, parseFeeWithGasToken } from './history';
 import { nativeAssetPerChain } from './chains';
 
@@ -513,7 +513,7 @@ export const buildEnsMigrationRawTransactions = async (accounts: Account[], wall
 
 export async function estimateArchanovaRawTransactions(rawTransactions: string[]): Promise<BigNumber> {
   if (!rawTransactions?.length) {
-    reportErrorLog('estimateArchanovaRawTransactions: no transactions to estimate');
+    logBreadcrumb('estimateArchanovaRawTransactions', 'no transactions to estimate');
     throw new Error(t('error.noTransactionsToEstimate'));
   }
 

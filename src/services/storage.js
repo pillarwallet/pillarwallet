@@ -20,7 +20,7 @@
 import AsyncStorage from '@react-native-community/async-storage';
 import get from 'lodash.get';
 import merge from 'lodash.merge';
-import { printLog, reportErrorLog } from 'utils/common';
+import { printLog, reportErrorLog, logBreadcrumb } from 'utils/common';
 import PouchDBStorage from './pouchDBStorage';
 
 const STORAGE_SETTINGS_KEY = 'storageSettings';
@@ -52,7 +52,7 @@ Storage.prototype.save = async function (id: string, data: Object, forceRewrite:
   const key = this.getKey(id);
 
   if (this.activeDocs[key]) {
-    reportErrorLog('Race condition spotted', { id, data, forceRewrite });
+    logBreadcrumb('AsyncStoragee', 'Race condition spotted', { id, data, forceRewrite });
   }
 
   this.activeDocs[key] = true;

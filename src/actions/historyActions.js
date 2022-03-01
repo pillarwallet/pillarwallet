@@ -49,7 +49,7 @@ import {
   findFirstEtherspotAccount,
   findAccountByAddress,
 } from 'utils/accounts';
-import { reportLog, uniqBy } from 'utils/common';
+import { reportLog, logBreadcrumb, uniqBy } from 'utils/common';
 import {
   deviceHasGasTokenSupport,
   getGasTokenDetails,
@@ -293,7 +293,7 @@ export const updateTransactionStatusAction = (chain: Chain, hash: string) => {
 
       // NOTE: if trxInfo is not null, that means transaction was mined or failed
       if (sdkToAppStatus === TX_PENDING_STATUS && transactionStatus) {
-        reportLog('Wrong transaction status', {
+        logBreadcrumb('updateTransactionStatusAction', 'Wrong transaction status', {
           hash,
           sdkToAppStatus,
           sdkStatus: sdkTransactionInfo?.state,

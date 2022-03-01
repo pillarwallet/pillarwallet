@@ -44,7 +44,7 @@ import Toast from 'components/Toast';
 import type { TranslationResourcesOfLanguage } from 'models/Translations';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
-import { reportErrorLog, reportLog } from 'utils/common';
+import { reportLog, logBreadcrumb } from 'utils/common';
 import { getCachedTranslationResources } from 'utils/cache';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { CACHE_STATUS } from 'constants/cacheConstants';
@@ -90,7 +90,7 @@ type GetTranslationResourcesProps = {
 const getLocalTranslations = (language: string) => {
   const relatedLocalTranslationData = localeConfig.localTranslations[language];
   if (!relatedLocalTranslationData) {
-    reportLog('Local translations are missing', { language });
+    logBreadcrumb('getLocalTranslations', 'Local translations are missing', { language });
     return {};
   }
   return localeConfig.namespaces.reduce((mappedResources, ns) => {
@@ -186,7 +186,7 @@ const setLanguageAndTranslationBundles = async ({ language, resources, onSuccess
   } else {
     // report to sentry if fallback language misses translations
     if (language === localeConfig.defaultLanguage) {
-      reportErrorLog(LANGUAGE_ERROR.NO_TRANSLATIONS);
+      logBreadcrumb('setLanguageAndTranslationBundles', LANGUAGE_ERROR.NO_TRANSLATIONS);
     }
     onLanguageChangeError();
   }
@@ -206,7 +206,7 @@ export const getAndSetFallbackLanguageResources = () => {
     if (missingNameSpaces.length || !hasFallbackTranslations) {
       const ERROR = missingNameSpaces.length ? LANGUAGE_ERROR.MISSES_NAMESPACES : LANGUAGE_ERROR.NO_TRANSLATIONS;
       const extra = missingNameSpaces.length ? { missingNameSpaces } : null;
-      reportLog(ERROR, extra);
+      logBreadcrumb('getTranslationsResources', ERROR, extra);
     }
 
     if (hasFallbackTranslations) {
@@ -256,7 +256,9 @@ export const getTranslationsResourcesAndSetLanguageOnAppOpenAction = () => {
 
       // log to Sentry if any default language name spaces are missing
       if (language === localeConfig.defaultLanguage && missingNsArray.length) {
-        reportErrorLog(LANGUAGE_ERROR.MISSES_NAMESPACES, { missingNameSpaces: missingNsArray });
+        logBreadcrumb('getTranslationsResourcesAndSetLanguageOnAppOpenAction', LANGUAGE_ERROR.MISSES_NAMESPACES, {
+          missingNameSpaces: missingNsArray,
+        });
       }
 
       await setLanguageAndTranslationBundles({ resources, language });
@@ -297,7 +299,9 @@ export const changeLanguageAction = (language: string) => {
             autoClose: true,
           });
           if (language === localeConfig.defaultLanguage) {
-            reportErrorLog(LANGUAGE_ERROR.MISSES_NAMESPACES, { missingNameSpaces: missingNsArray });
+            logBreadcrumb('changeLanguageAction', LANGUAGE_ERROR.MISSES_NAMESPACES, {
+              missingNameSpaces: missingNsArray,
+            });
           }
         } else {
           Toast.show({
