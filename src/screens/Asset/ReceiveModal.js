@@ -354,7 +354,7 @@ const InfoView = styled.View`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-height: ${Dimensions.get('screen').height * 0.80}px;
+  max-height: ${Dimensions.get('screen').height * 0.75}px;
 `;
 
 const ImageWrapper = styled.View`
