@@ -20,7 +20,7 @@
 
 import React, { useCallback, type AbstractComponent } from 'react';
 import { connect } from 'react-redux';
-import { Share } from 'react-native';
+import { Share, FlatList, Dimensions } from 'react-native';
 import Clipboard from '@react-native-community/clipboard';
 import { SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
@@ -133,7 +133,7 @@ const ReceiveModal = ({
     const { title } = chainsConfig[chain];
 
     return (
-      <Container key={`${chain}`}>
+      <Container activeOpacity={1} key={`${chain}`}>
         <ContainerView>
           <RowContainer>
             <ChainViewIcon size={24} style={IconContainer} name={chain} />
@@ -201,7 +201,16 @@ const ReceiveModal = ({
     >
       {isEtherspotAccount(activeAccount) ? (
         <ContentWrapper forceInset={{ bottom: 'always' }}>
-          <InfoView>{chains.map((chain) => renderChainAddress(chain))}</InfoView>
+          <InfoView>
+            <FlatList
+              bounces={false}
+              data={chains}
+              keyExtractor={(item) => item}
+              showsVerticalScrollIndicator={false}
+              style={styles.flatList}
+              renderItem={({ item }) => renderChainAddress(item)}
+            />
+          </InfoView>
         </ContentWrapper>
       ) : (
         <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
@@ -296,6 +305,9 @@ const styles = {
   singleAddressInfo: {
     marginTop: spacing.medium,
   },
+  flatList: {
+    width: '100%',
+  },
 };
 
 const ContentWrapper = styled(SafeAreaView)`
@@ -342,6 +354,7 @@ const InfoView = styled.View`
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  max-height: ${Dimensions.get('screen').height * 0.80}px;
 `;
 
 const ImageWrapper = styled.View`
@@ -375,7 +388,7 @@ const IconContainer = styled.View`
   justify-content: center;
 `;
 
-const Container = styled.View`
+const Container = styled.TouchableOpacity`
   background-color: ${({ theme }) => theme.colors.basic080};
   flex-direction: row;
   margin: ${spacing.small}px 0;
