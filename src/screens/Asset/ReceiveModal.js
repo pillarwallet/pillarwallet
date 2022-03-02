@@ -20,7 +20,7 @@
 
 import React, { useCallback, type AbstractComponent } from 'react';
 import { connect } from 'react-redux';
-import { Share, FlatList, Dimensions } from 'react-native';
+import { Share, FlatList } from 'react-native';
 import Clipboard from '@react-native-community/clipboard';
 import { SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
@@ -46,6 +46,7 @@ import {
 } from 'utils/accounts';
 import { getThemeColors } from 'utils/themes';
 import { useChainsConfig } from 'utils/uiConfig';
+import { getDeviceHeight } from 'utils/common';
 
 // Types
 import type { Account } from 'models/Account';
@@ -67,6 +68,7 @@ import { useDeploymentStatus } from 'hooks/deploymentStatus';
 // Constants
 import { CHAIN } from 'constants/chainConstants';
 
+const DEVICE_HEIGHT = getDeviceHeight();
 type StateProps = {|
   user: User,
   activeAccount: ?Account,
@@ -354,7 +356,7 @@ const InfoView = styled.View`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-height: ${Dimensions.get('screen').height * 0.75}px;
+  max-height: ${DEVICE_HEIGHT * 0.75}px;
 `;
 
 const ImageWrapper = styled.View`
