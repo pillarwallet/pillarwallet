@@ -46,7 +46,7 @@ import { activeAccountSelector } from 'selectors';
 
 // utils
 import { getAccountAddress } from 'utils/accounts';
-import { reportErrorLog } from 'utils/common';
+import { reportErrorLog, logBreadcrumb } from 'utils/common';
 import { hasKeyBasedWalletConnectSession } from 'utils/walletConnect';
 import { isLogV2AppEvents } from 'utils/environment';
 
@@ -107,7 +107,7 @@ export const initWalletConnectSessionsAction = (resetExisting: boolean = false) 
 
       const connector = createConnector({ session });
       if (!connector) {
-        reportErrorLog('initWalletConnectSessionsAction createConnector failed: no connector', { session });
+        logBreadcrumb('initWalletConnectSessionsAction', 'createConnector failed: no connector', { session });
         return;
       }
 

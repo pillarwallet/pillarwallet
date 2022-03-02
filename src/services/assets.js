@@ -29,8 +29,7 @@ import { ERC721_TRANSFER_METHODS, ERROR_TYPE } from 'constants/transactionsConst
 import {
   getEthereumProvider,
   parseTokenBigNumberAmount,
-  reportErrorLog,
-  reportLog,
+  logBreadcrumb,
   addressAsKey,
 } from 'utils/common';
 import { nativeAssetPerChain } from 'utils/chains';
@@ -254,7 +253,7 @@ export async function transferERC721(options: ERC721TransferOptions) {
   const data = await buildERC721TransactionData(options, wallet.provider);
 
   if (!data) {
-    reportLog('Could not transfer collectible', {
+    logBreadcrumb('transferERC721', 'Could not transfer collectible', {
       networkProvider: getEnv().COLLECTIBLES_NETWORK,
       contractAddress,
       tokenId,
@@ -319,7 +318,7 @@ export async function getExchangeRates(
   assets: Asset[],
 ): Promise<?RatesByAssetAddress> {
   if (isEmpty(assets)) {
-    reportLog('getExchangeRates received empty assets', { assets });
+    logBreadcrumb('getExchangeRates', 'received empty assets', { assets });
   }
 
   // $FlowFixMe
@@ -339,7 +338,7 @@ export async function getExchangeRates(
   }
 
   if (!rates) {
-    reportErrorLog('getExchangeRates failed: no rates data', { rates, assets });
+    logBreadcrumb('getExchangeRates', 'failed: no rates data', { rates, assets });
     return null;
   }
 

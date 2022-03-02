@@ -96,7 +96,7 @@ export const sendENSTransactionAction = (
     logBreadcrumb('Send Flow', 'sendENSTransactionAction: checking for active account');
     const activeAccount = activeAccountSelector(getState());
     if (!activeAccount) {
-      reportErrorLog('sendENSTransactionAction failed: no active account');
+      logBreadcrumb('sendENSTransactionAction', 'failed: no active account');
       return;
     }
 
@@ -208,7 +208,7 @@ export const sendAssetAction = (
     );
     const activeAccount = activeAccountSelector(getState());
     if (!activeAccount) {
-      reportErrorLog('sendAssetAction failed: no active account');
+      logBreadcrumb('sendAssetAction', 'failed: no active account');
       return;
     }
 
@@ -563,7 +563,11 @@ export const fetchAllAccountsTotalBalancesAction = () => {
         const chain = chainFromChainId[chainId];
         const assetsCategory = assetsCategoryFromEtherspotBalancesCategory[balancesCategory];
         if (!assetsCategory) {
-          reportErrorLog('Cannot map Etherspot balances category into assets category', { balancesCategory });
+          logBreadcrumb(
+            'fetchAllAccountsTotalBalancesAction',
+            'Cannot map Etherspot balances category into assets category',
+            { balancesCategory },
+          );
           return;
         }
 

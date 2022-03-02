@@ -53,7 +53,7 @@ import {
   getHistoryEventsFromTransactions,
   getTokenTransactionsFromHistory,
 } from 'utils/history';
-import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
+import { isArchanovaAccount, isEtherspotAccount, isKeyBasedAccount } from 'utils/accounts';
 import { getAssetRateInFiat } from 'utils/rates';
 
 // Configs
@@ -156,7 +156,7 @@ const AssetScreen = ({
   );
 
   const buttons = [
-    !isArchanovaAccount(activeAccount) && {
+    !isArchanovaAccount(activeAccount) && !isKeyBasedAccount(activeAccount) && {
       title: t('button.swap'),
       iconName: 'exchange',
       onPress: () => navigation.navigate(EXCHANGE, { fromAssetAddress: contractAddress, chain }),

@@ -49,7 +49,7 @@ import { fetchGasInfoAction } from 'actions/historyActions';
 
 // utils
 import { addressesEqual, getBalance, transformBalancesToObject } from 'utils/assets';
-import { BigNumber, truncateAmount, reportErrorLog, reportLog } from 'utils/common';
+import { BigNumber, truncateAmount, logBreadcrumb } from 'utils/common';
 import { findFirstEtherspotAccount, getAccountAddress } from 'utils/accounts';
 import { calculateETHTransactionAmountAfterFee } from 'utils/transactions';
 
@@ -169,7 +169,7 @@ export const fetchAvailableBalancesToTransferAction = () => {
 
     const keyBasedWalletAddress = walletData?.address;
     if (!keyBasedWalletAddress) {
-      reportErrorLog('fetchAvailableBalancesToTransferAction failed: no keyBasedWalletAddress');
+      logBreadcrumb('fetchAvailableBalancesToTransferAction', 'failed: no keyBasedWalletAddress');
       return;
     }
 
@@ -194,7 +194,7 @@ export const fetchAvailableCollectiblesToTransferAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const keyBasedWalletAddress = getState().wallet.data?.address;
     if (!keyBasedWalletAddress) {
-      reportLog('fetchAvailableCollectiblesToTransferAction failed: no keyBasedWalletAddress');
+      logBreadcrumb('fetchAvailableCollectiblesToTransferAction', 'failed: no keyBasedWalletAddress');
       return;
     }
 
@@ -204,7 +204,9 @@ export const fetchAvailableCollectiblesToTransferAction = () => {
 
     const fetchedCollectibles = await fetchCollectibles(keyBasedWalletAddress);
     if (!fetchedCollectibles) {
-      reportLog('Failed to fetch key based wallet collectibles', { requestResult: fetchedCollectibles });
+      logBreadcrumb('fetchAvailableCollectiblesToTransferAction', 'Failed to fetch key based wallet collectibles', {
+        requestResult: fetchedCollectibles,
+      });
     } else {
       availableCollectibles = fetchedCollectibles.map(parseCollectibleFromOpenSeaAsset);
     }
@@ -230,13 +232,16 @@ export const calculateKeyBasedAssetsToTransferTransactionGasAction = () => {
 
     const keyBasedWalletAddress = walletData?.address;
     if (!keyBasedWalletAddress) {
-      reportLog('calculateKeyBasedAssetsToTransferTransactionGasAction failed: no keyBasedWalletAddress');
+      logBreadcrumb('calculateKeyBasedAssetsToTransferTransactionGasAction', 'failed: no keyBasedWalletAddress');
       return;
     }
 
     const etherspotAccount = findFirstEtherspotAccount(accounts);
     if (!etherspotAccount) {
-      reportLog('Failed to find Etherspot account in key based estimate calculations.');
+      logBreadcrumb(
+        'calculateKeyBasedAssetsToTransferTransactionGasAction',
+        'Failed to find Etherspot account in key based estimate calculations.',
+      );
       return;
     }
 
@@ -247,7 +252,7 @@ export const calculateKeyBasedAssetsToTransferTransactionGasAction = () => {
     const { history: { gasInfo } } = getState();
     const ethereumGasInfo = gasInfo?.[CHAIN.ETHEREUM];
     if (!ethereumGasInfo?.isFetched || !ethereumGasInfo?.gasPrice) {
-      reportLog('calculateKeyBasedAssetsToTransferTransactionGasAction failed: no gas price.');
+      logBreadcrumb('calculateKeyBasedAssetsToTransferTransactionGasAction', 'failed: no gas price.');
       return;
     }
 
@@ -350,10 +355,14 @@ export const checkKeyBasedAssetTransferTransactionsAction = () => {
         const transactionSent = await transferSigned(assetToTransferTransaction?.signedHash)
           .catch((error) => ({ error }));
         if (!transactionSent?.hash || transactionSent?.error) {
-          reportLog('Failed to send key based asset migration signed transaction', {
-            assetToTransferTransaction: transferTransactionsInQueue[0],
-            error: transactionSent.error,
-          });
+          logBreadcrumb(
+            'checkKeyBasedAssetTransferTransactionsAction',
+            'Failed to send key based asset migration signed transaction',
+            {
+              assetToTransferTransaction: transferTransactionsInQueue[0],
+              error: transactionSent.error,
+            },
+          );
         } else {
           // update with pending status
           const updatedTransaction: KeyBasedAssetTransfer = {
@@ -390,7 +399,7 @@ export const createKeyBasedAssetsToTransferTransactionsAction = (wallet: Wallet)
 
     const keyBasedWalletAddress = walletData?.address;
     if (!keyBasedWalletAddress) {
-      reportLog('createKeyBasedAssetsToTransferTransactionsAction failed: no keyBasedWalletAddress');
+      logBreadcrumb('createKeyBasedAssetsToTransferTransactionsAction', 'failed: no keyBasedWalletAddress');
       return;
     }
 
@@ -399,7 +408,10 @@ export const createKeyBasedAssetsToTransferTransactionsAction = (wallet: Wallet)
 
     const etherspotAccount = findFirstEtherspotAccount(accounts);
     if (!etherspotAccount) {
-      reportLog('Failed to find Etherspot account in key based asset transfer creation.');
+      logBreadcrumb(
+        'createKeyBasedAssetsToTransferTransactionsAction',
+        'Failed to find Etherspot account in key based asset transfer creation.',
+      );
       return;
     }
 
@@ -437,7 +449,9 @@ export const createKeyBasedAssetsToTransferTransactionsAction = (wallet: Wallet)
         dispatch,
         getState,
       ).catch((error) => {
-        reportLog('Failed to create key based asset migration signed transaction', { keyBasedAssetTransfer, error });
+        logBreadcrumb('createKeyBasedAssetsToTransferTransactionsAction',
+          'Failed to create key based asset migration signed transaction',
+          { keyBasedAssetTransfer, error });
         return null;
       });
       if (signedTransaction) keyBasedAssetsToTransferUpdated.push({ ...keyBasedAssetTransfer, signedTransaction });

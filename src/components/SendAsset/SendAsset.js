@@ -39,7 +39,7 @@ import FeeLabelToggle from 'components/FeeLabelToggle';
 import SendHighGasModal from 'components/HighGasFeeModals/SendHighGasModal';
 
 // Utils
-import { truncateAmount, reportErrorLog, lookupAddress } from 'utils/common';
+import { truncateAmount, logBreadcrumb, lookupAddress } from 'utils/common';
 import { getBalanceBN, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { isValidValueForTransfer, showTransactionRevertedToast, isHighGasFee } from 'utils/transactions';
 
@@ -177,7 +177,7 @@ const SendAsset = ({
     if (!feeInfo || !selectedContact || !assetData) {
       // something went wrong
       showTransactionRevertedToast();
-      reportErrorLog('SendAsset screen handleFormSubmit failed', { feeInfo, selectedContact, assetData });
+      logBreadcrumb('SendAsset screen', 'handleFormSubmit failed', { feeInfo, selectedContact, assetData });
       return;
     }
 

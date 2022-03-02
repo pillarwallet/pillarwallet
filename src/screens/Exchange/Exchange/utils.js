@@ -33,7 +33,7 @@ import { accountWalletAssetsBalancesSelector } from 'selectors/balances';
 import { addressesEqual, getAssetOption, sortAssets } from 'utils/assets';
 import { getWalletBalanceForAsset } from 'utils/balances';
 import { nativeAssetPerChain } from 'utils/chains';
-import { reportErrorLog } from 'utils/common';
+import { logBreadcrumb } from 'utils/common';
 
 // Services
 import etherspotService from 'services/etherspot';
@@ -98,7 +98,7 @@ function getExchangeFromAssetOptions(
     .filter((asset) => {
       if (!asset) {
         // debug and safe return for Sentry issue #2605322771
-        reportErrorLog('getExchangeFromAssetOptions failed: no asset', { asset, accountAssets });
+        logBreadcrumb('getExchangeFromAssetOptions', 'failed: no asset', { asset, accountAssets });
         return false;
       }
       return isMatching(asset) && isSupported(asset);

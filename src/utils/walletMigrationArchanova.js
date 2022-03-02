@@ -60,7 +60,10 @@ export async function submitMigrationTransactions(
   logBreadcrumb('walletMigrationArchanova', 'estimating migration transactions');
   const fee = await estimateMigrationTransactions(wallet, accounts, tokensToMigrate, collectiblesToMigrate);
   if (!fee) {
-    reportErrorLog('submitMigrationTransactions: estimateMigrationTransactions returned falsy fee');
+    logBreadcrumb(
+      'submitMigrationTransactions',
+      'estimateMigrationTransactions returned falsy fee',
+    );
     throw new Error(t('error.failedToSubmitTransaction'));
   }
 
@@ -77,7 +80,7 @@ export async function submitMigrationTransactions(
     collectiblesToMigrate,
   );
   if (!transactionsToSubmit?.length) {
-    reportErrorLog('submitMigrationTransactions: transactionsToSumbmit is empty');
+    logBreadcrumb('submitMigrationTransactions', 'transactionsToSumbmit is empty');
     throw new Error(t('error.failedToSubmitTransaction'));
   }
 
@@ -91,7 +94,7 @@ export async function submitMigrationTransactions(
   }
 
   if (!hash) {
-    reportErrorLog('submitMigrationTransactions: sendRawTransactions returned falsy hash');
+    logBreadcrumb('submitMigrationTransactions', 'sendRawTransactions returned falsy hash');
     throw new Error(t('error.failedToSubmitTransaction'));
   }
 
@@ -120,7 +123,7 @@ export async function estimateMigrationTransactions(
     collectiblesToMigrate,
   );
   if (!transactionsToEstimate?.length) {
-    reportErrorLog('estimateMigrationTransactions: transactionsToEstimate is empty');
+    logBreadcrumb('estimateMigrationTransactions', 'transactionsToEstimate is empty');
     throw new Error(t('error.failedToEstimateTransaction'));
   }
 
@@ -188,13 +191,13 @@ const buildAssetMigrationRawTransactions = async (
 ): Promise<string[]> => {
   const etherspotAccount = findFirstEtherspotAccount(accounts);
   if (!etherspotAccount) {
-    reportErrorLog('buildAssetMigrationRawTransactions: no etherspot account found');
+    logBreadcrumb('buildAssetMigrationRawTransactions', 'no etherspot account found');
     throw new Error(t('error.failedToBuildTransaction'));
   }
 
   const archanovaAccount = findFirstArchanovaAccount(accounts);
   if (!archanovaAccount) {
-    reportErrorLog('buildAssetMigrationRawTransactions: no etherspot account found');
+    logBreadcrumb('buildAssetMigrationRawTransactions', 'no archanovaAccount account found');
     throw new Error(t('error.failedToBuildTransaction'));
   }
 
@@ -216,7 +219,7 @@ const buildAssetMigrationRawTransactions = async (
   logBreadcrumb('walletMigrationArchanova', 'sign message');
   const archanovaAccountDeviceSignature = await wallet.signMessage(migrator.migrationMessage);
   if (!archanovaAccountDeviceSignature) {
-    reportErrorLog('buildAssetMigrationRawTransactions: signMessage returned null');
+    logBreadcrumb('buildAssetMigrationRawTransactions', 'signMessage returned null');
     throw new Error(t('error.failedToSignMessage'));
   }
 

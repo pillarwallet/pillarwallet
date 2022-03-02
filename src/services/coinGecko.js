@@ -26,7 +26,7 @@ import { rateKeys } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // Utils
-import { reportErrorLog, addressAsKey } from 'utils/common';
+import { reportErrorLog, logBreadcrumb, addressAsKey } from 'utils/common';
 import httpRequest from 'utils/httpRequest';
 import { nativeAssetPerChain } from 'utils/chains';
 import { addressesEqual } from 'utils/assets';
@@ -109,7 +109,7 @@ export const getCoinGeckoTokenPrices = async (
     )
     .then(({ data: responseData }) => {
       if (!responseData) {
-        reportErrorLog('getCoinGeckoTokenPrices failed: unexpected response', {
+        logBreadcrumb('getCoinGeckoTokenPrices', 'failed: unexpected response', {
           response: responseData,
           assetsContractAddresses,
         });
@@ -139,7 +139,7 @@ export const getCoinGeckoPricesByCoinId = async (coinId: string): Promise<?Rates
       requestConfig,
     );
     if (!response.data) {
-      reportErrorLog('getCoinGeckoPricesByCoinId failed: unexpected response', { coinId, response: response.data });
+      logBreadcrumb('getCoinGeckoPricesByCoinId', 'failed: unexpected response', { coinId, response: response.data });
       return null;
     }
 

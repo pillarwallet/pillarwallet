@@ -34,7 +34,7 @@ import {
   isAccountType,
   isArchanovaAccount,
 } from 'utils/accounts';
-import { reportErrorLog } from 'utils/common';
+import { logBreadcrumb } from 'utils/common';
 import { getSupportedChains } from 'utils/chains';
 
 // selectors
@@ -56,7 +56,7 @@ export const addWalletCreationEventIfNeededAction = (account: Account) => {
     const createdAtTimestamp = getSmartWalletAccountCreatedAtTimestamp(account);
     if (!createdAtTimestamp) {
       // this shouldn't happen
-      reportErrorLog('addWalletCreationEventAction failed: no createdAtTimestamp', { account });
+      logBreadcrumb('addWalletCreationEventAction', 'failed: no createdAtTimestamp', { account });
       return;
     }
 
