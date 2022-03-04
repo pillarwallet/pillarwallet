@@ -38,12 +38,14 @@ import { getBalanceInFiat } from 'utils/assets';
 import { formatTokenValue, formatFiatValue } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 import { isHighGasFee } from 'utils/transactions';
+import { ethToWei } from '@netgum/utils';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
 import type { Chain } from 'models/Chain';
 import { spacing } from 'utils/variables';
 import Icon from 'components/core/Icon';
+import type { Value } from 'models/Value';
 
 type Mode = 'actual' | 'estimate';
 
@@ -52,7 +54,7 @@ type Mode = 'actual' | 'estimate';
  * instead of performing expensive search on whole assets array
  */
 type Props = {
-  value: BigNumber | null;
+  value: Value;
   assetSymbol: string;
   assetAddress: string;
   chain: Chain;
@@ -92,7 +94,8 @@ function FeeLabel({
   const valueInFiat = new BigNumber(getBalanceInFiat(currency, value, chainRates, assetAddress));
   const labelValue = showFiatValue ? formatFiatValue(valueInFiat, currency) : formatTokenValue(value, assetSymbol);
 
-  const highFee = isHighGasFee(chain, value, null, chainRates, currency, gasThresholds);
+  const feeInWei = ethToWei(value).toString();
+  const highFee = isHighGasFee(chain, feeInWei, null, chainRates, currency, gasThresholds);
 
   const onHighFeeInfoPress = () => {
     if (!highGasFeeModal) return;
