@@ -66,6 +66,7 @@ import { parsePeerName, mapCallRequestToTransactionPayload } from 'utils/walletC
 import { isArchanovaAccount } from 'utils/accounts';
 import { getGasAddress, getGasSymbol, isHighGasFee } from 'utils/transactions';
 import { getThemeColors } from 'utils/themes';
+import { ethToWei } from '@netgum/utils';
 
 // Types
 import type { WalletConnectCallRequest } from 'models/WalletConnect';
@@ -126,7 +127,8 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
 
   const chainRates = useChainRates(chain);
 
-  const highFee = isHighGasFee(chain, fee, null, chainRates, fiatCurrency, gasThresholds);
+  const feeInWei = ethToWei(value).toString();
+  const highFee = isHighGasFee(chain, feeInWei, null, chainRates, fiatCurrency, gasThresholds);
 
   return (
     <>
@@ -322,7 +324,7 @@ const ErrorMessage = styled(Text)`
 const IconView = styled.View`
   margin-top: ${spacing.largePlus}px;
   text-align: center;
-  flexdirection: row;
+  flexDirection: row;
 `;
 
 const ServiceIcon = styled(Image)`
@@ -330,8 +332,8 @@ const ServiceIcon = styled(Image)`
   height: 76px;
   border-radius: 39px;
   margin-left: -48px;
-  borderwidth: 6px;
-  bordercolor: ${({ theme }) => theme.colors.basic050};
+  borderWidth: 6px;
+  borderColor: ${({ theme }) => theme.colors.basic050};
   overflow: hidden;
 `;
 
