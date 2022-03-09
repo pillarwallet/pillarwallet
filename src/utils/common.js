@@ -83,6 +83,11 @@ export const printLog = (...params: any) => {
   console.log(...params); // eslint-disable-line
 };
 
+export const errorLog = (...params: any) => {
+  if ((isProdEnv() && !__DEV__) || isTest) return;
+  console.error(...params); // eslint-disable-line
+};
+
 export const reportLog = (message: string, extra?: Object, level: Sentry.Severity = Sentry.Severity.Info) => {
   Sentry.withScope((scope) => {
     scope.setExtras({ extra, level });

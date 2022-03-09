@@ -19,7 +19,7 @@
 */
 
 import React, { useEffect, useState } from 'react';
-import { Keyboard } from 'react-native';
+import { Keyboard, Platform } from 'react-native';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
@@ -30,6 +30,7 @@ import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 
 // Actions
 import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
+import { appsFlyerlogEventAction } from 'actions/analyticsActions';
 
 // Components
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
@@ -49,8 +50,10 @@ import { spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { reportErrorLog } from 'utils/common';
 import { nativeAssetPerChain } from 'utils/chains';
-import { isEtherspotAccount } from 'utils/accounts';
+import { isEtherspotAccount, getAccountType } from 'utils/accounts';
 import { showTransactionRevertedToast } from 'utils/transactions';
+import { isLogV2AppEvents } from 'utils/environment';
+import { currentDate, currentTime } from 'utils/date';
 
 // Services
 import { fetchRinkebyETHBalance } from 'services/assets';
@@ -84,13 +87,8 @@ type Props = {
   estimateErrorMessage: ?string,
   resetEstimateTransaction: () => void,
   estimateTransaction: (transaction: TransactionToEstimate, chain: Chain) => void,
+  logAppsFlyerEvent: (name: string, properties: Object) => void,
 };
-
-const WarningMessage = styled(Paragraph)`
-  text-align: center;
-  color: ${themedColors.negative};
-  padding-bottom: ${spacing.small}px;
-`;
 
 const SendCollectibleConfirm = ({
   isOnline,
@@ -101,6 +99,7 @@ const SendCollectibleConfirm = ({
   feeInfo,
   isEstimating,
   estimateErrorMessage,
+  logAppsFlyerEvent,
 }: Props) => {
   const navigation = useNavigation();
 
@@ -173,6 +172,19 @@ const SendCollectibleConfirm = ({
       txFeeInWei,
       gasToken,
     };
+
+    if (activeAccount && isLogV2AppEvents()) {
+      // eslint-disable-next-line i18next/no-literal-string
+      logAppsFlyerEvent(`nft_ sent_${chain}`, {
+        token: assetData?.tokenType,
+        tokenId: assetData?.tokenId,
+        date: currentDate(),
+        time: currentTime(),
+        address: assetData?.contractAddress,
+        platform: Platform.OS,
+        walletType: getAccountType(activeAccount),
+      });
+    }
 
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload: transactionPayloadUpdated,
@@ -315,6 +327,13 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     transaction: TransactionToEstimate,
     chain: Chain,
   ) => dispatch(estimateTransactionAction(transaction, chain)),
+  logAppsFlyerEvent: (name: string, properties: Object) => dispatch(appsFlyerlogEventAction(name, properties)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(SendCollectibleConfirm);
+
+const WarningMessage = styled(Paragraph)`
+  text-align: center;
+  color: ${themedColors.negative};
+  padding-bottom: ${spacing.small}px;
+`;

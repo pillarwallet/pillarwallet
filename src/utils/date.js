@@ -67,3 +67,11 @@ export const humanizeDateString = (date: Date): string => {
   const dateFormat = DateFns.isThisYear(date) ? USER_MONTH_DAY_FORMAT : USER_FULL_DATE_FORMAT;
   return DateFns.format(date, dateFormat);
 };
+
+export const currentDate = (): string => {
+  return new Date().toLocaleDateString();
+};
+
+export const currentTime = (): string => {
+  return new Date().toLocaleTimeString();
+};
