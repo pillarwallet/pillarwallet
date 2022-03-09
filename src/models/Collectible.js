@@ -36,6 +36,7 @@ export type Collectible = {
   iconUrl: ?string,
   image: ?string,
   imageUrl: ?string,
+  tokenId: ?string,
 
   /**
    * Legacy NFTs are minted pre ERC-721 (e.g. cryptokitties)

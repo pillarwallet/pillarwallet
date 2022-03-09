@@ -19,8 +19,10 @@
 */
 
 import * as React from 'react';
+import { Platform } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
+import { useDispatch } from 'react-redux';
 import { useTranslation } from 'translations/translate';
 
 // Components
@@ -39,7 +41,7 @@ import { TRANSACTION_TYPE } from 'constants/transactionsConstants';
 import { useTransactionsEstimate, useTransactionFeeCheck } from 'hooks/transactions';
 
 // Selectors
-import { useRootSelector, useFiatCurrency, useChainRates } from 'selectors';
+import { useRootSelector, useFiatCurrency, useChainRates, useActiveAccount } from 'selectors';
 import { gasThresholdsSelector } from 'redux/selectors/gas-threshold-selector';
 
 // Utils
@@ -48,6 +50,12 @@ import { useProviderConfig } from 'utils/exchange';
 import { mapTransactionsToTransactionPayload, showTransactionRevertedToast, isHighGasFee } from 'utils/transactions';
 import { spacing } from 'utils/variables';
 import { useThemeColors } from 'utils/themes';
+import { isLogV2AppEvents } from 'utils/environment';
+import { currentDate, currentTime } from 'utils/date';
+import { getAccountType } from 'utils/accounts';
+
+// Actions
+import { appsFlyerlogEventAction } from 'actions/analyticsActions';
 
 // Types
 import type { ExchangeOffer } from 'models/Exchange';
@@ -60,22 +68,29 @@ const ExchangeConfirmScreen = () => {
   const colors = useThemeColors();
   const { t } = useTranslation();
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const activeAccount = useActiveAccount();
 
   const offer: ExchangeOffer = navigation.getParam('offer');
-  const { fromAsset, toAsset, fromAmount, toAmount, provider, chain } = offer;
+  const { fromAsset, toAsset, fromAmount, toAmount, provider, chain: chainName } = offer;
   const toAssetSymbol = toAsset.symbol;
 
   const isOnline = useRootSelector((root) => root.session.data.isOnline);
   const fiatCurrency = useFiatCurrency();
   const gasThresholds = useRootSelector(gasThresholdsSelector);
 
-  const chainRates = useChainRates(chain);
+  const chainRates = useChainRates(chainName);
 
   const { feeInfo, errorMessage: estimationErrorMessage, isEstimating } = useTransactionsEstimate(
-    chain,
+    chainName,
     offer.transactions,
   );
-  const { errorMessage: notEnoughForFeeErrorMessage } = useTransactionFeeCheck(chain, feeInfo, fromAsset, fromAmount);
+  const { errorMessage: notEnoughForFeeErrorMessage } = useTransactionFeeCheck(
+    chainName,
+    feeInfo,
+    fromAsset,
+    fromAmount,
+  );
 
   const providerConfig = useProviderConfig(provider);
 
@@ -85,7 +100,21 @@ const ExchangeConfirmScreen = () => {
       return;
     }
 
-    const transactionPayload = mapTransactionsToTransactionPayload(chain, offer.transactions);
+    const transactionPayload = mapTransactionsToTransactionPayload(chainName, offer.transactions);
+
+    activeAccount && isLogV2AppEvents &&
+      dispatch(
+        appsFlyerlogEventAction(`swap_completed_${fromAsset?.symbol}_${toAsset?.symbol}`, {
+          tokenPair: `${fromAsset?.symbol}_${toAsset?.symbol}`,
+          chain: chainName,
+          amount_swapped: fromAmount,
+          date: currentDate(),
+          time: currentTime(),
+          platform: Platform.OS,
+          address: toAsset.address,
+          walletType: getAccountType(activeAccount),
+        }),
+      );
 
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload,
@@ -99,7 +128,7 @@ const ExchangeConfirmScreen = () => {
 
   const errorMessage = estimationErrorMessage || notEnoughForFeeErrorMessage;
 
-  const highFee = isHighGasFee(chain, feeInfo?.fee, feeInfo?.gasToken, chainRates, fiatCurrency, gasThresholds);
+  const highFee = isHighGasFee(chainName, feeInfo?.fee, feeInfo?.gasToken, chainRates, fiatCurrency, gasThresholds);
 
   return (
     <Container>
@@ -129,7 +158,7 @@ const ExchangeConfirmScreen = () => {
 
           <Spacing h={24} />
 
-          <TransactionDeploymentWarning chain={chain} style={styles.transactionDeploymentWarning} />
+          <TransactionDeploymentWarning chain={chainName} style={styles.transactionDeploymentWarning} />
 
           {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
 

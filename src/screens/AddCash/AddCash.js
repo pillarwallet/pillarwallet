@@ -31,9 +31,16 @@ import { isValidFiatValue } from 'utils/validators';
 import { getCurrencySymbol, hasTooMuchDecimals } from 'utils/common';
 import { openUrl } from 'utils/inAppBrowser';
 import { rampWidgetUrl, wertWidgetUrl } from 'utils/fiatToCrypto';
-import { getActiveAccount, getAccountAddress, isSmartWalletAccount, isEtherspotAccount } from 'utils/accounts';
+import {
+  getActiveAccount,
+  getAccountAddress,
+  isSmartWalletAccount,
+  isEtherspotAccount,
+  getAccountType,
+} from 'utils/accounts';
 import { useThemeColors } from 'utils/themes';
 import { isLogV2AppEvents } from 'utils/environment';
+import { currentDate, currentTime } from 'utils/date';
 
 // Components
 import { Container } from 'components/layout/Layout';
@@ -48,7 +55,7 @@ import BuyCryptoAccountNotActiveModal from 'components/BuyCryptoAccountNotActive
 import { useFiatCurrency, accountsSelector, useRootSelector } from 'selectors';
 
 // Actions
-import { logEventAction } from 'actions/analyticsActions';
+import { logEventAction, appsFlyerlogEventAction } from 'actions/analyticsActions';
 
 import AddCashValueInputAccessoryHolder, {
   INPUT_ACCESSORY_NATIVE_ID,
@@ -121,17 +128,43 @@ const AddCash = () => {
   };
 
   const openWert = () => {
-    const address = getCryptoPurchaseAddress();
-    if (address === null) return;
-    isLogV2AppEvents() && dispatch(logEventAction('v2_add_cash_started'));
-    openUrl(wertWidgetUrl(address, value));
+    const cryptoAddress = getCryptoPurchaseAddress();
+    if (cryptoAddress === null) return;
+    activeAccount && isLogV2AppEvents() &&
+      dispatch(logEventAction('v2_add_cash_started')) &&
+      dispatch(
+        appsFlyerlogEventAction('add_cash_wert', {
+          currency: currencySymbol,
+          amount: value,
+          date: currentDate(),
+          time: currentTime(),
+          address: cryptoAddress,
+          platform: Platform.OS,
+          walletType: getAccountType(activeAccount),
+          link: wertWidgetUrl(cryptoAddress, value),
+        }),
+      );
+    openUrl(wertWidgetUrl(cryptoAddress, value));
   };
 
   const openRamp = () => {
-    const address = getCryptoPurchaseAddress();
-    if (address === null) return;
-    isLogV2AppEvents() && dispatch(logEventAction('v2_add_cash_started'));
-    openUrl(rampWidgetUrl(address, fiatCurrency, value, isEtherspotAccount(activeAccount)));
+    const cryptoAddress = getCryptoPurchaseAddress();
+    if (cryptoAddress === null) return;
+    activeAccount && isLogV2AppEvents() &&
+      dispatch(logEventAction('v2_add_cash_started')) &&
+      dispatch(
+        appsFlyerlogEventAction('add_cash_ramp', {
+          currency: currencySymbol,
+          amount: value,
+          date: currentDate,
+          time: currentTime,
+          address: cryptoAddress,
+          platform: Platform.OS,
+          walletType: getAccountType(activeAccount),
+          link: rampWidgetUrl(cryptoAddress, fiatCurrency, value, isEtherspotAccount(activeAccount)),
+        }),
+      );
+    openUrl(rampWidgetUrl(cryptoAddress, fiatCurrency, value, isEtherspotAccount(activeAccount)));
   };
 
   return (

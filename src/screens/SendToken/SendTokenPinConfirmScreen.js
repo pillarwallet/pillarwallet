@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { Platform } from 'react-native';
 import { connect } from 'react-redux';
 import t from 'translations/translate';
 
@@ -27,10 +28,11 @@ import CheckAuth from 'components/CheckAuth';
 // Actions
 import { sendAssetAction } from 'actions/assetsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
-import { logEventAction } from 'actions/analyticsActions';
+import { logEventAction, appsFlyerlogEventAction } from 'actions/analyticsActions';
 
 // Constants
 import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // Types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -40,6 +42,8 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // Utils
 import { isLogV2AppEvents } from 'utils/environment';
+import { getActiveAccountType } from 'utils/accounts';
+import { currentDate, currentTime } from 'utils/date';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -53,6 +57,7 @@ type Props = {
   isOnline: boolean,
   logEvent: (name: string, properties: Object) => void,
   useBiometrics: boolean,
+  logAppsFlyerEvent: (name: string, properties: Object) => void,
 };
 
 type State = {
@@ -82,7 +87,9 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
       sendAsset,
       isOnline,
       logEvent,
+      logAppsFlyerEvent,
       navigation,
+      accounts,
     } = this.props;
     const { transactionPayload } = this.state;
     const toAssetSymbol = navigation.getParam('toAssetSymbol', '');
@@ -101,7 +108,7 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
       return;
     }
 
-    const { to: recipient, contractAddress, symbol, amount, chain } = transactionPayload;
+    const { to: recipient, contractAddress, symbol, amount, chain: chainName = CHAIN.ETHEREUM } = transactionPayload;
 
     this.setState(
       {
@@ -116,7 +123,18 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
             toSymbol: toAssetSymbol,
             toContractAddress: recipient,
             amount,
-            chain,
+            chainName,
+          }) &&
+          // eslint-disable-next-line i18next/no-literal-string
+          logAppsFlyerEvent(`transaction_sent_${chainName}`, {
+            token: `${symbol}}`,
+            chain: chainName,
+            amount_swapped: amount,
+            date: currentDate(),
+            time: currentTime(),
+            address: contractAddress,
+            platform: Platform.OS,
+            walletType: getActiveAccountType(accounts),
           });
         sendAsset(transactionPayload, wallet.privateKey, this.navigateToTransactionState);
       },
@@ -176,6 +194,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   ) => dispatch(sendAssetAction(transaction, privateKey, callback)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   logEvent: (name: string, properties: Object) => dispatch(logEventAction(name, properties)),
+  logAppsFlyerEvent: (name: string, properties: Object) => dispatch(appsFlyerlogEventAction(name, properties)),
 });
 
 
