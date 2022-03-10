@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { Keyboard } from 'react-native';
+import { Keyboard, Platform } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
 import { useDebounce } from 'use-debounce';
@@ -51,11 +51,12 @@ import { isLogV2AppEvents } from 'utils/environment';
 import { nativeAssetPerChain } from 'utils/chains';
 import { addressesEqual } from 'utils/assets';
 import { appendFeeCaptureTransactionIfNeeded } from 'utils/exchange';
-import { getAccountAddress } from 'utils/accounts';
+import { getAccountAddress, getAccountType } from 'utils/accounts';
 import { hitSlop50w20h } from 'utils/common';
+import { currentDate, currentTime } from 'utils/date';
 
 // Actions
-import { logEventAction } from 'actions/analyticsActions';
+import { logEventAction, appsFlyerlogEventAction } from 'actions/analyticsActions';
 
 // Types
 import type { AssetOption } from 'models/Asset';
@@ -76,7 +77,6 @@ function Exchange() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const activeAccount = useActiveAccount();
-
   const fromInputRef = React.useRef();
 
   const initialChain: Chain = navigation.getParam('chain') || CHAIN.ETHEREUM;
@@ -128,10 +128,22 @@ function Exchange() {
   }, [dispatch, fromAsset]);
 
   React.useEffect(() => {
-    if (isLogV2AppEvents()) {
+    if (isLogV2AppEvents() && fromAsset && toAsset && activeAccount) {
       dispatch(logEventAction('v2_exchange_pair_selected'));
+      dispatch(
+        appsFlyerlogEventAction(`exchange_pair_selected_${fromAsset?.symbol}_${toAsset?.symbol}`, {
+          tokenPair: `${fromAsset?.symbol}_${toAsset?.symbol}`,
+          chain: `${fromAsset?.chain}`,
+          amount_swapped: fromValue,
+          date: currentDate(),
+          time: currentTime(),
+          address: activeAccount.id,
+          platform: Platform.OS,
+          walletType: getAccountType(activeAccount),
+        }),
+      );
     }
-  }, [dispatch, fromAsset, toAsset]);
+  }, [dispatch, fromAsset, toAsset, activeAccount, fromValue]);
 
   const handleSelectFromAsset = (asset: AssetOption) => {
     setChain(asset.chain);

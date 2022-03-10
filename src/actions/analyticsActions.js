@@ -17,9 +17,17 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { firebaseAnalytics } from 'services/firebase';
+import appsFlyer from 'react-native-appsflyer';
 import get from 'lodash.get';
+
+// Services
+import { firebaseAnalytics } from 'services/firebase';
+
+// Reducers
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+
+// Utils
+import { printLog, errorLog } from 'utils/common';
 
 const isTrackingEnabled = (getState: GetState): boolean => !get(getState(), 'appSettings.data.optOutTracking', false);
 
@@ -44,5 +52,21 @@ export const logUserPropertyAction = (name: string, value?: string) => {
   return (dispatch: Dispatch, getState: GetState) => {
     if (!isTrackingEnabled(getState) || !value) return;
     firebaseAnalytics.logEvent('property_changed', { [name]: value });
+  };
+};
+
+export const appsFlyerlogEventAction = (eventName: string, eventValues?: Object) => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    if (!isTrackingEnabled(getState)) return;
+    appsFlyer.logEvent(
+      eventName,
+      eventValues,
+      (res) => {
+        printLog(res);
+      },
+      (err) => {
+        errorLog(err);
+      },
+    );
   };
 };
