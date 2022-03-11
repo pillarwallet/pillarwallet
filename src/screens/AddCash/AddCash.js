@@ -55,7 +55,7 @@ import BuyCryptoAccountNotActiveModal from 'components/BuyCryptoAccountNotActive
 import { useFiatCurrency, accountsSelector, useRootSelector } from 'selectors';
 
 // Actions
-import { logEventAction, appsFlyerlogEventAction } from 'actions/analyticsActions';
+import { appsFlyerlogEventAction } from 'actions/analyticsActions';
 
 import AddCashValueInputAccessoryHolder, {
   INPUT_ACCESSORY_NATIVE_ID,
@@ -133,18 +133,6 @@ const AddCash = () => {
     activeAccount &&
       isLogV2AppEvents() &&
       dispatch(
-        logEventAction('add_cash_wert', {
-          currency: currencySymbol,
-          amount: value,
-          date: currentDate(),
-          time: currentTime(),
-          address: cryptoAddress,
-          platform: Platform.OS,
-          walletType: getAccountType(activeAccount),
-          link: wertWidgetUrl(cryptoAddress, value),
-        }),
-      ) &&
-      dispatch(
         appsFlyerlogEventAction('add_cash_wert', {
           currency: currencySymbol,
           amount: value,
@@ -164,18 +152,6 @@ const AddCash = () => {
     if (cryptoAddress === null) return;
     activeAccount &&
       isLogV2AppEvents() &&
-      dispatch(
-        logEventAction('add_cash_ramp', {
-          currency: currencySymbol,
-          amount: value,
-          date: currentDate,
-          time: currentTime,
-          address: cryptoAddress,
-          platform: Platform.OS,
-          walletType: getAccountType(activeAccount),
-          link: rampWidgetUrl(cryptoAddress, fiatCurrency, value, isEtherspotAccount(activeAccount)),
-        }),
-      ) &&
       dispatch(
         appsFlyerlogEventAction('add_cash_ramp', {
           currency: currencySymbol,

@@ -115,16 +115,6 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
       () => {
         logEvent('transaction_sent', { source: this.source });
         isLogV2AppEvents() &&
-          logEvent(`transaction_sent_${chainName}`, {
-            token: `${symbol}}`,
-            chain: chainName,
-            amount_swapped: amount,
-            date: currentDate(),
-            time: currentTime(),
-            address: contractAddress,
-            platform: Platform.OS,
-            walletType: getActiveAccountType(accounts),
-          }) &&
           // eslint-disable-next-line i18next/no-literal-string
           logAppsFlyerEvent(`transaction_sent_${chainName}`, {
             token: `${symbol}}`,

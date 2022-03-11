@@ -55,7 +55,7 @@ import { currentDate, currentTime } from 'utils/date';
 import { getAccountType } from 'utils/accounts';
 
 // Actions
-import { logEventAction, appsFlyerlogEventAction } from 'actions/analyticsActions';
+import { appsFlyerlogEventAction } from 'actions/analyticsActions';
 
 // Types
 import type { ExchangeOffer } from 'models/Exchange';
@@ -103,18 +103,6 @@ const ExchangeConfirmScreen = () => {
     const transactionPayload = mapTransactionsToTransactionPayload(chainName, offer.transactions);
 
     if (activeAccount && isLogV2AppEvents) {
-      dispatch(
-        logEventAction(`swap_completed_${fromAsset?.symbol}_${toAsset?.symbol}`, {
-          tokenPair: `${fromAsset?.symbol}_${toAsset?.symbol}`,
-          chain: chainName,
-          amount_swapped: fromAmount,
-          date: currentDate(),
-          time: currentTime(),
-          address: activeAccount.id,
-          platform: Platform.OS,
-          walletType: getAccountType(activeAccount),
-        }),
-      );
       dispatch(
         appsFlyerlogEventAction(`swap_completed_${fromAsset?.symbol}_${toAsset?.symbol}`, {
           tokenPair: `${fromAsset?.symbol}_${toAsset?.symbol}`,

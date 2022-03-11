@@ -56,7 +56,7 @@ import { hitSlop50w20h } from 'utils/common';
 import { currentDate, currentTime } from 'utils/date';
 
 // Actions
-import { logEventAction, appsFlyerlogEventAction } from 'actions/analyticsActions';
+import { appsFlyerlogEventAction } from 'actions/analyticsActions';
 
 // Types
 import type { AssetOption } from 'models/Asset';
@@ -129,18 +129,6 @@ function Exchange() {
 
   React.useEffect(() => {
     if (isLogV2AppEvents() && fromAsset && toAsset && activeAccount) {
-      dispatch(
-        logEventAction(`exchange_pair_selected_${fromAsset?.symbol}_${toAsset?.symbol}`, {
-          tokenPair: `${fromAsset?.symbol}_${toAsset?.symbol}`,
-          chain: `${fromAsset?.chain}`,
-          amount_swapped: fromValue,
-          date: currentDate(),
-          time: currentTime(),
-          address: activeAccount.id,
-          platform: Platform.OS,
-          walletType: getAccountType(activeAccount),
-        }),
-      );
       dispatch(
         appsFlyerlogEventAction(`exchange_pair_selected_${fromAsset?.symbol}_${toAsset?.symbol}`, {
           tokenPair: `${fromAsset?.symbol}_${toAsset?.symbol}`,
