@@ -68,5 +68,6 @@ export const appsFlyerlogEventAction = (eventName: string, eventValues?: Object)
         errorLog(err);
       },
     );
+    dispatch(logEventAction(eventName, eventValues));
   };
 };

@@ -88,11 +88,9 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
       isOnline,
       logEvent,
       logAppsFlyerEvent,
-      navigation,
       accounts,
     } = this.props;
     const { transactionPayload } = this.state;
-    const toAssetSymbol = navigation.getParam('toAssetSymbol', '');
 
     if (!isOnline) {
       this.setState({
@@ -108,7 +106,7 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
       return;
     }
 
-    const { to: recipient, contractAddress, symbol, amount, chain: chainName = CHAIN.ETHEREUM } = transactionPayload;
+    const { to: recipient, symbol, amount, chain: chainName = CHAIN.ETHEREUM } = transactionPayload;
 
     this.setState(
       {
@@ -117,14 +115,6 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
       () => {
         logEvent('transaction_sent', { source: this.source });
         isLogV2AppEvents() &&
-          logEvent('v2_transaction_sent', {
-            fromSymbol: symbol,
-            fromContractAddress: contractAddress,
-            toSymbol: toAssetSymbol,
-            toContractAddress: recipient,
-            amount,
-            chainName,
-          }) &&
           // eslint-disable-next-line i18next/no-literal-string
           logAppsFlyerEvent(`transaction_sent_${chainName}`, {
             token: `${symbol}}`,
@@ -132,7 +122,7 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
             amount_swapped: amount,
             date: currentDate(),
             time: currentTime(),
-            address: contractAddress,
+            address: recipient,
             platform: Platform.OS,
             walletType: getActiveAccountType(accounts),
           });

@@ -55,7 +55,7 @@ import BuyCryptoAccountNotActiveModal from 'components/BuyCryptoAccountNotActive
 import { useFiatCurrency, accountsSelector, useRootSelector } from 'selectors';
 
 // Actions
-import { logEventAction, appsFlyerlogEventAction } from 'actions/analyticsActions';
+import { appsFlyerlogEventAction } from 'actions/analyticsActions';
 
 import AddCashValueInputAccessoryHolder, {
   INPUT_ACCESSORY_NATIVE_ID,
@@ -130,8 +130,8 @@ const AddCash = () => {
   const openWert = () => {
     const cryptoAddress = getCryptoPurchaseAddress();
     if (cryptoAddress === null) return;
-    activeAccount && isLogV2AppEvents() &&
-      dispatch(logEventAction('v2_add_cash_started')) &&
+    activeAccount &&
+      isLogV2AppEvents() &&
       dispatch(
         appsFlyerlogEventAction('add_cash_wert', {
           currency: currencySymbol,
@@ -150,8 +150,8 @@ const AddCash = () => {
   const openRamp = () => {
     const cryptoAddress = getCryptoPurchaseAddress();
     if (cryptoAddress === null) return;
-    activeAccount && isLogV2AppEvents() &&
-      dispatch(logEventAction('v2_add_cash_started')) &&
+    activeAccount &&
+      isLogV2AppEvents() &&
       dispatch(
         appsFlyerlogEventAction('add_cash_ramp', {
           currency: currencySymbol,

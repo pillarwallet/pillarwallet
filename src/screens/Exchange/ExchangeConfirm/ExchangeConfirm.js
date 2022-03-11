@@ -102,7 +102,7 @@ const ExchangeConfirmScreen = () => {
 
     const transactionPayload = mapTransactionsToTransactionPayload(chainName, offer.transactions);
 
-    activeAccount && isLogV2AppEvents &&
+    if (activeAccount && isLogV2AppEvents) {
       dispatch(
         appsFlyerlogEventAction(`swap_completed_${fromAsset?.symbol}_${toAsset?.symbol}`, {
           tokenPair: `${fromAsset?.symbol}_${toAsset?.symbol}`,
@@ -115,6 +115,7 @@ const ExchangeConfirmScreen = () => {
           walletType: getAccountType(activeAccount),
         }),
       );
+    }
 
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload,
