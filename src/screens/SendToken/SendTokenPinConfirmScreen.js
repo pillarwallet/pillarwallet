@@ -106,7 +106,7 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
       return;
     }
 
-    const { contractAddress, symbol, amount, chain: chainName = CHAIN.ETHEREUM } = transactionPayload;
+    const { to: recipient, symbol, amount, chain: chainName = CHAIN.ETHEREUM } = transactionPayload;
 
     this.setState(
       {
@@ -122,7 +122,7 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
             amount_swapped: amount,
             date: currentDate(),
             time: currentTime(),
-            address: contractAddress,
+            address: recipient,
             platform: Platform.OS,
             walletType: getActiveAccountType(accounts),
           });
