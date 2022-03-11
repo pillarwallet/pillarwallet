@@ -30,7 +30,7 @@ import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 
 // Actions
 import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
-import { appsFlyerlogEventAction } from 'actions/analyticsActions';
+import { appsFlyerlogEventAction, logEventAction } from 'actions/analyticsActions';
 
 // Components
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
@@ -88,6 +88,7 @@ type Props = {
   resetEstimateTransaction: () => void,
   estimateTransaction: (transaction: TransactionToEstimate, chain: Chain) => void,
   logAppsFlyerEvent: (name: string, properties: Object) => void,
+  logEvent: (name: string, properties: Object) => void,
 };
 
 const SendCollectibleConfirm = ({
@@ -100,6 +101,7 @@ const SendCollectibleConfirm = ({
   isEstimating,
   estimateErrorMessage,
   logAppsFlyerEvent,
+  logEvent,
 }: Props) => {
   const navigation = useNavigation();
 
@@ -174,6 +176,15 @@ const SendCollectibleConfirm = ({
     };
 
     if (activeAccount && isLogV2AppEvents()) {
+      logEvent(`nft_ sent_${chain}`, {
+        token: assetData?.tokenType,
+        tokenId: assetData?.tokenId,
+        date: currentDate(),
+        time: currentTime(),
+        address: assetData?.contractAddress,
+        platform: Platform.OS,
+        walletType: getAccountType(activeAccount),
+      });
       // eslint-disable-next-line i18next/no-literal-string
       logAppsFlyerEvent(`nft_ sent_${chain}`, {
         token: assetData?.tokenType,
@@ -327,6 +338,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     transaction: TransactionToEstimate,
     chain: Chain,
   ) => dispatch(estimateTransactionAction(transaction, chain)),
+  logEvent: (name: string, properties: Object) => dispatch(logEventAction(name, properties)),
   logAppsFlyerEvent: (name: string, properties: Object) => dispatch(appsFlyerlogEventAction(name, properties)),
 });
 

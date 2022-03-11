@@ -130,8 +130,20 @@ const AddCash = () => {
   const openWert = () => {
     const cryptoAddress = getCryptoPurchaseAddress();
     if (cryptoAddress === null) return;
-    activeAccount && isLogV2AppEvents() &&
-      dispatch(logEventAction('v2_add_cash_started')) &&
+    activeAccount &&
+      isLogV2AppEvents() &&
+      dispatch(
+        logEventAction('add_cash_wert', {
+          currency: currencySymbol,
+          amount: value,
+          date: currentDate(),
+          time: currentTime(),
+          address: cryptoAddress,
+          platform: Platform.OS,
+          walletType: getAccountType(activeAccount),
+          link: wertWidgetUrl(cryptoAddress, value),
+        }),
+      ) &&
       dispatch(
         appsFlyerlogEventAction('add_cash_wert', {
           currency: currencySymbol,
@@ -150,8 +162,20 @@ const AddCash = () => {
   const openRamp = () => {
     const cryptoAddress = getCryptoPurchaseAddress();
     if (cryptoAddress === null) return;
-    activeAccount && isLogV2AppEvents() &&
-      dispatch(logEventAction('v2_add_cash_started')) &&
+    activeAccount &&
+      isLogV2AppEvents() &&
+      dispatch(
+        logEventAction('add_cash_ramp', {
+          currency: currencySymbol,
+          amount: value,
+          date: currentDate,
+          time: currentTime,
+          address: cryptoAddress,
+          platform: Platform.OS,
+          walletType: getAccountType(activeAccount),
+          link: rampWidgetUrl(cryptoAddress, fiatCurrency, value, isEtherspotAccount(activeAccount)),
+        }),
+      ) &&
       dispatch(
         appsFlyerlogEventAction('add_cash_ramp', {
           currency: currencySymbol,

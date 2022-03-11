@@ -129,7 +129,18 @@ function Exchange() {
 
   React.useEffect(() => {
     if (isLogV2AppEvents() && fromAsset && toAsset && activeAccount) {
-      dispatch(logEventAction('v2_exchange_pair_selected'));
+      dispatch(
+        logEventAction(`exchange_pair_selected_${fromAsset?.symbol}_${toAsset?.symbol}`, {
+          tokenPair: `${fromAsset?.symbol}_${toAsset?.symbol}`,
+          chain: `${fromAsset?.chain}`,
+          amount_swapped: fromValue,
+          date: currentDate(),
+          time: currentTime(),
+          address: activeAccount.id,
+          platform: Platform.OS,
+          walletType: getAccountType(activeAccount),
+        }),
+      );
       dispatch(
         appsFlyerlogEventAction(`exchange_pair_selected_${fromAsset?.symbol}_${toAsset?.symbol}`, {
           tokenPair: `${fromAsset?.symbol}_${toAsset?.symbol}`,
