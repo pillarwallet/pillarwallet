@@ -88,7 +88,6 @@ type Props = {
   resetEstimateTransaction: () => void,
   estimateTransaction: (transaction: TransactionToEstimate, chain: Chain) => void,
   logAppsFlyerEvent: (name: string, properties: Object) => void,
-  logEvent: (name: string, properties: Object) => void,
 };
 
 const SendCollectibleConfirm = ({
