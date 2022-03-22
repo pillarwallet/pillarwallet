@@ -44,7 +44,6 @@ import * as RoutePath from 'constants/navigationConstants';
 // Selectors
 import { useRootSelector, bannerDataSelector } from 'selectors';
 
-
 type Props = {
   screenName: string,
   theme: Theme,
@@ -63,8 +62,9 @@ const Banner = (props: Props) => {
 
   if (!response) return null;
 
-  return response.slice(0, 3).map((bannerData, index) =>
-    <Content bannerData={bannerData} index={index} theme={theme} />);
+  return response
+    .slice(0, 3)
+    .map((bannerData, index) => <Content bannerData={bannerData} index={index} theme={theme} />);
 };
 
 export default withTheme(Banner);
@@ -78,15 +78,16 @@ const Content = ({ bannerData, index, theme }) => {
   const bannerIcon = bannerData?.data?.icon?.url || '';
   const bannerBackgroundColor = bannerData?.data?.background_color;
   const bannerLinkUrl = bannerData?.data?.link?.url;
-  const bannerLinkType = bannerData?.data?.link?.link_type;
+  const background_image = bannerData?.data?.background_image?.url;
 
   const onClose = () => setIsVisible(false);
 
-  const openLink = (url: string, urlType: string) => {
-    if (urlType === 'Web' && isValidURL(url)) {
+  const openLink = (url: string) => {
+    const pathName = url ? url.split('://').pop() : '';
+    if (Object.keys(RoutePath).includes(pathName)) {
+      navigation.navigate(pathName);
+    } else if (isValidURL(url)) {
       openUrl(url);
-    } else if (Object.keys(RoutePath).includes(url)) {
-      navigation.navigate(url);
     } else {
       reportOrWarn(`Banner: navigation failed to open: ${url}`);
     }
@@ -94,25 +95,31 @@ const Content = ({ bannerData, index, theme }) => {
 
   if (!isVisible) return null;
   return (
-    <TouchableContainer
-      key={index}
-      onPress={() => openLink(bannerLinkUrl, bannerLinkType)}
-      style={{ backgroundColor: bannerBackgroundColor }}
-    >
-      <Summary>
-        <Title color={colors.bannerTextColor}>{bannerTitle}</Title>
-        <SubTitle color={colors.bannerTextColor}>{bannerSubtitle}</SubTitle>
-      </Summary>
-      <BannerImage source={{ uri: bannerIcon }} />
-      <Close name="close" color={colors.white} onPress={onClose} horizontalAlign="flex-end" />
+    <TouchableContainer key={index} onPress={() => openLink(bannerLinkUrl)}>
+      <ImageContainer
+        source={{ uri: background_image }}
+        resizeMode="stretch"
+        style={{ backgroundColor: bannerBackgroundColor }}
+        imageStyle={{ borderRadius: 30 }}
+      >
+        <Summary>
+          <Title color={colors.bannerTextColor}>{bannerTitle}</Title>
+          <SubTitle color={colors.bannerTextColor}>{bannerSubtitle}</SubTitle>
+        </Summary>
+        <BannerImage source={{ uri: bannerIcon }} />
+        <Close name="close" color={colors.white} onPress={onClose} horizontalAlign="flex-end" />
+      </ImageContainer>
     </TouchableContainer>
   );
 };
 
 const TouchableContainer = styled.TouchableOpacity`
-  flex-direction: row;
   margin-horizontal: ${spacing.mediumLarge}px;
   margin-top: ${spacing.mediumLarge}px;
+`;
+
+const ImageContainer = styled.ImageBackground`
+  flex-direction: row;
   padding: ${spacing.medium}px ${spacing.largePlus}px;
   border-radius: 30px;
 `;
@@ -133,8 +140,7 @@ const Title = styled(Text)`
   margin-bottom: ${spacing.extraSmall}px;
 `;
 
-const SubTitle = styled(Text)`
-`;
+const SubTitle = styled(Text)``;
 
 const Close = styled(Icon)`
   height: 16px;
@@ -143,4 +149,3 @@ const Close = styled(Icon)`
   top: 8px;
   right: 14px;
 `;
-

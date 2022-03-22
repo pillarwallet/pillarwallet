@@ -44,7 +44,9 @@ export type CmsBannerDocument = {
       alternate_languages: [],
       data: {
         background_color: string,
-        background_image: Object[],
+        background_image: {
+          url: String,
+        },
         enabled: boolean,
         ends_at: string,
         foreground_color: string,
