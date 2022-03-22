@@ -2,13 +2,13 @@ import React, { FC } from 'react';
 import styled from 'styled-components/native';
 
 // Components
-import Icon from 'components/core/Icon';
+import Icon, { IconName } from 'components/core/Icon';
 
 // Utils
 import { spacing } from 'utils/variables';
 
 interface IAddressBarButton {
-  icon?: string | null;
+  icon?: IconName | null;
   onPress?: () => void;
   iconColor?: string | null;
   disabled?: boolean;

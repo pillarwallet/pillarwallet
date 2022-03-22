@@ -26,8 +26,7 @@
       "translations/*": ["src/translations/*"],
       "utils/*": ["src/utils/*"],
       "hooks/*": ["src/hooks/*"],
-      "selectors/*": ["src/selectors/*"],
-      "src/*": ["src/*"],
+      "src/*": ["src/*"]
     },
     "resolveJsonModule": true,
     "skipLibCheck": true,

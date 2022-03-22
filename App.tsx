@@ -94,6 +94,7 @@ import { store, persistor } from 'src/configureStore';
 // redux
 import { syncStateWithFirestore } from 'src/redux/actions/firestore-actions';
 import { fetchGasThresholds } from 'src/redux/actions/gas-threshold-actions';
+import { fetchNativeIntegrationAbis } from 'src/redux/actions/native-integration-actions';
 
 const queryClient = new QueryClient();
 
@@ -131,6 +132,7 @@ interface Props extends WithTranslation {
   initWalletConnectSessionsWithoutReset: () => void;
   syncReduxStateWithFirestore: () => void;
   reduxFetchGasThresholds: () => void;
+  reduxFetchAbis: () => void;
 }
 
 class App extends React.Component<Props, any> {
@@ -265,12 +267,14 @@ class App extends React.Component<Props, any> {
       themeType,
       syncReduxStateWithFirestore,
       reduxFetchGasThresholds,
+      reduxFetchAbis,
     } = this.props;
     const { isFetched: prevIsFetched, themeType: prevThemeType } = prevProps;
     if (isFetched && !prevIsFetched) {
       handleSystemDefaultThemeChange();
       syncReduxStateWithFirestore();
       reduxFetchGasThresholds();
+      reduxFetchAbis();
     }
 
     if (themeType !== prevThemeType) {
@@ -436,6 +440,7 @@ const mapDispatchToProps = (dispatch: Dispatch): Partial<Props> => ({
   initWalletConnectSessionsWithoutReset: () => dispatch(initWalletConnectSessionsAction(false)),
   syncReduxStateWithFirestore: () => dispatch(syncStateWithFirestore()),
   reduxFetchGasThresholds: () => dispatch(fetchGasThresholds()),
+  reduxFetchAbis: () => dispatch(fetchNativeIntegrationAbis()),
 });
 
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(withTranslation()(App));
