@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+/* eslint-disable i18next/no-literal-string */
 // @flow
 /*
     Pillar Wallet: the personal data locker
@@ -19,96 +21,126 @@
 */
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
+import { useNavigation } from 'react-navigation-hooks';
 
-import IconButton from 'components/IconButton';
+// Components
+import Icon from 'components/core/Icon';
 import Image from 'components/Image';
-import { Paragraph } from 'components/legacy/Typography';
-import { fontSizes, spacing } from 'utils/variables';
-import { getThemeColors } from 'utils/themes';
+import Text from 'components/core/Text';
+
+// Types
 import type { Theme } from 'models/Theme';
+
+// Utils
+import { appFont, fontStyles, spacing } from 'utils/variables';
+import { getThemeColors } from 'utils/themes';
+import { openUrl } from 'utils/inAppBrowser';
+import { isValidURL } from 'utils/validators';
+import { reportOrWarn } from 'utils/common';
+
+// Constants
+import * as RoutePath from 'constants/navigationConstants';
+
+// Selectors
+import { useRootSelector, bannerDataSelector } from 'selectors';
 
 
 type Props = {
-  bannerText: string,
-  onClose: () => void,
-  onPress?: () => void,
-  wrapperStyle?: Object,
-  isVisible?: boolean,
-  imageProps?: Object,
+  screenName: string,
   theme: Theme,
+  bottomPosition?: boolean,
 };
 
-const Wrapper = styled.View`
-`;
-
-const BannerContentWrapper = styled.TouchableOpacity`
-  position: relative;
-  background-color: ${({ theme }) => theme.colors.basic050};
-  border: 1px solid ${({ theme }) => theme.colors.basic080};
-  border-radius: 6px;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  overflow: hidden;
-`;
-
-const BannerTextWrapper = styled.View`
-  padding: ${spacing.medium}px 26px ${spacing.medium}px ${spacing.mediumLarge}px;
-  flex-shrink: 1;
-`;
-
-const Close = styled(IconButton)`
-  height: 16px;
-  width: 16px;
-  position: absolute;
-  top: 6px;
-  right: 8px;
-`;
-
-const BannerParagraph = styled(Paragraph)`
-  margin: 8px 0;
-`;
-
-const BannerImage = styled(Image)`
-  align-self: flex-end;
-`;
-
 const Banner = (props: Props) => {
-  const {
-    bannerText,
-    onClose,
-    isVisible,
-    wrapperStyle,
-    imageProps,
-    onPress,
-    theme,
-  } = props;
+  const { screenName, theme, bottomPosition = true } = props;
+  const bannerDataResponse = useRootSelector(bannerDataSelector);
 
-  const colors = getThemeColors(theme);
+  const response = bannerDataResponse?.results.filter((result) => {
+    const bannerPosition = result?.data?.position || 'Bottom';
+    const position = bottomPosition ? 'Bottom' : 'Top';
+    return result?.data?.screen === screenName && bannerPosition === position;
+  });
 
-  if (!isVisible) return null;
-  return (
-    <Wrapper style={{ padding: spacing.mediumLarge, ...wrapperStyle }}>
-      <BannerContentWrapper onPress={onPress} disabled={!onPress}>
-        <BannerTextWrapper>
-          <BannerParagraph small>
-            {bannerText}
-          </BannerParagraph>
-        </BannerTextWrapper>
-        {!!imageProps && <BannerImage {...imageProps} resizeMode="contain" />}
-        <Close
-          icon="rounded-close"
-          color={colors.basic020}
-          onPress={onClose}
-          fontSize={fontSizes.small}
-          horizontalAlign="flex-end"
-          hitSlop={{
-            top: 8, bottom: 10, left: 10, right: 8,
-          }}
-        />
-      </BannerContentWrapper>
-    </Wrapper>
-  );
+  if (!response) return null;
+
+  return response.slice(0, 3).map((bannerData, index) =>
+    <Content bannerData={bannerData} index={index} theme={theme} />);
 };
 
 export default withTheme(Banner);
+
+const Content = ({ bannerData, index, theme }) => {
+  const colors = getThemeColors(theme);
+  const navigation = useNavigation();
+  const [isVisible, setIsVisible] = React.useState(true);
+  const bannerTitle = bannerData?.data?.title[0]?.text || '';
+  const bannerSubtitle = bannerData?.data?.subtitle[0]?.text || '';
+  const bannerIcon = bannerData?.data?.icon?.url || '';
+  const bannerBackgroundColor = bannerData?.data?.background_color;
+  const bannerLinkUrl = bannerData?.data?.link?.url;
+  const bannerLinkType = bannerData?.data?.link?.link_type;
+
+  const onClose = () => setIsVisible(false);
+
+  const openLink = (url: string, urlType: string) => {
+    if (urlType === 'Web' && isValidURL(url)) {
+      openUrl(url);
+    } else if (Object.keys(RoutePath).includes(url)) {
+      navigation.navigate(url);
+    } else {
+      reportOrWarn(`Banner: navigation failed to open: ${url}`);
+    }
+  };
+
+  if (!isVisible) return null;
+  return (
+    <TouchableContainer
+      key={index}
+      onPress={() => openLink(bannerLinkUrl, bannerLinkType)}
+      style={{ backgroundColor: bannerBackgroundColor }}
+    >
+      <Summary>
+        <Title color={colors.bannerTextColor}>{bannerTitle}</Title>
+        <SubTitle color={colors.bannerTextColor}>{bannerSubtitle}</SubTitle>
+      </Summary>
+      <BannerImage source={{ uri: bannerIcon }} />
+      <Close name="close" color={colors.white} onPress={onClose} horizontalAlign="flex-end" />
+    </TouchableContainer>
+  );
+};
+
+const TouchableContainer = styled.TouchableOpacity`
+  flex-direction: row;
+  margin-horizontal: ${spacing.mediumLarge}px;
+  margin-top: ${spacing.mediumLarge}px;
+  padding: ${spacing.medium}px ${spacing.largePlus}px;
+  border-radius: 30px;
+`;
+
+const Summary = styled.View`
+  flex: 1;
+`;
+
+const BannerImage = styled(Image)`
+  width: 36px;
+  height: 36px;
+  margin-right: ${spacing.medium}px;
+`;
+
+const Title = styled(Text)`
+  font-family: '${appFont.medium}';
+  ${fontStyles.medium};
+  margin-bottom: ${spacing.extraSmall}px;
+`;
+
+const SubTitle = styled(Text)`
+`;
+
+const Close = styled(Icon)`
+  height: 16px;
+  width: 16px;
+  position: absolute;
+  top: 8px;
+  right: 14px;
+`;
+

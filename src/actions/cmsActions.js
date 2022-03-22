@@ -22,10 +22,11 @@ import { Predicates } from '@prismicio/client';
 
 // constants
 import { CMS_DATA_TYPES, DOCUMENT_TYPE } from 'constants/cmsConstants';
-import { SET_TUTORIAL_DATA } from 'constants/onboardingConstants';
+import { SET_TUTORIAL_DATA, SET_BANNER_DATA } from 'constants/onboardingConstants';
 
 // services
 import prismicClient from 'services/prismic';
+import * as Prismic from 'services/prismic';
 
 // utils
 import { reportErrorLog, logBreadcrumb } from 'utils/common';
@@ -40,6 +41,8 @@ const {
   ONBOARDING_SCREENS_FOR_NATIVES: NATIVES,
   ONBOARDING_SCREENS_FOR_NEWBIES: NEWBIES,
 } = CMS_DATA_TYPES;
+
+const TYPE_CUSTOMISABLE_BANNER = 'customisable_banner';
 
 export const fetchTutorialDataIfNeededAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -60,6 +63,21 @@ export const fetchTutorialDataIfNeededAction = () => {
       dispatch({
         type: SET_TUTORIAL_DATA,
         payload: tutorialData,
+      });
+    } catch (error) {
+      reportErrorLog('fetchTutorialDataIfNeededAction failed', { error });
+    }
+  };
+};
+
+export const bannerDataAction = () => {
+  return async (dispatch: Dispatch) => {
+    try {
+      const response = await Prismic.queryDocumentsByType(TYPE_CUSTOMISABLE_BANNER);
+      logBreadcrumb('tutorial', 'cmsActions.js: Dispatching action: SET_BANNER_DATA');
+      dispatch({
+        type: SET_BANNER_DATA,
+        payload: response,
       });
     } catch (error) {
       reportErrorLog('fetchTutorialDataIfNeededAction failed', { error });

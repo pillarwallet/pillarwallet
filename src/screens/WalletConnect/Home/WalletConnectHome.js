@@ -39,6 +39,7 @@ import Spinner from 'components/Spinner';
 import WalletConnectRequests from 'screens/WalletConnect/Requests';
 import Modal from 'components/Modal';
 import Icon from 'components/core/Icon';
+import Banner from 'components/Banner/Banner';
 
 // Selectors
 import { useActiveAccount } from 'selectors';
@@ -58,6 +59,7 @@ import { appFont, fontStyles, spacing, borderRadiusSizes } from 'utils/variables
 import { useChainsConfig } from 'utils/uiConfig';
 import { showServiceLaunchErrorToast } from 'utils/inAppBrowser';
 import { isArchanovaAccount, isKeyBasedAccount } from 'utils/accounts';
+import { getActiveScreenName } from 'utils/navigation';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
@@ -81,6 +83,7 @@ function WalletConnectHome() {
   const tabItems = useTabItems();
   const [activeChain, setActiveChain] = React.useState<?Chain>(null);
   const [activeItem, setActiveItem] = React.useState(tabItems[0]);
+  const screenName = getActiveScreenName(navigation);
 
   const { isDeployedOnChain } = useDeploymentStatus();
 
@@ -131,6 +134,7 @@ function WalletConnectHome() {
         )}
 
         {showDeployBanner && activeChain != null && <DeployBanner chain={activeChain} style={styles.banner} />}
+        <Banner screenName={screenName} bottomPosition={false} />
       </ListHeader>
     );
   };

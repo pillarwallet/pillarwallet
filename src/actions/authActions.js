@@ -90,7 +90,7 @@ import {
 import { setSessionTranslationBundleInitialisedAction } from './sessionActions';
 import { importEtherspotAccountsAction, initEtherspotServiceAction } from './etherspotActions';
 import { setEnsNameIfNeededAction } from './ensRegistryActions';
-import { fetchTutorialDataIfNeededAction } from './cmsActions';
+import { fetchTutorialDataIfNeededAction, bannerDataAction } from './cmsActions';
 import { fetchAllAccountsAssetsBalancesAction, fetchAllAccountsTotalBalancesAction } from './assetsActions';
 import { finishOnboardingAction } from './onboardingActions';
 import { addMissingWalletEventsIfNeededAction } from './walletEventsActions';
@@ -122,6 +122,7 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
       },
       accounts: { data: accounts },
       user: { data: user },
+      onboarding: { bannerData },
     } = getState();
 
     dispatch({ type: UPDATE_SESSION, payload: { isAuthorizing: true } });
@@ -171,6 +172,8 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
       } = getState();
       if (tutorialData) navigateAction = NavigationActions.navigate({ routeName: TUTORIAL_FLOW });
     }
+
+    if (!bannerData) await dispatch(bannerDataAction());
 
     const navigateToAppAction = NavigationActions.navigate({
       routeName: APP_FLOW,

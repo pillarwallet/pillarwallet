@@ -87,7 +87,7 @@ import {
   initEtherspotServiceAction,
 } from 'actions/etherspotActions';
 import { fetchSupportedAssetsAction, fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
-import { fetchTutorialDataIfNeededAction } from 'actions/cmsActions';
+import { fetchTutorialDataIfNeededAction, bannerDataAction } from 'actions/cmsActions';
 import { initialDeepLinkExecutedAction } from 'actions/appSettingsActions';
 import { addAccountAction } from 'actions/accountsActions';
 import {
@@ -329,6 +329,8 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
 
     logBreadcrumb('onboarding', 'walletSetupAction: dispatching initialDeepLinkExecutedAction');
     dispatch(initialDeepLinkExecutedAction());
+
+    dispatch(bannerDataAction());
 
     logBreadcrumb('onboarding', 'walletSetupAction: completed, dispatching SET_FINISHING_ONBOARDING');
     isLogV2AppEvents() && dispatch(logEventAction('v2_account_sign_up_completed'));

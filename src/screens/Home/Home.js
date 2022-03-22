@@ -38,6 +38,7 @@ import UserNameAndImage from 'components/UserNameAndImage';
 import WalletConnectRequests from 'screens/WalletConnect/Requests';
 import Tooltip from 'components/Tooltip';
 import Modal from 'components/Modal';
+import Banner from 'components/Banner/Banner';
 
 // Constants
 import { MENU, HOME_HISTORY, REGISTER_ENS } from 'constants/navigationConstants';
@@ -61,6 +62,7 @@ import { calculateTotalBalancePerCategory, calculateTotalBalancePerChain } from 
 import { useThemeColors } from 'utils/themes';
 import { getSupportedBiometryType } from 'utils/keychain';
 import { getEnsNodeState } from 'utils/accounts';
+import { getActiveScreenName } from 'utils/navigation';
 
 // Local
 import BalanceSection from './BalanceSection';
@@ -94,6 +96,7 @@ function Home() {
   const balancePerCategory = calculateTotalBalancePerCategory(accountTotalBalances);
   const balancePerChain = calculateTotalBalancePerChain(accountTotalBalances);
   const totalBalance = sumRecord(balancePerCategory);
+  const screenName = getActiveScreenName(navigation);
 
   const isRefreshing = useRootSelector(({ totalBalances }) => !!totalBalances.isFetching);
 
@@ -179,12 +182,15 @@ function Home() {
 
         <GovernanceCallBanner />
 
+        <Banner screenName={screenName} bottomPosition={false} />
+
         <ChartsSection balancePerCategory={balancePerCategory} balancePerChain={balancePerChain} />
 
         <AssetsSection
           accountTotalBalances={accountTotalBalances}
           accountCollectibleCounts={accountCollectibleCounts}
         />
+        <Banner screenName={screenName} bottomPosition />
       </Content>
 
       <FloatingActions />

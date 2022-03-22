@@ -103,6 +103,7 @@ export const semanticLightThemeColors = {
   modalHandleBar: '#ededed',
   toastBackgroundColor: lightThemeColors.synthetic140,
   toastTextColor: lightThemeColors.basic090,
+  bannerTextColor: baseColors.white,
 };
 
 export const semanticDarkThemeColors = {
@@ -165,6 +166,7 @@ export const semanticDarkThemeColors = {
   modalHandleBar: '#4d4d4d',
   toastBackgroundColor: darkThemeColors.darkGreen,
   toastTextColor: darkThemeColors.basic010,
+  bannerTextColor: baseColors.black,
 };
 
 export const themedColors = {
