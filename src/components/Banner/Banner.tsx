@@ -19,7 +19,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
+import React, { FC } from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
 
@@ -44,13 +44,13 @@ import * as RoutePath from 'constants/navigationConstants';
 // Selectors
 import { useRootSelector, bannerDataSelector } from 'selectors';
 
-type Props = {
+interface IBanner {
   screenName: string,
   theme: Theme,
   bottomPosition?: boolean,
 };
 
-const Banner = (props: Props) => {
+const Banner: FC<IBanner> = (props) => {
   const { screenName, theme, bottomPosition = true } = props;
   const bannerDataResponse = useRootSelector(bannerDataSelector);
 
@@ -100,7 +100,7 @@ const Content = ({ bannerData, index, theme }) => {
         source={{ uri: background_image }}
         resizeMode="stretch"
         style={{ backgroundColor: bannerBackgroundColor }}
-        imageStyle={{ borderRadius: 30 }}
+        imageStyle={{ borderRadius: 20 }}
       >
         <Summary>
           <Title color={colors.bannerTextColor}>{bannerTitle}</Title>
@@ -120,8 +120,11 @@ const TouchableContainer = styled.TouchableOpacity`
 
 const ImageContainer = styled.ImageBackground`
   flex-direction: row;
-  padding: ${spacing.medium}px ${spacing.largePlus}px;
-  border-radius: 30px;
+  padding-top: ${spacing.medium}px;
+  padding-bottom: ${spacing.mediumLarge}px;
+  padding-horizontal: ${spacing.largePlus}px;
+  border-radius: 20px;
+  align-items: center;
 `;
 
 const Summary = styled.View`
@@ -137,10 +140,11 @@ const BannerImage = styled(Image)`
 const Title = styled(Text)`
   font-family: '${appFont.medium}';
   ${fontStyles.medium};
-  margin-bottom: ${spacing.extraSmall}px;
 `;
 
-const SubTitle = styled(Text)``;
+const SubTitle = styled(Text)`
+  ${fontStyles.small};
+`;
 
 const Close = styled(Icon)`
   height: 16px;
