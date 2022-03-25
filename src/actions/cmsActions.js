@@ -73,14 +73,18 @@ export const fetchTutorialDataIfNeededAction = () => {
 export const bannerDataAction = () => {
   return async (dispatch: Dispatch) => {
     try {
-      const response = await Prismic.queryDocumentsByType(TYPE_CUSTOMISABLE_BANNER);
-      logBreadcrumb('tutorial', 'cmsActions.js: Dispatching action: SET_BANNER_DATA');
+      const bannerData = await Prismic.queryDocumentsByType(TYPE_CUSTOMISABLE_BANNER);
+      if (!bannerData.results) {
+        logBreadcrumb('bannerDataAction', 'bannerData not valid: ', { bannerData });
+        return;
+      }
+      logBreadcrumb('bannerData', 'cmsActions.js: Dispatching action: SET_BANNER_DATA');
       dispatch({
         type: SET_BANNER_DATA,
-        payload: response,
+        payload: bannerData,
       });
     } catch (error) {
-      reportErrorLog('fetchTutorialDataIfNeededAction failed', { error });
+      reportErrorLog('bannerDataAction failed', { error });
     }
   };
 };

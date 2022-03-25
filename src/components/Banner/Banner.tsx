@@ -54,6 +54,8 @@ const Banner: FC<IBanner> = (props) => {
   const { screenName, theme, bottomPosition = true } = props;
   const bannerDataResponse = useRootSelector(bannerDataSelector);
 
+  if(!bannerDataResponse && !Array.isArray(bannerDataResponse?.results)) return null;
+
   const response = bannerDataResponse?.results.filter((result) => {
     const bannerPosition = result?.data?.position || 'Bottom';
     const position = bottomPosition ? 'Bottom' : 'Top';
@@ -64,21 +66,22 @@ const Banner: FC<IBanner> = (props) => {
 
   return response
     .slice(0, 3)
-    .map((bannerData, index) => <Content bannerData={bannerData} index={index} theme={theme} />);
+    .map((bannerData, index) => <MultiBannerContainer bannerData={bannerData} index={index} theme={theme} />);
 };
 
 export default withTheme(Banner);
 
-const Content = ({ bannerData, index, theme }) => {
+const MultiBannerContainer = ({ bannerData, index, theme }) => {
   const colors = getThemeColors(theme);
   const navigation = useNavigation();
   const [isVisible, setIsVisible] = React.useState(true);
-  const bannerTitle = bannerData?.data?.title[0]?.text || '';
-  const bannerSubtitle = bannerData?.data?.subtitle[0]?.text || '';
-  const bannerIcon = bannerData?.data?.icon?.url || '';
-  const bannerBackgroundColor = bannerData?.data?.background_color;
-  const bannerLinkUrl = bannerData?.data?.link?.url;
-  const background_image = bannerData?.data?.background_image?.url;
+  const bannerDataResponse = bannerData?.data;
+  const bannerTitle = bannerDataResponse?.title[0]?.text || '';
+  const bannerSubtitle =bannerDataResponse?.subtitle[0]?.text || '';
+  const bannerIcon = bannerDataResponse?.icon?.url || '';
+  const bannerBackgroundColor = bannerDataResponse?.background_color;
+  const bannerLinkUrl = bannerDataResponse?.link?.url;
+  const background_image = bannerDataResponse?.background_image?.url;
 
   const onClose = () => setIsVisible(false);
 

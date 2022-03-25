@@ -173,7 +173,7 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
       if (tutorialData) navigateAction = NavigationActions.navigate({ routeName: TUTORIAL_FLOW });
     }
 
-    if (!bannerData) await dispatch(bannerDataAction());
+    if (!bannerData) dispatch(bannerDataAction());
 
     const navigateToAppAction = NavigationActions.navigate({
       routeName: APP_FLOW,
