@@ -31,6 +31,7 @@ import { Container, Content, Spacing } from 'components/layout/Layout';
 import CheckAuth from 'components/CheckAuth';
 import HeaderBlock from 'components/HeaderBlock';
 import Text from 'components/core/Text';
+import Banner from 'components/Banner/Banner';
 
 // Selectors
 import { useRootSelector } from 'selectors';
@@ -60,7 +61,7 @@ const Settings = () => {
   const { t } = useTranslationWithPrefix('menu.settings');
   const navigation = useNavigation();
   const isBackedUp = useIsWalletBackedUp();
-
+  const screenName = navigation.state.routeName;
   const { showPinModal, pin, wallet, onPinValid } = useWalletData();
 
   if (showPinModal) {
@@ -104,6 +105,7 @@ const Settings = () => {
             <ImportFlowSetting wallet={wallet} />
           </View>
         )}
+        <Banner screenName={screenName} />
       </Content>
     </Container>
   );

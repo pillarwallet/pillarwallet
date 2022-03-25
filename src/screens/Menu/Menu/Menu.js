@@ -31,6 +31,9 @@ import { Container, Content } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import MigrateEnsBanner from 'components/Banners/MigrateEnsBanner';
 import MigrateWalletBanner from 'components/Banners/MigrateWalletBanner';
+import Banner from 'components/Banner/Banner';
+
+// Screens
 import WalletMigrationArchanovaBanner from 'screens/WalletMigrationArchanova/Banner';
 
 // Constants
@@ -71,6 +74,7 @@ const Menu = () => {
   const chains = useSupportedChains();
   const plrbalance = getWalletPlrBalance(accountBalances, chains);
   const enoughPlrBalance = sum(plrbalance).gt(9999);
+  const screenName = navigation.state.routeName;
 
   const knowledgebaseUrl = firebaseRemoteConfig.getString(REMOTE_CONFIG.KNOWLEDGEBASE_URL);
 
@@ -132,6 +136,8 @@ const Menu = () => {
         {__DEV__ && <MenuItem title={t('item.storybook')} icon="lifebuoy" onPress={goToStorybook} />}
 
         <SocialMediaLinks />
+
+        <Banner screenName={screenName} bottomPosition />
 
         <BannersContainer>
           <MigrateEnsBanner style={styles.banner} />

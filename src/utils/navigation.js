@@ -45,3 +45,9 @@ export const getActiveRouteName = (navigationState: any): string | null => {
 
   return route.routeName;
 };
+
+export const getActiveScreenName = (navigation: any): string | null => {
+  if (!navigation) return null;
+  const screenName = navigation.state.routeName;
+  return screenName;
+};
