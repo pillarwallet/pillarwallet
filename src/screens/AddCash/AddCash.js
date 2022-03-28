@@ -41,6 +41,7 @@ import {
 import { useThemeColors } from 'utils/themes';
 import { isLogV2AppEvents } from 'utils/environment';
 import { currentDate, currentTime } from 'utils/date';
+import { getActiveScreenName } from 'utils/navigation';
 
 // Components
 import { Container } from 'components/layout/Layout';
@@ -50,6 +51,7 @@ import HeaderBlock from 'components/HeaderBlock';
 import Text from 'components/core/Text';
 import Modal from 'components/Modal';
 import BuyCryptoAccountNotActiveModal from 'components/BuyCryptoAccountNotActiveModal';
+import Banner from 'components/Banner/Banner';
 
 // Selectors
 import { useFiatCurrency, accountsSelector, useRootSelector } from 'selectors';
@@ -74,6 +76,7 @@ const AddCash = () => {
   const buttonDisable = value !== null && (Number(value) === 0 || !isValidFiatValue(value));
   const accounts = useRootSelector(accountsSelector);
   const activeAccount = getActiveAccount(accounts);
+  const screenName = getActiveScreenName(navigation);
 
   const residentSelected = (isUsResident: boolean) => {
     if (isUsResident) {
@@ -176,6 +179,7 @@ const AddCash = () => {
         noPaddingTop
       />
       <ScrollView onScroll={() => Keyboard.dismiss()} keyboardShouldPersistTaps="handled">
+        <Banner screenName={screenName} bottomPosition={false} />
         <AddCashView>
           <Text color={colors.basic030} variant="medium">
             {t('servicesContent.ramp.addCash.subTitle')}

@@ -23,6 +23,7 @@ import { ScrollView, Keyboard } from 'react-native';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 import { BigNumber } from 'bignumber.js';
+import { useNavigation } from 'react-navigation-hooks';
 
 // Components
 import { Spacing } from 'components/legacy/Layout';
@@ -31,6 +32,7 @@ import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import ContactSelector from 'components/ContactSelector';
 import Spinner from 'components/Spinner';
 import SwipeButton from 'components/SwipeButton/SwipeButton';
+import Banner from 'components/Banner/Banner';
 
 // Constants
 import { ASSET_TYPES } from 'constants/assetsConstants';
@@ -39,6 +41,7 @@ import { CHAIN } from 'constants/chainConstants';
 // Utils
 import { spacing } from 'utils/variables';
 import { useChainConfig } from 'utils/uiConfig';
+import { getActiveScreenName } from 'utils/navigation';
 
 // Types
 import type { ContactSelectorProps } from 'components/ContactSelector';
@@ -80,7 +83,9 @@ const SendContainer = ({
   isHighGasFee,
 }: Props) => {
   const chain = assetData?.chain ?? CHAIN.ETHEREUM;
+  const navigation = useNavigation();
   const { titleShort: chainTitle } = useChainConfig(chain);
+  const screenName = getActiveScreenName(navigation);
 
   // Bridge props from legacy value input data to modern token value input data
   const selectedToken: ?AssetOption = assetData?.tokenType !== ASSET_TYPES.COLLECTIBLE ? (assetData: any) : null;
@@ -112,6 +117,7 @@ const SendContainer = ({
     >
       <ScrollView onScroll={() => Keyboard.dismiss()} keyboardShouldPersistTaps="handled">
         <SelectorWrapper>
+          <Banner screenName={screenName} bottomPosition={false} />
           {!isLoading && (
             <AssetSelector
               selectedToken={selectedToken}
@@ -134,6 +140,8 @@ const SendContainer = ({
 
           <ContactSelector {...customSelectorProps} />
         </Wrapper>
+
+        <Banner screenName={screenName} bottomPosition />
 
         <SendFooter isHighGasFee={isHighGasFee} {...footerProps} />
 

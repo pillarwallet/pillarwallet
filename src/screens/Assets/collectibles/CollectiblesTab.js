@@ -32,6 +32,7 @@ import ChainListFooter from 'components/lists/ChainListFooter';
 import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
+import Banner from 'components/Banner/Banner';
 
 // Constants
 import { COLLECTIBLE, SEND_COLLECTIBLE_FROM_ASSET_FLOW } from 'constants/navigationConstants';
@@ -42,6 +43,7 @@ import { useSupportedChains } from 'selectors/chains';
 
 // Utils
 import { spacing } from 'utils/variables';
+import { getActiveScreenName } from 'utils/navigation';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
@@ -58,6 +60,7 @@ function CollectiblesTab() {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const safeArea = useSafeAreaInsets();
+  const screenName = getActiveScreenName(navigation);
 
   const initialChain: ?Chain = navigation.getParam('chain');
   const { expandItemsPerChain, toggleExpandItems } = useExpandItemsPerChain(initialChain);
@@ -132,6 +135,7 @@ function CollectiblesTab() {
       <ImageContainer>
         {(totalCollectibleCount === 0) && <ContentIcon source={collectibleBanner} />}
       </ImageContainer> */}
+      <Banner screenName={screenName} bottomPosition={false} />
       <SectionList
         sections={sections}
         renderSectionHeader={({ section }) => renderSectionHeader(section)}
@@ -140,6 +144,7 @@ function CollectiblesTab() {
         keyExtractor={(items) => items[0]?.key}
         contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
       />
+      <Banner screenName={screenName} bottomPosition />
 
       <FloatingButtons items={buttons} />
     </Container>
