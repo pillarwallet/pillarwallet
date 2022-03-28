@@ -175,7 +175,7 @@ const SendCollectibleConfirm = ({
 
     if (activeAccount && isLogV2AppEvents()) {
       // eslint-disable-next-line i18next/no-literal-string
-      logAppsFlyerEvent(`nft_ sent_${chain}`, {
+      logAppsFlyerEvent(`nft_sent_${chain}`, {
         token: assetData?.tokenType,
         tokenId: assetData?.tokenId,
         date: currentDate(),
