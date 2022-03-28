@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-// constants
+// Constants
 import {
   RESET_ONBOARDING,
   SET_CHECKING_USERNAME,
@@ -31,11 +31,12 @@ import {
   SET_ONBOARDING_WALLET,
   SET_REGISTERING_USER,
   SET_TUTORIAL_DATA,
+  SET_BANNER_DATA,
 } from 'constants/onboardingConstants';
 
-// types
+// Types
 import type { EthereumWallet } from 'models/Wallet';
-import type { TutorialDataObject } from 'models/CMSData';
+import type { TutorialDataObject, CmsBannerDocument } from 'models/CMSData';
 import type { OnboardingUser } from 'models/User';
 
 
@@ -50,6 +51,7 @@ export type OnboardingReducerState = {
   usernameRegistrationFailed: boolean,
   isFinishingOnboarding: boolean,
   tutorialData: ?TutorialDataObject,
+  bannerData: ?CmsBannerDocument,
 };
 
 export type OnboardingReducerAction = {
@@ -68,6 +70,7 @@ export const initialState = {
   usernameRegistrationFailed: false,
   isFinishingOnboarding: false,
   tutorialData: null,
+  bannerData: null,
 };
 
 export default function onboardingReducer(
@@ -133,6 +136,11 @@ export default function onboardingReducer(
       return {
         ...state,
         tutorialData: action.payload,
+      };
+    case SET_BANNER_DATA:
+      return {
+        ...state,
+        bannerData: action.payload,
       };
     case RESET_ONBOARDING:
       return { ...initialState };
