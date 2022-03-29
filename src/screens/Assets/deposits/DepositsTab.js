@@ -32,6 +32,7 @@ import ChainListHeader from 'components/lists/ChainListHeader';
 import ChainListFooter from 'components/lists/ChainListFooter';
 import FiatChangeView from 'components/display/FiatChangeView';
 import FloatingButtons from 'components/FloatingButtons';
+import Banner from 'components/Banner/Banner';
 
 // Constants
 import { WALLETCONNECT } from 'constants/navigationConstants';
@@ -45,6 +46,7 @@ import { formatPercentValue } from 'utils/format';
 import { type HeaderListItem, prepareHeaderListItems } from 'utils/headerList';
 import { getFiatValueFromUsd } from 'utils/rates';
 import { spacing } from 'utils/variables';
+import { getActiveScreenName } from 'utils/navigation';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
@@ -61,6 +63,7 @@ function DepositsTab() {
   const { t, tRoot } = useTranslationWithPrefix('assets.deposits');
   const navigation = useNavigation();
   const safeArea = useSafeAreaInsets();
+  const screenName = getActiveScreenName(navigation);
 
   const initialChain: ?Chain = navigation.getParam('chain');
   const { expandItemsPerChain, toggleExpandItems } = useExpandItemsPerChain(initialChain);
@@ -80,6 +83,7 @@ function DepositsTab() {
       <ListHeader>
         <BalanceView balance={totalBalance.value} style={styles.balanceView} />
         {!!change && <FiatChangeView value={value} change={totalBalance.change} currency={currency} />}
+        <Banner screenName={screenName} bottomPosition={false} />
       </ListHeader>
     );
   };

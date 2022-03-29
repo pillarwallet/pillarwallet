@@ -73,6 +73,8 @@ export const fiatCurrencySelector = (root: RootReducerState) =>
 
 export const historySelector = ({ history }: RootReducerState) => history.data;
 
+export const bannerDataSelector = ({ onboarding }: RootReducerState) => onboarding.bannerData;
+
 export const paymentNetworkBalancesSelector =
   ({ paymentNetwork }: RootReducerState) => paymentNetwork.balances;
 

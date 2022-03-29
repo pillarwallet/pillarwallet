@@ -33,6 +33,9 @@ import ChainListFooter from 'components/lists/ChainListFooter';
 import FiatChangeView from 'components/display/FiatChangeView';
 import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
+import Banner from 'components/Banner/Banner';
+
+// Screens
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 
 // Constants
@@ -54,6 +57,7 @@ import { useSupportedChains } from 'selectors/chains';
 import { findAssetByAddress } from 'utils/assets';
 import { spacing } from 'utils/variables';
 import { isKeyBasedAccount } from 'utils/accounts';
+import { getActiveScreenName } from 'utils/navigation';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
@@ -76,6 +80,7 @@ function WalletTab() {
   const totalBalance = useWalletTotalBalance();
   const sections = useSectionData(expandItemsPerChain);
   const currency = useFiatCurrency();
+  const screenName = getActiveScreenName(navigation);
 
   const supportedAssets = useRootSelector(supportedAssetsPerChainSelector);
 
@@ -111,6 +116,7 @@ function WalletTab() {
         )}
 
         {isPillarPaySupported && <PillarPaySummary style={styles.pillarPay} />}
+        <Banner screenName={screenName} bottomPosition={false} />
       </ListHeader>
     );
   };

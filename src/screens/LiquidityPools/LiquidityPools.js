@@ -73,56 +73,6 @@ const TABS = {
   STAKED: 'STAKED',
 };
 
-const Row = styled.View`
-  flex-direction: row;
-`;
-
-const Card = styled.View`
-  background-color: ${({ theme }) => theme.colors.basic050};
-  border-radius: 6px;
-  padding: 12px 20px;
-`;
-
-const HorizontalDivider = styled.View`
-  height: 1px;
-  background-color: ${({ theme }) => theme.colors.basic060};
-  margin: 12px 0;
-`;
-
-const VerticalDivider = styled.View`
-  width: 1px;
-  background-color: ${({ theme }) => theme.colors.basic060};
-`;
-
-const MainContainer = styled.View`
-  padding: 24px 20px;
-  flex: 1;
-`;
-
-const CardColumn = styled.View`
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-`;
-
-const Rewards = styled.View`
-  flex-direction: row;
-  flex-wrap: wrap;
-  flex: 1;
-  margin-bottom: -8px;
-`;
-
-const RewardIcon = styled(Image)`
-  width: 20px;
-  height: 20px;
-`;
-
-const Reward = styled.View`
-  flex-direction: row;
-  align-items: center;
-  margin: 0 24px 8px 0;
-`;
-
 const LiquidityPoolsScreen = ({
   fetchLiquidityPoolsData,
   baseFiatCurrency,
@@ -441,3 +391,54 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(LiquidityPoolsScreen));
+
+
+const Row = styled.View`
+  flex-direction: row;
+`;
+
+const Card = styled.View`
+  background-color: ${({ theme }) => theme.colors.basic050};
+  border-radius: 6px;
+  padding: 12px 20px;
+`;
+
+const HorizontalDivider = styled.View`
+  height: 1px;
+  background-color: ${({ theme }) => theme.colors.basic060};
+  margin: 12px 0;
+`;
+
+const VerticalDivider = styled.View`
+  width: 1px;
+  background-color: ${({ theme }) => theme.colors.basic060};
+`;
+
+const MainContainer = styled.View`
+  padding: 24px 20px;
+  flex: 1;
+`;
+
+const CardColumn = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`;
+
+const Rewards = styled.View`
+  flex-direction: row;
+  flex-wrap: wrap;
+  flex: 1;
+  margin-bottom: -8px;
+`;
+
+const RewardIcon = styled(Image)`
+  width: 20px;
+  height: 20px;
+`;
+
+const Reward = styled.View`
+  flex-direction: row;
+  align-items: center;
+  margin: 0 24px 8px 0;
+`;

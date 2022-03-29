@@ -38,6 +38,52 @@ export type CmsDocument = {
   },
 };
 
+export type CmsBannerDocument = {
+  results: [
+    {
+      alternate_languages: [],
+      data: {
+        background_color: string,
+        background_image: {
+          url: String,
+        },
+        enabled: boolean,
+        ends_at: string,
+        foreground_color: string,
+        icon: {
+          dimensions: {
+            height: string,
+            width: string,
+          },
+          url: string,
+        },
+        link: {
+          link_type: string,
+          url: string,
+        },
+        position: string,
+        screen: string,
+        starts_at: string,
+        subtitle: [
+          {
+            spans: [],
+            text: string,
+            type: string,
+          }
+        ],
+        title: [
+          {
+            spans: [],
+            text: string,
+            type: string,
+          }
+        ],
+        id: string,
+      },
+    },
+  ],
+};
+
 export type ParsedCmsDocument = {
   id: string,
   type: string,
@@ -58,4 +104,8 @@ export type CmsData = {
 
 export type TutorialDataObject = {
   [key: string]: ParsedCmsDocument[],
+};
+
+export type CmsBannerData = {
+  results: CmsBannerDocument[],
 };

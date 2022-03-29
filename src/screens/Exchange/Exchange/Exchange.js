@@ -40,6 +40,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Icon from 'components/core/Icon';
 import Spinner from 'components/Spinner';
 import Toast from 'components/Toast';
+import Banner from 'components/Banner/Banner';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
@@ -54,6 +55,7 @@ import { appendFeeCaptureTransactionIfNeeded } from 'utils/exchange';
 import { getAccountAddress, getAccountType } from 'utils/accounts';
 import { hitSlop50w20h } from 'utils/common';
 import { currentDate, currentTime } from 'utils/date';
+import { getActiveScreenName } from 'utils/navigation';
 
 // Actions
 import { appsFlyerlogEventAction } from 'actions/analyticsActions';
@@ -78,6 +80,7 @@ function Exchange() {
   const dispatch = useDispatch();
   const activeAccount = useActiveAccount();
   const fromInputRef = React.useRef();
+  const screenName = getActiveScreenName(navigation);
 
   const initialChain: Chain = navigation.getParam('chain') || CHAIN.ETHEREUM;
   const initialFromAddress: string =
@@ -203,6 +206,7 @@ function Exchange() {
       />
 
       <Content onScroll={() => Keyboard.dismiss()}>
+        <Banner screenName={screenName} bottomPosition={false} />
         <FromAssetSelector
           assets={fromOptions}
           selectedAsset={fromAsset}
@@ -225,6 +229,8 @@ function Exchange() {
         />
 
         <Spacing h={40} />
+
+        <Banner screenName={screenName} bottomPosition />
 
         {showLoading && (
           <EmptyStateWrapper>
