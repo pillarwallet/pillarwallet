@@ -110,6 +110,7 @@ import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
 import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
 import WalletConnectBrowser from 'screens/WalletConnect/WalletConnectBrowser';
 import RegisterENSScreen from 'screens/RegisterENS';
+import StoreValueContractScreen from 'screens/Contract/StoreValueContract';
 
 // components
 import Toast from 'components/Toast';
@@ -236,6 +237,8 @@ import {
   PIN_CODE_CONFIRMATION,
   IMPORT_FLOW_FROM_SETTINGS,
   REGISTER_ENS,
+  STORE_VALUE_CONTRACT,
+  CONTRACT_FLOW,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -537,6 +540,13 @@ const liquidityPoolsFlow = createStackNavigator(
   StackNavigatorConfig,
 );
 
+const ContractFlow = createStackNavigator(
+  {
+    [STORE_VALUE_CONTRACT]: StoreValueContractScreen,
+  },
+  StackNavigatorConfig,
+);
+
 const MainStack = createStackNavigator(
   {
     [HOME_FLOW]: homeFlow,
@@ -589,6 +599,7 @@ const AppFlowNavigation = createStackNavigator(
     [WEB_VIEW]: WebViewScreen,
     [LEGAL_SCREEN]: LegalScreen,
     [IMPORT_FLOW_FROM_SETTINGS]: ImportFlowFromSettings,
+    [CONTRACT_FLOW]: ContractFlow,
   },
   modalTransition,
 );

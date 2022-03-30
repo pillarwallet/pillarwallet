@@ -34,6 +34,7 @@ const nativeIntegrationAbisFetched = (
 ) =>
   updateObject(state, {
     fetchState: ProcessState.HANDLED,
+    abis: actions.payload,
   });
 
 const fetchNativeIntegrationAbisError = (state: IReduxNativeIntegrationState, actions: IReduxAction) =>

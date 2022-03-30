@@ -29,7 +29,7 @@ import Modal from 'components/Modal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 
 // Constants
-import { CONNECT_FLOW, EXCHANGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';
+import { CONTRACT_FLOW, EXCHANGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';
 
 // Utils
 import { isArchanovaAccount } from 'utils/accounts';
@@ -74,7 +74,8 @@ function FloatingActions() {
     {
       title: t('connect'),
       iconName: 'wallet-connect',
-      onPress: () => navigation.navigate(CONNECT_FLOW),
+      // onPress: () => navigation.navigate(CONNECT_FLOW),
+      onPress: () => navigation.navigate(CONTRACT_FLOW),
     },
   ];
 
@@ -86,9 +87,8 @@ const useEnabledActions = () => {
   const activeAccount = useActiveAccount();
   const smartWalletState = useArchanovaWalletStatus();
 
-
-  const isEnabled = walletTotalBalance.gt(0)
-    && (!isArchanovaAccount(activeAccount) || isEmpty(smartWalletState.sendingBlockedMessage));
+  const isEnabled =
+    walletTotalBalance.gt(0) && (!isArchanovaAccount(activeAccount) || isEmpty(smartWalletState.sendingBlockedMessage));
 
   return {
     isSendEnabled: true,
