@@ -33,30 +33,26 @@ import { nativeIntegrationSelector } from 'redux/selectors/native-integration-se
 import { getEnv } from 'configs/envConfig';
 
 // Services
-import { firebaseRemoteConfig } from 'services/firebase';
+import etherspotService from 'services/etherspot';
 
-// Constants
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+// constants
+import { CHAIN } from 'constants/chainConstants';
 
 const StoreValueContract = () => {
-  // const { activeConnectors } = useWalletConnect();
   const nativeIntigrationResponse = useRootSelector(nativeIntegrationSelector);
-  const infuraProjectId = firebaseRemoteConfig.getString(REMOTE_CONFIG.INFURA_PROJECT_ID) || getEnv().INFURA_PROJECT_ID;
-
-  logBreadcrumb('nativeIntigrationResponse!!', infuraProjectId, JSON.stringify(nativeIntigrationResponse));
+  const nativeIntigrationAbi = nativeIntigrationResponse?.abis;
+  const contractAddress = nativeIntigrationResponse?.contractAddress;
   const [storeValue, setStoreValue] = useState('');
 
   const FetchData = async () => {};
 
   const StoreData = async () => {
-    // Connect to the network
-    // const provider = ethers.providers.InfuraProvider('573da487c709458483a788caecb10df7');
     const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-    const contractAddress = '0x09f72Cc951a7c84f1718d732d26f3013B979039f';
-    const privateKey = '0x0123456789012345678901234567890123456789012345678901234567890123';
+    // Testing key
+    const privateKey = '0x067D674A5D8D0DEBC0B02D4E5DB5166B3FA08384DCE50A574A0D0E370B4534F9';
 
-    const contract = new ethers.Contract(contractAddress, abi, provider);
-    logBreadcrumb('contract', contract);
+    const contract = new ethers.Contract(contractAddress, nativeIntigrationAbi, provider);
+    logBreadcrumb('contract', JSON.stringify(contract));
 
     const wallet = new ethers.Wallet(privateKey, provider);
     logBreadcrumb('wallet', JSON.stringify(wallet));
@@ -70,23 +66,15 @@ const StoreValueContract = () => {
   };
 
   const RetrieveData = async () => {
-    const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-    logBreadcrumb('Provider', JSON.stringify(provider));
-    const contractAddress = '0x09f72Cc951a7c84f1718d732d26f3013B979039f';
-    const contract = new ethers.Contract(contractAddress, abi, provider);
-    try {
-      await contract.deployTransaction.wait();
-    } catch (error) {
-      logBreadcrumb('contract!!!!', error);
-    }
-
-    logBreadcrumb('Provider+contract', provider, contract);
-    try {
-      const currentValue = await contract.retrieve();
-      logBreadcrumb('Retrieve value', currentValue);
-    } catch (error) {
-      logBreadcrumb('Retrieve error!', error);
-    }
+    const testIntegrationContract = etherspotService.getContract(CHAIN.POLYGON, nativeIntigrationAbi, contractAddress);
+    // eslint-disable-next-line no-console
+    console.log('testIntegrationContract!', testIntegrationContract);
+    // try {
+    //   const fetchResult = await testIntegrationContract?.callRetrieve();
+    //   logBreadcrumb('fetchResult', fetchResult);
+    // } catch (error) {
+    //   logBreadcrumb('Retrive error', error);
+    // }
   };
 
   return (
@@ -106,35 +94,6 @@ const StoreValueContract = () => {
 };
 
 export default StoreValueContract;
-
-const abi = [
-  {
-    inputs: [],
-    name: 'retrieve',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: 'num',
-        type: 'uint256',
-      },
-    ],
-    name: 'store',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-];
 
 const Container = styled(View)`
   flex: 1;
