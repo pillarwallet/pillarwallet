@@ -19,9 +19,10 @@
 */
 
 // constants
-import { CHAIN } from 'constants/chainConstants';
+import { CHAIN, CHAIN_ID } from 'constants/chainConstants';
 
 export type Chain = $Values<typeof CHAIN>;
+export type ChainId = $Values<typeof CHAIN_ID>;
 
 export type ChainRecord<T> = {
   polygon?: T,
@@ -30,4 +31,3 @@ export type ChainRecord<T> = {
   ethereum?: T,
   avalanche?: T,
 };
-

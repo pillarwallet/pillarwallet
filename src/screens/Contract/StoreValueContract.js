@@ -21,84 +21,45 @@
 
 import React, { useState } from 'react';
 import styled from 'styled-components/native';
-import { ethers } from 'ethers';
 import { TouchableOpacity, View, Text, TextInput } from 'react-native';
 
 // utils
-import { logBreadcrumb, getEthereumProvider } from 'utils/common';
+import { logBreadcrumb, errorLog } from 'utils/common';
 
 // Selectors
 import { useRootSelector } from 'selectors';
 import { nativeIntegrationSelector } from 'redux/selectors/native-integration-selector';
-import { getEnv } from 'configs/envConfig';
 
 // Services
 import etherspotService from 'services/etherspot';
 
-// constants
-import { CHAIN } from 'constants/chainConstants';
-
 const StoreValueContract = () => {
   const nativeIntegrationResponse = useRootSelector(nativeIntegrationSelector);
-  const nativeIntigrationAbi = nativeIntegrationResponse?.abis;
-  const contractAddress = nativeIntegrationResponse?.contractAddress;
   const [storeValue, setStoreValue] = useState('');
 
   const FetchData = async () => {};
 
-  const StoreData = async () => {
-    const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-    // Testing key
-    const privateKey = '0x067D674A5D8D0DEBC0B02D4E5DB5166B3FA08384DCE50A574A0D0E370B4534F9';
-
-    const contract = new ethers.Contract(contractAddress, nativeIntigrationAbi, provider);
-    logBreadcrumb('contract', JSON.stringify(contract));
-
-    const wallet = new ethers.Wallet(privateKey, provider);
-    logBreadcrumb('wallet', JSON.stringify(wallet));
-    try {
-      const contractWithSigner = contract.connect(wallet);
-      const tx = await contractWithSigner.store(parseInt(storeValue, 0));
-      logBreadcrumb('tx', JSON.stringify(tx));
-    } catch (error) {
-      logBreadcrumb('Error!!!1', error);
-    }
-  };
+  const StoreData = async () => {};
 
   const retrieveData = async () => {
     try {
-      /**
-       * We need to fetch the instance of Etherspot,
-       * this can be done dynamically
-       */
-      const mumbaiSdkInstance = etherspotService.instances.mumbai;
+      const testIntegrationContract = etherspotService.connectContract(
+        nativeIntegrationResponse?.chainId,
+        nativeIntegrationResponse?.abis,
+        nativeIntegrationResponse?.contractAddress,
+      );
 
-      /**
-       * Next, register the contract we're dealing with
-       */
-      const testIntegrationContract =
-        mumbaiSdkInstance
-          .registerContract(
-            `${CHAIN}-${nativeIntegrationResponse.address}`,
-            nativeIntigrationAbi,
-            contractAddress,
-          );
-
+      const abiSpecForFunction = nativeIntegrationResponse?.abis.filter((fnSpec) => fnSpec.stateMutability === 'view');
+      logBreadcrumb('abiSpecForFunction', JSON.stringify(abiSpecForFunction));
       /**
        * And call* - where * is, is the Contract function name.
        * This could also be dynamic.
        */
-      const nativeIntegrationContractResponse = await testIntegrationContract.callRetrieve();
-
-      // eslint-disable-next-line no-console
-      const abiSpecForFunction = nativeIntegrationResponse.abis.filter((fnSpec) => (fnSpec.name === 'retrieve'));
-      // eslint-disable-next-line no-console
-      console.log(abiSpecForFunction);
-      // eslint-disable-next-line no-console
-      console.log('testIntegrationContract!', nativeIntegrationContractResponse.toNumber());
+      const nativeIntegrationContractResponse = await testIntegrationContract?.callRetrieve();
+      nativeIntegrationContractResponse &&
+        logBreadcrumb('nativeIntegrationContractResponse', nativeIntegrationContractResponse?.toNumber());
     } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error(e);
+      errorLog('ERROR!', e);
     }
   };
 

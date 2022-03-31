@@ -53,7 +53,7 @@ import {
   getChainTokenListName,
 } from 'utils/etherspot';
 import { addressesEqual, findAssetByAddress } from 'utils/assets';
-import { nativeAssetPerChain } from 'utils/chains';
+import { nativeAssetPerChain, chainFromChainId } from 'utils/chains';
 import { mapToEthereumTransactions } from 'utils/transactions';
 import { getCaptureFee } from 'utils/exchange';
 
@@ -72,7 +72,7 @@ import type {
 } from 'utils/types/etherspot';
 import type { AssetCore, Asset } from 'models/Asset';
 import type { WalletAssetBalance } from 'models/Balances';
-import type { Chain, ChainRecord } from 'models/Chain';
+import type { Chain, ChainId, ChainRecord } from 'models/Chain';
 import type { ExchangeOffer } from 'models/Exchange';
 import type {
   EthereumTransaction,
@@ -552,9 +552,7 @@ export class EtherspotService {
     return this.setTransactionsBatchAndSend(etherspotTransactions, chain);
   }
 
-  async sendENSTransaction(
-    chain: Chain,
-  ): Promise<?TransactionResult> {
+  async sendENSTransaction(chain: Chain): Promise<?TransactionResult> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {
       logBreadcrumb('setTransactionsBatchAndSend', 'failed: no SDK for chain set', { chain });
@@ -617,7 +615,8 @@ export class EtherspotService {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {
       logBreadcrumb(
-        'EtherspotService', 'waitForTransactionHashFromSubmittedBatch failed: no sdk instance for network name',
+        'EtherspotService',
+        'waitForTransactionHashFromSubmittedBatch failed: no sdk instance for network name',
         { chain },
       );
       // fail gracefully as transaction has been sent anyway
@@ -805,6 +804,21 @@ export class EtherspotService {
     try {
       // contract name is for internal use, just to not pollute let's create contracts under chain-address
       return sdk.registerContract(`${chain}-${address}`, abi, address);
+    } catch (error) {
+      reportErrorLog('EtherspotService getExchangeOffers failed', { chain, error });
+      return null;
+    }
+  }
+
+  connectContract<T>(chainId: ChainId, abi: Object[], contractAddress: string): T | null {
+    const chain = chainFromChainId[chainId];
+    const isNetworkValid = this.supportedNetworks.includes(chain);
+    if (!isNetworkValid) {
+      return null;
+    }
+    const sdk = this.instances[chain];
+    try {
+      return sdk.registerContract(`${chain}-${contractAddress}`, abi, contractAddress);
     } catch (error) {
       reportErrorLog('EtherspotService getExchangeOffers failed', { chain, error });
       return null;
