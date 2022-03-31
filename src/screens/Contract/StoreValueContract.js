@@ -39,9 +39,9 @@ import etherspotService from 'services/etherspot';
 import { CHAIN } from 'constants/chainConstants';
 
 const StoreValueContract = () => {
-  const nativeIntigrationResponse = useRootSelector(nativeIntegrationSelector);
-  const nativeIntigrationAbi = nativeIntigrationResponse?.abis;
-  const contractAddress = nativeIntigrationResponse?.contractAddress;
+  const nativeIntegrationResponse = useRootSelector(nativeIntegrationSelector);
+  const nativeIntigrationAbi = nativeIntegrationResponse?.abis;
+  const contractAddress = nativeIntegrationResponse?.contractAddress;
   const [storeValue, setStoreValue] = useState('');
 
   const FetchData = async () => {};
@@ -65,16 +65,41 @@ const StoreValueContract = () => {
     }
   };
 
-  const RetrieveData = async () => {
-    const testIntegrationContract = etherspotService.getContract(CHAIN.POLYGON, nativeIntigrationAbi, contractAddress);
-    // eslint-disable-next-line no-console
-    console.log('testIntegrationContract!', testIntegrationContract);
-    // try {
-    //   const fetchResult = await testIntegrationContract?.callRetrieve();
-    //   logBreadcrumb('fetchResult', fetchResult);
-    // } catch (error) {
-    //   logBreadcrumb('Retrive error', error);
-    // }
+  const retrieveData = async () => {
+    try {
+      /**
+       * We need to fetch the instance of Etherspot,
+       * this can be done dynamically
+       */
+      const mumbaiSdkInstance = etherspotService.instances.mumbai;
+
+      /**
+       * Next, register the contract we're dealing with
+       */
+      const testIntegrationContract =
+        mumbaiSdkInstance
+          .registerContract(
+            `${CHAIN}-${nativeIntegrationResponse.address}`,
+            nativeIntigrationAbi,
+            contractAddress,
+          );
+
+      /**
+       * And call* - where * is, is the Contract function name.
+       * This could also be dynamic.
+       */
+      const nativeIntegrationContractResponse = await testIntegrationContract.callRetrieve();
+
+      // eslint-disable-next-line no-console
+      const abiSpecForFunction = nativeIntegrationResponse.abis.filter((fnSpec) => (fnSpec.name === 'retrieve'));
+      // eslint-disable-next-line no-console
+      console.log(abiSpecForFunction);
+      // eslint-disable-next-line no-console
+      console.log('testIntegrationContract!', nativeIntegrationContractResponse.toNumber());
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(e);
+    }
   };
 
   return (
@@ -86,7 +111,7 @@ const StoreValueContract = () => {
       <ConnectButton onPress={StoreData}>
         <NormalText>Store</NormalText>
       </ConnectButton>
-      <ConnectButton onPress={RetrieveData}>
+      <ConnectButton onPress={retrieveData}>
         <NormalText>Retrive</NormalText>
       </ConnectButton>
     </Container>
