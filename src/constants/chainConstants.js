@@ -32,7 +32,6 @@ export const CHAIN_NAMES = {
   BINANCE: 'binance',
   XDAI: 'xdai',
   AVALANCHE: 'avalanche',
-  MUMBAI: 'mumbai',
 };
 
 export const CHAIN_SHORT = {
@@ -54,3 +53,14 @@ export const CHAIN_ID = {
   FUJI: 43113,
   MUMBAI: 80001,
 };
+
+export const CHAIN_WITH_ID = [
+  { name: 'ethereum', chainId: 1 },
+  { name: 'kovan', chainId: 42 },
+  { name: 'polygon', chainId: 137 },
+  { name: 'binance', chainId: 56 },
+  { name: 'xdai', chainId: 100 },
+  { name: 'avalanche', chainId: 43114 },
+  { name: 'fuji', chainId: 43113 },
+  { name: 'mumbai', chainId: 80001 },
+];

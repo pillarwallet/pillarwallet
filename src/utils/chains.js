@@ -23,7 +23,7 @@ import { isProdEnv } from 'utils/environment';
 
 // Constants
 import { ETH, MATIC, BNB, AVAX, XDAI, ADDRESS_ZERO } from 'constants/assetsConstants';
-import { CHAIN, CHAIN_ID, CHAIN_NAMES } from 'constants/chainConstants';
+import { CHAIN, CHAIN_ID } from 'constants/chainConstants';
 
 // Utils
 import { isEtherspotAccount } from 'utils/accounts';
@@ -41,7 +41,6 @@ export const chainFromChainId: { [number]: Chain } = {
   [CHAIN_ID.POLYGON]: CHAIN.POLYGON,
   [CHAIN_ID.AVALANCHE]: CHAIN.AVALANCHE,
   [CHAIN_ID.FUJI]: CHAIN.AVALANCHE,
-  [CHAIN_ID.MUMBAI]: CHAIN_NAMES.MUMBAI,
 };
 
 /**

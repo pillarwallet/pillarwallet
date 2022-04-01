@@ -53,13 +53,13 @@ import {
   getChainTokenListName,
 } from 'utils/etherspot';
 import { addressesEqual, findAssetByAddress } from 'utils/assets';
-import { nativeAssetPerChain, chainFromChainId } from 'utils/chains';
+import { nativeAssetPerChain } from 'utils/chains';
 import { mapToEthereumTransactions } from 'utils/transactions';
 import { getCaptureFee } from 'utils/exchange';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
-import { CHAIN } from 'constants/chainConstants';
+import { CHAIN, CHAIN_WITH_ID } from 'constants/chainConstants';
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 import { PROJECT_KEY } from 'constants/etherspotConstants';
 
@@ -811,7 +811,8 @@ export class EtherspotService {
   }
 
   connectContract<T>(chainId: ChainId, abi: Object[], contractAddress: string): T | null {
-    const chain = chainFromChainId[chainId];
+    const chain = CHAIN_WITH_ID.find((specItem) => specItem.chainId === chainId)?.name;
+    if (!chain) return null;
     const isNetworkValid = this.supportedNetworks.includes(chain);
     if (!isNetworkValid) {
       return null;
@@ -820,7 +821,7 @@ export class EtherspotService {
     try {
       return sdk.registerContract(`${chain}-${contractAddress}`, abi, contractAddress);
     } catch (error) {
-      reportErrorLog('EtherspotService getExchangeOffers failed', { chain, error });
+      reportErrorLog('Connect Contract service failed', { chain, error });
       return null;
     }
   }
