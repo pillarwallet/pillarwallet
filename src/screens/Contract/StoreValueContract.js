@@ -25,6 +25,7 @@ import { TouchableOpacity, View, Text, TextInput } from 'react-native';
 
 // utils
 import { logBreadcrumb, errorLog } from 'utils/common';
+import { chainFromChainId } from 'utils/chains';
 
 // Selectors
 import { useRootSelector } from 'selectors';
@@ -42,9 +43,11 @@ const StoreValueContract = () => {
   const StoreData = async () => {};
 
   const retrieveData = async () => {
+    const chain = chainFromChainId[nativeIntegrationResponse?.chainId];
+    if (!chain) null;
     try {
-      const testIntegrationContract = etherspotService.connectContract(
-        nativeIntegrationResponse?.chainId,
+      const testIntegrationContract = etherspotService.getContract(
+        chain,
         nativeIntegrationResponse?.abis,
         nativeIntegrationResponse?.contractAddress,
       );

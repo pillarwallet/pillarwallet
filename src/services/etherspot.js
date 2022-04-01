@@ -59,7 +59,7 @@ import { getCaptureFee } from 'utils/exchange';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
-import { CHAIN, CHAIN_WITH_ID } from 'constants/chainConstants';
+import { CHAIN } from 'constants/chainConstants';
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 import { PROJECT_KEY } from 'constants/etherspotConstants';
 
@@ -72,7 +72,7 @@ import type {
 } from 'utils/types/etherspot';
 import type { AssetCore, Asset } from 'models/Asset';
 import type { WalletAssetBalance } from 'models/Balances';
-import type { Chain, ChainId, ChainRecord } from 'models/Chain';
+import type { Chain, ChainRecord } from 'models/Chain';
 import type { ExchangeOffer } from 'models/Exchange';
 import type {
   EthereumTransaction,
@@ -806,22 +806,6 @@ export class EtherspotService {
       return sdk.registerContract(`${chain}-${address}`, abi, address);
     } catch (error) {
       reportErrorLog('EtherspotService getExchangeOffers failed', { chain, error });
-      return null;
-    }
-  }
-
-  connectContract<T>(chainId: ChainId, abi: Object[], contractAddress: string): T | null {
-    const chain = CHAIN_WITH_ID.find((specItem) => specItem.chainId === chainId)?.name;
-    if (!chain) return null;
-    const isNetworkValid = this.supportedNetworks.includes(chain);
-    if (!isNetworkValid) {
-      return null;
-    }
-    const sdk = this.instances[chain];
-    try {
-      return sdk.registerContract(`${chain}-${contractAddress}`, abi, contractAddress);
-    } catch (error) {
-      reportErrorLog('Connect Contract service failed', { chain, error });
       return null;
     }
   }
