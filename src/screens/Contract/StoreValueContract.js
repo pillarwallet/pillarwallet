@@ -22,9 +22,11 @@
 import React, { useState } from 'react';
 import styled from 'styled-components/native';
 import { TouchableOpacity, View, Text, TextInput } from 'react-native';
+import { getEnv } from 'configs/envConfig';
+import { ethers } from 'ethers';
 
 // utils
-import { logBreadcrumb, errorLog } from 'utils/common';
+import { getEthereumProvider, logBreadcrumb } from 'utils/common';
 import { chainFromChainId } from 'utils/chains';
 
 // Selectors
@@ -34,50 +36,88 @@ import { nativeIntegrationSelector } from 'redux/selectors/native-integration-se
 // Services
 import etherspotService from 'services/etherspot';
 
+// Type
+import type { EtherspotContractFetchItem } from 'utils/types/etherspot';
+
+let integrationContract: any;
+
 const StoreValueContract = () => {
   const nativeIntegrationResponse = useRootSelector(nativeIntegrationSelector);
   const [storeValue, setStoreValue] = useState('');
+  const [isFetched, setIsFetched] = useState(false);
 
-  const FetchData = async () => {};
+  const viewFunctions = nativeIntegrationResponse?.abis?.filter((fnSpec) => fnSpec.stateMutability === 'view');
+  const inputFuctions = nativeIntegrationResponse?.abis?.filter((fnSpec) => fnSpec.stateMutability !== 'view');
 
-  const StoreData = async () => {};
-
-  const retrieveData = async () => {
+  const FetchData = async () => {
     const chain = chainFromChainId[nativeIntegrationResponse?.chainId];
     if (!chain) null;
-    try {
-      const testIntegrationContract = etherspotService.getContract(
-        chain,
-        nativeIntegrationResponse?.abis,
-        nativeIntegrationResponse?.contractAddress,
-      );
+    integrationContract = etherspotService.getContract(
+      chain,
+      nativeIntegrationResponse?.abis,
+      nativeIntegrationResponse?.contractAddress,
+    );
+    if (integrationContract) setIsFetched(true);
+  };
 
-      const abiSpecForFunction = nativeIntegrationResponse?.abis.filter((fnSpec) => fnSpec.stateMutability === 'view');
-      logBreadcrumb('abiSpecForFunction', JSON.stringify(abiSpecForFunction));
-      /**
-       * And call* - where * is, is the Contract function name.
-       * This could also be dynamic.
-       */
-      const nativeIntegrationContractResponse = await testIntegrationContract?.callRetrieve();
+  const StoreData = async () => {
+    /**
+     * Note
+     * For perticuar input value using perffix in "encode"
+     */
+    const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
+    const privateKey = '';
+    const wallet = new ethers.Wallet(privateKey, provider);
+    const contract = new ethers.Contract(
+      nativeIntegrationResponse?.contractAddress,
+      nativeIntegrationResponse?.abis,
+      provider,
+    );
+    try {
+      const contractWithSigner = contract.connect(wallet);
+      const nativeIntegrationContractStore = await contractWithSigner?.store(parseInt(storeValue, 0));
+      nativeIntegrationContractStore &&
+        logBreadcrumb('nativeIntegrationContractStore', JSON.stringify(nativeIntegrationContractStore));
+    } catch (e) {
+      logBreadcrumb('Store error!', e);
+    }
+  };
+
+  const retrieveData = async (res: EtherspotContractFetchItem) => {
+    /**
+     * Note
+     * For perticuar get value using perffix in "call"
+     */
+    const fnNm = `call${res?.name[0]?.toUpperCase()}${res?.name?.substring(1)}`;
+    try {
+      const nativeIntegrationContractResponse = await integrationContract[fnNm]();
       nativeIntegrationContractResponse &&
         logBreadcrumb('nativeIntegrationContractResponse', nativeIntegrationContractResponse?.toNumber());
     } catch (e) {
-      errorLog('ERROR!', e);
+      logBreadcrumb('ERROR!', e);
     }
   };
 
   return (
     <Container>
+      {isFetched && <NormalText style={{ color: 'black' }}>Fetched!</NormalText>}
       <ConnectButton style={{ marginBottom: 100 }} onPress={FetchData}>
-        <NormalText>Fetch data from wallet/Connect wallet</NormalText>
+        <NormalText>Fetch Contract</NormalText>
       </ConnectButton>
-      <NormalTextInput value={storeValue} onChangeText={setStoreValue} />
-      <ConnectButton onPress={StoreData}>
-        <NormalText>Store</NormalText>
-      </ConnectButton>
-      <ConnectButton onPress={retrieveData}>
-        <NormalText>Retrive</NormalText>
-      </ConnectButton>
+      {inputFuctions?.map((fnRes) => (
+        <InputContainer>
+          <NormalTextInput value={storeValue} onChangeText={setStoreValue} />
+          <ConnectButton onPress={StoreData}>
+            <NormalText>{fnRes.name?.toUpperCase()}</NormalText>
+          </ConnectButton>
+        </InputContainer>
+      ))}
+
+      {viewFunctions?.map((fnRes) => (
+        <ConnectButton onPress={() => retrieveData(fnRes)}>
+          <NormalText>{fnRes.name?.toUpperCase()}</NormalText>
+        </ConnectButton>
+      ))}
     </Container>
   );
 };
@@ -87,7 +127,11 @@ export default StoreValueContract;
 const Container = styled(View)`
   flex: 1;
   background-color: white;
-  justify-content: center;
+  align-items: center;
+  padding-top: 100px;
+`;
+
+const InputContainer = styled(View)`
   align-items: center;
 `;
 
