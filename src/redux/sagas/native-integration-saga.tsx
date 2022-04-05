@@ -1,4 +1,4 @@
-import { takeEvery, call, put, select } from 'redux-saga/effects';
+import { takeEvery, call, put } from 'redux-saga/effects';
 
 // Redux
 import { ReduxNativeIntegrationType as t } from 'redux/redux-types/native-integration-type';
@@ -7,12 +7,9 @@ import { IReduxNativeIntegrationAbisFetched } from 'redux/reducers/native-integr
 
 // Services
 import * as Prismic from 'services/prismic';
-import etherspotService from 'services/etherspot';
 
 // Utils
-import { logBreadcrumb, reportErrorLog } from 'utils/common';
-import { CHAIN } from 'constants/chainConstants';
-import { buildERC20ApproveTransactionData, encodeContractMethod } from 'services/assets';
+import { reportErrorLog } from 'utils/common';
 
 const TYPE_NATIVE_INTEGRATION = 'native-integration';
 
@@ -45,19 +42,6 @@ const fetchNativeIntegrationAbis = async (): Promise<IReduxNativeIntegrationAbis
   contractAddress = prismicData?.results?.[0].data?.contract_address ?? null;
   abis = JSON.parse(prismicData?.results?.[0].data?.abi) ?? null;
   actions = prismicData?.results?.[0].data?.actions ?? null;
-
-  console.log(TAG, chainId);
-  console.log(TAG, contractAddress);
-  console.log(TAG, 'abis', abis);
-  console.log(TAG, 'actions', actions);
-
-  // let data = await encodeContractMethod(remixTestAbi, 'retrieve');
-  // console.log('NativeIntegration', data);
-
-  // let chain = CHAIN.POLYGON;
-  // await etherspotService.nativeIntegrationTest(chain, addresses.RemixTest, 0, data).catch((error) => {
-  //   reportErrorLog('Sadge', { error });
-  // });
 
   return {
     type: t.NATIVE_INTEGRATION_ABIS_FETCHED,

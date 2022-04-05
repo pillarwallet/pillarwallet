@@ -19,14 +19,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components/native';
 import { TouchableOpacity, View, Text, TextInput } from 'react-native';
-import { getEnv } from 'configs/envConfig';
-import { ethers } from 'ethers';
 
 // utils
-import { getEthereumProvider, logBreadcrumb } from 'utils/common';
+import { logBreadcrumb } from 'utils/common';
 import { chainFromChainId } from 'utils/chains';
 
 // Selectors
@@ -46,11 +44,16 @@ const StoreValueContract = () => {
   const [storeValue, setStoreValue] = useState('');
   const [isFetched, setIsFetched] = useState(false);
 
+  const chain = chainFromChainId[nativeIntegrationResponse?.chainId];
+
   const viewFunctions = nativeIntegrationResponse?.abis?.filter((fnSpec) => fnSpec.stateMutability === 'view');
   const inputFuctions = nativeIntegrationResponse?.abis?.filter((fnSpec) => fnSpec.stateMutability !== 'view');
 
+  useEffect(() => {
+    FetchData();
+  });
+
   const FetchData = async () => {
-    const chain = chainFromChainId[nativeIntegrationResponse?.chainId];
     if (!chain) null;
     integrationContract = etherspotService.getContract(
       chain,
@@ -60,26 +63,19 @@ const StoreValueContract = () => {
     if (integrationContract) setIsFetched(true);
   };
 
-  const StoreData = async () => {
+  const storeData = async (res: EtherspotContractFetchItem) => {
     /**
      * Note
      * For perticuar input value using perffix in "encode"
      */
-    const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-    const privateKey = '';
-    const wallet = new ethers.Wallet(privateKey, provider);
-    const contract = new ethers.Contract(
-      nativeIntegrationResponse?.contractAddress,
-      nativeIntegrationResponse?.abis,
-      provider,
-    );
+    const fnName = `encode${res?.name[0]?.toUpperCase()}${res?.name?.substring(1)}`;
     try {
-      const contractWithSigner = contract.connect(wallet);
-      const nativeIntegrationContractStore = await contractWithSigner?.store(parseInt(storeValue, 0));
-      nativeIntegrationContractStore &&
-        logBreadcrumb('nativeIntegrationContractStore', JSON.stringify(nativeIntegrationContractStore));
+      const nativeIntegrationContractResponse = await integrationContract[fnName](storeValue);
+      await etherspotService.setTransactionsBatchAndSend([nativeIntegrationContractResponse], chain);
+      nativeIntegrationContractResponse &&
+        logBreadcrumb('nativeIntegrationContractResponse', JSON.stringify(nativeIntegrationContractResponse));
     } catch (e) {
-      logBreadcrumb('Store error!', e);
+      logBreadcrumb('ERROR!', e);
     }
   };
 
@@ -88,11 +84,14 @@ const StoreValueContract = () => {
      * Note
      * For perticuar get value using perffix in "call"
      */
-    const fnNm = `call${res?.name[0]?.toUpperCase()}${res?.name?.substring(1)}`;
+    const fnName = `call${res?.name[0]?.toUpperCase()}${res?.name?.substring(1)}`;
     try {
-      const nativeIntegrationContractResponse = await integrationContract[fnNm]();
+      const nativeIntegrationContractResponse = await integrationContract[fnName]();
       nativeIntegrationContractResponse &&
-        logBreadcrumb('nativeIntegrationContractResponse', nativeIntegrationContractResponse?.toNumber());
+        logBreadcrumb(
+          'nativeIntegrationContractResponse',
+          JSON.stringify(nativeIntegrationContractResponse.toNumber()),
+        );
     } catch (e) {
       logBreadcrumb('ERROR!', e);
     }
@@ -107,7 +106,7 @@ const StoreValueContract = () => {
       {inputFuctions?.map((fnRes) => (
         <InputContainer>
           <NormalTextInput value={storeValue} onChangeText={setStoreValue} />
-          <ConnectButton onPress={StoreData}>
+          <ConnectButton onPress={() => storeData(fnRes)}>
             <NormalText>{fnRes.name?.toUpperCase()}</NormalText>
           </ConnectButton>
         </InputContainer>
