@@ -40,7 +40,7 @@ import { mapChainToChainId } from 'utils/chains';
 import { type Chain } from 'models/Chain';
 
 // Local
-import { useConnectedAppItems } from '../selectors';
+import { useConnectedAppItems } from '../../screens/WalletConnect/Home/selectors';
 
 type itemType = {|
   key: ?Chain,
@@ -48,7 +48,7 @@ type itemType = {|
 |};
 
 type Props = {|
-  items: ?itemType[],
+  items: ?(itemType[]),
   activeItem: ?itemType,
   updateActiveChain: (?Chain) => void,
   updateActiveItem: (itemType) => void,
@@ -92,12 +92,8 @@ function SwitchChainModal({ items, activeItem, updateActiveChain, updateActiveIt
       <Container key={`${key ?? 'all'}`} onPress={() => handleChains(chain)}>
         <ContainerView isSelected={isSelected}>
           <RowContainer>
-            {isSelected && (
-              <RadioIcon name="checked-radio" />
-            )}
-            {!isSelected && (
-              <RadioIcon name="unchecked-radio" />
-            )}
+            {isSelected && <RadioIcon name="checked-radio" />}
+            {!isSelected && <RadioIcon name="unchecked-radio" />}
             <ChainViewIcon size={24} style={IconContainer} name={key ?? 'all-networks'} />
             <Title>{title}</Title>
             <Value>{formattedBalance}</Value>

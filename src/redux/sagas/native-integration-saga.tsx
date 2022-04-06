@@ -29,28 +29,12 @@ function* fetchNativeIntegrationAbisSaga(actions: IReduxAction) {
 }
 
 const fetchNativeIntegrationAbis = async (): Promise<IReduxNativeIntegrationAbisFetched> => {
-  console.log(TAG, 'fetching abis...');
-
-  let chainId: number | null = null;
-  let contractAddress: string | null = null;
-  let abis: any = null;
-  let actions: any = null;
-
   const prismicData = await Prismic.queryDocumentsByType(TYPE_NATIVE_INTEGRATION);
 
-  chainId = prismicData?.results?.[0].data?.chain_id ?? null;
-  contractAddress = prismicData?.results?.[0].data?.contract_address ?? null;
-  abis = JSON.parse(prismicData?.results?.[0].data?.abi) ?? null;
-  actions = prismicData?.results?.[0].data?.actions ?? null;
-
+  console.log('prismicData', prismicData);
   return {
     type: t.NATIVE_INTEGRATION_ABIS_FETCHED,
-    payload: {
-      chainId: chainId,
-      contractAddress: contractAddress,
-      abis: abis,
-      actions: actions,
-    },
+    payload: prismicData?.results,
   };
 };
 

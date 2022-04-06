@@ -25,7 +25,7 @@ import { useNavigation } from 'react-navigation-hooks';
 import { useInteractionManager } from '@react-native-community/hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
-import { useTranslation, useTranslationWithPrefix } from 'translations/translate';
+import { useTranslationWithPrefix } from 'translations/translate';
 import { chunk } from 'lodash';
 
 import { WALLETCONNECT_BROWSER } from 'constants/navigationConstants';
@@ -37,9 +37,8 @@ import Text from 'components/core/Text';
 import FloatingButtons from 'components/FloatingButtons';
 import Spinner from 'components/Spinner';
 import WalletConnectRequests from 'screens/WalletConnect/Requests';
-import Modal from 'components/Modal';
-import Icon from 'components/core/Icon';
 import Banner from 'components/Banner/Banner';
+import DropdownChainView from 'components/ChainView/DropdownChainView';
 
 // Selectors
 import { useActiveAccount } from 'selectors';
@@ -55,8 +54,7 @@ import { navigate } from 'services/navigation';
 
 // Utils
 import { mapNotNil } from 'utils/array';
-import { appFont, fontStyles, spacing, borderRadiusSizes } from 'utils/variables';
-import { useChainsConfig } from 'utils/uiConfig';
+import { appFont, fontStyles, spacing } from 'utils/variables';
 import { showServiceLaunchErrorToast } from 'utils/inAppBrowser';
 import { isArchanovaAccount, isKeyBasedAccount } from 'utils/accounts';
 import { getActiveScreenName } from 'utils/navigation';
@@ -71,7 +69,6 @@ import WalletConnectListItem from './components/WalletConnectListItem';
 import ConnectFloatingButton from './components/ConnectFloatingButton';
 import ConnectedAppsFloatingButton from './components/ConnectedAppsFloatingButton';
 import DeployBanner from './components/DeployBanner';
-import SwitchChainModal from './components/SwitchChainModal';
 
 function WalletConnectHome() {
   const { t } = useTranslationWithPrefix('walletConnect.home');
@@ -80,9 +77,7 @@ function WalletConnectHome() {
   const isReady = useInteractionManager(); // Used to prevent jank on screen entry animation
 
   const activeAccount = useActiveAccount();
-  const tabItems = useTabItems();
   const [activeChain, setActiveChain] = React.useState<?Chain>(null);
-  const [activeItem, setActiveItem] = React.useState(tabItems[0]);
   const screenName = getActiveScreenName(navigation);
 
   const { isDeployedOnChain } = useDeploymentStatus();
@@ -92,46 +87,11 @@ function WalletConnectHome() {
 
   const showDeployBanner = !isKeyBasedAccount(activeAccount) && activeChain != null && !isDeployedOnChain[activeChain];
 
-  const updateActiveChain = (chain?) => {
-    setActiveChain(chain ?? null);
-  };
-
-  const updateActiveItem = (item?) => {
-    if (item) setActiveItem(item);
-  };
-
-  const closeModal = () => Modal.closeAll();
-
-  const openSwitchChainModal = () => {
-    Modal.open(() => {
-      return (
-        <SwitchChainModal
-          items={tabItems}
-          activeItem={activeItem}
-          updateActiveChain={updateActiveChain}
-          updateActiveItem={updateActiveItem}
-          closeModal={closeModal}
-        />
-      );
-    });
-  };
-
   const renderListHeader = () => {
-    const { key, title } = activeItem;
     return (
       <ListHeader>
         <WalletConnectRequests />
-        {!isArchanovaAccount(activeAccount) && (
-          <ContainerView isSelected>
-            <RowContainer>
-              <ChainViewIcon size={24} style={IconContainer} name={key ?? 'all-networks'} />
-              <Title>{title}</Title>
-              <TouchableContainer onPress={() => openSwitchChainModal()}>
-                <ChainViewIcon name="chevron-down" />
-              </TouchableContainer>
-            </RowContainer>
-          </ContainerView>
-        )}
+        {!isArchanovaAccount(activeAccount) && <DropdownChainView selectedChain={setActiveChain} />}
 
         {showDeployBanner && activeChain != null && <DeployBanner chain={activeChain} style={styles.banner} />}
         <Banner screenName={screenName} bottomPosition={false} />
@@ -211,31 +171,15 @@ type Section = {
   title: string,
 };
 
-type itemType = {|
-  key: ?Chain,
-  title: ?string,
-|};
-
 const useColumnDimensions = () => {
   const { width } = useWindowDimensions();
-  const availableWidth = width - (2 * spacing.layoutSides);
+  // eslint-disable-next-line no-mixed-operators
+  const availableWidth = width - 2 * spacing.layoutSides;
   const minColumnWidth = 80;
 
   const numberOfColumns = Math.floor(availableWidth / minColumnWidth);
   const columnWidth = Math.floor(availableWidth / numberOfColumns);
   return { numberOfColumns, columnWidth };
-};
-
-const useTabItems = (): itemType[] => {
-  const { t } = useTranslation();
-  const chains = useSupportedChains();
-  const config = useChainsConfig();
-
-  const chainTabs = chains.map((chain) => ({
-    key: chain,
-    title: config[chain].titleShort,
-  }));
-  return [{ key: null, title: t('label.all') }, ...chainTabs];
 };
 
 type SectionData = {|
@@ -309,42 +253,4 @@ const ListRow = styled.View`
   flex-direction: row;
   align-items: stretch;
   padding: 0 ${spacing.layoutSides}px;
-`;
-
-const ContainerView = styled.View`
-  background-color: ${({ theme, isSelected }) => (isSelected ? theme.colors.basic080 : theme.colors.basic050)};
-  margin: 0 ${spacing.layoutSides}px;
-  padding: ${spacing.large}px;
-  border-radius: ${borderRadiusSizes.medium}px;
-`;
-
-const RowContainer = styled.View`
-  align-items: center;
-  justify-content: center;
-  flex-direction: row;
-  padding: ${spacing.small}px;
-`;
-
-const IconContainer = styled.View`
-  align-items: center;
-  justify-content: center;
-`;
-
-const Title = styled(Text)`
-  flex: 1;
-  flex-direction: row;
-  ${fontStyles.medium};
-  padding: 0 ${spacing.medium}px 0 ${spacing.medium}px;
-`;
-
-const ChainViewIcon = styled(Icon)`
-  height: 24px;
-  width: 24px;
-  background-color: ${({ theme }) => theme.colors.basic050};
-  border-radius: ${borderRadiusSizes.medium}px;
-`;
-
-const TouchableContainer = styled.TouchableOpacity`
-  align-items: center;
-  justify-content: center;
 `;

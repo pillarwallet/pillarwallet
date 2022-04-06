@@ -111,6 +111,7 @@ import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
 import WalletConnectBrowser from 'screens/WalletConnect/WalletConnectBrowser';
 import RegisterENSScreen from 'screens/RegisterENS';
 import StoreValueContractScreen from 'screens/Contract/StoreValueContract';
+import NIServices from 'screens/NativeIntegration/NIServices';
 
 // components
 import Toast from 'components/Toast';
@@ -239,6 +240,8 @@ import {
   REGISTER_ENS,
   STORE_VALUE_CONTRACT,
   CONTRACT_FLOW,
+  NI_SERVICES,
+  NATIVE_INTEGRATION_FLOW,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -331,6 +334,14 @@ const walletConnectFlow = createStackNavigator(
     [WALLETCONNECT]: WalletConnectHomeScreen,
     [WALLETCONNECT_CONNECTED_APPS]: WalletConnectConnectedAppsScreen,
     [WALLETCONNECT_BROWSER]: WalletConnectBrowser,
+  },
+  StackNavigatorConfig,
+);
+
+// NATIVE INTEGRATION FLOW
+const nativeIntegrationFlow = createStackNavigator(
+  {
+    [NI_SERVICES]: NIServices,
   },
   StackNavigatorConfig,
 );
@@ -600,6 +611,7 @@ const AppFlowNavigation = createStackNavigator(
     [LEGAL_SCREEN]: LegalScreen,
     [IMPORT_FLOW_FROM_SETTINGS]: ImportFlowFromSettings,
     [CONTRACT_FLOW]: ContractFlow,
+    [NATIVE_INTEGRATION_FLOW]: nativeIntegrationFlow,
   },
   modalTransition,
 );

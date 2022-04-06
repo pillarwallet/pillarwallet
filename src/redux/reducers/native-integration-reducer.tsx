@@ -4,13 +4,13 @@ import { ProcessState } from 'models/ProcessState';
 import { ReduxNativeIntegrationType as t } from 'redux/redux-types/native-integration-type';
 
 export interface IReduxNativeIntegrationState {
-  abis?: any;
+  data?: any;
   fetchState?: ProcessState;
   error?: string | null;
 }
 
 const initialState: IReduxNativeIntegrationState = {
-  abis: null,
+  data: null,
   fetchState: ProcessState.READY,
   error: null,
 };
@@ -20,12 +20,7 @@ const fetchNativeIntegrationAbis = (state: IReduxNativeIntegrationState, actions
 
 export interface IReduxNativeIntegrationAbisFetched extends IReduxAction {
   type: t.NATIVE_INTEGRATION_ABIS_FETCHED;
-  payload: {
-    chainId: number | null;
-    contractAddress: string | null;
-    abis: any;
-    actions: any;
-  };
+  payload: Object;
 }
 
 const nativeIntegrationAbisFetched = (
@@ -34,7 +29,7 @@ const nativeIntegrationAbisFetched = (
 ) =>
   updateObject(state, {
     fetchState: ProcessState.HANDLED,
-    abis: actions.payload,
+    data: actions.payload,
   });
 
 const fetchNativeIntegrationAbisError = (state: IReduxNativeIntegrationState, actions: IReduxAction) =>
@@ -47,5 +42,3 @@ const nativeIntegrationReducer = createReducer(initialState, {
 });
 
 export default nativeIntegrationReducer;
-
-const TAG = 'ReduxNativeIntegrationReducer';

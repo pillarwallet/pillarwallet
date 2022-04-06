@@ -41,7 +41,7 @@ import Modal from 'components/Modal';
 import Banner from 'components/Banner/Banner';
 
 // Constants
-import { MENU, HOME_HISTORY, REGISTER_ENS } from 'constants/navigationConstants';
+import { MENU, HOME_HISTORY, REGISTER_ENS, NATIVE_INTEGRATION_FLOW } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
@@ -71,6 +71,7 @@ import AssetsSection from './AssetsSection';
 import FloatingActions from './FloatingActions';
 import { useAccountCollectibleCounts } from './utils';
 import BiometricModal from '../../components/BiometricModal/BiometricModal';
+import AppsButton from './AppsButton';
 
 function Home() {
   const navigation = useNavigation();
@@ -190,7 +191,15 @@ function Home() {
           accountTotalBalances={accountTotalBalances}
           accountCollectibleCounts={accountCollectibleCounts}
         />
+
         <Banner screenName={screenName} bottomPosition />
+
+        <AppsButton
+          title={t('home.apps.title')}
+          iconName="apps"
+          isShowLabel
+          onPress={() => navigation.navigate(NATIVE_INTEGRATION_FLOW)}
+        />
       </Content>
 
       <FloatingActions />
