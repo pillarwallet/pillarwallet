@@ -21,18 +21,16 @@
 import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
 import { useTranslation } from 'translations/translate';
-import styled from 'styled-components/native';
 
 // Utils
 import { isArchanovaAccount } from 'utils/accounts';
-import { spacing, borderRadiusSizes, appFont } from 'utils/variables';
 import { chainFromChainId } from 'utils/chains';
 
 // Components
 import { Container } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import DropdownChainView from 'components/ChainView/DropdownChainView';
-import Icon from 'components/core/Icon';
+import Modal from 'components/Modal';
 
 // Selectors
 import { useRootSelector, useActiveAccount } from 'selectors';
@@ -41,6 +39,10 @@ import { nativeIntegrationSelector } from 'redux/selectors/native-integration-se
 // Types
 import { Chain } from 'models/Chain';
 import ContractItemContent from './components/ContractItemContent';
+import ContractActionsModal from './components/ContractActionsModal';
+
+// Constants
+import { NI_VIEW_SERVICE, NI_INPUT_SERVICE } from 'constants/navigationConstants';
 
 function NIServices() {
   const nativeIntegrationResponse = useRootSelector(nativeIntegrationSelector);
@@ -61,6 +63,22 @@ function NIServices() {
     }
   };
 
+  const openActionsModal = (item: any) => {
+    Modal.open(() => {
+      return <ContractActionsModal items={item} onSelectItem={(val) => onSelectItem(item, val)} />;
+    });
+  };
+
+  const onSelectItem = (item, val) => {
+    const abi = item?.data?.abi;
+    const type = JSON.parse(abi)?.find((fnRes) => fnRes.name === val?.['action-contract-call'])?.stateMutability;
+
+    if (type === 'view' || type === 'pure')
+      navigation.navigate(NI_VIEW_SERVICE, { action: val, contractData: item?.data });
+    if (type === 'nonpayable' || type === 'payable')
+      navigation.navigate(NI_INPUT_SERVICE, { action: val, contractData: item?.data });
+  };
+
   return (
     <Container>
       <HeaderBlock
@@ -69,51 +87,11 @@ function NIServices() {
         navigation={navigation}
       />
       {!isArchanovaAccount(activeAccount) && <DropdownChainView selectedChain={updateChain} />}
-      {contractList?.map((fnRes) => (
-        <ContractItemContent item={fnRes} />
+      {contractList?.map((res: Object) => (
+        <ContractItemContent item={res} onPress={() => openActionsModal(res)} />
       ))}
     </Container>
   );
 }
 
 export default NIServices;
-
-const styles = {
-  titleStyle: {
-    fontFamily: appFont.medium,
-  },
-};
-
-const RowContainer = styled.View`
-  align-items: center;
-  justify-content: center;
-  flex-direction: row;
-`;
-
-const RadioIcon = styled(Icon)`
-  height: 24px;
-  width: 24px;
-  background-color: ${({ theme }) => theme.colors.basic050};
-  border-radius: ${borderRadiusSizes.medium}px;
-  padding-right: ${spacing.medium}px;
-  margin-right: ${spacing.medium}px;
-`;
-
-const ContentView = styled.View`
-  flex: 1;
-  padding: 0 ${spacing.medium}px 0 ${spacing.medium}px;
-`;
-
-/**
- *   <RowContainer>
-        {isSideChains && <RadioIcon name="checked-radio" />}
-        {!isSideChains && <RadioIcon name="unchecked-radio" />}
-        <ContentView>
-          <Text variant="big" style={isSideChains && styles.titleStyle}>
-            {'NI example'}
-          </Text>
-          <Text color={colors.tertiaryText}>{'store and retrieve'}</Text>
-        </ContentView>
-        <Text>{"t('options.recommended')"}</Text>
-      </RowContainer>
- */

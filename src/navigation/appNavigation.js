@@ -112,6 +112,8 @@ import WalletConnectBrowser from 'screens/WalletConnect/WalletConnectBrowser';
 import RegisterENSScreen from 'screens/RegisterENS';
 import StoreValueContractScreen from 'screens/Contract/StoreValueContract';
 import NIServices from 'screens/NativeIntegration/NIServices';
+import NIInputService from 'screens/NativeIntegration/NIInputService';
+import NIViewService from 'screens/NativeIntegration/NIViewService';
 
 // components
 import Toast from 'components/Toast';
@@ -241,6 +243,8 @@ import {
   STORE_VALUE_CONTRACT,
   CONTRACT_FLOW,
   NI_SERVICES,
+  NI_VIEW_SERVICE,
+  NI_INPUT_SERVICE,
   NATIVE_INTEGRATION_FLOW,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
@@ -342,6 +346,8 @@ const walletConnectFlow = createStackNavigator(
 const nativeIntegrationFlow = createStackNavigator(
   {
     [NI_SERVICES]: NIServices,
+    [NI_INPUT_SERVICE]: NIInputService,
+    [NI_VIEW_SERVICE]: NIViewService,
   },
   StackNavigatorConfig,
 );
