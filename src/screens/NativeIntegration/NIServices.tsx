@@ -21,6 +21,8 @@
 import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
 import { useTranslation } from 'translations/translate';
+import { useDispatch } from 'react-redux';
+import styled from 'styled-components/native';
 
 // Utils
 import { isArchanovaAccount } from 'utils/accounts';
@@ -31,6 +33,7 @@ import { Container } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import DropdownChainView from 'components/ChainView/DropdownChainView';
 import Modal from 'components/Modal';
+import Spinner from 'components/Spinner';
 
 // Selectors
 import { useRootSelector, useActiveAccount } from 'selectors';
@@ -44,16 +47,24 @@ import ContractActionsModal from './components/ContractActionsModal';
 // Constants
 import { NI_VIEW_SERVICE, NI_INPUT_SERVICE } from 'constants/navigationConstants';
 
+// Redux
+import { fetchNativeIntegrationAbis } from 'src/redux/actions/native-integration-actions';
+
 function NIServices() {
-  const nativeIntegrationResponse = useRootSelector(nativeIntegrationSelector);
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   const activeAccount = useActiveAccount();
+  const nativeIntegrationResponse = useRootSelector(nativeIntegrationSelector);
   const [contractList, setContractList]: any[] = React.useState([]);
 
   React.useEffect(() => {
-    updateChain(null);
+    dispatch(fetchNativeIntegrationAbis());
   }, []);
+
+  React.useEffect(() => {
+    updateChain(null);
+  }, [nativeIntegrationResponse]);
 
   const updateChain = (chain: Chain | null) => {
     if (chain === null) setContractList(nativeIntegrationResponse);
@@ -87,11 +98,17 @@ function NIServices() {
         navigation={navigation}
       />
       {!isArchanovaAccount(activeAccount) && <DropdownChainView selectedChain={updateChain} />}
-      {contractList?.map((res: Object) => (
-        <ContractItemContent item={res} onPress={() => openActionsModal(res)} />
-      ))}
+      {contractList ? (
+        contractList?.map((res: Object) => <ContractItemContent item={res} onPress={() => openActionsModal(res)} />)
+      ) : (
+        <LoadingSpinner />
+      )}
     </Container>
   );
 }
 
 export default NIServices;
+
+const LoadingSpinner = styled(Spinner)`
+  margin-top: 50px;
+`;

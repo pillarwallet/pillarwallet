@@ -71,6 +71,7 @@ const ImageIcon = styled.Image`
   width: 48;
   height: 48;
   border-radius: 24px;
+  background-color: lightgrey;
 `;
 
 const ContentView = styled.View`

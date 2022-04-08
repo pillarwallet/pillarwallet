@@ -23,27 +23,32 @@ import { useNavigation } from 'react-navigation-hooks';
 import { useTranslation } from 'translations/translate';
 import { StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
+import { debounce } from 'lodash';
 
 // Utils
 import { chainFromChainId } from 'utils/chains';
 import { calculateDeploymentFee } from 'utils/deploymentCost';
-import { logBreadcrumb } from 'utils/common';
+import { logBreadcrumb, getCurrencySymbol } from 'utils/common';
+import { getTxFeeInFiat, isHighGasFee } from 'utils/transactions';
 
 // Components
 import { Container } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import BigNumberInput from 'components/inputs/BigNumberInput';
 import SwipeButton from 'components/SwipeButton/SwipeButton';
+import Toast from 'components/Toast';
 
 // Services
 import etherspotService from 'services/etherspot';
-import { appFont, fontSizes, fontStyles, spacing } from 'utils/variables';
+import { appFont, fontSizes, fontStyles } from 'utils/variables';
 
 // Selectors
-import { useChainGasInfo, useFiatCurrency, useChainRates } from 'selectors/selectors';
+import { useRootSelector, useFiatCurrency, useChainRates } from 'selectors/selectors';
+import { gasThresholdsSelector } from 'redux/selectors/gas-threshold-selector';
 
 // Actions
 import { fetchGasInfoAction } from 'actions/historyActions';
+import { estimateTransactionAction } from 'actions/transactionEstimateActions';
 import { useDispatch } from 'react-redux';
 
 type inputType = {
@@ -59,6 +64,8 @@ type inputType = {
     | null;
 };
 
+let integrationContract: any;
+let contractRes: any;
 function NIInputService() {
   const { t } = useTranslation();
   const navigation = useNavigation();
@@ -69,35 +76,55 @@ function NIInputService() {
   const description = action?.['action-description'][0]?.text;
   const actionName = action?.['action-contract-call'];
   const chain = chainFromChainId[contractData?.chain_id];
-  const gasInfo = useChainGasInfo(chain);
   const fiatCurrency = useFiatCurrency();
   const chainRates = useChainRates(chain);
-
+  const currencySymbol = getCurrencySymbol(fiatCurrency);
+  const feeInfo = useRootSelector((root) => root.transactionEstimate.feeInfo);
   const [value, setValue] = React.useState();
+
+  // const highFee = isHighGasFee(chain, feeInfo?.fee, feeInfo?.gasToken, chainRates, fiatCurrency, gasThresholds);
 
   React.useEffect(() => {
     dispatch(fetchGasInfoAction(chain));
+    integrationContract = etherspotService.getContract(chain, contractData?.abi, contractData?.contract_address);
   }, [dispatch]);
 
-  const deploymentFee = React.useMemo(() => {
-    if (!gasInfo?.gasPrice?.fast) return null;
-    return calculateDeploymentFee(chain, chainRates, fiatCurrency, gasInfo);
-  }, [gasInfo, chainRates, chain, fiatCurrency]);
-
-  const updateData = async () => {
-    if (!chain) null;
-    const integrationContract = etherspotService.getContract(chain, contractData?.abi, contractData?.contract_address);
-
+  const updateTxFee = async () => {
+    if (!value) return;
     const fnName = `encode${actionName[0]?.toUpperCase()}${actionName?.substring(1)}`;
     try {
-      const contractInputRes = await integrationContract[fnName](JSON.parse(value));
-      await etherspotService.setTransactionsBatchAndSend([contractInputRes], chain);
-      // navigation.navigate()
-      contractInputRes && logBreadcrumb('nativeIntegrationContractResponse', JSON.stringify(contractInputRes));
+      contractRes = await integrationContract[fnName](JSON.parse(value));
+      dispatch(estimateTransactionAction({ ...contractRes, value: 0 }, chain));
+      contractRes && logBreadcrumb('nativeIntegrationContractResponse', JSON.stringify(contractRes));
     } catch (e) {
+      contractRes = undefined;
       logBreadcrumb('contractInput error!', e);
+      Toast.show({
+        message: JSON.stringify(e),
+        emoji: 'warning',
+      });
     }
   };
+  const updateTxFeeDebounced = React.useCallback(debounce(updateTxFee, 100), [value]);
+
+  React.useEffect(() => {
+    updateTxFeeDebounced();
+    return updateTxFeeDebounced.cancel;
+  }, [updateTxFeeDebounced]);
+
+  const updateData = async () => {
+    if (chain && contractRes) {
+      try {
+        const res = await etherspotService.setTransactionsBatchAndSend([contractRes], chain);
+        console.log('resss', res);
+      } catch (error) {
+        logBreadcrumb('contract update error!', error);
+      }
+    }
+  };
+
+  const feeInFiat = getTxFeeInFiat(chain, feeInfo?.fee, feeInfo?.gasToken, chainRates, fiatCurrency);
+  const feeInFiatDisplayValue = `${currencySymbol}${feeInFiat.toFixed(5)}`;
 
   return (
     <Container>
@@ -111,12 +138,12 @@ function NIInputService() {
           editable={true}
           style={[styles.input]}
         />
-        <SwipeButton
-          confirmTitle={t('button.swipeTo') + ' ' + actionName}
-          disabled={value ? false : true}
-          onPress={updateData}
-        />
-        <FeeText>{t('Fee') + ' ' + deploymentFee?.fiatValue}</FeeText>
+        {value && (
+          <FooterContent>
+            <FeeText>{t('Fee') + ' ' + feeInFiatDisplayValue}</FeeText>
+            <SwipeButton confirmTitle={t('button.swipeTo') + ' ' + actionName} onPress={updateData} />
+          </FooterContent>
+        )}
       </MainContent>
     </Container>
   );
@@ -134,6 +161,8 @@ const MainContent = styled.View`
   padding: 20px;
 `;
 
+const FooterContent = styled.View``;
+
 const Description = styled.Text`
   ${fontStyles.regular};
   font-family: ${appFont.regular};
@@ -144,5 +173,5 @@ const FeeText = styled.Text`
   text-align: center;
   color: ${({ theme }) => theme.colors.hazardIconColor};
   font-size: ${fontSizes.regular}px;
-  margin-top: 20px;
+  margin: 20px;
 `;
