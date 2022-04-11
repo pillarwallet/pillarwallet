@@ -84,9 +84,8 @@ function NIServices() {
     const abi = item?.data?.abi;
     const type = JSON.parse(abi)?.find((fnRes) => fnRes.name === val?.['action-contract-call'])?.stateMutability;
 
-    if (type === 'view' || type === 'pure')
-      navigation.navigate(NI_VIEW_SERVICE, { action: val, contractData: item?.data });
-    if (type === 'nonpayable' || type === 'payable')
+    if (type === 'view') navigation.navigate(NI_VIEW_SERVICE, { action: val, contractData: item?.data });
+    if (type === 'nonpayable' || type === 'payable' || type === 'pure')
       navigation.navigate(NI_INPUT_SERVICE, { action: val, contractData: item?.data });
   };
 

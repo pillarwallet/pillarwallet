@@ -21,7 +21,7 @@
 import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
 import { useTranslation } from 'translations/translate';
-import { StyleSheet } from 'react-native';
+import { Alert, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 import { debounce } from 'lodash';
 
@@ -37,10 +37,12 @@ import HeaderBlock from 'components/HeaderBlock';
 import BigNumberInput from 'components/inputs/BigNumberInput';
 import SwipeButton from 'components/SwipeButton/SwipeButton';
 import Toast from 'components/Toast';
+import { ScrollWrapper, Wrapper } from 'components/legacy/Layout';
+import Text from 'components/core/Text';
 
 // Services
 import etherspotService from 'services/etherspot';
-import { appFont, fontSizes, fontStyles } from 'utils/variables';
+import { appFont, fontSizes, fontStyles, spacing } from 'utils/variables';
 
 // Selectors
 import { useRootSelector, useFiatCurrency, useChainRates } from 'selectors/selectors';
@@ -50,6 +52,7 @@ import { gasThresholdsSelector } from 'redux/selectors/gas-threshold-selector';
 import { fetchGasInfoAction } from 'actions/historyActions';
 import { estimateTransactionAction } from 'actions/transactionEstimateActions';
 import { useDispatch } from 'react-redux';
+import NIInputField from './components/NIInputField';
 
 type inputType = {
   parameterType:
@@ -80,6 +83,9 @@ function NIInputService() {
   const chainRates = useChainRates(chain);
   const currencySymbol = getCurrencySymbol(fiatCurrency);
   const feeInfo = useRootSelector((root) => root.transactionEstimate.feeInfo);
+  const contractFunction = JSON.parse(contractData?.abi)?.find((fnRes) => fnRes.name === actionName);
+  const blueprint = action?.blueprint;
+  const sequence = blueprint ? JSON.parse(blueprint).sequence : null;
   const [value, setValue] = React.useState();
 
   // const highFee = isHighGasFee(chain, feeInfo?.fee, feeInfo?.gasToken, chainRates, fiatCurrency, gasThresholds);
@@ -89,11 +95,14 @@ function NIInputService() {
     integrationContract = etherspotService.getContract(chain, contractData?.abi, contractData?.contract_address);
   }, [dispatch]);
 
+  console.log('integrationContract action', integrationContract);
+
   const updateTxFee = async () => {
     if (!value) return;
     const fnName = `encode${actionName[0]?.toUpperCase()}${actionName?.substring(1)}`;
     try {
       contractRes = await integrationContract[fnName](JSON.parse(value));
+      console.log('contractRes', contractRes);
       dispatch(estimateTransactionAction({ ...contractRes, value: 0 }, chain));
       contractRes && logBreadcrumb('nativeIntegrationContractResponse', JSON.stringify(contractRes));
     } catch (e) {
@@ -128,23 +137,19 @@ function NIInputService() {
 
   return (
     <Container>
-      <HeaderBlock centerItems={[{ title: title ? title : '' }]} navigation={navigation} />
-      <MainContent>
-        <Description>{description}</Description>
-        <BigNumberInput
-          value={value}
-          returnType="done"
-          onValueChange={setValue}
-          editable={true}
-          style={[styles.input]}
-        />
-        {value && (
+      <ScrollWrapper>
+        <HeaderBlock centerItems={[{ title: title ? title : '' }]} navigation={navigation} />
+        <MainContent>
+          {contractFunction?.inputs?.map((fnRes, index) => (
+            <NIInputField blueprint={sequence[index]} itemInfo={fnRes} navigation={navigation} />
+          ))}
+
           <FooterContent>
             <FeeText>{t('Fee') + ' ' + feeInFiatDisplayValue}</FeeText>
             <SwipeButton confirmTitle={t('button.swipeTo') + ' ' + actionName} onPress={updateData} />
           </FooterContent>
-        )}
-      </MainContent>
+        </MainContent>
+      </ScrollWrapper>
     </Container>
   );
 }
@@ -156,6 +161,13 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
 });
+
+const InputContainer = styled.View``;
+
+const Title = styled(Text)`
+  ${fontStyles.medium};
+  font-variant: tabular-nums;
+`;
 
 const MainContent = styled.View`
   padding: 20px;
