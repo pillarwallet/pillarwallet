@@ -276,7 +276,8 @@
     "filterByName": "Filter by name",
     "username": "username",
     "assetMigrate": "Migrate assets to Etherspot",
-    "ensMigrate": "Migrate ENS to Etherspot"
+    "ensMigrate": "Migrate ENS to Etherspot",
+    "transaction_submitted":"Transaction submitted"
   },
 
   "button": {
@@ -392,7 +393,8 @@
     "copyToClipboard": "Copy to clipboard",
     "savedPhrase": "I have saved my 12 words",
     "savedPrivateKey": "I have saved my private key",
-    "openInBrowser": "Open in browser"
+    "openInBrowser": "Open in browser",
+    "ok": "OK"
   },
 
   "paragraph": {

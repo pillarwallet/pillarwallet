@@ -257,7 +257,8 @@
     "pleaseSelect": "请选择",
     "balanceFiatTokenFormat": "余额 {{balanceInFiat}} ({{balance}})",
     "balanceTokenFormat": "余额{{balance}}",
-    "filterByName": "按名称过滤"
+    "filterByName": "按名称过滤",
+    "transaction_submitted": "交易提交"
   },
   "button": {
     "activate": "启用",
@@ -370,7 +371,8 @@
     "notNow": "现在不要",
     "copyToClipboard": "复制到剪贴板",
     "savedPhrase": "我已经保存了我的 12 个字",
-    "savedPrivateKey": "我已经保存了我的私钥"
+    "savedPrivateKey": "我已经保存了我的私钥",
+    "ok": "确认"
   },
   "paragraph": {
     "addressCopiedToClipboard": "地址已复制到剪贴板。",

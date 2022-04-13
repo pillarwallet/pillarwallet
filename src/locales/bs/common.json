@@ -197,7 +197,8 @@
     "popular": "Popularno",
     "set": "Postavi",
     "notAvailableInYourCountry": "Nije dostupno u Vašoj državi",
-    "cannotProceedOffline": "Nemoguće nastaviti offline"
+    "cannotProceedOffline": "Nemoguće nastaviti offline",
+    "transaction_submitted":"transakcija dostavljena"
   },
 
   "button": {
@@ -292,7 +293,8 @@
     "readMore": "Saznaj još",
     "activateSmartWallet": "Aktiviraj Smart Wallet",
     "finish": "Završi",
-    "copyAddress": "Kopiraj adresu"
+    "copyAddress": "Kopiraj adresu",
+    "ok": "uredu"
   },
 
   "paragraph": {

@@ -20,37 +20,34 @@
 
 import * as React from 'react';
 import { useTranslation } from 'translations/translate';
-import { StyleSheet, TextInput as RNTextInput } from 'react-native';
+import { Platform, StyleSheet, TextInput as RNTextInput } from 'react-native';
 import styled from 'styled-components/native';
 
 // Components
-import BigNumberInput from 'components/inputs/BigNumberInput';
 import Text from 'components/core/Text';
-import TokenValueInput from 'components/inputs/TokenValueInput';
-import Modal from 'components/Modal';
-import AssetSelectorModal from 'components/Modals/AssetSelectorModal';
+
+import Switcher from 'components/Switcher';
+import Input from 'components/inputs/TextInput';
+import MultilineTextInput from 'components/inputs/MultilineTextInput';
 
 // Services
 import { appFont, fontStyles } from 'utils/variables';
 
 // Selectors
-import { useRootSelector } from 'selectors/selectors';
+import { useRootSelector, activeAccountAddressSelector } from 'selectors/selectors';
 import { accountAssetsWithBalanceSelector } from 'selectors/assets';
-import { accountCollectiblesSelector } from 'selectors/collectibles';
 
-// Types
-import type { AssetOption } from 'models/Asset';
-import type { Collectible } from 'models/Collectible';
-import type { ChainRecord } from 'models/Chain';
-
-// Constant
-import { ASSET_TYPES } from 'constants/assetsConstants';
+// Utils
+import { useThemeColors } from 'utils/themes';
+import { isValidAddressOrEnsName } from 'utils/validators';
+import { addressesEqual } from 'utils/assets';
 
 type Props = {
   blueprint: bluePrintType | null;
   itemInfo: infoType;
   valueInputRef?: React.Ref<typeof RNTextInput>;
-  navigation: any;
+  value: any;
+  onChangeValue: (val: any) => void;
 };
 
 type inputType =
@@ -79,85 +76,89 @@ type infoType = {
   type: string;
 };
 
-function NIInputField({ blueprint, itemInfo, valueInputRef }: Props) {
+function NIInputField({ blueprint, itemInfo, value, onChangeValue }: Props) {
   const { t } = useTranslation();
+  const inputRef = React.useRef();
+  const colors = useThemeColors();
+  const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
   const assetsWithBalance = useRootSelector(accountAssetsWithBalanceSelector);
-  const collectibles = flattenCollectibles(useRootSelector(accountCollectiblesSelector));
-  const componentNm = blueprint?.uiComponent;
 
-  const [value, setValue] = React.useState();
-
-  let defaultAssetData = getAssetData(assetsWithBalance, undefined);
-  const defaultAssetOption = defaultAssetData &&
-    defaultAssetData?.token && {
-      ...defaultAssetData,
-      symbol: defaultAssetData.token,
-    };
-
-  const [assetData, setAssetData] = React.useState<AssetOption | Collectible>(
-    defaultAssetData?.tokenType ? defaultAssetData : defaultAssetOption || assetsWithBalance[0],
-  );
-  const selectedToken = assetData?.tokenType !== ASSET_TYPES.COLLECTIBLE ? assetData : null;
-
-  const handleSelectToken = (token: AssetOption) => {
-    setAssetData(token);
-  };
-
-  const handleSelectCollectible = (collectible: Collectible) => {
-    setAssetData(collectible);
-  };
-
-  const handleSelectAsset = () => {
-    Modal.open(() => (
-      <AssetSelectorModal
-        tokens={assetsWithBalance}
-        onSelectToken={handleSelectToken}
-        collectibles={collectibles}
-        onSelectCollectible={handleSelectCollectible}
-        autoFocus
-      />
-    ));
-  };
-
-  const inputComponent = () => {
-    if (componentNm === 'TokenValueInput') {
-      return (
-        <TokenValueInput
-          value={value}
-          onValueChange={setValue}
-          placeholder={itemInfo.type}
-          ref={valueInputRef}
-          asset={selectedToken}
-          onTokenPress={handleSelectAsset}
-          balance={assetData?.balance?.balance}
-          style={[styles.input]}
-        />
-      );
+  const getValidationError = () => {
+    if (value?.c) return null;
+    if (addressesEqual(value, activeAccountAddress)) {
+      return t('error.cannotSendToYourself');
     }
-
-    if (componentNm === 'BigNumberInput') {
-      return (
-        <BigNumberInput
-          value={value}
-          returnType="done"
-          onValueChange={setValue}
-          editable={true}
-          placeholder={itemInfo.type}
-          style={[styles.input]}
-          // onBlur={() => Alert.alert('Index')}
-        />
-      );
+    if (value && !isValidAddressOrEnsName(value)) {
+      return t('error.incorrectAddress');
     }
-
     return null;
   };
 
-  if (componentNm === null) return null;
+  const onChangeAddress = (val) => {
+    const input = val.trimLeft().replace(/\s\s/g, ' ');
+    onChangeValue(input);
+  };
+
+  const onChangeNumber = (val) => {
+    const input = val.replace(/[^0-9]/g, '');
+    onChangeValue(input);
+  };
+
+  const errorMessage = getValidationError();
+  const inputStyles = [styles.input, { color: !!errorMessage ? colors.negative : colors.text }];
+
+  const inputComponent = () => {
+    if (itemInfo?.type === 'uint256') {
+      return (
+        <Input
+          ref={inputRef}
+          style={styles.input}
+          numberOfLines={1}
+          value={value}
+          onChangeText={onChangeNumber}
+          placeholder={itemInfo.type}
+        />
+      );
+    }
+
+    if (itemInfo?.type === 'address') {
+      return (
+        <MultilineTextInput
+          ref={inputRef}
+          value={value}
+          onChangeText={onChangeAddress}
+          style={inputStyles}
+          autoCapitalize="none"
+          autoCompleteType="off"
+          autoCorrect={false}
+          placeholder={itemInfo.type}
+          blurOnSubmit
+        />
+      );
+    }
+
+    if (itemInfo?.type === 'bool') {
+      return <Switcher isOn={value} onToggle={onChangeValue} />;
+    }
+
+    return (
+      <Input
+        ref={inputRef}
+        style={styles.input}
+        numberOfLines={1}
+        value={value}
+        onChangeText={onChangeValue}
+        placeholder={itemInfo.type}
+      />
+    );
+  };
 
   return (
     <Container>
-      <Title>{itemInfo.name}</Title>
-      {inputComponent()}
+      <Content isRow={itemInfo?.type === 'bool'}>
+        <Title>{itemInfo.name}</Title>
+        {inputComponent()}
+      </Content>
       <Description>{blueprint?.uiComponentProperties?.description}</Description>
     </Container>
   );
@@ -165,26 +166,19 @@ function NIInputField({ blueprint, itemInfo, valueInputRef }: Props) {
 
 export default NIInputField;
 
-const getAssetData = (tokens, selectedToken) => {
-  return tokens.find((token) => {
-    if (selectedToken?.chain === token.chain && selectedToken?.contractAddress === token.contractAddress) {
-      return true;
-    }
-    return false;
-  });
-};
-
-function flattenCollectibles(collectiblesPerChain: ChainRecord<Collectible[]>): Collectible[] {
-  return Object.keys(collectiblesPerChain).flatMap((chain) => collectiblesPerChain[chain] ?? []);
-}
-
 const styles = StyleSheet.create({
   input: {
-    marginBottom: 20,
+    fontSize: 24,
+    marginVertical: Platform.OS === 'ios' ? 5 : 0,
   },
 });
 
 const Container = styled.View``;
+
+const Content = styled.View`
+  flex-direction: ${({ isRow }) => (isRow ? 'row' : 'column')};
+  justify-content: space-between;
+`;
 
 const Title = styled(Text)`
   ${fontStyles.medium};
@@ -195,4 +189,5 @@ const Description = styled(Text)`
   ${fontStyles.regular};
   font-family: ${appFont.regular};
   color: ${({ theme }) => theme.colors.basic020};
+  margin-bottom: 20px;
 `;

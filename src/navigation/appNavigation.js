@@ -114,6 +114,7 @@ import StoreValueContractScreen from 'screens/Contract/StoreValueContract';
 import NIServices from 'screens/NativeIntegration/NIServices';
 import NIInputService from 'screens/NativeIntegration/NIInputService';
 import NIViewService from 'screens/NativeIntegration/NIViewService';
+import NITransactionSubmitted from 'screens/NativeIntegration/NITransactionSubmitted';
 
 // components
 import Toast from 'components/Toast';
@@ -246,6 +247,7 @@ import {
   NI_VIEW_SERVICE,
   NI_INPUT_SERVICE,
   NATIVE_INTEGRATION_FLOW,
+  NI_TRANSACTION_COMPLETED,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -348,6 +350,7 @@ const nativeIntegrationFlow = createStackNavigator(
     [NI_SERVICES]: NIServices,
     [NI_INPUT_SERVICE]: NIInputService,
     [NI_VIEW_SERVICE]: NIViewService,
+    [NI_TRANSACTION_COMPLETED]: NITransactionSubmitted,
   },
   StackNavigatorConfig,
 );
