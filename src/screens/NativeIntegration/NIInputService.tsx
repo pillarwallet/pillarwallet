@@ -23,6 +23,7 @@ import { useNavigation } from 'react-navigation-hooks';
 import { useTranslation } from 'translations/translate';
 import styled from 'styled-components/native';
 import { debounce } from 'lodash';
+import { utils } from 'ethers';
 
 // Utils
 import { chainFromChainId } from 'utils/chains';
@@ -70,7 +71,7 @@ function NIInputService() {
   const contractFunction = JSON.parse(contractData?.abi)?.find((fnRes) => fnRes.name === actionName);
   const blueprint = action?.blueprint;
   const sequence = blueprint ? JSON.parse(blueprint).sequence : null;
-  const blankArr = new Array(contractFunction?.inputs.length).fill('');
+  const blankArr = new Array(contractFunction?.inputs.length).fill(null);
 
   const [value, setValue] = React.useState(blankArr);
   const [contractRes, setContractRes] = React.useState();
@@ -88,14 +89,17 @@ function NIInputService() {
   const updateTxFee = async () => {
     if (!value) return;
     if (value.length < contractFunction?.inputs.length) return;
-
-    if (value?.includes('')) {
+    const findNull = value?.find((res) => res === null || res === '');
+    if (findNull !== undefined) {
       setContractRes(undefined);
       return;
     }
 
     const fnName = `encode${actionName[0]?.toUpperCase()}${actionName?.substring(1)}`;
-    const updatedArr = value?.map((specificVal) => (specificVal?.c ? specificVal?.toNumber() : specificVal));
+    const updatedArr = value?.map((specificVal) =>
+      specificVal?.c ? utils.parseUnits(specificVal?.toString(), 0) : specificVal,
+    );
+
     try {
       setIsSendTransaction(true);
       const response = await integrationContract[fnName](...updatedArr);
@@ -165,10 +169,6 @@ function NIInputService() {
           )}
 
           <Spacing h={30} />
-
-          {/* {contractFunction?.outputs?.map((fnRes, index) => (
-            <NIViewField itemInfo={fnRes} contractData={contractData} />
-          ))} */}
         </MainContent>
       </ScrollWrapper>
     </Container>

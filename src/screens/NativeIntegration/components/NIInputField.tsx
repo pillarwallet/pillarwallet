@@ -25,7 +25,7 @@ import styled from 'styled-components/native';
 
 // Components
 import Text from 'components/core/Text';
-
+import BigNumberInput from 'components/inputs/BigNumberInput';
 import Switcher from 'components/Switcher';
 import Input from 'components/inputs/TextInput';
 import MultilineTextInput from 'components/inputs/MultilineTextInput';
@@ -41,6 +41,7 @@ import { accountAssetsWithBalanceSelector } from 'selectors/assets';
 import { useThemeColors } from 'utils/themes';
 import { isValidAddressOrEnsName } from 'utils/validators';
 import { addressesEqual } from 'utils/assets';
+import BigNumber from 'bignumber.js';
 
 type Props = {
   blueprint: bluePrintType | null;
@@ -83,6 +84,8 @@ function NIInputField({ blueprint, itemInfo, value, onChangeValue }: Props) {
   const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
   const assetsWithBalance = useRootSelector(accountAssetsWithBalanceSelector);
 
+  // console.log('assetsWithBalance', assetsWithBalance);
+
   const getValidationError = () => {
     if (value?.c) return null;
     if (addressesEqual(value, activeAccountAddress)) {
@@ -100,6 +103,7 @@ function NIInputField({ blueprint, itemInfo, value, onChangeValue }: Props) {
   };
 
   const onChangeNumber = (val) => {
+    const value = new BigNumber('0.5');
     const input = val.replace(/[^0-9]/g, '');
     onChangeValue(input);
   };
@@ -110,16 +114,31 @@ function NIInputField({ blueprint, itemInfo, value, onChangeValue }: Props) {
   const inputComponent = () => {
     if (itemInfo?.type === 'uint256') {
       return (
-        <Input
-          ref={inputRef}
-          style={styles.input}
-          numberOfLines={1}
+        <BigNumberInput
           value={value}
-          onChangeText={onChangeNumber}
+          returnType="done"
+          onValueChange={onChangeValue}
+          editable={true}
+          decimals={18}
           placeholder={itemInfo.type}
+          style={styles.input}
         />
       );
     }
+
+    // if (itemInfo?.type === 'uint256') {
+    //   return (
+    //     <Input
+    //       ref={inputRef}
+    //       style={styles.input}
+    //       numberOfLines={1}
+    //       value={value}
+    //       onChangeText={onChangeNumber}
+    //       placeholder={itemInfo.type}
+    //       keyboardType={'decimal-pad'}
+    //     />
+    //   );
+    // }
 
     if (itemInfo?.type === 'address') {
       return (
