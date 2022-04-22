@@ -49,7 +49,7 @@ import { useRootSelector, useFiatCurrency, useChainRates, useActiveAccount } fro
 
 // Actions
 import { fetchGasInfoAction } from 'actions/historyActions';
-import { estimateTransactionAction } from 'actions/transactionEstimateActions';
+import { estimateTransactionsAction } from 'actions/transactionEstimateActions';
 import { useDispatch } from 'react-redux';
 import NIInputField from './components/NIInputField';
 
@@ -101,6 +101,16 @@ function NIInputService() {
       return;
     }
 
+    await contractInterface();
+  };
+  const updateTxFeeDebounced = React.useCallback(debounce(updateTxFee, 100), [value]);
+
+  React.useEffect(() => {
+    updateTxFeeDebounced();
+    return updateTxFeeDebounced.cancel;
+  }, [updateTxFeeDebounced]);
+
+  const contractInterface = async () => {
     const fnName = `encode${actionName[0]?.toUpperCase()}${actionName?.substring(1)}`;
     const updatedArr = value?.map((specificVal) =>
       specificVal?.c ? utils.parseUnits(specificVal?.toString(), 0) : specificVal,
@@ -110,61 +120,50 @@ function NIInputService() {
       setIsSendTransaction(true);
       const response = await integrationContract[fnName](...updatedArr);
       setContractRes(response);
-      dispatch(estimateTransactionAction({ ...response, value: 0 }, chain));
+      const txArr = [{ ...response, value: 0 }];
+      dispatch(estimateTransactionsAction(txArr, chain));
       setIsSendTransaction(false);
-      contractRes && logBreadcrumb('nativeIntegrationContractResponse', JSON.stringify(response));
+      logBreadcrumb('nativeIntegrationContractResponse', JSON.stringify(response));
     } catch (e) {
       setIsSendTransaction(false);
       setContractRes(undefined);
       logBreadcrumb('contractInput error!', e);
     }
   };
-  const updateTxFeeDebounced = React.useCallback(debounce(updateTxFee, 100), [value]);
-
-  React.useEffect(() => {
-    updateTxFeeDebounced();
-    return updateTxFeeDebounced.cancel;
-  }, [updateTxFeeDebounced]);
 
   const updateData = async () => {
-    /**
-     * Before we continue here, we need to be sure that
-     * we check approvals. Approvals allow smart contracts
-     * to "spend" our money on our behalf.
-     * 
-     * The first thing we need to do is to build an array of
-     * approval promises. An approval check requires two bits
-     * of information:
-     * - the owner
-     * - the spender (the contract that wants to spend your money)
-     */
-
-    console.log('Blueprint for Approvals:', approvalsData);
-    console.log('Number of approvals to check:', approvalsData.length);
-
-    /**
-     * If approvalsData.length is 0 - we can skip the approvals check
-     */
-
     /**
      * Next, let's build our approval calls. Cycle through the
      * approvalsData array and build the Promises array
      */
     const approvalCheckPromises = [];
-    approvalsData.forEach(approvalData => {
+    const approvalTransactions = [];
+
+    approvalsData?.forEach((approvalData) => {
       /**
        * We need to know in advance at which position in the
        * input array from the user the token address lives at.
        * This is delivered via the CMS from here:
        * `approvalData.abiInputsArrayPosition.token`
        */
-      const approvalContractInterface = etherspotService
-        .getContract(chain, ERC20_CONTRACT_ABI, value[approvalData.abiInputsArrayPosition.token]);
-      
+      const approvalContractInterface = etherspotService.getContract(
+        chain,
+        ERC20_CONTRACT_ABI,
+        value[approvalData.abiInputsArrayPosition.token],
+      );
+
       // ... and add this check to the `approvalCheckPromises` array.
       approvalCheckPromises.push(
-        approvalContractInterface.callAllowance(activeAccount.id, contractData?.contract_address)
+        approvalContractInterface.callAllowance(activeAccount.id, contractData?.contract_address),
       );
+      // ... and list of approval data
+      approvalTransactions.push({
+        ...approvalContractInterface.encodeApprove(
+          contractData?.contract_address,
+          utils.parseUnits(value[approvalData.abiInputsArrayPosition.amount].toString(), 0),
+        ),
+        value: 0,
+      });
     });
 
     console.log(`Built ${approvalCheckPromises.length} approval checks.`);
@@ -172,47 +171,69 @@ function NIInputService() {
     /**
      * Now we can execute the approvals check array
      */
+    let approvalTx = [];
+    try {
+      const approvalsResult = await Promise.all(approvalCheckPromises);
+      const approvalsTxResult = await Promise.all(approvalTransactions);
+      console.log('Approvals result was:', approvalsResult);
+      console.log('Approvals tx result was:', approvalsTxResult);
+      /**
+       * A BigNumber is returned here of the amount that the
+       * smart contract wanting to spend the accounts money has
+       * left to spend. This value needs to be checked against
+       * what is in the array position here:
+       * `approvalsData.abiInputsArrayPosition.amount` which, again,
+       * is a value that we need to know ahead of time from the CMS.
+       */
 
-    const approvalsResult = await Promise.all(approvalCheckPromises);
+      approvalTx = approvalsResult
+        .map((bnResult, i) => {
+          const bnUserInput = new BigNumber(value[approvalsData[i].abiInputsArrayPosition.amount]);
+          const bnResultAsBigNumber = new BigNumber(bnResult);
+          console.log(
+            `Was the amount approved less than the user entered amount? ${bnResultAsBigNumber.lt(bnUserInput)}`,
+          );
 
-    console.log('Approvals result was:', approvalsResult);
-    // And a more clear view:
-    approvalsResult.forEach((r) => console.log(r));
+          if (bnResultAsBigNumber.lt(bnUserInput)) {
+            console.log('Approval transaction needed!');
 
-    /**
-     * A BigNumber is returned here of the amount that the
-     * smart contract wanting to spend the accounts money has
-     * left to spend. This value needs to be checked against
-     * what is in the array position here:
-     * `approvalsData.abiInputsArrayPosition.amount` which, again,
-     * is a value that we need to know ahead of time from the CMS.
-     */
+            return approvalsTxResult[i];
+            /**
+             * If we end up here, we're going to need to make a transaction
+             * to run an approval transaction to allow a smart contract to
+             * spend the funds in the account.
+             * https://docs.openzeppelin.com/contracts/2.x/api/token/erc20#IERC20-approve-address-uint256-
+             *
+             * These approval transactions will need to be added to the batch.
+             * There's no need to perform these first, just add them to the
+             * transacion batch before the actual contract call.
+             */
+          } else {
+            console.log('No approvals needed, continue to perform contract call...');
+            return null;
+          }
+        })
+        .filter((res) => res !== null);
 
-    approvalsResult.forEach((bnResult, i) => {
-      const bnUserInput = new BigNumber(value[approvalsData[i].abiInputsArrayPosition.amount]);
-      const bnResultAsBigNumber = new BigNumber(bnResult);
-      console.log(`Was the amount approved less than the user entered amount? ${bnResultAsBigNumber.lt(bnUserInput)}`);
+      await approvalSendTransaction(approvalTx);
+    } catch (e) {
+      console.log('Transaction Approval error', e);
+      if (!approvalsData) nativeIntegrationTransaction();
+    }
+  };
 
-      if (bnResultAsBigNumber.lt(bnUserInput)) {
-        console.log('Approval transaction needed!');
-        /**
-         * If we end up here, we're going to need to make a transaction
-         * to run an approval transaction to allow a smart contract to
-         * spend the funds in the account.
-         * https://docs.openzeppelin.com/contracts/2.x/api/token/erc20#IERC20-approve-address-uint256-
-         * 
-         * These approval transactions will need to be added to the batch.
-         * There's no need to perform these first, just add them to the
-         * transacion batch before the actual contract call.
-         */
-      } else {
-        console.log('No approvals needed, continue to perform contract call...');
-      }
-    });
+  const approvalSendTransaction = async (approvalTx) => {
+    try {
+      if (approvalTx.length > 0) {
+        const sendResult = await etherspotService.setTransactionsBatchAndSend(approvalTx, chain);
+        if (sendResult) nativeIntegrationTransaction();
+      } else nativeIntegrationTransaction();
+    } catch (e) {
+      console.log('approvalSendTransaction failed', e);
+    }
+  };
 
-    /**
-     * Continue as usual.
-     */
+  const nativeIntegrationTransaction = async () => {
     try {
       setIsSendTransaction(true);
       const res = await etherspotService.setTransactionsBatchAndSend([contractRes], chain);
