@@ -29,6 +29,7 @@ import BigNumberInput from 'components/inputs/BigNumberInput';
 import Switcher from 'components/Switcher';
 import Input from 'components/inputs/TextInput';
 import MultilineTextInput from 'components/inputs/MultilineTextInput';
+import { Spacing } from 'components/legacy/Layout';
 
 // Services
 import { appFont, fontStyles } from 'utils/variables';
@@ -41,34 +42,12 @@ import { accountAssetsWithBalanceSelector } from 'selectors/assets';
 import { useThemeColors } from 'utils/themes';
 import { isValidAddressOrEnsName } from 'utils/validators';
 import { addressesEqual } from 'utils/assets';
-import BigNumber from 'bignumber.js';
 
 type Props = {
-  blueprint: bluePrintType | null;
   itemInfo: infoType;
   valueInputRef?: React.Ref<typeof RNTextInput>;
   value: any;
   onChangeValue: (val: any) => void;
-};
-
-type inputType =
-  | 'BigNumberInput'
-  | 'TokenValueInput'
-  | 'AutoScaleTextInput'
-  | 'CollectibleInput'
-  | 'FiatValueInput'
-  | 'MultilineTextInput'
-  | 'TextInput'
-  | 'TokenFiatValueInputs'
-  | null;
-
-type bluePrintType = {
-  isApprovalNeeded: boolean;
-  mapsToParameterNumber: number;
-  uiComponent: inputType;
-  required: boolean;
-  userVisible: boolean;
-  uiComponentProperties?: any;
 };
 
 type infoType = {
@@ -77,7 +56,7 @@ type infoType = {
   type: string;
 };
 
-function NIInputField({ blueprint, itemInfo, value, onChangeValue }: Props) {
+function NIInputField({ itemInfo, value, onChangeValue }: Props) {
   const { t } = useTranslation();
   const inputRef = React.useRef();
   const colors = useThemeColors();
@@ -87,7 +66,7 @@ function NIInputField({ blueprint, itemInfo, value, onChangeValue }: Props) {
   // console.log('assetsWithBalance', assetsWithBalance);
 
   const getValidationError = () => {
-    if (value?.c) return null;
+    if (value?.c || typeof value == 'boolean') return null;
     if (addressesEqual(value, activeAccountAddress)) {
       return t('error.cannotSendToYourself');
     }
@@ -99,12 +78,6 @@ function NIInputField({ blueprint, itemInfo, value, onChangeValue }: Props) {
 
   const onChangeAddress = (val) => {
     const input = val.trimLeft().replace(/\s\s/g, ' ');
-    onChangeValue(input);
-  };
-
-  const onChangeNumber = (val) => {
-    const value = new BigNumber('0.5');
-    const input = val.replace(/[^0-9]/g, '');
     onChangeValue(input);
   };
 
@@ -125,20 +98,6 @@ function NIInputField({ blueprint, itemInfo, value, onChangeValue }: Props) {
         />
       );
     }
-
-    // if (itemInfo?.type === 'uint256') {
-    //   return (
-    //     <Input
-    //       ref={inputRef}
-    //       style={styles.input}
-    //       numberOfLines={1}
-    //       value={value}
-    //       onChangeText={onChangeNumber}
-    //       placeholder={itemInfo.type}
-    //       keyboardType={'decimal-pad'}
-    //     />
-    //   );
-    // }
 
     if (itemInfo?.type === 'address') {
       return (
@@ -177,8 +136,8 @@ function NIInputField({ blueprint, itemInfo, value, onChangeValue }: Props) {
       <Content isRow={itemInfo?.type === 'bool'}>
         <Title>{itemInfo.name}</Title>
         {inputComponent()}
+        <Spacing h={20} />
       </Content>
-      <Description>{blueprint?.uiComponentProperties?.description}</Description>
     </Container>
   );
 }
@@ -202,11 +161,4 @@ const Content = styled.View`
 const Title = styled(Text)`
   ${fontStyles.medium};
   font-variant: tabular-nums;
-`;
-
-const Description = styled(Text)`
-  ${fontStyles.regular};
-  font-family: ${appFont.regular};
-  color: ${({ theme }) => theme.colors.basic020};
-  margin-bottom: 20px;
 `;

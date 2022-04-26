@@ -115,6 +115,7 @@ import IconAssetMigration from 'assets/icons/svg/icon-24-assets.svg';
 import IconEnsMigrationDark from 'assets/icons/svg/icon-24-ens-dark.svg';
 import IconAssetMigrationDark from 'assets/icons/svg/icon-24-assets-dark.svg';
 import IconApps from 'assets/icons/svg/icon-apps.svg';
+import InvestIcon from 'assets/icons/svg/24-dashboard-investments.svg';
 
 // Assets: services icons
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
@@ -211,6 +212,7 @@ const components = {
   'ens-migration-dark': IconEnsMigrationDark,
   'asset-migration-dark': IconAssetMigrationDark,
   apps: IconApps,
+  invest: InvestIcon,
 
   // Service icons
   binance: IconBinance,

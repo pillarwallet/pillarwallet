@@ -72,10 +72,9 @@ function FloatingActions() {
       disabled: !isSendEnabled,
     },
     {
-      title: t('connect'),
-      iconName: 'wallet-connect',
+      title: t('invest'),
+      iconName: 'invest',
       onPress: () => navigation.navigate(CONNECT_FLOW),
-      // onPress: () => navigation.navigate(CONTRACT_FLOW),
     },
   ];
 

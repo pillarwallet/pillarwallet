@@ -95,6 +95,7 @@ function NIServices() {
         leftItems={[{ close: true }]}
         centerItems={[{ title: t('home.apps.title') }]}
         navigation={navigation}
+        onClose={() => navigation.dismiss()}
       />
       {!isArchanovaAccount(activeAccount) && <DropdownChainView selectedChain={updateChain} />}
       {contractList ? (

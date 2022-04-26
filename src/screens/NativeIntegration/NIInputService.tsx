@@ -45,7 +45,7 @@ import Spinner from 'components/Spinner';
 import etherspotService from 'services/etherspot';
 
 // Selectors
-import { useRootSelector, useFiatCurrency, useChainRates, useActiveAccount } from 'selectors/selectors';
+import { useRootSelector, useFiatCurrency, useChainRates } from 'selectors/selectors';
 
 // Actions
 import { fetchGasInfoAction } from 'actions/historyActions';
@@ -92,7 +92,6 @@ function NIInputService() {
 
   const updateTxFee = async () => {
     if (!value) return;
-    // if (value.length < contractFunction?.inputs.length) return;
     const findNull = value?.find((res) => res === null || res === '');
     if (findNull !== undefined) {
       setContractRes(undefined);
@@ -208,12 +207,7 @@ function NIInputService() {
         <HeaderBlock centerItems={[{ title: title ? title : '' }]} navigation={navigation} />
         <MainContent>
           {contractFunction?.inputs?.map((fnRes, index) => (
-            <NIInputField
-              blueprint={sequence[index]}
-              itemInfo={fnRes}
-              value={value[index]}
-              onChangeValue={(val) => onChangeValue(val, index)}
-            />
+            <NIInputField itemInfo={fnRes} value={value[index]} onChangeValue={(val) => onChangeValue(val, index)} />
           ))}
 
           <Spacing h={10} />

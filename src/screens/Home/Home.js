@@ -41,7 +41,7 @@ import Modal from 'components/Modal';
 import Banner from 'components/Banner/Banner';
 
 // Constants
-import { MENU, HOME_HISTORY, REGISTER_ENS, NATIVE_INTEGRATION_FLOW } from 'constants/navigationConstants';
+import { MENU, HOME_HISTORY, REGISTER_ENS, NI_WARNING, NI_SERVICES } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
@@ -52,6 +52,7 @@ import { etherspotAccountSelector } from 'selectors/accounts';
 
 // Services
 import { firebaseRemoteConfig } from 'services/firebase';
+import Storage from 'services/storage';
 
 // Screens
 import GovernanceCallBanner from 'screens/GovernanceCall/GovernanceCallBanner';
@@ -139,6 +140,13 @@ function Home() {
     dispatch(fetchAllAccountsTotalBalancesAction());
   };
 
+  const onApps = async () => {
+    const storage = Storage.getInstance('db');
+    const nativeIntegrationWarning = await storage.get('ni_warning');
+    if (nativeIntegrationWarning?.visible) navigation.navigate(NI_SERVICES);
+    else navigation.navigate(NI_WARNING);
+  };
+
   return (
     <Container>
       <HeaderBlock
@@ -194,12 +202,7 @@ function Home() {
 
         <Banner screenName={screenName} bottomPosition />
 
-        <AppsButton
-          title={t('home.apps.title')}
-          iconName="apps"
-          isShowLabel
-          onPress={() => navigation.navigate(NATIVE_INTEGRATION_FLOW)}
-        />
+        <AppsButton title={t('home.apps.title')} iconName="apps" isShowLabel onPress={onApps} />
       </Content>
 
       <FloatingActions />

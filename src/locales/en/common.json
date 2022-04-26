@@ -594,7 +594,8 @@
       "receive": "Receive",
       "send": "Send",
       "swap": "Swap",
-      "connect": "Connect"
+      "connect": "Connect",
+      "invest": "Invest"
     },
     "apps": {
       "title": "Apps",
