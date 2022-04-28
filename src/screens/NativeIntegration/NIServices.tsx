@@ -49,7 +49,6 @@ import { NI_VIEW_SERVICE, NI_INPUT_SERVICE } from 'constants/navigationConstants
 
 function NIServices() {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const navigation = useNavigation();
   const activeAccount = useActiveAccount();
   const nativeIntegrationResponse = useRootSelector(nativeIntegrationSelector);
