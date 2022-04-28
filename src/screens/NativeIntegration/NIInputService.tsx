@@ -132,7 +132,7 @@ function NIInputService() {
         { ...contractInterface, value: isPayable ? utils.parseUnits(amount.toString(), 18) : 0 },
       ]);
 
-      const approveListWithValue = approveTxList?.map((response) => {
+      const approveListWithValue = approveTxList.map((response) => {
         return { ...response, value: 0 };
       });
 

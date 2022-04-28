@@ -49,6 +49,7 @@ import { useRootSelector, useAccounts, activeAccountAddressSelector } from 'sele
 import { accountTotalBalancesSelector } from 'selectors/totalBalances';
 import { useUser } from 'selectors/user';
 import { etherspotAccountSelector } from 'selectors/accounts';
+import { nativeIntegrationSelector } from 'redux/selectors/native-integration-selector';
 
 // Services
 import { firebaseRemoteConfig } from 'services/firebase';
@@ -74,6 +75,9 @@ import { useAccountCollectibleCounts } from './utils';
 import BiometricModal from '../../components/BiometricModal/BiometricModal';
 import AppsButton from './AppsButton';
 
+// Redux
+import { fetchNativeIntegrationAbis } from '../../redux/actions/native-integration-actions';
+
 function Home() {
   const navigation = useNavigation();
   const colors = useThemeColors();
@@ -93,6 +97,7 @@ function Home() {
   const isEnsNodeCliamed = ensNodeState === ENSNodeStates.Claimed;
   const featureOnboardingENS = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ONBOARDING_ENS);
   const showEnsTooltip = featureOnboardingENS && !isEnsNodeCliamed;
+  const nativeIntegrationResponse = useRootSelector(nativeIntegrationSelector);
 
   const { accountSwitchTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
   const balancePerCategory = calculateTotalBalancePerCategory(accountTotalBalances);
@@ -103,6 +108,7 @@ function Home() {
   const isRefreshing = useRootSelector(({ totalBalances }) => !!totalBalances.isFetching);
 
   React.useEffect(() => {
+    dispatch(fetchNativeIntegrationAbis());
     setTimeout(() => {
       if (!wallet) {
         getSupportedBiometryType((biometryType) => {
@@ -202,7 +208,9 @@ function Home() {
 
         <Banner screenName={screenName} bottomPosition />
 
-        <AppsButton title={t('home.apps.title')} iconName="apps" isShowLabel onPress={onApps} />
+        {nativeIntegrationResponse !== null && nativeIntegrationResponse?.[0] !== undefined && (
+          <AppsButton title={t('home.apps.title')} iconName="apps" isShowLabel onPress={onApps} />
+        )}
       </Content>
 
       <FloatingActions />

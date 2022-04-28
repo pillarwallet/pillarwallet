@@ -47,9 +47,6 @@ import ContractActionsModal from './components/ContractActionsModal';
 // Constants
 import { NI_VIEW_SERVICE, NI_INPUT_SERVICE } from 'constants/navigationConstants';
 
-// Redux
-import { fetchNativeIntegrationAbis } from 'src/redux/actions/native-integration-actions';
-
 function NIServices() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -57,10 +54,6 @@ function NIServices() {
   const activeAccount = useActiveAccount();
   const nativeIntegrationResponse = useRootSelector(nativeIntegrationSelector);
   const [contractList, setContractList]: any[] = React.useState([]);
-
-  React.useEffect(() => {
-    dispatch(fetchNativeIntegrationAbis());
-  }, []);
 
   React.useEffect(() => {
     updateChain(null);
