@@ -78,11 +78,10 @@ function NIInputField({ itemInfo, chain, value, onChangeValue, txFeeInfo, disabl
     (response) => response?.chain === chain && response?.address === '0x0000000000000000000000000000000000000000',
   );
 
-  const defaultAssetOption = defaultAssetData &&
-    defaultAssetData?.token && {
-      ...defaultAssetData,
-      symbol: defaultAssetData.token,
-    };
+  const defaultAssetOption = defaultAssetData && {
+    ...defaultAssetData,
+    symbol: defaultAssetData.token,
+  };
 
   const [assetData, setAssetData] = React.useState<AssetOption | Collectible>(
     defaultAssetData?.tokenType ? defaultAssetData : defaultAssetOption || [],
@@ -182,7 +181,7 @@ function NIInputField({ itemInfo, chain, value, onChangeValue, txFeeInfo, disabl
 
   return (
     <Container>
-      <Content isRow={itemInfo?.type === 'bool'}>
+      <Content isRow={itemInfo.type === 'bool' ? true : false}>
         <Title>{itemInfo.name}</Title>
         {inputComponent()}
         <Spacing h={20} />

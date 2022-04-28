@@ -97,7 +97,7 @@ function NIInputService() {
   const updateTxFee = async () => {
     if (!value) return;
     if (contractType === 'payable' ? (amount === null ? true : false) : false) return;
-    const findNull = value?.find((res) => res === null || res === '');
+    const findNull = value.find((res) => res === null || res === '');
     if (findNull !== undefined) {
       setContractRes(undefined);
       return;
@@ -113,8 +113,8 @@ function NIInputService() {
   }, [updateTxFeeDebounced]);
 
   const contractInterface = async () => {
-    const fnName = `encode${actionName[0]?.toUpperCase()}${actionName?.substring(1)}`;
-    const updatedArr = value?.map(async (specificVal, i) =>
+    const fnName = actionName ? `encode${actionName[0].toUpperCase()}${actionName.substring(1)}` : ``;
+    const updatedArr = value.map(async (specificVal, i) =>
       specificVal?.c ? getDecimalValue(specificVal, i) : specificVal,
     );
 
@@ -230,6 +230,7 @@ function NIInputService() {
           )}
           {contractFunction?.inputs?.map((fnRes, index) => (
             <NIInputField
+              key={index.toString()}
               itemInfo={fnRes}
               value={value[index]}
               onChangeValue={(val) => onChangeValue(val, index)}

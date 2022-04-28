@@ -30,12 +30,8 @@ function* fetchNativeIntegrationAbisSaga(actions: IReduxAction) {
 
 const fetchNativeIntegrationAbis = async (): Promise<IReduxNativeIntegrationAbisFetched> => {
   const prismicData = await Prismic.queryDocumentsByType(TYPE_NATIVE_INTEGRATION);
-
-  console.log('prismicData', prismicData);
   return {
     type: t.NATIVE_INTEGRATION_ABIS_FETCHED,
     payload: prismicData?.results,
   };
 };
-
-const TAG = 'ReduxNativeIntegrationSaga';

@@ -99,7 +99,9 @@ function NIServices() {
       />
       {!isArchanovaAccount(activeAccount) && <DropdownChainView selectedChain={updateChain} />}
       {contractList ? (
-        contractList?.map((res: Object) => <ContractItemContent item={res} onPress={() => openActionsModal(res)} />)
+        contractList.map((res: Object) => (
+          <ContractItemContent key={res.toString()} item={res} onPress={() => openActionsModal(res)} />
+        ))
       ) : (
         <LoadingSpinner />
       )}

@@ -17,16 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
-import { Dimensions, Platform, PixelRatio, View } from 'react-native';
-
 export async function getDecimals(token) {
   const decimals = await token
     .callDecimals()
     .then((result) => {
       return result;
     })
-    .catch((error) => {
+    .catch(() => {
       return 0;
     });
   return decimals;

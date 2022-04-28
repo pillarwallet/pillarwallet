@@ -35,9 +35,9 @@ interface Props {
 
 function ContractItemContent({ item, onPress }: Props) {
   const colors = useThemeColors();
-  const iconUrl = item?.data?.icon?.url;
-  const title = item?.data?.name[0].text;
-  const description = item?.data?.description[0].text;
+  const iconUrl = item.data.icon.url;
+  const title = item.data.name[0].text;
+  const description = item.data.description[0].text;
 
   return (
     <Button key={item.toString()} onPress={onPress}>

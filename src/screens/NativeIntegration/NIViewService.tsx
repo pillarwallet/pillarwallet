@@ -20,8 +20,7 @@
 
 import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
-import { useTranslation } from 'translations/translate';
-import { TextInput as RNTextInput, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 // Utils
 import { chainFromChainId } from 'utils/chains';
@@ -35,16 +34,12 @@ import BigNumberInput from 'components/inputs/BigNumberInput';
 // Services
 import etherspotService from 'services/etherspot';
 
-type Instance = typeof RNTextInput;
-
 function NIViewService() {
-  const { t } = useTranslation();
   const navigation = useNavigation();
   const action = navigation.getParam('action');
   const contractData = navigation.getParam('contractData');
   const title = action?.['action-name'][0]?.text;
   const actionName = action?.['action-contract-call'];
-  const ref = React.forwardRef<Instance>(null);
   const chain = chainFromChainId[contractData?.chain_id];
   const [value, setValue] = React.useState(0);
 
@@ -53,11 +48,11 @@ function NIViewService() {
   });
 
   const FetchData = async () => {
-    if (!chain) null;
+    if (!chain) return;
 
     const integrationContract = etherspotService.getContract(chain, contractData?.abi, contractData?.contract_address);
 
-    const fnName = `call${actionName[0]?.toUpperCase()}${actionName?.substring(1)}`;
+    const fnName = actionName ? `call${actionName[0].toUpperCase()}${actionName.substring(1)}` : ``;
 
     try {
       const contractResponse = await integrationContract?.[fnName]();
@@ -70,7 +65,7 @@ function NIViewService() {
   return (
     <Container>
       <HeaderBlock centerItems={[{ title: title ? title : '' }]} navigation={navigation} />
-      <BigNumberInput ref={ref} value={value} onValueChange={setValue} editable={false} style={[styles.input]} />
+      <BigNumberInput value={value} onValueChange={setValue} editable={false} style={[styles.input]} />
     </Container>
   );
 }
