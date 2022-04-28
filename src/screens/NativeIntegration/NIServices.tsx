@@ -21,7 +21,6 @@
 import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
 import { useTranslation } from 'translations/translate';
-import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 
 // Utils
