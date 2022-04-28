@@ -294,7 +294,8 @@
     "activateSmartWallet": "Aktiviraj Smart Wallet",
     "finish": "Završi",
     "copyAddress": "Kopiraj adresu",
-    "ok": "uredu"
+    "ok": "uredu",
+    "i_understood": "razumijem"
   },
 
   "paragraph": {
@@ -311,7 +312,9 @@
     "backupPhraseRevealedPurpose": "Molim korisite ovih 12 tajnih riječi kako bi obnovili svoj račun.",
     "privateKeyRevealedPurpose": "Molim korisite ovaj privatni ključ kako bi obnovili svoj račun.",
     "doNotShareBackup": "Držite ih sigurnim jer je to jedini način za obnovu računa. Nemojte email-at ga ili screenshot-at.",
-    "sessionExpiredReEnterPin": "Sesija istekla, molim unesite PIN za nastavak."
+    "sessionExpiredReEnterPin": "Sesija istekla, molim unesite PIN za nastavak.",
+    "nativeIntegrationWarning": "Sljedeći alat vam daje izravan pristup pametnim ugovorima. Ovo se smatra profesionalnim alatom i ako ne znate što radite, nemojte pokušavati koristiti ovaj alat jer bi to moglo rezultirati gubitkom sredstava.",
+    "ownRisk": "Nastavite na vlastitu odgovornost."
   },
 
   "insight": {

@@ -86,7 +86,7 @@ function NIServices() {
 
     if (type === 'view') navigation.navigate(NI_VIEW_SERVICE, { action: val, contractData: item?.data });
     if (type === 'nonpayable' || type === 'payable' || type === 'pure')
-      navigation.navigate(NI_INPUT_SERVICE, { action: val, contractData: item?.data });
+      navigation.navigate(NI_INPUT_SERVICE, { action: val, contractData: item?.data, contractType: type });
   };
 
   return (

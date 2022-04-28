@@ -372,7 +372,8 @@
     "copyToClipboard": "复制到剪贴板",
     "savedPhrase": "我已经保存了我的 12 个字",
     "savedPrivateKey": "我已经保存了我的私钥",
-    "ok": "确认"
+    "ok": "确认",
+    "i_understood": "我明白"
   },
   "paragraph": {
     "addressCopiedToClipboard": "地址已复制到剪贴板。",
@@ -389,7 +390,9 @@
     "privateKeyRevealedPurpose": "请使用此私钥来恢复钱包。",
     "doNotShareBackup": "确保它的安全，因为这是在紧急情况下恢复帐户的唯一方法。不要通过电子邮件发送或截图。",
     "sessionExpiredReEnterPin": "登录会话已过期，请输入您的 PIN 码以继续。",
-    "addContacts": "将联系人添加到地址簿以轻松访问收藏地址以发送资产。"
+    "addContacts": "将联系人添加到地址簿以轻松访问收藏地址以发送资产。",
+    "nativeIntegrationWarning": "以下工具可让您直接访问智能合约。这被认为是一种专业工具，如果您不知道自己在做什么，请不要尝试使用此工具，因为它可能会导致资金损失。",
+    "ownRisk":"继续自担风险。"
   },
   "insight": {
     "pillarNetworkActivate": {

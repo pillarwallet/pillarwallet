@@ -65,6 +65,7 @@ function NIInputService() {
   const dispatch = useDispatch();
   const action = navigation.getParam('action');
   const contractData = navigation.getParam('contractData');
+  const contractType = navigation.getParam('contractType');
   const title = action?.['action-name'][0]?.text;
   const actionName = action?.['action-contract-call'];
   const chain = chainFromChainId[contractData?.chain_id];
@@ -76,13 +77,16 @@ function NIInputService() {
   const blueprint = action?.blueprint;
   const sequence = blueprint ? JSON.parse(blueprint).sequence : null;
   const blankArr = new Array(contractFunction?.inputs.length).fill(null);
+  const isPayable = contractType === 'payable' ? true : false;
+
+  const feeInFiat = getTxFeeInFiat(chain, feeInfo?.fee, feeInfo?.gasToken, chainRates, fiatCurrency);
+  const feeInFiatDisplayValue = `${currencySymbol}${feeInFiat.toFixed(5)}`;
 
   const [value, setValue] = React.useState(blankArr);
   const [contractRes, setContractRes] = React.useState([]);
   const [integrationContract, setIntegrationContract]: any = React.useState();
   const [isSendTransaction, setIsSendTransaction] = React.useState(false);
-
-  // const highFee = isHighGasFee(chain, feeInfo?.fee, feeInfo?.gasToken, chainRates, fiatCurrency, gasThresholds);
+  const [amount, setAmount] = React.useState(null);
 
   React.useEffect(() => {
     dispatch(fetchGasInfoAction(chain));
@@ -92,15 +96,16 @@ function NIInputService() {
 
   const updateTxFee = async () => {
     if (!value) return;
+    if (contractType === 'payable' ? (amount === null ? true : false) : false) return;
     const findNull = value?.find((res) => res === null || res === '');
     if (findNull !== undefined) {
       setContractRes(undefined);
       return;
     }
-
     await contractInterface();
   };
-  const updateTxFeeDebounced = React.useCallback(debounce(updateTxFee, 100), [value]);
+
+  const updateTxFeeDebounced = React.useCallback(debounce(updateTxFee, 100), [value, amount]);
 
   React.useEffect(() => {
     updateTxFeeDebounced();
@@ -112,22 +117,31 @@ function NIInputService() {
     const updatedArr = value?.map(async (specificVal, i) =>
       specificVal?.c ? getDecimalValue(specificVal, i) : specificVal,
     );
-    const valueWithBigNumber = await Promise.all(updatedArr);
 
     try {
       setIsSendTransaction(true);
+      const valueWithBigNumber = await Promise.all(updatedArr);
 
       const list = await approvalList();
       const approveTxList = list ? await Promise.all(list) : [];
 
       const contractInterface = await integrationContract[fnName](...valueWithBigNumber);
-      setContractRes([...approveTxList, contractInterface]);
+
+      setContractRes([
+        ...approveTxList,
+        { ...contractInterface, value: isPayable ? utils.parseUnits(amount.toString(), 18) : 0 },
+      ]);
 
       const approveListWithValue = approveTxList?.map((response) => {
         return { ...response, value: 0 };
       });
 
-      dispatch(estimateTransactionsAction([...approveListWithValue, { ...contractInterface, value: 0 }], chain));
+      dispatch(
+        estimateTransactionsAction(
+          [...approveListWithValue, { ...contractInterface, value: isPayable ? amount?.toString() : 0 }],
+          chain,
+        ),
+      );
       setIsSendTransaction(false);
       logBreadcrumb('nativeIntegrationContractResponse', JSON.stringify(contractInterface));
     } catch (e) {
@@ -172,6 +186,7 @@ function NIInputService() {
     const position = sequence?.[index]?.decimalAddressPosition;
     const approvalContractInterface =
       position !== undefined ? etherspotService.getContract(chain, ERC20_CONTRACT_ABI, value[position]) : null;
+
     const decimal = !approvalContractInterface ? 0 : await getDecimals(approvalContractInterface);
 
     return utils.parseUnits(bigNumberValue.toString(), decimal);
@@ -198,21 +213,32 @@ function NIInputService() {
     setValue(arr);
   };
 
-  const feeInFiat = getTxFeeInFiat(chain, feeInfo?.fee, feeInfo?.gasToken, chainRates, fiatCurrency);
-  const feeInFiatDisplayValue = `${currencySymbol}${feeInFiat.toFixed(5)}`;
-
   return (
     <Container>
       <ScrollWrapper>
         <HeaderBlock centerItems={[{ title: title ? title : '' }]} navigation={navigation} />
         <MainContent>
+          {contractType === 'payable' && (
+            <NIInputField
+              itemInfo={{ name: 'Value', type: 'nativeTokenInput', internalType: 'nativeTokenInput' }}
+              value={amount}
+              onChangeValue={setAmount}
+              txFeeInfo={feeInfo}
+              chain={chain}
+              disableAssetSelectorModal
+            />
+          )}
           {contractFunction?.inputs?.map((fnRes, index) => (
-            <NIInputField itemInfo={fnRes} value={value[index]} onChangeValue={(val) => onChangeValue(val, index)} />
+            <NIInputField
+              itemInfo={fnRes}
+              value={value[index]}
+              onChangeValue={(val) => onChangeValue(val, index)}
+              chain={chain}
+            />
           ))}
-
           <Spacing h={10} />
 
-          {contractRes && chain && (
+          {contractRes && chain && (contractType === 'payable' ? (amount !== null ? true : false) : true) && (
             <FooterContent>
               <FeeText>{t('Fee') + ' ' + feeInFiatDisplayValue}</FeeText>
               <SwipeButton

@@ -30,9 +30,10 @@ import Switcher from 'components/Switcher';
 import Input from 'components/inputs/TextInput';
 import MultilineTextInput from 'components/inputs/MultilineTextInput';
 import { Spacing } from 'components/legacy/Layout';
+import AssetSelector from 'components/SendAsset/AssetSelector';
 
 // Services
-import { appFont, fontStyles } from 'utils/variables';
+import { fontStyles } from 'utils/variables';
 
 // Selectors
 import { useRootSelector, activeAccountAddressSelector } from 'selectors/selectors';
@@ -43,11 +44,21 @@ import { useThemeColors } from 'utils/themes';
 import { isValidAddressOrEnsName } from 'utils/validators';
 import { addressesEqual } from 'utils/assets';
 
+// Types
+import type { AssetOption } from 'models/Asset';
+import type { Collectible } from 'models/Collectible';
+
+// Constants
+import { ASSET_TYPES } from 'constants/assetsConstants';
+
 type Props = {
   itemInfo: infoType;
   valueInputRef?: React.Ref<typeof RNTextInput>;
   value: any;
   onChangeValue: (val: any) => void;
+  txFeeInfo?: any;
+  chain?: string;
+  disableAssetSelectorModal?: boolean;
 };
 
 type infoType = {
@@ -56,14 +67,36 @@ type infoType = {
   type: string;
 };
 
-function NIInputField({ itemInfo, value, onChangeValue }: Props) {
+function NIInputField({ itemInfo, chain, value, onChangeValue, txFeeInfo, disableAssetSelectorModal = false }: Props) {
   const { t } = useTranslation();
   const inputRef = React.useRef();
   const colors = useThemeColors();
   const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
   const assetsWithBalance = useRootSelector(accountAssetsWithBalanceSelector);
 
-  // console.log('assetsWithBalance', assetsWithBalance);
+  let defaultAssetData = assetsWithBalance.find(
+    (response) => response?.chain === chain && response?.address === '0x0000000000000000000000000000000000000000',
+  );
+
+  const defaultAssetOption = defaultAssetData &&
+    defaultAssetData?.token && {
+      ...defaultAssetData,
+      symbol: defaultAssetData.token,
+    };
+
+  const [assetData, setAssetData] = React.useState<AssetOption | Collectible>(
+    defaultAssetData?.tokenType ? defaultAssetData : defaultAssetOption || [],
+  );
+  const selectedToken: AssetOption = assetData?.tokenType !== ASSET_TYPES.COLLECTIBLE ? assetData : null;
+  const selectedCollectible: Collectible = assetData?.tokenType === ASSET_TYPES.COLLECTIBLE ? assetData : null;
+
+  const handleSelectToken = (token: AssetOption) => {
+    if (token) setAssetData(token);
+  };
+
+  const handleSelectCollectible = (collectible: Collectible) => {
+    if (collectible) setAssetData?.(collectible);
+  };
 
   const getValidationError = () => {
     if (value?.c || typeof value == 'boolean') return null;
@@ -85,6 +118,22 @@ function NIInputField({ itemInfo, value, onChangeValue }: Props) {
   const inputStyles = [styles.input, { color: !!errorMessage ? colors.negative : colors.text }];
 
   const inputComponent = () => {
+    if (itemInfo?.type === 'nativeTokenInput') {
+      return (
+        <AssetSelector
+          selectedToken={selectedToken}
+          onSelectToken={handleSelectToken}
+          selectedCollectible={selectedCollectible}
+          onSelectCollectible={handleSelectCollectible}
+          value={value}
+          onValueChange={onChangeValue}
+          txFeeInfo={txFeeInfo}
+          disableAssetSelectorModal={disableAssetSelectorModal}
+          hideFiatValueInput
+        />
+      );
+    }
+
     if (itemInfo?.type === 'uint256') {
       return (
         <BigNumberInput

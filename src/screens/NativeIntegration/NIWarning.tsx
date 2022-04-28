@@ -21,19 +21,23 @@ import React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
 import t from 'translations/translate';
 import { useDispatch } from 'react-redux';
+import styled from 'styled-components/native';
 
 // Components
 import { Container } from 'components/layout/Layout';
 import { Wrapper } from 'components/legacy/Layout';
 import Title from 'components/legacy/Title';
-import Button from 'components/core/Button';
-import HeaderBlock from 'components/HeaderBlock';
+import SwipeButton from 'components/SwipeButton/SwipeButton';
+import Text from 'components/core/Text';
 
 // Constants
 import { NI_SERVICES } from 'constants/navigationConstants';
 
 // Actions
 import { saveDbAction } from 'actions/dbActions';
+
+// Utils
+import { fontStyles } from 'utils/variables';
 
 function NIWarning() {
   const dispatch = useDispatch();
@@ -45,13 +49,14 @@ function NIWarning() {
   };
 
   return (
-    <Container>
-      <HeaderBlock leftItems={[{ close: true }]} navigation={navigation} />
-      <Wrapper flex={1} center regularPadding>
+    <Container style={containerStyle}>
+      <Wrapper flex={1}>
         <Title fullWidth title={'Warning!'} titleStyles={titleStyle} align="center" />
+        <WarningText>{t('paragraph.nativeIntegrationWarning')}</WarningText>
+        <WarningText style={{ fontWeight: 'bold' }}>{t('paragraph.ownRisk')}</WarningText>
       </Wrapper>
 
-      <Button onPress={onContinue} title={t('button.continue')} style={buttonStyle} />
+      <SwipeButton confirmTitle={t('button.i_understood')} onPress={onContinue} />
     </Container>
   );
 }
@@ -59,11 +64,17 @@ function NIWarning() {
 export default NIWarning;
 
 const titleStyle = {
-  fontSize: 16,
+  fontSize: 24,
+  color: 'red',
+  marginTop: '12%',
 };
 
-const buttonStyle = {
-  width: '90%',
-  alignSelf: 'center',
-  marginBottom: 20,
-};
+const containerStyle = { padding: 20, paddingBottom: 40 };
+
+const WarningText = styled(Text)`
+  text-align: center;
+  color: ${({ theme }) => theme.colors.basic010};
+  ${fontStyles.big};
+  padding-horizontal: 20px
+  margin-top: 25px;
+`;
