@@ -18,12 +18,17 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { LayoutAnimation } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
+import { useDispatch } from 'react-redux';
+
+// Components
+import Text from 'components/core/Text';
+import Switcher from 'components/Switcher';
 
 // Constants
 import { ASSETS, SERVICES_FLOW } from 'constants/navigationConstants';
@@ -42,7 +47,7 @@ import { formatValue, formatFiatValue } from 'utils/format';
 import { LIST_ITEMS_APPEARANCE } from 'utils/layoutAnimations';
 import { calculateTotalBalancePerCategory } from 'utils/totalBalances';
 import { useChainsConfig, useAssetCategoriesConfig } from 'utils/uiConfig';
-import { spacing } from 'utils/variables';
+import { spacing, fontStyles } from 'utils/variables';
 import { isArchanovaAccount, isKeyBasedAccount } from 'utils/accounts';
 
 // Types
@@ -50,11 +55,16 @@ import type { AssetCategory, AssetCategoryRecordKeys } from 'models/AssetCategor
 import type { Chain, ChainRecord } from 'models/Chain';
 import type { TotalBalances } from 'models/TotalBalances';
 
-
 // Local
 import CategoryListItem from './components/CategoryListItem';
 import ChainListItem from './components/ChainListItem';
 import { calculateTotalCollectibleCount } from './utils';
+
+// Services
+import Storage from '../../services/storage';
+
+// Actions
+import { saveDbAction } from '../../actions/dbActions';
 
 type Props = {|
   accountTotalBalances: TotalBalances,
@@ -68,10 +78,21 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts }: Props
   const navigation = useNavigation();
 
   const [showChainsPerCategory, setShowChainsPerCategory] = React.useState<FlagPerCategory>({});
+  const [visibleBalance, setVisibleBalance] = React.useState(false);
+
+  useEffect(() => {
+    const callFunction = async () => {
+      const storage = Storage.getInstance('db');
+      const response = await storage.get('visible_balance');
+      if (response?.visible) setVisibleBalance(response?.visible);
+    };
+    return callFunction();
+  }, []);
 
   const chains = useSupportedChains();
   const fiatCurrency = useFiatCurrency();
   const activeAccount = useActiveAccount();
+  const dispatch = useDispatch();
 
   const { isDeployedOnChain, showDeploymentInterjection } = useDeploymentStatus();
 
@@ -115,6 +136,8 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts }: Props
           iconName={iconName}
           title={title}
           value={formattedBalance}
+          category={category}
+          balanceVisible={visibleBalance}
           onPress={() => handlePressAssetCategory(category)}
         />
         {showChains && chains.map((chain) => renderChainWithBalance(category, chain))}
@@ -133,6 +156,8 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts }: Props
         key={`${category}-${chain}`}
         title={title}
         value={formattedBalance}
+        category={category}
+        visibleBalance={visibleBalance}
         isDeployed={isKeyBasedAccount(activeAccount) || isDeployedOnChain[chain]}
         onPress={() => navigateToAssetDetails(category, chain)}
         onPressDeploy={() => showDeploymentInterjection(chain)}
@@ -171,10 +196,20 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts }: Props
   };
 
   // Temporarily hide rewards tab until rewards fetching is implemented
-  const categoriesToRender = Object.keys(balancePerCategory).filter(category => category !== ASSET_CATEGORY.REWARDS);
+  const categoriesToRender = Object.keys(balancePerCategory).filter((category) => category !== ASSET_CATEGORY.REWARDS);
+
+  const onChangeSwitch = async (value) => {
+    await dispatch(saveDbAction('visible_balance', { visible: value }));
+    setVisibleBalance(value);
+  };
 
   return (
     <Container>
+      <RowContainer>
+        <TextView>{t('show_balance')}</TextView>
+        <Switcher isOn={visibleBalance} onToggle={(value: boolean) => onChangeSwitch(value)} />
+      </RowContainer>
+
       {categoriesToRender.map((category) => renderCategoryWithBalance(category))}
 
       {renderCollectiblesCategory()}
@@ -196,4 +231,16 @@ export default AssetsSection;
 
 const Container = styled.View`
   padding: 0 ${spacing.large}px;
+`;
+
+const RowContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  padding: 5px 0 5px;
+  justify-content: space-between;
+`;
+
+const TextView = styled(Text)`
+  ${fontStyles.big};
+  font-variant: tabular-nums;
 `;
