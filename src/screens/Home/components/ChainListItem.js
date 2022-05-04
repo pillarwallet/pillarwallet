@@ -36,8 +36,8 @@ export type Props = {|
   value?: ?string,
   isDeployed?: boolean,
   onPressDeploy: () => mixed,
-  visibleBalance: boolean,
-  category: string,
+  visibleBalance?: boolean,
+  category?: string,
 |};
 
 function CategoryListItem({ title, onPress, value, isDeployed, category, visibleBalance, onPressDeploy }: Props) {

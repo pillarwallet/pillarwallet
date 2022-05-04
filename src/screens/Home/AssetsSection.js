@@ -81,13 +81,14 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts }: Props
   const [visibleBalance, setVisibleBalance] = React.useState(false);
 
   useEffect(() => {
-    const callFunction = async () => {
-      const storage = Storage.getInstance('db');
-      const response = await storage.get('visible_balance');
-      if (response?.visible) setVisibleBalance(response?.visible);
-    };
-    return callFunction();
+    callFunction();
   }, []);
+
+  const callFunction = async () => {
+    const storage = Storage.getInstance('db');
+    const response = await storage.get('visible_balance');
+    if (response?.visible) setVisibleBalance(response?.visible);
+  };
 
   const chains = useSupportedChains();
   const fiatCurrency = useFiatCurrency();

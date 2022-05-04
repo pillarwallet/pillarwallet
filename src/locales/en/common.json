@@ -586,7 +586,7 @@
     "assets": {
       "contacts": "Contacts",
       "services": "Services",
-      "show_balance": "Show Balances",
+      "show_balance": "Show Balances"
     },
     "actions": {
       "receive": "Receive",
