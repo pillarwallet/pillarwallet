@@ -33,9 +33,9 @@ import Icon from 'components/core/Icon';
 // utils
 import { getAccountName, isEtherspotAccount } from 'utils/accounts';
 import { calculateTotalBalance } from 'utils/totalBalances';
-import { fontStyles, spacing, borderRadiusSizes } from 'utils/variables';
+import { fontStyles, appFont, spacing, borderRadiusSizes } from 'utils/variables';
 import { images } from 'utils/images';
-import { useTheme, getThemeColors, useIsDarkTheme } from 'utils/themes';
+import { useTheme, getThemeColors, useIsDarkTheme, isLightTheme } from 'utils/themes';
 import { formatFiat, getEnsPrefix } from 'utils/common';
 
 // constants
@@ -107,8 +107,9 @@ const AccountsScreen = ({
   const fiatCurrency = useFiatCurrency();
   const isEnsMigrationNeeded = useRootSelector(isEnsMigrationNeededSelector);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { fetchAllAccountsTotalBalances(); }, []);
+  useEffect(() => {
+    fetchAllAccountsTotalBalances();
+  }, [fetchAllAccountsTotalBalances]);
 
   const { smartWalletIcon } = images(theme);
   const activeBlockchainNetwork = blockchainNetworks.find(({ isActive }) => !!isActive);
@@ -142,21 +143,20 @@ const AccountsScreen = ({
       >
         <ContainerView isSelected={isActive}>
           <RowContainer>
-            {isActive && (
-              <RadioIcon name="checked-radio" />
-            )}
-            {!isActive && (
-              <RadioIcon name="unchecked-radio" />
-            )}
+            {isActive && <RadioIcon name={isLightTheme() ? 'selected-radio-button' : 'checked-radio'} />}
+            {!isActive && <RadioIcon name={isLightTheme() ? 'radio-button' : 'unchecked-radio'} />}
             <TitleContainer>
-              <TextContent>{title}</TextContent>
-              <TextContent style={{ fontSize: 14 }}>
-                {`${address.substring(0, 4)}...${
-                  address.substring(address.length - 4)}${isActive && username ? ` (${username})` : ''}`}
+              <TextContent numberOfLines={1} style={isActive && { fontFamily: appFont.medium }}>
+                {title}
               </TextContent>
             </TitleContainer>
-            <Value>{balance}</Value>
+            <Value style={isActive && { fontFamily: appFont.medium }}>{balance}</Value>
           </RowContainer>
+          <TextContent style={addressText} numberOfLines={1}>
+            {`${address.substring(0, 4)}...${address.substring(address.length - 4)}${
+              isActive && username ? ` (${username})` : ''
+            }`}
+          </TextContent>
           <MigrationButtons>
             {showKeyBasedAssetMigrationButton && (
               <RowContainer>
@@ -164,10 +164,9 @@ const AccountsScreen = ({
                   name={isDarkTheme ? 'asset-migration-dark' : 'asset-migration'}
                   onPress={() => navigation.navigate(KEY_BASED_ASSET_TRANSFER_INTRO)}
                 />
-                <BannerText
-                  color={colors.link}
-                  onPress={() => navigation.navigate(KEY_BASED_ASSET_TRANSFER_INTRO)}
-                > {t('label.assetMigrate', { mediumText: true, color: colors.link })}
+                <BannerText color={colors.link} onPress={() => navigation.navigate(KEY_BASED_ASSET_TRANSFER_INTRO)}>
+                  {' '}
+                  {t('label.assetMigrate', { mediumText: true, color: colors.link })}
                 </BannerText>
               </RowContainer>
             )}
@@ -177,13 +176,12 @@ const AccountsScreen = ({
                   name={isDarkTheme ? 'ens-migration-dark' : 'ens-migration'}
                   onPress={() => navigation.navigate(ENS_MIGRATION_CONFIRM)}
                 />
-                <BannerText
-                  color={colors.link}
-                  onPress={() => navigation.navigate(ENS_MIGRATION_CONFIRM)}
-                > {t('label.ensMigrate', { mediumText: true, color: colors.link })}
+                <BannerText color={colors.link} onPress={() => navigation.navigate(ENS_MIGRATION_CONFIRM)}>
+                  {' '}
+                  {t('label.ensMigrate', { mediumText: true, color: colors.link })}
                 </BannerText>
               </RowContainer>
-              )}
+            )}
           </MigrationButtons>
         </ContainerView>
       </Container>
@@ -191,10 +189,7 @@ const AccountsScreen = ({
   };
 
   // etherspot account first
-  const sortedAccounts = sortBy(
-    accounts,
-    ({ type }) => type === ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET ? -1 : 1,
-  );
+  const sortedAccounts = sortBy(accounts, ({ type }) => (type === ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET ? -1 : 1));
 
   const isKeyBasedAssetsMigrationEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.KEY_BASED_ASSETS_MIGRATION);
 
@@ -223,11 +218,13 @@ const AccountsScreen = ({
   return (
     <SlideModal noPadding noClose showHeader centerTitle title={t('title.accounts')}>
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
-        {accountsList.map(item => renderListItem(item))}
+        {accountsList.map((item) => renderListItem(item))}
       </ContentWrapper>
     </SlideModal>
   );
 };
+
+const addressText = { fontSize: 14, marginLeft: 32 };
 
 const ContentWrapper = styled.View`
   padding: ${spacing.medium}px 0px;
@@ -236,14 +233,13 @@ const ContentWrapper = styled.View`
 
 const TitleContainer = styled.View`
   flex-direction: column;
-  flex:1;
-
+  flex: 1;
 `;
 
 const ContainerView = styled.View`
-  background-color: ${({ theme, isSelected }) => (isSelected ? theme.colors.basic080 : theme.colors.basic050)};
-  margin: 0 ${spacing.layoutSides}px;
-  padding: ${spacing.large}px;
+  background-color: ${({ theme, isSelected }) => (isSelected ? theme.colors.basic60 : theme.colors.basic050)};
+  margin: 0 ${spacing.medium}px;
+  padding: ${spacing.mediumLarge}px;
   border-radius: ${borderRadiusSizes.medium}px;
   flex-direction: column;
   flex: 1;
@@ -261,12 +257,11 @@ const Container = styled(TouchableContainer)`
 `;
 
 const Value = styled(Text)`
-  ${fontStyles.medium};
+  ${fontStyles.big};
   font-variant: tabular-nums;
 `;
 
 const RowContainer = styled.View`
-  align-items: center;
   justify-content: center;
   flex-direction: row;
   padding: ${spacing.small}px;
@@ -279,11 +274,10 @@ const TextContent = styled(Text)`
 
 const BannerText = styled(Text)`
   ${fontStyles.medium};
-  padding-left: ${spacing.small}px;
+  padding-left: ${spacing.extraSmall}px;
 `;
 
-const IconContainer = styled(Icon)`
-`;
+const IconContainer = styled(Icon)``;
 
 const RadioIcon = styled(Icon)`
   height: 24px;
@@ -295,7 +289,7 @@ const RadioIcon = styled(Icon)`
 
 const MigrationButtons = styled.View`
   flex-direction: column;
-  margin-left: 20px;
+  margin-left: 32px;
   align-items: flex-start;
   justify-content: flex-start;
 `;

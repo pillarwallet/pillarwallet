@@ -191,6 +191,8 @@ class SlideModal extends React.Component<Props, State> {
 
     const modalInner = (
       <React.Fragment>
+        {showModalHeader && !fullScreen && <HandleBar />}
+
         {!!showModalHeader && (
           // $FlowFixMe: flow update to 0.122
           <HeaderBlock
@@ -284,7 +286,7 @@ class SlideModal extends React.Component<Props, State> {
               style={{
                 elevation: 2,
                 zIndex: 11,
-                marginTop: -1 * this.state.contentHeight,
+                marginTop: -this.state.contentHeight,
                 marginBottom: 0,
               }}
             >

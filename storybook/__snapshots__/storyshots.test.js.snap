@@ -10407,7 +10407,7 @@ exports[`Storyshots Button all variants 1`] = `
           Object {
             "alignItems": "center",
             "alignSelf": "auto",
-            "backgroundColor": "#007AFF",
+            "backgroundColor": "#ebf0f6",
             "borderRadius": 6,
             "flexDirection": "row",
             "height": 72,
@@ -10416,7 +10416,7 @@ exports[`Storyshots Button all variants 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -10429,7 +10429,7 @@ exports[`Storyshots Button all variants 1`] = `
           style={
             Array [
               Object {
-                "color": "#FFFFFF",
+                "color": "#818eb3",
                 "fontFamily": "EuclidCircularB-Regular",
                 "fontSize": 16,
                 "lineHeight": 16,
@@ -10439,7 +10439,7 @@ exports[`Storyshots Button all variants 1`] = `
               },
             ]
           }
-          variant="default"
+          variant="disabled"
         >
           Long long long long long long title that takes up two lines
         </Text>
@@ -10518,7 +10518,7 @@ exports[`Storyshots Button all variants 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -10620,7 +10620,7 @@ exports[`Storyshots Button all variants 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -10722,7 +10722,7 @@ exports[`Storyshots Button all variants 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -10848,7 +10848,7 @@ exports[`Storyshots Button buttons auto width 1`] = `
           Object {
             "alignItems": "center",
             "alignSelf": "auto",
-            "backgroundColor": "#007AFF",
+            "backgroundColor": "#ebf0f6",
             "borderRadius": 6,
             "flexDirection": "row",
             "height": 72,
@@ -10857,7 +10857,7 @@ exports[`Storyshots Button buttons auto width 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 34,
             "paddingRight": 34,
@@ -10869,7 +10869,7 @@ exports[`Storyshots Button buttons auto width 1`] = `
           style={
             Array [
               Object {
-                "color": "#FFFFFF",
+                "color": "#818eb3",
                 "fontFamily": "EuclidCircularB-Regular",
                 "fontSize": 16,
                 "lineHeight": 16,
@@ -10879,7 +10879,7 @@ exports[`Storyshots Button buttons auto width 1`] = `
               },
             ]
           }
-          variant="default"
+          variant="disabled"
         >
           Button title
         </Text>
@@ -10957,7 +10957,7 @@ exports[`Storyshots Button buttons auto width 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 34,
             "paddingRight": 34,
@@ -11057,7 +11057,7 @@ exports[`Storyshots Button buttons auto width 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 34,
             "paddingRight": 34,
@@ -11157,7 +11157,7 @@ exports[`Storyshots Button buttons auto width 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 34,
             "paddingRight": 34,
@@ -11295,7 +11295,7 @@ exports[`Storyshots Button buttons with icons 1`] = `
           Object {
             "alignItems": "center",
             "alignSelf": "auto",
-            "backgroundColor": "#007AFF",
+            "backgroundColor": "#ebf0f6",
             "borderRadius": 6,
             "flexDirection": "row",
             "height": 72,
@@ -11304,7 +11304,7 @@ exports[`Storyshots Button buttons with icons 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 34,
             "paddingRight": 34,
@@ -11317,7 +11317,7 @@ exports[`Storyshots Button buttons with icons 1`] = `
           style={
             Array [
               Object {
-                "color": "#FFFFFF",
+                "color": "#818eb3",
                 "fontSize": 16,
                 "height": 16,
                 "marginRight": 6,
@@ -11329,7 +11329,7 @@ exports[`Storyshots Button buttons with icons 1`] = `
           style={
             Array [
               Object {
-                "color": "#FFFFFF",
+                "color": "#818eb3",
                 "fontFamily": "EuclidCircularB-Regular",
                 "fontSize": 16,
                 "lineHeight": 16,
@@ -11339,7 +11339,7 @@ exports[`Storyshots Button buttons with icons 1`] = `
               },
             ]
           }
-          variant="default"
+          variant="disabled"
         >
           Button title
         </Text>
@@ -11430,7 +11430,7 @@ exports[`Storyshots Button buttons with icons 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 34,
             "paddingRight": 34,
@@ -11556,7 +11556,7 @@ exports[`Storyshots Button buttons with icons 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 34,
             "paddingRight": 34,
@@ -11682,7 +11682,7 @@ exports[`Storyshots Button buttons with icons 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 34,
             "paddingRight": 34,
@@ -11779,7 +11779,7 @@ exports[`Storyshots Button loading buttons 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -12008,7 +12008,7 @@ exports[`Storyshots Button loading buttons 1`] = `
           Object {
             "alignItems": "center",
             "alignSelf": "auto",
-            "backgroundColor": "#007AFF",
+            "backgroundColor": "#ebf0f6",
             "borderRadius": 6,
             "flexDirection": "row",
             "height": 72,
@@ -12017,245 +12017,7 @@ exports[`Storyshots Button loading buttons 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
-            "paddingBottom": 0,
-            "paddingLeft": 20,
-            "paddingRight": 20,
-            "paddingTop": 0,
-            "width": "100%",
-          }
-        }
-      >
-        <View
-          style={
-            Object {
-              "height": 24,
-            }
-          }
-        >
-          <View
-            style={
-              Array [
-                Object {
-                  "alignItems": "center",
-                  "flex": 1,
-                  "justifyContent": "center",
-                },
-                Object {
-                  "paddingLeft": 8,
-                  "paddingRight": 8,
-                },
-              ]
-            }
-          >
-            <View
-              animating={true}
-              animationDuration={4000}
-              animationEasing={[Function]}
-              color="#FCFDFF"
-              hideAnimationDuration={200}
-              interaction={true}
-              renderComponent={[Function]}
-              style={
-                Object {
-                  "height": 24,
-                  "opacity": 1,
-                  "width": 24,
-                }
-              }
-              trackWidth={2}
-            >
-              <View
-                style={
-                  Object {
-                    "alignItems": "center",
-                    "bottom": 0,
-                    "justifyContent": "center",
-                    "left": 0,
-                    "position": "absolute",
-                    "right": 0,
-                    "top": 0,
-                  }
-                }
-              >
-                <View
-                  style={
-                    Object {
-                      "height": 24,
-                      "transform": Array [
-                        Object {
-                          "rotate": "82.5deg",
-                        },
-                        Object {
-                          "rotate": "0deg",
-                        },
-                      ],
-                      "width": 24,
-                    }
-                  }
-                >
-                  <View
-                    collapsable={false}
-                    style={
-                      Object {
-                        "height": 12,
-                        "overflow": "hidden",
-                        "width": 24,
-                      }
-                    }
-                  >
-                    <View
-                      style={
-                        Object {
-                          "height": 24,
-                          "transform": Array [
-                            Object {
-                              "translateY": 0,
-                            },
-                            Object {
-                              "rotate": "-172.5deg",
-                            },
-                          ],
-                          "width": 24,
-                        }
-                      }
-                    >
-                      <View
-                        collapsable={false}
-                        style={
-                          Object {
-                            "height": 12,
-                            "overflow": "hidden",
-                            "width": 24,
-                          }
-                        }
-                      >
-                        <View
-                          style={
-                            Object {
-                              "borderColor": "#FCFDFF",
-                              "borderRadius": 12,
-                              "borderWidth": 2,
-                              "height": 24,
-                              "width": 24,
-                            }
-                          }
-                        />
-                      </View>
-                    </View>
-                  </View>
-                </View>
-              </View>
-              <View
-                style={
-                  Object {
-                    "alignItems": "center",
-                    "bottom": 0,
-                    "justifyContent": "center",
-                    "left": 0,
-                    "position": "absolute",
-                    "right": 0,
-                    "top": 0,
-                  }
-                }
-              >
-                <View
-                  style={
-                    Object {
-                      "height": 24,
-                      "transform": Array [
-                        Object {
-                          "rotate": "82.5deg",
-                        },
-                        Object {
-                          "rotate": "0deg",
-                        },
-                      ],
-                      "width": 24,
-                    }
-                  }
-                >
-                  <View
-                    collapsable={false}
-                    style={
-                      Object {
-                        "height": 12,
-                        "overflow": "hidden",
-                        "top": 12,
-                        "width": 24,
-                      }
-                    }
-                  >
-                    <View
-                      style={
-                        Object {
-                          "height": 24,
-                          "transform": Array [
-                            Object {
-                              "translateY": -12,
-                            },
-                            Object {
-                              "rotate": "352.5deg",
-                            },
-                          ],
-                          "width": 24,
-                        }
-                      }
-                    >
-                      <View
-                        collapsable={false}
-                        style={
-                          Object {
-                            "height": 12,
-                            "overflow": "hidden",
-                            "width": 24,
-                          }
-                        }
-                      >
-                        <View
-                          style={
-                            Object {
-                              "borderColor": "#FCFDFF",
-                              "borderRadius": 12,
-                              "borderWidth": 2,
-                              "height": 24,
-                              "width": 24,
-                            }
-                          }
-                        />
-                      </View>
-                    </View>
-                  </View>
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
-      </View>
-      <View
-        accessible={true}
-        focusable={true}
-        onClick={[Function]}
-        onResponderGrant={[Function]}
-        onResponderMove={[Function]}
-        onResponderRelease={[Function]}
-        onResponderTerminate={[Function]}
-        onResponderTerminationRequest={[Function]}
-        onStartShouldSetResponder={[Function]}
-        style={
-          Object {
-            "alignItems": "center",
-            "alignSelf": "auto",
-            "backgroundColor": "#2AA057",
-            "borderRadius": 6,
-            "flexDirection": "row",
-            "height": 72,
-            "justifyContent": "center",
-            "marginBottom": 0,
-            "marginLeft": 0,
-            "marginRight": 0,
-            "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -12493,7 +12255,245 @@ exports[`Storyshots Button loading buttons 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
+            "paddingBottom": 0,
+            "paddingLeft": 20,
+            "paddingRight": 20,
+            "paddingTop": 0,
+            "width": "100%",
+          }
+        }
+      >
+        <View
+          style={
+            Object {
+              "height": 24,
+            }
+          }
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "flex": 1,
+                  "justifyContent": "center",
+                },
+                Object {
+                  "paddingLeft": 8,
+                  "paddingRight": 8,
+                },
+              ]
+            }
+          >
+            <View
+              animating={true}
+              animationDuration={4000}
+              animationEasing={[Function]}
+              color="#FCFDFF"
+              hideAnimationDuration={200}
+              interaction={true}
+              renderComponent={[Function]}
+              style={
+                Object {
+                  "height": 24,
+                  "opacity": 1,
+                  "width": 24,
+                }
+              }
+              trackWidth={2}
+            >
+              <View
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "bottom": 0,
+                    "justifyContent": "center",
+                    "left": 0,
+                    "position": "absolute",
+                    "right": 0,
+                    "top": 0,
+                  }
+                }
+              >
+                <View
+                  style={
+                    Object {
+                      "height": 24,
+                      "transform": Array [
+                        Object {
+                          "rotate": "82.5deg",
+                        },
+                        Object {
+                          "rotate": "0deg",
+                        },
+                      ],
+                      "width": 24,
+                    }
+                  }
+                >
+                  <View
+                    collapsable={false}
+                    style={
+                      Object {
+                        "height": 12,
+                        "overflow": "hidden",
+                        "width": 24,
+                      }
+                    }
+                  >
+                    <View
+                      style={
+                        Object {
+                          "height": 24,
+                          "transform": Array [
+                            Object {
+                              "translateY": 0,
+                            },
+                            Object {
+                              "rotate": "-172.5deg",
+                            },
+                          ],
+                          "width": 24,
+                        }
+                      }
+                    >
+                      <View
+                        collapsable={false}
+                        style={
+                          Object {
+                            "height": 12,
+                            "overflow": "hidden",
+                            "width": 24,
+                          }
+                        }
+                      >
+                        <View
+                          style={
+                            Object {
+                              "borderColor": "#FCFDFF",
+                              "borderRadius": 12,
+                              "borderWidth": 2,
+                              "height": 24,
+                              "width": 24,
+                            }
+                          }
+                        />
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </View>
+              <View
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "bottom": 0,
+                    "justifyContent": "center",
+                    "left": 0,
+                    "position": "absolute",
+                    "right": 0,
+                    "top": 0,
+                  }
+                }
+              >
+                <View
+                  style={
+                    Object {
+                      "height": 24,
+                      "transform": Array [
+                        Object {
+                          "rotate": "82.5deg",
+                        },
+                        Object {
+                          "rotate": "0deg",
+                        },
+                      ],
+                      "width": 24,
+                    }
+                  }
+                >
+                  <View
+                    collapsable={false}
+                    style={
+                      Object {
+                        "height": 12,
+                        "overflow": "hidden",
+                        "top": 12,
+                        "width": 24,
+                      }
+                    }
+                  >
+                    <View
+                      style={
+                        Object {
+                          "height": 24,
+                          "transform": Array [
+                            Object {
+                              "translateY": -12,
+                            },
+                            Object {
+                              "rotate": "352.5deg",
+                            },
+                          ],
+                          "width": 24,
+                        }
+                      }
+                    >
+                      <View
+                        collapsable={false}
+                        style={
+                          Object {
+                            "height": 12,
+                            "overflow": "hidden",
+                            "width": 24,
+                          }
+                        }
+                      >
+                        <View
+                          style={
+                            Object {
+                              "borderColor": "#FCFDFF",
+                              "borderRadius": 12,
+                              "borderWidth": 2,
+                              "height": 24,
+                              "width": 24,
+                            }
+                          }
+                        />
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+      <View
+        accessible={true}
+        focusable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "alignSelf": "auto",
+            "backgroundColor": "#2AA057",
+            "borderRadius": 6,
+            "flexDirection": "row",
+            "height": 72,
+            "justifyContent": "center",
+            "marginBottom": 0,
+            "marginLeft": 0,
+            "marginRight": 0,
+            "marginTop": 0,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -12731,7 +12731,7 @@ exports[`Storyshots Button loading buttons 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -12969,7 +12969,7 @@ exports[`Storyshots Button loading buttons 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -13207,7 +13207,7 @@ exports[`Storyshots Button loading buttons 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -13445,7 +13445,7 @@ exports[`Storyshots Button loading buttons 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -13760,7 +13760,7 @@ exports[`Storyshots Button small buttons 1`] = `
           Object {
             "alignItems": "center",
             "alignSelf": "auto",
-            "backgroundColor": "#007AFF",
+            "backgroundColor": "#ebf0f6",
             "borderRadius": 3,
             "flexDirection": "row",
             "height": 32,
@@ -13769,7 +13769,7 @@ exports[`Storyshots Button small buttons 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -13783,7 +13783,7 @@ exports[`Storyshots Button small buttons 1`] = `
           style={
             Array [
               Object {
-                "color": "#FFFFFF",
+                "color": "#818eb3",
                 "fontFamily": "EuclidCircularB-Regular",
                 "fontSize": 14,
                 "lineHeight": 14,
@@ -13793,7 +13793,7 @@ exports[`Storyshots Button small buttons 1`] = `
               },
             ]
           }
-          variant="default"
+          variant="disabled"
         >
           Long long long long long long title that takes up two lines
         </Text>
@@ -13873,7 +13873,7 @@ exports[`Storyshots Button small buttons 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -13977,7 +13977,7 @@ exports[`Storyshots Button small buttons 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -14081,7 +14081,7 @@ exports[`Storyshots Button small buttons 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -14209,7 +14209,7 @@ exports[`Storyshots Button small buttons auto width 1`] = `
           Object {
             "alignItems": "center",
             "alignSelf": "auto",
-            "backgroundColor": "#007AFF",
+            "backgroundColor": "#ebf0f6",
             "borderRadius": 3,
             "flexDirection": "row",
             "height": 32,
@@ -14218,7 +14218,7 @@ exports[`Storyshots Button small buttons auto width 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -14231,7 +14231,7 @@ exports[`Storyshots Button small buttons auto width 1`] = `
           style={
             Array [
               Object {
-                "color": "#FFFFFF",
+                "color": "#818eb3",
                 "fontFamily": "EuclidCircularB-Regular",
                 "fontSize": 14,
                 "lineHeight": 14,
@@ -14241,7 +14241,7 @@ exports[`Storyshots Button small buttons auto width 1`] = `
               },
             ]
           }
-          variant="default"
+          variant="disabled"
         >
           Button title
         </Text>
@@ -14320,7 +14320,7 @@ exports[`Storyshots Button small buttons auto width 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -14422,7 +14422,7 @@ exports[`Storyshots Button small buttons auto width 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -14524,7 +14524,7 @@ exports[`Storyshots Button small buttons auto width 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -14609,7 +14609,7 @@ exports[`Storyshots Button small buttons auto width loading 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -14837,7 +14837,7 @@ exports[`Storyshots Button small buttons auto width loading 1`] = `
           Object {
             "alignItems": "center",
             "alignSelf": "auto",
-            "backgroundColor": "#007AFF",
+            "backgroundColor": "#ebf0f6",
             "borderRadius": 3,
             "flexDirection": "row",
             "height": 32,
@@ -14846,244 +14846,7 @@ exports[`Storyshots Button small buttons auto width loading 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
-            "paddingBottom": 0,
-            "paddingLeft": 20,
-            "paddingRight": 20,
-            "paddingTop": 0,
-          }
-        }
-      >
-        <View
-          style={
-            Object {
-              "height": 16,
-            }
-          }
-        >
-          <View
-            style={
-              Array [
-                Object {
-                  "alignItems": "center",
-                  "flex": 1,
-                  "justifyContent": "center",
-                },
-                Object {
-                  "paddingLeft": 8,
-                  "paddingRight": 8,
-                },
-              ]
-            }
-          >
-            <View
-              animating={true}
-              animationDuration={4000}
-              animationEasing={[Function]}
-              color="#FCFDFF"
-              hideAnimationDuration={200}
-              interaction={true}
-              renderComponent={[Function]}
-              style={
-                Object {
-                  "height": 16,
-                  "opacity": 1,
-                  "width": 16,
-                }
-              }
-              trackWidth={1}
-            >
-              <View
-                style={
-                  Object {
-                    "alignItems": "center",
-                    "bottom": 0,
-                    "justifyContent": "center",
-                    "left": 0,
-                    "position": "absolute",
-                    "right": 0,
-                    "top": 0,
-                  }
-                }
-              >
-                <View
-                  style={
-                    Object {
-                      "height": 16,
-                      "transform": Array [
-                        Object {
-                          "rotate": "82.5deg",
-                        },
-                        Object {
-                          "rotate": "0deg",
-                        },
-                      ],
-                      "width": 16,
-                    }
-                  }
-                >
-                  <View
-                    collapsable={false}
-                    style={
-                      Object {
-                        "height": 8,
-                        "overflow": "hidden",
-                        "width": 16,
-                      }
-                    }
-                  >
-                    <View
-                      style={
-                        Object {
-                          "height": 16,
-                          "transform": Array [
-                            Object {
-                              "translateY": 0,
-                            },
-                            Object {
-                              "rotate": "-172.5deg",
-                            },
-                          ],
-                          "width": 16,
-                        }
-                      }
-                    >
-                      <View
-                        collapsable={false}
-                        style={
-                          Object {
-                            "height": 8,
-                            "overflow": "hidden",
-                            "width": 16,
-                          }
-                        }
-                      >
-                        <View
-                          style={
-                            Object {
-                              "borderColor": "#FCFDFF",
-                              "borderRadius": 8,
-                              "borderWidth": 1,
-                              "height": 16,
-                              "width": 16,
-                            }
-                          }
-                        />
-                      </View>
-                    </View>
-                  </View>
-                </View>
-              </View>
-              <View
-                style={
-                  Object {
-                    "alignItems": "center",
-                    "bottom": 0,
-                    "justifyContent": "center",
-                    "left": 0,
-                    "position": "absolute",
-                    "right": 0,
-                    "top": 0,
-                  }
-                }
-              >
-                <View
-                  style={
-                    Object {
-                      "height": 16,
-                      "transform": Array [
-                        Object {
-                          "rotate": "82.5deg",
-                        },
-                        Object {
-                          "rotate": "0deg",
-                        },
-                      ],
-                      "width": 16,
-                    }
-                  }
-                >
-                  <View
-                    collapsable={false}
-                    style={
-                      Object {
-                        "height": 8,
-                        "overflow": "hidden",
-                        "top": 8,
-                        "width": 16,
-                      }
-                    }
-                  >
-                    <View
-                      style={
-                        Object {
-                          "height": 16,
-                          "transform": Array [
-                            Object {
-                              "translateY": -8,
-                            },
-                            Object {
-                              "rotate": "352.5deg",
-                            },
-                          ],
-                          "width": 16,
-                        }
-                      }
-                    >
-                      <View
-                        collapsable={false}
-                        style={
-                          Object {
-                            "height": 8,
-                            "overflow": "hidden",
-                            "width": 16,
-                          }
-                        }
-                      >
-                        <View
-                          style={
-                            Object {
-                              "borderColor": "#FCFDFF",
-                              "borderRadius": 8,
-                              "borderWidth": 1,
-                              "height": 16,
-                              "width": 16,
-                            }
-                          }
-                        />
-                      </View>
-                    </View>
-                  </View>
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
-      </View>
-      <View
-        accessible={true}
-        focusable={true}
-        onClick={[Function]}
-        onResponderGrant={[Function]}
-        onResponderMove={[Function]}
-        onResponderRelease={[Function]}
-        onResponderTerminate={[Function]}
-        onResponderTerminationRequest={[Function]}
-        onStartShouldSetResponder={[Function]}
-        style={
-          Object {
-            "alignItems": "center",
-            "alignSelf": "auto",
-            "backgroundColor": "#2AA057",
-            "borderRadius": 3,
-            "flexDirection": "row",
-            "height": 32,
-            "justifyContent": "center",
-            "marginBottom": 0,
-            "marginLeft": 0,
-            "marginRight": 0,
-            "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -15320,7 +15083,244 @@ exports[`Storyshots Button small buttons auto width loading 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
+            "paddingBottom": 0,
+            "paddingLeft": 20,
+            "paddingRight": 20,
+            "paddingTop": 0,
+          }
+        }
+      >
+        <View
+          style={
+            Object {
+              "height": 16,
+            }
+          }
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "flex": 1,
+                  "justifyContent": "center",
+                },
+                Object {
+                  "paddingLeft": 8,
+                  "paddingRight": 8,
+                },
+              ]
+            }
+          >
+            <View
+              animating={true}
+              animationDuration={4000}
+              animationEasing={[Function]}
+              color="#FCFDFF"
+              hideAnimationDuration={200}
+              interaction={true}
+              renderComponent={[Function]}
+              style={
+                Object {
+                  "height": 16,
+                  "opacity": 1,
+                  "width": 16,
+                }
+              }
+              trackWidth={1}
+            >
+              <View
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "bottom": 0,
+                    "justifyContent": "center",
+                    "left": 0,
+                    "position": "absolute",
+                    "right": 0,
+                    "top": 0,
+                  }
+                }
+              >
+                <View
+                  style={
+                    Object {
+                      "height": 16,
+                      "transform": Array [
+                        Object {
+                          "rotate": "82.5deg",
+                        },
+                        Object {
+                          "rotate": "0deg",
+                        },
+                      ],
+                      "width": 16,
+                    }
+                  }
+                >
+                  <View
+                    collapsable={false}
+                    style={
+                      Object {
+                        "height": 8,
+                        "overflow": "hidden",
+                        "width": 16,
+                      }
+                    }
+                  >
+                    <View
+                      style={
+                        Object {
+                          "height": 16,
+                          "transform": Array [
+                            Object {
+                              "translateY": 0,
+                            },
+                            Object {
+                              "rotate": "-172.5deg",
+                            },
+                          ],
+                          "width": 16,
+                        }
+                      }
+                    >
+                      <View
+                        collapsable={false}
+                        style={
+                          Object {
+                            "height": 8,
+                            "overflow": "hidden",
+                            "width": 16,
+                          }
+                        }
+                      >
+                        <View
+                          style={
+                            Object {
+                              "borderColor": "#FCFDFF",
+                              "borderRadius": 8,
+                              "borderWidth": 1,
+                              "height": 16,
+                              "width": 16,
+                            }
+                          }
+                        />
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </View>
+              <View
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "bottom": 0,
+                    "justifyContent": "center",
+                    "left": 0,
+                    "position": "absolute",
+                    "right": 0,
+                    "top": 0,
+                  }
+                }
+              >
+                <View
+                  style={
+                    Object {
+                      "height": 16,
+                      "transform": Array [
+                        Object {
+                          "rotate": "82.5deg",
+                        },
+                        Object {
+                          "rotate": "0deg",
+                        },
+                      ],
+                      "width": 16,
+                    }
+                  }
+                >
+                  <View
+                    collapsable={false}
+                    style={
+                      Object {
+                        "height": 8,
+                        "overflow": "hidden",
+                        "top": 8,
+                        "width": 16,
+                      }
+                    }
+                  >
+                    <View
+                      style={
+                        Object {
+                          "height": 16,
+                          "transform": Array [
+                            Object {
+                              "translateY": -8,
+                            },
+                            Object {
+                              "rotate": "352.5deg",
+                            },
+                          ],
+                          "width": 16,
+                        }
+                      }
+                    >
+                      <View
+                        collapsable={false}
+                        style={
+                          Object {
+                            "height": 8,
+                            "overflow": "hidden",
+                            "width": 16,
+                          }
+                        }
+                      >
+                        <View
+                          style={
+                            Object {
+                              "borderColor": "#FCFDFF",
+                              "borderRadius": 8,
+                              "borderWidth": 1,
+                              "height": 16,
+                              "width": 16,
+                            }
+                          }
+                        />
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+      <View
+        accessible={true}
+        focusable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "alignSelf": "auto",
+            "backgroundColor": "#2AA057",
+            "borderRadius": 3,
+            "flexDirection": "row",
+            "height": 32,
+            "justifyContent": "center",
+            "marginBottom": 0,
+            "marginLeft": 0,
+            "marginRight": 0,
+            "marginTop": 0,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -15557,7 +15557,7 @@ exports[`Storyshots Button small buttons auto width loading 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -15794,7 +15794,7 @@ exports[`Storyshots Button small buttons auto width loading 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -16031,7 +16031,7 @@ exports[`Storyshots Button small buttons auto width loading 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -16268,7 +16268,7 @@ exports[`Storyshots Button small buttons auto width loading 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -16589,7 +16589,7 @@ exports[`Storyshots Button transparent buttons 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -16690,7 +16690,7 @@ exports[`Storyshots Button transparent buttons 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -16791,7 +16791,7 @@ exports[`Storyshots Button transparent buttons 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -16892,7 +16892,7 @@ exports[`Storyshots Button transparent buttons 1`] = `
             "marginLeft": 0,
             "marginRight": 0,
             "marginTop": 0,
-            "opacity": 0.5,
+            "opacity": 0.8,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -43002,6 +43002,20 @@ exports[`Storyshots SlideModal default 1`] = `
               ]
             }
           >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignSelf": "center",
+                    "backgroundColor": "#ededed",
+                    "borderRadius": 2.5,
+                    "height": 5,
+                    "marginTop": 12,
+                    "width": 38,
+                  },
+                ]
+              }
+            />
             <View
               style={
                 Object {

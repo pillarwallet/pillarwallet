@@ -30,12 +30,13 @@ import Button from 'components/core/Button';
 
 // Utils
 import { fontStyles, spacing, borderRadiusSizes, appFont } from 'utils/variables';
+import { isLightTheme } from 'utils/themes';
 
 interface ISelectResidentModal {
-  residentSelected: (isUsResident: boolean) => void,
+  residentSelected: (isUsResident: boolean) => void;
 }
 
-const SelectResidentModal : FC<ISelectResidentModal> = ({ residentSelected }) => {
+const SelectResidentModal: FC<ISelectResidentModal> = ({ residentSelected }) => {
   const modalRef = useRef(null);
   const { t, tRoot } = useTranslationWithPrefix('servicesContent.ramp.addCash.selectResidentModal');
   const [usResident, setUsResident] = React.useState(true);
@@ -66,8 +67,8 @@ const SelectResidentModal : FC<ISelectResidentModal> = ({ residentSelected }) =>
       <Container onPress={selectUsResident}>
         <ContainerView isSelected={usResident}>
           <RowContainer>
-            {usResident && <RadioIcon name="checked-radio" />}
-            {!usResident && <RadioIcon name="unchecked-radio" />}
+            {usResident && <RadioIcon name={isLightTheme() ? 'selected-radio-button' : 'checked-radio'} />}
+            {!usResident && <RadioIcon name={isLightTheme() ? 'radio-button' : 'unchecked-radio'} />}
             <Title style={usResident && styles.titleStyle}>{t('options.usResident')}</Title>
           </RowContainer>
         </ContainerView>
@@ -75,8 +76,8 @@ const SelectResidentModal : FC<ISelectResidentModal> = ({ residentSelected }) =>
       <Container onPress={selectNonUsResident}>
         <ContainerView isSelected={nonUsResident}>
           <RowContainer>
-            {nonUsResident && <RadioIcon name="checked-radio" />}
-            {!nonUsResident && <RadioIcon name="unchecked-radio" />}
+            {nonUsResident && <RadioIcon name={isLightTheme() ? 'selected-radio-button' : 'checked-radio'} />}
+            {!nonUsResident && <RadioIcon name={isLightTheme() ? 'radio-button' : 'unchecked-radio'} />}
             <Title style={nonUsResident && styles.titleStyle}>{t('options.nonUsResident')}</Title>
           </RowContainer>
         </ContainerView>
@@ -90,6 +91,7 @@ export default SelectResidentModal;
 
 const styles = {
   buttonStyle: {
+    marginTop: spacing.medium,
     marginBottom: spacing.extraLarge,
   },
   titleStyle: {
@@ -117,7 +119,7 @@ const Container = styled(TouchableContainer)`
 `;
 
 const ContainerView = styled.View`
-  background-color: ${({ theme, isSelected }) => (isSelected ? theme.colors.basic080 : theme.colors.basic050)};
+  background-color: ${({ theme, isSelected }) => (isSelected ? theme.colors.basic60 : theme.colors.basic050)};
   padding: ${spacing.large}px;
   border-radius: ${borderRadiusSizes.medium}px;
   flex-direction: column;

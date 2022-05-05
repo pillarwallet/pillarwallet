@@ -45,7 +45,7 @@ import { getActiveScreenName } from 'utils/navigation';
 
 // Components
 import { Container } from 'components/layout/Layout';
-import Button from 'components/core/Button';
+import Button from 'components/legacy/Button';
 import TextInput from 'components/legacy/TextInput';
 import HeaderBlock from 'components/HeaderBlock';
 import Text from 'components/core/Text';
@@ -70,6 +70,7 @@ const AddCash = () => {
   const dispatch = useDispatch();
   const [value, setValue] = React.useState('0');
   const [inUS, setinUS] = React.useState(false);
+
   const fiatCurrency = useFiatCurrency();
   const colors = useThemeColors();
   const [currencySymbol, setCurrencySymbol] = React.useState(getCurrencySymbol(fiatCurrency));

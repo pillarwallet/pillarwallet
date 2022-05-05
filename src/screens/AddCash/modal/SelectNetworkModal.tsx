@@ -48,10 +48,10 @@ import { useChainGasInfo, useChainRates, useFiatCurrency } from 'selectors/selec
 import { fetchGasInfoAction } from 'actions/historyActions';
 
 interface ISelectNetworkModal {
-  networkSelected: () => void,
+  networkSelected: () => void;
 }
 
-const SelectNetworkModal : FC<ISelectNetworkModal> = ({ networkSelected }) => {
+const SelectNetworkModal: FC<ISelectNetworkModal> = ({ networkSelected }) => {
   const modalRef = useRef(null);
   const dispatch = useDispatch();
   const colors = useThemeColors();

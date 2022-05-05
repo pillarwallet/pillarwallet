@@ -32,11 +32,11 @@ import { useFiatCurrency, useRootSelector } from 'selectors';
 import { accountTotalBalancesSelector } from 'selectors/totalBalances';
 
 // Utils
-import { fontStyles, spacing, borderRadiusSizes } from 'utils/variables';
+import { fontStyles, spacing, appFont, borderRadiusSizes } from 'utils/variables';
 import { calculateTotalBalancePerCategory, calculateTotalBalancePerChain } from 'utils/totalBalances';
 import { formatFiatValue } from 'utils/format';
 import { mapChainToChainId } from 'utils/chains';
-
+import { isLightTheme } from 'utils/themes';
 import { type Chain } from 'models/Chain';
 
 // Local
@@ -48,7 +48,7 @@ type itemType = {|
 |};
 
 type Props = {|
-  items: ?itemType[],
+  items: ?(itemType[]),
   activeItem: ?itemType,
   updateActiveChain: (?Chain) => void,
   updateActiveItem: (itemType) => void,
@@ -92,15 +92,15 @@ function SwitchChainModal({ items, activeItem, updateActiveChain, updateActiveIt
       <Container key={`${key ?? 'all'}`} onPress={() => handleChains(chain)}>
         <ContainerView isSelected={isSelected}>
           <RowContainer>
-            {isSelected && (
-              <RadioIcon name="checked-radio" />
-            )}
-            {!isSelected && (
-              <RadioIcon name="unchecked-radio" />
-            )}
-            <ChainViewIcon size={24} style={IconContainer} name={key ?? 'all-networks'} />
-            <Title>{title}</Title>
-            <Value>{formattedBalance}</Value>
+            {isSelected && <RadioIcon name={isLightTheme() ? 'selected-radio-button' : 'checked-radio'} />}
+            {!isSelected && <RadioIcon name={isLightTheme() ? 'radio-button' : 'unchecked-radio'} />}
+            <ChainViewIcon
+              size={24}
+              style={IconContainer}
+              name={key ?? (isLightTheme() ? 'all-networks-light' : 'all-networks')}
+            />
+            <Title style={isSelected && { fontFamily: appFont.medium }}>{title}</Title>
+            <Value style={isSelected && { fontFamily: appFont.medium }}>{formattedBalance}</Value>
           </RowContainer>
         </ContainerView>
       </Container>
@@ -130,9 +130,11 @@ const InfoView = styled.View`
 `;
 
 const ContainerView = styled.View`
-  background-color: ${({ theme, isSelected }) => (isSelected ? theme.colors.basic080 : theme.colors.basic050)};
-  margin: 0 ${spacing.layoutSides}px;
-  padding: ${spacing.large}px;
+  background-color: ${({ theme, isSelected }) => (isSelected ? theme.colors.basic60 : theme.colors.basic050)};
+  margin: 8px ${spacing.medium}px;
+  padding: 0 ${spacing.large}px 0 ${spacing.mediumLarge}px;
+  height: 64px;
+  justify-content: center;
   border-radius: ${borderRadiusSizes.medium}px;
   flex-direction: column;
   flex: 1;
