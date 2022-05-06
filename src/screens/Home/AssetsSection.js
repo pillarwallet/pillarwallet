@@ -165,6 +165,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, showBal
       <ChainListItem
         key={`collectibles-${chain}`}
         title={chainsConfig[chain].title}
+        visibleBalance={showBalance}
         value={formatValue(accountCollectibleCounts[chain] ?? 0)}
         isDeployed={isKeyBasedAccount(activeAccount) || isDeployedOnChain[chain]}
         onPress={() => navigateToAssetDetails(ASSET_CATEGORY.COLLECTIBLES, chain)}

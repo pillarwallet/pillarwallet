@@ -92,7 +92,7 @@ function Home() {
   const accountAddress = useRootSelector(activeAccountAddressSelector);
   const [showAccountSwitchTooltip, setShowAccountSwitchTooltip] = React.useState(false);
   const [showENSTooltip, setShowENSSwitchTooltip] = React.useState(false);
-  const [balanceVisible, setBalanceVisible] = React.useState(false);
+  const [balanceVisible, setBalanceVisible] = React.useState(true);
 
   const canSwitchAccount = useAccounts().length > 1;
   const ensNodeState = getEnsNodeState(etherspotAccount);
@@ -127,7 +127,7 @@ function Home() {
   const callFunction = async () => {
     const storage = Storage.getInstance('db');
     const response = await storage.get('visible_balance');
-    if (response?.visible) setBalanceVisible(response?.visible);
+    if (response?.visible !== undefined) setBalanceVisible(response?.visible);
   };
 
   React.useEffect(() => {
