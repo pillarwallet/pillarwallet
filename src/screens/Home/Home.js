@@ -126,7 +126,7 @@ function Home() {
 
   const callVisibleBalanceFunction = async () => {
     const response = await visibleBalanceSession();
-    setBalanceVisible(response);
+    if (response !== undefined) setBalanceVisible(response);
   };
 
   React.useEffect(() => {
@@ -206,7 +206,7 @@ function Home() {
         <ChartsSection balancePerCategory={balancePerCategory} balancePerChain={balancePerChain} />
 
         <AssetsSection
-          showBalance={balanceVisible}
+          visibleBalance={balanceVisible}
           accountTotalBalances={accountTotalBalances}
           accountCollectibleCounts={accountCollectibleCounts}
         />

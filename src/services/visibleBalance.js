@@ -21,15 +21,11 @@
 // services
 import Storage from 'services/storage';
 
-interface VisibleBalanceState {
-  visible: boolean;
-}
-
-const visibleBalanceSession = async (): Promise<VisibleBalanceState> => {
+const visibleBalanceSession = async (): any => {
   const storage = Storage.getInstance('db');
   const visibleBalanceStorage = await storage.get('visible_balance');
-  console.log('visibleBalanceStorage', visibleBalanceStorage);
-  return visibleBalanceStorage?.visible !== undefined ? visibleBalanceStorage?.visible : true;
+
+  return visibleBalanceStorage?.visible;
 };
 
 export default visibleBalanceSession;

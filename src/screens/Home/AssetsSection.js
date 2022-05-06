@@ -58,12 +58,12 @@ import { calculateTotalCollectibleCount } from './utils';
 type Props = {|
   accountTotalBalances: TotalBalances,
   accountCollectibleCounts: ChainRecord<number>,
-  showBalance: boolean,
+  visibleBalance: boolean,
 |};
 
 type FlagPerCategory = { [AssetCategory]: ?boolean };
 
-function AssetsSection({ accountTotalBalances, accountCollectibleCounts, showBalance }: Props) {
+function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visibleBalance }: Props) {
   const { t } = useTranslationWithPrefix('home.assets');
   const navigation = useNavigation();
 
@@ -115,7 +115,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, showBal
           iconName={iconName}
           title={title}
           value={formattedBalance}
-          visibleBalance={showBalance}
+          visibleBalance={visibleBalance}
           onPress={() => handlePressAssetCategory(category)}
         />
         {showChains && chains.map((chain) => renderChainWithBalance(category, chain))}
@@ -134,7 +134,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, showBal
         key={`${category}-${chain}`}
         title={title}
         value={formattedBalance}
-        visibleBalance={showBalance}
+        visibleBalance={visibleBalance}
         isDeployed={isKeyBasedAccount(activeAccount) || isDeployedOnChain[chain]}
         onPress={() => navigateToAssetDetails(category, chain)}
         onPressDeploy={() => showDeploymentInterjection(chain)}
@@ -151,7 +151,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, showBal
           key="collectibles"
           title={title}
           iconName={iconName}
-          visibleBalance={showBalance}
+          visibleBalance={visibleBalance}
           onPress={() => handlePressAssetCategory(ASSET_CATEGORY.COLLECTIBLES)}
           value={formatValue(totalCollectibleCount)}
         />
@@ -165,7 +165,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, showBal
       <ChainListItem
         key={`collectibles-${chain}`}
         title={chainsConfig[chain].title}
-        visibleBalance={showBalance}
+        visibleBalance={visibleBalance}
         value={formatValue(accountCollectibleCounts[chain] ?? 0)}
         isDeployed={isKeyBasedAccount(activeAccount) || isDeployedOnChain[chain]}
         onPress={() => navigateToAssetDetails(ASSET_CATEGORY.COLLECTIBLES, chain)}
@@ -189,7 +189,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, showBal
           key="services"
           title={t('services')}
           iconName="info"
-          visibleBalance={showBalance}
+          visibleBalance={visibleBalance}
           onPress={() => navigation.navigate(SERVICES_FLOW)}
         />
       )}
