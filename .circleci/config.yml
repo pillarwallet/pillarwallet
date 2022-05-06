@@ -826,6 +826,7 @@ workflows:
                 - /.*(u|U)(i|I)(-|_).*/
                 - /.*(-|_)(u|U)(i|I).*/
                 - /.*(u|U)(i|I)\/.*/
+                - fix/PRO-144-ci-pipeline-xcode-13
                 
   build_and_deploy_appcenter:
     jobs:
@@ -838,6 +839,7 @@ workflows:
                 - /.*(u|U)(i|I)(-|_).*/
                 - /.*(-|_)(u|U)(i|I).*/
                 - /.*(u|U)(i|I)\/.*/
+                - fix/PRO-144-ci-pipeline-xcode-13
 
       - appcenter_ios:
           requires:
@@ -849,6 +851,7 @@ workflows:
                 - /.*(u|U)(i|I)(-|_).*/
                 - /.*(-|_)(u|U)(i|I).*/
                 - /.*(u|U)(i|I)\/.*/
+                - fix/PRO-144-ci-pipeline-xcode-13
 
       - appcenter_android:
           context: docker-hub-creds
