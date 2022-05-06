@@ -1188,7 +1188,7 @@
       }
     },
     "highGasFee": {
-      "ethereumNetworkFees": "Ethereum network fees are currently high. Consider using sidechains for low-to-no transaction costs.\nPillar is free and does not charge any extra fees.",
+      "warningLabel": "Network fees are currently high. \nPillar is free and does not charge any extra fees.",
       "pillarEthFeeDisclaimer": "Pillar does not charge any fees.\nFee displayed is the current Ethereum network fee."
     }
   },
