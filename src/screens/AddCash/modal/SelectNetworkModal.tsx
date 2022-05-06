@@ -117,7 +117,7 @@ const SelectNetworkModal: FC<ISelectNetworkModal> = ({ networkSelected }) => {
   };
 
   return (
-    <SlideModal noSwipeToDismiss ref={modalRef} title={t('title')} noClose>
+    <SlideModal noSwipeToDismiss ref={modalRef} title={t('title')} hideHeader noClose>
       <Content>
         <ModalTitle>{t('title')}</ModalTitle>
         <ModalSubtitle color={colors.tertiaryText}>{t('subtitle')}</ModalSubtitle>
