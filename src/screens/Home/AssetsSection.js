@@ -115,7 +115,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, showBal
           iconName={iconName}
           title={title}
           value={formattedBalance}
-          balanceVisible={showBalance}
+          visibleBalance={showBalance}
           onPress={() => handlePressAssetCategory(category)}
         />
         {showChains && chains.map((chain) => renderChainWithBalance(category, chain))}
@@ -151,7 +151,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, showBal
           key="collectibles"
           title={title}
           iconName={iconName}
-          balanceVisible={showBalance}
+          visibleBalance={showBalance}
           onPress={() => handlePressAssetCategory(ASSET_CATEGORY.COLLECTIBLES)}
           value={formatValue(totalCollectibleCount)}
         />
@@ -189,7 +189,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, showBal
           key="services"
           title={t('services')}
           iconName="info"
-          balanceVisible={showBalance}
+          visibleBalance={showBalance}
           onPress={() => navigation.navigate(SERVICES_FLOW)}
         />
       )}

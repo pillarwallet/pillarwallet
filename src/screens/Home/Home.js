@@ -73,7 +73,7 @@ import { useAccountCollectibleCounts } from './utils';
 import BiometricModal from '../../components/BiometricModal/BiometricModal';
 
 // Services
-import Storage from '../../services/storage';
+import visibleBalanceSession from '../../services/visibleBalance';
 
 // Actions
 import { saveDbAction } from '../../actions/dbActions';
@@ -109,7 +109,7 @@ function Home() {
   const isRefreshing = useRootSelector(({ totalBalances }) => !!totalBalances.isFetching);
 
   React.useEffect(() => {
-    callFunction();
+    callVisibleBalanceFunction();
     setTimeout(() => {
       if (!wallet) {
         getSupportedBiometryType((biometryType) => {
@@ -124,10 +124,9 @@ function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const callFunction = async () => {
-    const storage = Storage.getInstance('db');
-    const response = await storage.get('visible_balance');
-    if (response?.visible !== undefined) setBalanceVisible(response?.visible);
+  const callVisibleBalanceFunction = async () => {
+    const response = await visibleBalanceSession();
+    setBalanceVisible(response);
   };
 
   React.useEffect(() => {
