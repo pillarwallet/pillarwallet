@@ -37,10 +37,9 @@ export type Props = {|
   isDeployed?: boolean,
   onPressDeploy: () => mixed,
   visibleBalance?: boolean,
-  category?: string,
 |};
 
-function CategoryListItem({ title, onPress, value, isDeployed, category, visibleBalance, onPressDeploy }: Props) {
+function CategoryListItem({ title, onPress, value, isDeployed, visibleBalance, onPressDeploy }: Props) {
   const colors = useThemeColors();
 
   return (
@@ -59,7 +58,7 @@ function CategoryListItem({ title, onPress, value, isDeployed, category, visible
         </DeployContainer>
       )}
       {isDeployed && <Title style={{ flex: 1 }}>{title}</Title>}
-      {category === 'wallet' && !visibleBalance ? null : !!value && <Value>{value}</Value>}
+      {!!value && <Value>{visibleBalance ? value : '***'}</Value>}
     </Container>
   );
 }
