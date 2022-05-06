@@ -29,13 +29,14 @@ import t from 'translations/translate';
 import SlideModal from 'components/Modals/SlideModal';
 import Text from 'components/core/Text';
 import Icon from 'components/core/Icon';
+import RadioButton from 'components/RadioButton';
 
 // utils
 import { getAccountName, isEtherspotAccount } from 'utils/accounts';
 import { calculateTotalBalance } from 'utils/totalBalances';
 import { fontStyles, appFont, spacing, borderRadiusSizes } from 'utils/variables';
 import { images } from 'utils/images';
-import { useTheme, getThemeColors, useIsDarkTheme, isLightTheme } from 'utils/themes';
+import { useTheme, getThemeColors, useIsDarkTheme } from 'utils/themes';
 import { formatFiat, getEnsPrefix } from 'utils/common';
 
 // constants
@@ -143,8 +144,7 @@ const AccountsScreen = ({
       >
         <ContainerView isSelected={isActive}>
           <RowContainer>
-            {isActive && <RadioIcon name={isLightTheme() ? 'selected-radio-button' : 'checked-radio'} />}
-            {!isActive && <RadioIcon name={isLightTheme() ? 'radio-button' : 'unchecked-radio'} />}
+            <RadioButton visible={isActive} />
             <TitleContainer>
               <TextContent numberOfLines={1} style={isActive && { fontFamily: appFont.medium }}>
                 {title}
@@ -278,14 +278,6 @@ const BannerText = styled(Text)`
 `;
 
 const IconContainer = styled(Icon)``;
-
-const RadioIcon = styled(Icon)`
-  height: 24px;
-  width: 24px;
-  background-color: ${({ theme }) => theme.colors.basic050};
-  border-radius: ${borderRadiusSizes.medium}px;
-  padding-right: ${spacing.medium}px;
-`;
 
 const MigrationButtons = styled.View`
   flex-direction: column;

@@ -27,6 +27,7 @@ import SlideModal from 'components/Modals/SlideModal';
 import Icon from 'components/core/Icon';
 import Text from 'components/core/Text';
 import Button from 'components/core/Button';
+import RadioButton from 'components/RadioButton';
 
 // Utils
 import { fontStyles, spacing, borderRadiusSizes, appFont } from 'utils/variables';
@@ -67,8 +68,7 @@ const SelectResidentModal: FC<ISelectResidentModal> = ({ residentSelected }) => 
       <Container onPress={selectUsResident}>
         <ContainerView isSelected={usResident}>
           <RowContainer>
-            {usResident && <RadioIcon name={isLightTheme() ? 'selected-radio-button' : 'checked-radio'} />}
-            {!usResident && <RadioIcon name={isLightTheme() ? 'radio-button' : 'unchecked-radio'} />}
+            <RadioButton visible={usResident} />
             <Title style={usResident && styles.titleStyle}>{t('options.usResident')}</Title>
           </RowContainer>
         </ContainerView>
@@ -76,8 +76,7 @@ const SelectResidentModal: FC<ISelectResidentModal> = ({ residentSelected }) => 
       <Container onPress={selectNonUsResident}>
         <ContainerView isSelected={nonUsResident}>
           <RowContainer>
-            {nonUsResident && <RadioIcon name={isLightTheme() ? 'selected-radio-button' : 'checked-radio'} />}
-            {!nonUsResident && <RadioIcon name={isLightTheme() ? 'radio-button' : 'unchecked-radio'} />}
+            <RadioButton visible={nonUsResident} />
             <Title style={nonUsResident && styles.titleStyle}>{t('options.nonUsResident')}</Title>
           </RowContainer>
         </ContainerView>
@@ -137,13 +136,4 @@ const Title = styled(Text)`
   flex-direction: row;
   ${fontStyles.big};
   padding: 0 ${spacing.medium}px 0 ${spacing.medium}px;
-`;
-
-const RadioIcon = styled(Icon)`
-  height: 24px;
-  width: 24px;
-  background-color: ${({ theme }) => theme.colors.basic050};
-  border-radius: ${borderRadiusSizes.medium}px;
-  padding-right: ${spacing.medium}px;
-  margin-right: ${spacing.medium}px;
 `;

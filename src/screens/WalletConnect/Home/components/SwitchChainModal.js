@@ -26,6 +26,7 @@ import Text from 'components/core/Text';
 import SlideModal from 'components/Modals/SlideModal';
 import Icon from 'components/core/Icon';
 import { BigNumber } from 'bignumber.js';
+import RadioButton from 'components/RadioButton';
 
 // Selectors
 import { useFiatCurrency, useRootSelector } from 'selectors';
@@ -92,8 +93,7 @@ function SwitchChainModal({ items, activeItem, updateActiveChain, updateActiveIt
       <Container key={`${key ?? 'all'}`} onPress={() => handleChains(chain)}>
         <ContainerView isSelected={isSelected}>
           <RowContainer>
-            {isSelected && <RadioIcon name={isLightTheme() ? 'selected-radio-button' : 'checked-radio'} />}
-            {!isSelected && <RadioIcon name={isLightTheme() ? 'radio-button' : 'unchecked-radio'} />}
+            <RadioButton visible={isSelected} />
             <ChainViewIcon
               size={24}
               style={IconContainer}
@@ -180,13 +180,4 @@ const ChainViewIcon = styled(Icon)`
   width: 24px;
   background-color: ${({ theme }) => theme.colors.basic050};
   border-radius: ${borderRadiusSizes.medium}px;
-`;
-
-const RadioIcon = styled(Icon)`
-  height: 24px;
-  width: 24px;
-  background-color: ${({ theme }) => theme.colors.basic050};
-  border-radius: ${borderRadiusSizes.medium}px;
-  padding-right: ${spacing.medium}px;
-  margin-right: ${spacing.medium}px;
 `;
