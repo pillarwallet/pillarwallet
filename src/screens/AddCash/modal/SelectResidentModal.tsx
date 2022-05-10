@@ -24,14 +24,12 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import SlideModal from 'components/Modals/SlideModal';
-import Icon from 'components/core/Icon';
 import Text from 'components/core/Text';
 import Button from 'components/core/Button';
 import RadioButton from 'components/RadioButton';
 
 // Utils
 import { fontStyles, spacing, borderRadiusSizes, appFont } from 'utils/variables';
-import { isLightTheme } from 'utils/themes';
 
 interface ISelectResidentModal {
   residentSelected: (isUsResident: boolean) => void;
@@ -63,8 +61,7 @@ const SelectResidentModal: FC<ISelectResidentModal> = ({ residentSelected }) => 
   };
 
   return (
-    <SlideModal isSwipeClose noSwipeToDismiss ref={modalRef} hideHeader noClose>
-      <ModalTitle>{t('title')}</ModalTitle>
+    <SlideModal title={t('title')} centerTitle ref={modalRef} showHeader noClose>
       <Container onPress={selectUsResident}>
         <ContainerView isSelected={usResident}>
           <RowContainer>
@@ -97,13 +94,6 @@ const styles = {
     fontFamily: appFont.medium,
   },
 };
-
-const ModalTitle = styled(Text)`
-  ${fontStyles.big};
-  text-align: center;
-  margin: ${spacing.large}px 0px;
-  font-family: '${appFont.medium}';
-`;
 
 const TouchableContainer = styled.TouchableOpacity`
   align-items: center;

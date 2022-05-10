@@ -342,7 +342,7 @@ const IconContainer = styled.View`
 const Title = styled(Text)`
   flex: 1;
   flex-direction: row;
-  ${fontStyles.medium};
+  ${fontStyles.big};
   padding: 0 ${spacing.medium}px 0 ${spacing.medium}px;
 `;
 

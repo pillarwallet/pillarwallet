@@ -399,7 +399,7 @@ const ReceiveTitle = styled.Text`
   justify-content: center;
   align-items: center;
   font-family: ${appFont.medium};
-  margin: ${spacing.extraLarge + spacing.small}px ${spacing.largePlus}px ${spacing.mediumLarge}px;
+  margin: ${spacing.small + spacing.large}px ${spacing.largePlus}px ${spacing.mediumLarge}px;
   color: ${({ theme }) => theme.colors.text};
 `;
 

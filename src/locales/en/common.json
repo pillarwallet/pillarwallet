@@ -685,7 +685,7 @@
   "walletConnect": {
     "home": {
       "title": "WalletConnect",
-      "switch-title": "Switch Network",
+      "switch-title": "Switch network",
       "headerStories": "New and Noteworthy",
       "deployOnChainFormat": "Deploy this wallet to take full advantage of using {{chain}}.",
       "toast": {

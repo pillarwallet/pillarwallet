@@ -17,9 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components/native';
-import { useNavigation } from 'react-navigation-hooks';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { sortBy } from 'lodash';
@@ -63,6 +62,7 @@ import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 import type { TotalBalancesPerAccount } from 'models/TotalBalances';
+import type { NavigationScreenProp } from 'react-navigation';
 
 const ITEM_TYPE = {
   ACCOUNT: 'ACCOUNT',
@@ -90,23 +90,26 @@ type Props = {|
   fetchAllAccountsTotalBalances: () => void,
   keyBasedWalletHasPositiveBalance: boolean,
   totalBalances: TotalBalancesPerAccount,
+  name: string,
+  navigation: NavigationScreenProp<*>,
 |};
 
-const AccountsScreen = ({
+const AccountsModal = ({
   fetchAllAccountsTotalBalances,
   accounts,
   switchAccount,
   blockchainNetworks,
   keyBasedWalletHasPositiveBalance,
   totalBalances,
+  navigation,
+  name,
 }: Props) => {
-  const navigation = useNavigation();
-  const name = navigation.getParam('user');
   const theme = useTheme();
   const colors = getThemeColors(theme);
   const isDarkTheme = useIsDarkTheme();
   const fiatCurrency = useFiatCurrency();
   const isEnsMigrationNeeded = useRootSelector(isEnsMigrationNeededSelector);
+  const modalRef = useRef(null);
 
   useEffect(() => {
     fetchAllAccountsTotalBalances();
@@ -138,6 +141,7 @@ const AccountsScreen = ({
       <Container
         key={`${id}`}
         onPress={() => {
+          modalRef.current?.close();
           if (isActive) navigation.goBack(null);
           else mainAction();
         }}
@@ -216,7 +220,7 @@ const AccountsScreen = ({
   });
 
   return (
-    <SlideModal noPadding noClose showHeader centerTitle title={t('title.accounts')}>
+    <SlideModal ref={modalRef} noPadding noClose showHeader centerTitle title={t('title.accounts')}>
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
         {accountsList.map((item) => renderListItem(item))}
       </ContentWrapper>
@@ -224,7 +228,7 @@ const AccountsScreen = ({
   );
 };
 
-const addressText = { fontSize: 14, marginLeft: 32 };
+const addressText = { fontSize: 14, marginLeft: 32 + 12 };
 
 const ContentWrapper = styled.View`
   padding: ${spacing.medium}px 0px;
@@ -269,7 +273,7 @@ const RowContainer = styled.View`
 
 const TextContent = styled(Text)`
   ${fontStyles.big};
-  padding: 0 ${spacing.medium}px 0 ${spacing.medium}px;
+  padding: 0 ${spacing.medium}px 0 ${0}px;
 `;
 
 const BannerText = styled(Text)`
@@ -309,4 +313,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchAllAccountsTotalBalances: () => dispatch(fetchAllAccountsTotalBalancesAction()),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(AccountsScreen);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(AccountsModal);

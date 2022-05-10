@@ -30,9 +30,7 @@ import { dismissAccountSwitchTooltipAction } from 'actions/appSettingsActions';
 import ProfileImage from 'components/ProfileImage';
 import Icon from 'components/core/Icon';
 import Text from 'components/core/Text';
-
-// Constants
-import { ACCOUNTS } from 'constants/navigationConstants';
+import Modal from 'components/Modal';
 
 // Selectors
 import { useAccounts } from 'selectors';
@@ -41,6 +39,9 @@ import { useAccounts } from 'selectors';
 import { fontStyles, spacing } from 'utils/variables';
 import { hitSlop20 } from 'utils/common';
 import { useThemeColors } from 'utils/themes';
+
+// Screen
+import AccountsModal from 'src/screens/Accounts';
 
 type Props = {
   user: ?string,
@@ -56,7 +57,7 @@ const UserNameAndImage = ({ user, address }: Props) => {
 
   const onAccountSwitchPress = () => {
     dispatch(dismissAccountSwitchTooltipAction());
-    navigation.navigate(ACCOUNTS, { user });
+    Modal.open(() => <AccountsModal navigation={navigation} name={user} />);
   };
 
   return (
@@ -65,7 +66,11 @@ const UserNameAndImage = ({ user, address }: Props) => {
 
       {user && <UserName>{user}</UserName>}
 
-      {!user && <Address numberOfLines={1} ellipsizeMode="middle">{address}</Address>}
+      {!user && (
+        <Address numberOfLines={1} ellipsizeMode="middle">
+          {address}
+        </Address>
+      )}
 
       {canSwitchAccount && <Icon name="select" color={colors.basic020} />}
     </Wrapper>

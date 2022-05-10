@@ -53,58 +53,80 @@ exports[`Storyshots ActionModal default 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": "0 16px",
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
-            sideMargins={20}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 20,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 16,
-                  "paddingRight": 16,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 20,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 16,
+                "paddingRight": 16,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <View
@@ -19737,57 +19759,80 @@ exports[`Storyshots DetailModal Layout L 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -20130,57 +20175,80 @@ exports[`Storyshots DetailModal Layout M 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -20541,57 +20609,80 @@ exports[`Storyshots DetailModal Layout S 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -20891,57 +20982,80 @@ exports[`Storyshots DetailModal Paragraph Child 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -21220,57 +21334,80 @@ exports[`Storyshots DetailModal Pending Fee 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -21714,57 +21851,80 @@ exports[`Storyshots DetailModal Plain Text Child 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -22002,57 +22162,80 @@ exports[`Storyshots EventDetail Liquidity added 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -22474,57 +22657,80 @@ exports[`Storyshots EventDetail Liquidity removed 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -22946,57 +23152,80 @@ exports[`Storyshots EventDetail Liquidity reward claimed 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -23287,57 +23516,80 @@ exports[`Storyshots EventDetail Liquidity staked 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -23627,57 +23879,80 @@ exports[`Storyshots EventDetail Liquidity unstaked 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -23968,57 +24243,80 @@ exports[`Storyshots EventDetail Pillar Network Activated 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -24516,57 +24814,80 @@ exports[`Storyshots EventDetail Pillar Network Created 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -25003,57 +25324,80 @@ exports[`Storyshots EventDetail Pillar Network Received 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -25285,57 +25629,80 @@ exports[`Storyshots EventDetail Pillar Network Sent 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -25567,57 +25934,80 @@ exports[`Storyshots EventDetail Pillar Network Settle (PPN <-> SW) 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -26191,57 +26581,80 @@ exports[`Storyshots EventDetail Pillar Network Top Up (PPN <- SW) 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -26533,57 +26946,80 @@ exports[`Storyshots EventDetail Pillar Network Top Up (SW -> PPN) 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -26875,57 +27311,80 @@ exports[`Storyshots EventDetail Pillar Network Withdrawal (PPN -> SW) 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -27217,57 +27676,80 @@ exports[`Storyshots EventDetail Pillar Network Withdrawal (SW <- PPN) 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -27559,57 +28041,80 @@ exports[`Storyshots EventDetail PoolTogether Deposit DAI 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -27857,57 +28362,80 @@ exports[`Storyshots EventDetail PoolTogether Deposit USDC 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -28155,57 +28683,80 @@ exports[`Storyshots EventDetail PoolTogether Withdraw DAI 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -28453,57 +29004,80 @@ exports[`Storyshots EventDetail PoolTogether Withdraw USDC 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -28751,57 +29325,80 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact (Pending) 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -29043,57 +29640,80 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -29384,57 +30004,80 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact (Pending) 1`] 
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -29704,57 +30347,80 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -30073,57 +30739,80 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact (Pending) 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -30365,57 +31054,80 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -30706,57 +31418,80 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact (Pending) 1`] 
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -31026,57 +31761,80 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -31395,57 +32153,80 @@ exports[`Storyshots EventDetail Smart Wallet Top up | KW -> SW 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -31737,57 +32518,80 @@ exports[`Storyshots EventDetail Smart Wallet Top up | SW <- KW 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -32079,57 +32883,80 @@ exports[`Storyshots EventDetail Smart wallet activated | Needs to activate PPN 1
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -32404,57 +33231,80 @@ exports[`Storyshots EventDetail Smart wallet activated 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -32668,57 +33518,80 @@ exports[`Storyshots EventDetail Smart wallet created | Needs to activate 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": 0,
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <Text
@@ -34611,7 +35484,7 @@ exports[`Storyshots HeaderBlock edge cases 1`] = `
                       Object {
                         "color": "#0A1427",
                         "fontFamily": "EuclidCircularB-Medium",
-                        "fontSize": 16,
+                        "fontSize": 18,
                         "lineHeight": 20,
                         "textAlign": "center",
                         "textAlignVertical": "center",
@@ -34915,7 +35788,7 @@ exports[`Storyshots HeaderBlock floating transparent 1`] = `
                       Object {
                         "color": "#0A1427",
                         "fontFamily": "EuclidCircularB-Medium",
-                        "fontSize": 16,
+                        "fontSize": 18,
                         "lineHeight": 20,
                         "textAlign": "center",
                         "textAlignVertical": "center",
@@ -35189,7 +36062,7 @@ exports[`Storyshots HeaderBlock with close icon on the left 1`] = `
                       Object {
                         "color": "#0A1427",
                         "fontFamily": "EuclidCircularB-Medium",
-                        "fontSize": 16,
+                        "fontSize": 18,
                         "lineHeight": 20,
                         "textAlign": "center",
                         "textAlignVertical": "center",
@@ -35342,7 +36215,7 @@ exports[`Storyshots HeaderBlock with close icon on the right 1`] = `
                       Object {
                         "color": "#0A1427",
                         "fontFamily": "EuclidCircularB-Medium",
-                        "fontSize": 16,
+                        "fontSize": 18,
                         "lineHeight": 20,
                         "textAlign": "center",
                         "textAlignVertical": "center",
@@ -35614,7 +36487,7 @@ exports[`Storyshots HeaderBlock with hamburger 1`] = `
                       Object {
                         "color": "#0A1427",
                         "fontFamily": "EuclidCircularB-Medium",
-                        "fontSize": 16,
+                        "fontSize": 18,
                         "lineHeight": 20,
                         "textAlign": "center",
                         "textAlignVertical": "center",
@@ -35813,7 +36686,7 @@ exports[`Storyshots HeaderBlock with items on all sides 1`] = `
                       Object {
                         "color": "#0A1427",
                         "fontFamily": "EuclidCircularB-Medium",
-                        "fontSize": 16,
+                        "fontSize": 18,
                         "lineHeight": 20,
                         "textAlign": "center",
                         "textAlignVertical": "center",
@@ -42949,57 +43822,80 @@ exports[`Storyshots SlideModal default 1`] = `
           }
         >
           <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "height": "100%",
-                  "width": "100%",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "height": "100%",
-                    "width": "100%",
-                  },
-                ]
-              }
-            />
-          </View>
-          <View
-            customTheme={
               Object {
-                "borderRadius": "30px",
-                "padding": "0 16px",
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "opacity": 1,
+                "zIndex": 10,
               }
             }
-            onLayout={[Function]}
+          />
+          <View
             style={
               Array [
                 Object {
-                  "backgroundColor": "#FFFFFF",
-                  "borderTopLeftRadius": 30,
-                  "borderTopRightRadius": 30,
-                  "elevation": 1,
-                  "marginHorizontal": 0,
-                  "marginTop": "auto",
-                  "overflow": "hidden",
-                  "paddingBottom": 0,
-                  "paddingLeft": 16,
-                  "paddingRight": 16,
-                  "paddingTop": 0,
-                  "shadowColor": "rgba(0,0,0,0.1)",
-                  "shadowOffset": Object {
-                    "height": 2,
-                    "width": 0,
-                  },
-                  "shadowOpacity": 1,
-                  "shadowRadius": 7,
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                },
+                Object {
+                  "alignSelf": "center",
+                  "height": 70,
+                  "position": "absolute",
+                  "width": "100%",
+                  "zIndex": 11,
+                },
+                Object {
+                  "top": 1334,
                 },
               ]
+            }
+          />
+          <View
+            accessible={true}
+            focusable={false}
+            onClick={[Function]}
+            onLayout={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
+                "marginHorizontal": 0,
+                "marginTop": "auto",
+                "opacity": 1,
+                "overflow": "hidden",
+                "paddingBottom": 0,
+                "paddingLeft": 16,
+                "paddingRight": 16,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,0.1)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+              }
             }
           >
             <View
@@ -43082,7 +43978,7 @@ exports[`Storyshots SlideModal default 1`] = `
                             Object {
                               "color": "#0A1427",
                               "fontFamily": "EuclidCircularB-Medium",
-                              "fontSize": 16,
+                              "fontSize": 18,
                               "lineHeight": 20,
                               "textAlign": "left",
                               "textAlignVertical": "center",

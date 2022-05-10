@@ -100,7 +100,7 @@ function SwitchChainModal({ items, activeItem, updateActiveChain, updateActiveIt
               name={key ?? (isLightTheme() ? 'all-networks-light' : 'all-networks')}
             />
             <Title style={isSelected && { fontFamily: appFont.medium }}>{title}</Title>
-            <Value style={isSelected && { fontFamily: appFont.medium }}>{formattedBalance}</Value>
+            <Value>{formattedBalance}</Value>
           </RowContainer>
         </ContainerView>
       </Container>
@@ -171,7 +171,7 @@ const IconContainer = styled.View`
 const Title = styled(Text)`
   flex: 1;
   flex-direction: row;
-  ${fontStyles.medium};
+  ${fontStyles.big};
   padding: 0 ${spacing.medium}px 0 ${spacing.medium}px;
 `;
 
