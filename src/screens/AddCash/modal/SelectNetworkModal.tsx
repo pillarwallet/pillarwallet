@@ -26,7 +26,6 @@ import { useDispatch } from 'react-redux';
 
 // Components
 import SlideModal from 'components/Modals/SlideModal';
-import Icon from 'components/core/Icon';
 import Text from 'components/core/Text';
 import Button from 'components/core/Button';
 import RadioButton from 'components/RadioButton';

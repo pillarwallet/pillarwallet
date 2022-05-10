@@ -116,7 +116,7 @@ const AddCash = () => {
   }, []);
 
   if (ref && visibleModal) {
-    ref?.focus();
+    ref.focus();
   }
 
   const handleChangeText = (text: string) => {
