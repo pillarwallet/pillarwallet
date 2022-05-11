@@ -46,7 +46,6 @@ type Props = {
 };
 
 function AppsButton({ isShowLabel, label, navigation, response }: Props) {
-  console.log(response)
   if (response === null || response?.[0] === undefined) return null
 
   const onNativeIntegrationsLaunch = async () => {

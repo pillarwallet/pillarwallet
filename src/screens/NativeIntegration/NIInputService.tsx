@@ -145,7 +145,7 @@ function NIInputService() {
     const tokenApprovals = sequence?.filter((res) => res?.isApprovalNeeded);
 
     const listOfApprovals =
-      tokenApprovals[0] !== undefined
+      tokenApprovals?.[0] !== undefined
         ? await transactionApprovalsList(tokenApprovals, sequence, contractData?.contract_address, chain, value)
         : null;
 
