@@ -15,30 +15,27 @@ const initialState: IReduxNativeIntegrationState = {
   error: null,
 };
 
-const fetchNativeIntegrationAbis = (state: IReduxNativeIntegrationState, actions: IReduxAction) =>
+const fetchNativeIntegration = (state: IReduxNativeIntegrationState, actions: IReduxAction) =>
   updateObject(state, { fetchState: ProcessState.PROCESSING });
 
-export interface IReduxNativeIntegrationAbisFetched extends IReduxAction {
-  type: t.NATIVE_INTEGRATION_ABIS_FETCHED;
+export interface IReduxNativeIntegrationFetched extends IReduxAction {
+  type: t.NATIVE_INTEGRATION_FETCHED;
   payload: Object;
 }
 
-const nativeIntegrationAbisFetched = (
-  state: IReduxNativeIntegrationState,
-  actions: IReduxNativeIntegrationAbisFetched,
-) =>
+const nativeIntegrationFetched = (state: IReduxNativeIntegrationState, actions: IReduxNativeIntegrationFetched) =>
   updateObject(state, {
     fetchState: ProcessState.HANDLED,
     data: actions.payload,
   });
 
-const fetchNativeIntegrationAbisError = (state: IReduxNativeIntegrationState, actions: IReduxAction) =>
+const fetchNativeIntegrationError = (state: IReduxNativeIntegrationState, actions: IReduxAction) =>
   updateObject(state, { fetchState: ProcessState.HANDLED, error: actions.payload.error?.toString() || null });
 
 const nativeIntegrationReducer = createReducer(initialState, {
-  [t.FETCH_NATIVE_INTEGRATION_ABIS]: fetchNativeIntegrationAbis,
-  [t.NATIVE_INTEGRATION_ABIS_FETCHED]: nativeIntegrationAbisFetched,
-  [t.FETCH_NATIVE_INTEGRATION_ABIS_ERROR]: fetchNativeIntegrationAbisError,
+  [t.FETCH_NATIVE_INTEGRATION]: fetchNativeIntegration,
+  [t.NATIVE_INTEGRATION_FETCHED]: nativeIntegrationFetched,
+  [t.FETCH_NATIVE_INTEGRATION_ERROR]: fetchNativeIntegrationError,
 });
 
 export default nativeIntegrationReducer;

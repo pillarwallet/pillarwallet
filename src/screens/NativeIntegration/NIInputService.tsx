@@ -27,10 +27,9 @@ import { utils } from 'ethers';
 
 // Utils
 import { chainFromChainId } from 'utils/chains';
-import { logBreadcrumb, getCurrencySymbol } from 'utils/common';
+import { getCurrencySymbol } from 'utils/common';
 import { getTxFeeInFiat } from 'utils/transactions';
 import { fontSizes, spacing } from 'utils/variables';
-import { getDecimals } from 'utils/nativeIntegration';
 
 // Components
 import { Container } from 'components/layout/Layout';
@@ -38,11 +37,11 @@ import HeaderBlock from 'components/HeaderBlock';
 import SwipeButton from 'components/SwipeButton/SwipeButton';
 import { ScrollWrapper } from 'components/legacy/Layout';
 import { Spacing } from 'components/legacy/Layout';
-import Toast from 'components/Toast';
 import Spinner from 'components/Spinner';
 
 // Services
 import etherspotService from 'services/etherspot';
+import { catchError, getDecimalValue, transactionApprovalsList } from 'services/nativeIntegration';
 
 // Selectors
 import { useRootSelector, useFiatCurrency, useChainRates } from 'selectors/selectors';
@@ -55,9 +54,6 @@ import NIInputField from './components/NIInputField';
 
 // Constant
 import { NI_TRANSACTION_COMPLETED } from 'constants/navigationConstants';
-
-// ABIs
-import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 
 function NIInputService() {
   const { t } = useTranslation();
@@ -85,7 +81,7 @@ function NIInputService() {
   const [value, setValue] = React.useState(blankArr);
   const [contractRes, setContractRes] = React.useState([]);
   const [integrationContract, setIntegrationContract]: any = React.useState();
-  const [isSendTransaction, setIsSendTransaction] = React.useState(false);
+  const [visibleLoader, setVisibleLoader] = React.useState(false);
   const [amount, setAmount] = React.useState(null);
 
   React.useEffect(() => {
@@ -115,96 +111,54 @@ function NIInputService() {
   const contractInterface = async () => {
     const fnName = actionName ? `encode${actionName[0].toUpperCase()}${actionName.substring(1)}` : ``;
     const updatedArr = value.map(async (specificVal, i) =>
-      specificVal?.c ? getDecimalValue(specificVal, i) : specificVal,
+      specificVal?.c ? getDecimalValue(specificVal, sequence?.[i]?.decimalAddressPosition, chain, value) : specificVal,
     );
 
-    try {
-      setIsSendTransaction(true);
-      const valueWithBigNumber = await Promise.all(updatedArr);
+    setVisibleLoader(true);
+    const valueWithBigNumber = await Promise.all(updatedArr).catch(() => catchError('Bignumber value error!'));
 
-      const list = await approvalList();
-      const approveTxList = list ? await Promise.all(list) : [];
+    const list = await approvalsList().catch(() => catchError('Error in approvals list!'));
+    const approveTxList = list ? await Promise.all(list) : [];
 
-      const contractInterface = await integrationContract[fnName](...valueWithBigNumber);
+    const contractInterface = await integrationContract[fnName](...valueWithBigNumber);
+    if (!contractInterface) setContractRes(undefined);
 
-      setContractRes([
-        ...approveTxList,
-        { ...contractInterface, value: isPayable ? utils.parseUnits(amount.toString(), 18) : 0 },
-      ]);
+    setContractRes([
+      ...approveTxList,
+      { ...contractInterface, value: isPayable ? utils.parseUnits(amount.toString(), 18) : 0 },
+    ]);
 
-      const approveListWithValue = approveTxList.map((response) => {
-        return { ...response, value: 0 };
-      });
+    const approveListWithValue = approveTxList.map((response) => {
+      return { ...response, value: 0 };
+    });
 
-      dispatch(
-        estimateTransactionsAction(
-          [...approveListWithValue, { ...contractInterface, value: isPayable ? amount?.toString() : 0 }],
-          chain,
-        ),
-      );
-      setIsSendTransaction(false);
-      logBreadcrumb('nativeIntegrationContractResponse', JSON.stringify(contractInterface));
-    } catch (e) {
-      setIsSendTransaction(false);
-      setContractRes(undefined);
-      Toast.show({
-        message: e,
-        emoji: 'warning',
-      });
-      logBreadcrumb('contractInput error!', e);
-    }
+    dispatch(
+      estimateTransactionsAction(
+        [...approveListWithValue, { ...contractInterface, value: isPayable ? amount?.toString() : 0 }],
+        chain,
+      ),
+    );
+    setVisibleLoader(false);
   };
 
-  const approvalList = async () => {
-    const approvalFilter = sequence?.filter((res) => res?.isApprovalNeeded);
+  const approvalsList = async () => {
+    const tokenApprovals = sequence?.filter((res) => res?.isApprovalNeeded);
 
-    const listOfApproval = approvalFilter
-      ? await approvalFilter.map(async (approvalData, i) => {
-          const index = sequence.indexOf(approvalData);
+    const listOfApprovals =
+      tokenApprovals[0] !== undefined
+        ? await transactionApprovalsList(tokenApprovals, sequence, contractData?.contract_address, chain, value)
+        : null;
 
-          const approvalContractInterface = etherspotService.getContract(chain, ERC20_CONTRACT_ABI, value[index]);
-          try {
-            const decimalVal = await getDecimals(approvalContractInterface);
-            return approvalContractInterface.encodeApprove(
-              contractData?.contract_address,
-              utils.parseUnits(value[approvalData?.approveAmountPosition].toString(), decimalVal),
-            );
-          } catch (e) {
-            Toast.show({
-              message: 'Please enter valid address',
-              emoji: 'warning',
-            });
-            return null;
-          }
-        })
-      : null;
-
-    return listOfApproval;
-  };
-
-  const getDecimalValue = async (bigNumberValue, index) => {
-    const position = sequence?.[index]?.decimalAddressPosition;
-    const approvalContractInterface =
-      position !== undefined ? etherspotService.getContract(chain, ERC20_CONTRACT_ABI, value[position]) : null;
-
-    const decimal = !approvalContractInterface ? 0 : await getDecimals(approvalContractInterface);
-
-    return utils.parseUnits(bigNumberValue.toString(), decimal);
+    return listOfApprovals;
   };
 
   const nativeIntegrationTransaction = async () => {
-    try {
-      setIsSendTransaction(true);
-      const res = await etherspotService.setTransactionsBatchAndSend(contractRes, chain);
-      setIsSendTransaction(false);
-      navigation.navigate(NI_TRANSACTION_COMPLETED, { transactionInfo: { chain: chain, ...res } });
-    } catch (error) {
-      setIsSendTransaction(false);
-      Toast.show({
-        message: error.toString(),
-        emoji: 'warning',
-      });
-    }
+    setVisibleLoader(true);
+    const res = await etherspotService
+      .setTransactionsBatchAndSend(contractRes, chain)
+      .catch(() => catchError('Transaction Failed!', null));
+    setVisibleLoader(false);
+    if (res) navigation.navigate(NI_TRANSACTION_COMPLETED, { transactionInfo: { chain: chain, ...res } });
   };
 
   const onChangeValue = (val, index) => {
@@ -246,7 +200,7 @@ function NIInputService() {
                 confirmTitle={t('button.swipeTo') + ' ' + actionName}
                 onPress={nativeIntegrationTransaction}
               />
-              {isSendTransaction && <LoadingSpinner size={35} />}
+              {visibleLoader && <LoadingSpinner size={35} />}
             </FooterContent>
           )}
 

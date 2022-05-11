@@ -41,7 +41,7 @@ import Modal from 'components/Modal';
 import Banner from 'components/Banner/Banner';
 
 // Constants
-import { MENU, HOME_HISTORY, REGISTER_ENS, NI_WARNING, NI_SERVICES } from 'constants/navigationConstants';
+import { MENU, HOME_HISTORY, REGISTER_ENS } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
@@ -53,7 +53,6 @@ import { nativeIntegrationSelector } from 'redux/selectors/native-integration-se
 
 // Services
 import { firebaseRemoteConfig } from 'services/firebase';
-import Storage from 'services/storage';
 
 // Screens
 import GovernanceCallBanner from 'screens/GovernanceCall/GovernanceCallBanner';
@@ -76,7 +75,7 @@ import BiometricModal from '../../components/BiometricModal/BiometricModal';
 import AppsButton from './AppsButton';
 
 // Redux
-import { fetchNativeIntegrationAbis } from '../../redux/actions/native-integration-actions';
+import { fetchNativeIntegration } from '../../redux/actions/native-integration-actions';
 
 function Home() {
   const navigation = useNavigation();
@@ -108,7 +107,7 @@ function Home() {
   const isRefreshing = useRootSelector(({ totalBalances }) => !!totalBalances.isFetching);
 
   React.useEffect(() => {
-    dispatch(fetchNativeIntegrationAbis());
+    dispatch(fetchNativeIntegration());
     setTimeout(() => {
       if (!wallet) {
         getSupportedBiometryType((biometryType) => {
@@ -144,13 +143,6 @@ function Home() {
   const onRefresh = () => {
     dispatch(refreshEtherspotAccountsAction());
     dispatch(fetchAllAccountsTotalBalancesAction());
-  };
-
-  const onApps = async () => {
-    const storage = Storage.getInstance('db');
-    const nativeIntegrationWarning = await storage.get('ni_warning');
-    if (nativeIntegrationWarning?.visible) navigation.navigate(NI_SERVICES);
-    else navigation.navigate(NI_WARNING);
   };
 
   return (
@@ -208,9 +200,7 @@ function Home() {
 
         <Banner screenName={screenName} bottomPosition />
 
-        {nativeIntegrationResponse !== null && nativeIntegrationResponse?.[0] !== undefined && (
-          <AppsButton title={t('home.apps.title')} iconName="apps" isShowLabel onPress={onApps} />
-        )}
+        <AppsButton response={nativeIntegrationResponse} navigation={navigation} isShowLabel />
       </Content>
 
       <FloatingActions />

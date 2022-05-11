@@ -44,6 +44,7 @@ import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 
 // Services
 import etherspotService from 'services/etherspot';
+import { catchError } from 'services/nativeIntegration';
 
 function NITransactionSubmitted() {
   const dispatch = useDispatch();
@@ -61,20 +62,17 @@ function NITransactionSubmitted() {
     const handleHashChange = async () => {
       if (!hash && batchHash) {
         setisResolvingHash(true);
-        setHash(await etherspotService.waitForTransactionHashFromSubmittedBatch(chain, batchHash));
+        const hash = await etherspotService.waitForTransactionHashFromSubmittedBatch(chain, batchHash).catch(() => catchError('Transaction hash failed!'))
+        if (hash) setHash(hash);
         setisResolvingHash(false);
       }
     };
     handleHashChange();
   }, [transactionInfo]);
 
-  const viewOnBlockchain = () => {
-    dispatch(viewTransactionOnBlockchainAction(chain, { hash, batchHash, fromAddress }));
-  };
+  const viewOnBlockchain = () => { dispatch(viewTransactionOnBlockchainAction(chain, { hash, batchHash, fromAddress })); };
 
-  const handleDismissal = () => {
-    navigation.dismiss();
-  };
+  const handleDismissal = () => { navigation.dismiss(); };
 
   const renderSuccess = () => {
     return (

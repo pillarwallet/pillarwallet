@@ -133,7 +133,7 @@ function NIInputField({ itemInfo, chain, value, onChangeValue, txFeeInfo, disabl
       );
     }
 
-    if (itemInfo?.type === 'uint256') {
+    if (itemInfo?.type?.includes('uint')) {
       return (
         <BigNumberInput
           value={value}

@@ -33,19 +33,19 @@ import { useSupportedChains } from 'selectors/chains';
 import { fontStyles, spacing, borderRadiusSizes } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
 
-// Types
-import { type Chain } from 'models/Chain';
-
 // Local
 import SwitchChainModal from './SwitchChainModal';
 
-type itemType = {|
-  key: ?Chain,
-  title: ?string,
-|};
+// Type
+import type { Chain } from 'models/Chain';
+
+type itemType = {
+  key: Chain;
+  title: string;
+};
 
 interface Props {
-  selectedChain: (?Chain) => void;
+  selectedChain: (Chain?) => void;
 }
 
 function DropdownChainView({ selectedChain }: Props) {
@@ -75,6 +75,7 @@ function DropdownChainView({ selectedChain }: Props) {
       );
     });
   };
+
   const { key, title } = activeItem;
 
   return (
@@ -82,7 +83,7 @@ function DropdownChainView({ selectedChain }: Props) {
       <RowContainer>
         <ChainViewIcon size={24} style={IconContainer} name={key ?? 'all-networks'} />
         <Title>{title}</Title>
-        <TouchableContainer onPress={() => openSwitchChainModal()}>
+        <TouchableContainer onPress={openSwitchChainModal}>
           <ChainViewIcon name="chevron-down" />
         </TouchableContainer>
       </RowContainer>

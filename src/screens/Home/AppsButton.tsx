@@ -20,6 +20,7 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
+import type { NavigationScreenProp } from 'react-navigation';
 
 // Components
 import Icon from 'components/core/Icon';
@@ -28,23 +29,36 @@ import Text from 'components/core/Text';
 // Utils
 import { appFont, baseColors, fontSizes } from 'utils/variables';
 
+// Constants
+import { NI_WARNING, NI_SERVICES } from 'constants/navigationConstants';
+
+// Services
+import { nativeIntegrationWarning } from 'services/nativeIntegration';
+
 // Types
-import type { IconName } from 'components/core/Icon';
 import t from 'translations/translate';
 
-export type Props = {
-  title: string;
-  iconName: IconName;
-  onPress: () => void;
+type Props = {
   isShowLabel: boolean;
   label?: string;
+  navigation: NavigationScreenProp<any>;
+  response: any[] | null;
 };
 
-function AppsButton({ title, iconName, onPress, isShowLabel, label }: Props) {
+function AppsButton({ isShowLabel, label, navigation, response }: Props) {
+  console.log(response)
+  if (response === null || response?.[0] === undefined) return null
+
+  const onNativeIntegrationsLaunch = async () => {
+    const hideNativeIntegrationWarning = await nativeIntegrationWarning();
+    if (hideNativeIntegrationWarning) navigation.navigate(NI_SERVICES);
+    else navigation.navigate(NI_WARNING);
+  };
+
   return (
-    <ButtonContainer onPress={onPress}>
-      <Icon name={iconName} />
-      <ItemTitle>{title}</ItemTitle>
+    <ButtonContainer onPress={onNativeIntegrationsLaunch}>
+      <Icon name={"apps"} />
+      <ItemTitle>{t('home.apps.title')}</ItemTitle>
       {isShowLabel && (
         <TextBackground>
           <InformationText>{label ? label : t('home.apps.new')}</InformationText>

@@ -44,10 +44,8 @@ function ContractActionsModal({ items, onSelectItem }: Props) {
 
   const handleChains = (value) => {
     setSelectedItemName(value?.['action-name'][0]?.text);
-    setTimeout(() => {
-      onSelectItem(value);
-      Modal.closeAll();
-    }, 500);
+    onSelectItem(value);
+    Modal.closeAll();
   };
 
   const renderActions = (item: any) => {

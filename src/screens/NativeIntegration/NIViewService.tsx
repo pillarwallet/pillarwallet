@@ -24,7 +24,6 @@ import { StyleSheet } from 'react-native';
 
 // Utils
 import { chainFromChainId } from 'utils/chains';
-import { logBreadcrumb } from 'utils/common';
 
 // Components
 import { Container } from 'components/layout/Layout';
@@ -54,12 +53,8 @@ function NIViewService() {
 
     const fnName = actionName ? `call${actionName[0].toUpperCase()}${actionName.substring(1)}` : ``;
 
-    try {
-      const contractResponse = await integrationContract?.[fnName]();
-      contractResponse?._isBigNumber ? setValue(contractResponse?.toNumber()) : setValue(contractResponse);
-    } catch (e) {
-      logBreadcrumb('contractResponse error!', e);
-    }
+    const contractResponse = await integrationContract?.[fnName]();
+    contractResponse?._isBigNumber ? setValue(contractResponse?.toNumber()) : setValue(contractResponse);
   };
 
   return (
