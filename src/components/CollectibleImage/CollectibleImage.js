@@ -24,21 +24,14 @@ import { isSvgImage } from 'utils/images';
 import Image from 'components/Image';
 import type { ImageProps } from 'components/Image';
 
-type Props = ImageProps | SvgCssUri;
+type Props = ImageProps | SvgCssUri | any;
 
 const CollectibleImage = (props: Props) => {
-  const { uri } = props.source;
+  const { uri }: any = props.source;
   if (isSvgImage(uri)) {
-    return (
-      <SvgCssUri
-        uri={uri}
-        width={props.width || '100%'}
-        height={props.height || '100%'}
-        {...props}
-      />
-    );
+    return <SvgCssUri uri={uri} width={props.width || '100%'} height={props.height || '100%'} {...props} />;
   }
-  return <Image {...props} style={[{ width: props.width, height: props.height }, props.style]} />;
+  return <Image {...props} style={[{ width: props.width || '100%', height: props.height || '100%' }, props.style]} />;
 };
 
 export default CollectibleImage;
