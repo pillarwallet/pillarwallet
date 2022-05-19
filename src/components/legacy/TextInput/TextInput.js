@@ -20,12 +20,7 @@
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { Item as NBItem } from 'native-base';
-import {
-  View,
-  Platform,
-  TextInput as RNInput,
-  TouchableWithoutFeedback,
-} from 'react-native';
+import { View, Platform, TextInput as RNInput, TouchableWithoutFeedback } from 'react-native';
 
 import IconButton from 'components/IconButton';
 import { BaseText, MediumText } from 'components/legacy/Typography';
@@ -107,7 +102,10 @@ class TextInput extends React.Component<Props, State> {
   }
 
   handleBlur = () => {
-    const { inputProps: { onBlur, selectorValue = {}, value }, trim } = this.props;
+    const {
+      inputProps: { onBlur, selectorValue = {}, value },
+      trim,
+    } = this.props;
     const { selector } = selectorValue;
     const trimmedValue = trim ? value?.toString().trim() : value;
     if (onBlur) {
@@ -132,7 +130,9 @@ class TextInput extends React.Component<Props, State> {
   };
 
   handleChange = (e: ChangeEvent) => {
-    const { inputProps: { onChange, selectorValue = {} } } = this.props;
+    const {
+      inputProps: { onChange, selectorValue = {} },
+    } = this.props;
     const value = e.nativeEvent.text;
     const { selector } = selectorValue;
 
@@ -146,7 +146,10 @@ class TextInput extends React.Component<Props, State> {
   };
 
   handleFocus = () => {
-    const { inputProps: { multiline, onFocus, value }, keyboardAvoidance } = this.props;
+    const {
+      inputProps: { multiline, onFocus, value },
+      keyboardAvoidance,
+    } = this.props;
     if (Platform.OS === 'ios' && multiline && keyboardAvoidance) {
       this.handleMultilineFocus();
       return;
@@ -195,7 +198,7 @@ class TextInput extends React.Component<Props, State> {
 
   focusMultilineInput = () => {
     if (this.multilineInputField) this.multilineInputField.focus();
-  }
+  };
 
   onMultilineInputFieldPress = () => {
     const { onLeftSideTextPress } = this.props;
@@ -205,14 +208,7 @@ class TextInput extends React.Component<Props, State> {
 
   renderInputHeader = () => {
     const { inputProps } = this.props;
-    const {
-      label,
-      onPressRightLabel,
-      rightLabel,
-      inputHeaderStyle = {},
-      customLabel,
-      customRightLabel,
-    } = inputProps;
+    const { label, onPressRightLabel, rightLabel, inputHeaderStyle = {}, customLabel, customRightLabel } = inputProps;
 
     if (!label && !rightLabel && !customLabel) return null;
     const justifyContent = rightLabel && !(label || customLabel) ? 'flex-end' : 'space-between';
@@ -266,12 +262,10 @@ class TextInput extends React.Component<Props, State> {
     } = this.props;
     let { fallbackSource, hasError } = this.props;
 
-    hasError = hasError ?? (!!errorMessage);
+    hasError = hasError ?? !!errorMessage;
 
     const colors = getThemeColors(theme);
-    const {
-      value = '', selectorValue = {}, multiline, editable = true,
-    } = inputProps;
+    const { value = '', selectorValue = {}, multiline, editable = true } = inputProps;
     const { input: inputValue } = selectorValue;
     const textInputValue = inputValue || value;
     const { genericToken } = images(theme);
@@ -286,10 +280,10 @@ class TextInput extends React.Component<Props, State> {
 
     const customStyle = multiline ? { paddingTop: 10 } : {};
 
-    const showLeftAddon = (innerImageURI || fallbackSource) || !!leftSideText || !!leftSideSymbol;
+    const showLeftAddon = innerImageURI || fallbackSource || !!leftSideText || !!leftSideSymbol;
     const showRightAddon = !!iconProps || !!loading || !!rightPlaceholder;
 
-    const imageSource = resolveAssetSource(innerImageURI);
+    const imageSource: any = resolveAssetSource(innerImageURI);
 
     const defaultInputStyle = {
       fontSize: getFontSize(value, numeric),
@@ -305,36 +299,29 @@ class TextInput extends React.Component<Props, State> {
       <View style={[{ paddingBottom: 10, flexDirection: 'column' }, inputWrapperStyle]}>
         {this.renderInputHeader()}
         <InputBorder error={hasError} style={itemHolderStyle}>
-          <Tooltip
-            body={errorMessage || ''}
-            isVisible={!!hasError}
-          >
-            <ItemHolder error={hasError} style={itemHolderStyle} >
-              <Item
-                isFocused={isFocused}
-                height={inputHeight}
-              >
-                {showLeftAddon &&
-                <TouchableWithoutFeedback onPress={this.onMultilineInputFieldPress}>
-                  <LeftSideWrapper>
-                    {(innerImageURI || fallbackSource) && <Image
-                      source={imageSource}
-                      fallbackSource={fallbackSource}
-                      style={{ marginRight: 9 }}
-                    />}
-                    {!!leftSideSymbol && <AddonIcon name={leftSideSymbol} />}
-                    {!!leftSideText && <AddonRegularText>{leftSideText}</AddonRegularText>}
-                  </LeftSideWrapper>
-                </TouchableWithoutFeedback>}
+          <Tooltip body={errorMessage || ''} isVisible={!!hasError}>
+            <ItemHolder error={hasError} style={itemHolderStyle}>
+              <Item isFocused={isFocused} height={inputHeight}>
+                {showLeftAddon && (
+                  <TouchableWithoutFeedback onPress={this.onMultilineInputFieldPress}>
+                    <LeftSideWrapper>
+                      {(innerImageURI || fallbackSource) && (
+                        <Image source={imageSource} fallbackSource={fallbackSource} style={{ marginRight: 9 }} />
+                      )}
+                      {!!leftSideSymbol && <AddonIcon name={leftSideSymbol} />}
+                      {!!leftSideText && <AddonRegularText>{leftSideText}</AddonRegularText>}
+                    </LeftSideWrapper>
+                  </TouchableWithoutFeedback>
+                )}
                 {/* $FlowFixMe: incorrect RN flow types */}
                 <TouchableWithoutFeedback style={{ flex: 1 }} onPress={this.focusMultilineInput}>
                   <View style={{ flex: 1 }}>
                     <InputField
                       {...inputProps}
                       ref={(input) => {
-                          if (getInputRef) getInputRef(input);
-                          this.multilineInputField = input;
-                        }}
+                        if (getInputRef) getInputRef(input);
+                        this.multilineInputField = input;
+                      }}
                       onChange={this.handleChange}
                       onBlur={this.handleBlur}
                       onEndEditing={this.handleBlur}
@@ -343,12 +330,12 @@ class TextInput extends React.Component<Props, State> {
                       value={textInputValue}
                       autoCorrect={autoCorrect}
                       style={[
-                          defaultInputStyle,
-                          customStyle,
-                          additionalStyle,
-                          !editable && { color: colors.basic010 },
-                          inputError && { color: colors.secondaryAccent240 },
-                        ]}
+                        defaultInputStyle,
+                        customStyle,
+                        additionalStyle,
+                        !editable && { color: colors.basic010 },
+                        inputError && { color: colors.secondaryAccent240 },
+                      ]}
                       onLayout={onLayout}
                       placeholderTextColor={colors.basic030}
                       alignTextOnRight={!!numeric}
@@ -358,27 +345,33 @@ class TextInput extends React.Component<Props, State> {
                     />
                   </View>
                 </TouchableWithoutFeedback>
-                {showRightAddon &&
-                <RightSideWrapper onPress={onRightAddonPress} disabled={!onRightAddonPress}>
-                  {!!rightPlaceholder &&
-                  <PlaceholderRight color={colors.basic030} addMargin={!!iconProps}>
-                    {rightPlaceholder}
-                  </PlaceholderRight>
-                }
-                  {!!iconProps && <IconButton color={colors.basic000} {...iconProps} />}
-                  {!!loading && <Spinner size={30} trackWidth={3} style={{ marginLeft: 6 }} />}
-                </RightSideWrapper>}
-                {!!buttonProps &&
-                <ButtonWrapper>
-                  <Button {...buttonProps} block={false} />
-                </ButtonWrapper>}
+                {showRightAddon && (
+                  <RightSideWrapper onPress={onRightAddonPress} disabled={!onRightAddonPress}>
+                    {!!rightPlaceholder && (
+                      <PlaceholderRight color={colors.basic030} addMargin={!!iconProps}>
+                        {rightPlaceholder}
+                      </PlaceholderRight>
+                    )}
+                    {!!iconProps && <IconButton color={colors.basic000} {...iconProps} />}
+                    {!!loading && <Spinner size={30} trackWidth={3} style={{ marginLeft: 6 }} />}
+                  </RightSideWrapper>
+                )}
+                {!!buttonProps && (
+                  <ButtonWrapper>
+                    <Button {...buttonProps} block={false} />
+                  </ButtonWrapper>
+                )}
               </Item>
-              {Platform.OS === 'ios' && <IosFocusInput
-                caretHidden
-                autoCorrect={false}
-                ref={(ref) => { this.rnInput = ref; }}
-                onFocus={this.handleRNFocus}
-              />}
+              {Platform.OS === 'ios' && (
+                <IosFocusInput
+                  caretHidden
+                  autoCorrect={false}
+                  ref={(ref) => {
+                    this.rnInput = ref;
+                  }}
+                  onFocus={this.handleRNFocus}
+                />
+              )}
             </ItemHolder>
           </Tooltip>
         </InputBorder>
@@ -389,13 +382,12 @@ class TextInput extends React.Component<Props, State> {
 
 export default withTheme(TextInput);
 
-
 const InputField = styled(Input)`
   color: ${({ theme }) => theme.colors.basic010};
   ${({ smallPadding }) => `padding: 0 ${smallPadding ? 6 : 14}px`};
   align-self: stretch;
   margin: 0;
-  text-align: ${({ alignTextOnRight }) => alignTextOnRight ? 'right' : 'auto'};
+  text-align: ${({ alignTextOnRight }) => (alignTextOnRight ? 'right' : 'auto')};
 `;
 
 const IosFocusInput = styled(RNInput)`
@@ -418,7 +410,7 @@ const Item = styled(NBItem)`
 const InputBorder = styled.View`
   border-radius: 4px;
   border: 1px;
-  border-color: ${({ error, theme }) => error ? theme.colors.secondaryAccent240 : 'transparent'};
+  border-color: ${({ error, theme }) => (error ? theme.colors.secondaryAccent240 : 'transparent')};
 `;
 
 const ItemHolder = styled.View`

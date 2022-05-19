@@ -47,8 +47,8 @@ import type { WalletConnectCallRequest } from 'models/WalletConnect';
 
 type Props = {|
   request: WalletConnectCallRequest,
-  onConfirm: () => mixed;
-  onReject: () => mixed;
+  onConfirm: () => mixed,
+  onReject: () => mixed,
 |};
 
 function SignatureRequestContent({ request, onConfirm, onReject }: Props) {
@@ -64,8 +64,9 @@ function SignatureRequestContent({ request, onConfirm, onReject }: Props) {
    * Archanova account needs to be deployed for all types call requests.
    * Etherspot account needs to be deployed for signature type call requests only.
    */
-  const requiresDeployedAccount = (isArchanovaAccount(activeAccount) && !isArchanovaAccountDeployed)
-    || (isEtherspotAccount(activeAccount) && !isEtherspotAccountDeployed(activeAccount, chain));
+  const requiresDeployedAccount =
+    (isArchanovaAccount(activeAccount) && !isArchanovaAccountDeployed) ||
+    (isEtherspotAccount(activeAccount) && !isEtherspotAccountDeployed(activeAccount, chain));
 
   return (
     <>
@@ -76,9 +77,7 @@ function SignatureRequestContent({ request, onConfirm, onReject }: Props) {
       <Image source={{ uri: iconUrl }} style={styles.icon} />
 
       {requiresDeployedAccount && (
-        <ErrorMessage variant="small">
-          {t('walletConnectContent.error.smartWalletNeedToBeActivated')}
-        </ErrorMessage>
+        <ErrorMessage variant="small">{t('walletConnectContent.error.smartWalletNeedToBeActivated')}</ErrorMessage>
       )}
 
       <Button
@@ -88,12 +87,7 @@ function SignatureRequestContent({ request, onConfirm, onReject }: Props) {
         style={styles.button}
       />
 
-      <Button
-        title={t('button.reject')}
-        onPress={onReject}
-        variant="destructive"
-        style={styles.button}
-      />
+      <Button title={t('button.reject')} onPress={onReject} variant="destructive" style={styles.button} />
     </>
   );
 }
@@ -102,7 +96,7 @@ export default SignatureRequestContent;
 
 const getViewData = (request: WalletConnectCallRequest) => {
   const title = parsePeerName(request.name);
-  const iconUrl = request.icon;
+  const iconUrl: any = request.icon;
   const chain = chainFromChainId[request.chainId] ?? CHAIN.ETHEREUM;
 
   return { title, iconUrl, chain };
@@ -125,4 +119,3 @@ const ErrorMessage = styled(Text)`
   text-align: center;
   color: ${({ theme }) => theme.colors.negative};
 `;
-
