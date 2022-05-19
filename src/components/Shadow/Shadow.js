@@ -17,11 +17,11 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { Platform, PixelRatio, View } from 'react-native';
-import { BoxShadow } from 'react-native-shadow';
+import { Shadow as BoxShadow } from 'react-native-shadow-2';
 import styled from 'styled-components/native';
-import NativeAndroidShadow from './NativeAndroidShadow';
 
 type Props = {
   children?: React.Node,
@@ -38,15 +38,13 @@ type Props = {
   heightIOS: number,
   widthAndroid?: number | string,
   heightAndroid?: number | string,
-  shadowBorder?: number,
   marginVertical?: number,
   useSVGShadow?: boolean,
-  shadowOpacity?: number | string,
   wrapperStyle?: Object,
 };
 
 const ShadowInnerWrapper = styled.View`
-  height: ${props => props.heightWithPaddings};
+  height: ${(props) => props.heightWithPaddings};
 `;
 
 export const Shadow = (props: Props) => {
@@ -59,14 +57,12 @@ export const Shadow = (props: Props) => {
     shadowSpread = 18,
     widthAndroid,
     heightAndroid,
-    shadowBorder = 10,
     marginVertical = 0,
     widthIOS = 100,
     heightIOS = 70,
     shadowColorAndroid = '#14105baa',
     shadowColoriOS = '#EEF3F9',
     useSVGShadow,
-    shadowOpacity,
     wrapperStyle,
   } = props;
 
@@ -80,30 +76,20 @@ export const Shadow = (props: Props) => {
     sSpread = (shadowSpread * pixelRatio) / 2;
   }
 
-  const widthWithPaddings = widthAndroid
-    ? widthAndroid + (((sDistance + sSpread) * 2) / pixelRatio)
-    : '100%';
-  const heightWithPaddings = heightAndroid
-    ? `${heightAndroid + (((sDistance + sSpread) * 2) / pixelRatio)}px`
-    : '100%';
+  // eslint-disable-next-line no-mixed-operators
+  const widthWithPaddings = widthAndroid ? widthAndroid + ((sDistance + sSpread) * 2) / pixelRatio : '100%';
+  // eslint-disable-next-line no-mixed-operators
+  const heightWithPaddings = heightAndroid ? `${heightAndroid + ((sDistance + sSpread) * 2) / pixelRatio}px` : '100%';
 
   if (Platform.OS === 'ios' || useSVGShadow) {
     return (
       <View style={[{ position: 'relative' }, wrapperStyle]}>
         <BoxShadow
-          setting={{
-            color: shadowColoriOS,
-            x: shadowOffsetX,
-            y: shadowOffsetY,
-            opacity: shadowOpacity || 1,
-            radius: shadowRadius,
-            width: widthIOS,
-            height: heightIOS,
-            border: shadowBorder,
-            style: {
-              marginVertical,
-            },
-          }}
+          finalColor={shadowColoriOS}
+          radius={shadowRadius}
+          offset={[shadowOffsetX, shadowOffsetY]}
+          viewStyle={{ marginVertical }}
+          size={[widthIOS, heightIOS]}
         >
           {children}
         </BoxShadow>
@@ -113,18 +99,9 @@ export const Shadow = (props: Props) => {
 
   return (
     <View style={[{ width: widthWithPaddings }, wrapperStyle]}>
-      <NativeAndroidShadow
-        shadowAngle={90}
-        shadowRadius={sSpread}
-        shadowDistance={sDistance}
-        shadowColor={shadowColorAndroid}
-      >
-        <ShadowInnerWrapper
-          heightWithPaddings={heightWithPaddings}
-        >
-          {children}
-        </ShadowInnerWrapper>
-      </NativeAndroidShadow>
+      <BoxShadow radius={sSpread} distance={sDistance} finalColor={shadowColorAndroid}>
+        <ShadowInnerWrapper heightWithPaddings={heightWithPaddings}>{children}</ShadowInnerWrapper>
+      </BoxShadow>
     </View>
   );
 };
