@@ -48,7 +48,7 @@ const MutlilineTextInput = React.forwardRef<Props, Instance>(({ style, ...rest }
       ref={ref}
       keyboardAppearance={keyboardAppearance}
       // `placeholder` is needed for Android to avoid slight increase in height when input is empty.
-      placeholder=""
+      // placeholder=""
       placeholderTextColor={colors.secondaryText}
       disableFullscreenUI
       underlineColorAndroid="transparent"
