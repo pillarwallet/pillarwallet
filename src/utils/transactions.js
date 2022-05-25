@@ -45,6 +45,7 @@ import { firebaseRemoteConfig } from 'services/firebase';
 
 // Abi
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
+import ERC1155_CONTRACT_ABI from 'abi/erc1155.json';
 
 // Types
 import type { AssetType } from 'models/Asset';
@@ -98,6 +99,12 @@ export const buildEthereumTransaction = async (
   useLegacyTransferMethod?: boolean,
 ): Promise<EthereumTransaction> => {
   let value;
+
+  if (tokenType === ASSET_TYPES.COLLECTIBLE && contractAddress && tokenId) {
+    data = encodeContractMethod(ERC1155_CONTRACT_ABI, 'safeTransferFrom', [from, to, tokenId, amount, data]);
+    to = contractAddress;
+    value = EthersBigNumber.from(0); // value is in encoded transfer method as data
+  }
 
   if (tokenType !== ASSET_TYPES.COLLECTIBLE) {
     const chainNativeSymbol = nativeAssetPerChain[chain].symbol;
