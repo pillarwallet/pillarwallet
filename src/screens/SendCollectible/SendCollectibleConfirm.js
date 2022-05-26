@@ -29,7 +29,6 @@ import t from 'translations/translate';
 import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 
 // Actions
-import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 import { appsFlyerlogEventAction } from 'actions/analyticsActions';
 
 // Components
@@ -67,7 +66,7 @@ import { accountWalletAssetsBalancesSelector } from 'selectors/balances';
 import { useActiveAccount } from 'selectors';
 
 // Types
-import type { CollectibleTransactionPayload, TransactionFeeInfo, TransactionToEstimate } from 'models/Transaction';
+import type { CollectibleTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { WalletAssetsBalances } from 'models/Balances';
 import type { Chain, ChainRecord } from 'models/Chain';
@@ -80,16 +79,12 @@ type Props = {
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
   estimateErrorMessage: ?string,
-  resetEstimateTransaction: () => void,
-  estimateTransaction: (transaction: TransactionToEstimate, chain: Chain) => void,
   logAppsFlyerEvent: (name: string, properties: Object) => void,
 };
 
 const SendCollectibleConfirm = ({
   isOnline,
   balances,
-  resetEstimateTransaction,
-  estimateTransaction,
   keyBasedWalletAddress,
   feeInfo,
   isEstimating,
@@ -142,8 +137,6 @@ const SendCollectibleConfirm = ({
       });
 
   useEffect(() => {
-    resetEstimateTransaction();
-    estimateTransaction({ to: receiver, value: 0, assetData }, chain);
     if (isKovanNetwork) fetchRinkebyEth();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -299,9 +292,6 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
-  estimateTransaction: (transaction: TransactionToEstimate, chain: Chain) =>
-    dispatch(estimateTransactionAction(transaction, chain)),
   logAppsFlyerEvent: (name: string, properties: Object) => dispatch(appsFlyerlogEventAction(name, properties)),
 });
 
