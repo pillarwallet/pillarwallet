@@ -58,7 +58,7 @@ const requestConfig = {
   },
 };
 
-const currenciesParam = rateKeys.map(key => key.toLocaleString()).join(',');
+const currenciesParam = rateKeys.map((key) => key.toLocaleString()).join(',');
 
 /* eslint-disable i18next/no-literal-string */
 export const chainToCoinGeckoCoinId = {
@@ -66,7 +66,7 @@ export const chainToCoinGeckoCoinId = {
   [CHAIN.POLYGON]: 'matic-network',
   [CHAIN.BINANCE]: 'binancecoin',
   [CHAIN.XDAI]: 'xdai',
-  [CHAIN.AVALANCHE]: 'avalanche',
+  [CHAIN.AVALANCHE]: 'avalanche-2',
 };
 
 const chainToCoinGeckoNetwork = {
@@ -74,25 +74,24 @@ const chainToCoinGeckoNetwork = {
   [CHAIN.POLYGON]: 'polygon-pos',
   [CHAIN.BINANCE]: 'binance-smart-chain',
   [CHAIN.XDAI]: 'xdai',
-  [CHAIN.AVALANCHE]: 'avalanche',
+  [CHAIN.AVALANCHE]: 'avalanche-2',
 };
 /* eslint-enable i18next/no-literal-string */
 
-const mapWalletAndCoinGeckoAssetsPrices = (
-  responseData: CoinGeckoAssetsPrices,
-): RatesByAssetAddress => Object.keys(responseData).reduce((mappedResponseData, contractAddress) => ({
-  ...mappedResponseData,
-  [addressAsKey(contractAddress)]: mapPricesToRates(responseData[contractAddress]),
-}), {});
+const mapWalletAndCoinGeckoAssetsPrices = (responseData: CoinGeckoAssetsPrices): RatesByAssetAddress =>
+  Object.keys(responseData).reduce(
+    (mappedResponseData, contractAddress) => ({
+      ...mappedResponseData,
+      [addressAsKey(contractAddress)]: mapPricesToRates(responseData[contractAddress]),
+    }),
+    {},
+  );
 
-export const getCoinGeckoTokenPrices = async (
-  chain: Chain,
-  assets: Asset[],
-): Promise<?RatesByAssetAddress> => {
+export const getCoinGeckoTokenPrices = async (chain: Chain, assets: Asset[]): Promise<?RatesByAssetAddress> => {
   // native asset not always fit into token price endpoint, it is fetched with other API call
-  const assetsWithoutNativeAsset = assets.filter(({
-    address,
-  }) => !addressesEqual(address, nativeAssetPerChain[chain].address));
+  const assetsWithoutNativeAsset = assets.filter(
+    ({ address }) => !addressesEqual(address, nativeAssetPerChain[chain].address),
+  );
 
   const assetsContractAddresses = assetsWithoutNativeAsset.map(({ address }) => address);
 
