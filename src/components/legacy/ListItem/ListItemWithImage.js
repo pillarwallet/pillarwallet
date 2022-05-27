@@ -21,9 +21,10 @@
 import * as React from 'react';
 import { View } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
-import Icon from 'components/legacy/Icon';
 import t from 'translations/translate';
 
+// Components
+import Icon from 'components/legacy/Icon';
 import { BaseText, MediumText } from 'components/legacy/Typography';
 import ProfileImage from 'components/ProfileImage';
 import Button from 'components/legacy/Button';
@@ -34,16 +35,18 @@ import TankAssetBalance from 'components/TankAssetBalance';
 import { LabelBadge } from 'components/LabelBadge/LabelBadge';
 import CollectibleImage from 'components/CollectibleImage';
 
+// Constants
 import { ACTION, DEFAULT } from 'constants/listItemConstants';
 
+// Utils
 import { formatTokenAmount } from 'utils/common';
 import { fontSizes, spacing, fontTrackings, fontStyles, objectFontStyles } from 'utils/variables';
 import { getColorByTheme, getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
 
+// Types
 import type { AssetOptionBalance } from 'models/Asset';
 import type { Theme, ThemeColors } from 'models/Theme';
-
 
 type Props = {
   label: string,
@@ -134,7 +137,7 @@ const ItemWrapper = styled.View`
 
 const InnerWrapper = styled.TouchableOpacity`
   flex-direction: row;
-  align-items: ${props => props.horizontalAlign || 'center'};
+  align-items: ${(props) => props.horizontalAlign || 'center'};
   justify-content: center;
   padding: ${({ padding }) => padding || `14px ${spacing.large}px`};
   width: 100%;
@@ -154,7 +157,7 @@ const ImageHolder = styled.View`
 
 const InfoWrapper = styled.View`
   flex-direction: row;
-  align-items: ${props => props.horizontalAlign || 'center'};
+  align-items: ${(props) => props.horizontalAlign || 'center'};
   justify-content: space-between;
   width: 100%;
 `;
@@ -207,8 +210,8 @@ const IconRounded = styled.View`
     height: ${(!borderRadius && diameter) || 52}px;
     border-radius: ${borderRadius || (diameter ? diameter / 2 : 26)}px;
   `}
-  background-color: ${({ backgroundColor }) => backgroundColor
-    || getColorByTheme({ lightKey: 'basic060', darkKey: 'basic040' })};
+  background-color: ${({ backgroundColor }) =>
+    backgroundColor || getColorByTheme({ lightKey: 'basic060', darkKey: 'basic040' })};
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -219,7 +222,7 @@ const IconRounded = styled.View`
 `;
 
 const ItemIcon = styled(Icon)`
-  font-size: ${props => props.fontSize || 48}px;
+  font-size: ${(props) => props.fontSize || 48}px;
   color: ${({ iconColor, theme }) => iconColor || theme.colors.basic000};
 `;
 
@@ -284,8 +287,8 @@ const ActionLabelText = styled(BaseText)`
   ${fontStyles.regular};
   color: ${({ color, theme }) => color || theme.colors.basic020};
   margin-left: auto;
-  margin-bottom: ${props => props.button ? '2px' : 0};
-  padding: ${props => props.button ? `0 ${spacing.large}px` : '6px 0'};
+  margin-bottom: ${(props) => (props.button ? '2px' : 0)};
+  padding: ${(props) => (props.button ? `0 ${spacing.large}px` : '6px 0')};
 `;
 
 const ImageAddonHolder = styled.View`
@@ -303,12 +306,7 @@ const CornerIcon = styled(Image)`
 `;
 
 const ImageWrapper = (props: ImageWrapperProps) => {
-  const {
-    children,
-    hasShadow,
-    imageDiameter,
-    imageWrapperStyle,
-  } = props;
+  const { children, hasShadow, imageDiameter, imageWrapperStyle } = props;
 
   if (hasShadow) {
     const shadowDiameter = imageDiameter || 54;
@@ -330,11 +328,7 @@ const ImageWrapper = (props: ImageWrapperProps) => {
       </ImageHolder>
     );
   }
-  return (
-    <ImageHolder style={imageWrapperStyle}>
-      {children}
-    </ImageHolder>
-  );
+  return <ImageHolder style={imageWrapperStyle}>{children}</ImageHolder>;
 };
 
 const ItemImage = (props: Props) => {
@@ -385,11 +379,7 @@ const ItemImage = (props: Props) => {
         border={iconBorder}
         borderRadius={roundedImageCustomBorderRadius}
       >
-        <IconImage
-          source={iconSource}
-          size={iconImageSize}
-          resizeMode={iconImageResizeMode}
-        />
+        <IconImage source={iconSource} size={iconImageSize} resizeMode={iconImageResizeMode} />
       </IconRounded>
     );
   }
@@ -453,11 +443,7 @@ const ItemImage = (props: Props) => {
 };
 
 const ImageAddon = (props: Props) => {
-  const {
-    imageAddonIconName,
-    imageAddonName,
-    iconColor,
-  } = props;
+  const { imageAddonIconName, imageAddonName, iconColor } = props;
 
   if (imageAddonIconName) {
     return (
@@ -476,12 +462,7 @@ const ImageAddon = (props: Props) => {
 
   return (
     <ImageAddonHolder>
-      <ProfileImage
-        onPress={() => {}}
-        userName={imageAddonName}
-        diameter={22}
-        borderWidth={2}
-      />
+      <ProfileImage onPress={() => {}} userName={imageAddonName} diameter={22} borderWidth={2} />
     </ImageAddonHolder>
   );
 };
@@ -504,11 +485,11 @@ const Addon = (props: AddonProps) => {
   if (itemValue || itemStatusIcon) {
     return (
       <Wrapper horizontal style={{ flexWrap: 'wrap', alignItems: 'center', justifyContent: 'flex-end' }}>
-        {!!itemValue &&
+        {!!itemValue && (
           <ItemValue color={valueColor} numberOfLines={2} ellipsizeMode="tail">
             {itemValue}
           </ItemValue>
-        }
+        )}
         {!!itemStatusIcon && <ItemValueStatus name={itemStatusIcon} iconColor={statusIconColor} />}
       </Wrapper>
     );
@@ -538,12 +519,7 @@ const Addon = (props: AddonProps) => {
   }
 
   if (balance) {
-    const {
-      syntheticBalance = '',
-      balance: tokenBalance = 0,
-      token = '',
-      value = '',
-    } = balance;
+    const { syntheticBalance = '', balance: tokenBalance = 0, token = '', value = '' } = balance;
 
     return (
       <View style={{ flexDirection: 'row' }}>
@@ -621,29 +597,33 @@ const ListItemWithImage = (props: Props) => {
         <View style={{ flex: 1 }}>
           <InfoWrapper type={type} horizontalAlign={innerWrapperHorizontalAlign}>
             <Column type={type} style={{ flexGrow: 1 }}>
-              {(!!label || !!customLabel) &&
-              <Row>
-                {!!customLabel && customLabel}
-                {!!label && <ItemTitle numberOfLines={2} ellipsizeMode="tail" type={type}>{label}</ItemTitle>}
-              </Row>
-              }
-              {!!paragraph &&
-              <Row>
-                <ItemParagraph numberOfLines={paragraphLines}>{paragraph}</ItemParagraph>
-              </Row>
-              }
-              {!!subtext &&
-              <React.Fragment>
-                <Spacing h={2} />
-                <ItemSubText numberOfLines={2}>{subtext}</ItemSubText>
-              </React.Fragment>
-              }
-              {!!badge &&
-              <React.Fragment>
-                <Spacing h={4} />
-                <LabelBadge label={badge} primary labelStyle={objectFontStyles.tiny} />
-              </React.Fragment>
-              }
+              {(!!label || !!customLabel) && (
+                <Row>
+                  {!!customLabel && customLabel}
+                  {!!label && (
+                    <ItemTitle numberOfLines={2} ellipsizeMode="tail" type={type}>
+                      {label}
+                    </ItemTitle>
+                  )}
+                </Row>
+              )}
+              {!!paragraph && (
+                <Row>
+                  <ItemParagraph numberOfLines={paragraphLines}>{paragraph}</ItemParagraph>
+                </Row>
+              )}
+              {!!subtext && (
+                <React.Fragment>
+                  <Spacing h={2} />
+                  <ItemSubText numberOfLines={2}>{subtext}</ItemSubText>
+                </React.Fragment>
+              )}
+              {!!badge && (
+                <React.Fragment>
+                  <Spacing h={4} />
+                  <LabelBadge label={badge} primary labelStyle={objectFontStyles.tiny} />
+                </React.Fragment>
+              )}
             </Column>
             <RightColumn type={type} style={{ maxWidth: '50%' }}>
               <View style={[rightColumnInnerStyle, { flexWrap: 'wrap' }]}>
