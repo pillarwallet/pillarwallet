@@ -21,7 +21,7 @@
 // services
 import Storage from 'services/storage';
 
-const visibleBalanceSession = async (): any => {
+const visibleBalanceSession = async () => {
   const storage = Storage.getInstance('db');
   const visibleBalanceStorage = await storage.get('visible_balance');
 

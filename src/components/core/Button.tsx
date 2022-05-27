@@ -119,7 +119,7 @@ const TouchableContainer = styled(TouchableOpacity)`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  border-radius: 6px;
+  border-radius: 14px;
   ${({ disabled }) => disabled && 'opacity: 0.5;'}
   ${({ $size }) => $size === 'regular' && `width: 100%; height: 72px; padding: 14px ${spacing.large}px`}
   ${({ $size }) =>

@@ -124,7 +124,7 @@ function MigrationSummary({ etherspotAccount, archanovaAccount, items, feeInEth,
 
       {feeInEth && highFee && (
         <WarningBlock
-          text={tRoot('transactions.highGasFee.ethereumNetworkFees')}
+          text={tRoot('transactions.highGasFee.warningLabel')}
           icon="small-warning"
           backgroundColor={colors.negative}
           right={10}

@@ -111,7 +111,7 @@ const SendHighGasModal: FC<ISendHighGasModal> = (props) => {
 
         <TxListItem title={t('label.transactionFee')} component={<TxFee />} />
         <WarningBlock
-          text={t('transactions.highGasFee.ethereumNetworkFees')}
+          text={t('transactions.highGasFee.warningLabel')}
           icon={'small-warning'}
           backgroundColor={colors.negative}
           right={10}
