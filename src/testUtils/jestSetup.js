@@ -138,6 +138,8 @@ jest.setMock('react-native-splash-screen', {
   hide: jest.fn(),
 });
 
+jest.setMock('react-native-shadow-2', { Shadow: () => '' });
+
 jest.setMock('react-native-scrypt', () => Promise.resolve('xxxx'));
 
 jest.setMock('react-native-permissions', {

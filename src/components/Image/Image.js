@@ -42,7 +42,7 @@ export type ImageProps = {|
  * @param {FastImageSource | number} source
  * @returns {FastImageSource | number}
  */
-const getValidSource = (source: FastImageSource | number) => {
+const getValidSource: any = (source: FastImageSource | number) => {
   if (typeof source?.uri !== 'string') return source;
   const { uri } = source;
   const interpretedNftMedia = interpretNftMedia(uri);
@@ -72,7 +72,7 @@ class Image extends React.Component<ImageProps> {
   static preload = FastImage.preload;
 
   render() {
-    const { source, fallbackSource, ...rest } = this.props;
+    const { source, fallbackSource, ...rest }: any = this.props;
     return (
       <FastImage source={getValidSource(source)} fallback={!!fallbackSource} defaultSource={fallbackSource} {...rest} />
     );
@@ -80,4 +80,3 @@ class Image extends React.Component<ImageProps> {
 }
 
 export default Image;
-
