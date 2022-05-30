@@ -100,12 +100,6 @@ export const buildEthereumTransaction = async (
 ): Promise<EthereumTransaction> => {
   let value;
 
-  if (tokenType === ASSET_TYPES.COLLECTIBLE && contractAddress && tokenId) {
-    data = encodeContractMethod(ERC1155_CONTRACT_ABI, 'safeTransferFrom', [from, to, tokenId, amount, data]);
-    to = contractAddress;
-    value = EthersBigNumber.from(0); // value is in encoded transfer method as data
-  }
-
   if (tokenType !== ASSET_TYPES.COLLECTIBLE) {
     const chainNativeSymbol = nativeAssetPerChain[chain].symbol;
     value = utils.parseUnits(amount, decimals);
@@ -114,6 +108,11 @@ export const buildEthereumTransaction = async (
       to = contractAddress;
       value = EthersBigNumber.from(0); // value is in encoded transfer method as data
     }
+  } else if (contractAddress && tokenId && tokenId.length > 63) {
+    const approve = encodeContractMethod(ERC1155_CONTRACT_ABI, 'setApprovalForAll', [contractAddress, true]);
+    data = encodeContractMethod(ERC1155_CONTRACT_ABI, 'safeTransferFrom', [from, to, tokenId, 0, approve]);
+    to = contractAddress;
+    value = EthersBigNumber.from(0); // value is in encoded transfer method as data
   } else if (contractAddress && tokenId) {
     data = await buildERC721TransactionData({
       from,
