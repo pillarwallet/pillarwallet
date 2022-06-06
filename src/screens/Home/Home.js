@@ -59,7 +59,7 @@ import GovernanceCallBanner from 'screens/GovernanceCall/GovernanceCallBanner';
 
 // Utils
 import { sumRecord } from 'utils/bigNumber';
-import { calculateTotalBalancePerCategory, calculateTotalBalancePerChain } from 'utils/totalBalances';
+import { calculateTotalBalancePerCategory } from 'utils/totalBalances';
 import { useThemeColors } from 'utils/themes';
 import { getSupportedBiometryType } from 'utils/keychain';
 import { getEnsNodeState } from 'utils/accounts';
@@ -67,7 +67,6 @@ import { getActiveScreenName } from 'utils/navigation';
 
 // Local
 import BalanceSection from './BalanceSection';
-import ChartsSection from './ChartsSection';
 import AssetsSection from './AssetsSection';
 import FloatingActions from './FloatingActions';
 import { useAccountCollectibleCounts } from './utils';
@@ -95,7 +94,6 @@ function Home() {
 
   const { accountSwitchTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
   const balancePerCategory = calculateTotalBalancePerCategory(accountTotalBalances);
-  const balancePerChain = calculateTotalBalancePerChain(accountTotalBalances);
   const totalBalance = sumRecord(balancePerCategory);
   const screenName = getActiveScreenName(navigation);
 
@@ -187,7 +185,7 @@ function Home() {
 
         <Banner screenName={screenName} bottomPosition={false} />
 
-        <ChartsSection balancePerCategory={balancePerCategory} balancePerChain={balancePerChain} />
+        {/* <ChartsSection balancePerCategory={balancePerCategory} balancePerChain={balancePerChain} /> */}
 
         <AssetsSection
           accountTotalBalances={accountTotalBalances}
