@@ -60,6 +60,7 @@ import { useChainsConfig } from 'utils/uiConfig';
 import { showServiceLaunchErrorToast } from 'utils/inAppBrowser';
 import { isArchanovaAccount, isKeyBasedAccount } from 'utils/accounts';
 import { getActiveScreenName } from 'utils/navigation';
+import { isLightTheme } from 'utils/themes';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
@@ -122,13 +123,15 @@ function WalletConnectHome() {
       <ListHeader>
         <WalletConnectRequests />
         {!isArchanovaAccount(activeAccount) && (
-          <ContainerView isSelected>
+          <ContainerView isSelected onPress={() => openSwitchChainModal()}>
             <RowContainer>
-              <ChainViewIcon size={24} style={IconContainer} name={key ?? 'all-networks'} />
+              <ChainViewIcon
+                size={24}
+                style={IconContainer}
+                name={key ?? isLightTheme() ? 'all-networks-light' : 'all-networks'}
+              />
               <Title>{title}</Title>
-              <TouchableContainer onPress={() => openSwitchChainModal()}>
-                <ChainViewIcon name="chevron-down" />
-              </TouchableContainer>
+              <ChainViewIcon name="chevron-down" />
             </RowContainer>
           </ContainerView>
         )}
@@ -186,7 +189,10 @@ function WalletConnectHome() {
           renderItem={({ item }) => renderListRow(item)}
           keyExtractor={(items) => items[0]?.id}
           ListHeaderComponent={renderListHeader()}
-          contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
+          contentContainerStyle={{
+            paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET,
+            paddingTop: spacing.rhythm,
+          }}
         />
       )}
       {isReady && isFetching && (
@@ -218,7 +224,8 @@ type itemType = {|
 
 const useColumnDimensions = () => {
   const { width } = useWindowDimensions();
-  const availableWidth = width - (2 * spacing.layoutSides);
+  // eslint-disable-next-line no-mixed-operators
+  const availableWidth = width - 2 * spacing.layoutSides;
   const minColumnWidth = 80;
 
   const numberOfColumns = Math.floor(availableWidth / minColumnWidth);
@@ -235,7 +242,7 @@ const useTabItems = (): itemType[] => {
     key: chain,
     title: config[chain].titleShort,
   }));
-  return [{ key: null, title: t('label.all') }, ...chainTabs];
+  return [{ key: null, title: t('label.allNetwork') }, ...chainTabs];
 };
 
 type SectionData = {|
@@ -311,10 +318,12 @@ const ListRow = styled.View`
   padding: 0 ${spacing.layoutSides}px;
 `;
 
-const ContainerView = styled.View`
-  background-color: ${({ theme, isSelected }) => (isSelected ? theme.colors.basic080 : theme.colors.basic050)};
+const ContainerView = styled.TouchableOpacity`
+  background-color: ${({ theme, isSelected }) => (isSelected ? theme.colors.basic60 : theme.colors.basic050)};
   margin: 0 ${spacing.layoutSides}px;
-  padding: ${spacing.large}px;
+  padding: 0 ${spacing.large}px 0 ${spacing.mediumLarge}px;
+  height: 66px;
+  justify-content: center;
   border-radius: ${borderRadiusSizes.medium}px;
 `;
 
@@ -333,7 +342,7 @@ const IconContainer = styled.View`
 const Title = styled(Text)`
   flex: 1;
   flex-direction: row;
-  ${fontStyles.medium};
+  ${fontStyles.big};
   padding: 0 ${spacing.medium}px 0 ${spacing.medium}px;
 `;
 
@@ -342,9 +351,4 @@ const ChainViewIcon = styled(Icon)`
   width: 24px;
   background-color: ${({ theme }) => theme.colors.basic050};
   border-radius: ${borderRadiusSizes.medium}px;
-`;
-
-const TouchableContainer = styled.TouchableOpacity`
-  align-items: center;
-  justify-content: center;
 `;

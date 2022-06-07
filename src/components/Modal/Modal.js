@@ -24,8 +24,10 @@ import RNModal from 'react-native-modal';
 import { View } from 'react-native';
 import styled from 'styled-components/native';
 
+// Components
 import { ToastProvider } from 'components/Toast';
 
+// Local
 import ModalProvider, { ModalStack, ModalIdContext, EMPTY_MODAL_ID } from './ModalProvider';
 import type { ModalOptions } from './ModalProvider';
 
@@ -35,7 +37,7 @@ export type ScrollToProps = {|
   x?: number,
   y?: number,
   animated?: boolean,
-|}
+|};
 
 type SwipeDirection = 'up' | 'down' | 'left' | 'right';
 
@@ -63,7 +65,7 @@ type Props = {|
   onModalShow?: () => void,
   onSwipeStart?: () => void,
   onSwipeMove?: (percentageShown: number) => void,
-  onSwipeComplete?: ({ swipingDirection: SwipeDirection}) => void,
+  onSwipeComplete?: ({ swipingDirection: SwipeDirection }) => void,
   scrollOffset?: number,
   scrollOffsetMax?: number,
   scrollTo?: (_: ScrollToProps) => void,
@@ -101,18 +103,17 @@ class Modal extends React.Component<Props, State> {
   static contextType = ModalIdContext;
 
   // alias for readability
-  getId = () => this.context
-
+  getId = () => this.context;
   state = {
     isVisible: true,
-  }
+  };
 
   closingCallbacks: (() => void)[] = [];
 
   callClosingCallbacks = () => {
-    this.closingCallbacks.forEach(callback => callback());
+    this.closingCallbacks.forEach((callback) => callback());
     this.closingCallbacks = [];
-  }
+  };
 
   componentDidMount() {
     const instance = ModalProvider.getInstance();
@@ -131,20 +132,20 @@ class Modal extends React.Component<Props, State> {
   close = () => {
     const instance = ModalProvider.getInstance();
     if (instance) instance.close(this.getId());
-  }
+  };
 
   closeRNModal = () => {
     this.setState({ isVisible: false });
     return new Promise((resolve) => {
       this.closingCallbacks.push(resolve);
     });
-  }
+  };
 
   onHide = () => {
     this.callClosingCallbacks();
     const { onModalHide } = this.props;
     if (onModalHide) onModalHide();
-  }
+  };
 
   render() {
     // swipeDirection is passed explicitly to work around issues with using
@@ -156,9 +157,7 @@ class Modal extends React.Component<Props, State> {
     // attached outside of ModalProvider (e.g. in storybook)
     return this.getId() === EMPTY_MODAL_ID ? (
       <StaticContainer>
-        <View style={this.props.style}>
-          {children}
-        </View>
+        <View style={this.props.style}>{children}</View>
       </StaticContainer>
     ) : (
       <RNModal

@@ -39,6 +39,7 @@ import WalletConnectRequests from 'screens/WalletConnect/Requests';
 import Tooltip from 'components/Tooltip';
 import Modal from 'components/Modal';
 import Banner from 'components/Banner/Banner';
+import { Spacing } from 'components/legacy/Layout';
 
 // Constants
 import { MENU, HOME_HISTORY, REGISTER_ENS } from 'constants/navigationConstants';
@@ -196,6 +197,8 @@ function Home() {
         <BalanceSection balanceInFiat={totalBalance} showBalance={balanceVisible} onBalanceClick={onBalanceClick} />
 
         <WalletConnectRequests />
+
+        <Spacing h={13} />
 
         <GovernanceCallBanner />
 

@@ -134,6 +134,7 @@
     "added": "Added",
     "adding": "Adding",
     "all": "All",
+    "allNetwork":"All networks",
     "backedUp": "Backup secured",
     "canceled": "Canceled",
     "collectibleFromUser": "NFT from {{username}}",
@@ -328,6 +329,7 @@
     "settleMore": "Settle more",
     "settleTransactions": "Settle transactions",
     "shareAddress": "Share",
+    "share":"Share",
     "smartWalletFAQ": "Smart Wallet FAQ",
     "subscribe": "Subscribe",
     "support": "Support",
@@ -685,7 +687,7 @@
   "walletConnect": {
     "home": {
       "title": "WalletConnect",
-      "switch-title": "Switch Network",
+      "switch-title": "Switch network",
       "headerStories": "New and Noteworthy",
       "deployOnChainFormat": "Deploy this wallet to take full advantage of using {{chain}}.",
       "toast": {
@@ -1166,7 +1168,6 @@
       "collectiblesToTransfer": "NFTs to transfer",
       "data": "Data",
       "message": "Message",
-      "network": "Network",
       "address": "Address",
       "ethFee": "Max. Ethereum fee",
       "maximumFee": "Maximum fee",
