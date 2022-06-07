@@ -188,6 +188,7 @@
     "swapping": "Swapping",
     "transactionDeploymentWarning": "Don't proceed if you don't want to deploy {{chain}} Smart Wallet.",
     "transactionFee": "Transaction fee",
+    "smartWalletDeploy":"Smart wallet deployment",
     "today": "Today",
     "toKeyWallet": "to Key wallet",
     "toPPN": "to Pillar Network",
@@ -1190,7 +1191,8 @@
     },
     "highGasFee": {
       "warningLabel": "Network fees are currently high. \nPillar is free and does not charge any extra fees.",
-      "pillarEthFeeDisclaimer": "Pillar does not charge any fees.\nFee displayed is the current Ethereum network fee."
+      "pillarEthFeeDisclaimer": "Pillar does not charge any fees.\nFee displayed is the current Ethereum network fee.",
+      "deployLabel": "This is your first transaction on this network. It will automatically deploy your smart wallet. Deployment cost will be added to regular transaction fee."
     }
   },
 
