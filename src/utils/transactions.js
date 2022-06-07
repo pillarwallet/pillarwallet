@@ -111,9 +111,18 @@ export const buildEthereumTransaction = async (
       value = EthersBigNumber.from(0); // value is in encoded transfer method as data
     }
   } else if (contractAddress && tokenId) {
-    try {
-      const erc721Contract = etherspotService.getContract(chain, ERC721_CONTRACT_ABI, contractAddress);
-      await erc721Contract?.callOwnerOf(tokenId);
+    const approveData = encodeContractMethod(ERC1155_CONTRACT_ABI, 'setApprovalForAll', [contractAddress, true]);
+    data = encodeContractMethod(ERC1155_CONTRACT_ABI, 'safeTransferFrom', [from, to, tokenId, 1, approveData]);
+    to = contractAddress;
+    value = EthersBigNumber.from(0);
+
+    const erc721Contract = etherspotService.getContract(chain, ERC721_CONTRACT_ABI, contractAddress);
+    const ownerAddress = await erc721Contract?.callOwnerOf(tokenId).catch((e) => {
+      logBreadcrumb('ERC-721 Owner', 'failed: ERC-721 Owner address', { e });
+      return null;
+    });
+
+    if (ownerAddress) {
       data = await buildERC721TransactionData({
         from,
         to,
@@ -121,13 +130,6 @@ export const buildEthereumTransaction = async (
         contractAddress,
         useLegacyTransferMethod: !!useLegacyTransferMethod,
       });
-      to = contractAddress;
-      value = EthersBigNumber.from(0);
-    } catch (e) {
-      const approveData = encodeContractMethod(ERC1155_CONTRACT_ABI, 'setApprovalForAll', [contractAddress, true]);
-      data = encodeContractMethod(ERC1155_CONTRACT_ABI, 'safeTransferFrom', [from, to, tokenId, 1, approveData]);
-      to = contractAddress;
-      value = EthersBigNumber.from(0);
     }
   }
 
