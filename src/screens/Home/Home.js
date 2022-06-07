@@ -71,6 +71,12 @@ import FloatingActions from './FloatingActions';
 import { useAccountCollectibleCounts } from './utils';
 import BiometricModal from '../../components/BiometricModal/BiometricModal';
 
+// Services
+import visibleBalanceSession from '../../services/visibleBalance';
+
+// Actions
+import { saveDbAction } from '../../actions/dbActions';
+
 function Home() {
   const navigation = useNavigation();
   const colors = useThemeColors();
@@ -85,6 +91,8 @@ function Home() {
   const accountAddress = useRootSelector(activeAccountAddressSelector);
   const [showAccountSwitchTooltip, setShowAccountSwitchTooltip] = React.useState(false);
   const [showENSTooltip, setShowENSSwitchTooltip] = React.useState(false);
+  const [balanceVisible, setBalanceVisible] = React.useState(true);
+
   const canSwitchAccount = useAccounts().length > 1;
   const ensNodeState = getEnsNodeState(etherspotAccount);
   const isEnsNodeCliamed = ensNodeState === ENSNodeStates.Claimed;
@@ -99,6 +107,7 @@ function Home() {
   const isRefreshing = useRootSelector(({ totalBalances }) => !!totalBalances.isFetching);
 
   React.useEffect(() => {
+    callVisibleBalanceFunction();
     setTimeout(() => {
       if (!wallet) {
         getSupportedBiometryType((biometryType) => {
@@ -112,6 +121,11 @@ function Home() {
     }, 1000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const callVisibleBalanceFunction = async () => {
+    const response = await visibleBalanceSession();
+    if (response !== undefined) setBalanceVisible(response);
+  };
 
   React.useEffect(() => {
     if (canSwitchAccount) {
@@ -134,6 +148,11 @@ function Home() {
   const onRefresh = () => {
     dispatch(refreshEtherspotAccountsAction());
     dispatch(fetchAllAccountsTotalBalancesAction());
+  };
+
+  const onBalanceClick = async () => {
+    await dispatch(saveDbAction('visible_balance', { visible: !balanceVisible }));
+    setBalanceVisible(!balanceVisible);
   };
 
   return (
@@ -174,7 +193,7 @@ function Home() {
       >
         <Stories />
 
-        <BalanceSection balanceInFiat={totalBalance} />
+        <BalanceSection balanceInFiat={totalBalance} showBalance={balanceVisible} onBalanceClick={onBalanceClick} />
 
         <WalletConnectRequests />
 
@@ -185,6 +204,7 @@ function Home() {
         {/* <ChartsSection balancePerCategory={balancePerCategory} balancePerChain={balancePerChain} /> */}
 
         <AssetsSection
+          visibleBalance={balanceVisible}
           accountTotalBalances={accountTotalBalances}
           accountCollectibleCounts={accountCollectibleCounts}
         />
