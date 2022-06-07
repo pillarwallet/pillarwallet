@@ -118,6 +118,7 @@ import SelectedRadioButton from 'assets/icons/svg/form-radio-button-focus-light.
 import RadioButton from 'assets/icons/svg/form-radio-button-normal-light.svg';
 import DeployLightIcon from 'assets/icons/svg/24-circle-filled-alert-light.svg';
 import DeployIcon from 'assets/icons/svg/24-circle-filled-alert.svg';
+import ExclamationLight from 'assets/icons/svg/exclamationLight.svg';
 
 // Assets: services icons
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
@@ -218,6 +219,7 @@ const components = {
   'radio-button': RadioButton,
   'deploy-light': DeployLightIcon,
   deploy: DeployIcon,
+  'exclamation-round-light': ExclamationLight,
 
   // Service icons
   binance: IconBinance,

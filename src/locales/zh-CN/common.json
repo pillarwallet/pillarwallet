@@ -552,7 +552,8 @@
     },
     "assets": {
       "contacts": "联系人",
-      "services": "服务"
+      "services": "服务",
+      "show_balance": "显示余额"
     },
     "actions": {
       "receive": "收到",

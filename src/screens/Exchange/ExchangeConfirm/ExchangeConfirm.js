@@ -81,10 +81,11 @@ const ExchangeConfirmScreen = () => {
 
   const chainRates = useChainRates(chainName);
 
-  const { feeInfo, errorMessage: estimationErrorMessage, isEstimating } = useTransactionsEstimate(
-    chainName,
-    offer.transactions,
-  );
+  const {
+    feeInfo,
+    errorMessage: estimationErrorMessage,
+    isEstimating,
+  } = useTransactionsEstimate(chainName, offer.transactions);
   const { errorMessage: notEnoughForFeeErrorMessage } = useTransactionFeeCheck(
     chainName,
     feeInfo,
@@ -150,7 +151,7 @@ const ExchangeConfirmScreen = () => {
 
           {highFee && (
             <WarningBlock
-              text={t('transactions.highGasFee.ethereumNetworkFees')}
+              text={t('transactions.highGasFee.warningLabel')}
               icon="small-warning"
               backgroundColor={colors.negative}
               right={10}

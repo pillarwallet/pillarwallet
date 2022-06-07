@@ -27,10 +27,7 @@ import { useNavigation } from 'react-navigation-hooks';
 import Text from 'components/core/Text';
 
 // Selectors
-import {
-  useActiveAccount,
-  useFiatCurrency,
-} from 'selectors';
+import { useActiveAccount, useFiatCurrency } from 'selectors';
 
 // Utils
 import { formatFiatValue, formatFiatChangeExtended } from 'utils/format';
@@ -39,20 +36,19 @@ import { spacing } from 'utils/variables';
 import { isKeyBasedAccount } from 'utils/accounts';
 
 // Constants
-import {
-  ADD_CASH,
-} from 'constants/navigationConstants';
+import { ADD_CASH } from 'constants/navigationConstants';
 
 // Local
 import SpecialButton from './components/SpecialButton';
 
-
 type Props = {|
   balanceInFiat: BigNumber,
   changeInFiat?: ?BigNumber,
+  showBalance?: boolean,
+  onBalanceClick?: () => mixed,
 |};
 
-function BalanceSection({ balanceInFiat, changeInFiat }: Props) {
+function BalanceSection({ balanceInFiat, changeInFiat, showBalance, onBalanceClick }: Props) {
   const { t, tRoot } = useTranslationWithPrefix('home.balance');
   const colors = useThemeColors();
   const navigation = useNavigation();
@@ -66,9 +62,11 @@ function BalanceSection({ balanceInFiat, changeInFiat }: Props) {
   return (
     <Container>
       <FirstColumn>
-        <BalanceText numberOfLines={1} adjustsFontSizeToFit>
-          {formatFiatValue(balanceInFiat, fiatCurrency)}
-        </BalanceText>
+        <TouchableContainer onPress={onBalanceClick}>
+          <BalanceText numberOfLines={1} adjustsFontSizeToFit>
+            {showBalance ? formatFiatValue(balanceInFiat, fiatCurrency) : '***'}
+          </BalanceText>
+        </TouchableContainer>
         {!!formattedChange && (
           <ProfitContainer>
             <ProfitLabel color={colors.secondaryText}>{t('lastWeek')}</ProfitLabel>
@@ -87,7 +85,7 @@ function BalanceSection({ balanceInFiat, changeInFiat }: Props) {
             }}
           />
         </SecondColumn>
-        )}
+      )}
     </Container>
   );
 }
@@ -126,3 +124,5 @@ const ProfitLabel = styled(Text)`
 const ProfitValue = styled(Text)`
   font-variant: tabular-nums;
 `;
+
+const TouchableContainer = styled.TouchableOpacity``;
