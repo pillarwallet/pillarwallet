@@ -802,6 +802,7 @@ jobs:
             APP_VERSION="$(cat /tmp/workspace/build-num/app_version.txt)"
             echo $SUPPORT_DESCRIPTION > support_description.txt
             github-release release -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION  -n "$RELEASE_TITLE" --description "$RELEASE_DESCRIPTION"
+            sleep 10
             github-release upload -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION -n "pillarwallet-prod-android-$APP_VERSION.apk" -f /tmp/workspace/android-release/*.apk
             github-release upload -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION -n "pillarwallet-prod-ios-$APP_VERSION.ipa" -f /tmp/workspace/ios-release/*.ipa
       - run:

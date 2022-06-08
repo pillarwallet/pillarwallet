@@ -24,18 +24,18 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import SlideModal from 'components/Modals/SlideModal';
-import Icon from 'components/core/Icon';
 import Text from 'components/core/Text';
 import Button from 'components/core/Button';
+import RadioButton from 'components/RadioButton';
 
 // Utils
 import { fontStyles, spacing, borderRadiusSizes, appFont } from 'utils/variables';
 
 interface ISelectResidentModal {
-  residentSelected: (isUsResident: boolean) => void,
+  residentSelected: (isUsResident: boolean) => void;
 }
 
-const SelectResidentModal : FC<ISelectResidentModal> = ({ residentSelected }) => {
+const SelectResidentModal: FC<ISelectResidentModal> = ({ residentSelected }) => {
   const modalRef = useRef(null);
   const { t, tRoot } = useTranslationWithPrefix('servicesContent.ramp.addCash.selectResidentModal');
   const [usResident, setUsResident] = React.useState(true);
@@ -61,13 +61,11 @@ const SelectResidentModal : FC<ISelectResidentModal> = ({ residentSelected }) =>
   };
 
   return (
-    <SlideModal isSwipeClose noSwipeToDismiss ref={modalRef} hideHeader noClose>
-      <ModalTitle>{t('title')}</ModalTitle>
+    <SlideModal title={t('title')} centerTitle ref={modalRef} showHeader noClose>
       <Container onPress={selectUsResident}>
         <ContainerView isSelected={usResident}>
           <RowContainer>
-            {usResident && <RadioIcon name="checked-radio" />}
-            {!usResident && <RadioIcon name="unchecked-radio" />}
+            <RadioButton visible={usResident} />
             <Title style={usResident && styles.titleStyle}>{t('options.usResident')}</Title>
           </RowContainer>
         </ContainerView>
@@ -75,8 +73,7 @@ const SelectResidentModal : FC<ISelectResidentModal> = ({ residentSelected }) =>
       <Container onPress={selectNonUsResident}>
         <ContainerView isSelected={nonUsResident}>
           <RowContainer>
-            {nonUsResident && <RadioIcon name="checked-radio" />}
-            {!nonUsResident && <RadioIcon name="unchecked-radio" />}
+            <RadioButton visible={nonUsResident} />
             <Title style={nonUsResident && styles.titleStyle}>{t('options.nonUsResident')}</Title>
           </RowContainer>
         </ContainerView>
@@ -90,19 +87,13 @@ export default SelectResidentModal;
 
 const styles = {
   buttonStyle: {
+    marginTop: spacing.medium,
     marginBottom: spacing.extraLarge,
   },
   titleStyle: {
     fontFamily: appFont.medium,
   },
 };
-
-const ModalTitle = styled(Text)`
-  ${fontStyles.big};
-  text-align: center;
-  margin: ${spacing.large}px 0px;
-  font-family: '${appFont.medium}';
-`;
 
 const TouchableContainer = styled.TouchableOpacity`
   align-items: center;
@@ -117,7 +108,7 @@ const Container = styled(TouchableContainer)`
 `;
 
 const ContainerView = styled.View`
-  background-color: ${({ theme, isSelected }) => (isSelected ? theme.colors.basic080 : theme.colors.basic050)};
+  background-color: ${({ theme, isSelected }) => (isSelected ? theme.colors.basic60 : theme.colors.basic050)};
   padding: ${spacing.large}px;
   border-radius: ${borderRadiusSizes.medium}px;
   flex-direction: column;
@@ -135,13 +126,4 @@ const Title = styled(Text)`
   flex-direction: row;
   ${fontStyles.big};
   padding: 0 ${spacing.medium}px 0 ${spacing.medium}px;
-`;
-
-const RadioIcon = styled(Icon)`
-  height: 24px;
-  width: 24px;
-  background-color: ${({ theme }) => theme.colors.basic050};
-  border-radius: ${borderRadiusSizes.medium}px;
-  padding-right: ${spacing.medium}px;
-  margin-right: ${spacing.medium}px;
 `;

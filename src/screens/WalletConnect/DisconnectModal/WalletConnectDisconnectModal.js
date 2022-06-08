@@ -72,7 +72,7 @@ function WalletConnectDisconnectModal({ connector }: Props) {
     ref.current?.close();
   };
 
-  const { app, chain, iconUrl } = getViewData(connector);
+  const { app, chain, iconUrl }: any = getViewData(connector);
   const config = configs[chain];
 
   return (

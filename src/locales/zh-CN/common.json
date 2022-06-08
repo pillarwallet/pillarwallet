@@ -122,6 +122,7 @@
     "added": "添加",
     "adding": "添加",
     "all": "全部",
+    "allNetwork":"所有网络",
     "backedUp": "备份安全",
     "canceled": "取消",
     "collectibleFromUser": "来自 {{username}} 的 NFT",
@@ -308,6 +309,7 @@
     "settleMore": "解决更多",
     "settleTransactions": "结算交易",
     "shareAddress": "分享",
+    "share": "分享",
     "smartWalletFAQ": "智能钱包常见问题",
     "subscribe": "订阅",
     "support": "支持",
@@ -556,7 +558,8 @@
     },
     "assets": {
       "contacts": "联系人",
-      "services": "服务"
+      "services": "服务",
+      "show_balance": "显示余额"
     },
     "actions": {
       "receive": "收到",

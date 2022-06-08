@@ -78,6 +78,9 @@ function SearchInput({
         autoCorrect={false}
         blurOnSubmit
         autoFocus={autoFocus}
+        contextMenuHidden
+        // eslint-disable-next-line i18next/no-literal-string
+        returnKeyType="done"
       />
 
       {!query && (

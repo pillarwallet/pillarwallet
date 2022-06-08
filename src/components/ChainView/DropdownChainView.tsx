@@ -32,6 +32,7 @@ import { useSupportedChains } from 'selectors/chains';
 // Utils
 import { fontStyles, spacing, borderRadiusSizes } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
+import { isLightTheme } from 'utils/themes';
 
 // Local
 import SwitchChainModal from './SwitchChainModal';
@@ -79,13 +80,15 @@ function DropdownChainView({ selectedChain }: Props) {
   const { key, title } = activeItem;
 
   return (
-    <ContainerView isSelected>
+    <ContainerView isSelected onPress={() => openSwitchChainModal()}>
       <RowContainer>
-        <ChainViewIcon size={24} style={IconContainer} name={key ?? 'all-networks'} />
+        <ChainViewIcon
+          size={24}
+          style={IconContainer}
+          name={key ?? isLightTheme() ? 'all-networks-light' : 'all-networks'}
+        />
         <Title>{title}</Title>
-        <TouchableContainer onPress={openSwitchChainModal}>
-          <ChainViewIcon name="chevron-down" />
-        </TouchableContainer>
+        <ChainViewIcon name="chevron-down" />
       </RowContainer>
     </ContainerView>
   );
@@ -105,10 +108,12 @@ const useTabItems = (): itemType[] => {
   return [{ key: null, title: t('label.all') }, ...chainTabs];
 };
 
-const ContainerView = styled.View`
-  background-color: ${({ theme, isSelected }) => (isSelected ? theme.colors.basic080 : theme.colors.basic050)};
-  margin: 0 ${spacing.layoutSides}px;
-  padding: ${spacing.large}px;
+const ContainerView = styled.TouchableOpacity`
+  background-color: ${({ theme, isSelected }) => (isSelected ? theme.colors.basic60 : theme.colors.basic050)};
+  margin: 10px ${spacing.layoutSides}px;
+  padding: 0 ${spacing.large}px 0 ${spacing.mediumLarge}px;
+  height: 66px;
+  justify-content: center;
   border-radius: ${borderRadiusSizes.medium}px;
 `;
 
@@ -136,9 +141,4 @@ const ChainViewIcon = styled(Icon)`
   width: 24px;
   background-color: ${({ theme }) => theme.colors.basic050};
   border-radius: ${borderRadiusSizes.medium}px;
-`;
-
-const TouchableContainer = styled.TouchableOpacity`
-  align-items: center;
-  justify-content: center;
 `;

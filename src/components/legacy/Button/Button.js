@@ -24,7 +24,7 @@ import debounce from 'lodash.debounce';
 import { BaseText } from 'components/legacy/Typography';
 import Icon from 'components/legacy/Icon';
 import Spinner from 'components/Spinner';
-import { fontSizes, spacing } from 'utils/variables';
+import { fontSizes, appFont, spacing } from 'utils/variables';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import { getThemeColors, getThemeType } from 'utils/themes';
 
@@ -115,6 +115,7 @@ const VARIANT = {
   DANGER: 'danger',
   TRANSPARENT: 'transparent',
   TRANSPARENT_DANGER: 'transparentDanger',
+  DISABLE: 'disabled',
 };
 
 // THEME
@@ -134,6 +135,10 @@ const backgroundColor = themeVariant.variants('current', 'variant', {
   [VARIANT.DANGER]: {
     lightTheme: (props) => props.theme.colors.secondaryAccent240,
     darkTheme: (props) => props.theme.colors.secondaryAccent240,
+  },
+  [VARIANT.DISABLE]: {
+    lightTheme: (props) => props.theme.colors.basic60,
+    darkTheme: (props) => props.theme.colors.basic60,
   },
   [VARIANT.TRANSPARENT]: {
     lightTheme: 'transparent',
@@ -166,6 +171,10 @@ const contentColor = themeVariant.variants('current', 'variant', {
     lightTheme: (props) => props.theme.colors.primaryAccent130,
     darkTheme: (props) => props.theme.colors.basic000,
   },
+  [VARIANT.DISABLE]: {
+    lightTheme: (props) => props.theme.colors.labelTertiary,
+    darkTheme: (props) => props.theme.colors.basic020,
+  },
   [VARIANT.TRANSPARENT_DANGER]: {
     lightTheme: (props) => props.theme.colors.secondaryAccent240,
     darkTheme: (props) => props.theme.colors.secondaryAccent240,
@@ -178,41 +187,42 @@ const getLabelTopMargin = (props) => {
 
 const getButtonOpacity = ({ disabled, theme }) => {
   if (disabled) {
-    if (theme.current === DARK_THEME) return 0.3;
-    return 0.5;
+    if (theme.current === DARK_THEME) return 0.7;
+    return 0.8;
   }
   return 1;
 };
 
 const ButtonIcon = styled(Icon)`
-  font-size: ${props => getButtonFontSize(props)}px;
-  ${({ isOnLeft }) => isOnLeft ? 'margin-right: 6px;' : 'margin-left: 6px;'}
+  font-size: ${(props) => getButtonFontSize(props)}px;
+  ${({ isOnLeft }) => (isOnLeft ? 'margin-right: 6px;' : 'margin-left: 6px;')}
   color: ${contentColor};
-  height: ${props => getButtonFontSize(props)}px;
+  height: ${(props) => getButtonFontSize(props)}px;
 `;
 
 const ButtonWrapper = styled.TouchableOpacity`
   align-items: center;
   justify-content: center;
   flex-direction: row;
-  padding: 0 ${props => getButtonPadding(props)};
+  padding: 0 ${(props) => getButtonPadding(props)};
   background-color: ${backgroundColor};
-  opacity: ${props => getButtonOpacity(props)};
-  margin-top: ${props => props.marginTop || 0}px;
-  margin-bottom: ${props => props.marginBottom || 0}px;
-  margin-left: ${props => props.marginLeft || 0}px;
-  margin-right: ${props => props.marginRight || 0}px;
+  opacity: ${(props) => getButtonOpacity(props)};
+  margin-top: ${(props) => props.marginTop || 0}px;
+  margin-bottom: ${(props) => props.marginBottom || 0}px;
+  margin-left: ${(props) => props.marginLeft || 0}px;
+  margin-right: ${(props) => props.marginRight || 0}px;
   border-radius: ${({ borderRadius }) => borderRadius}px;
-  ${props => getButtonWidth(props)};
-  height: ${props => getButtonHeight(props)};
-  align-self: ${props => props.flexRight ? 'flex-end' : 'auto'};
+  ${(props) => getButtonWidth(props)};
+  height: ${(props) => getButtonHeight(props)};
+  align-self: ${(props) => (props.flexRight ? 'flex-end' : 'auto')};
 `;
 
 const ButtonText = styled(BaseText)`
   color: ${contentColor};
-  font-size: ${props => getButtonFontSize(props)}px;
-  line-height: ${props => getButtonFontSize(props)}px;
-  margin-top: ${props => getLabelTopMargin(props)}px;
+  font-size: ${(props) => getButtonFontSize(props)}px;
+  line-height: ${(props) => getButtonFontSize(props)}px;
+  margin-top: ${(props) => getLabelTopMargin(props)}px;
+  // font-family: ${appFont.medium};
   text-align: center;
 `;
 
@@ -231,6 +241,9 @@ const getVariant = (props) => {
   }
   if (props.transparent) {
     return VARIANT.TRANSPARENT;
+  }
+  if (props.disabled) {
+    return VARIANT.DISABLE;
   }
   return VARIANT.DEFAULT;
 };
@@ -288,9 +301,10 @@ class Button extends React.Component<CombinedProps, State> {
           trackWidth={small ? 1 : 2}
           basic
           style={{ paddingLeft: 8, paddingRight: 8 }}
-          color={(themeType === LIGHT_THEME && variant === VARIANT.SECONDARY) || variant === VARIANT.TRANSPARENT
-            ? colors.basic010
-            : null
+          color={
+            (themeType === LIGHT_THEME && variant === VARIANT.SECONDARY) || variant === VARIANT.TRANSPARENT
+              ? colors.basic010
+              : null
           }
         />
       );
@@ -310,14 +324,7 @@ class Button extends React.Component<CombinedProps, State> {
   };
 
   render() {
-    const {
-      disabled,
-      children,
-      isLoading,
-      style,
-      small,
-      debounceTime,
-    } = this.props;
+    const { disabled, children, isLoading, style, small, debounceTime } = this.props;
 
     const variant = getVariant(this.props);
 

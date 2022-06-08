@@ -48,7 +48,7 @@ function UnsupportedRequestContent({ request, onReject }: Props) {
   const { t } = useTranslation();
   const configs = useChainsConfig();
 
-  const { title, iconUrl, chain } = getViewData(request);
+  const { title, iconUrl, chain }: any = getViewData(request);
   const config = configs[chain];
 
   return (

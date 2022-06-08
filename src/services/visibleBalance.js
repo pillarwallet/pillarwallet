@@ -17,18 +17,15 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-/* eslint-disable i18next/no-literal-string */
 
-import { requireNativeComponent } from 'react-native';
+// services
+import Storage from 'services/storage';
 
-/**
- * Composes View with a shadow for Android.
- *
- * - shadowAngle: number
- * - shadowRadius: number
- * - shadowDistance: number
- * - shadowColor: string
- */
+const visibleBalanceSession = async () => {
+  const storage = Storage.getInstance('db');
+  const visibleBalanceStorage = await storage.get('visible_balance');
 
-// $FlowFixMe
-export default requireNativeComponent('NativeShadow');
+  return visibleBalanceStorage?.visible;
+};
+
+export default visibleBalanceSession;

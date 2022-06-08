@@ -45,7 +45,7 @@ import { getActiveScreenName } from 'utils/navigation';
 
 // Components
 import { Container } from 'components/layout/Layout';
-import Button from 'components/core/Button';
+import Button from 'components/legacy/Button';
 import TextInput from 'components/legacy/TextInput';
 import HeaderBlock from 'components/HeaderBlock';
 import Text from 'components/core/Text';
@@ -65,11 +65,16 @@ import AddCashValueInputAccessoryHolder, {
 import SelectResidentModal from './modal/SelectResidentModal';
 import SelectNetworkModal from './modal/SelectNetworkModal';
 
+let visibleModal = false;
 const AddCash = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [value, setValue] = React.useState('0');
   const [inUS, setinUS] = React.useState(false);
+  const [ref, setRef] = React.useState(null);
+
+  // console.log('ref@@@@', ref?.focus());
+
   const fiatCurrency = useFiatCurrency();
   const colors = useThemeColors();
   const [currencySymbol, setCurrencySymbol] = React.useState(getCurrencySymbol(fiatCurrency));
@@ -99,14 +104,20 @@ const AddCash = () => {
   };
 
   React.useEffect(() => {
+    visibleModal = false;
     Modal.open(() => (
       <SelectResidentModal
         residentSelected={(isUsResident: boolean) => {
+          visibleModal = true;
           residentSelected(isUsResident);
         }}
       />
     ));
   }, []);
+
+  if (ref && visibleModal) {
+    ref.focus();
+  }
 
   const handleChangeText = (text: string) => {
     const amount = text.replace(currencySymbol, '');
@@ -196,6 +207,7 @@ const AddCash = () => {
               onFocus: () => AddCashValueInputAccessoryHolder.addAccessory(onSelectValue),
               inputAccessoryViewID: INPUT_ACCESSORY_NATIVE_ID,
             }}
+            getInputRef={setRef}
             inputWrapperStyle={styles.inputWrapperStyles}
             itemHolderStyle={styles.itemHolderStyles}
             additionalStyle={styles.additionalStyle}

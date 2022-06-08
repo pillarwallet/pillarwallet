@@ -39,6 +39,7 @@ import WalletConnectRequests from 'screens/WalletConnect/Requests';
 import Tooltip from 'components/Tooltip';
 import Modal from 'components/Modal';
 import Banner from 'components/Banner/Banner';
+import { Spacing } from 'components/legacy/Layout';
 
 // Constants
 import { MENU, HOME_HISTORY, REGISTER_ENS } from 'constants/navigationConstants';
@@ -59,7 +60,7 @@ import GovernanceCallBanner from 'screens/GovernanceCall/GovernanceCallBanner';
 
 // Utils
 import { sumRecord } from 'utils/bigNumber';
-import { calculateTotalBalancePerCategory, calculateTotalBalancePerChain } from 'utils/totalBalances';
+import { calculateTotalBalancePerCategory } from 'utils/totalBalances';
 import { useThemeColors } from 'utils/themes';
 import { getSupportedBiometryType } from 'utils/keychain';
 import { getEnsNodeState } from 'utils/accounts';
@@ -67,7 +68,6 @@ import { getActiveScreenName } from 'utils/navigation';
 
 // Local
 import BalanceSection from './BalanceSection';
-import ChartsSection from './ChartsSection';
 import AssetsSection from './AssetsSection';
 import FloatingActions from './FloatingActions';
 import { useAccountCollectibleCounts } from './utils';
@@ -76,6 +76,12 @@ import AppsButton from './AppsButton';
 
 // Redux
 import { fetchNativeIntegration } from '../../redux/actions/native-integration-actions';
+
+// Services
+import visibleBalanceSession from '../../services/visibleBalance';
+
+// Actions
+import { saveDbAction } from '../../actions/dbActions';
 
 function Home() {
   const navigation = useNavigation();
@@ -91,6 +97,8 @@ function Home() {
   const accountAddress = useRootSelector(activeAccountAddressSelector);
   const [showAccountSwitchTooltip, setShowAccountSwitchTooltip] = React.useState(false);
   const [showENSTooltip, setShowENSSwitchTooltip] = React.useState(false);
+  const [balanceVisible, setBalanceVisible] = React.useState(true);
+
   const canSwitchAccount = useAccounts().length > 1;
   const ensNodeState = getEnsNodeState(etherspotAccount);
   const isEnsNodeCliamed = ensNodeState === ENSNodeStates.Claimed;
@@ -100,7 +108,6 @@ function Home() {
 
   const { accountSwitchTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
   const balancePerCategory = calculateTotalBalancePerCategory(accountTotalBalances);
-  const balancePerChain = calculateTotalBalancePerChain(accountTotalBalances);
   const totalBalance = sumRecord(balancePerCategory);
   const screenName = getActiveScreenName(navigation);
 
@@ -108,6 +115,7 @@ function Home() {
 
   React.useEffect(() => {
     dispatch(fetchNativeIntegration());
+    callVisibleBalanceFunction();
     setTimeout(() => {
       if (!wallet) {
         getSupportedBiometryType((biometryType) => {
@@ -121,6 +129,11 @@ function Home() {
     }, 1000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const callVisibleBalanceFunction = async () => {
+    const response = await visibleBalanceSession();
+    if (response !== undefined) setBalanceVisible(response);
+  };
 
   React.useEffect(() => {
     if (canSwitchAccount) {
@@ -143,6 +156,11 @@ function Home() {
   const onRefresh = () => {
     dispatch(refreshEtherspotAccountsAction());
     dispatch(fetchAllAccountsTotalBalancesAction());
+  };
+
+  const onBalanceClick = async () => {
+    await dispatch(saveDbAction('visible_balance', { visible: !balanceVisible }));
+    setBalanceVisible(!balanceVisible);
   };
 
   return (
@@ -183,17 +201,20 @@ function Home() {
       >
         <Stories />
 
-        <BalanceSection balanceInFiat={totalBalance} />
+        <BalanceSection balanceInFiat={totalBalance} showBalance={balanceVisible} onBalanceClick={onBalanceClick} />
 
         <WalletConnectRequests />
+
+        <Spacing h={13} />
 
         <GovernanceCallBanner />
 
         <Banner screenName={screenName} bottomPosition={false} />
 
-        <ChartsSection balancePerCategory={balancePerCategory} balancePerChain={balancePerChain} />
+        {/* <ChartsSection balancePerCategory={balancePerCategory} balancePerChain={balancePerChain} /> */}
 
         <AssetsSection
+          visibleBalance={balanceVisible}
           accountTotalBalances={accountTotalBalances}
           accountCollectibleCounts={accountCollectibleCounts}
         />

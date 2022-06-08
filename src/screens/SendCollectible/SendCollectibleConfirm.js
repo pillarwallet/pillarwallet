@@ -29,7 +29,6 @@ import t from 'translations/translate';
 import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 
 // Actions
-import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 import { appsFlyerlogEventAction } from 'actions/analyticsActions';
 
 // Components
@@ -63,38 +62,29 @@ import { useDeploymentStatus } from 'hooks/deploymentStatus';
 import { useEtherspotDeploymentFee } from 'hooks/transactions';
 
 // Selectors
-import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
+import { accountWalletAssetsBalancesSelector } from 'selectors/balances';
 import { useActiveAccount } from 'selectors';
 
 // Types
-import type {
-  CollectibleTransactionPayload,
-  TransactionFeeInfo,
-  TransactionToEstimate,
-} from 'models/Transaction';
+import type { CollectibleTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { WalletAssetsBalances } from 'models/Balances';
-import type { Chain } from 'models/Chain';
+import type { Chain, ChainRecord } from 'models/Chain';
 import type { Collectible } from 'models/Collectible';
-
 
 type Props = {
   keyBasedWalletAddress: string,
-  balances: WalletAssetsBalances,
+  balances: ChainRecord<WalletAssetsBalances>,
   isOnline: boolean,
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
   estimateErrorMessage: ?string,
-  resetEstimateTransaction: () => void,
-  estimateTransaction: (transaction: TransactionToEstimate, chain: Chain) => void,
   logAppsFlyerEvent: (name: string, properties: Object) => void,
 };
 
 const SendCollectibleConfirm = ({
   isOnline,
   balances,
-  resetEstimateTransaction,
-  estimateTransaction,
   keyBasedWalletAddress,
   feeInfo,
   isEstimating,
@@ -108,18 +98,13 @@ const SendCollectibleConfirm = ({
   const receiver: string = useNavigationParam('receiver');
   const navigationSource: ?string = useNavigationParam('source');
   const chain: Chain = useNavigationParam('chain');
-  const activeAccount = useActiveAccount();
-  const { deploymentFee, feeWithoutDeployment } = useEtherspotDeploymentFee(chain, feeInfo?.fee, feeInfo?.gasToken);
 
+  const activeAccount = useActiveAccount();
+  const walletBalances = balances?.[chain] ?? {};
+  const { deploymentFee, feeWithoutDeployment } = useEtherspotDeploymentFee(chain, feeInfo?.fee, feeInfo?.gasToken);
   const isKovanNetwork = getEnv().NETWORK_PROVIDER === 'kovan';
 
-  const {
-    name,
-    tokenType,
-    id: tokenId,
-    contractAddress,
-    isLegacy,
-  } = assetData;
+  const { name, tokenType, id: tokenId, contractAddress, isLegacy } = assetData;
 
   let transactionPayload: CollectibleTransactionPayload = {
     to: receiver,
@@ -143,16 +128,15 @@ const SendCollectibleConfirm = ({
    * using this additional call
    */
   const [rinkebyEth, setRinkebyEth] = useState(0);
-  const fetchRinkebyEth = () => fetchRinkebyETHBalance(keyBasedWalletAddress)
-    .then(setRinkebyEth)
-    .catch((error) => {
-      reportErrorLog('SendCollectibleConfirm screen fetchRinkebyEth failed', { error, keyBasedWalletAddress });
-      return null;
-    });
+  const fetchRinkebyEth = () =>
+    fetchRinkebyETHBalance(keyBasedWalletAddress)
+      .then(setRinkebyEth)
+      .catch((error) => {
+        reportErrorLog('SendCollectibleConfirm screen fetchRinkebyEth failed', { error, keyBasedWalletAddress });
+        return null;
+      });
 
   useEffect(() => {
-    resetEstimateTransaction();
-    estimateTransaction({ to: receiver, value: 0, assetData }, chain);
     if (isKovanNetwork) fetchRinkebyEth();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -175,7 +159,7 @@ const SendCollectibleConfirm = ({
 
     if (activeAccount && isLogV2AppEvents()) {
       // eslint-disable-next-line i18next/no-literal-string
-      logAppsFlyerEvent(`nft_ sent_${chain}`, {
+      logAppsFlyerEvent(`nft_sent_${chain}`, {
         token: assetData?.tokenType,
         tokenId: assetData?.tokenId,
         date: currentDate(),
@@ -206,28 +190,20 @@ const SendCollectibleConfirm = ({
       gasToken: feeInfo?.gasToken,
     };
 
-    isEnoughForFee = canProceedKovanTesting || isEnoughBalanceForTransactionFee(
-      balances,
-      balanceCheckTransaction,
-      chain,
-    );
+    isEnoughForFee =
+      canProceedKovanTesting || isEnoughBalanceForTransactionFee(walletBalances, balanceCheckTransaction, chain);
   }
 
   const feeSymbol = feeInfo?.gasToken?.symbol || nativeAssetPerChain[chain].symbol;
-  const errorMessage = isEnoughForFee
-    ? estimateErrorMessage
-    : t('error.notEnoughTokenForFee', { token: feeSymbol });
+  const errorMessage = isEnoughForFee ? estimateErrorMessage : t('error.notEnoughTokenForFee', { token: feeSymbol });
 
   // confirm button
   const isConfirmDisabled = isEstimating || !isOnline || !feeInfo || !!errorMessage;
-  const confirmButtonTitle = isEstimating
-    ? t('label.gettingFee')
-    : t('transactions.button.send');
+  const confirmButtonTitle = isEstimating ? t('label.gettingFee') : t('transactions.button.send');
 
   const { isDeployedOnChain } = useDeploymentStatus();
-  const feeTooltip = isEtherspotAccount(activeAccount) && !isDeployedOnChain?.[chain]
-    ? t('tooltip.includesDeploymentFee')
-    : undefined;
+  const feeTooltip =
+    isEtherspotAccount(activeAccount) && !isDeployedOnChain?.[chain] ? t('tooltip.includesDeploymentFee') : undefined;
 
   const transactionFeeLabel = deploymentFee
     ? t('transactions.label.maxTransactionFee')
@@ -286,24 +262,18 @@ const SendCollectibleConfirm = ({
         </Table>
         <Spacing h={40} />
         {!!errorMessage && <WarningMessage small>{errorMessage}</WarningMessage>}
-        <Button
-          disabled={isConfirmDisabled}
-          onPress={handleFormSubmit}
-          title={confirmButtonTitle}
-        />
+        <Button disabled={isConfirmDisabled} onPress={handleFormSubmit} title={confirmButtonTitle} />
       </ScrollWrapper>
     </ContainerWithHeader>
   );
 };
 
 const mapStateToProps = ({
-  session: { data: { isOnline } },
-  wallet: { data: walletData },
-  transactionEstimate: {
-    feeInfo,
-    isEstimating,
-    errorMessage: estimateErrorMessage,
+  session: {
+    data: { isOnline },
   },
+  wallet: { data: walletData },
+  transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
 }: RootReducerState): $Shape<Props> => ({
   keyBasedWalletAddress: walletData?.address,
   isOnline,
@@ -313,7 +283,7 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountEthereumWalletAssetsBalancesSelector,
+  balances: accountWalletAssetsBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
@@ -322,11 +292,6 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
-  estimateTransaction: (
-    transaction: TransactionToEstimate,
-    chain: Chain,
-  ) => dispatch(estimateTransactionAction(transaction, chain)),
   logAppsFlyerEvent: (name: string, properties: Object) => dispatch(appsFlyerlogEventAction(name, properties)),
 });
 
