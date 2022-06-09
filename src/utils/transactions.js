@@ -42,9 +42,12 @@ import { getAssetRateInFiat } from 'utils/rates';
 // Services
 import { buildERC721TransactionData, encodeContractMethod } from 'services/assets';
 import { firebaseRemoteConfig } from 'services/firebase';
+import etherspotService from 'services/etherspot';
 
 // Abi
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
+import ERC1155_CONTRACT_ABI from 'abi/erc1155.json';
+import ERC721_CONTRACT_ABI from 'abi/erc721.json';
 
 // Types
 import type { AssetType } from 'models/Asset';
@@ -108,15 +111,26 @@ export const buildEthereumTransaction = async (
       value = EthersBigNumber.from(0); // value is in encoded transfer method as data
     }
   } else if (contractAddress && tokenId) {
-    data = await buildERC721TransactionData({
-      from,
-      to,
-      tokenId,
-      contractAddress,
-      useLegacyTransferMethod: !!useLegacyTransferMethod,
-    });
+    const approveData = encodeContractMethod(ERC1155_CONTRACT_ABI, 'setApprovalForAll', [contractAddress, true]);
+    data = encodeContractMethod(ERC1155_CONTRACT_ABI, 'safeTransferFrom', [from, to, tokenId, 1, approveData]);
     to = contractAddress;
     value = EthersBigNumber.from(0);
+
+    const erc721Contract = etherspotService.getContract(chain, ERC721_CONTRACT_ABI, contractAddress);
+    const ownerAddress = await erc721Contract?.callOwnerOf(tokenId).catch((e) => {
+      logBreadcrumb('ERC-721 Owner', 'failed: ERC-721 Owner address', { e });
+      return null;
+    });
+
+    if (ownerAddress) {
+      data = await buildERC721TransactionData({
+        from,
+        to,
+        tokenId,
+        contractAddress,
+        useLegacyTransferMethod: !!useLegacyTransferMethod,
+      });
+    }
   }
 
   let transaction = { to, value };
