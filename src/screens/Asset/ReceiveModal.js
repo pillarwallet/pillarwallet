@@ -38,12 +38,8 @@ import TextWithCopy from 'components/display/TextWithCopy';
 import Icon from 'components/core/Icon';
 
 // Utils
-import { spacing, fontStyles, fontSizes, borderRadiusSizes } from 'utils/variables';
-import {
-  getAccountEnsName,
-  isEtherspotAccount,
-  isKeyBasedAccount,
-} from 'utils/accounts';
+import { spacing, fontStyles, fontSizes, appFont, borderRadiusSizes } from 'utils/variables';
+import { getAccountEnsName, isEtherspotAccount, isKeyBasedAccount } from 'utils/accounts';
 import { getThemeColors } from 'utils/themes';
 import { useChainsConfig } from 'utils/uiConfig';
 import { getDeviceHeight } from 'utils/common';
@@ -86,18 +82,7 @@ type Props = {|
   theme: Theme,
 |};
 
-const handleCopyToClipboard = (addressName: string) => {
-  Clipboard.setString(addressName);
-  Toast.show({ message: t('toast.addressCopiedToClipboard'), emoji: 'ok_hand' });
-};
-
-const ReceiveModal = ({
-  activeAccount,
-  address,
-  onModalHide,
-  user,
-  theme,
-}: Props) => {
+const ReceiveModal = ({ activeAccount, address, onModalHide, user, theme }: Props) => {
   const [closeFlag, setCloseFlag] = React.useState(false);
   const handleAddressShare = useCallback(() => {
     Share.share({ title: t('title.publicAddress'), message: address });
@@ -107,6 +92,12 @@ const ReceiveModal = ({
   const { isDeployedOnChain, showDeploymentInterjection } = useDeploymentStatus();
   const chains = useSupportedChains();
   const chainsConfig = useChainsConfig();
+
+  const handleCopyToClipboard = (addressName: string) => {
+    Clipboard.setString(addressName);
+    Toast.show({ message: t('toast.addressCopiedToClipboard'), emoji: 'ok_hand' });
+    setCloseFlag(true);
+  };
 
   const handleCopyFromChain = (chain: Chain, title: string) => {
     if (isEtherspotAccount(activeAccount)) {
@@ -139,7 +130,7 @@ const ReceiveModal = ({
         <ContainerView>
           <RowContainer>
             <ChainViewIcon size={24} style={IconContainer} name={chain} />
-            <Title>{title}</Title>
+            <Title style={{ flex: 0 }}>{title}</Title>
             <CopyButtonFromChain>
               <Button
                 width="100%"
@@ -252,9 +243,7 @@ const ReceiveModal = ({
             </QRCodeWrapper>
           )}
           {isEtherspotAccount(activeAccount) && (
-            <WarningText style={styles.singleAddressInfo}>
-              {t('receiveModal.etherspotSingleAddressInfo')}
-            </WarningText>
+            <WarningText style={styles.singleAddressInfo}>{t('receiveModal.etherspotSingleAddressInfo')}</WarningText>
           )}
           {showWarning && (
             <WarningText>
@@ -272,7 +261,7 @@ const ReceiveModal = ({
             <Button title={t('button.copyAddress')} onPress={() => handleCopyToClipboard(address)} />
           </CopyButton>
           <ShareButton>
-            <Button title={t('button.shareAddress')} onPress={handleAddressShare} secondary />
+            <Button transparent title={t('button.share')} onPress={handleAddressShare} />
           </ShareButton>
         </ContentWrapper>
       )}
@@ -280,9 +269,7 @@ const ReceiveModal = ({
   );
 };
 
-const mapStateToProps = ({
-  user: { data: user },
-}: RootReducerState): $Shape<StateProps> => ({
+const mapStateToProps = ({ user: { data: user } }: RootReducerState): $Shape<StateProps> => ({
   user,
 });
 
@@ -313,7 +300,7 @@ const styles = {
 };
 
 const ContentWrapper = styled(SafeAreaView)`
-  padding: 0 ${spacing.layoutSides}px 30px;
+  padding: 10px ${spacing.layoutSides}px 30px;
   align-items: center;
 `;
 
@@ -379,10 +366,10 @@ const ActivateText = styled(Text)`
 
 const DeployText = styled(Text)`
   ${fontStyles.small};
-  color: ${({ theme }) => theme.colors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic020};
   justify-content: center;
-  margin: ${spacing.medium}px 0 0;
-  padding: 0 ${spacing.medium}px 0 ${spacing.medium}px;
+  margin: ${spacing.small}px 0 0;
+  padding: 0 ${spacing.medium}px 20px ${spacing.medium}px;
 `;
 
 const IconContainer = styled.View`
@@ -391,7 +378,7 @@ const IconContainer = styled.View`
 `;
 
 const Container = styled.TouchableOpacity`
-  background-color: ${({ theme }) => theme.colors.basic080};
+  background-color: ${({ theme }) => theme.colors.basic60};
   flex-direction: row;
   margin: ${spacing.small}px 0;
   padding: ${spacing.medium}px;
@@ -403,6 +390,7 @@ const Title = styled(Text)`
   flex-direction: row;
   ${fontStyles.medium};
   padding: 0 ${spacing.medium}px 0 ${spacing.medium}px;
+  margin: 10px 0;
 `;
 
 const ReceiveTitle = styled.Text`
@@ -410,7 +398,8 @@ const ReceiveTitle = styled.Text`
   ${fontStyles.big};
   justify-content: center;
   align-items: center;
-  margin: ${spacing.large}px ${spacing.largePlus}px ${spacing.mediumLarge}px;
+  font-family: ${appFont.medium};
+  margin: ${spacing.small + spacing.large}px ${spacing.largePlus}px ${spacing.mediumLarge}px;
   color: ${({ theme }) => theme.colors.text};
 `;
 
@@ -420,7 +409,6 @@ const ContainerView = styled.View`
 `;
 
 const RowContainer = styled.View`
-  align-items: center;
   flex-direction: row;
   padding: ${spacing.small}px;
 `;
@@ -430,4 +418,5 @@ const ChainViewIcon = styled(Icon)`
   width: 24px;
   background-color: ${({ theme }) => theme.colors.basic050};
   border-radius: ${borderRadiusSizes.medium}px;
+  margin: 10px 0;
 `;

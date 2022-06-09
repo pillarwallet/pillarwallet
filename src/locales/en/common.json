@@ -134,6 +134,7 @@
     "added": "Added",
     "adding": "Adding",
     "all": "All",
+    "allNetwork":"All networks",
     "backedUp": "Backup secured",
     "canceled": "Canceled",
     "collectibleFromUser": "NFT from {{username}}",
@@ -188,6 +189,7 @@
     "swapping": "Swapping",
     "transactionDeploymentWarning": "Don't proceed if you don't want to deploy {{chain}} Smart Wallet.",
     "transactionFee": "Transaction fee",
+    "smartWalletDeploy":"Smart wallet deployment",
     "today": "Today",
     "toKeyWallet": "to Key wallet",
     "toPPN": "to Pillar Network",
@@ -327,6 +329,7 @@
     "settleMore": "Settle more",
     "settleTransactions": "Settle transactions",
     "shareAddress": "Share",
+    "share":"Share",
     "smartWalletFAQ": "Smart Wallet FAQ",
     "subscribe": "Subscribe",
     "support": "Support",
@@ -585,7 +588,8 @@
     },
     "assets": {
       "contacts": "Contacts",
-      "services": "Services"
+      "services": "Services",
+      "show_balance": "Show Balances"
     },
     "actions": {
       "receive": "Receive",
@@ -683,7 +687,7 @@
   "walletConnect": {
     "home": {
       "title": "WalletConnect",
-      "switch-title": "Switch Network",
+      "switch-title": "Switch network",
       "headerStories": "New and Noteworthy",
       "deployOnChainFormat": "Deploy this wallet to take full advantage of using {{chain}}.",
       "toast": {
@@ -1164,7 +1168,6 @@
       "collectiblesToTransfer": "NFTs to transfer",
       "data": "Data",
       "message": "Message",
-      "network": "Network",
       "address": "Address",
       "ethFee": "Max. Ethereum fee",
       "maximumFee": "Maximum fee",
@@ -1190,7 +1193,8 @@
     },
     "highGasFee": {
       "warningLabel": "Network fees are currently high. \nPillar is free and does not charge any extra fees.",
-      "pillarEthFeeDisclaimer": "Pillar does not charge any fees.\nFee displayed is the current Ethereum network fee."
+      "pillarEthFeeDisclaimer": "Pillar does not charge any fees.\nFee displayed is the current Ethereum network fee.",
+      "deployLabel": "This is your first transaction on this network. It will automatically deploy your smart wallet. Deployment cost will be added to regular transaction fee."
     }
   },
 

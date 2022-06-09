@@ -81,10 +81,11 @@ const ExchangeConfirmScreen = () => {
 
   const chainRates = useChainRates(chainName);
 
-  const { feeInfo, errorMessage: estimationErrorMessage, isEstimating } = useTransactionsEstimate(
-    chainName,
-    offer.transactions,
-  );
+  const {
+    feeInfo,
+    errorMessage: estimationErrorMessage,
+    isEstimating,
+  } = useTransactionsEstimate(chainName, offer.transactions);
   const { errorMessage: notEnoughForFeeErrorMessage } = useTransactionFeeCheck(
     chainName,
     feeInfo,

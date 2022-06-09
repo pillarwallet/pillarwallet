@@ -17,32 +17,15 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
-import styled, { withTheme } from 'styled-components/native';
 
-// Components
-import Icon from 'components/core/Icon';
+// services
+import Storage from 'services/storage';
 
-// Utils
-import { spacing, borderRadiusSizes } from 'utils/variables';
-import { isLightTheme } from 'utils/themes';
+const visibleBalanceSession = async () => {
+  const storage = Storage.getInstance('db');
+  const visibleBalanceStorage = await storage.get('visible_balance');
 
-const RadioButton = ({ visible }) => {
-  return (
-    <>
-      {visible && <RadioIcon name={isLightTheme() ? 'selected-radio-button' : 'checked-radio'} />}
-      {!visible && <RadioIcon name={isLightTheme() ? 'radio-button' : 'unchecked-radio'} />}
-    </>
-  );
+  return visibleBalanceStorage?.visible;
 };
 
-export default withTheme(RadioButton);
-
-const RadioIcon = styled(Icon)`
-  height: 24px;
-  width: 24px;
-  background-color: ${({ theme }) => theme.colors.basic050};
-  border-radius: ${borderRadiusSizes.medium}px;
-  padding-right: ${spacing.medium}px;
-  margin-right: ${spacing.medium}px;
-`;
+export default visibleBalanceSession;

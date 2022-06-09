@@ -36,23 +36,17 @@ export type Props = {|
   iconName: IconName,
   onPress: ?() => mixed,
   value?: ?string,
+  visibleBalance?: boolean,
 |};
 
-function CategoryListItem({
-  title,
-  iconName,
-  onPress,
-  value,
-}: Props) {
+function CategoryListItem({ title, iconName, visibleBalance, onPress, value }: Props) {
   return (
     <Container onPress={onPress}>
       <ItemIcon name={iconName} />
 
       <Title>{title}</Title>
 
-      <ValueContainer>
-        {!!value && <Value>{value}</Value>}
-      </ValueContainer>
+      <ValueContainer>{!!value && <Value>{visibleBalance ? value : '***'}</Value>}</ValueContainer>
     </Container>
   );
 }
