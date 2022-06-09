@@ -35,7 +35,6 @@ import { getPlrAddressForChain } from 'configs/assetsConfig';
 
 // Components
 import { Container, Content, Spacing } from 'components/layout/Layout';
-import HeaderBlock from 'components/HeaderBlock';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Icon from 'components/core/Icon';
 import Spinner from 'components/Spinner';
@@ -74,7 +73,11 @@ import ToAssetSelector from './ToAssetSelector';
 import OfferCard from './OfferCard';
 import { useFromAssets, useToAssets, useOffersQuery, sortOffers } from './utils';
 
-function Exchange() {
+interface Props {
+  fetchTitle: (val: string) => void;
+}
+
+function Exchange({ fetchTitle }: Props) {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -193,18 +196,15 @@ function Exchange() {
       ? t('exchangeContent.title.initialExchange')
       : t('exchangeContent.title.exchange', { chain: chainConfig.titleShort });
 
+  React.useEffect(() => {
+    fetchTitle && fetchTitle(customTitle);
+  }, [chain, customTitle, fetchTitle]);
+
   const showLoading = offersQuery.isFetching;
   const showEmptyState = !offers?.length && !offersQuery.isIdle && !offersQuery.isFetching;
 
   return (
     <Container>
-      <HeaderBlock
-        leftItems={[{ close: true }]}
-        centerItems={[{ title: customTitle }]}
-        navigation={navigation}
-        noPaddingTop
-      />
-
       <Content onScroll={() => Keyboard.dismiss()}>
         <Banner screenName={screenName} bottomPosition={false} />
         <FromAssetSelector

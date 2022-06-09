@@ -779,6 +779,11 @@ export class EtherspotService {
     }
   }
 
+  async supportedCrossChain() {
+    const chainList = await this.sdk.getCrossChainBridgeSupportedChains();
+    return chainList;
+  }
+
   async getGasPrice(chain: Chain): Promise<?GasPrice> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) return null;
