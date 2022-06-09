@@ -114,6 +114,8 @@ import IconEnsMigration from 'assets/icons/svg/icon-24-ens.svg';
 import IconAssetMigration from 'assets/icons/svg/icon-24-assets.svg';
 import IconEnsMigrationDark from 'assets/icons/svg/icon-24-ens-dark.svg';
 import IconAssetMigrationDark from 'assets/icons/svg/icon-24-assets-dark.svg';
+import IconApps from 'assets/icons/svg/icon-apps.svg';
+import InvestIcon from 'assets/icons/svg/24-dashboard-investments.svg';
 import SelectedRadioButton from 'assets/icons/svg/form-radio-button-focus-light.svg';
 import RadioButton from 'assets/icons/svg/form-radio-button-normal-light.svg';
 import DeployLightIcon from 'assets/icons/svg/24-circle-filled-alert-light.svg';
@@ -215,6 +217,8 @@ const components = {
   'asset-migration': IconAssetMigration,
   'ens-migration-dark': IconEnsMigrationDark,
   'asset-migration-dark': IconAssetMigrationDark,
+  apps: IconApps,
+  invest: InvestIcon,
   'selected-radio-button': SelectedRadioButton,
   'radio-button': RadioButton,
   'deploy-light': DeployLightIcon,

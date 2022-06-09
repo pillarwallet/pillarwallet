@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2021 Stiftung Pillar Project
+    Copyright (C) 2019 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,17 +17,18 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+export async function getDecimals(token) {
+  const decimals = await token
+    .callDecimals()
+    .then((result) => {
+      return result;
+    })
+    .catch(() => {
+      return 0;
+    });
+  return decimals;
+}
 
-// constants
-import { CHAIN, CHAIN_ID } from 'constants/chainConstants';
-
-export type Chain = $Values<typeof CHAIN>;
-export type ChainId = $Values<typeof CHAIN_ID>;
-
-export type ChainRecord<T> = {
-  polygon?: T,
-  binance?: T,
-  xdai?: T,
-  ethereum?: T,
-  avalanche?: T,
-};
+export async function tokenApprove(token, contract_address: string, amount) {
+  return await token.encodeApprove(contract_address, amount);
+}
