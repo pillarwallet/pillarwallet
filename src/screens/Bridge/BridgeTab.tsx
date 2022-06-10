@@ -31,7 +31,7 @@ import TabView from 'components/layout/TabView';
 import { BRIDGE_CATEGORY as CATEGORY } from 'constants/exchangeConstants';
 
 // Local
-import ExchangeScreen from '../Exchange/Exchange';
+import Exchange_Crosschain from './Exchange-CrossChain/ExchangeCrosschain';
 
 // services
 import etherspotService from 'services/etherspot';
@@ -44,17 +44,17 @@ function BridgeTab() {
   const [customTitle, setCustomTitle] = React.useState(t('exchangeContent.title.initialExchange'));
 
   const items = [
-    { key: CATEGORY.EXCHANGE, title: CATEGORY.EXCHANGE, component: ExchangeScreen },
-    { key: CATEGORY.CROSS_CHAIN, title: CATEGORY.CROSS_CHAIN, component: ExchangeScreen },
+    { key: CATEGORY.EXCHANGE, title: CATEGORY.EXCHANGE, component: Exchange_Crosschain },
+    { key: CATEGORY.CROSS_CHAIN, title: CATEGORY.CROSS_CHAIN, component: Exchange_Crosschain },
   ];
 
   React.useEffect(() => {
-    const callFunction = async () => {
-      const list = await etherspotService.supportedCrossChain();
-      console.log('SUPPOTTED LIST', list);
-    };
     callFunction();
   }, []);
+  const callFunction = async () => {
+    const list = await etherspotService.supportedCrossChain();
+    console.log('SUPPOTTED LIST', list);
+  };
 
   return (
     <Container>
@@ -64,7 +64,13 @@ function BridgeTab() {
         navigation={navigation}
         noPaddingTop
       />
-      <TabView items={items} tabIndex={tabIndex} onTabIndexChange={setTabIndex} fetchTitle={setCustomTitle} />
+      <TabView
+        items={items}
+        tabIndex={tabIndex}
+        onTabIndexChange={setTabIndex}
+        fetchTitle={setCustomTitle}
+        isCrosschain={tabIndex === 1}
+      />
     </Container>
   );
 }

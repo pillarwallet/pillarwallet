@@ -39,6 +39,7 @@ import WalletConnectRequests from 'screens/WalletConnect/Requests';
 import Tooltip from 'components/Tooltip';
 import Modal from 'components/Modal';
 import Banner from 'components/Banner/Banner';
+import { Spacing } from 'components/legacy/Layout';
 
 // Constants
 import { MENU, HOME_HISTORY, REGISTER_ENS } from 'constants/navigationConstants';
@@ -49,6 +50,7 @@ import { useRootSelector, useAccounts, activeAccountAddressSelector } from 'sele
 import { accountTotalBalancesSelector } from 'selectors/totalBalances';
 import { useUser } from 'selectors/user';
 import { etherspotAccountSelector } from 'selectors/accounts';
+import { nativeIntegrationSelector } from 'redux/selectors/native-integration-selector';
 
 // Services
 import { firebaseRemoteConfig } from 'services/firebase';
@@ -70,6 +72,10 @@ import AssetsSection from './AssetsSection';
 import FloatingActions from './FloatingActions';
 import { useAccountCollectibleCounts } from './utils';
 import BiometricModal from '../../components/BiometricModal/BiometricModal';
+import AppsButton from './AppsButton';
+
+// Redux
+import { fetchNativeIntegration } from '../../redux/actions/native-integration-actions';
 
 // Services
 import visibleBalanceSession from '../../services/visibleBalance';
@@ -98,6 +104,7 @@ function Home() {
   const isEnsNodeCliamed = ensNodeState === ENSNodeStates.Claimed;
   const featureOnboardingENS = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ONBOARDING_ENS);
   const showEnsTooltip = featureOnboardingENS && !isEnsNodeCliamed;
+  const nativeIntegrationResponse = useRootSelector(nativeIntegrationSelector);
 
   const { accountSwitchTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
   const balancePerCategory = calculateTotalBalancePerCategory(accountTotalBalances);
@@ -107,6 +114,7 @@ function Home() {
   const isRefreshing = useRootSelector(({ totalBalances }) => !!totalBalances.isFetching);
 
   React.useEffect(() => {
+    dispatch(fetchNativeIntegration());
     callVisibleBalanceFunction();
     setTimeout(() => {
       if (!wallet) {
@@ -197,6 +205,8 @@ function Home() {
 
         <WalletConnectRequests />
 
+        <Spacing h={13} />
+
         <GovernanceCallBanner />
 
         <Banner screenName={screenName} bottomPosition={false} />
@@ -208,7 +218,10 @@ function Home() {
           accountTotalBalances={accountTotalBalances}
           accountCollectibleCounts={accountCollectibleCounts}
         />
+
         <Banner screenName={screenName} bottomPosition />
+
+        <AppsButton response={nativeIntegrationResponse} navigation={navigation} isShowLabel />
       </Content>
 
       <FloatingActions />

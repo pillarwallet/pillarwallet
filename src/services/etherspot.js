@@ -552,9 +552,7 @@ export class EtherspotService {
     return this.setTransactionsBatchAndSend(etherspotTransactions, chain);
   }
 
-  async sendENSTransaction(
-    chain: Chain,
-  ): Promise<?TransactionResult> {
+  async sendENSTransaction(chain: Chain): Promise<?TransactionResult> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {
       logBreadcrumb('setTransactionsBatchAndSend', 'failed: no SDK for chain set', { chain });
@@ -617,7 +615,8 @@ export class EtherspotService {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {
       logBreadcrumb(
-        'EtherspotService', 'waitForTransactionHashFromSubmittedBatch failed: no sdk instance for network name',
+        'EtherspotService',
+        'waitForTransactionHashFromSubmittedBatch failed: no sdk instance for network name',
         { chain },
       );
       // fail gracefully as transaction has been sent anyway
@@ -779,9 +778,30 @@ export class EtherspotService {
     }
   }
 
+  // async crossChainBridgeToken() {
+  //   const sdk = this.getSdkForChain('polygon');
+  //   try {
+  //     const chai: any = await sdk.getCrossChainBridgeTokenList({
+  //       direction: 'From',
+  //       fromChainId: 80001,
+  //       toChainId: 42,
+  //       disableSwapping: false,
+  //     });
+  //     console.log('CHAI!!!!', chai);
+  //     return chai;
+  //   } catch (e) {
+  //     console.log('getBridgeTokenList error', e);
+  //     return e;
+  //   }
+  // }
+
   async supportedCrossChain() {
-    const chainList = await this.sdk.getCrossChainBridgeSupportedChains();
-    return chainList;
+    try {
+      const info: any = await this.sdk.getCrossChainBridgeSupportedChains();
+      return info;
+    } catch (e) {
+      return e;
+    }
   }
 
   async getGasPrice(chain: Chain): Promise<?GasPrice> {

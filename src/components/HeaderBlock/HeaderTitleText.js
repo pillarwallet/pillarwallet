@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { fontSizes } from 'utils/variables';
+import { fontSizes, appFont } from 'utils/variables';
 import { MediumText } from 'components/legacy/Typography';
 
 type Props = {
@@ -29,10 +29,11 @@ type Props = {
 };
 
 const StyledText = styled(MediumText)`
-  font-size: ${fontSizes.medium}px;
+  font-size: ${fontSizes.big}px;
   line-height: 20px;
   color: ${({ color, theme }) => color || theme.colors.basic010};
-  text-align: ${props => props.centerText ? 'center' : 'left'};
+  text-align: ${(props) => (props.centerText ? 'center' : 'left')};
+  font-family: ${appFont.medium};
 `;
 
 const HeaderTitleText = (props: Props) => <StyledText {...props} ellipsizeMode="tail" numberOfLines={2} />;

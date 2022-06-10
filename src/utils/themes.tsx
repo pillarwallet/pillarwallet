@@ -104,6 +104,7 @@ export const semanticLightThemeColors = {
   toastBackgroundColor: lightThemeColors.synthetic140,
   toastTextColor: lightThemeColors.basic090,
   bannerTextColor: baseColors.white,
+  basic60: '#ebf0f6',
 };
 
 export const semanticDarkThemeColors = {
@@ -121,7 +122,7 @@ export const semanticDarkThemeColors = {
   negative: '#FF367F',
   negativeWeak: '#ff80aa4c',
   neutral: darkThemeColors.basic020,
-  neutralWeak: '#9999994c',
+  neutralWeak: '#141414',
   card: darkThemeColors.basic050,
   tertiary: '#171F31',
   control: '#FCFDFF',
@@ -167,6 +168,7 @@ export const semanticDarkThemeColors = {
   toastBackgroundColor: darkThemeColors.darkGreen,
   toastTextColor: darkThemeColors.basic010,
   bannerTextColor: baseColors.black,
+  basic60: '#141414',
 };
 
 export const themedColors = {
@@ -305,6 +307,10 @@ export function useTheme(): Theme {
 
 export function useIsDarkTheme(): boolean {
   return useTheme().current === DARK_THEME;
+}
+
+export function isLightTheme(): boolean {
+  return useTheme().current === LIGHT_THEME;
 }
 
 export function getThemeColors(currentTheme: Theme = defaultTheme) {

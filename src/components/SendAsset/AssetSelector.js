@@ -52,10 +52,12 @@ type Props = {|
   selectedCollectible?: ?Collectible,
   onSelectCollectible?: (collectible: ?Collectible) => mixed,
   txFeeInfo: ?TransactionFeeInfo,
+  hideFiatValueInput?: boolean,
+  disableAssetSelectorModal?: boolean,
 |};
 
 const getToken = (tokens, selectedToken) => {
-  return tokens.find(e => {
+  return tokens.find((e) => {
     if (selectedToken?.chain === e.chain && selectedToken?.contractAddress === e.contractAddress) {
       return true;
     }
@@ -71,6 +73,8 @@ const AssetSelector = ({
   selectedCollectible,
   onSelectCollectible,
   txFeeInfo,
+  hideFiatValueInput,
+  disableAssetSelectorModal = false,
 }: Props) => {
   const inputRef = React.useRef();
 
@@ -114,15 +118,16 @@ const AssetSelector = ({
   };
 
   const handleSelectAsset = () => {
-    Modal.open(() => (
-      <AssetSelectorModal
-        tokens={tokens}
-        onSelectToken={handleSelectToken}
-        collectibles={collectibles}
-        onSelectCollectible={handleSelectCollectible}
-        autoFocus
-      />
-    ));
+    !disableAssetSelectorModal &&
+      Modal.open(() => (
+        <AssetSelectorModal
+          tokens={tokens}
+          onSelectToken={handleSelectToken}
+          collectibles={collectibles}
+          onSelectCollectible={handleSelectCollectible}
+          autoFocus
+        />
+      ));
   };
 
   if (selectedCollectible) {
@@ -143,6 +148,7 @@ const AssetSelector = ({
       balanceAfterFee={tokenBalanceAfterFee}
       disableMaxValue={disableMaxValue}
       onTokenPress={handleSelectAsset}
+      hideFiatValueInput={hideFiatValueInput}
       showChainIcon
     />
   );
@@ -151,7 +157,7 @@ const AssetSelector = ({
 export default AssetSelector;
 
 function flattenCollectibles(collectiblesPerChain: ChainRecord<Collectible[]>): Collectible[] {
-  return Object.keys(collectiblesPerChain).flatMap(chain => collectiblesPerChain[chain] ?? []);
+  return Object.keys(collectiblesPerChain).flatMap((chain) => collectiblesPerChain[chain] ?? []);
 }
 
 function useTokenBalanceAfterFee(asset: ?AssetOption, feeInfo: ?TransactionFeeInfo) {

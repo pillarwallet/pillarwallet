@@ -75,14 +75,15 @@ import { useFromAssets, useToAssets, useOffersQuery, sortOffers } from './utils'
 
 interface Props {
   fetchTitle: (val: string) => void;
+  isCrosschain: boolean;
 }
 
-function Exchange({ fetchTitle }: Props) {
+function Exchange({ fetchTitle, isCrosschain = false }: Props) {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const activeAccount = useActiveAccount();
-  const fromInputRef = React.useRef();
+  const fromInputRef: any = React.useRef();
   const screenName = getActiveScreenName(navigation);
 
   const initialChain: Chain = navigation.getParam('chain') || CHAIN.ETHEREUM;
@@ -91,16 +92,18 @@ function Exchange({ fetchTitle }: Props) {
   const initialToAddress: string = navigation.getParam('toAssetAddress') || getPlrAddressForChain(initialChain);
 
   const [chain, setChain] = React.useState(initialChain);
+  const [toAddressChain, setToAddressChain] = React.useState(null);
   const [fromAddress, setFromAddress] = React.useState(initialFromAddress);
   const [toAddress, setToAddress] = React.useState(initialToAddress);
 
   const [fromValue, setFromValue] = React.useState(null);
-  const [debouncedFromValue]: [string] = useDebounce(fromValue, 500);
+  const [debouncedFromValue] = useDebounce(fromValue, 500);
 
   const fromOptions = useFromAssets();
   const toOptions = useToAssets(chain);
 
   const chainConfig = useChainConfig(chain);
+  const toChainConfig = useChainConfig(toAddressChain || CHAIN.ETHEREUM);
 
   const fromAsset = React.useMemo(
     () => fromOptions.find((a) => a.chain === chain && addressesEqual(a.address, fromAddress)),
@@ -134,7 +137,7 @@ function Exchange({ fetchTitle }: Props) {
   }, [dispatch, fromAsset]);
 
   React.useEffect(() => {
-    if (isLogV2AppEvents() && fromAsset && toAsset && activeAccount) {
+    if (isLogV2AppEvents() && fromAsset && toAsset && activeAccount && !isCrosschain) {
       dispatch(
         appsFlyerlogEventAction(`exchange_pair_selected_${fromAsset?.symbol}_${toAsset?.symbol}`, {
           tokenPair: `${fromAsset?.symbol}_${toAsset?.symbol}`,
@@ -155,11 +158,13 @@ function Exchange({ fetchTitle }: Props) {
     setFromAddress(asset.address);
     if (chain !== asset.chain) {
       setToAddress(null);
+      setToAddressChain(null);
     }
   };
 
   const handleSelectToAsset = (asset: AssetOption) => {
     setToAddress(asset.address);
+    setToAddressChain(asset.chain);
   };
 
   const handleOfferPress = async (selectedOffer: ExchangeOffer) => {
@@ -182,7 +187,6 @@ function Exchange({ fetchTitle }: Props) {
 
   const handleSwapAssets = () => {
     if (!allowSwap) return;
-
     // Needed to update keyboard accessory view (add/remove 100% option)
     Keyboard.dismiss();
     setFromAddress(toAddress);
@@ -190,15 +194,20 @@ function Exchange({ fetchTitle }: Props) {
     setFromValue(null);
   };
 
-  const toValue = maxBy(offers, (offer) => offer.toAmount)?.toAmount.precision(6);
-  const customTitle =
+  const toValue = maxBy(offers, (offer: any) => offer.toAmount)?.toAmount.precision(6);
+  const customExchangeTitle =
     nativeAssetPerChain[CHAIN.ETHEREUM]?.address === fromAddress && chain === CHAIN.ETHEREUM
       ? t('exchangeContent.title.initialExchange')
       : t('exchangeContent.title.exchange', { chain: chainConfig.titleShort });
 
+  const customCrosschainTitle =
+    chain === CHAIN.ETHEREUM
+      ? t('exchangeContent.title.crossChain')
+      : chainConfig.titleShort + ' → ' + (toAddressChain ? toChainConfig.titleShort : '');
+
   React.useEffect(() => {
-    fetchTitle && fetchTitle(customTitle);
-  }, [chain, customTitle, fetchTitle]);
+    fetchTitle && fetchTitle(isCrosschain ? customCrosschainTitle : customExchangeTitle);
+  }, [chain, customExchangeTitle, customCrosschainTitle, fetchTitle, fromAddress, toAddress, isCrosschain]);
 
   const showLoading = offersQuery.isFetching;
   const showEmptyState = !offers?.length && !offersQuery.isIdle && !offersQuery.isFetching;
@@ -218,7 +227,7 @@ function Exchange({ fetchTitle }: Props) {
         />
 
         <TouchableSwapIcon onPress={handleSwapAssets} disabled={!allowSwap} hitSlop={hitSlop50w20h}>
-          {toAsset ? <Icon name="arrow-up-down" /> : <Spacing h={24} />}
+          {toAsset ? <Icon name={isCrosschain ? 'arrow-down' : 'arrow-up-down'} /> : <Spacing h={24} />}
         </TouchableSwapIcon>
 
         <ToAssetSelector
@@ -239,6 +248,7 @@ function Exchange({ fetchTitle }: Props) {
         )}
 
         {!showLoading &&
+          !isCrosschain &&
           offers?.map((offer) => (
             <OfferCard
               key={offer.provider}
@@ -249,7 +259,7 @@ function Exchange({ fetchTitle }: Props) {
             />
           ))}
 
-        {showEmptyState && (
+        {showEmptyState && !isCrosschain && (
           <EmptyStateWrapper>
             <EmptyStateParagraph
               title={t('exchangeContent.emptyState.offers.title')}

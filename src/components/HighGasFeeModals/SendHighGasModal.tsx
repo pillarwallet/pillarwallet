@@ -34,7 +34,6 @@ import WarningBlock from './WarningBlock';
 import type { Chain } from 'models/Chain';
 import BigNumber from 'bignumber.js';
 
-
 interface ISendHighGasModal {
   value: BigNumber | null;
   contact: Contact | null;
@@ -45,7 +44,7 @@ interface ISendHighGasModal {
 const SendHighGasModal: FC<ISendHighGasModal> = (props) => {
   const colors = useThemeColors();
   const { t } = useTranslation();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   let { value, contact, chain, txFeeInfo } = props;
 

@@ -18,23 +18,31 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { withTheme } from 'styled-components/native';
-import { TouchableOpacity } from 'react-native';
-import Svg, { Circle, G } from 'react-native-svg';
-import { getThemeColors } from 'utils/themes';
+import styled, { withTheme } from 'styled-components/native';
 
-const RadioButton = ({ checked, onPress, theme }) => {
-  const colors = getThemeColors(theme);
+// Components
+import Icon from 'components/core/Icon';
+
+// Utils
+import { spacing, borderRadiusSizes } from 'utils/variables';
+import { isLightTheme } from 'utils/themes';
+
+const RadioButton = ({ visible }) => {
   return (
-    <TouchableOpacity onPress={onPress}>
-      <Svg width={20} height={21} viewBox="0 0 20 21">
-        <G fill="none" fill-rule="evenodd">
-          <Circle cx="10" cy="11" r="9.5" stroke="#B7B8BB" />
-          {checked && <Circle cx="10" cy="11" r="6" fill={colors.positive} />}
-        </G>
-      </Svg>
-    </TouchableOpacity>
+    <>
+      {visible && <RadioIcon name={isLightTheme() ? 'selected-radio-button' : 'checked-radio'} />}
+      {!visible && <RadioIcon name={isLightTheme() ? 'radio-button' : 'unchecked-radio'} />}
+    </>
   );
 };
 
 export default withTheme(RadioButton);
+
+const RadioIcon = styled(Icon)`
+  height: 24px;
+  width: 24px;
+  background-color: ${({ theme }) => theme.colors.basic050};
+  border-radius: ${borderRadiusSizes.medium}px;
+  padding-right: ${spacing.medium}px;
+  margin-right: ${spacing.medium}px;
+`;
