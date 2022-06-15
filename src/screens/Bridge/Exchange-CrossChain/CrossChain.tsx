@@ -2,17 +2,14 @@
 /*
     Pillar Wallet: the personal data locker
     Copyright (C) 2021 Stiftung Pillar Project
-
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
-
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -35,7 +32,6 @@ import { getPlrAddressForChain } from 'configs/assetsConfig';
 
 // Components
 import { Container, Content, Spacing } from 'components/layout/Layout';
-import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Icon from 'components/core/Icon';
 import Spinner from 'components/Spinner';
 import Toast from 'components/Toast';
@@ -70,15 +66,13 @@ import { useActiveAccount } from 'selectors';
 // Local
 import FromAssetSelector from './FromAssetSelector';
 import ToAssetSelector from './ToAssetSelector';
-import OfferCard from './OfferCard';
-import { useFromAssets, useToAssets, useOffersQuery, sortOffers } from './utils';
+import { useFromAssets, useToAssetsCrossChain, useOffersQuery, sortOffers } from './utils';
 
 interface Props {
-  fetchTitle: (val: string) => void;
-  isCrosschain: boolean;
+  fetchCrossChainTitle: (val: string) => void;
 }
 
-function Exchange({ fetchTitle, isCrosschain = false }: Props) {
+function CrossChain({ fetchCrossChainTitle }: Props) {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -100,7 +94,7 @@ function Exchange({ fetchTitle, isCrosschain = false }: Props) {
   const [debouncedFromValue] = useDebounce(fromValue, 500);
 
   const fromOptions = useFromAssets();
-  const toOptions = useToAssets(chain);
+  const toOptions = useToAssetsCrossChain(chain);
 
   const chainConfig = useChainConfig(chain);
   const toChainConfig = useChainConfig(toAddressChain || CHAIN.ETHEREUM);
@@ -118,11 +112,6 @@ function Exchange({ fetchTitle, isCrosschain = false }: Props) {
   const offersQuery = useOffersQuery(chain, fromAsset, toAsset, debouncedFromValue);
   const offers = sortOffers(offersQuery.data);
 
-  React.useEffect(() => {
-    dispatch(fetchGasThresholds());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   // Focus on from amount input after user changes fromAsset
   React.useEffect(() => {
     let isCancelled = false;
@@ -137,7 +126,7 @@ function Exchange({ fetchTitle, isCrosschain = false }: Props) {
   }, [dispatch, fromAsset]);
 
   React.useEffect(() => {
-    if (isLogV2AppEvents() && fromAsset && toAsset && activeAccount && !isCrosschain) {
+    if (isLogV2AppEvents() && fromAsset && toAsset && activeAccount) {
       dispatch(
         appsFlyerlogEventAction(`exchange_pair_selected_${fromAsset?.symbol}_${toAsset?.symbol}`, {
           tokenPair: `${fromAsset?.symbol}_${toAsset?.symbol}`,
@@ -158,35 +147,18 @@ function Exchange({ fetchTitle, isCrosschain = false }: Props) {
     setFromAddress(asset.address);
     if (chain !== asset.chain) {
       setToAddress(null);
-      setToAddressChain(null);
     }
   };
 
   const handleSelectToAsset = (asset: AssetOption) => {
     setToAddress(asset.address);
-    setToAddressChain(asset.chain);
-  };
-
-  const handleOfferPress = async (selectedOffer: ExchangeOffer) => {
-    if (!activeAccount) {
-      // shouldn't happen
-      Toast.show({
-        message: t('toast.somethingWentWrong'),
-        emoji: 'hushed',
-        supportLink: true,
-        autoClose: false,
-      });
-      return;
-    }
-
-    const offer = await appendFeeCaptureTransactionIfNeeded(selectedOffer, getAccountAddress(activeAccount));
-    navigation.navigate(EXCHANGE_CONFIRM, { offer });
   };
 
   const allowSwap = !!toAsset && fromOptions.some((o) => o.chain === chain && addressesEqual(o.address, toAddress));
 
   const handleSwapAssets = () => {
     if (!allowSwap) return;
+
     // Needed to update keyboard accessory view (add/remove 100% option)
     Keyboard.dismiss();
     setFromAddress(toAddress);
@@ -195,19 +167,13 @@ function Exchange({ fetchTitle, isCrosschain = false }: Props) {
   };
 
   const toValue = maxBy(offers, (offer: any) => offer.toAmount)?.toAmount.precision(6);
-  const customExchangeTitle =
-    nativeAssetPerChain[CHAIN.ETHEREUM]?.address === fromAddress && chain === CHAIN.ETHEREUM
-      ? t('exchangeContent.title.initialExchange')
-      : t('exchangeContent.title.exchange', { chain: chainConfig.titleShort });
-
   const customCrosschainTitle =
     chain === CHAIN.ETHEREUM
       ? t('exchangeContent.title.crossChain')
       : chainConfig.titleShort + ' → ' + (toAddressChain ? toChainConfig.titleShort : '');
-
   React.useEffect(() => {
-    fetchTitle && fetchTitle(isCrosschain ? customCrosschainTitle : customExchangeTitle);
-  }, [chain, customExchangeTitle, customCrosschainTitle, fetchTitle, fromAddress, toAddress, isCrosschain]);
+    fetchCrossChainTitle && fetchCrossChainTitle(customCrosschainTitle);
+  }, [chain, customCrosschainTitle, fetchCrossChainTitle, fromAddress, toAddress]);
 
   const showLoading = offersQuery.isFetching;
   const showEmptyState = !offers?.length && !offersQuery.isIdle && !offersQuery.isFetching;
@@ -227,7 +193,7 @@ function Exchange({ fetchTitle, isCrosschain = false }: Props) {
         />
 
         <TouchableSwapIcon onPress={handleSwapAssets} disabled={!allowSwap} hitSlop={hitSlop50w20h}>
-          {toAsset ? <Icon name={isCrosschain ? 'arrow-down' : 'arrow-up-down'} /> : <Spacing h={24} />}
+          {toAsset ? <Icon name="arrow-down" /> : <Spacing h={24} />}
         </TouchableSwapIcon>
 
         <ToAssetSelector
@@ -247,33 +213,12 @@ function Exchange({ fetchTitle, isCrosschain = false }: Props) {
           </EmptyStateWrapper>
         )}
 
-        {!showLoading &&
-          !isCrosschain &&
-          offers?.map((offer) => (
-            <OfferCard
-              key={offer.provider}
-              offer={offer}
-              disabled={false}
-              isLoading={false}
-              onPress={() => handleOfferPress(offer)}
-            />
-          ))}
-
-        {showEmptyState && !isCrosschain && (
-          <EmptyStateWrapper>
-            <EmptyStateParagraph
-              title={t('exchangeContent.emptyState.offers.title')}
-              bodyText={t('exchangeContent.emptyState.offers.paragraph')}
-              large
-            />
-          </EmptyStateWrapper>
-        )}
       </Content>
     </Container>
   );
 }
 
-export default Exchange;
+export default CrossChain;
 
 const TouchableSwapIcon = styled.TouchableOpacity`
   margin: 8px 0 8px;

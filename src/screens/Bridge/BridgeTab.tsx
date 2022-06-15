@@ -31,7 +31,8 @@ import TabView from 'components/layout/TabView';
 import { BRIDGE_CATEGORY as CATEGORY } from 'constants/exchangeConstants';
 
 // Local
-import Exchange_Crosschain from './Exchange-CrossChain/ExchangeCrosschain';
+import Exchange from './Exchange-CrossChain/Exchange';
+import CrossChain from './Exchange-CrossChain/CrossChain'
 
 // services
 import etherspotService from 'services/etherspot';
@@ -41,26 +42,27 @@ function BridgeTab() {
   const navigation = useNavigation();
 
   const [tabIndex, setTabIndex] = React.useState(0);
-  const [customTitle, setCustomTitle] = React.useState(t('exchangeContent.title.initialExchange'));
+  const [exchangeTitle, setExchangeTitle] = React.useState(t('exchangeContent.title.initialExchange'));
+  const [crossChainTitle, setCrossChainTitile] = React.useState(t('exchangeContent.title.crossChain'));
 
   const items = [
-    { key: CATEGORY.EXCHANGE, title: CATEGORY.EXCHANGE, component: Exchange_Crosschain },
-    { key: CATEGORY.CROSS_CHAIN, title: CATEGORY.CROSS_CHAIN, component: Exchange_Crosschain },
+    { key: CATEGORY.EXCHANGE, title: CATEGORY.EXCHANGE, component: Exchange },
+    { key: CATEGORY.CROSS_CHAIN, title: CATEGORY.CROSS_CHAIN, component: CrossChain },
   ];
 
   React.useEffect(() => {
     callFunction();
   }, []);
   const callFunction = async () => {
-    const list = await etherspotService.supportedCrossChain();
-    console.log('SUPPOTTED LIST', list);
+    const list = await etherspotService.findCrossChainBridgeRoutes();
+    console.log('findCrossChainBridgeRoutes', list);
   };
 
   return (
     <Container>
       <HeaderBlock
         leftItems={[{ close: true }]}
-        centerItems={[{ title: customTitle }]}
+        centerItems={[{ title: tabIndex === 1 ? crossChainTitle : exchangeTitle }]}
         navigation={navigation}
         noPaddingTop
       />
@@ -68,7 +70,8 @@ function BridgeTab() {
         items={items}
         tabIndex={tabIndex}
         onTabIndexChange={setTabIndex}
-        fetchTitle={setCustomTitle}
+        fetchExchangeTitle={setExchangeTitle}
+        fetchCrossChainTitle={setCrossChainTitile}
         isCrosschain={tabIndex === 1}
       />
     </Container>

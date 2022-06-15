@@ -21,7 +21,7 @@
 import * as React from 'react';
 import { useQuery } from 'react-query';
 import { BigNumber } from 'bignumber.js';
-import { orderBy } from 'lodash';
+import { chain, orderBy } from 'lodash';
 
 // Selectors
 import { useRootSelector, useSupportedAssetsPerChain, useRatesPerChain, useFiatCurrency } from 'selectors';
@@ -67,6 +67,36 @@ export function useFromAssets(): AssetOption[] {
     );
   }, [
     supportedChains,
+    supportedAssetsPerChain,
+    accountAssetsPerChain,
+    walletBalancesPerChain,
+    ratesPerChain,
+    currency,
+  ]);
+}
+
+export function useToAssetsCrossChain(removeChainNm: Chain): AssetOption[] {
+  const supportedChains = useSupportedChains();
+  const filteredSupportedList = supportedChains.filter((chainNm: Chain) => chainNm !== removeChainNm);
+  const supportedAssetsPerChain = useSupportedAssetsPerChain();
+  const accountAssetsPerChain = useRootSelector(accountAssetsPerChainSelector);
+  const walletBalancesPerChain = useRootSelector(accountWalletAssetsBalancesSelector);
+  const ratesPerChain = useRatesPerChain();
+  const currency = useFiatCurrency();
+
+  return React.useMemo(() => {
+    return filteredSupportedList.flatMap((chainNm) =>
+      getExchangeFromAssetOptions(
+        chainNm,
+        supportedAssetsPerChain,
+        accountAssetsPerChain,
+        walletBalancesPerChain,
+        ratesPerChain,
+        currency,
+      ),
+    );
+  }, [
+    filteredSupportedList,
     supportedAssetsPerChain,
     accountAssetsPerChain,
     walletBalancesPerChain,
@@ -134,7 +164,7 @@ function getExchangeToAssetOptions(
 }
 
 export function useOffersQuery(
-  chain: Chain,
+  chain1: Chain,
   fromAsset: ?AssetOption,
   toAsset: ?AssetOption,
   fromAmount: string,
@@ -143,7 +173,7 @@ export function useOffersQuery(
 
   return useQuery(
     ['ExchangeOffers', fromAsset, toAsset, fromAmount],
-    () => etherspotService.getExchangeOffers(chain, fromAsset, toAsset, BigNumber(fromAmount)),
+    () => etherspotService.getExchangeOffers(chain1, fromAsset, toAsset, BigNumber(fromAmount)),
     { enabled, cacheTime: 0 },
   );
 }

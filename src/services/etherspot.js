@@ -53,7 +53,7 @@ import {
   getChainTokenListName,
 } from 'utils/etherspot';
 import { addressesEqual, findAssetByAddress } from 'utils/assets';
-import { nativeAssetPerChain } from 'utils/chains';
+import { nativeAssetPerChain, chainFromChainId } from 'utils/chains';
 import { mapToEthereumTransactions } from 'utils/transactions';
 import { getCaptureFee } from 'utils/exchange';
 
@@ -778,22 +778,53 @@ export class EtherspotService {
     }
   }
 
-  // async crossChainBridgeToken() {
-  //   const sdk = this.getSdkForChain('polygon');
-  //   try {
-  //     const chai: any = await sdk.getCrossChainBridgeTokenList({
-  //       direction: 'From',
-  //       fromChainId: 80001,
-  //       toChainId: 42,
-  //       disableSwapping: false,
-  //     });
-  //     console.log('CHAI!!!!', chai);
-  //     return chai;
-  //   } catch (e) {
-  //     console.log('getBridgeTokenList error', e);
-  //     return e;
-  //   }
-  // }
+  async findCrossChainBridgeRoutes() {
+    const sdk = this.getSdkForChain('binance');
+    try {
+      const response: any = await sdk.findCrossChainBridgeRoutes({
+        fromTokenAddress: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
+        fromChainId: 56,
+        toTokenAddress: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
+        toChainId: 10,
+        fromAmount: '100000000000000000000',
+        userAddress: '0x3e8cB4bd04d81498aB4b94a392c334F5328b237b',
+        disableSwapping: false,
+      });
+      const data = response[0];
+      console.log('findCrossChainBridgeRoutes!!!!', data);
+
+      const resss: any = await sdk.buildCrossChainBridgeTransaction(data);
+
+      const { userTxType, txType, txData, txTarget, chainId, value } = data;
+
+      const chain = chainFromChainId[chainId];
+
+      console.log('buildCrossChainBridgeTransaction!!!!', resss);
+
+      // const transactionInfo = await buildCrossChainBridgeTransaction(data[0]);
+      return data;
+    } catch (e) {
+      console.log('findCrossChainBridgeRoutes error', e);
+      return e;
+    }
+  }
+
+  async getCrossChainBridgeTokenList() {
+    try {
+      const list = await this.sdk.getCrossChainBridgeTokenList({
+        direction: 'From',
+        fromChainId: 1,
+        toChainId: 56,
+        disableSwapping: false,
+      });
+
+      console.log('getCrossChainBridgeTokenList!!!!', list);
+      return list;
+    } catch (e) {
+      console.log('getBridgeTokenList error', e);
+      return e;
+    }
+  }
 
   async supportedCrossChain() {
     try {
