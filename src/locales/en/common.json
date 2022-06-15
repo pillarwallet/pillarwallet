@@ -1168,6 +1168,7 @@
       "collectiblesToTransfer": "NFTs to transfer",
       "data": "Data",
       "message": "Message",
+      "network": "Network",
       "address": "Address",
       "ethFee": "Max. Ethereum fee",
       "maximumFee": "Maximum fee",

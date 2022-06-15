@@ -224,7 +224,10 @@ type itemType = {|
 
 const useColumnDimensions = () => {
   const { width } = useWindowDimensions();
+<<<<<<< Updated upstream
   // eslint-disable-next-line no-mixed-operators
+=======
+>>>>>>> Stashed changes
   const availableWidth = width - 2 * spacing.layoutSides;
   const minColumnWidth = 80;
 
