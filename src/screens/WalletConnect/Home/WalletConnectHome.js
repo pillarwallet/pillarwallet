@@ -39,7 +39,6 @@ import Spinner from 'components/Spinner';
 import WalletConnectRequests from 'screens/WalletConnect/Requests';
 import Modal from 'components/Modal';
 import Icon from 'components/core/Icon';
-import Banner from 'components/Banner/Banner';
 
 // Selectors
 import { useActiveAccount } from 'selectors';
@@ -59,8 +58,6 @@ import { appFont, fontStyles, spacing, borderRadiusSizes } from 'utils/variables
 import { useChainsConfig } from 'utils/uiConfig';
 import { showServiceLaunchErrorToast } from 'utils/inAppBrowser';
 import { isArchanovaAccount, isKeyBasedAccount } from 'utils/accounts';
-import { getActiveScreenName } from 'utils/navigation';
-import { isLightTheme } from 'utils/themes';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
@@ -84,7 +81,6 @@ function WalletConnectHome() {
   const tabItems = useTabItems();
   const [activeChain, setActiveChain] = React.useState<?Chain>(null);
   const [activeItem, setActiveItem] = React.useState(tabItems[0]);
-  const screenName = getActiveScreenName(navigation);
 
   const { isDeployedOnChain } = useDeploymentStatus();
 
@@ -123,21 +119,18 @@ function WalletConnectHome() {
       <ListHeader>
         <WalletConnectRequests />
         {!isArchanovaAccount(activeAccount) && (
-          <ContainerView isSelected onPress={() => openSwitchChainModal()}>
+          <ContainerView isSelected>
             <RowContainer>
-              <ChainViewIcon
-                size={24}
-                style={IconContainer}
-                name={key ?? isLightTheme() ? 'all-networks-light' : 'all-networks'}
-              />
+              <ChainViewIcon size={24} style={IconContainer} name={key ?? 'all-networks'} />
               <Title>{title}</Title>
-              <ChainViewIcon name="chevron-down" />
+              <TouchableContainer onPress={() => openSwitchChainModal()}>
+                <ChainViewIcon name="chevron-down" />
+              </TouchableContainer>
             </RowContainer>
           </ContainerView>
         )}
 
         {showDeployBanner && activeChain != null && <DeployBanner chain={activeChain} style={styles.banner} />}
-        <Banner screenName={screenName} bottomPosition={false} />
       </ListHeader>
     );
   };
@@ -189,10 +182,7 @@ function WalletConnectHome() {
           renderItem={({ item }) => renderListRow(item)}
           keyExtractor={(items) => items[0]?.id}
           ListHeaderComponent={renderListHeader()}
-          contentContainerStyle={{
-            paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET,
-            paddingTop: spacing.rhythm,
-          }}
+          contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
         />
       )}
       {isReady && isFetching && (
@@ -224,10 +214,6 @@ type itemType = {|
 
 const useColumnDimensions = () => {
   const { width } = useWindowDimensions();
-<<<<<<< Updated upstream
-  // eslint-disable-next-line no-mixed-operators
-=======
->>>>>>> Stashed changes
   const availableWidth = width - 2 * spacing.layoutSides;
   const minColumnWidth = 80;
 
@@ -245,7 +231,7 @@ const useTabItems = (): itemType[] => {
     key: chain,
     title: config[chain].titleShort,
   }));
-  return [{ key: null, title: t('label.allNetwork') }, ...chainTabs];
+  return [{ key: null, title: t('label.all') }, ...chainTabs];
 };
 
 type SectionData = {|
@@ -321,12 +307,10 @@ const ListRow = styled.View`
   padding: 0 ${spacing.layoutSides}px;
 `;
 
-const ContainerView = styled.TouchableOpacity`
-  background-color: ${({ theme, isSelected }) => (isSelected ? theme.colors.basic60 : theme.colors.basic050)};
+const ContainerView = styled.View`
+  background-color: ${({ theme, isSelected }) => (isSelected ? theme.colors.basic080 : theme.colors.basic050)};
   margin: 0 ${spacing.layoutSides}px;
-  padding: 0 ${spacing.large}px 0 ${spacing.mediumLarge}px;
-  height: 66px;
-  justify-content: center;
+  padding: ${spacing.large}px;
   border-radius: ${borderRadiusSizes.medium}px;
 `;
 
@@ -345,7 +329,7 @@ const IconContainer = styled.View`
 const Title = styled(Text)`
   flex: 1;
   flex-direction: row;
-  ${fontStyles.big};
+  ${fontStyles.medium};
   padding: 0 ${spacing.medium}px 0 ${spacing.medium}px;
 `;
 
@@ -354,4 +338,9 @@ const ChainViewIcon = styled(Icon)`
   width: 24px;
   background-color: ${({ theme }) => theme.colors.basic050};
   border-radius: ${borderRadiusSizes.medium}px;
+`;
+
+const TouchableContainer = styled.TouchableOpacity`
+  align-items: center;
+  justify-content: center;
 `;
