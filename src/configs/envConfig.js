@@ -77,7 +77,7 @@ const envVars = {
     ENVIRONMENT: STAGING,
     TX_DETAILS_URL_ETHEREUM: 'https://kovan.etherscan.io/tx/',
     TX_DETAILS_URL_BINANCE: 'https://bscscan.com/tx/',
-    TX_DETAILS_URL_POLYGON: 'https://polygonscan.com/tx/',
+    TX_DETAILS_URL_POLYGON: 'https://mumbai.polygonscan.com/tx/',
     TX_DETAILS_URL_XDAI: 'https://blockscout.com/xdai/mainnet/tx/',
     TX_DETAILS_URL_AVALANCHE: 'https://testnet.snowtrace.io/tx/',
     NETWORK_PROVIDER: 'kovan',

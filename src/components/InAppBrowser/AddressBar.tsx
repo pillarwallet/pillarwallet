@@ -2,6 +2,9 @@ import React, { FC, forwardRef } from 'react';
 import { TextInput } from 'react-native';
 import styled from 'styled-components/native';
 
+// Components
+import { IconName } from 'components/core/Icon';
+
 // Utils
 import { fontSizes, spacing, borderRadiusSizes } from 'utils/variables';
 
@@ -34,11 +37,13 @@ interface IAddressBar {
 const AddressBar = forwardRef<TextInput, IAddressBar>((props, ref) => {
   const { colors, isDarkTheme, url, urlValue, onUrlChange, isTyping, onBlur, isLoading, buttonActions } = props;
 
+  const icon: IconName = isDarkTheme ? 'pillar-browser-dark' : 'pillar-browser';
+
   const LeftButtons: FC = () => {
     return (
       <ButtonsContainer>
         <AddressBarButton
-          icon={'pillar-browser' + (isDarkTheme ? '-dark' : '')}
+          icon={icon}
           onPress={buttonActions.openOptionsMenu}
           iconColor={isDarkTheme ? colors.basic090 : colors.basic020}
         />

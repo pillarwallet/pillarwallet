@@ -10,6 +10,7 @@
     "moduleResolution": "node",
     "noEmit": true,
     "paths": {
+      "abi/*": ["src/abi/*"],
       "actions/*": ["src/actions/*"],
       "assets/*": ["src/assets/*"],
       "components/*": ["src/components/*"],
@@ -26,8 +27,7 @@
       "translations/*": ["src/translations/*"],
       "utils/*": ["src/utils/*"],
       "hooks/*": ["src/hooks/*"],
-      "selectors/*": ["src/selectors/*"],
-      "src/*": ["src/*"],
+      "src/*": ["src/*"]
     },
     "resolveJsonModule": true,
     "skipLibCheck": true,

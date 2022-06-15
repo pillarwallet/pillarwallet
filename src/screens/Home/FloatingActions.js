@@ -86,9 +86,8 @@ const useEnabledActions = () => {
   const activeAccount = useActiveAccount();
   const smartWalletState = useArchanovaWalletStatus();
 
-
-  const isEnabled = walletTotalBalance.gt(0)
-    && (!isArchanovaAccount(activeAccount) || isEmpty(smartWalletState.sendingBlockedMessage));
+  const isEnabled =
+    walletTotalBalance.gt(0) && (!isArchanovaAccount(activeAccount) || isEmpty(smartWalletState.sendingBlockedMessage));
 
   return {
     isSendEnabled: true,

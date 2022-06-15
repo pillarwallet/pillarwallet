@@ -34,7 +34,6 @@ import WarningBlock from './WarningBlock';
 import type { Chain } from 'models/Chain';
 import BigNumber from 'bignumber.js';
 
-
 interface ISendHighGasModal {
   value: BigNumber | null;
   contact: Contact | null;

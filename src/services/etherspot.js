@@ -552,9 +552,7 @@ export class EtherspotService {
     return this.setTransactionsBatchAndSend(etherspotTransactions, chain);
   }
 
-  async sendENSTransaction(
-    chain: Chain,
-  ): Promise<?TransactionResult> {
+  async sendENSTransaction(chain: Chain): Promise<?TransactionResult> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {
       logBreadcrumb('setTransactionsBatchAndSend', 'failed: no SDK for chain set', { chain });
@@ -617,7 +615,8 @@ export class EtherspotService {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {
       logBreadcrumb(
-        'EtherspotService', 'waitForTransactionHashFromSubmittedBatch failed: no sdk instance for network name',
+        'EtherspotService',
+        'waitForTransactionHashFromSubmittedBatch failed: no sdk instance for network name',
         { chain },
       );
       // fail gracefully as transaction has been sent anyway

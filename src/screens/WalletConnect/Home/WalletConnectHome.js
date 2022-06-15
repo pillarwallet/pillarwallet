@@ -2,17 +2,14 @@
 /*
     Pillar Wallet: the personal data locker
     Copyright (C) 2021 Stiftung Pillar Project
-
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
-
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -58,6 +55,7 @@ import { appFont, fontStyles, spacing, borderRadiusSizes } from 'utils/variables
 import { useChainsConfig } from 'utils/uiConfig';
 import { showServiceLaunchErrorToast } from 'utils/inAppBrowser';
 import { isArchanovaAccount, isKeyBasedAccount } from 'utils/accounts';
+import { isLightTheme } from 'utils/themes';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
@@ -119,13 +117,15 @@ function WalletConnectHome() {
       <ListHeader>
         <WalletConnectRequests />
         {!isArchanovaAccount(activeAccount) && (
-          <ContainerView isSelected>
+          <ContainerView isSelected onPress={() => openSwitchChainModal()}>
             <RowContainer>
-              <ChainViewIcon size={24} style={IconContainer} name={key ?? 'all-networks'} />
+              <ChainViewIcon
+                size={24}
+                style={IconContainer}
+                name={key ?? isLightTheme() ? 'all-networks-light' : 'all-networks'}
+              />
               <Title>{title}</Title>
-              <TouchableContainer onPress={() => openSwitchChainModal()}>
-                <ChainViewIcon name="chevron-down" />
-              </TouchableContainer>
+              <ChainViewIcon name="chevron-down" />
             </RowContainer>
           </ContainerView>
         )}
@@ -182,7 +182,10 @@ function WalletConnectHome() {
           renderItem={({ item }) => renderListRow(item)}
           keyExtractor={(items) => items[0]?.id}
           ListHeaderComponent={renderListHeader()}
-          contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
+          contentContainerStyle={{
+            paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET,
+            paddingTop: spacing.rhythm,
+          }}
         />
       )}
       {isReady && isFetching && (
@@ -232,7 +235,7 @@ const useTabItems = (): itemType[] => {
     key: chain,
     title: config[chain].titleShort,
   }));
-  return [{ key: null, title: t('label.all') }, ...chainTabs];
+  return [{ key: null, title: t('label.allNetwork') }, ...chainTabs];
 };
 
 type SectionData = {|
@@ -308,10 +311,12 @@ const ListRow = styled.View`
   padding: 0 ${spacing.layoutSides}px;
 `;
 
-const ContainerView = styled.View`
-  background-color: ${({ theme, isSelected }) => (isSelected ? theme.colors.basic080 : theme.colors.basic050)};
+const ContainerView = styled.TouchableOpacity`
+  background-color: ${({ theme, isSelected }) => (isSelected ? theme.colors.basic60 : theme.colors.basic050)};
   margin: 0 ${spacing.layoutSides}px;
-  padding: ${spacing.large}px;
+  padding: 0 ${spacing.large}px 0 ${spacing.mediumLarge}px;
+  height: 66px;
+  justify-content: center;
   border-radius: ${borderRadiusSizes.medium}px;
 `;
 
@@ -330,7 +335,7 @@ const IconContainer = styled.View`
 const Title = styled(Text)`
   flex: 1;
   flex-direction: row;
-  ${fontStyles.medium};
+  ${fontStyles.big};
   padding: 0 ${spacing.medium}px 0 ${spacing.medium}px;
 `;
 
@@ -339,9 +344,4 @@ const ChainViewIcon = styled(Icon)`
   width: 24px;
   background-color: ${({ theme }) => theme.colors.basic050};
   border-radius: ${borderRadiusSizes.medium}px;
-`;
-
-const TouchableContainer = styled.TouchableOpacity`
-  align-items: center;
-  justify-content: center;
 `;

@@ -22,10 +22,10 @@ import { BigNumber as EthersBigNumber } from 'ethers';
 import type { AccountDashboardProtocols as EtherspotAccountDashboardProtocols } from 'etherspot';
 
 export type PaginationResult<T = any> = {
-  items?: T[];
-  currentPage: number;
-  nextPage: number;
-}
+  items?: T[],
+  currentPage: number,
+  nextPage: number,
+};
 
 export type PaginatedTokens = PaginationResult<TokenListToken>;
 
@@ -78,4 +78,12 @@ export type EtherspotAccountTotalBalancesItem = {
   category: EtherspotAccountDashboardProtocols,
   totalBalance: number,
   balances: EtherspotAccountTotalBalancesMetadata[],
+};
+
+export type EtherspotContractFetchItem = {
+  name: string,
+  stateMutability: string,
+  type: Function,
+  inputs?: Object[],
+  outputs?: Object[],
 };

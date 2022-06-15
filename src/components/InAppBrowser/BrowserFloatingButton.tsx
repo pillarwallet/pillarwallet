@@ -1,15 +1,14 @@
 import React, { FC } from 'react';
-import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 
 // Components
-import Icon from 'components/core/Icon';
+import Icon, { IconName } from 'components/core/Icon';
 
 // Utils
 import { spacing } from 'utils/variables';
 
 interface IBrowserFloatingButton {
-  icon?: string | null;
+  icon?: IconName | null;
   onPress?: () => void;
   disabled?: boolean;
 }
