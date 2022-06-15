@@ -795,13 +795,12 @@ export class EtherspotService {
 
       const resss: any = await sdk.buildCrossChainBridgeTransaction(data);
 
-      const { userTxType, txType, txData, txTarget, chainId, value } = data;
+      // const { userTxType, txType, txData, txTarget, chainId, value } = data;
 
-      const chain = chainFromChainId[chainId];
+      // const chain = chainFromChainId[chainId];
 
       console.log('buildCrossChainBridgeTransaction!!!!', resss);
 
-      // const transactionInfo = await buildCrossChainBridgeTransaction(data[0]);
       return data;
     } catch (e) {
       console.log('findCrossChainBridgeRoutes error', e);
