@@ -53,7 +53,7 @@ import {
   getChainTokenListName,
 } from 'utils/etherspot';
 import { addressesEqual, findAssetByAddress } from 'utils/assets';
-import { nativeAssetPerChain, chainFromChainId } from 'utils/chains';
+import { nativeAssetPerChain, mapChainToChainId } from 'utils/chains';
 import { mapToEthereumTransactions } from 'utils/transactions';
 import { getCaptureFee } from 'utils/exchange';
 
@@ -70,7 +70,7 @@ import type {
   GatewayEstimatedBatch,
   EtherspotAccountTotalBalancesItem,
 } from 'utils/types/etherspot';
-import type { AssetCore, Asset } from 'models/Asset';
+import type { AssetCore, Asset, AssetOption } from 'models/Asset';
 import type { WalletAssetBalance } from 'models/Balances';
 import type { Chain, ChainRecord } from 'models/Chain';
 import type { ExchangeOffer } from 'models/Exchange';
@@ -79,6 +79,7 @@ import type {
   TransactionPayload,
   TransactionResult,
   TransactionFeeInfo,
+  CrossChainBridgeBuildTXResponse,
 } from 'models/Transaction';
 import type { GasPrice } from 'models/GasInfo';
 import type { NftList } from 'etherspot';
@@ -778,50 +779,59 @@ export class EtherspotService {
     }
   }
 
-  async findCrossChainBridgeRoutes() {
-    const sdk = this.getSdkForChain('binance');
+  async buildCrossChainBridgeTransaction(
+    fromAsset: AssetOption,
+    toAsset: AssetOption,
+    fromValue: BigNumber,
+    activeAccount: any,
+  ) {
+    const sdk = this.getSdkForChain(fromAsset.chain);
+
+    if (!sdk) return null;
+
+    const value = EthersUtils.parseUnits(fromValue.toString(), fromAsset.decimals);
+
     try {
-      const response: any = await sdk.findCrossChainBridgeRoutes({
-        fromTokenAddress: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
-        fromChainId: 56,
-        toTokenAddress: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
-        toChainId: 10,
-        fromAmount: '100000000000000000000',
-        userAddress: '0x3e8cB4bd04d81498aB4b94a392c334F5328b237b',
+      const routes = await sdk.findCrossChainBridgeRoutes({
+        fromTokenAddress: fromAsset.address,
+        fromChainId: mapChainToChainId(fromAsset.chain),
+        toTokenAddress: toAsset.address,
+        toChainId: mapChainToChainId(toAsset.chain),
+        fromAmount: value.toString(),
+        userAddress: activeAccount.id,
         disableSwapping: false,
       });
-      const data = response[0];
-      console.log('findCrossChainBridgeRoutes!!!!', data);
 
-      const resss: any = await sdk.buildCrossChainBridgeTransaction(data);
+      logBreadcrumb('findCrossChainBridgeRoutes', 'List of cross chain bridge routes', { routes });
 
-      // const { userTxType, txType, txData, txTarget, chainId, value } = data;
+      const route = routes[0];
 
-      // const chain = chainFromChainId[chainId];
+      if (route) {
+        const transactionData: CrossChainBridgeBuildTXResponse = await this.sdk.buildCrossChainBridgeTransaction(route);
+        return { ...transactionData, chain: fromAsset?.chain, to: toAsset?.address };
+      }
 
-      console.log('buildCrossChainBridgeTransaction!!!!', resss);
-
-      return data;
+      return route;
     } catch (e) {
-      console.log('findCrossChainBridgeRoutes error', e);
-      return e;
+      logBreadcrumb('findCrossChainBridgeRoutes failed!', 'failed cross chain bridge routes', { e });
+      return null;
     }
   }
 
   async getCrossChainBridgeTokenList() {
     try {
       const list = await this.sdk.getCrossChainBridgeTokenList({
+        // eslint-disable-next-line i18next/no-literal-string
         direction: 'From',
-        fromChainId: 1,
-        toChainId: 56,
-        disableSwapping: false,
+        fromChainId: 137,
+        toChainId: 1,
+        disableSwapping: true,
       });
-
-      console.log('getCrossChainBridgeTokenList!!!!', list);
+      logBreadcrumb('getCrossChainBridgeTokenList', 'Get cross chain bridge supported list', { list });
       return list;
     } catch (e) {
-      console.log('getBridgeTokenList error', e);
-      return e;
+      logBreadcrumb('getCrossChainBridgeTokenList Failed!', 'get error in supproted list cross chain', { e });
+      return null;
     }
   }
 

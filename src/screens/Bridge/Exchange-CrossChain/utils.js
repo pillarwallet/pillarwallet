@@ -21,7 +21,7 @@
 import * as React from 'react';
 import { useQuery } from 'react-query';
 import { BigNumber } from 'bignumber.js';
-import { chain, orderBy } from 'lodash';
+import { orderBy } from 'lodash';
 
 // Selectors
 import { useRootSelector, useSupportedAssetsPerChain, useRatesPerChain, useFiatCurrency } from 'selectors';
@@ -37,6 +37,7 @@ import { logBreadcrumb } from 'utils/common';
 
 // Services
 import etherspotService from 'services/etherspot';
+import { calculateCrossChainToAssetValue } from 'services/assets';
 
 // Types
 import type { QueryResult } from 'utils/types/react-query';
@@ -79,30 +80,15 @@ export function useToAssetsCrossChain(removeChainNm: Chain): AssetOption[] {
   const supportedChains = useSupportedChains();
   const filteredSupportedList = supportedChains.filter((chainNm: Chain) => chainNm !== removeChainNm);
   const supportedAssetsPerChain = useSupportedAssetsPerChain();
-  const accountAssetsPerChain = useRootSelector(accountAssetsPerChainSelector);
   const walletBalancesPerChain = useRootSelector(accountWalletAssetsBalancesSelector);
   const ratesPerChain = useRatesPerChain();
   const currency = useFiatCurrency();
 
   return React.useMemo(() => {
-    return filteredSupportedList.flatMap((chainNm) =>
-      getExchangeFromAssetOptions(
-        chainNm,
-        supportedAssetsPerChain,
-        accountAssetsPerChain,
-        walletBalancesPerChain,
-        ratesPerChain,
-        currency,
-      ),
+    return filteredSupportedList.flatMap((chain) =>
+      getExchangeToAssetOptions(chain, supportedAssetsPerChain, walletBalancesPerChain, ratesPerChain, currency),
     );
-  }, [
-    filteredSupportedList,
-    supportedAssetsPerChain,
-    accountAssetsPerChain,
-    walletBalancesPerChain,
-    ratesPerChain,
-    currency,
-  ]);
+  }, [filteredSupportedList, supportedAssetsPerChain, walletBalancesPerChain, ratesPerChain, currency]);
 }
 
 function getExchangeFromAssetOptions(
@@ -164,7 +150,7 @@ function getExchangeToAssetOptions(
 }
 
 export function useOffersQuery(
-  chain1: Chain,
+  chain: Chain,
   fromAsset: ?AssetOption,
   toAsset: ?AssetOption,
   fromAmount: string,
@@ -173,7 +159,32 @@ export function useOffersQuery(
 
   return useQuery(
     ['ExchangeOffers', fromAsset, toAsset, fromAmount],
-    () => etherspotService.getExchangeOffers(chain1, fromAsset, toAsset, BigNumber(fromAmount)),
+    () => etherspotService.getExchangeOffers(chain, fromAsset, toAsset, BigNumber(fromAmount)),
+    { enabled, cacheTime: 0 },
+  );
+}
+
+export function useCrossChainBuildTransactionQuery(
+  fromAsset: AssetOption,
+  toAsset: AssetOption,
+  fromValue: BigNumber,
+  activeAccount: any,
+) {
+  const enabled = !!fromAsset && !!toAsset && !!fromValue;
+
+  return useQuery(
+    ['buildCrossChainBridgeTransaction', fromAsset, toAsset, fromValue, activeAccount],
+    () => etherspotService.buildCrossChainBridgeTransaction(fromAsset, toAsset, fromValue, activeAccount),
+    { enabled, cacheTime: 0 },
+  );
+}
+
+export function useToAssetValueQuery(fromAsset: AssetOption, toAsset: AssetOption, fromValue: string) {
+  const enabled = !!fromAsset && !!toAsset && !!fromValue;
+
+  return useQuery(
+    ['calculateCrossChainToAssetValue', fromAsset, toAsset, fromValue],
+    () => calculateCrossChainToAssetValue(fromValue, fromAsset, toAsset),
     { enabled, cacheTime: 0 },
   );
 }

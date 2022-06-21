@@ -71,193 +71,193 @@ import OfferCard from './OfferCard';
 import { useFromAssets, useToAssets, useOffersQuery, sortOffers } from './utils';
 
 interface Props {
-    fetchExchangeTitle: (val: string) => void;
+  fetchExchangeTitle: (val: string) => void;
 }
 
 function Exchange({ fetchExchangeTitle }: Props) {
-    const { t } = useTranslation();
-    const navigation = useNavigation();
-    const dispatch = useDispatch();
-    const activeAccount = useActiveAccount();
-    const fromInputRef: any = React.useRef();
-    const screenName = getActiveScreenName(navigation);
+  const { t } = useTranslation();
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const activeAccount = useActiveAccount();
+  const fromInputRef: any = React.useRef();
+  const screenName = getActiveScreenName(navigation);
 
-    const initialChain: Chain = navigation.getParam('chain') || CHAIN.ETHEREUM;
-    const initialFromAddress: string =
-        navigation.getParam('fromAssetAddress') || nativeAssetPerChain[initialChain]?.address;
-    const initialToAddress: string = navigation.getParam('toAssetAddress') || getPlrAddressForChain(initialChain);
+  const initialChain: Chain = navigation.getParam('chain') || CHAIN.ETHEREUM;
+  const initialFromAddress: string =
+    navigation.getParam('fromAssetAddress') || nativeAssetPerChain[initialChain]?.address;
+  const initialToAddress: string = navigation.getParam('toAssetAddress') || getPlrAddressForChain(initialChain);
 
-    const [chain, setChain] = React.useState(initialChain);
-    const [fromAddress, setFromAddress] = React.useState(initialFromAddress);
-    const [toAddress, setToAddress] = React.useState(initialToAddress);
+  const [chain, setChain] = React.useState(initialChain);
+  const [fromAddress, setFromAddress] = React.useState(initialFromAddress);
+  const [toAddress, setToAddress] = React.useState(initialToAddress);
 
-    const [fromValue, setFromValue] = React.useState(null);
-    const [debouncedFromValue] = useDebounce(fromValue, 500);
+  const [fromValue, setFromValue] = React.useState(null);
+  const [debouncedFromValue] = useDebounce(fromValue, 500);
 
-    const fromOptions = useFromAssets();
-    const toOptions = useToAssets(chain);
+  const fromOptions = useFromAssets();
+  const toOptions = useToAssets(chain);
 
-    const chainConfig = useChainConfig(chain);
+  const chainConfig = useChainConfig(chain);
 
-    const fromAsset = React.useMemo(
-        () => fromOptions.find((a) => a.chain === chain && addressesEqual(a.address, fromAddress)),
-        [fromOptions, fromAddress, chain],
-    );
+  const fromAsset = React.useMemo(
+    () => fromOptions.find((a) => a.chain === chain && addressesEqual(a.address, fromAddress)),
+    [fromOptions, fromAddress, chain],
+  );
 
-    const toAsset = React.useMemo(
-        () => toOptions.find((a) => a.chain === chain && addressesEqual(a.address, toAddress)),
-        [toOptions, toAddress, chain],
-    );
+  const toAsset = React.useMemo(
+    () => toOptions.find((a) => a.chain === chain && addressesEqual(a.address, toAddress)),
+    [toOptions, toAddress, chain],
+  );
 
-    const offersQuery = useOffersQuery(chain, fromAsset, toAsset, debouncedFromValue);
-    const offers = sortOffers(offersQuery.data);
+  const offersQuery = useOffersQuery(chain, fromAsset, toAsset, debouncedFromValue);
+  const offers = sortOffers(offersQuery.data);
 
-    React.useEffect(() => {
-        dispatch(fetchGasThresholds());
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+  React.useEffect(() => {
+    dispatch(fetchGasThresholds());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    // Focus on from amount input after user changes fromAsset
-    React.useEffect(() => {
-        let isCancelled = false;
+  // Focus on from amount input after user changes fromAsset
+  React.useEffect(() => {
+    let isCancelled = false;
 
-        setTimeout(() => {
-            if (!isCancelled) fromInputRef.current?.focus();
-        }, 650);
+    setTimeout(() => {
+      if (!isCancelled) fromInputRef.current?.focus();
+    }, 650);
 
-        return () => {
-            isCancelled = true;
-        };
-    }, [dispatch, fromAsset]);
-
-    React.useEffect(() => {
-        if (isLogV2AppEvents() && fromAsset && toAsset && activeAccount) {
-            dispatch(
-                appsFlyerlogEventAction(`exchange_pair_selected_${fromAsset?.symbol}_${toAsset?.symbol}`, {
-                    tokenPair: `${fromAsset?.symbol}_${toAsset?.symbol}`,
-                    chain: `${fromAsset?.chain}`,
-                    amount_swapped: fromValue,
-                    date: currentDate(),
-                    time: currentTime(),
-                    address: activeAccount.id,
-                    platform: Platform.OS,
-                    walletType: getAccountType(activeAccount),
-                }),
-            );
-        }
-    }, [dispatch, fromAsset, toAsset, activeAccount, fromValue]);
-
-    const handleSelectFromAsset = (asset: AssetOption) => {
-        setChain(asset.chain);
-        setFromAddress(asset.address);
-        if (chain !== asset.chain) {
-            setToAddress(null);
-        }
+    return () => {
+      isCancelled = true;
     };
+  }, [dispatch, fromAsset]);
 
-    const handleSelectToAsset = (asset: AssetOption) => {
-        setToAddress(asset.address);
-    };
+  React.useEffect(() => {
+    if (isLogV2AppEvents() && fromAsset && toAsset && activeAccount) {
+      dispatch(
+        appsFlyerlogEventAction(`exchange_pair_selected_${fromAsset?.symbol}_${toAsset?.symbol}`, {
+          tokenPair: `${fromAsset?.symbol}_${toAsset?.symbol}`,
+          chain: `${fromAsset?.chain}`,
+          amount_swapped: fromValue,
+          date: currentDate(),
+          time: currentTime(),
+          address: activeAccount.id,
+          platform: Platform.OS,
+          walletType: getAccountType(activeAccount),
+        }),
+      );
+    }
+  }, [dispatch, fromAsset, toAsset, activeAccount, fromValue]);
 
-    const handleOfferPress = async (selectedOffer: ExchangeOffer) => {
-        if (!activeAccount) {
-            // shouldn't happen
-            Toast.show({
-                message: t('toast.somethingWentWrong'),
-                emoji: 'hushed',
-                supportLink: true,
-                autoClose: false,
-            });
-            return;
-        }
+  const handleSelectFromAsset = (asset: AssetOption) => {
+    setChain(asset.chain);
+    setFromAddress(asset.address);
+    if (chain !== asset.chain) {
+      setToAddress(null);
+    }
+  };
 
-        const offer = await appendFeeCaptureTransactionIfNeeded(selectedOffer, getAccountAddress(activeAccount));
-        navigation.navigate(EXCHANGE_CONFIRM, { offer });
-    };
+  const handleSelectToAsset = (asset: AssetOption) => {
+    setToAddress(asset.address);
+  };
 
-    const allowSwap = !!toAsset && fromOptions.some((o) => o.chain === chain && addressesEqual(o.address, toAddress));
+  const handleOfferPress = async (selectedOffer: ExchangeOffer) => {
+    if (!activeAccount) {
+      // shouldn't happen
+      Toast.show({
+        message: t('toast.somethingWentWrong'),
+        emoji: 'hushed',
+        supportLink: true,
+        autoClose: false,
+      });
+      return;
+    }
 
-    const handleSwapAssets = () => {
-        if (!allowSwap) return;
+    const offer = await appendFeeCaptureTransactionIfNeeded(selectedOffer, getAccountAddress(activeAccount));
+    navigation.navigate(EXCHANGE_CONFIRM, { offer });
+  };
 
-        // Needed to update keyboard accessory view (add/remove 100% option)
-        Keyboard.dismiss();
-        setFromAddress(toAddress);
-        setToAddress(fromAddress);
-        setFromValue(null);
-    };
+  const allowSwap = !!toAsset && fromOptions.some((o) => o.chain === chain && addressesEqual(o.address, toAddress));
 
-    const toValue = maxBy(offers, (offer: any) => offer.toAmount)?.toAmount.precision(6);
-    const customTitle =
-        nativeAssetPerChain[CHAIN.ETHEREUM]?.address === fromAddress && chain === CHAIN.ETHEREUM
-            ? t('exchangeContent.title.initialExchange')
-            : t('exchangeContent.title.exchange', { chain: chainConfig.titleShort });
+  const handleSwapAssets = () => {
+    if (!allowSwap) return;
 
-    React.useEffect(() => {
-        fetchExchangeTitle && fetchExchangeTitle(customTitle);
-    }, [chain, customTitle, fetchExchangeTitle, fromAddress, toAddress]);
+    // Needed to update keyboard accessory view (add/remove 100% option)
+    Keyboard.dismiss();
+    setFromAddress(toAddress);
+    setToAddress(fromAddress);
+    setFromValue(null);
+  };
 
-    const showLoading = offersQuery.isFetching;
-    const showEmptyState = !offers?.length && !offersQuery.isIdle && !offersQuery.isFetching;
+  const toValue = maxBy(offers, (offer: any) => offer.toAmount)?.toAmount.precision(6);
+  const customTitle =
+    nativeAssetPerChain[CHAIN.ETHEREUM]?.address === fromAddress && chain === CHAIN.ETHEREUM
+      ? t('exchangeContent.title.initialExchange')
+      : t('exchangeContent.title.exchange', { chain: chainConfig.titleShort });
 
-    return (
-        <Container>
-            <Content onScroll={() => Keyboard.dismiss()}>
-                <Banner screenName={screenName} bottomPosition={false} />
-                <FromAssetSelector
-                    assets={fromOptions}
-                    selectedAsset={fromAsset}
-                    onSelectAsset={handleSelectFromAsset}
-                    value={fromValue}
-                    onValueChange={setFromValue}
-                    editable={!!fromAsset}
-                    valueInputRef={fromInputRef}
-                />
+  React.useEffect(() => {
+    fetchExchangeTitle && fetchExchangeTitle(customTitle);
+  }, [chain, customTitle, fetchExchangeTitle, fromAddress, toAddress]);
 
-                <TouchableSwapIcon onPress={handleSwapAssets} disabled={!allowSwap} hitSlop={hitSlop50w20h}>
-                    {toAsset ? <Icon name="arrow-up-down" /> : <Spacing h={24} />}
-                </TouchableSwapIcon>
+  const showLoading = offersQuery.isFetching;
+  const showEmptyState = !offers?.length && !offersQuery.isIdle && !offersQuery.isFetching;
 
-                <ToAssetSelector
-                    assets={toOptions}
-                    selectedAsset={toAsset}
-                    onSelectAsset={handleSelectToAsset}
-                    value={toValue}
-                />
+  return (
+    <Container>
+      <Content onScroll={() => Keyboard.dismiss()}>
+        <Banner screenName={screenName} bottomPosition={false} />
+        <FromAssetSelector
+          assets={fromOptions}
+          selectedAsset={fromAsset}
+          onSelectAsset={handleSelectFromAsset}
+          value={fromValue}
+          onValueChange={setFromValue}
+          editable={!!fromAsset}
+          valueInputRef={fromInputRef}
+        />
 
-                <Spacing h={40} />
+        <TouchableSwapIcon onPress={handleSwapAssets} disabled={!allowSwap} hitSlop={hitSlop50w20h}>
+          {toAsset ? <Icon name="arrow-up-down" /> : <Spacing h={24} />}
+        </TouchableSwapIcon>
 
-                <Banner screenName={screenName} bottomPosition />
+        <ToAssetSelector
+          assets={toOptions}
+          selectedAsset={toAsset}
+          onSelectAsset={handleSelectToAsset}
+          value={toValue}
+        />
 
-                {showLoading && (
-                    <EmptyStateWrapper>
-                        <Spinner />
-                    </EmptyStateWrapper>
-                )}
+        <Spacing h={40} />
 
-                {!showLoading &&
-                    offers?.map((offer) => (
-                        <OfferCard
-                            key={offer.provider}
-                            offer={offer}
-                            disabled={false}
-                            isLoading={false}
-                            onPress={() => handleOfferPress(offer)}
-                        />
-                    ))}
+        <Banner screenName={screenName} bottomPosition />
 
-                {showEmptyState && (
-                    <EmptyStateWrapper>
-                        <EmptyStateParagraph
-                            title={t('exchangeContent.emptyState.offers.title')}
-                            bodyText={t('exchangeContent.emptyState.offers.paragraph')}
-                            large
-                        />
-                    </EmptyStateWrapper>
-                )}
-            </Content>
-        </Container>
-    );
+        {showLoading && (
+          <EmptyStateWrapper>
+            <Spinner />
+          </EmptyStateWrapper>
+        )}
+
+        {!showLoading &&
+          offers?.map((offer) => (
+            <OfferCard
+              key={offer.provider}
+              offer={offer}
+              disabled={false}
+              isLoading={false}
+              onPress={() => handleOfferPress(offer)}
+            />
+          ))}
+
+        {showEmptyState && (
+          <EmptyStateWrapper>
+            <EmptyStateParagraph
+              title={t('exchangeContent.emptyState.offers.title')}
+              bodyText={t('exchangeContent.emptyState.offers.paragraph')}
+              large
+            />
+          </EmptyStateWrapper>
+        )}
+      </Content>
+    </Container>
+  );
 }
 
 export default Exchange;

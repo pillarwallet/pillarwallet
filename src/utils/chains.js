@@ -49,7 +49,7 @@ export const chainFromChainId: { [number]: Chain } = {
  */
 export function mapChainToChainId(chain: Chain): number {
   if (chain === CHAIN.ETHEREUM) return isProdEnv() ? CHAIN_ID.ETHEREUM_MAINNET : CHAIN_ID.ETHEREUM_KOVAN;
-  if (chain === CHAIN.POLYGON) return CHAIN_ID.POLYGON;
+  if (chain === CHAIN.POLYGON) return isProdEnv() ? CHAIN_ID.POLYGON : CHAIN_ID.MUMBAI;
   if (chain === CHAIN.BINANCE) return CHAIN_ID.BINANCE;
   if (chain === CHAIN.XDAI) return CHAIN_ID.XDAI;
   if (chain === CHAIN.AVALANCHE) return isProdEnv() ? CHAIN_ID.AVALANCHE : CHAIN_ID.FUJI;

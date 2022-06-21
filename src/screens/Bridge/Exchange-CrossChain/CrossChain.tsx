@@ -16,57 +16,61 @@
 */
 
 import * as React from 'react';
-import { Keyboard, Platform } from 'react-native';
+import { Keyboard } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
 import { useDebounce } from 'use-debounce';
-import { maxBy } from 'lodash';
 import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
-
-// Actions
-import { fetchGasThresholds } from 'redux/actions/gas-threshold-actions';
-
-// Configs
-import { getPlrAddressForChain } from 'configs/assetsConfig';
+import BigNumber from 'bignumber.js';
 
 // Components
 import { Container, Content, Spacing } from 'components/layout/Layout';
 import Icon from 'components/core/Icon';
 import Spinner from 'components/Spinner';
-import Toast from 'components/Toast';
 import Banner from 'components/Banner/Banner';
+import SwipeButton from 'components/SwipeButton/SwipeButton';
+import SendHighGasModal from 'components/HighGasFeeModals/SendHighGasModal';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
-import { EXCHANGE_CONFIRM } from 'constants/navigationConstants';
+import { NI_TRANSACTION_COMPLETED } from 'constants/navigationConstants';
 
 // Utils
 import { useChainConfig } from 'utils/uiConfig';
-import { isLogV2AppEvents } from 'utils/environment';
 import { nativeAssetPerChain } from 'utils/chains';
 import { addressesEqual } from 'utils/assets';
-import { appendFeeCaptureTransactionIfNeeded } from 'utils/exchange';
-import { getAccountAddress, getAccountType } from 'utils/accounts';
-import { hitSlop50w20h } from 'utils/common';
-import { currentDate, currentTime } from 'utils/date';
 import { getActiveScreenName } from 'utils/navigation';
-
-// Actions
-import { appsFlyerlogEventAction } from 'actions/analyticsActions';
+import { getCurrencySymbol } from 'utils/common';
+import { getTxFeeInFiat } from 'utils/transactions';
+import { isHighGasFee } from 'utils/transactions';
 
 // Types
 import type { AssetOption } from 'models/Asset';
-import type { ExchangeOffer } from 'models/Exchange';
 import type { Chain } from 'models/Chain';
 
 // Selectors
-import { useActiveAccount } from 'selectors';
+import { useActiveAccount, useChainRates, useFiatCurrency, useRootSelector } from 'selectors';
+import { gasThresholdsSelector } from 'redux/selectors/gas-threshold-selector';
 
 // Local
 import FromAssetSelector from './FromAssetSelector';
 import ToAssetSelector from './ToAssetSelector';
-import { useFromAssets, useToAssetsCrossChain, useOffersQuery, sortOffers } from './utils';
+import {
+  useFromAssets,
+  useToAssetsCrossChain,
+  useCrossChainBuildTransactionQuery,
+  useToAssetValueQuery,
+} from './utils';
+
+// services
+import etherspotService from 'services/etherspot';
+import { calculateCrossChainToAssetValue } from 'services/assets';
+import { catchError } from 'services/nativeIntegration';
+// Actions
+import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
+import { fontSizes } from 'utils/variables';
 
 interface Props {
   fetchCrossChainTitle: (val: string) => void;
@@ -79,25 +83,33 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const activeAccount = useActiveAccount();
   const fromInputRef: any = React.useRef();
   const screenName = getActiveScreenName(navigation);
-
+  const fiatCurrency = useFiatCurrency();
+  const currencySymbol = getCurrencySymbol(fiatCurrency);
+  const feeInfo = useRootSelector((root) => root.transactionEstimate.feeInfo);
+  const isEstimating = useRootSelector((root) => root.transactionEstimate.isEstimating);
+  const gasThresholds = useRootSelector(gasThresholdsSelector);
   const initialChain: Chain = navigation.getParam('chain') || CHAIN.ETHEREUM;
   const initialFromAddress: string =
     navigation.getParam('fromAssetAddress') || nativeAssetPerChain[initialChain]?.address;
-  const initialToAddress: string = navigation.getParam('toAssetAddress') || getPlrAddressForChain(initialChain);
 
   const [chain, setChain] = React.useState(initialChain);
   const [toAddressChain, setToAddressChain] = React.useState(null);
   const [fromAddress, setFromAddress] = React.useState(initialFromAddress);
-  const [toAddress, setToAddress] = React.useState(initialToAddress);
-
+  const [toAddress, setToAddress] = React.useState(null);
   const [fromValue, setFromValue] = React.useState(null);
-  const [debouncedFromValue] = useDebounce(fromValue, 500);
+  const [toValue, setToValue] = React.useState(null);
 
   const fromOptions = useFromAssets();
   const toOptions = useToAssetsCrossChain(chain);
-
   const chainConfig = useChainConfig(chain);
   const toChainConfig = useChainConfig(toAddressChain || CHAIN.ETHEREUM);
+  const chainRates = useChainRates(chain);
+  const feeInFiat = getTxFeeInFiat(chain, feeInfo?.fee, feeInfo?.gasToken, chainRates, fiatCurrency);
+  const feeInFiatDisplayValue = `${currencySymbol}${feeInFiat.toFixed(5)}`;
+
+  React.useEffect(() => {
+    dispatch(resetEstimateTransactionAction());
+  }, []);
 
   const fromAsset = React.useMemo(
     () => fromOptions.find((a) => a.chain === chain && addressesEqual(a.address, fromAddress)),
@@ -105,12 +117,37 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   );
 
   const toAsset = React.useMemo(
-    () => toOptions.find((a) => a.chain === chain && addressesEqual(a.address, toAddress)),
+    () => toOptions.find((a) => a.chain !== chain && addressesEqual(a.address, toAddress)),
     [toOptions, toAddress, chain],
   );
 
-  const offersQuery = useOffersQuery(chain, fromAsset, toAsset, debouncedFromValue);
-  const offers = sortOffers(offersQuery.data);
+  const customCrosschainTitle = !fromAsset
+    ? t('exchangeContent.title.crossChain')
+    : chainConfig.titleShort + ' → ' + (toAddressChain ? toChainConfig.titleShort : '');
+
+  React.useEffect(() => {
+    fetchCrossChainTitle && fetchCrossChainTitle(customCrosschainTitle);
+  }, [chain, customCrosschainTitle, fetchCrossChainTitle, fromAddress, toAddress]);
+
+  const buildTractionQuery = useCrossChainBuildTransactionQuery(fromAsset, toAsset, fromValue, activeAccount);
+  const buildTransactionData = buildTractionQuery.data;
+  const buildTransactionFetched = buildTractionQuery.isFetched;
+  const toAssetValueQuery = useToAssetValueQuery(fromAsset, toAsset, fromValue);
+  const toAssetValue = toAssetValueQuery.data;
+
+  React.useEffect(() => {
+    toAssetValue && setToValue(toAssetValue);
+  }, [toAssetValue]);
+
+  React.useEffect(() => {
+    buildTransactionData && estimateTransactionFee(buildTransactionData);
+  }, [buildTransactionData]);
+
+  async function estimateTransactionFee(data) {
+    const { value, txData, to } = data;
+    const hexValue = new BigNumber(value);
+    await dispatch(estimateTransactionAction({ value: hexValue?.toString(), data: txData, to }, chain));
+  }
 
   // Focus on from amount input after user changes fromAsset
   React.useEffect(() => {
@@ -125,58 +162,37 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
     };
   }, [dispatch, fromAsset]);
 
-  React.useEffect(() => {
-    if (isLogV2AppEvents() && fromAsset && toAsset && activeAccount) {
-      dispatch(
-        appsFlyerlogEventAction(`exchange_pair_selected_${fromAsset?.symbol}_${toAsset?.symbol}`, {
-          tokenPair: `${fromAsset?.symbol}_${toAsset?.symbol}`,
-          chain: `${fromAsset?.chain}`,
-          amount_swapped: fromValue,
-          date: currentDate(),
-          time: currentTime(),
-          address: activeAccount.id,
-          platform: Platform.OS,
-          walletType: getAccountType(activeAccount),
-        }),
-      );
-    }
-  }, [dispatch, fromAsset, toAsset, activeAccount, fromValue]);
-
   const handleSelectFromAsset = (asset: AssetOption) => {
     setChain(asset.chain);
     setFromAddress(asset.address);
+    setToValue(null);
     if (chain !== asset.chain) {
       setToAddress(null);
+      setToAddressChain(null);
     }
   };
 
   const handleSelectToAsset = (asset: AssetOption) => {
     setToAddress(asset.address);
+    setToAddressChain(asset.chain);
+    setToValue(null);
   };
 
-  const allowSwap = !!toAsset && fromOptions.some((o) => o.chain === chain && addressesEqual(o.address, toAddress));
+  async function onSubmit() {
+    const { value, txData, to } = buildTransactionData;
+    const hexValue = new BigNumber(value);
+    const res = await etherspotService
+      .setTransactionsBatchAndSend([{ to, value: hexValue.toString(), data: txData }], chain)
+      .catch(() => catchError('Transaction Failed!', null));
+    if (res) navigation.navigate(NI_TRANSACTION_COMPLETED, { transactionInfo: { chain: chain, ...res } });
+  }
 
-  const handleSwapAssets = () => {
-    if (!allowSwap) return;
+  const showLoading = buildTractionQuery.isLoading;
+  const highFee = isHighGasFee(chain, feeInfo?.fee, feeInfo?.gasToken, chainRates, fiatCurrency, gasThresholds);
 
-    // Needed to update keyboard accessory view (add/remove 100% option)
-    Keyboard.dismiss();
-    setFromAddress(toAddress);
-    setToAddress(fromAddress);
-    setFromValue(null);
-  };
-
-  const toValue = maxBy(offers, (offer: any) => offer.toAmount)?.toAmount.precision(6);
-  const customCrosschainTitle =
-    chain === CHAIN.ETHEREUM
-      ? t('exchangeContent.title.crossChain')
-      : chainConfig.titleShort + ' → ' + (toAddressChain ? toChainConfig.titleShort : '');
-  React.useEffect(() => {
-    fetchCrossChainTitle && fetchCrossChainTitle(customCrosschainTitle);
-  }, [chain, customCrosschainTitle, fetchCrossChainTitle, fromAddress, toAddress]);
-
-  const showLoading = offersQuery.isFetching;
-  const showEmptyState = !offers?.length && !offersQuery.isIdle && !offersQuery.isFetching;
+  const highGasFeeModal = highFee ? (
+    <SendHighGasModal value={fromValue} contact={fromAddress} chain={chain} txFeeInfo={feeInfo} />
+  ) : null;
 
   return (
     <Container>
@@ -192,9 +208,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
           valueInputRef={fromInputRef}
         />
 
-        <TouchableSwapIcon onPress={handleSwapAssets} disabled={!allowSwap} hitSlop={hitSlop50w20h}>
-          {toAsset ? <Icon name="arrow-down" /> : <Spacing h={24} />}
-        </TouchableSwapIcon>
+        <IconWrapper>{toAsset ? <Icon name="arrow-down" /> : <Spacing h={24} />}</IconWrapper>
 
         <ToAssetSelector
           assets={toOptions}
@@ -207,12 +221,26 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
 
         <Banner screenName={screenName} bottomPosition />
 
-        {showLoading && (
+        {(isEstimating || showLoading) && (
           <EmptyStateWrapper>
             <Spinner />
           </EmptyStateWrapper>
         )}
-
+        {feeInfo?.fee && (
+          <FooterContent>
+            <FeeText>{t('Fee') + ' ' + feeInFiatDisplayValue}</FeeText>
+            <SwipeButton confirmTitle={t('button.swipeSend')} onPress={onSubmit} />
+          </FooterContent>
+        )}
+        {!buildTransactionData && buildTransactionFetched && (
+          <EmptyStateWrapper>
+            <EmptyStateParagraph
+              title={t('exchangeContent.emptyState.routes.title')}
+              bodyText={t('exchangeContent.emptyState.routes.paragraph')}
+              large
+            />
+          </EmptyStateWrapper>
+        )}
       </Content>
     </Container>
   );
@@ -220,7 +248,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
 
 export default CrossChain;
 
-const TouchableSwapIcon = styled.TouchableOpacity`
+const IconWrapper = styled.View`
   margin: 8px 0 8px;
   align-self: center;
 `;
@@ -229,4 +257,13 @@ const EmptyStateWrapper = styled.View`
   justify-content: center;
   align-items: center;
   margin-top: 40px;
+`;
+
+const FooterContent = styled.View``;
+
+const FeeText = styled.Text`
+  text-align: center;
+  color: ${({ theme }) => theme.colors.hazardIconColor};
+  font-size: ${fontSizes.regular}px;
+  margin: 20px;
 `;
