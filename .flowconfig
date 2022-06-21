@@ -5,6 +5,7 @@
 <PROJECT_ROOT>/node_modules/.findup-2XwtwOIH/test/fixture/f/e/d/c/b/a/top.json
 <PROJECT_ROOT>/node_modules/.findup-2XwtwOIH/test/fixture/f/e/d/c/config.json
 <PROJECT_ROOT>/node_modules/.react-native-vector-icons-pKlfVeht/.*
+<PROJECT_ROOT>/node_modules/.react-native-vector-icons-pKlfVeht/MaterialCommunityIcons.js.flow
 ; We fork some components by platform
 .*/*[.]android.js
 
