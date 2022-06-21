@@ -110,6 +110,11 @@ import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
 import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
 import WalletConnectBrowser from 'screens/WalletConnect/WalletConnectBrowser';
 import RegisterENSScreen from 'screens/RegisterENS';
+import NIServices from 'screens/NativeIntegration/NIServices';
+import NIInputService from 'screens/NativeIntegration/NIInputService';
+import NIViewService from 'screens/NativeIntegration/NIViewService';
+import NITransactionSubmitted from 'screens/NativeIntegration/NITransactionSubmitted';
+import NIWarningScreen from 'screens/NativeIntegration/NIWarning';
 
 // components
 import Toast from 'components/Toast';
@@ -236,6 +241,12 @@ import {
   PIN_CODE_CONFIRMATION,
   IMPORT_FLOW_FROM_SETTINGS,
   REGISTER_ENS,
+  NI_SERVICES,
+  NI_VIEW_SERVICE,
+  NI_INPUT_SERVICE,
+  NI_WARNING,
+  NATIVE_INTEGRATION_FLOW,
+  NI_TRANSACTION_COMPLETED,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -328,6 +339,18 @@ const walletConnectFlow = createStackNavigator(
     [WALLETCONNECT]: WalletConnectHomeScreen,
     [WALLETCONNECT_CONNECTED_APPS]: WalletConnectConnectedAppsScreen,
     [WALLETCONNECT_BROWSER]: WalletConnectBrowser,
+  },
+  StackNavigatorConfig,
+);
+
+// NATIVE INTEGRATION FLOW
+const nativeIntegrationFlow = createStackNavigator(
+  {
+    [NI_WARNING]: NIWarningScreen,
+    [NI_SERVICES]: NIServices,
+    [NI_INPUT_SERVICE]: NIInputService,
+    [NI_VIEW_SERVICE]: NIViewService,
+    [NI_TRANSACTION_COMPLETED]: NITransactionSubmitted,
   },
   StackNavigatorConfig,
 );
@@ -589,6 +612,7 @@ const AppFlowNavigation = createStackNavigator(
     [WEB_VIEW]: WebViewScreen,
     [LEGAL_SCREEN]: LegalScreen,
     [IMPORT_FLOW_FROM_SETTINGS]: ImportFlowFromSettings,
+    [NATIVE_INTEGRATION_FLOW]: nativeIntegrationFlow,
   },
   modalTransition,
 );

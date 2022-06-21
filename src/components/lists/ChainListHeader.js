@@ -28,9 +28,7 @@ import Text from 'components/core/Text';
 import Icon from 'components/core/Icon';
 
 // Selectors
-import {
-  useActiveAccount,
-} from 'selectors';
+import { useActiveAccount } from 'selectors';
 
 // Hooks
 import { useDeploymentStatus } from 'hooks/deploymentStatus';
@@ -39,6 +37,7 @@ import { useDeploymentStatus } from 'hooks/deploymentStatus';
 import { fontStyles, spacing } from 'utils/variables';
 import { useChainConfig } from 'utils/uiConfig';
 import { isKeyBasedAccount } from 'utils/accounts';
+import { isLightTheme } from 'utils/themes';
 
 // Types
 import { type Chain } from 'models/Chain';
@@ -64,7 +63,7 @@ function ChainListHeader({ chain, onPress, isExpanded }: Props) {
       </TouchableOpacity>
       {!isDeployed && (
         <TouchableOpacity onPress={() => showDeploymentInterjection(chain)}>
-          <WalletNotDeployed name="alert" />
+          <WalletNotDeployed name={isLightTheme() ? 'deploy-light' : 'deploy'} />
         </TouchableOpacity>
       )}
       {isDeployed && (

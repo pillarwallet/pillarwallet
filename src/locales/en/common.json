@@ -134,6 +134,7 @@
     "added": "Added",
     "adding": "Adding",
     "all": "All",
+    "allNetwork":"All networks",
     "backedUp": "Backup secured",
     "canceled": "Canceled",
     "collectibleFromUser": "NFT from {{username}}",
@@ -188,6 +189,7 @@
     "swapping": "Swapping",
     "transactionDeploymentWarning": "Don't proceed if you don't want to deploy {{chain}} Smart Wallet.",
     "transactionFee": "Transaction fee",
+    "smartWalletDeploy":"Smart wallet deployment",
     "today": "Today",
     "toKeyWallet": "to Key wallet",
     "toPPN": "to Pillar Network",
@@ -276,7 +278,8 @@
     "filterByName": "Filter by name",
     "username": "username",
     "assetMigrate": "Migrate assets to Etherspot",
-    "ensMigrate": "Migrate ENS to Etherspot"
+    "ensMigrate": "Migrate ENS to Etherspot",
+    "transaction_submitted":"Transaction submitted"
   },
 
   "button": {
@@ -327,12 +330,14 @@
     "settleMore": "Settle more",
     "settleTransactions": "Settle transactions",
     "shareAddress": "Share",
+    "share":"Share",
     "smartWalletFAQ": "Smart Wallet FAQ",
     "subscribe": "Subscribe",
     "support": "Support",
     "swap": "Swap",
     "swipeConfirm": "Swipe to confirm",
     "swipeSend": "Swipe to send",
+    "swipeTo": "Swipe to",
     "topUp": "Top up",
     "topUpMore": "Top up more",
     "topUpPLRTank": "Top up PLR Tank",
@@ -391,7 +396,9 @@
     "copyToClipboard": "Copy to clipboard",
     "savedPhrase": "I have saved my 12 words",
     "savedPrivateKey": "I have saved my private key",
-    "openInBrowser": "Open in browser"
+    "openInBrowser": "Open in browser",
+    "ok": "OK",
+    "i_understood": "I understand"
   },
 
   "paragraph": {
@@ -409,7 +416,9 @@
     "privateKeyRevealedPurpose": "Please use this private key in order to restore the wallet.",
     "doNotShareBackup": "Keep it secure as it's the only way to recover your account in an emergency. Don't email or screenshot it.",
     "sessionExpiredReEnterPin": "Login session expired, please enter your PIN to proceed.",
-    "addContacts": "Add contacts to address book to easily access favorite addresses for sending assets."
+    "addContacts": "Add contacts to address book to easily access favorite addresses for sending assets.",
+    "nativeIntegrationWarning":"The following tool gives you direct access to Smart Contracts. This is considered a professional tool and if you don't know what you're doing, please don't attempt to use this tool as it could result in loss of funds.",
+    "ownRisk": "Continue at your own risk."
   },
 
   "insight": {
@@ -585,13 +594,19 @@
     },
     "assets": {
       "contacts": "Contacts",
-      "services": "Services"
+      "services": "Services",
+      "show_balance": "Show Balances"
     },
     "actions": {
       "receive": "Receive",
       "send": "Send",
       "swap": "Swap",
-      "connect": "Connect"
+      "connect": "Connect",
+      "invest": "Invest"
+    },
+    "apps": {
+      "title": "Apps",
+      "new":"NEW"
     }
   },
 
@@ -683,7 +698,7 @@
   "walletConnect": {
     "home": {
       "title": "WalletConnect",
-      "switch-title": "Switch Network",
+      "switch-title": "Switch network",
       "headerStories": "New and Noteworthy",
       "deployOnChainFormat": "Deploy this wallet to take full advantage of using {{chain}}.",
       "toast": {
@@ -1164,7 +1179,6 @@
       "collectiblesToTransfer": "NFTs to transfer",
       "data": "Data",
       "message": "Message",
-      "network": "Network",
       "address": "Address",
       "ethFee": "Max. Ethereum fee",
       "maximumFee": "Maximum fee",
@@ -1190,7 +1204,8 @@
     },
     "highGasFee": {
       "warningLabel": "Network fees are currently high. \nPillar is free and does not charge any extra fees.",
-      "pillarEthFeeDisclaimer": "Pillar does not charge any fees.\nFee displayed is the current Ethereum network fee."
+      "pillarEthFeeDisclaimer": "Pillar does not charge any fees.\nFee displayed is the current Ethereum network fee.",
+      "deployLabel": "This is your first transaction on this network. It will automatically deploy your smart wallet. Deployment cost will be added to regular transaction fee."
     }
   },
 

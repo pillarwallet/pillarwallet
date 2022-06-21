@@ -55,6 +55,7 @@ type Props = {|
   showChainIcon?: boolean,
   style?: ViewStyleProp,
   tokenInputRef?: React.Ref<typeof TextInput>,
+  hideFiatValueInput?: boolean,
 |};
 
 /**
@@ -72,6 +73,7 @@ const TokenFiatValueInputs = ({
   showChainIcon,
   style,
   tokenInputRef,
+  hideFiatValueInput = false,
 }: Props) => {
   const rates = useChainRates(chain);
   const currency = useFiatCurrency();
@@ -128,9 +130,12 @@ const TokenFiatValueInputs = ({
         disableUseMax={disableMaxValue}
       />
 
-      <Spacing h={36} />
-
-      <FiatValueInput value={resultFiatValue} onValueChange={handleFiatValueChange} editable={editableFiatValue} />
+      {!hideFiatValueInput && (
+        <Container>
+          <Spacing h={36} />
+          <FiatValueInput value={resultFiatValue} onValueChange={handleFiatValueChange} editable={editableFiatValue} />
+        </Container>
+      )}
     </Container>
   );
 };
@@ -147,12 +152,7 @@ function calculateFiatValue(
   return wrapBigNumberOrNil(fiatValue)?.decimalPlaces(2, BigNumber.ROUND_HALF_EVEN);
 }
 
-function calculateTokenValue(
-  fiatValue: ?BigNumber,
-  asset: ?Asset,
-  rates: RatesByAssetAddress,
-  currency: Currency,
-) {
+function calculateTokenValue(fiatValue: ?BigNumber, asset: ?Asset, rates: RatesByAssetAddress, currency: Currency) {
   const tokenValue = getAssetValueFromFiat(fiatValue, asset?.address, rates, currency);
   if (!tokenValue) return null;
 

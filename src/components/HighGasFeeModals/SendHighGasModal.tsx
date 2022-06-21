@@ -1,13 +1,17 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import Text from 'components/core/Text';
 import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
+import { useDispatch } from 'react-redux';
 
 // Components
 import SlideModal from 'components/Modals/SlideModal';
 import Icon from 'components/core/Icon';
 import { Spacing } from 'components/legacy/Layout';
+
+// Actions
+import { fetchGasInfoAction } from 'actions/historyActions';
 
 // Utils
 import { spacing, fontSizes } from 'utils/variables';
@@ -15,13 +19,14 @@ import { useThemeColors } from 'utils/themes';
 import { getCurrencySymbol, truncateAddress } from 'utils/common';
 import { nativeAssetPerChain } from 'utils/chains';
 import { getTxFeeInFiat } from 'utils/transactions';
+import { calculateDeploymentFee } from 'utils/deploymentCost';
 
 // Types
 import { Contact } from 'models/Contact';
 import type { TransactionFeeInfo } from 'models/Transaction';
 
 // Selectors
-import { useFiatCurrency, useChainRates } from 'selectors';
+import { useFiatCurrency, useChainRates, useChainGasInfo } from 'selectors';
 
 // Local
 import TxListItem from './TxListItem';
@@ -39,13 +44,24 @@ interface ISendHighGasModal {
 const SendHighGasModal: FC<ISendHighGasModal> = (props) => {
   const colors = useThemeColors();
   const { t } = useTranslation();
+  const dispatch = useDispatch();
 
   let { value, contact, chain, txFeeInfo } = props;
 
   const chainRates = useChainRates(chain);
+  const gasInfo = useChainGasInfo(chain);
   const chainInfo = nativeAssetPerChain[chain];
   const fiatCurrency = useFiatCurrency();
   const currencySymbol = getCurrencySymbol(fiatCurrency);
+
+  useEffect(() => {
+    dispatch(fetchGasInfoAction(chain));
+  }, [chain, dispatch]);
+
+  const deploymentFee = React.useMemo(() => {
+    if (!gasInfo?.gasPrice?.fast) return null;
+    return calculateDeploymentFee(chain, chainRates, fiatCurrency, gasInfo);
+  }, [gasInfo, chainRates, chain, fiatCurrency]);
 
   const styles = StyleSheet.create({
     text: {
@@ -102,6 +118,13 @@ const SendHighGasModal: FC<ISendHighGasModal> = (props) => {
     return <Text style={[styles.text, { color: colors.negative }]}>{labelValue}</Text>;
   };
 
+  const DeployFee: FC = () => {
+    const labelValue = deploymentFee?.fiatValue;
+    if (!labelValue) return null;
+
+    return <Text style={[styles.text]}>{labelValue}</Text>;
+  };
+
   return (
     <SlideModal noPadding hideHeader>
       <ModalContainer>
@@ -114,6 +137,15 @@ const SendHighGasModal: FC<ISendHighGasModal> = (props) => {
           text={t('transactions.highGasFee.warningLabel')}
           icon={'small-warning'}
           backgroundColor={colors.negative}
+          right={10}
+        />
+
+        <TxListItem title={t('label.smartWalletDeploy')} component={<DeployFee />} />
+        <WarningBlock
+          text={t('transactions.highGasFee.deployLabel')}
+          textColor={colors.neutral}
+          icon={'exclamation-round-light'}
+          backgroundColor={colors.swiperButtonThumb}
           right={10}
         />
       </ModalContainer>

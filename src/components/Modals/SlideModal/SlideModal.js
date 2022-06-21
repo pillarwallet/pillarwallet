@@ -21,6 +21,7 @@
 import * as React from 'react';
 import type { Node as ReactNode } from 'react';
 import styled, { withTheme } from 'styled-components/native';
+import { Dimensions } from 'react-native';
 import type { LayoutEvent } from 'react-native/Libraries/Types/CoreEventTypes';
 import isEmpty from 'lodash.isempty';
 import pick from 'lodash.pick';
@@ -171,6 +172,7 @@ class SlideModal extends React.Component<Props, State> {
     const customTheme = getTheme(this.props);
     const colors = getThemeColors(theme);
     const backgroundColor = bgColor || colors.basic070;
+    const { height } = Dimensions.get('window');
 
     const showModalHeader = ((!fullScreen || showHeader) && !hideHeader) || !isEmpty(headerProps);
     let leftItems = [];
@@ -189,8 +191,10 @@ class SlideModal extends React.Component<Props, State> {
 
     if (closeFlag) this.handleDismiss();
 
-    const modalInner = (
-      <React.Fragment>
+    const handleBar = showModalHeader && !fullScreen && <HandleBar />;
+
+    const header = (
+      <>
         {!!showModalHeader && (
           // $FlowFixMe: flow update to 0.122
           <HeaderBlock
@@ -209,7 +213,13 @@ class SlideModal extends React.Component<Props, State> {
         )}
 
         {!showModalHeader && !fullScreen && <HandleBar />}
+      </>
+    );
 
+    const modalInner = (
+      <React.Fragment>
+        {handleBar}
+        {header}
         <ModalContent fullScreen={fullScreen} showHeader={showHeader} fillHeight={fillHeight}>
           {children}
         </ModalContent>
@@ -228,14 +238,24 @@ class SlideModal extends React.Component<Props, State> {
 
       if (eventDetail) {
         return (
-          <ModalBackground onLayout={this.onModalBoxLayout} customTheme={customTheme} sideMargins={sideMargins}>
+          <ModalBackground
+            disabled
+            onLayout={this.onModalBoxLayout}
+            customTheme={customTheme}
+            sideMargins={sideMargins}
+          >
             {children}
           </ModalBackground>
         );
       }
 
       return (
-        <ModalBackground onLayout={this.onModalBoxLayout} customTheme={customTheme} sideMargins={sideMargins}>
+        <ModalBackground
+          activeOpacity={1}
+          onLayout={this.onModalBoxLayout}
+          customTheme={customTheme}
+          sideMargins={sideMargins}
+        >
           {modalInner}
         </ModalBackground>
       );
@@ -256,6 +276,8 @@ class SlideModal extends React.Component<Props, State> {
     );
     /* eslint-enable i18next/no-literal-string */
 
+    const onClose = () => Modal.closeAll();
+
     return (
       <Modal
         ref={this._modalRef}
@@ -274,23 +296,12 @@ class SlideModal extends React.Component<Props, State> {
         {...fwdProps}
       >
         <ContentWrapper fullScreen={fullScreen} bgColor={backgroundColor} noTopPadding={noTopPadding}>
-          {!fullScreen && (
-            <Backdrop>
-              <FillSpacer />
-            </Backdrop>
-          )}
-          {!!centerFloatingItem && (
-            <Wrapper
-              style={{
-                elevation: 2,
-                zIndex: 11,
-                marginTop: -1 * this.state.contentHeight,
-                marginBottom: 0,
-              }}
-            >
-              {centerFloatingItem}
-            </Wrapper>
-          )}
+          <TouchableBackground activeOpacity={1} onPress={onClose} />
+
+          <Wrapper style={[wrapperStyle, { top: height - this.state.contentHeight }]}>
+            {!!centerFloatingItem && centerFloatingItem}
+          </Wrapper>
+
           {modalContent()}
         </ContentWrapper>
       </Modal>
@@ -310,6 +321,14 @@ const getModalContentPadding = (showHeader: boolean) => {
   return `${spacing.rhythm}px 0 0`;
 };
 
+const wrapperStyle = {
+  position: 'absolute',
+  alignSelf: 'center',
+  zIndex: 11,
+  width: '100%',
+  height: 70,
+};
+
 const ContentWrapper = styled.View`
   width: 100%;
   height: 100%;
@@ -317,17 +336,12 @@ const ContentWrapper = styled.View`
   ${(props) => (props.bgColor && props.fullScreen ? `background-color: ${props.bgColor};` : '')}
 `;
 
-const FillSpacer = styled.View`
-  width: 100%;
-  height: 100%;
+const TouchableBackground = styled.TouchableOpacity`
+  flex: 1;
+  z-index: 10;
 `;
 
-const Backdrop = styled.View`
-  width: 100%;
-  height: 100%;
-`;
-
-const ModalBackground = styled.View`
+const ModalBackground = styled.TouchableOpacity`
   border-top-left-radius: ${(props) => props.customTheme.borderRadius};
   border-top-right-radius: ${(props) => props.customTheme.borderRadius};
   overflow: hidden;

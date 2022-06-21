@@ -1,7 +1,7 @@
 PODS:
-  - AppsFlyerFramework (6.5.2):
-    - AppsFlyerFramework/Main (= 6.5.2)
-  - AppsFlyerFramework/Main (6.5.2)
+  - AppsFlyerFramework (6.6.1):
+    - AppsFlyerFramework/Main (= 6.6.1)
+  - AppsFlyerFramework/Main (6.6.1)
   - boost-for-react-native (1.63.0)
   - BVLinearGradient (2.5.4):
     - React
@@ -37,7 +37,7 @@ PODS:
   - Firebase/RemoteConfig (8.10.0):
     - Firebase/CoreOnly
     - FirebaseRemoteConfig (~> 8.10.0)
-  - FirebaseABTesting (8.13.0):
+  - FirebaseABTesting (8.15.0):
     - FirebaseCore (~> 8.0)
   - FirebaseAnalytics (8.10.0):
     - FirebaseAnalytics/AdIdSupport (= 8.10.0)
@@ -66,7 +66,7 @@ PODS:
     - FirebaseCoreDiagnostics (~> 8.0)
     - GoogleUtilities/Environment (~> 7.6)
     - GoogleUtilities/Logger (~> 7.6)
-  - FirebaseCoreDiagnostics (8.13.0):
+  - FirebaseCoreDiagnostics (8.15.0):
     - GoogleDataTransport (~> 9.1)
     - GoogleUtilities/Environment (~> 7.7)
     - GoogleUtilities/Logger (~> 7.7)
@@ -78,7 +78,7 @@ PODS:
     - GoogleUtilities/Environment (~> 7.6)
     - nanopb (~> 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
-  - FirebaseInstallations (8.13.0):
+  - FirebaseInstallations (8.15.0):
     - FirebaseCore (~> 8.0)
     - GoogleUtilities/Environment (~> 7.7)
     - GoogleUtilities/UserDefaults (~> 7.7)
@@ -137,9 +137,9 @@ PODS:
     - GoogleUtilities/Network (~> 7.6)
     - "GoogleUtilities/NSData+zlib (~> 7.6)"
     - nanopb (~> 2.30908.0)
-  - GoogleDataTransport (9.1.2):
-    - GoogleUtilities/Environment (~> 7.2)
-    - nanopb (~> 2.30908.0)
+  - GoogleDataTransport (9.1.4):
+    - GoogleUtilities/Environment (~> 7.7)
+    - nanopb (< 2.30910.0, >= 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
   - GoogleUtilities/AppDelegateSwizzler (7.7.0):
     - GoogleUtilities/Environment
@@ -161,7 +161,7 @@ PODS:
     - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (7.7.0):
     - GoogleUtilities/Logger
-  - GTMSessionFetcher/Core (1.7.0)
+  - GTMSessionFetcher/Core (1.7.2)
   - libwebp (1.2.1):
     - libwebp/demux (= 1.2.1)
     - libwebp/mux (= 1.2.1)
@@ -186,7 +186,7 @@ PODS:
     - RNPermissions
   - Permission-PhotoLibrary (2.2.2):
     - RNPermissions
-  - PromisesObjC (2.0.0)
+  - PromisesObjC (2.1.0)
   - QBImagePickerController (3.4.0)
   - RCTRequired (0.63.4)
   - RCTTypeSafety (0.63.4):
@@ -356,8 +356,8 @@ PODS:
   - React-jsinspector (0.63.4)
   - react-native-appearance (0.3.4):
     - React
-  - react-native-appsflyer (6.5.21):
-    - AppsFlyerFramework (= 6.5.2)
+  - react-native-appsflyer (6.6.0):
+    - AppsFlyerFramework (= 6.6.1)
     - React
   - react-native-background-timer (2.1.1):
     - React
@@ -377,7 +377,7 @@ PODS:
     - React-Core
   - react-native-notifications (3.2.1):
     - React
-  - react-native-pager-view (5.4.15):
+  - react-native-pager-view (5.4.24):
     - React-Core
   - react-native-randombytes (3.6.1):
     - React-Core
@@ -833,7 +833,7 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  AppsFlyerFramework: 9f304d91cc80b6579b1206a59220383056b58b47
+  AppsFlyerFramework: 5e4b385a27dc6179e132b1617f76809412eb2f88
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   BVLinearGradient: 8cbc5155c978f2e43098818c91d206d07aae6d30
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
@@ -841,22 +841,22 @@ SPEC CHECKSUMS:
   FBLazyVector: 3bb422f41b18121b71783a905c10e58606f7dc3e
   FBReactNativeSpec: f2c97f2529dd79c083355182cc158c9f98f4bd6e
   Firebase: 44213362f1dcc52555b935dc925ed35ac55f1b20
-  FirebaseABTesting: c390fb900b9dd6e9c04888e34dda8e9e84b07195
+  FirebaseABTesting: 10cbce8db9985ae2e3847ea44e9947dd18f94e10
   FirebaseAnalytics: 319c9b3b1bdd400d60e2f415dff0c5f6959e6760
   FirebaseAuth: 59a2d2b933b5b79e18fb1e6ad230c6abdaa73d26
   FirebaseCore: 04186597c095da37d90ff9fd3e53bc61a1ff2440
-  FirebaseCoreDiagnostics: c2836d254a8f0bbb4121ff18f2c2ea39d118fd08
+  FirebaseCoreDiagnostics: 92e07a649aeb66352b319d43bdd2ee3942af84cb
   FirebaseCrashlytics: 3b7f17cdf5bf1ae6ad5956696a6c26edeb39cca7
-  FirebaseInstallations: 60edbf7e11d91ae4c751d26c200dfd037099abe0
+  FirebaseInstallations: 40bd9054049b2eae9a2c38ef1c3dd213df3605cd
   FirebaseMessaging: b0aeba17332ee1ee610662b4d1e02a86db82f08f
   FirebasePerformance: 4f6d878a30f70f5ea4327c36868cd3624e762a07
   FirebaseRemoteConfig: 84d3397887d95587f0ee7a0a3989b2756dc2bbf9
   Folly: b73c3869541e86821df3c387eb0af5f65addfab4
   glog: 40a13f7840415b9a77023fbcae0f1e6f43192af3
   GoogleAppMeasurement: a3311dbcf3ea651e5a070fe8559b57c174ada081
-  GoogleDataTransport: 629c20a4d363167143f30ea78320d5a7eb8bd940
+  GoogleDataTransport: 5fffe35792f8b96ec8d6775f5eccd83c998d5a3b
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
-  GTMSessionFetcher: 43748f93435c2aa068b1cbe39655aaf600652e91
+  GTMSessionFetcher: 5595ec75acf5be50814f81e9189490412bad82ba
   libwebp: 98a37e597e40bfdb4c911fc98f2c53d0b12d05fc
   lottie-ios: 2e935fa7fb8271f80ec6f18ecced5a2a3e2dce45
   lottie-react-native: 4dff8fe8d10ddef9e7880e770080f4a56121397e
@@ -864,7 +864,7 @@ SPEC CHECKSUMS:
   Permission-Camera: 5d2aaf95592660b6dcb5e8d1d90ed5d0156cad02
   Permission-FaceID: 8f034a57c60ed8c602d184f485a9bd524c0f98b7
   Permission-PhotoLibrary: 8227a6ed9f6a971537afe63742d54f5f23a38fe2
-  PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
+  PromisesObjC: 99b6f43f9e1044bd87a95a60beff28c2c44ddb72
   QBImagePickerController: d54cf93db6decf26baf6ed3472f336ef35cae022
   RCTRequired: 082f10cd3f905d6c124597fd1c14f6f2655ff65e
   RCTTypeSafety: 8c9c544ecbf20337d069e4ae7fd9a377aadf504b
@@ -877,14 +877,14 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 93bd528844ad21dc07aab1c67cb10abae6df6949
   React-jsinspector: 58aef7155bc9a9683f5b60b35eccea8722a4f53a
   react-native-appearance: 0f0e5fc2fcef70e03d48c8fe6b00b9158c2ba8aa
-  react-native-appsflyer: 5990accc2e36af78770e8b7edcea0e16956ddebc
+  react-native-appsflyer: b3ef4a825351e2ba4f302760e59dfa4262babead
   react-native-background-timer: 1b6e6b4e10f1b74c367a1fdc3c72b67c619b222b
   react-native-camera: b8cc03e2feec0c04403d0998e37cf519d8fd4c6f
   react-native-cookies: 854d59c4135c70b92a02ca4930e68e4e2eb58150
   react-native-date-picker: 201b481c94dcb7678f4712477ad026dd7793305b
   react-native-netinfo: 30fb89fa913c342be82a887b56e96be6d71201dd
   react-native-notifications: 66c59381a466cb561c4036028ef6401a6b1a8a71
-  react-native-pager-view: b1914469643f40042e65d78cbf3d3dfebd6fb0d9
+  react-native-pager-view: 95d0418c3c74279840abec6926653d32447bafb6
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-restart: d19a0f8d053d065fe64cd2baebb6487111c77149
   react-native-safe-area-context: 9e40fb181dac02619414ba1294d6c2a807056ab9

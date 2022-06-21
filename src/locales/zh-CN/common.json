@@ -122,6 +122,7 @@
     "added": "添加",
     "adding": "添加",
     "all": "全部",
+    "allNetwork":"所有网络",
     "backedUp": "备份安全",
     "canceled": "取消",
     "collectibleFromUser": "来自 {{username}} 的 NFT",
@@ -257,7 +258,8 @@
     "pleaseSelect": "请选择",
     "balanceFiatTokenFormat": "余额 {{balanceInFiat}} ({{balance}})",
     "balanceTokenFormat": "余额{{balance}}",
-    "filterByName": "按名称过滤"
+    "filterByName": "按名称过滤",
+    "transaction_submitted": "交易提交"
   },
   "button": {
     "activate": "启用",
@@ -307,11 +309,13 @@
     "settleMore": "解决更多",
     "settleTransactions": "结算交易",
     "shareAddress": "分享",
+    "share": "分享",
     "smartWalletFAQ": "智能钱包常见问题",
     "subscribe": "订阅",
     "support": "支持",
     "swap": "交换",
     "swipeConfirm": "滑动确认",
+    "swipeTo": "滑動到",
     "topUp": "充值",
     "topUpMore": "充值更多",
     "topUpPLRTank": "加满 PLR 坦克",
@@ -369,7 +373,9 @@
     "notNow": "现在不要",
     "copyToClipboard": "复制到剪贴板",
     "savedPhrase": "我已经保存了我的 12 个字",
-    "savedPrivateKey": "我已经保存了我的私钥"
+    "savedPrivateKey": "我已经保存了我的私钥",
+    "ok": "确认",
+    "i_understood": "我明白"
   },
   "paragraph": {
     "addressCopiedToClipboard": "地址已复制到剪贴板。",
@@ -386,7 +392,9 @@
     "privateKeyRevealedPurpose": "请使用此私钥来恢复钱包。",
     "doNotShareBackup": "确保它的安全，因为这是在紧急情况下恢复帐户的唯一方法。不要通过电子邮件发送或截图。",
     "sessionExpiredReEnterPin": "登录会话已过期，请输入您的 PIN 码以继续。",
-    "addContacts": "将联系人添加到地址簿以轻松访问收藏地址以发送资产。"
+    "addContacts": "将联系人添加到地址簿以轻松访问收藏地址以发送资产。",
+    "nativeIntegrationWarning": "以下工具可让您直接访问智能合约。这被认为是一种专业工具，如果您不知道自己在做什么，请不要尝试使用此工具，因为它可能会导致资金损失。",
+    "ownRisk":"继续自担风险。"
   },
   "insight": {
     "pillarNetworkActivate": {
@@ -550,13 +558,19 @@
     },
     "assets": {
       "contacts": "联系人",
-      "services": "服务"
+      "services": "服务",
+      "show_balance": "显示余额"
     },
     "actions": {
       "receive": "收到",
       "send": "发送",
       "swap": "交换",
-      "connect": "连接"
+      "connect": "连接",
+      "invest": "投资"
+    },
+    "apps": {
+      "title": "应用",
+      "new":"新的"
     }
   },
   "menu": {

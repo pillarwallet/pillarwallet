@@ -26,9 +26,9 @@ import { useDispatch } from 'react-redux';
 
 // Components
 import SlideModal from 'components/Modals/SlideModal';
-import Icon from 'components/core/Icon';
 import Text from 'components/core/Text';
 import Button from 'components/core/Button';
+import RadioButton from 'components/RadioButton';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
@@ -48,10 +48,10 @@ import { useChainGasInfo, useChainRates, useFiatCurrency } from 'selectors/selec
 import { fetchGasInfoAction } from 'actions/historyActions';
 
 interface ISelectNetworkModal {
-  networkSelected: () => void,
+  networkSelected: () => void;
 }
 
-const SelectNetworkModal : FC<ISelectNetworkModal> = ({ networkSelected }) => {
+const SelectNetworkModal: FC<ISelectNetworkModal> = ({ networkSelected }) => {
   const modalRef = useRef(null);
   const dispatch = useDispatch();
   const colors = useThemeColors();
@@ -116,30 +116,30 @@ const SelectNetworkModal : FC<ISelectNetworkModal> = ({ networkSelected }) => {
   };
 
   return (
-    <SlideModal noSwipeToDismiss ref={modalRef} hideHeader noClose>
+    <SlideModal noSwipeToDismiss ref={modalRef} title={t('title')} hideHeader noClose>
       <Content>
         <ModalTitle>{t('title')}</ModalTitle>
         <ModalSubtitle color={colors.tertiaryText}>{t('subtitle')}</ModalSubtitle>
         <Container onPress={selectSideChains}>
           <ContainerView isSelected={isSideChains}>
             <RowContainer>
-              {isSideChains && <RadioIcon name="checked-radio" />}
-              {!isSideChains && <RadioIcon name="unchecked-radio" />}
+              <RadioButton visible={isSideChains} />
               <ContentView>
-                <Text variant="big" style={isSideChains && styles.titleStyle}>
-                  {t('options.sidechains')}
-                </Text>
+                <RowContainer style={{ justifyContent: 'space-between' }}>
+                  <Text variant="big" style={isSideChains && styles.titleStyle} numberOfLines={1}>
+                    {t('options.sidechains')}
+                  </Text>
+                  <Text>{t('options.recommended')}</Text>
+                </RowContainer>
                 <Text color={colors.tertiaryText}>{t('options.chainName')}</Text>
               </ContentView>
-              <Text>{t('options.recommended')}</Text>
             </RowContainer>
           </ContainerView>
         </Container>
         <Container onPress={selectEthereumChain}>
           <ContainerView isSelected={isEthereumChain}>
             <RowContainer>
-              {isEthereumChain && <RadioIcon name="checked-radio" />}
-              {!isEthereumChain && <RadioIcon name="unchecked-radio" />}
+              <RadioButton visible={isEthereumChain} />
               <ContentView>
                 <Text variant="big" style={isEthereumChain && styles.titleStyle}>
                   {t('options.ethereum')}
@@ -174,6 +174,7 @@ const styles = {
   },
   titleStyle: {
     fontFamily: appFont.medium,
+    flex: 1,
   },
 };
 
@@ -206,7 +207,7 @@ const Container = styled(TouchableContainer)`
 `;
 
 const ContainerView = styled.View`
-  background-color: ${({ theme, isSelected }) => (isSelected ? theme.colors.basic080 : theme.colors.basic050)};
+  background-color: ${({ theme, isSelected }) => (isSelected ? theme.colors.basic60 : theme.colors.basic050)};
   padding: ${spacing.large}px;
   border-radius: ${borderRadiusSizes.medium}px;
   flex-direction: column;
@@ -221,16 +222,7 @@ const RowContainer = styled.View`
 
 const ContentView = styled.View`
   flex: 1;
-  padding: 0 ${spacing.medium}px 0 ${spacing.medium}px;
-`;
-
-const RadioIcon = styled(Icon)`
-  height: 24px;
-  width: 24px;
-  background-color: ${({ theme }) => theme.colors.basic050};
-  border-radius: ${borderRadiusSizes.medium}px;
-  padding-right: ${spacing.medium}px;
-  margin-right: ${spacing.medium}px;
+  padding: 0 ${spacing.medium}px 0 ${0}px;
 `;
 
 const WarningMessage = styled(Text)`

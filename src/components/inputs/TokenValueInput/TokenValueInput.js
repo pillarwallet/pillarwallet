@@ -62,6 +62,7 @@ type Props = {|
   onTokenPress?: () => mixed,
   onPercentInput?: () => mixed,
   showChainIcon?: boolean,
+  placeholder?: string | null | '',
 |};
 
 type Instance = typeof RNTextInput;

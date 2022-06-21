@@ -51,4 +51,5 @@ export const CHAIN_ID = {
   XDAI: 100,
   AVALANCHE: 43114,
   FUJI: 43113,
+  MUMBAI: 80001,
 };

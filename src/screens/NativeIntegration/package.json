@@ -1,0 +1,6 @@
+{
+  "name": "native-integration",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./NIServices.tsx"
+}

@@ -104,8 +104,8 @@ import IconWallet from 'assets/icons/svg/icon-24-wallet.svg';
 import IconWarning from 'assets/icons/svg/icon-24-warning.svg';
 import IconWithdraw from 'assets/icons/svg/icon-24-withdraw.svg';
 import IconAlert from 'assets/icons/svg/icon-24-circle-filled-alert.svg';
-import IconCheckedRadio from 'assets/icons/svg/x-masters-form-radio-button-focus.svg';
-import IconUncheckedRadio from 'assets/icons/svg/x-masters-form-radio-button-normal.svg';
+import IconCheckedRadio from 'assets/icons/svg/form-radio-button-focus-dark.svg';
+import IconUncheckedRadio from 'assets/icons/svg/form-radio-button-normal-dark.svg';
 import IconPillarBrowser from 'assets/icons/svg/icon-24-pillar-browser.svg';
 import IconPillarBrowserDark from 'assets/icons/svg/icon-24-pillar-browser-dark.svg';
 import IconOpenLink from 'assets/icons/svg/icon-24-open-link.svg';
@@ -114,6 +114,13 @@ import IconEnsMigration from 'assets/icons/svg/icon-24-ens.svg';
 import IconAssetMigration from 'assets/icons/svg/icon-24-assets.svg';
 import IconEnsMigrationDark from 'assets/icons/svg/icon-24-ens-dark.svg';
 import IconAssetMigrationDark from 'assets/icons/svg/icon-24-assets-dark.svg';
+import IconApps from 'assets/icons/svg/icon-apps.svg';
+import InvestIcon from 'assets/icons/svg/24-dashboard-investments.svg';
+import SelectedRadioButton from 'assets/icons/svg/form-radio-button-focus-light.svg';
+import RadioButton from 'assets/icons/svg/form-radio-button-normal-light.svg';
+import DeployLightIcon from 'assets/icons/svg/24-circle-filled-alert-light.svg';
+import DeployIcon from 'assets/icons/svg/24-circle-filled-alert.svg';
+import ExclamationLight from 'assets/icons/svg/exclamationLight.svg';
 
 // Assets: services icons
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
@@ -123,6 +130,7 @@ import IconPolygon from 'assets/icons/svg/icon-24-polygon.svg';
 import IconAvalanche from 'assets/icons/svg/icon-24-avalanche.svg';
 import IconWalletConnect from 'assets/icons/svg/icon-24-wallet-connect.svg';
 import IconAllNetworks from 'assets/icons/svg/services-48-circle-pillar-exchange.svg';
+import IconAllNetworksLight from 'assets/icons/svg/services-48-circle-pillar-exchange-light.svg';
 
 const components = {
   // Generic icons
@@ -209,6 +217,13 @@ const components = {
   'asset-migration': IconAssetMigration,
   'ens-migration-dark': IconEnsMigrationDark,
   'asset-migration-dark': IconAssetMigrationDark,
+  apps: IconApps,
+  invest: InvestIcon,
+  'selected-radio-button': SelectedRadioButton,
+  'radio-button': RadioButton,
+  'deploy-light': DeployLightIcon,
+  deploy: DeployIcon,
+  'exclamation-round-light': ExclamationLight,
 
   // Service icons
   binance: IconBinance,
@@ -218,6 +233,7 @@ const components = {
   avalanche: IconAvalanche,
   'wallet-connect': IconWalletConnect,
   'all-networks': IconAllNetworks,
+  'all-networks-light': IconAllNetworksLight,
 };
 
 export type IconName = keyof typeof components;

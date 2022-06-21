@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
+import React from 'react';
 import { LayoutAnimation } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
@@ -50,7 +50,6 @@ import type { AssetCategory, AssetCategoryRecordKeys } from 'models/AssetCategor
 import type { Chain, ChainRecord } from 'models/Chain';
 import type { TotalBalances } from 'models/TotalBalances';
 
-
 // Local
 import CategoryListItem from './components/CategoryListItem';
 import ChainListItem from './components/ChainListItem';
@@ -59,11 +58,12 @@ import { calculateTotalCollectibleCount } from './utils';
 type Props = {|
   accountTotalBalances: TotalBalances,
   accountCollectibleCounts: ChainRecord<number>,
+  visibleBalance: boolean,
 |};
 
 type FlagPerCategory = { [AssetCategory]: ?boolean };
 
-function AssetsSection({ accountTotalBalances, accountCollectibleCounts }: Props) {
+function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visibleBalance }: Props) {
   const { t } = useTranslationWithPrefix('home.assets');
   const navigation = useNavigation();
 
@@ -115,6 +115,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts }: Props
           iconName={iconName}
           title={title}
           value={formattedBalance}
+          visibleBalance={visibleBalance}
           onPress={() => handlePressAssetCategory(category)}
         />
         {showChains && chains.map((chain) => renderChainWithBalance(category, chain))}
@@ -133,6 +134,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts }: Props
         key={`${category}-${chain}`}
         title={title}
         value={formattedBalance}
+        visibleBalance={visibleBalance}
         isDeployed={isKeyBasedAccount(activeAccount) || isDeployedOnChain[chain]}
         onPress={() => navigateToAssetDetails(category, chain)}
         onPressDeploy={() => showDeploymentInterjection(chain)}
@@ -149,6 +151,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts }: Props
           key="collectibles"
           title={title}
           iconName={iconName}
+          visibleBalance={visibleBalance}
           onPress={() => handlePressAssetCategory(ASSET_CATEGORY.COLLECTIBLES)}
           value={formatValue(totalCollectibleCount)}
         />
@@ -162,6 +165,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts }: Props
       <ChainListItem
         key={`collectibles-${chain}`}
         title={chainsConfig[chain].title}
+        visibleBalance={visibleBalance}
         value={formatValue(accountCollectibleCounts[chain] ?? 0)}
         isDeployed={isKeyBasedAccount(activeAccount) || isDeployedOnChain[chain]}
         onPress={() => navigateToAssetDetails(ASSET_CATEGORY.COLLECTIBLES, chain)}
@@ -171,7 +175,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts }: Props
   };
 
   // Temporarily hide rewards tab until rewards fetching is implemented
-  const categoriesToRender = Object.keys(balancePerCategory).filter(category => category !== ASSET_CATEGORY.REWARDS);
+  const categoriesToRender = Object.keys(balancePerCategory).filter((category) => category !== ASSET_CATEGORY.REWARDS);
 
   return (
     <Container>
@@ -185,6 +189,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts }: Props
           key="services"
           title={t('services')}
           iconName="info"
+          visibleBalance={visibleBalance}
           onPress={() => navigation.navigate(SERVICES_FLOW)}
         />
       )}
