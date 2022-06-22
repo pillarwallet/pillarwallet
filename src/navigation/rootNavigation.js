@@ -32,6 +32,7 @@ import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import ForgotPinScreen from 'screens/ForgotPin';
 import PermissionScreen from 'screens/Permissions';
+import MenuSelectAppearanceScreen from 'screens/AppAppearence';
 
 // Utils
 import { modalTransition } from 'utils/common';
@@ -52,6 +53,7 @@ import {
   FORGOT_PIN,
   IMPORT_WALLET_LEGALS,
   PERMISSIONS,
+  MENU_SELECT_APPEARANCE,
 } from 'constants/navigationConstants';
 
 import type { NavigationNavigator } from 'react-navigation';
@@ -82,10 +84,14 @@ const onBoardingFlow = createStackNavigator(
   StackNavigatorConfig,
 );
 
-const authFlow = createStackNavigator({
-  [PIN_CODE_UNLOCK]: PinCodeUnlockScreen,
-  [FORGOT_PIN]: ForgotPinScreen,
-}, modalTransition);
+const authFlow = createStackNavigator(
+  {
+    [MENU_SELECT_APPEARANCE]: MenuSelectAppearanceScreen,
+    [PIN_CODE_UNLOCK]: PinCodeUnlockScreen,
+    [FORGOT_PIN]: ForgotPinScreen,
+  },
+  modalTransition,
+);
 
 const RootSwitch: NavigationNavigator<any, {}, {}> = createSwitchNavigator({
   [ONBOARDING_FLOW]: onBoardingFlow,

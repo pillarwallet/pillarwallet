@@ -591,6 +591,7 @@
       "title": "设置",
       "appSettings": "应用设置",
       "darkMode": "黑暗模式",
+      "appearance":"外貌",
       "language": "语",
       "fiatCurrency": "当地法定货币",
       "biometricLogin": "生物识别登录",
