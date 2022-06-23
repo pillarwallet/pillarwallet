@@ -1414,6 +1414,7 @@
   },
   "tooltip": {
     "switchAccountsByTappingHere": "您可以点按此处切换帐户",
+    "start_by_cash":"从添加现金开始",
     "includesDeploymentFee": "一次性智能钱包部署费"
   },
   "governanceCall": {

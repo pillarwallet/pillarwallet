@@ -1536,6 +1536,7 @@
 
   "tooltip": {
     "switchAccountsByTappingHere": "You can switch accounts by tapping here",
+    "start_by_cash":"Start by adding cash",
     "includesDeploymentFee": "One-time Smart Wallet deployment fee",
     "registerENS": "Register your unique ENS name"
   },
