@@ -42,6 +42,9 @@ import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 import { isValidAddress, toChecksumAddress } from 'ethereumjs-util';
 
+// abi
+import ERC20_CONTRACT_ABI from 'abi/erc20.json';
+
 // utils
 import { BigNumber, getEnsName, parseTokenAmount, reportErrorLog, logBreadcrumb } from 'utils/common';
 import { isProdEnv } from 'utils/environment';
@@ -58,7 +61,7 @@ import { mapToEthereumTransactions } from 'utils/transactions';
 import { getCaptureFee } from 'utils/exchange';
 
 // constants
-import { ETH } from 'constants/assetsConstants';
+import { ETH, ADDRESS_ZERO, ROOT_TOKEN_ADDRESS } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 import { PROJECT_KEY } from 'constants/etherspotConstants';
@@ -79,10 +82,10 @@ import type {
   TransactionPayload,
   TransactionResult,
   TransactionFeeInfo,
-  CrossChainBridgeBuildTXResponse,
 } from 'models/Transaction';
 import type { GasPrice } from 'models/GasInfo';
 import type { NftList } from 'etherspot';
+import type { EtherspotErc20Interface } from 'models/Etherspot';
 
 export class EtherspotService {
   sdk: EtherspotSdk;
@@ -779,39 +782,38 @@ export class EtherspotService {
     }
   }
 
-  async buildCrossChainBridgeTransaction(
-    fromAsset: AssetOption,
-    toAsset: AssetOption,
-    fromValue: BigNumber,
-    activeAccount: any,
-  ) {
+  async buildCrossChainBridgeTransaction(fromAsset: AssetOption, toAsset: AssetOption, fromValue: BigNumber) {
     const sdk = this.getSdkForChain(fromAsset.chain);
-
     if (!sdk) return null;
 
     const value = EthersUtils.parseUnits(fromValue.toString(), fromAsset.decimals);
 
     try {
-      const routes = await sdk.findCrossChainBridgeRoutes({
-        fromTokenAddress: fromAsset.address,
+      const quotes = await sdk.getCrossChainQuotes({
+        fromTokenAddress: fromAsset.address === ADDRESS_ZERO ? ROOT_TOKEN_ADDRESS : fromAsset.address,
         fromChainId: mapChainToChainId(fromAsset.chain),
         toTokenAddress: toAsset.address,
         toChainId: mapChainToChainId(toAsset.chain),
-        fromAmount: value.toString(),
-        userAddress: activeAccount.id,
-        disableSwapping: false,
+        fromAmount: value,
       });
 
-      logBreadcrumb('findCrossChainBridgeRoutes', 'List of cross chain bridge routes', { routes });
+      const quote: any = quotes.items[0];
 
-      const route = routes[0];
+      if (!quote) return null;
+      const tokenAddres = quote.estimate.data.fromToken.address;
+      const { approvalAddress } = quote.estimate;
+      const amount = quote.estimate.data.fromTokenAmount;
 
-      if (route) {
-        const transactionData: CrossChainBridgeBuildTXResponse = await this.sdk.buildCrossChainBridgeTransaction(route);
-        return { ...transactionData, chain: fromAsset?.chain, to: toAsset?.address };
-      }
+      const erc20Contract: any = this.getContract<?EtherspotErc20Interface>(
+        fromAsset.chain,
+        ERC20_CONTRACT_ABI,
+        tokenAddres,
+      );
+      if (!erc20Contract) return null;
 
-      return route;
+      const approvalTransactionData = erc20Contract.encodeApprove(approvalAddress, amount);
+
+      return { approvalTransactionData, transactionData: quote.transaction };
     } catch (e) {
       logBreadcrumb('findCrossChainBridgeRoutes failed!', 'failed cross chain bridge routes', { e });
       return null;
@@ -825,7 +827,6 @@ export class EtherspotService {
         direction: 'From',
         fromChainId: 137,
         toChainId: 1,
-        disableSwapping: true,
       });
       logBreadcrumb('getCrossChainBridgeTokenList', 'Get cross chain bridge supported list', { list });
       return list;

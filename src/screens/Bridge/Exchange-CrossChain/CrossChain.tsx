@@ -19,7 +19,6 @@ import * as React from 'react';
 import { Keyboard } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
-import { useDebounce } from 'use-debounce';
 import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 import BigNumber from 'bignumber.js';
@@ -32,6 +31,7 @@ import Banner from 'components/Banner/Banner';
 import SwipeButton from 'components/SwipeButton/SwipeButton';
 import SendHighGasModal from 'components/HighGasFeeModals/SendHighGasModal';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import Text from 'components/core/Text';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
@@ -45,13 +45,14 @@ import { getActiveScreenName } from 'utils/navigation';
 import { getCurrencySymbol } from 'utils/common';
 import { getTxFeeInFiat } from 'utils/transactions';
 import { isHighGasFee } from 'utils/transactions';
+import { logBreadcrumb } from 'utils/common';
 
 // Types
 import type { AssetOption } from 'models/Asset';
 import type { Chain } from 'models/Chain';
 
 // Selectors
-import { useActiveAccount, useChainRates, useFiatCurrency, useRootSelector } from 'selectors';
+import { useChainRates, useFiatCurrency, useRootSelector } from 'selectors';
 import { gasThresholdsSelector } from 'redux/selectors/gas-threshold-selector';
 
 // Local
@@ -66,11 +67,14 @@ import {
 
 // services
 import etherspotService from 'services/etherspot';
-import { calculateCrossChainToAssetValue } from 'services/assets';
 import { catchError } from 'services/nativeIntegration';
+
 // Actions
-import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
+import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 import { fontSizes } from 'utils/variables';
+
+// Hooks
+import { useTransactionsEstimate, useTransactionFeeCheck } from 'hooks/transactions';
 
 interface Props {
   fetchCrossChainTitle: (val: string) => void;
@@ -80,13 +84,10 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const activeAccount = useActiveAccount();
   const fromInputRef: any = React.useRef();
   const screenName = getActiveScreenName(navigation);
   const fiatCurrency = useFiatCurrency();
   const currencySymbol = getCurrencySymbol(fiatCurrency);
-  const feeInfo = useRootSelector((root) => root.transactionEstimate.feeInfo);
-  const isEstimating = useRootSelector((root) => root.transactionEstimate.isEstimating);
   const gasThresholds = useRootSelector(gasThresholdsSelector);
   const initialChain: Chain = navigation.getParam('chain') || CHAIN.ETHEREUM;
   const initialFromAddress: string =
@@ -104,12 +105,18 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const chainConfig = useChainConfig(chain);
   const toChainConfig = useChainConfig(toAddressChain || CHAIN.ETHEREUM);
   const chainRates = useChainRates(chain);
-  const feeInFiat = getTxFeeInFiat(chain, feeInfo?.fee, feeInfo?.gasToken, chainRates, fiatCurrency);
-  const feeInFiatDisplayValue = `${currencySymbol}${feeInFiat.toFixed(5)}`;
 
   React.useEffect(() => {
     dispatch(resetEstimateTransactionAction());
   }, []);
+
+  React.useEffect(() => {
+    supportedTokenList();
+  }, []);
+  const supportedTokenList = async () => {
+    const data = await etherspotService.getCrossChainBridgeTokenList();
+    logBreadcrumb('getCrossChainBridgeTokenList data!', 'list of all supported token list', { data });
+  };
 
   const fromAsset = React.useMemo(
     () => fromOptions.find((a) => a.chain === chain && addressesEqual(a.address, fromAddress)),
@@ -129,25 +136,28 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
     fetchCrossChainTitle && fetchCrossChainTitle(customCrosschainTitle);
   }, [chain, customCrosschainTitle, fetchCrossChainTitle, fromAddress, toAddress]);
 
-  const buildTractionQuery = useCrossChainBuildTransactionQuery(fromAsset, toAsset, fromValue, activeAccount);
+  const buildTractionQuery = useCrossChainBuildTransactionQuery(fromAsset, toAsset, fromValue);
   const buildTransactionData = buildTractionQuery.data;
   const buildTransactionFetched = buildTractionQuery.isFetched;
   const toAssetValueQuery = useToAssetValueQuery(fromAsset, toAsset, fromValue);
   const toAssetValue = toAssetValueQuery.data;
 
+  const txData = React.useMemo(() => {
+    if (!buildTransactionData) return null;
+    const { approvalTransactionData, transactionData } = buildTransactionData;
+    const hexValue = new BigNumber(transactionData.value);
+    return [
+      { ...approvalTransactionData, value: 0 },
+      { data: transactionData.data, to: transactionData.to, value: hexValue.toString() },
+    ];
+  }, [buildTransactionData]);
+
+  const { feeInfo, errorMessage: estimationErrorMessage, isEstimating } = useTransactionsEstimate(chain, txData);
+  const { errorMessage: notEnoughForFeeErrorMessage } = useTransactionFeeCheck(chain, feeInfo, fromAsset, fromValue);
+
   React.useEffect(() => {
     toAssetValue && setToValue(toAssetValue);
   }, [toAssetValue]);
-
-  React.useEffect(() => {
-    buildTransactionData && estimateTransactionFee(buildTransactionData);
-  }, [buildTransactionData]);
-
-  async function estimateTransactionFee(data) {
-    const { value, txData, to } = data;
-    const hexValue = new BigNumber(value);
-    await dispatch(estimateTransactionAction({ value: hexValue?.toString(), data: txData, to }, chain));
-  }
 
   // Focus on from amount input after user changes fromAsset
   React.useEffect(() => {
@@ -179,10 +189,10 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   };
 
   async function onSubmit() {
-    const { value, txData, to } = buildTransactionData;
+    const { value, data, to } = buildTransactionData;
     const hexValue = new BigNumber(value);
     const res = await etherspotService
-      .setTransactionsBatchAndSend([{ to, value: hexValue.toString(), data: txData }], chain)
+      .setTransactionsBatchAndSend([{ to, value: hexValue.toString(), data }], chain)
       .catch(() => catchError('Transaction Failed!', null));
     if (res) navigation.navigate(NI_TRANSACTION_COMPLETED, { transactionInfo: { chain: chain, ...res } });
   }
@@ -193,6 +203,11 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const highGasFeeModal = highFee ? (
     <SendHighGasModal value={fromValue} contact={fromAddress} chain={chain} txFeeInfo={feeInfo} />
   ) : null;
+
+  const feeInFiat = getTxFeeInFiat(chain, feeInfo?.fee, feeInfo?.gasToken, chainRates, fiatCurrency);
+  const feeInFiatDisplayValue = `${currencySymbol}${feeInFiat.toFixed(5)}`;
+
+  const errorMessage = estimationErrorMessage | notEnoughForFeeErrorMessage;
 
   return (
     <Container>
@@ -226,6 +241,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
             <Spinner />
           </EmptyStateWrapper>
         )}
+        {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         {feeInfo?.fee && (
           <FooterContent>
             <FeeText>{t('Fee') + ' ' + feeInFiatDisplayValue}</FeeText>
@@ -266,4 +282,10 @@ const FeeText = styled.Text`
   color: ${({ theme }) => theme.colors.hazardIconColor};
   font-size: ${fontSizes.regular}px;
   margin: 20px;
+`;
+
+const ErrorMessage = styled(Text)`
+  margin-bottom: 15px;
+  text-align: center;
+  color: ${({ theme }) => theme.colors.negative};
 `;

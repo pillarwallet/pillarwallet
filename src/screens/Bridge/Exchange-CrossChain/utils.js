@@ -164,17 +164,12 @@ export function useOffersQuery(
   );
 }
 
-export function useCrossChainBuildTransactionQuery(
-  fromAsset: AssetOption,
-  toAsset: AssetOption,
-  fromValue: BigNumber,
-  activeAccount: any,
-) {
+export function useCrossChainBuildTransactionQuery(fromAsset: AssetOption, toAsset: AssetOption, fromValue: BigNumber) {
   const enabled = !!fromAsset && !!toAsset && !!fromValue;
 
   return useQuery(
-    ['buildCrossChainBridgeTransaction', fromAsset, toAsset, fromValue, activeAccount],
-    () => etherspotService.buildCrossChainBridgeTransaction(fromAsset, toAsset, fromValue, activeAccount),
+    ['buildCrossChainBridgeTransaction', fromAsset, toAsset, fromValue],
+    () => etherspotService.buildCrossChainBridgeTransaction(fromAsset, toAsset, fromValue),
     { enabled, cacheTime: 0 },
   );
 }

@@ -21,7 +21,6 @@
 import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
 import { useTranslation } from 'translations/translate';
-import { useDispatch } from 'react-redux';
 
 // Components
 import { Container } from 'components/layout/Layout';
@@ -35,18 +34,9 @@ import { BRIDGE_CATEGORY as CATEGORY } from 'constants/exchangeConstants';
 import Exchange from './Exchange-CrossChain/Exchange';
 import CrossChain from './Exchange-CrossChain/CrossChain';
 
-// services
-import etherspotService from 'services/etherspot';
-
-// Actions
-import { estimateTransactionAction } from 'actions/transactionEstimateActions';
-import { ethers, utils } from 'ethers';
-import BigNumber from 'bignumber.js';
-
 function BridgeTab() {
   const { t } = useTranslation();
   const navigation = useNavigation();
-  const dispatch = useDispatch();
 
   const [tabIndex, setTabIndex] = React.useState(0);
   const [exchangeTitle, setExchangeTitle] = React.useState(t('exchangeContent.title.initialExchange'));
@@ -56,18 +46,6 @@ function BridgeTab() {
     { key: CATEGORY.EXCHANGE, title: CATEGORY.EXCHANGE, component: Exchange },
     { key: CATEGORY.CROSS_CHAIN, title: CATEGORY.CROSS_CHAIN, component: CrossChain },
   ];
-
-  React.useEffect(() => {
-    //callFunction();
-  }, []);
-  const callFunction = async () => {
-    const data = await etherspotService.findCrossChainBridgeRoutes();
-    if (!data) return;
-
-    const { txData, to, chain, value } = data;
-    const hexValue = new BigNumber(value);
-    await dispatch(estimateTransactionAction({ value: hexValue.toString(), data: txData, to }, chain));
-  };
 
   return (
     <Container>
