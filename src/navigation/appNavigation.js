@@ -289,6 +289,19 @@ const StackNavigatorConfig = {
   },
 };
 
+const StackNavigatorConfigDisableGesture = {
+  defaultNavigationOptions: {
+    headerShown: false,
+    gestureEnabled: false,
+    cardStyle: {
+      backgroundColor: {
+        dark: getThemeColors(getThemeByType(DARK_THEME)).basic070,
+        light: getThemeColors(getThemeByType()).basic070,
+      },
+    },
+  },
+};
+
 // ASSETS FLOW
 const assetsFlow = createStackNavigator(
   {
@@ -305,7 +318,7 @@ const exchangeFlow = createStackNavigator(
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
   },
-  StackNavigatorConfig,
+  StackNavigatorConfigDisableGesture,
 );
 
 // SERVICES FLOW

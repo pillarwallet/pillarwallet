@@ -48,6 +48,7 @@ type ContentProps = {|
   onScroll?: ?(event: ScrollEvent) => void,
   scrollEventThrottle?: number,
   showsVerticalScrollIndicator?: boolean,
+  bounces?: boolean,
 |};
 
 /**
@@ -65,6 +66,7 @@ export function Content({
   onScroll,
   scrollEventThrottle = 0,
   showsVerticalScrollIndicator,
+  bounces = true,
 }: ContentProps) {
   const safeArea = useSafeAreaInsets();
 
@@ -86,6 +88,7 @@ export function Content({
         scrollEventThrottle={scrollEventThrottle}
         showsVerticalScrollIndicator={showsVerticalScrollIndicator}
         scrollEnabled={scrollEnabled}
+        bounces={bounces}
       >
         <View style={[contentStyles.safeAreaContent, { paddingBottom: safeArea.bottom }]}>{children}</View>
       </ScrollView>

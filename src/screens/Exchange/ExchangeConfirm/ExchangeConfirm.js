@@ -136,7 +136,7 @@ const ExchangeConfirmScreen = () => {
     <Container>
       <HeaderBlock centerItems={[{ title: t('exchangeContent.title.confirm') }]} navigation={navigation} noPaddingTop />
 
-      <Content paddingHorizontal={0} contentContainerStyle={styles.contentContainerStyle}>
+      <Content bounces={false} paddingHorizontal={0} contentContainerStyle={styles.contentContainerStyle}>
         <ExchangeScheme
           fromValue={fromAmount}
           fromSymbol={fromAsset.symbol}
