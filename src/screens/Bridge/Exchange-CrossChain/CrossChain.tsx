@@ -21,7 +21,6 @@ import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
-import BigNumber from 'bignumber.js';
 
 // Components
 import { Container, Content, Spacing } from 'components/layout/Layout';
@@ -32,6 +31,7 @@ import SwipeButton from 'components/SwipeButton/SwipeButton';
 import SendHighGasModal from 'components/HighGasFeeModals/SendHighGasModal';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Text from 'components/core/Text';
+import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
@@ -42,10 +42,7 @@ import { useChainConfig } from 'utils/uiConfig';
 import { nativeAssetPerChain } from 'utils/chains';
 import { addressesEqual } from 'utils/assets';
 import { getActiveScreenName } from 'utils/navigation';
-import { getCurrencySymbol } from 'utils/common';
-import { getTxFeeInFiat } from 'utils/transactions';
 import { isHighGasFee } from 'utils/transactions';
-import { logBreadcrumb } from 'utils/common';
 
 // Types
 import type { AssetOption } from 'models/Asset';
@@ -71,7 +68,6 @@ import { catchError } from 'services/nativeIntegration';
 
 // Actions
 import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
-import { fontSizes } from 'utils/variables';
 
 // Hooks
 import { useTransactionsEstimate, useTransactionFeeCheck } from 'hooks/transactions';
@@ -87,8 +83,8 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const fromInputRef: any = React.useRef();
   const screenName = getActiveScreenName(navigation);
   const fiatCurrency = useFiatCurrency();
-  const currencySymbol = getCurrencySymbol(fiatCurrency);
   const gasThresholds = useRootSelector(gasThresholdsSelector);
+  const isOnline = useRootSelector((root) => root.session.data.isOnline);
   const initialChain: Chain = navigation.getParam('chain') || CHAIN.ETHEREUM;
   const initialFromAddress: string =
     navigation.getParam('fromAssetAddress') || nativeAssetPerChain[initialChain]?.address;
@@ -110,21 +106,13 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
     dispatch(resetEstimateTransactionAction());
   }, []);
 
-  React.useEffect(() => {
-    supportedTokenList();
-  }, []);
-  const supportedTokenList = async () => {
-    const data = await etherspotService.getCrossChainBridgeTokenList();
-    logBreadcrumb('getCrossChainBridgeTokenList data!', 'list of all supported token list', { data });
-  };
-
   const fromAsset = React.useMemo(
     () => fromOptions.find((a) => a.chain === chain && addressesEqual(a.address, fromAddress)),
     [fromOptions, fromAddress, chain],
   );
 
   const toAsset = React.useMemo(
-    () => toOptions.find((a) => a.chain !== chain && addressesEqual(a.address, toAddress)),
+    () => toOptions?.find((a) => a.chain === toAddressChain && addressesEqual(a.address, toAddress)),
     [toOptions, toAddress, chain],
   );
 
@@ -145,15 +133,17 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const txData = React.useMemo(() => {
     if (!buildTransactionData) return null;
     const { approvalTransactionData, transactionData } = buildTransactionData;
-    const hexValue = new BigNumber(transactionData.value);
-    return [
-      { ...approvalTransactionData, value: 0 },
-      { data: transactionData.data, to: transactionData.to, value: hexValue.toString() },
-    ];
+
+    return [approvalTransactionData, transactionData];
   }, [buildTransactionData]);
 
   const { feeInfo, errorMessage: estimationErrorMessage, isEstimating } = useTransactionsEstimate(chain, txData);
-  const { errorMessage: notEnoughForFeeErrorMessage } = useTransactionFeeCheck(chain, feeInfo, fromAsset, fromValue);
+  const { errorMessage: notEnoughForFeeErrorMessage, isEnoughForFee } = useTransactionFeeCheck(
+    chain,
+    feeInfo,
+    fromAsset,
+    fromValue,
+  );
 
   React.useEffect(() => {
     toAssetValue && setToValue(toAssetValue);
@@ -189,10 +179,9 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   };
 
   async function onSubmit() {
-    const { value, data, to } = buildTransactionData;
-    const hexValue = new BigNumber(value);
+    const { approvalTransactionData, transactionData } = buildTransactionData;
     const res = await etherspotService
-      .setTransactionsBatchAndSend([{ to, value: hexValue.toString(), data }], chain)
+      .setTransactionsBatchAndSend([approvalTransactionData, transactionData], chain)
       .catch(() => catchError('Transaction Failed!', null));
     if (res) navigation.navigate(NI_TRANSACTION_COMPLETED, { transactionInfo: { chain: chain, ...res } });
   }
@@ -203,9 +192,6 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const highGasFeeModal = highFee ? (
     <SendHighGasModal value={fromValue} contact={fromAddress} chain={chain} txFeeInfo={feeInfo} />
   ) : null;
-
-  const feeInFiat = getTxFeeInFiat(chain, feeInfo?.fee, feeInfo?.gasToken, chainRates, fiatCurrency);
-  const feeInFiatDisplayValue = `${currencySymbol}${feeInFiat.toFixed(5)}`;
 
   const errorMessage = estimationErrorMessage | notEnoughForFeeErrorMessage;
 
@@ -234,18 +220,28 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
 
         <Spacing h={40} />
 
-        <Banner screenName={screenName} bottomPosition />
-
         {(isEstimating || showLoading) && (
           <EmptyStateWrapper>
             <Spinner />
           </EmptyStateWrapper>
         )}
-        {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+
         {feeInfo?.fee && (
           <FooterContent>
-            <FeeText>{t('Fee') + ' ' + feeInFiatDisplayValue}</FeeText>
-            <SwipeButton confirmTitle={t('button.swipeSend')} onPress={onSubmit} />
+            <FeeLabelToggle
+              txFeeInWei={feeInfo.fee}
+              gasToken={feeInfo.gasToken}
+              chain={chain}
+              isLoading={isEstimating}
+              hasError={!isEnoughForFee}
+              highGasFeeModal={highGasFeeModal}
+            />
+            <Spacing h={20} />
+            <SwipeButton
+              disabled={!isOnline || !feeInfo || !!errorMessage || isEstimating}
+              confirmTitle={t('button.swipeSend')}
+              onPress={onSubmit}
+            />
           </FooterContent>
         )}
         {!buildTransactionData && buildTransactionFetched && (
@@ -275,17 +271,6 @@ const EmptyStateWrapper = styled.View`
   margin-top: 40px;
 `;
 
-const FooterContent = styled.View``;
-
-const FeeText = styled.Text`
-  text-align: center;
-  color: ${({ theme }) => theme.colors.hazardIconColor};
-  font-size: ${fontSizes.regular}px;
-  margin: 20px;
-`;
-
-const ErrorMessage = styled(Text)`
-  margin-bottom: 15px;
-  text-align: center;
-  color: ${({ theme }) => theme.colors.negative};
+const FooterContent = styled.View`
+  align-items: center;
 `;

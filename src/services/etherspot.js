@@ -792,17 +792,18 @@ export class EtherspotService {
       const quotes = await sdk.getCrossChainQuotes({
         fromTokenAddress: fromAsset.address === ADDRESS_ZERO ? ROOT_TOKEN_ADDRESS : fromAsset.address,
         fromChainId: mapChainToChainId(fromAsset.chain),
-        toTokenAddress: toAsset.address,
+        toTokenAddress: toAsset.address === ADDRESS_ZERO ? ROOT_TOKEN_ADDRESS : toAsset.address,
         toChainId: mapChainToChainId(toAsset.chain),
         fromAmount: value,
       });
 
       const quote: any = quotes.items[0];
 
+      logBreadcrumb('buildCrossChainBridgeTransaction!', 'cross chain bridge quotes', { quotes });
+
       if (!quote) return null;
       const tokenAddres = quote.estimate.data.fromToken.address;
-      const { approvalAddress } = quote.estimate;
-      const amount = quote.estimate.data.fromTokenAmount;
+      const { approvalAddress, amount } = quote.approvalData;
 
       const erc20Contract: any = this.getContract<?EtherspotErc20Interface>(
         fromAsset.chain,
@@ -815,20 +816,31 @@ export class EtherspotService {
 
       return { approvalTransactionData, transactionData: quote.transaction };
     } catch (e) {
-      logBreadcrumb('findCrossChainBridgeRoutes failed!', 'failed cross chain bridge routes', { e });
+      logBreadcrumb('buildCrossChainBridgeTransaction failed!', 'failed cross chain bridge routes', { e });
       return null;
     }
   }
 
-  async getCrossChainBridgeTokenList() {
+  async getCrossChainBridgeTokenList(fromChain: Chain, supprotedChains: Chain[]) {
+    const sdk = this.getSdkForChain(fromChain);
+    if (!sdk) return null;
+
     try {
-      const list = await this.sdk.getCrossChainBridgeTokenList({
-        // eslint-disable-next-line i18next/no-literal-string
-        direction: 'From',
-        fromChainId: 137,
-        toChainId: 1,
+      const supprotedChainsList = supprotedChains.flatMap((chain) =>
+        sdk.getCrossChainBridgeTokenList({
+          // eslint-disable-next-line i18next/no-literal-string
+          direction: 'To',
+          fromChainId: mapChainToChainId(fromChain),
+          toChainId: mapChainToChainId(chain),
+        }),
+      );
+
+      const list = await Promise.all(supprotedChainsList);
+
+      logBreadcrumb('getCrossChainBridgeTokenList', 'Get cross chain bridge supported list', {
+        list,
+        supprotedChainsList,
       });
-      logBreadcrumb('getCrossChainBridgeTokenList', 'Get cross chain bridge supported list', { list });
       return list;
     } catch (e) {
       logBreadcrumb('getCrossChainBridgeTokenList Failed!', 'get error in supproted list cross chain', { e });
