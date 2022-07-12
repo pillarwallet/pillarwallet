@@ -20,7 +20,7 @@
 
 import { CHAIN } from 'constants/chainConstants';
 
-import { shouldTriggerSearch } from 'screens/Exchange/Exchange/utils';
+import { shouldTriggerSearch } from 'screens/Bridge/Exchange-CrossChain/utils';
 
 const assetEth = {
   symbol: 'ETH',
