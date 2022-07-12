@@ -1419,6 +1419,7 @@
   },
   "tooltip": {
     "switchAccountsByTappingHere": "您可以点按此处切换帐户",
+    "signInDeFi":"登录 DeFi",
     "includesDeploymentFee": "一次性智能钱包部署费"
   },
   "governanceCall": {

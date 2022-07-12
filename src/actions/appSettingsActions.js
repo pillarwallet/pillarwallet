@@ -22,12 +22,7 @@ import { Appearance } from 'react-native-appearance';
 import t from 'translations/translate';
 
 // constants
-import {
-  DARK_PREFERENCE,
-  DARK_THEME,
-  LIGHT_THEME,
-  UPDATE_APP_SETTINGS,
-} from 'constants/appSettingsConstants';
+import { DARK_PREFERENCE, DARK_THEME, LIGHT_THEME, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -46,7 +41,6 @@ import type { KeyChainData } from 'utils/keychain';
 // actions
 import { saveDbAction } from './dbActions';
 import { logUserPropertyAction, logEventAction } from './analyticsActions';
-
 
 export const saveOptOutTrackingAction = (status: boolean) => {
   return async (dispatch: Dispatch) => {
@@ -123,10 +117,12 @@ export const changeUseBiometricsAction = (value: boolean, data: KeyChainData, no
     });
     if (!noToast) {
       delay(200)
-        .then(() => Toast.show({
-          message,
-          emoji: 'ok_hand',
-        }))
+        .then(() =>
+          Toast.show({
+            message,
+            emoji: 'ok_hand',
+          }),
+        )
         .catch(() => null);
     }
   };
@@ -147,7 +143,9 @@ export const setAppThemeAction = (themeType: string, isManualThemeSelection?: bo
 export const handleSystemDefaultThemeChangeAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
     const {
-      appSettings: { data: { themeType, isManualThemeSelection } },
+      appSettings: {
+        data: { themeType, isManualThemeSelection },
+      },
     } = getState();
 
     if (isManualThemeSelection) return;
@@ -166,7 +164,9 @@ export const hasSeenTutorialAction = () => (dispatch: Dispatch) => {
 export const toggleBalanceAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
     const {
-      appSettings: { data: { hideBalance } },
+      appSettings: {
+        data: { hideBalance },
+      },
     } = getState();
 
     const newBalanceVisibilityState = !hideBalance;
@@ -204,7 +204,11 @@ export const initialDeepLinkExecutedAction = () => {
 
 export const toggleOmitPinOnLoginAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
-    const { appSettings: { data: { omitPinOnLogin } } } = getState();
+    const {
+      appSettings: {
+        data: { omitPinOnLogin },
+      },
+    } = getState();
     dispatch(saveDbAction('app_settings', { appSettings: { omitPinOnLogin: !omitPinOnLogin } }));
     dispatch({ type: UPDATE_APP_SETTINGS, payload: { omitPinOnLogin: !omitPinOnLogin } });
   };
@@ -213,7 +217,9 @@ export const toggleOmitPinOnLoginAction = () => {
 export const toggleLiquidityPoolsAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
     const {
-      appSettings: { data: { hideLiquidityPools } },
+      appSettings: {
+        data: { hideLiquidityPools },
+      },
     } = getState();
     const newLiquidityPoolsState = !hideLiquidityPools;
 
@@ -242,6 +248,13 @@ export const dismissAccountSwitchTooltipAction = () => {
   return (dispatch: Dispatch) => {
     dispatch(saveDbAction('app_settings', { appSettings: { accountSwitchTooltipDismissed: true } }));
     dispatch({ type: UPDATE_APP_SETTINGS, payload: { accountSwitchTooltipDismissed: true } });
+  };
+};
+
+export const dismissSignInDeFiTooltipAction = () => {
+  return (dispatch: Dispatch) => {
+    dispatch(saveDbAction('app_settings', { appSettings: { signInDeFiTooltipDismissed: true } }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: { signInDeFiTooltipDismissed: true } });
   };
 };
 
