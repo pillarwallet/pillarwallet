@@ -632,6 +632,7 @@
       "title": "Settings",
       "appSettings": "App settings",
       "darkMode": "Dark mode",
+      "appearance":"Appearance",
       "language": "Language",
       "fiatCurrency": "Local fiat currency",
       "biometricLogin": "Biometric login",

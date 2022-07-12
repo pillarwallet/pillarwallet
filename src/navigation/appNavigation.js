@@ -67,6 +67,7 @@ import StorybookScreen from 'screens/Storybook';
 import MenuScreen from 'screens/Menu/Menu';
 import MenuSettingsScreen from 'screens/Menu/Settings';
 import MenuSelectLanguageScreen from 'screens/Menu/SelectLanguage';
+import MenuSelectAppearanceScreen from 'screens/AppAppearence';
 import MenuSelectCurrencyScreen from 'screens/Menu/SelectCurrency';
 import MenuSystemInformationScreen from 'screens/Menu/SystemInformation';
 import WebViewScreen from 'screens/WebView/WebViewScreen';
@@ -177,6 +178,7 @@ import {
   MENU,
   MENU_SETTINGS,
   MENU_SELECT_LANGUAGE,
+  MENU_SELECT_APPEARANCE,
   MENU_SELECT_CURRENCY,
   MENU_SYSTEM_INFORMATION,
   PPN_SEND_TOKEN_AMOUNT,
@@ -494,6 +496,7 @@ const menuFlow = createStackNavigator(
     [MENU]: MenuScreen,
     [MENU_SETTINGS]: MenuSettingsScreen,
     [MENU_SELECT_LANGUAGE]: MenuSelectLanguageScreen,
+    [MENU_SELECT_APPEARANCE]: MenuSelectAppearanceScreen,
     [MENU_SELECT_CURRENCY]: MenuSelectCurrencyScreen,
     [MENU_SYSTEM_INFORMATION]: MenuSystemInformationScreen,
     [IMPORT_WALLET]: ImportWalletScreen,
