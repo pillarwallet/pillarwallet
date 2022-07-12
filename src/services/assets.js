@@ -26,12 +26,7 @@ import { ETH } from 'constants/assetsConstants';
 import { ERC721_TRANSFER_METHODS, ERROR_TYPE } from 'constants/transactionsConstants';
 
 // utils
-import {
-  getEthereumProvider,
-  parseTokenBigNumberAmount,
-  logBreadcrumb,
-  addressAsKey,
-} from 'utils/common';
+import { getEthereumProvider, parseTokenBigNumberAmount, logBreadcrumb, addressAsKey } from 'utils/common';
 import { nativeAssetPerChain } from 'utils/chains';
 import { addressesEqual } from 'utils/assets';
 
@@ -42,17 +37,12 @@ import ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM from 'abi/erc721_safeTransferFrom.
 import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
 
 // services
-import {
-  getCoinGeckoTokenPrices,
-  getCoinGeckoPricesByCoinId,
-  chainToCoinGeckoCoinId,
-} from 'services/coinGecko';
+import { getCoinGeckoTokenPrices, getCoinGeckoPricesByCoinId, chainToCoinGeckoCoinId } from 'services/coinGecko';
 
 // types
 import type { Asset } from 'models/Asset';
 import type { Erc721TransferMethod } from 'models/Transaction';
 import type { RatesByAssetAddress } from 'models/Rates';
-
 
 type Address = string;
 
@@ -93,11 +83,7 @@ type ETHTransferOptions = {
   data?: string,
 };
 
-export const encodeContractMethod = (
-  contractAbi: string | Object[],
-  method: string,
-  params: any,
-): string => {
+export const encodeContractMethod = (contractAbi: string | Object[], method: string, params: any): string => {
   const contractInterface = new ethers.utils.Interface(contractAbi);
   return contractInterface.encodeFunctionData(method, params);
 };
@@ -196,7 +182,7 @@ type Erc721TransactionPayload = {
   contractAddress: string,
   tokenId: string,
   useLegacyTransferMethod: boolean,
-}
+};
 
 export const buildERC721TransactionData = async (
   { from, to, tokenId, contractAddress, useLegacyTransferMethod }: Erc721TransactionPayload,
@@ -239,15 +225,7 @@ export const buildERC721TransactionData = async (
 };
 
 export async function transferERC721(options: ERC721TransferOptions) {
-  const {
-    contractAddress,
-    tokenId,
-    wallet: walletInstance,
-    nonce,
-    gasLimit,
-    gasPrice,
-    signOnly = false,
-  } = options;
+  const { contractAddress, tokenId, wallet: walletInstance, nonce, gasLimit, gasPrice, signOnly = false } = options;
 
   const wallet = walletInstance.connect(getEthereumProvider(getEnv().COLLECTIBLES_NETWORK));
   const data = await buildERC721TransactionData(options, wallet.provider);
@@ -275,16 +253,7 @@ export async function transferERC721(options: ERC721TransferOptions) {
 }
 
 export async function transferETH(options: ETHTransferOptions) {
-  const {
-    to,
-    wallet: walletInstance,
-    gasPrice,
-    gasLimit,
-    amount,
-    nonce,
-    signOnly = false,
-    data,
-  } = options;
+  const { to, wallet: walletInstance, gasPrice, gasLimit, amount, nonce, signOnly = false, data } = options;
   const value = utils.parseEther(amount.toString());
   const trx = {
     gasLimit,
@@ -300,10 +269,7 @@ export async function transferETH(options: ETHTransferOptions) {
   return { signedHash, value };
 }
 
-export async function sendRawTransaction(
-  walletInstance: ethers.Wallet,
-  transaction: ethers.Transaction,
-) {
+export async function sendRawTransaction(walletInstance: ethers.Wallet, transaction: ethers.Transaction) {
   const wallet = walletInstance.connect(getEthereumProvider(getEnv().NETWORK_PROVIDER));
   return wallet.sendTransaction(transaction);
 }
@@ -313,10 +279,7 @@ export function fetchRinkebyETHBalance(walletAddress: Address): Promise<string> 
   return provider.getBalance(walletAddress).then(utils.formatEther);
 }
 
-export async function getExchangeRates(
-  chain: string,
-  assets: Asset[],
-): Promise<?RatesByAssetAddress> {
+export async function getExchangeRates(chain: string, assets: Asset[]): Promise<?RatesByAssetAddress> {
   if (isEmpty(assets)) {
     logBreadcrumb('getExchangeRates', 'received empty assets', { assets });
   }
@@ -342,10 +305,31 @@ export async function getExchangeRates(
     return null;
   }
 
-  return Object.keys(rates).reduce((mappedData: RatesByAssetAddress, returnedAssetAddress: string) => ({
-    ...mappedData,
-    [addressAsKey(returnedAssetAddress)]: rates[returnedAssetAddress],
-  }), {});
+  return Object.keys(rates).reduce(
+    (mappedData: RatesByAssetAddress, returnedAssetAddress: string) => ({
+      ...mappedData,
+      [addressAsKey(returnedAssetAddress)]: rates[returnedAssetAddress],
+    }),
+    {},
+  );
+}
+
+export async function calculateCrossChainToAssetValue(fromValue: string, fromAsset: Asset, toAsset: Asset) {
+  if (!fromValue || !toAsset || !fromAsset) return;
+
+  const fromRate: Object = await getExchangeRates(fromAsset.chain, [fromAsset]);
+  const toRate: Object = await getExchangeRates(toAsset.chain, [toAsset]);
+
+  const fromRateValue: Object = Object.values(fromRate);
+  const toRateValue: Object = Object.values(toRate);
+
+  const fromRateInUsd = fromRateValue ? fromRateValue[0]?.USD : 0;
+  const toRateInUsd = toRateValue ? toRateValue[0]?.USD : 0;
+
+  const toValue = (fromRateInUsd * JSON.parse(fromValue)) / toRateInUsd;
+
+  // eslint-disable-next-line consistent-return
+  return toValue;
 }
 
 export function transferSigned(signed: ?string) {
@@ -356,19 +340,10 @@ export function transferSigned(signed: ?string) {
 export const DEFAULT_GAS_LIMIT = 500000;
 
 export async function calculateGasEstimate(transaction: Object) {
-  const {
-    from,
-    amount,
-    symbol,
-    contractAddress,
-    decimals: defaultDecimals = 18,
-    tokenId,
-  } = transaction;
+  const { from, amount, symbol, contractAddress, decimals: defaultDecimals = 18, tokenId } = transaction;
   let { to, data } = transaction;
   const provider = getEthereumProvider(tokenId ? getEnv().COLLECTIBLES_NETWORK : getEnv().NETWORK_PROVIDER);
-  const value = symbol === ETH
-    ? utils.parseEther(amount.toString())
-    : '';
+  const value = symbol === ETH ? utils.parseEther(amount.toString()) : '';
   try {
     if (tokenId) {
       data = await buildERC721TransactionData(transaction, provider);
@@ -387,23 +362,18 @@ export async function calculateGasEstimate(transaction: Object) {
     return DEFAULT_GAS_LIMIT;
   }
   // all parameters are required in order to estimate gas limit precisely
-  return provider.estimateGas({
-    from,
-    to,
-    data,
-    value,
-  })
-    .then(calculatedGasLimit =>
-      Math.round(EthersBigNumber.from(calculatedGasLimit).toNumber() * 1.5), // safe buffer multiplier
-    )
+  return provider
+    .estimateGas({
+      from,
+      to,
+      data,
+      value,
+    })
+    .then((calculatedGasLimit) => Math.round(EthersBigNumber.from(calculatedGasLimit).toNumber() * 1.5))
     .catch(() => DEFAULT_GAS_LIMIT);
 }
 
-export const buildERC20ApproveTransactionData = (
-  spenderAddress: string,
-  amount: string,
-  decimals: number,
-): string => {
+export const buildERC20ApproveTransactionData = (spenderAddress: string, amount: string, decimals: number): string => {
   const contractAmount = parseTokenBigNumberAmount(amount, decimals);
   return encodeContractMethod(ERC20_CONTRACT_ABI, 'approve', [spenderAddress, contractAmount]);
 };

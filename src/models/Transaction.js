@@ -31,7 +31,6 @@ import type { AssetData, AssetType } from 'models/Asset';
 import type { Value } from 'models/Value';
 import type { Chain } from 'models/Chain';
 
-
 export type TxSettlementItem = {
   symbol: string,
   value: string | number,
@@ -105,10 +104,7 @@ export type RariClaimExtra = {|
   rgtBurned: string,
 |};
 
-export type RariExtra = RariDepositExtra
-  | RariWithdrawExtra
-  | RariTransferExtra
-  | RariClaimExtra;
+export type RariExtra = RariDepositExtra | RariWithdrawExtra | RariTransferExtra | RariClaimExtra;
 
 export type LiquidityPoolsExtra = {|
   amount: string,
@@ -128,7 +124,8 @@ export type AllowanceTransactionExtra = {|
   },
 |};
 
-export type TransactionExtra = TxSettlementItem[]
+export type TransactionExtra =
+  | TxSettlementItem[]
   | TxWithdrawalExtra
   | SyntheticTransactionExtra
   | EnsTransactionExtra
@@ -172,7 +169,7 @@ export type Transaction = {
   stateInPPN?: string,
   feeWithGasToken?: ?FeeWithGasToken,
   type?: string,
-}
+};
 
 export type TransactionPayload = {
   gasLimit?: number,
@@ -266,4 +263,19 @@ export type TransactionStatus = {|
 export type TransactionResult = {|
   hash?: string,
   batchHash?: string,
+|};
+
+export type CrossChainBridgeBuildTXResponse = {|
+  userTxType: string,
+  txType: string,
+  txData: string,
+  txTarget: string,
+  chainId: number,
+  value: string,
+  approvalData: {|
+    minimumApprovalAmount: string,
+    approvalTokenAddress: string,
+    allowanceTarget: string,
+    owner: string,
+  |},
 |};

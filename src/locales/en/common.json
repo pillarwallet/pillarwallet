@@ -1323,6 +1323,7 @@
     },
     "title": {
       "exchange": "Swap on {{chain}}",
+      "crossChain": "Cross-chain bridge",
       "initialExchange": "Swap",
       "confirm": "Review"
     },
@@ -1340,6 +1341,10 @@
       "offers": {
         "title": "No live offers",
         "paragraph": "Currently no matching offers from exchange services are provided."
+      },
+      "routes":{
+        "title": "No routes available",
+        "paragraph": "Currently no matching routes from cross-chain services are provided."
       }
     }
   },
