@@ -2,17 +2,14 @@
 /*
     Pillar Wallet: the personal data locker
     Copyright (C) 2021 Stiftung Pillar Project
-
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
-
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-
     You should have received a copy of the GNU General Public License along
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
@@ -35,7 +32,6 @@ import { getPlrAddressForChain } from 'configs/assetsConfig';
 
 // Components
 import { Container, Content, Spacing } from 'components/layout/Layout';
-import HeaderBlock from 'components/HeaderBlock';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Icon from 'components/core/Icon';
 import Spinner from 'components/Spinner';
@@ -74,12 +70,16 @@ import ToAssetSelector from './ToAssetSelector';
 import OfferCard from './OfferCard';
 import { useFromAssets, useToAssets, useOffersQuery, sortOffers } from './utils';
 
-function Exchange() {
+interface Props {
+  fetchExchangeTitle: (val: string) => void;
+}
+
+function Exchange({ fetchExchangeTitle }: Props) {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const activeAccount = useActiveAccount();
-  const fromInputRef = React.useRef();
+  const fromInputRef: any = React.useRef();
   const screenName = getActiveScreenName(navigation);
 
   const initialChain: Chain = navigation.getParam('chain') || CHAIN.ETHEREUM;
@@ -92,7 +92,7 @@ function Exchange() {
   const [toAddress, setToAddress] = React.useState(initialToAddress);
 
   const [fromValue, setFromValue] = React.useState(null);
-  const [debouncedFromValue]: [string] = useDebounce(fromValue, 500);
+  const [debouncedFromValue] = useDebounce(fromValue, 500);
 
   const fromOptions = useFromAssets();
   const toOptions = useToAssets(chain);
@@ -187,24 +187,21 @@ function Exchange() {
     setFromValue(null);
   };
 
-  const toValue = maxBy(offers, (offer) => offer.toAmount)?.toAmount.precision(6);
+  const toValue = maxBy(offers, (offer: any) => offer.toAmount)?.toAmount.precision(6);
   const customTitle =
     nativeAssetPerChain[CHAIN.ETHEREUM]?.address === fromAddress && chain === CHAIN.ETHEREUM
       ? t('exchangeContent.title.initialExchange')
       : t('exchangeContent.title.exchange', { chain: chainConfig.titleShort });
+
+  React.useEffect(() => {
+    fetchExchangeTitle && fetchExchangeTitle(customTitle);
+  }, [chain, customTitle, fetchExchangeTitle, fromAddress, toAddress]);
 
   const showLoading = offersQuery.isFetching;
   const showEmptyState = !offers?.length && !offersQuery.isIdle && !offersQuery.isFetching;
 
   return (
     <Container>
-      <HeaderBlock
-        leftItems={[{ close: true }]}
-        centerItems={[{ title: customTitle }]}
-        navigation={navigation}
-        noPaddingTop
-      />
-
       <Content onScroll={() => Keyboard.dismiss()}>
         <Banner screenName={screenName} bottomPosition={false} />
         <FromAssetSelector

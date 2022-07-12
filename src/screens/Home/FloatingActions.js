@@ -29,7 +29,7 @@ import Modal from 'components/Modal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 
 // Constants
-import { CONNECT_FLOW, EXCHANGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';
+import { CONNECT_FLOW, BRIDGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';
 
 // Utils
 import { isArchanovaAccount } from 'utils/accounts';
@@ -62,7 +62,7 @@ function FloatingActions() {
     isExchangeAvailable && {
       title: t('swap'),
       iconName: 'exchange',
-      onPress: () => navigation.navigate(EXCHANGE_FLOW),
+      onPress: () => navigation.navigate(BRIDGE_FLOW),
       disabled: !isExchangeEnabled,
     },
     {

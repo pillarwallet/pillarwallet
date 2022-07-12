@@ -30,7 +30,6 @@ import { withTranslation } from 'react-i18next';
 // screens
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
-import ExchangeScreen from 'screens/Exchange/Exchange';
 import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
@@ -110,6 +109,7 @@ import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
 import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
 import WalletConnectBrowser from 'screens/WalletConnect/WalletConnectBrowser';
 import RegisterENSScreen from 'screens/RegisterENS';
+import BridgeTabScreen from 'screens/Bridge/BridgeTab';
 import NIServices from 'screens/NativeIntegration/NIServices';
 import NIInputService from 'screens/NativeIntegration/NIInputService';
 import NIViewService from 'screens/NativeIntegration/NIViewService';
@@ -135,7 +135,6 @@ import {
   ASSETS,
   ASSET,
   SERVICES_FLOW,
-  EXCHANGE,
   EXCHANGE_CONFIRM,
   HOME,
   HOME_FLOW,
@@ -241,6 +240,8 @@ import {
   PIN_CODE_CONFIRMATION,
   IMPORT_FLOW_FROM_SETTINGS,
   REGISTER_ENS,
+  BRIDGE_FLOW,
+  BRIDGE_TAB,
   NI_SERVICES,
   NI_VIEW_SERVICE,
   NI_INPUT_SERVICE,
@@ -313,7 +314,6 @@ const assetsFlow = createStackNavigator(
 
 const exchangeFlow = createStackNavigator(
   {
-    [EXCHANGE]: ExchangeScreen,
     [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
@@ -545,6 +545,14 @@ const contactsFlow = createStackNavigator(
   StackNavigatorConfig,
 );
 
+// BRIDGE TAB (Exchange and Cross-chain)
+const bridgeFlow = createStackNavigator(
+  {
+    [BRIDGE_TAB]: BridgeTabScreen,
+  },
+  StackNavigatorConfig,
+);
+
 const ensMigrationFlow = createStackNavigator(
   {
     [ENS_MIGRATION_CONFIRM]: EnsMigrationConfirmScreen,
@@ -625,6 +633,7 @@ const AppFlowNavigation = createStackNavigator(
     [WEB_VIEW]: WebViewScreen,
     [LEGAL_SCREEN]: LegalScreen,
     [IMPORT_FLOW_FROM_SETTINGS]: ImportFlowFromSettings,
+    [BRIDGE_FLOW]: bridgeFlow,
     [NATIVE_INTEGRATION_FLOW]: nativeIntegrationFlow,
   },
   modalTransition,

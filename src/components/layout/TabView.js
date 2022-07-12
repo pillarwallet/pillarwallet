@@ -52,9 +52,10 @@ type Props = {|
   onTabIndexChange: (index: number) => mixed,
   scrollEnabled?: boolean,
   swipeEnabled?: boolean,
+  rest?: any,
 |};
 
-function TabView({ items, tabIndex, onTabIndexChange, scrollEnabled, swipeEnabled }: Props) {
+function TabView({ items, tabIndex, onTabIndexChange, scrollEnabled, swipeEnabled, ...rest }: Props) {
   const colors = useThemeColors();
 
   const [internalIndex, setInternalIndex] = React.useState(0);
@@ -65,7 +66,7 @@ function TabView({ items, tabIndex, onTabIndexChange, scrollEnabled, swipeEnable
     }
 
     if (route.component) {
-      return <route.component />;
+      return <route.component {...rest} />;
     }
 
     return null;

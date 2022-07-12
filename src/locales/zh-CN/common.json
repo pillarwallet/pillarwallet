@@ -1212,6 +1212,7 @@
     },
     "title": {
       "exchange": "在 {{chain}} 上交换",
+      "crossChain": "跨链桥",
       "initialExchange": "交换",
       "confirm": "审查"
     },
@@ -1229,6 +1230,10 @@
       "offers": {
         "title": "没有实时优惠",
         "paragraph": "目前不提供来自交换服务的匹配报价。"
+      },
+      "routes":{
+        "title": "没有可用的路线",
+        "paragraph": "目前没有提供来自跨链服务的匹配路由。"
       }
     }
   },
