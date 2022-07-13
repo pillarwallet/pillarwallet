@@ -35,6 +35,9 @@ import { appFont, spacing, fontStyles } from 'utils/variables';
 import { useDispatch } from 'react-redux';
 import { setNotificationsVisibleStatus } from 'utils/getNotification';
 
+// Actions
+import { hasFCMPermission } from 'actions/notificationsActions';
+
 // Assets
 const smartWalletImage = require('assets/images/logo-get-notifications.png');
 
@@ -48,7 +51,9 @@ function GetNotifincations() {
   };
 
   const onNotificationRequest = async () => {
-    await setNotificationsVisibleStatus(dispatch, navigation, true);
+    if (await hasFCMPermission()) {
+      await setNotificationsVisibleStatus(dispatch, navigation, true);
+    }
   };
 
   return (

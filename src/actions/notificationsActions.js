@@ -117,7 +117,7 @@ const onFirebaseMessageAction = (message: FirebaseMessage) => {
   };
 };
 
-const hasFCMPermission = async () => {
+export const hasFCMPermission = async () => {
   const status = await firebaseMessaging.requestPermission();
   return [
     messaging.AuthorizationStatus.AUTHORIZED,

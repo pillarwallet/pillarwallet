@@ -31,13 +31,13 @@ import Storage from 'services/storage';
 
 export async function getNotificationsVisibleStatus() {
   const storage: any = Storage.getInstance('db');
-  const status: any = await storage.get('get_notifications8');
+  const status: any = await storage.get('get_notifications');
 
   return status?.visible;
 }
 
 export async function setNotificationsVisibleStatus(dispatch: any, navigation: any, status: boolean) {
-  await dispatch(saveDbAction('get_notifications8', { visible: status }));
+  await dispatch(saveDbAction('get_notifications', { visible: status }));
   navigation.goBack();
   if (status) {
     Toast.show({
