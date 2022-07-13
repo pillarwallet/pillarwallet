@@ -1420,6 +1420,7 @@
   },
   "tooltip": {
     "switchAccountsByTappingHere": "您可以点按此处切换帐户",
+    "start_by_cash":"从添加现金开始",
     "signInDeFi":"登录 DeFi",
     "includesDeploymentFee": "一次性智能钱包部署费"
   },

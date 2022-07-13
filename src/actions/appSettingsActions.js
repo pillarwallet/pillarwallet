@@ -251,6 +251,13 @@ export const dismissAccountSwitchTooltipAction = () => {
   };
 };
 
+export const dismissAddCashTooltipAction = () => {
+  return (dispatch: Dispatch) => {
+    dispatch(saveDbAction('app_settings', { appSettings: { addCashTooltipDismissed: true } }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: { addCashTooltipDismissed: true } });
+  };
+};
+
 export const dismissSignInDeFiTooltipAction = () => {
   return (dispatch: Dispatch) => {
     dispatch(saveDbAction('app_settings', { appSettings: { signInDeFiTooltipDismissed: true } }));
