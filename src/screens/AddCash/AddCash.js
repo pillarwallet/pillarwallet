@@ -45,7 +45,6 @@ import { getActiveScreenName } from 'utils/navigation';
 
 // Components
 import { Container } from 'components/layout/Layout';
-import Button from 'components/legacy/Button';
 import TextInput from 'components/legacy/TextInput';
 import HeaderBlock from 'components/HeaderBlock';
 import Text from 'components/core/Text';
@@ -63,7 +62,7 @@ import AddCashValueInputAccessoryHolder, {
   INPUT_ACCESSORY_NATIVE_ID,
 } from './components/AddCashAccessory/AddCashValueInputAccessoryHolder';
 import SelectResidentModal from './modal/SelectResidentModal';
-import SelectNetworkModal from './modal/SelectNetworkModal';
+import FooterContent from './components/FooterContent';
 
 let visibleModal = false;
 const AddCash = () => {
@@ -115,7 +114,7 @@ const AddCash = () => {
     ));
   }, []);
 
-  if (ref && visibleModal) {
+  if (ref && visibleModal && Platform.OS === 'android') {
     ref.focus();
   }
 
@@ -129,16 +128,6 @@ const AddCash = () => {
   const onSelectValue = async (accessoryValue: string) => {
     Keyboard.dismiss();
     setValue(accessoryValue);
-  };
-
-  const openSelectNetworkModal = () => {
-    Modal.open(() => (
-      <SelectNetworkModal
-        networkSelected={() => {
-          networkSelected();
-        }}
-      />
-    ));
   };
 
   const openWert = () => {
@@ -216,9 +205,7 @@ const AddCash = () => {
           />
         </AddCashView>
       </ScrollView>
-      <Footer behavior={Platform.OS === 'ios' ? 'position' : null}>
-        <Button onPress={openSelectNetworkModal} title={t('button.continue')} disabled={buttonDisable} />
-      </Footer>
+      <FooterContent buttonDisable={buttonDisable} onNetworkSelect={networkSelected} />
       <AddCashValueInputAccessoryHolder
         ref={(c) => {
           if (c && !AddCashValueInputAccessoryHolder.instances.includes(c)) {
@@ -254,10 +241,6 @@ const AddCashView = styled.View`
   min-height: 220px;
   flex: 1;
   margin-top: 70px;
-`;
-
-const Footer = styled.KeyboardAvoidingView`
-  padding: 20px 20px 20px;
 `;
 
 export default AddCash;

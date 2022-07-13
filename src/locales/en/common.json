@@ -1416,7 +1416,8 @@
     "transactionSentPending": "{{tokenValue}} is being sent.",
     "transactionSentConfirmed": "{{tokenValue}} sent.",
     "receivedCollectible": "You received an NFT.",
-    "collectibleSentAndReceived": "Your NFT has been received."
+    "collectibleSentAndReceived": "Your NFT has been received.",
+    "notification_enable": "Notifications enabled"
   },
 
   "graph": {
@@ -1563,5 +1564,10 @@
       "seedPhraseWarning": "On the blockchain, there is no traditional account tied to email or phone number. Instead, there is a seed phrase as your “password”. If it’s lost, your funds are lost. Make sure you have your 12 words saved nice and secure.",
       "privateKeyWarning": "Your Private key is used to restore/ import your wallet in case of device loss/change or deleting your wallet. Losing private key results in loss of access to your funds."
     }
+  },
+
+  "getNotifications":{
+    "title": "Get notifications",
+    "description": "Pillar will notify on your transactions status and requests from dapps. Never spam, always on point."
   }
 }

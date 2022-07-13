@@ -115,6 +115,7 @@ import NIInputService from 'screens/NativeIntegration/NIInputService';
 import NIViewService from 'screens/NativeIntegration/NIViewService';
 import NITransactionSubmitted from 'screens/NativeIntegration/NITransactionSubmitted';
 import NIWarningScreen from 'screens/NativeIntegration/NIWarning';
+import GetNotificationsScreen from 'screens/Notification/GetNotifications';
 
 // components
 import Toast from 'components/Toast';
@@ -234,6 +235,7 @@ import {
   WEB_VIEW,
   ENS_MIGRATION_FLOW,
   ADD_CASH,
+  GET_NOTIFICATIONS,
   LEGAL_SCREEN,
   SET_WALLET_PIN_CODE,
   WELCOME_BACK,
@@ -333,6 +335,7 @@ const servicesFlow = createStackNavigator(
 const addCashFlow = createStackNavigator(
   {
     [ADD_CASH]: AddCashScreen,
+    [GET_NOTIFICATIONS]: GetNotificationsScreen,
   },
   StackNavigatorConfig,
 );
