@@ -48,7 +48,7 @@ import { appFont, fontStyles, spacing } from 'utils/variables';
 import type { WalletObject } from 'models/Wallet';
 
 // Local
-import DarkModeSetting from './components/DarkModeSetting';
+import AppearanceSetting from './components/AppearanceSetting';
 import LanguageSetting from './components/LanguageSetting';
 import CurrencySetting from './components/CurrencySetting';
 import BiometricLoginSetting from './components/BiometricLoginSetting';
@@ -90,7 +90,7 @@ const Settings = () => {
 
         <Header>{t('appSettings')}</Header>
 
-        <DarkModeSetting />
+        <AppearanceSetting />
         <LanguageSetting />
         <CurrencySetting />
         <BiometricLoginSetting wallet={wallet} pin={pin} />

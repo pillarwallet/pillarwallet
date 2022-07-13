@@ -50,6 +50,7 @@ export type AppSettingsReducerState = {
     isBrowsingWebView?: boolean,
     accountSwitchTooltipDismissed?: boolean,
     addCashTooltipDismissed?: boolean,
+    signInDeFiTooltipDismissed?: boolean,
     deviceUniqueId?: string,
     hasSixDigitsPin?: boolean,
   },
@@ -83,6 +84,7 @@ export const initialState: AppSettingsReducerState = {
     hideLiquidityPools: false,
     accountSwitchTooltipDismissed: false,
     addCashTooltipDismissed: false,
+    signInDeFiTooltipDismissed: false,
   },
   isFetched: false,
 };

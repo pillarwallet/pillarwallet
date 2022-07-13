@@ -30,7 +30,6 @@ import { withTranslation } from 'react-i18next';
 // screens
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
-import ExchangeScreen from 'screens/Exchange/Exchange';
 import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
@@ -68,6 +67,7 @@ import StorybookScreen from 'screens/Storybook';
 import MenuScreen from 'screens/Menu/Menu';
 import MenuSettingsScreen from 'screens/Menu/Settings';
 import MenuSelectLanguageScreen from 'screens/Menu/SelectLanguage';
+import MenuSelectAppearanceScreen from 'screens/AppAppearence';
 import MenuSelectCurrencyScreen from 'screens/Menu/SelectCurrency';
 import MenuSystemInformationScreen from 'screens/Menu/SystemInformation';
 import WebViewScreen from 'screens/WebView/WebViewScreen';
@@ -110,6 +110,7 @@ import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
 import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
 import WalletConnectBrowser from 'screens/WalletConnect/WalletConnectBrowser';
 import RegisterENSScreen from 'screens/RegisterENS';
+import BridgeTabScreen from 'screens/Bridge/BridgeTab';
 import NIServices from 'screens/NativeIntegration/NIServices';
 import NIInputService from 'screens/NativeIntegration/NIInputService';
 import NIViewService from 'screens/NativeIntegration/NIViewService';
@@ -135,7 +136,6 @@ import {
   ASSETS,
   ASSET,
   SERVICES_FLOW,
-  EXCHANGE,
   EXCHANGE_CONFIRM,
   HOME,
   HOME_FLOW,
@@ -178,6 +178,7 @@ import {
   MENU,
   MENU_SETTINGS,
   MENU_SELECT_LANGUAGE,
+  MENU_SELECT_APPEARANCE,
   MENU_SELECT_CURRENCY,
   MENU_SYSTEM_INFORMATION,
   PPN_SEND_TOKEN_AMOUNT,
@@ -241,6 +242,8 @@ import {
   PIN_CODE_CONFIRMATION,
   IMPORT_FLOW_FROM_SETTINGS,
   REGISTER_ENS,
+  BRIDGE_FLOW,
+  BRIDGE_TAB,
   NI_SERVICES,
   NI_VIEW_SERVICE,
   NI_INPUT_SERVICE,
@@ -288,6 +291,19 @@ const StackNavigatorConfig = {
   },
 };
 
+const StackNavigatorConfigDisableGesture = {
+  defaultNavigationOptions: {
+    headerShown: false,
+    gestureEnabled: false,
+    cardStyle: {
+      backgroundColor: {
+        dark: getThemeColors(getThemeByType(DARK_THEME)).basic070,
+        light: getThemeColors(getThemeByType()).basic070,
+      },
+    },
+  },
+};
+
 // ASSETS FLOW
 const assetsFlow = createStackNavigator(
   {
@@ -300,12 +316,11 @@ const assetsFlow = createStackNavigator(
 
 const exchangeFlow = createStackNavigator(
   {
-    [EXCHANGE]: ExchangeScreen,
     [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
   },
-  StackNavigatorConfig,
+  StackNavigatorConfigDisableGesture,
 );
 
 // SERVICES FLOW
@@ -481,6 +496,7 @@ const menuFlow = createStackNavigator(
     [MENU]: MenuScreen,
     [MENU_SETTINGS]: MenuSettingsScreen,
     [MENU_SELECT_LANGUAGE]: MenuSelectLanguageScreen,
+    [MENU_SELECT_APPEARANCE]: MenuSelectAppearanceScreen,
     [MENU_SELECT_CURRENCY]: MenuSelectCurrencyScreen,
     [MENU_SYSTEM_INFORMATION]: MenuSystemInformationScreen,
     [IMPORT_WALLET]: ImportWalletScreen,
@@ -528,6 +544,14 @@ const walletMigrationFlow = createStackNavigator(
 const contactsFlow = createStackNavigator(
   {
     [CONTACTS_LIST]: ContactsListScreen,
+  },
+  StackNavigatorConfig,
+);
+
+// BRIDGE TAB (Exchange and Cross-chain)
+const bridgeFlow = createStackNavigator(
+  {
+    [BRIDGE_TAB]: BridgeTabScreen,
   },
   StackNavigatorConfig,
 );
@@ -612,6 +636,7 @@ const AppFlowNavigation = createStackNavigator(
     [WEB_VIEW]: WebViewScreen,
     [LEGAL_SCREEN]: LegalScreen,
     [IMPORT_FLOW_FROM_SETTINGS]: ImportFlowFromSettings,
+    [BRIDGE_FLOW]: bridgeFlow,
     [NATIVE_INTEGRATION_FLOW]: nativeIntegrationFlow,
   },
   modalTransition,
@@ -719,14 +744,8 @@ class AppFlow extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      showHomeUpdateIndicator,
-      navigation,
-      backupStatus,
-      theme,
-      i18n,
-      onboardingUsernameRegistrationFailed,
-    } = this.props;
+    const { showHomeUpdateIndicator, navigation, backupStatus, theme, i18n, onboardingUsernameRegistrationFailed } =
+      this.props;
 
     if (onboardingUsernameRegistrationFailed) return <UsernameFailed />;
 

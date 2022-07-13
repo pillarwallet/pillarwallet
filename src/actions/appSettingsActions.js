@@ -258,6 +258,13 @@ export const dismissAddCashTooltipAction = () => {
   };
 };
 
+export const dismissSignInDeFiTooltipAction = () => {
+  return (dispatch: Dispatch) => {
+    dispatch(saveDbAction('app_settings', { appSettings: { signInDeFiTooltipDismissed: true } }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: { signInDeFiTooltipDismissed: true } });
+  };
+};
+
 export const setDeviceUniqueIdIfNeededAction = (deviceUniqueId: string) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const { deviceUniqueId: currentDeviceUniqueId } = getState().appSettings.data;
