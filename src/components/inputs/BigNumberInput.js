@@ -28,11 +28,15 @@ import AutoScaleTextInput, { type Props as AutoScaleTextInputProps } from 'compo
 // Utils
 import { useThemeColors } from 'utils/themes';
 
-type PassthroughProps = $Diff<AutoScaleTextInputProps, {
-  value: $PropertyType<AutoScaleTextInputProps, 'value'>,
-  onChange: $PropertyType<AutoScaleTextInputProps, 'onChange'>,
-  onChangeText: $PropertyType<AutoScaleTextInputProps, 'onChangeText'>,
-}>;
+// eslint-disable-next-line flowtype/generic-spacing
+type PassthroughProps = $Diff<
+  AutoScaleTextInputProps,
+  {
+    value: $PropertyType<AutoScaleTextInputProps, 'value'>,
+    onChange: $PropertyType<AutoScaleTextInputProps, 'onChange'>,
+    onChangeText: $PropertyType<AutoScaleTextInputProps, 'onChangeText'>,
+  },
+>;
 
 type Props = {|
   ...PassthroughProps,
@@ -54,15 +58,7 @@ type Instance = typeof RNTextInput;
  * to allow user to input all allowed numbers.
  */
 const BigNumberInput = React.forwardRef<Props, Instance>((props, ref) => {
-  const {
-    value,
-    onValueChange,
-    decimals,
-    placeholder = '0',
-    maxValue,
-    style,
-    ...passthroughProps
-  } = props;
+  const { value, onValueChange, decimals, placeholder = '0', maxValue, style, ...passthroughProps } = props;
 
   const colors = useThemeColors();
 
@@ -73,7 +69,7 @@ const BigNumberInput = React.forwardRef<Props, Instance>((props, ref) => {
 
     // Sync `rawValue` state iff `value` is numerically different.
     if (!areEqual(currentValue, value)) {
-      setRawValue(value?.toFixed() ?? '');
+      setRawValue(value?.toFixed(passthroughProps?.toFixed && passthroughProps.toFixed) ?? '');
     }
   }, [value, rawValue]);
 

@@ -39,7 +39,7 @@ import SWActivationCard from 'components/SWActivationCard';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 
 // Constants
-import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
+import { BRIDGE_TAB, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL } from 'constants/paymentNetworkConstants';
 
@@ -49,10 +49,7 @@ import { formatFiat } from 'utils/common';
 import { getBalance } from 'utils/assets';
 import { getArchanovaWalletStatus } from 'utils/archanova';
 import { isArchanovaAccountAddress } from 'utils/feedData';
-import {
-  getHistoryEventsFromTransactions,
-  getTokenTransactionsFromHistory,
-} from 'utils/history';
+import { getHistoryEventsFromTransactions, getTokenTransactionsFromHistory } from 'utils/history';
 import { isArchanovaAccount, isEtherspotAccount, isKeyBasedAccount } from 'utils/accounts';
 import { getAssetRateInFiat } from 'utils/rates';
 
@@ -78,7 +75,6 @@ import type { AccountAssetBalances } from 'models/Balances';
 import type { Transaction } from 'models/Transaction';
 import type { ChainRecord } from 'models/Chain';
 import type { Currency } from 'models/Rates';
-
 
 type Props = {
   fetchAssetsBalances: () => void,
@@ -115,51 +111,34 @@ const AssetScreen = ({
     [accountHistory, accounts, contractAddress, chain],
   );
 
-  const transactions = useMemo(
-    () => {
-      const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
+  const transactions = useMemo(() => {
+    const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
 
-      if (isArchanovaAccount(activeAccount)) {
-        return tokenTransactions.filter(({
-          isPPNTransaction = false,
-          from,
-          to,
-          tag,
-        }) => {
-          const isBetweenArchanovaAccounts = isArchanovaAccountAddress(from, accounts)
-            && isArchanovaAccountAddress(to, accounts);
+    if (isArchanovaAccount(activeAccount)) {
+      return tokenTransactions.filter(({ isPPNTransaction = false, from, to, tag }) => {
+        const isBetweenArchanovaAccounts =
+          isArchanovaAccountAddress(from, accounts) && isArchanovaAccountAddress(to, accounts);
 
-          return tag !== PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL
-            && (!isPPNTransaction || (isPPNTransaction && isBetweenArchanovaAccounts));
-        });
-      }
-
-      if (isEtherspotAccount(activeAccount)) {
-        return getHistoryEventsFromTransactions(
-          tokenTransactions,
-          chain,
-          activeAccountAddress,
-          chainSupportedAssets,
+        return (
+          tag !== PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL &&
+          (!isPPNTransaction || (isPPNTransaction && isBetweenArchanovaAccounts))
         );
-      }
+      });
+    }
 
-      return [];
-    },
-    [
-      tokenTransactions,
-      chain,
-      accounts,
-      activeAccount,
-      activeAccountAddress,
-      supportedAssetsPerChain,
-    ],
-  );
+    if (isEtherspotAccount(activeAccount)) {
+      return getHistoryEventsFromTransactions(tokenTransactions, chain, activeAccountAddress, chainSupportedAssets);
+    }
+
+    return [];
+  }, [tokenTransactions, chain, accounts, activeAccount, activeAccountAddress, supportedAssetsPerChain]);
 
   const buttons = [
-    !isArchanovaAccount(activeAccount) && !isKeyBasedAccount(activeAccount) && {
+    !isArchanovaAccount(activeAccount) &&
+    !isKeyBasedAccount(activeAccount) && {
       title: t('button.swap'),
       iconName: 'exchange',
-      onPress: () => navigation.navigate(EXCHANGE, { fromAssetAddress: contractAddress, chain }),
+      onPress: () => navigation.navigate(BRIDGE_TAB, { fromAssetAddress: contractAddress, chain }),
     },
     {
       title: t('button.send'),
@@ -173,14 +152,10 @@ const AssetScreen = ({
   const walletBalances = accountAssetsBalances[chain]?.wallet ?? {};
   const balance = getBalance(walletBalances, contractAddress);
   const isWalletEmpty = balance <= 0;
-  const totalInFiat = isWalletEmpty ? 0 : (balance * tokenRate);
+  const totalInFiat = isWalletEmpty ? 0 : balance * tokenRate;
   const fiatAmount = formatFiat(totalInFiat, baseFiatCurrency);
 
-  const {
-    listed: isListed = true,
-    send: isAssetConfigSendActive = true,
-    disclaimer,
-  } = assetsConfig[token] || {};
+  const { listed: isListed = true, send: isAssetConfigSendActive = true, disclaimer } = assetsConfig[token] || {};
 
   const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
   const sendingBlockedMessage = archanovaWalletStatus.sendingBlockedMessage || {};
@@ -235,7 +210,9 @@ const AssetScreen = ({
 };
 
 const mapStateToProps = ({
-  appSettings: { data: { baseFiatCurrency } },
+  appSettings: {
+    data: { baseFiatCurrency },
+  },
   smartWallet: smartWalletState,
   accounts: { data: accounts },
 }: RootReducerState): $Shape<Props> => ({
@@ -262,7 +239,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetScreen);
-
 
 const DataWrapper = styled.View`
   margin: 0 ${spacing.large}px ${spacing.large}px;

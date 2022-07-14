@@ -19,32 +19,22 @@
 */
 
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
 import { useTranslationWithPrefix } from 'translations/translate';
+import { useNavigation } from 'react-navigation-hooks';
 
 // Constants
-import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
-
-// Selectors
-import { useRootSelector } from 'selectors';
-
-// Actions
-import { setAppThemeAction } from 'actions/appSettingsActions';
+import { MENU_SELECT_APPEARANCE } from 'constants/navigationConstants';
 
 // Local
-import SettingsToggle from './SettingsToggle';
+import SettingsItem from './SettingsItem';
 
-function DarkModeSetting() {
+function AppearanceSetting() {
   const { t } = useTranslationWithPrefix('menu.settings');
-  const dispatch = useDispatch();
+  const navigation = useNavigation();
 
-  const isDarkMode = useRootSelector((root) => root.appSettings.data.themeType) === DARK_THEME;
+  const onNaviagte = () => navigation.navigate(MENU_SELECT_APPEARANCE);
 
-  const handleChangeValue = (value: boolean) => dispatch(setAppThemeAction(value ? DARK_THEME : LIGHT_THEME, true));
-
-  return (
-    <SettingsToggle icon="darkMode16" title={t('darkMode')} value={isDarkMode} onChangeValue={handleChangeValue} />
-  );
+  return <SettingsItem icon="darkMode16" title={t('appearance')} onPress={onNaviagte} />;
 }
 
-export default DarkModeSetting;
+export default AppearanceSetting;

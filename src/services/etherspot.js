@@ -42,6 +42,9 @@ import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 import { isValidAddress, toChecksumAddress } from 'ethereumjs-util';
 
+// abi
+import ERC20_CONTRACT_ABI from 'abi/erc20.json';
+
 // utils
 import { BigNumber, getEnsName, parseTokenAmount, reportErrorLog, logBreadcrumb } from 'utils/common';
 import { isProdEnv } from 'utils/environment';
@@ -53,12 +56,12 @@ import {
   getChainTokenListName,
 } from 'utils/etherspot';
 import { addressesEqual, findAssetByAddress } from 'utils/assets';
-import { nativeAssetPerChain } from 'utils/chains';
+import { nativeAssetPerChain, mapChainToChainId } from 'utils/chains';
 import { mapToEthereumTransactions } from 'utils/transactions';
 import { getCaptureFee } from 'utils/exchange';
 
 // constants
-import { ETH } from 'constants/assetsConstants';
+import { ETH, ADDRESS_ZERO, ROOT_TOKEN_ADDRESS } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 import { PROJECT_KEY } from 'constants/etherspotConstants';
@@ -70,7 +73,7 @@ import type {
   GatewayEstimatedBatch,
   EtherspotAccountTotalBalancesItem,
 } from 'utils/types/etherspot';
-import type { AssetCore, Asset } from 'models/Asset';
+import type { AssetCore, Asset, AssetOption } from 'models/Asset';
 import type { WalletAssetBalance } from 'models/Balances';
 import type { Chain, ChainRecord } from 'models/Chain';
 import type { ExchangeOffer } from 'models/Exchange';
@@ -82,6 +85,7 @@ import type {
 } from 'models/Transaction';
 import type { GasPrice } from 'models/GasInfo';
 import type { NftList } from 'etherspot';
+import type { EtherspotErc20Interface } from 'models/Etherspot';
 
 export class EtherspotService {
   sdk: EtherspotSdk;
@@ -775,6 +779,81 @@ export class EtherspotService {
     } catch (error) {
       reportErrorLog('EtherspotService getExchangeOffers failed', { chain, error });
       return [];
+    }
+  }
+
+  async buildCrossChainBridgeTransaction(fromAsset: AssetOption, toAsset: AssetOption, fromValue: BigNumber) {
+    const sdk = this.getSdkForChain(fromAsset.chain);
+    if (!sdk) return null;
+
+    const value = EthersUtils.parseUnits(fromValue.toString(), fromAsset.decimals);
+
+    try {
+      const quotes = await sdk.getCrossChainQuotes({
+        fromTokenAddress: fromAsset.address === ADDRESS_ZERO ? ROOT_TOKEN_ADDRESS : fromAsset.address,
+        fromChainId: mapChainToChainId(fromAsset.chain),
+        toTokenAddress: toAsset.address === ADDRESS_ZERO ? ROOT_TOKEN_ADDRESS : toAsset.address,
+        toChainId: mapChainToChainId(toAsset.chain),
+        fromAmount: value,
+      });
+
+      const quote: any = quotes.items[0];
+
+      logBreadcrumb('buildCrossChainBridgeTransaction!', 'cross chain bridge quotes', { quotes });
+
+      if (!quote) return null;
+      const tokenAddres = quote.estimate.data.fromToken.address;
+      const { approvalAddress, amount } = quote.approvalData;
+
+      const erc20Contract: any = this.getContract<?EtherspotErc20Interface>(
+        fromAsset.chain,
+        ERC20_CONTRACT_ABI,
+        tokenAddres,
+      );
+      if (!erc20Contract) return null;
+
+      const approvalTransactionData = erc20Contract.encodeApprove(approvalAddress, amount);
+
+      return { approvalTransactionData, transactionData: quote.transaction };
+    } catch (e) {
+      logBreadcrumb('buildCrossChainBridgeTransaction failed!', 'failed cross chain bridge routes', { e });
+      return null;
+    }
+  }
+
+  async getCrossChainBridgeTokenList(fromChain: Chain, supprotedChains: Chain[]) {
+    const sdk = this.getSdkForChain(fromChain);
+    if (!sdk) return null;
+
+    try {
+      const supprotedChainsList = supprotedChains.flatMap((chain) =>
+        sdk.getCrossChainBridgeTokenList({
+          // eslint-disable-next-line i18next/no-literal-string
+          direction: 'To',
+          fromChainId: mapChainToChainId(fromChain),
+          toChainId: mapChainToChainId(chain),
+        }),
+      );
+
+      const list = await Promise.all(supprotedChainsList);
+
+      logBreadcrumb('getCrossChainBridgeTokenList', 'Get cross chain bridge supported list', {
+        list,
+        supprotedChainsList,
+      });
+      return list;
+    } catch (e) {
+      logBreadcrumb('getCrossChainBridgeTokenList Failed!', 'get error in supproted list cross chain', { e });
+      return null;
+    }
+  }
+
+  async supportedCrossChain() {
+    try {
+      const info: any = await this.sdk.getCrossChainBridgeSupportedChains();
+      return info;
+    } catch (e) {
+      return e;
     }
   }
 

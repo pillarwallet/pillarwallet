@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigation } from 'react-navigation-hooks';
 import t from 'translations/translate';
@@ -33,6 +33,7 @@ import Image from 'components/Image';
 
 // Constants
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
+import { PIN_CODE_UNLOCK } from 'constants/navigationConstants';
 
 // Utils
 import { fontStyles, spacing, appFont } from 'utils/variables';
@@ -40,6 +41,7 @@ import { getThemeColors } from 'utils/themes';
 
 // Actions
 import { setAppThemeAction } from 'actions/appSettingsActions';
+import { saveDbAction } from 'actions/dbActions';
 
 // Assets
 const lightTheme = require('assets/images/appAppearence/lightTheme.png');
@@ -51,8 +53,16 @@ const AppAppearence = () => {
   const theme = useTheme();
   const { current } = theme;
   const colors = getThemeColors(theme);
+  const omitPin = navigation.getParam('omitPin');
+  const nextScreenPinUnlock = navigation.getParam('next_pin_unlock');
+
+  const [currentTheme] = useState(current);
   const [isLightThemePressed, setLightThemePressed] = useState(current === LIGHT_THEME);
   const [isDarkThemePressed, setDarkThemePressed] = useState(current === DARK_THEME);
+
+  useEffect(() => {
+    dispatch(saveDbAction('appearance_visible', true));
+  }, [dispatch]);
 
   const onPressLightTheme = () => {
     setLightThemePressed(true);
@@ -66,9 +76,24 @@ const AppAppearence = () => {
     dispatch(setAppThemeAction(DARK_THEME, true));
   };
 
+  const onConfirm = async () => {
+    if (nextScreenPinUnlock) {
+      navigation.navigate({
+        routeName: PIN_CODE_UNLOCK,
+        params: { omitPin },
+      });
+    } else navigation.goBack(null);
+  };
+
+  const onBackPress = () => {
+    if (currentTheme === LIGHT_THEME) onPressLightTheme();
+    else onPressDarkTheme();
+    onConfirm();
+  };
+
   return (
     <Container>
-      <HeaderBlock leftItems={[{ close: true }]} navigation={navigation} noPaddingTop />
+      <HeaderBlock leftItems={[{ close: true }]} onClose={onBackPress} noPaddingTop />
       <Center flex={1} padding={spacing.rhythm}>
         <Title>{t('auth:title.appAppearence')}</Title>
         <Text color={colors.tertiaryText} variant="medium" style={appearenceStyles.textStyle}>
@@ -94,7 +119,12 @@ const AppAppearence = () => {
             </Text>
           </Themes>
         </ThemeView>
-        <Button title={t('auth:button.confirm')} size="large" style={appearenceStyles.confirmButton} />
+        <Button
+          title={t('auth:button.confirm')}
+          size="large"
+          style={appearenceStyles.confirmButton}
+          onPress={onConfirm}
+        />
       </Center>
     </Container>
   );

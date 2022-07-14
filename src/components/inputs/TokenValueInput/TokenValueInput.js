@@ -63,6 +63,7 @@ type Props = {|
   onPercentInput?: () => mixed,
   showChainIcon?: boolean,
   placeholder?: string | null | '',
+  toFixedValue?: number,
 |};
 
 type Instance = typeof RNTextInput;
@@ -84,6 +85,7 @@ const TokenValueInput = React.forwardRef<Props, Instance>((props, ref) => {
     textStyle,
     onTokenPress,
     showChainIcon,
+    toFixedValue,
   } = props;
 
   const { t } = useTranslation();
@@ -126,6 +128,7 @@ const TokenValueInput = React.forwardRef<Props, Instance>((props, ref) => {
         onFocus={referenceValue ? handleFocus : undefined}
         onBlur={referenceValue ? handleBlur : undefined}
         inputAccessoryViewID={referenceValue ? INPUT_ACCESSORY_NATIVE_ID : undefined}
+        toFixed={toFixedValue}
       />
 
       {!!asset && (

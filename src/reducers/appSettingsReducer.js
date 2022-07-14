@@ -49,6 +49,8 @@ export type AppSettingsReducerState = {
     isPickingImage?: boolean,
     isBrowsingWebView?: boolean,
     accountSwitchTooltipDismissed?: boolean,
+    addCashTooltipDismissed?: boolean,
+    signInDeFiTooltipDismissed?: boolean,
     deviceUniqueId?: string,
     hasSixDigitsPin?: boolean,
   },
@@ -81,6 +83,8 @@ export const initialState: AppSettingsReducerState = {
     localisation: null,
     hideLiquidityPools: false,
     accountSwitchTooltipDismissed: false,
+    addCashTooltipDismissed: false,
+    signInDeFiTooltipDismissed: false,
   },
   isFetched: false,
 };
@@ -92,11 +96,7 @@ const appSettingsReducer = (
   switch (action.type) {
     case UPDATE_APP_SETTINGS:
       const updatedState = { data: action.payload, isFetched: true };
-      return merge(
-        {},
-        state,
-        updatedState,
-      );
+      return merge({}, state, updatedState);
 
     case RESET_APP_SETTINGS:
       return { ...state, data: { ...initialState.data } };
