@@ -1,4 +1,3 @@
-// @flow
 /*
     Pillar Wallet: the personal data locker
     Copyright (C) 2021 Stiftung Pillar Project
@@ -22,6 +21,7 @@ import t from 'translations/translate';
 
 // Actions
 import { saveDbAction } from 'actions/dbActions';
+import { startListeningNotificationsAction } from 'actions/notificationsActions';
 
 // Components
 import Toast from 'components/Toast';
@@ -31,15 +31,18 @@ import Storage from 'services/storage';
 
 export async function getNotificationsVisibleStatus() {
   const storage: any = Storage.getInstance('db');
-  const status: any = await storage.get('get_notifications');
+  const status: any = await storage.get('get_notifications18');
 
   return status?.visible;
 }
 
 export async function setNotificationsVisibleStatus(dispatch: any, navigation: any, status: boolean) {
-  await dispatch(saveDbAction('get_notifications', { visible: status }));
+  await dispatch(saveDbAction('get_notifications18', { visible: status }));
   navigation.goBack();
   if (status) {
+    setTimeout(() => {
+      dispatch(startListeningNotificationsAction());
+    }, 4000);
     Toast.show({
       message: t('notification.notification_enable'),
       emoji: 'white_check_mark',

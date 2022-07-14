@@ -49,6 +49,7 @@ import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenSt
 import { firebaseMessaging } from 'services/firebase';
 
 // Utils
+import { getNotificationsVisibleStatus } from 'utils/getNotification';
 import {
   processNotification,
   resetAppNotificationsBadgeNumber,
@@ -127,7 +128,7 @@ export const hasFCMPermission = async () => {
 
 export const subscribeToPushNotificationsAction = () => {
   return async (dispatch: Dispatch) => {
-    if (await hasFCMPermission()) {
+    if (await getNotificationsVisibleStatus()) {
       if (notificationsListener !== null) return;
       notificationsListener = firebaseMessaging.onMessage(debounce(message => {
         dispatch(onFirebaseMessageAction(message));
