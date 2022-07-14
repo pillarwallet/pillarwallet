@@ -32,7 +32,6 @@ import TokenFiatValueAccessory from 'components/inputs/TokenValueInput/TokenFiat
 import type { ViewStyleProp } from 'utils/types/react-native';
 import type { AssetOption } from 'models/Asset';
 
-
 type Props = {|
   assets: AssetOption[],
   selectedAsset: ?AssetOption,
@@ -55,14 +54,10 @@ const ToAssetSelector = ({ assets, selectedAsset, onSelectAsset, value, style }:
         editable={false}
         referenceDisableMax
         onTokenPress={openSelectAsset}
+        toFixedValue={4}
       />
 
-      <TokenFiatValueAccessory
-        value={value}
-        chain={selectedAsset?.chain}
-        asset={selectedAsset}
-        disableUseMax
-      />
+      <TokenFiatValueAccessory value={value} chain={selectedAsset?.chain} asset={selectedAsset} disableUseMax />
     </Container>
   );
 };

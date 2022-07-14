@@ -137,6 +137,8 @@ export const ASSET_CATEGORY = {
 
 export const ADDRESS_ZERO = ethers.constants.AddressZero;
 
+export const ROOT_TOKEN_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
+
 export const PLR_ADDRESS_BSC = '0x790cfdc6ab2e0ee45a433aac5434f183be1f6a20';
 export const PLR_ADDRESS_POLYGON = '0xa6b37fc85d870711c56fbcb8afe2f8db049ae774';
 export const PLR_ADDRESS_XDAI = ''; // TODO: to be added when available

@@ -39,7 +39,7 @@ import Banner from 'components/Banner/Banner';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 
 // Constants
-import { ASSET, EXCHANGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW, ADD_CASH } from 'constants/navigationConstants';
+import { ASSET, BRIDGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW, ADD_CASH } from 'constants/navigationConstants';
 
 // Selectors
 import {
@@ -155,17 +155,19 @@ function WalletTab() {
       iconName: 'qrcode',
       onPress: showReceiveModal,
     },
-    isExchangeAvailable && hasPositiveBalance && {
+    isExchangeAvailable &&
+    hasPositiveBalance && {
       title: tRoot('button.swap'),
       iconName: 'exchange',
-      onPress: () => navigation.navigate(EXCHANGE_FLOW),
+      onPress: () => navigation.navigate(BRIDGE_FLOW),
     },
     hasPositiveBalance && {
       title: tRoot('button.send'),
       iconName: 'send',
       onPress: () => navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW),
     },
-    !isKeyBasedAccount(activeAccount) && !hasPositiveBalance && {
+    !isKeyBasedAccount(activeAccount) &&
+    !hasPositiveBalance && {
       title: tRoot('button.addCash'),
       iconName: 'plus',
       onPress: () => navigation.navigate(ADD_CASH),

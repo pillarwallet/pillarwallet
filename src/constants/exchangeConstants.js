@@ -34,3 +34,7 @@ export const ALLOWED_SLIPPAGE = 1; // 1%
 export const WBTC_PENDING_TRANSACTION = 'WBTC_PENDING_TRANSACTION';
 export const WBTC_SETTLED_TRANSACTION = 'WBTC_SETTLED_TRANSACTION';
 
+export const BRIDGE_CATEGORY = {
+  EXCHANGE: ('Exchange': 'Exchange'),
+  CROSS_CHAIN: ('Cross-chain': 'Cross-chain'),
+};

@@ -23,11 +23,15 @@ import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
 import { useNavigation } from 'react-navigation-hooks';
+import { Platform } from 'react-native';
+import { useDispatch } from 'react-redux';
 
+// Components
 import Text from 'components/core/Text';
+import Tooltip from 'components/Tooltip';
 
 // Selectors
-import { useActiveAccount, useFiatCurrency } from 'selectors';
+import { useActiveAccount, useRootSelector, useFiatCurrency } from 'selectors';
 
 // Utils
 import { formatFiatValue, formatFiatChangeExtended } from 'utils/format';
@@ -37,6 +41,9 @@ import { isKeyBasedAccount } from 'utils/accounts';
 
 // Constants
 import { ADD_CASH } from 'constants/navigationConstants';
+
+// Actions
+import { dismissAddCashTooltipAction } from 'actions/appSettingsActions';
 
 // Local
 import SpecialButton from './components/SpecialButton';
@@ -52,6 +59,7 @@ function BalanceSection({ balanceInFiat, changeInFiat, showBalance, onBalanceCli
   const { t, tRoot } = useTranslationWithPrefix('home.balance');
   const colors = useThemeColors();
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const fiatCurrency = useFiatCurrency();
   const activeAccount = useActiveAccount();
@@ -59,38 +67,70 @@ function BalanceSection({ balanceInFiat, changeInFiat, showBalance, onBalanceCli
   const initialBalance = changeInFiat ? balanceInFiat.minus(changeInFiat) : null;
   const formattedChange = formatFiatChangeExtended(changeInFiat, initialBalance, fiatCurrency);
 
-  return (
-    <Container>
-      <FirstColumn>
-        <TouchableContainer onPress={onBalanceClick}>
-          <BalanceText numberOfLines={1} adjustsFontSizeToFit>
-            {showBalance ? formatFiatValue(balanceInFiat, fiatCurrency) : '***'}
-          </BalanceText>
-        </TouchableContainer>
-        {!!formattedChange && (
-          <ProfitContainer>
-            <ProfitLabel color={colors.secondaryText}>{t('lastWeek')}</ProfitLabel>
-            <ProfitValue color={colors.positive}>{formattedChange}</ProfitValue>
-          </ProfitContainer>
-        )}
-      </FirstColumn>
+  const { addCashTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
 
-      {!isKeyBasedAccount(activeAccount) && (
-        <SecondColumn>
-          <SpecialButton
-            title={tRoot('button.addCash')}
-            iconName="add-cash"
-            onPress={() => {
-              navigation.navigate(ADD_CASH);
-            }}
-          />
-        </SecondColumn>
-      )}
-    </Container>
+  const visibleAddCashTooltip = !addCashTooltipDismissed && parseFloat(balanceInFiat) === 0.0;
+
+  const [visibleTooltip, setVisibleTooltip] = React.useState(false);
+
+  React.useEffect(() => {
+    if (visibleAddCashTooltip) {
+      setTimeout(() => {
+        setVisibleTooltip(true);
+      }, 3000);
+    } else {
+      setVisibleTooltip(false);
+    }
+  }, [addCashTooltipDismissed, balanceInFiat, visibleAddCashTooltip]);
+
+  const onAddCashPress = () => {
+    navigation.navigate(ADD_CASH);
+    dispatch(dismissAddCashTooltipAction());
+  };
+
+  return (
+    <>
+      <Container>
+        <FirstColumn>
+          <TouchableContainer onPress={onBalanceClick}>
+            <BalanceText numberOfLines={1} adjustsFontSizeToFit>
+              {showBalance ? formatFiatValue(balanceInFiat, fiatCurrency) : '***'}
+            </BalanceText>
+          </TouchableContainer>
+          {!!formattedChange && (
+            <ProfitContainer>
+              <ProfitLabel color={colors.secondaryText}>{t('lastWeek')}</ProfitLabel>
+              <ProfitValue color={colors.positive}>{formattedChange}</ProfitValue>
+            </ProfitContainer>
+          )}
+        </FirstColumn>
+
+        {!isKeyBasedAccount(activeAccount) && (
+          <SecondColumn>
+            <SpecialButton title={tRoot('button.addCash')} iconName="add-cash" onPress={onAddCashPress} />
+          </SecondColumn>
+        )}
+      </Container>
+      <Tooltip
+        isVisible={visibleTooltip}
+        body={tRoot('tooltip.start_by_cash')}
+        wrapperStyle={wrapperStyle}
+        onPress={onAddCashPress}
+      />
+    </>
   );
 }
 
 export default BalanceSection;
+
+const wrapperStyle = {
+  zIndex: 1999,
+  position: 'relative',
+  alignSelf: 'flex-end',
+  width: 150,
+  height: 10,
+  top: Platform.OS === 'ios' ? -20 : -10,
+};
 
 const Container = styled.View`
   flex-direction: row;

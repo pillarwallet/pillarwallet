@@ -32,7 +32,7 @@ import { firebaseCrashlytics } from 'services/firebase';
 
 // constants
 import { IS_APP_VERSION_V3 } from 'constants/appConstants';
-import { AUTH_FLOW, ONBOARDING_FLOW, PIN_CODE_UNLOCK } from 'constants/navigationConstants';
+import { AUTH_FLOW, ONBOARDING_FLOW, PIN_CODE_UNLOCK, MENU_SELECT_APPEARANCE } from 'constants/navigationConstants';
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { SET_SUPPORTED_ASSETS } from 'constants/assetsConstants';
 import { SET_ASSETS_BALANCES } from 'constants/assetsBalancesConstants';
@@ -77,7 +77,6 @@ import { getTranslationsResourcesAndSetLanguageOnAppOpenAction } from 'actions/l
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-
 
 const storage = Storage.getInstance('db');
 
@@ -197,12 +196,14 @@ export const initAppAndRedirectAction = () => {
 
     let navAction;
     if (walletTimestamp) {
+      const appearanceVisible = get(storageData, 'appearance_visible');
       navAction = {
         routeName: AUTH_FLOW,
         action: NavigationActions.navigate({
-          routeName: PIN_CODE_UNLOCK,
+          routeName: !appearanceVisible ? MENU_SELECT_APPEARANCE : PIN_CODE_UNLOCK,
           params: {
             omitPin: appSettings.omitPinOnLogin,
+            next_pin_unlock: true,
           },
         }),
       };
