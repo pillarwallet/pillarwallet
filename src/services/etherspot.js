@@ -109,6 +109,7 @@ export class EtherspotService {
       isMainnet ? NetworkNames.Matic : NetworkNames.Mumbai,
       NetworkNames.Xdai,
       isMainnet ? NetworkNames.Avalanche : NetworkNames.Fuji,
+      isMainnet ? NetworkNames.Optimism : NetworkNames.OptimismKovan,
     ];
 
     const primaryNetworkName = isMainnet ? NetworkNames.Mainnet : NetworkNames.Kovan;
@@ -120,7 +121,10 @@ export class EtherspotService {
     await Promise.all(
       this.supportedNetworks.map(async (networkName) => {
         const env =
-          networkName !== NetworkNames.Kovan && networkName !== NetworkNames.Fuji && networkName !== NetworkNames.Mumbai
+          networkName !== NetworkNames.Kovan &&
+          networkName !== NetworkNames.Fuji &&
+          networkName !== NetworkNames.Mumbai &&
+          networkName !== NetworkNames.OptimismKovan
             ? EnvNames.MainNets
             : EnvNames.TestNets;
         this.instances[networkName] = new EtherspotSdk(privateKey, {
@@ -176,6 +180,7 @@ export class EtherspotService {
   }
 
   getSdkForChain(chain: Chain): ?EtherspotSdk {
+    console.log('');
     const network = networkNameFromChain(chain);
     if (!network) {
       logBreadcrumb('EtherspotService', 'getSdkForChain failed: no network', { chain });
@@ -607,6 +612,9 @@ export class EtherspotService {
       case CHAIN.AVALANCHE:
         blockchainExplorerUrl = getEnv().TX_DETAILS_URL_AVALANCHE;
         break;
+      case CHAIN.OPTIMISM:
+        blockchainExplorerUrl = getEnv().TX_DETAILS_URL_OPTIMISM;
+        break;
       default:
         blockchainExplorerUrl = getEnv().TX_DETAILS_URL_ETHEREUM;
         break;
@@ -948,6 +956,8 @@ function networkNameFromChain(chain: Chain): ?string {
       return NetworkNames.Xdai;
     case CHAIN.AVALANCHE:
       return isProdEnv() ? NetworkNames.Avalanche : NetworkNames.Fuji;
+    case CHAIN.OPTIMISM:
+      return isProdEnv() ? NetworkNames.Optimism : NetworkNames.OptimismKovan;
     default:
       return null;
   }
@@ -968,6 +978,9 @@ function chainFromNetworkName(networkName: string): ?Chain {
     case NetworkNames.Avalanche:
     case NetworkNames.Fuji:
       return CHAIN.AVALANCHE;
+    case NetworkNames.Optimism:
+    case NetworkNames.OptimismKovan:
+      return CHAIN.OPTIMISM;
     default:
       return null;
   }

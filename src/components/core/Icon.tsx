@@ -131,6 +131,7 @@ import IconAvalanche from 'assets/icons/svg/icon-24-avalanche.svg';
 import IconWalletConnect from 'assets/icons/svg/icon-24-wallet-connect.svg';
 import IconAllNetworks from 'assets/icons/svg/services-48-circle-pillar-exchange.svg';
 import IconAllNetworksLight from 'assets/icons/svg/services-48-circle-pillar-exchange-light.svg';
+import IconOptimism from 'assets/icons/svg/icon-24-optimism.svg';
 
 const components = {
   // Generic icons
@@ -231,6 +232,7 @@ const components = {
   polygon: IconPolygon,
   xdai: IconXdai,
   avalanche: IconAvalanche,
+  optimism: IconOptimism,
   'wallet-connect': IconWalletConnect,
   'all-networks': IconAllNetworks,
   'all-networks-light': IconAllNetworksLight,

@@ -41,6 +41,7 @@ const commonColors = {
   polygon: '#8247e5',
   white: '#FFFFFF',
   black: '#000000',
+  optimism: '#ff0024',
 };
 
 export const semanticLightThemeColors = {

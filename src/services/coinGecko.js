@@ -67,6 +67,7 @@ export const chainToCoinGeckoCoinId = {
   [CHAIN.BINANCE]: 'binancecoin',
   [CHAIN.XDAI]: 'xdai',
   [CHAIN.AVALANCHE]: 'avalanche-2',
+  [CHAIN.OPTIMISM]: 'optimism',
 };
 
 const chainToCoinGeckoNetwork = {
@@ -75,6 +76,7 @@ const chainToCoinGeckoNetwork = {
   [CHAIN.BINANCE]: 'binance-smart-chain',
   [CHAIN.XDAI]: 'xdai',
   [CHAIN.AVALANCHE]: 'avalanche-2',
+  [CHAIN.OPTIMISM]: 'optimism',
 };
 /* eslint-enable i18next/no-literal-string */
 
@@ -102,8 +104,8 @@ export const getCoinGeckoTokenPrices = async (chain: Chain, assets: Asset[]): Pr
   return httpRequest
     .get(
       `${COINGECKO_API_URL}/simple/token_price/${coinGeckoNetwork}` +
-        `?contract_addresses=${contractAddressesQuery}` +
-        `&vs_currencies=${currenciesParam}`,
+      `?contract_addresses=${contractAddressesQuery}` +
+      `&vs_currencies=${currenciesParam}`,
       requestConfig,
     )
     .then(({ data: responseData }) => {

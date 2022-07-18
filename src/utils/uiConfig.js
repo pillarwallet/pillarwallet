@@ -42,17 +42,17 @@ import type { Chain } from 'models/Chain';
 
 type ChainConfig = {|
   title: string,
-  titleShort: string,
-  iconName: IconName,
-  color: string,
-  gasSymbol: string,
-  iconUrl: string,
+    titleShort: string,
+      iconName: IconName,
+        color: string,
+          gasSymbol: string,
+            iconUrl: string,
 |};
 
 /**
  * Returns common UI aspects (texts, icons, color) for displaying main Ethereum chain and side chains.
  */
-export function useChainsConfig(): { [key: Chain]: ChainConfig} {
+export function useChainsConfig(): { [key: Chain]: ChainConfig } {
   const { t } = useTranslation();
   const colors = useThemeColors();
 
@@ -98,6 +98,15 @@ export function useChainsConfig(): { [key: Chain]: ChainConfig} {
       iconUrl:
         'https://firebasestorage.googleapis.com/v0/b/pillar-project-1506420699556.appspot.com/o/app%2Fchains%2Favalanche%2Fassets%2Fassets%2FAvalanche_AVAX_RedWhite.png?alt=media&token=8e3bb7ba-76ac-4e64-a56e-d8623ab7a657',
     },
+    [CHAIN.OPTIMISM]: {
+      title: t('chains.optimism'),
+      titleShort: t('chainsShort.optimism'),
+      iconName: 'optimism',
+      color: colors.optimism,
+      gasSymbol: ETH,
+      iconUrl:
+        'https://tokens.1inch.io/0x4200000000000000000000000000000000000042.png',
+    },
   };
 }
 
@@ -108,9 +117,9 @@ export function useChainConfig(chain: Chain): ChainConfig {
 
 type AssetCategoryConfig = {|
   title: string,
-  titleShort: string,
-  iconName: IconName,
-  chartColor: string,
+    titleShort: string,
+      iconName: IconName,
+        chartColor: string,
 |};
 
 /**

@@ -39,7 +39,6 @@ import type { AssetOption } from 'models/Asset';
 import type { ExchangeOffer, ExchangeProvider } from 'models/Exchange';
 import type { Chain } from 'models/Chain';
 
-
 // Images
 const uniswapLightVertical = require('assets/images/exchangeProviders/uniswapLightVertical.png');
 const uniswapLightHorizontal = require('assets/images/exchangeProviders/uniswapLightHorizontal.png');
@@ -170,6 +169,10 @@ export const getCaptureFeeDestinationAddress = (chain: Chain): ?string => {
 
   if (chain === CHAIN.AVALANCHE) {
     return firebaseRemoteConfig.getString(REMOTE_CONFIG.EXCHANGE_FEE_AVAX_CAPTURE_ADDRESS);
+  }
+
+  if (chain === CHAIN.OPTIMISM) {
+    return firebaseRemoteConfig.getString(REMOTE_CONFIG.EXCHANGE_FEE_OPTIMISM_CAPTURE_ADDRESS);
   }
 
   return null;

@@ -59,13 +59,15 @@
     "ethereum": "Ethereum",
     "binance": "BSC",
     "xdai": "xDai",
-    "polygon": "Polygon"
+    "polygon": "Polygon",
+    "optimism": "Optimism"
   },
   "chainsShort": {
     "ethereum": "Ethereum",
     "binance": "BSC",
     "xdai": "xDai",
-    "polygon": "Polygon"
+    "polygon": "Polygon",
+    "optimism": "Optimism"
   },
   "assetCategories": {
     "wallet": "钱包",
