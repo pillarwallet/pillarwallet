@@ -26,7 +26,6 @@ import * as tForm from 'tcomb-form-native';
 // types
 import type { TranslatedString } from 'models/Translations';
 
-
 type AddressValidator = {
   validator: (address: string) => boolean,
   message: string,
@@ -49,12 +48,8 @@ export const validatePinWithConfirmation = (pin: string, confirmationPin: string
   return validatePin(pin, maxPinLength);
 };
 
-
-const supportedDomains = [
-  'eth',
-  'crypto',
-  'zil',
-];
+// eslint-disable-next-line i18next/no-literal-string
+const supportedDomains = ['eth', 'crypto', 'nft', 'x', 'wallet', 'bitcoin', 'dao', '888', 'coin', 'zil', 'blockchain'];
 
 export const isEnsName = (input: ?string): boolean => {
   if (!input || !input.toString().includes('.')) return false;
@@ -114,7 +109,8 @@ export function hasAllValues(object: ?Object) {
 
 export function isValidEmail(email: string) {
   // eslint-disable-next-line
-  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const re =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(email);
 }
 
