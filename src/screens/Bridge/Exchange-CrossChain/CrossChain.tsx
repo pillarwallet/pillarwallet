@@ -133,7 +133,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const txData = React.useMemo(() => {
     if (!buildTransactionData) return null;
     const { approvalTransactionData, transactionData } = buildTransactionData;
-
+    if (!approvalTransactionData) return [transactionData];
     return [approvalTransactionData, transactionData];
   }, [buildTransactionData]);
 
@@ -179,9 +179,8 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   };
 
   async function onSubmit() {
-    const { approvalTransactionData, transactionData } = buildTransactionData;
     const res = await etherspotService
-      .setTransactionsBatchAndSend([approvalTransactionData, transactionData], chain)
+      .setTransactionsBatchAndSend(txData, chain)
       .catch(() => catchError('Transaction Failed!', null));
     if (res) navigation.navigate(NI_TRANSACTION_COMPLETED, { transactionInfo: { chain: chain, ...res } });
   }
