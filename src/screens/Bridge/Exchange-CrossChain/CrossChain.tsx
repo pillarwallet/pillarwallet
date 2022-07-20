@@ -196,7 +196,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
 
   return (
     <Container>
-      <Content onScroll={() => Keyboard.dismiss()}>
+      <Content bounces={false} onScroll={() => Keyboard.dismiss()}>
         <Banner screenName={screenName} bottomPosition={false} />
         <FromAssetSelector
           assets={fromOptions}
