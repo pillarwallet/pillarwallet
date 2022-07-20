@@ -115,7 +115,7 @@ const AddCash = () => {
     ));
   }, []);
 
-  if (ref && visibleModal) {
+  if (ref && visibleModal && Platform.OS === 'android') {
     ref.focus();
   }
 
@@ -132,6 +132,7 @@ const AddCash = () => {
   };
 
   const openSelectNetworkModal = () => {
+    Keyboard.dismiss();
     Modal.open(() => (
       <SelectNetworkModal
         networkSelected={() => {
@@ -208,11 +209,13 @@ const AddCash = () => {
               inputAccessoryViewID: INPUT_ACCESSORY_NATIVE_ID,
             }}
             getInputRef={setRef}
+            customInputHeight={75}
             inputWrapperStyle={styles.inputWrapperStyles}
             itemHolderStyle={styles.itemHolderStyles}
             additionalStyle={styles.additionalStyle}
             errorMessage={value && !isValidFiatValue(value) && t('error.invalid.fiatValue')}
             avoidAutoFocus
+            disableSelection
           />
         </AddCashView>
       </ScrollView>
@@ -245,6 +248,7 @@ const styles = {
     fontSize: fontSizes.jumbo,
     fontFamily: appFont.regular,
     textAlign: 'center',
+    paddingVertical: 0,
   },
 };
 
