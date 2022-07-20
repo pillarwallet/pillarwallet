@@ -71,6 +71,7 @@ const BigNumberInput = React.forwardRef<Props, Instance>((props, ref) => {
     if (!areEqual(currentValue, value)) {
       setRawValue(value?.toFixed(passthroughProps?.toFixed && passthroughProps.toFixed) ?? '');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, rawValue]);
 
   const handleChangeText = (newRawValue: string) => {
