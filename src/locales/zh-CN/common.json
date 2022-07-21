@@ -198,7 +198,7 @@
     "whereToSend": "寄到哪里",
     "sendTo": "发给",
     "walletAddress": "钱包地址",
-    "addressEnsUsername": "地址、ENS、用户名",
+    "addressEnsUsername": "地址、ENS、不可阻挡的域",
     "walletNotDeployed": "钱包未部署",
     "tokens": "代币",
     "collectibles": "NFT",
