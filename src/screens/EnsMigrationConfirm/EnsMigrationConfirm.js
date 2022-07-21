@@ -44,7 +44,7 @@ import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import { BaseText, MediumText } from 'components/legacy/Typography';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import CheckAuth from 'components/CheckAuth';
-import SwipeButton from 'components/SwipeButton/SwipeButton';
+import Button from 'components/legacy/Button';
 
 // utils
 import { fontStyles, spacing } from 'utils/variables';
@@ -81,9 +81,11 @@ const EnsMigrationConfirm = () => {
   const accounts = useRootSelector(accountsSelector);
   const balances = useRootSelector(accountEthereumWalletAssetsBalancesSelector);
   const useBiometrics = useBiometricsSelector();
-  const { feeInfo, isEstimating, errorMessage: estimateErrorMessage } = useRootSelector(
-    ({ transactionEstimate }) => transactionEstimate,
-  );
+  const {
+    feeInfo,
+    isEstimating,
+    errorMessage: estimateErrorMessage,
+  } = useRootSelector(({ transactionEstimate }) => transactionEstimate);
 
   const chain = CHAIN.ETHEREUM;
 
@@ -197,8 +199,8 @@ const EnsMigrationConfirm = () => {
             {errorMessage}
           </BaseText>
         )}
-        <SwipeButton
-          confirmTitle={submitTitle}
+        <Button
+          title={submitTitle}
           warning={highFee}
           isLoading={isSubmitting}
           onPress={onSubmit}

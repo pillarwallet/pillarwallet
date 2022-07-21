@@ -29,7 +29,7 @@ import Text from 'components/core/Text';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
-import { fontStyles, fontSizes, lineHeights } from 'utils/variables';
+import { fontStyles, fontSizes } from 'utils/variables';
 
 // Types
 import type { ViewStyleProp, TextStyleProp } from 'utils/types/react-native';
@@ -85,7 +85,7 @@ function SearchInput({
 
       {!query && (
         <PlacerholderContainer>
-          {showSearchIcon && <Icon name="search" color={colors.tertiaryText} />}
+          {showSearchIcon && <Icon name="search" color={colors.tertiaryText} style={{ marginTop: 7 }} />}
           <PlaceholderText color={colors.tertiaryText} style={inputStyle}>
             {placeholder}
           </PlaceholderText>
@@ -101,29 +101,34 @@ const styles = {
   input: {
     fontSize: fontSizes.large,
     // Weird Android bug: setting line height style cause view size jump from "" -> "A" (anything not empty).
-    lineHeight: Platform.OS !== 'android' ? lineHeights.large : undefined,
+    // lineHeight: Platform.OS !== 'android' ? lineHeights.large : undefined,
     textAlign: 'center',
     maxHeight: 120,
   },
 };
 
 const Container = styled.View`
-  padding: 18px 32px 22px;
+  margin-top: 13px
+  padding: 32px 22px;
+  padding-top: ${Platform.OS === 'android' ? 5 : 0}
 `;
 
 const PlacerholderContainer = styled.View`
   position: absolute;
-  left: 0;
-  right: 0;
-  top: ${Platform.select({ ios: '8', android: '0' })}px;
-  bottom: ${Platform.select({ ios: '0', android: '6' })}px;
+  left: 5%;
+  right: 5%;
+  top: ${Platform.select({ ios: '0', android: '0' })}px;
+  bottom: ${Platform.select({ ios: '0', android: '0' })}px;
   flex-direction: row;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   z-index: -100;
   opacity: 0.4;
+  height: 80;
 `;
 
 const PlaceholderText = styled(Text)`
   ${fontStyles.large};
+  max-width: 85%;
+  text-align: center;
 `;

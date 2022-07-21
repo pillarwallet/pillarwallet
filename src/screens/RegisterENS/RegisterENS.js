@@ -54,7 +54,7 @@ import Text from 'components/core/Text';
 import TextInput from 'components/legacy/TextInput';
 import HeaderBlock from 'components/HeaderBlock';
 import Icon from 'components/core/Icon';
-import SwipeButton from 'components/SwipeButton/SwipeButton';
+import LegacyButton from 'components/legacy/Button';
 import Button from 'components/core/Button';
 import FeeLabel from 'components/display/FeeLabel';
 
@@ -206,9 +206,7 @@ const RegisterENS = () => {
               style={styles.buttonStyle}
             />
           )}
-          {(!!feeInfo || !!ensName?.username) && (
-            <SwipeButton confirmTitle={t('button.swipeConfirm')} disabled={!showFeeValue} />
-          )}
+          {(!!feeInfo || !!ensName?.username) && <LegacyButton title={t('button.confirm')} disabled={!showFeeValue} />}
         </Footer>
       </Content>
     </Container>
@@ -263,7 +261,6 @@ const FeeView = styled.View`
   justify-content: center;
   align-items: center;
 `;
-
 
 export const getUsernameInputIcon = (
   colors: Object,
