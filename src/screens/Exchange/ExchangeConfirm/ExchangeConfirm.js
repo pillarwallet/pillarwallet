@@ -30,7 +30,7 @@ import { Container, Content, Spacing } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import Text from 'components/core/Text';
 import TransactionDeploymentWarning from 'components/other/TransactionDeploymentWarning';
-import SwipeButton from 'components/SwipeButton/SwipeButton';
+import Button from 'components/legacy/Button';
 import WarningBlock from 'components/HighGasFeeModals/WarningBlock';
 
 // Constants
@@ -164,8 +164,8 @@ const ExchangeConfirmScreen = () => {
 
           {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
 
-          <SwipeButton
-            confirmTitle={isEstimating ? t('label.gettingFee') : t('button.swap')}
+          <Button
+            title={isEstimating ? t('label.gettingFee') : t('button.swap')}
             warning={highFee}
             onPress={confirmTransaction}
             disabled={!isOnline || !feeInfo || !!errorMessage || isEstimating}
