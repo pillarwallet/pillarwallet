@@ -27,7 +27,7 @@ import { Container, Content, Spacing } from 'components/layout/Layout';
 import Icon from 'components/core/Icon';
 import Spinner from 'components/Spinner';
 import Banner from 'components/Banner/Banner';
-import SwipeButton from 'components/SwipeButton/SwipeButton';
+import Button from 'components/legacy/Button';
 import SendHighGasModal from 'components/HighGasFeeModals/SendHighGasModal';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Text from 'components/core/Text';
@@ -236,9 +236,9 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
               highGasFeeModal={highGasFeeModal}
             />
             <Spacing h={20} />
-            <SwipeButton
+            <Button
               disabled={!isOnline || !feeInfo || !!errorMessage || isEstimating}
-              confirmTitle={t('button.swipeSend')}
+              title={t('button.send')}
               onPress={onSubmit}
             />
           </FooterContent>

@@ -31,7 +31,7 @@ import ArrowIcon from 'components/ArrowIcon';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import ContactSelector from 'components/ContactSelector';
 import Spinner from 'components/Spinner';
-import SwipeButton from 'components/SwipeButton/SwipeButton';
+import Button from 'components/legacy/Button';
 import Banner from 'components/Banner/Banner';
 
 // Constants
@@ -177,7 +177,14 @@ const SendFooter = (props: FooterProps) => {
     <FooterInner>
       {footerTopAddon}
       {isNextButtonVisible && (
-        <SwipeButton confirmTitle={t('button.swipeSend')} warning={isHighGasFee} {...buttonProps} />
+        <Button
+          title={t('button.send')}
+          warning={isHighGasFee}
+          onPress={buttonProps?.onPress}
+          disabled={buttonProps?.disabled}
+          isLoading={buttonProps?.isLoading}
+          marginTop={15}
+        />
       )}
     </FooterInner>
   );

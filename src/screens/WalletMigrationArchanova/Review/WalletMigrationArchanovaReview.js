@@ -30,7 +30,7 @@ import { fetchGasThresholds } from 'redux/actions/gas-threshold-actions';
 import { Container, Content, Footer } from 'components/layout/Layout';
 import CheckAuth from 'components/CheckAuth';
 import HeaderBlock from 'components/HeaderBlock';
-import SwipeButton from 'components/SwipeButton/SwipeButton';
+import Button from 'components/legacy/Button';
 
 // Constants
 import { WALLET_MIGRATION_ARCHANOVA_PIN_CONFIRM } from 'constants/navigationConstants';
@@ -136,16 +136,16 @@ function WalletMigrationArchanovaReview() {
 
       <Footer>
         {!fee && (
-          <SwipeButton
-            confirmTitle={isEstimating ? t('calculatingFee') : t('calculateFee')}
+          <Button
+            title={isEstimating ? t('calculatingFee') : t('calculateFee')}
             onPress={() => setShowCheckAuth(true)}
             disabled={isEstimating}
             warning={highFee}
           />
         )}
         {fee && (
-          <SwipeButton
-            confirmTitle={hasEnoughGas ? t('submit') : tRoot('label.notEnoughGas')}
+          <Button
+            title={hasEnoughGas ? t('submit') : tRoot('label.notEnoughGas')}
             onPress={handleSubmit}
             disabled={!hasEnoughGas}
             warning={highFee}
