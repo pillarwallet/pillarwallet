@@ -238,7 +238,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
             <Spacing h={20} />
             <Button
               disabled={!isOnline || !feeInfo || !!errorMessage || isEstimating}
-              title={t('button.send')}
+              title={t('button.swap')}
               onPress={onSubmit}
             />
           </FooterContent>
