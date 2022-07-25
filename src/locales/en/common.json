@@ -216,7 +216,7 @@
     "whereToSend": "Where to send",
     "sendTo": "Send to",
     "walletAddress": "Wallet address",
-    "addressEnsUsername": "Address, ENS, username",
+    "addressEnsUsername": "Address, ENS, Unstoppable Domains",
     "walletNotDeployed": "Wallet is not deployed",
     "tokens": "Tokens",
     "collectibles": "NFTs",
@@ -318,6 +318,7 @@
     "notEnoughPLR": "Not enough PLR",
     "purchase": "Purchase",
     "purchaseMore": "Purchase more",
+    "pressTo": "Press to",
     "referFriends": "Refer friends",
     "reject": "Reject",
     "retry": "Retry",
@@ -1164,6 +1165,7 @@
       "send": "Send"
     },
     "label": {
+      "network": "Network",
       "amount": "Amount",
       "receiver": "Receiver",
       "recipient": "Recipient",

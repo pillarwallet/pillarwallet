@@ -35,6 +35,7 @@ import {
   Transaction as EtherspotTransaction,
   Currencies as EtherspotCurrencies,
   AccountStates,
+  CrossChainServiceProvider,
 } from 'etherspot';
 import { map } from 'rxjs/operators';
 import type { Subscription } from 'rxjs';
@@ -803,6 +804,7 @@ export class EtherspotService {
         toTokenAddress: toAsset.address === ADDRESS_ZERO ? ROOT_TOKEN_ADDRESS : toAsset.address,
         toChainId: mapChainToChainId(toAsset.chain),
         fromAmount: value,
+        serviceProvider: CrossChainServiceProvider.LiFi,
       });
 
       const quote: any = quotes.items[0];
@@ -810,6 +812,9 @@ export class EtherspotService {
       logBreadcrumb('buildCrossChainBridgeTransaction!', 'cross chain bridge quotes', { quotes });
 
       if (!quote) return null;
+
+      if (!quote?.approvalData) return { transactionData: quote.transaction };
+
       const tokenAddres = quote.estimate.data.fromToken.address;
       const { approvalAddress, amount } = quote.approvalData;
 
@@ -818,7 +823,8 @@ export class EtherspotService {
         ERC20_CONTRACT_ABI,
         tokenAddres,
       );
-      if (!erc20Contract) return null;
+
+      if (!erc20Contract) return { transactionData: quote.transaction };
 
       const approvalTransactionData = erc20Contract.encodeApprove(approvalAddress, amount);
 

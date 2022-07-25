@@ -28,9 +28,8 @@ import Text from 'components/core/Text';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
-
 const getIndex = (number: number) => {
-  return (`0${number}`).slice(-2);
+  return `0${number}`.slice(-2);
 };
 
 type Props = {
@@ -44,14 +43,22 @@ const MnemonicPhrase = (props: Props) => {
 
   return (
     <MnemonicPhraseWrapper ref={excludeFromMonitoring}>
-      {mnemonicList.map((word, index) => {
-        return (
-          <MnemonicPhraseItem key={`${word}+${index}`}>
-            <Index color={colors.secondaryText} variant="small">{getIndex(index + 1)}</Index>
-            <Word variant="medium">{word}</Word>
-          </MnemonicPhraseItem>
-        );
-      })}
+      <List
+        data={mnemonicList}
+        bounces={false}
+        numColumns={3}
+        scrollEnabled={false}
+        renderItem={({ index }) => {
+          return (
+            <MnemonicPhraseItem key={`${mnemonicList[index]}+${index}`}>
+              <Index color={colors.secondaryText} variant="small">
+                {getIndex(index + 1)}
+              </Index>
+              <Word variant="medium">{mnemonicList[index]}</Word>
+            </MnemonicPhraseItem>
+          );
+        }}
+      />
     </MnemonicPhraseWrapper>
   );
 };
@@ -59,7 +66,6 @@ const MnemonicPhrase = (props: Props) => {
 export default MnemonicPhrase;
 
 const MnemonicPhraseWrapper = styled.View`
-  height: 130px;
   width: 100%;
   flex-wrap: wrap;
   align-content: center;
@@ -70,8 +76,11 @@ const MnemonicPhraseItem = styled.View`
   width: 33.3%;
   flex-direction: row;
   align-items: center;
+  padding-right: 5px;
   margin-bottom: ${spacing.small}px;
 `;
+
+const List = styled.FlatList``;
 
 const Index = styled(Text)`
   width: 15%;

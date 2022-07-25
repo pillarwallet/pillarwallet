@@ -49,11 +49,19 @@ export const validatePinWithConfirmation = (pin: string, confirmationPin: string
   return validatePin(pin, maxPinLength);
 };
 
-
+/* eslint-disable i18next/no-literal-string */
 const supportedDomains = [
   'eth',
   'crypto',
   'zil',
+  'nft',
+  'x',
+  'wallet',
+  'bitcoin',
+  'dao',
+  '888',
+  'coin',
+  'blockchain',
 ];
 
 export const isEnsName = (input: ?string): boolean => {
