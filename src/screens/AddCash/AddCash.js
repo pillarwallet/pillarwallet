@@ -130,6 +130,7 @@ const AddCash = () => {
     setValue(accessoryValue);
   };
 
+
   const openWert = () => {
     const cryptoAddress = getCryptoPurchaseAddress();
     if (cryptoAddress === null) return;
@@ -197,11 +198,13 @@ const AddCash = () => {
               inputAccessoryViewID: INPUT_ACCESSORY_NATIVE_ID,
             }}
             getInputRef={setRef}
+            customInputHeight={75}
             inputWrapperStyle={styles.inputWrapperStyles}
             itemHolderStyle={styles.itemHolderStyles}
             additionalStyle={styles.additionalStyle}
             errorMessage={value && !isValidFiatValue(value) && t('error.invalid.fiatValue')}
             avoidAutoFocus
+            disableSelection
           />
         </AddCashView>
       </ScrollView>
@@ -232,6 +235,7 @@ const styles = {
     fontSize: fontSizes.jumbo,
     fontFamily: appFont.regular,
     textAlign: 'center',
+    paddingVertical: 0,
   },
 };
 

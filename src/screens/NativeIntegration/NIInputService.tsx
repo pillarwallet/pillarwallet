@@ -34,7 +34,7 @@ import { fontSizes, spacing } from 'utils/variables';
 // Components
 import { Container } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
-import SwipeButton from 'components/SwipeButton/SwipeButton';
+import Button from 'components/legacy/Button';
 import { ScrollWrapper } from 'components/legacy/Layout';
 import { Spacing } from 'components/legacy/Layout';
 import Spinner from 'components/Spinner';
@@ -196,10 +196,7 @@ function NIInputService() {
           {contractRes && chain && (contractType === 'payable' ? (amount !== null ? true : false) : true) && (
             <FooterContent>
               <FeeText>{t('Fee') + ' ' + feeInFiatDisplayValue}</FeeText>
-              <SwipeButton
-                confirmTitle={t('button.swipeTo') + ' ' + actionName}
-                onPress={nativeIntegrationTransaction}
-              />
+              <Button title={t('button.pressTo') + ' ' + actionName} onPress={nativeIntegrationTransaction} />
               {visibleLoader && <LoadingSpinner size={35} />}
             </FooterContent>
           )}

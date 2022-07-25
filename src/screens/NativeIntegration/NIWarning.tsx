@@ -27,7 +27,7 @@ import styled from 'styled-components/native';
 import { Container } from 'components/layout/Layout';
 import { Wrapper } from 'components/legacy/Layout';
 import Title from 'components/legacy/Title';
-import SwipeButton from 'components/SwipeButton/SwipeButton';
+import Button from 'components/legacy/Button';
 import Text from 'components/core/Text';
 
 // Constants
@@ -56,7 +56,7 @@ function NIWarning() {
         <WarningText style={{ fontWeight: 'bold' }}>{t('paragraph.ownRisk')}</WarningText>
       </Wrapper>
 
-      <SwipeButton confirmTitle={t('button.i_understood')} onPress={onContinue} />
+      <Button title={t('button.i_understood')} onPress={onContinue} />
     </Container>
   );
 }
