@@ -59,6 +59,7 @@ export type Props = {|
   horizontalPaddings?: number,
   transparent?: boolean,
   primarySecond?: boolean,
+  warning?: boolean,
 |};
 
 type CombinedProps = {|
@@ -116,6 +117,7 @@ const VARIANT = {
   TRANSPARENT: 'transparent',
   TRANSPARENT_DANGER: 'transparentDanger',
   DISABLE: 'disabled',
+  WARNING: 'warning',
 };
 
 // THEME
@@ -123,6 +125,10 @@ const backgroundColor = themeVariant.variants('current', 'variant', {
   [VARIANT.DEFAULT]: {
     lightTheme: (props) => props.theme.colors.buttonPrimaryBackground,
     darkTheme: (props) => props.theme.colors.buttonPrimaryBackground,
+  },
+  [VARIANT.WARNING]: {
+    lightTheme: (props) => props.theme.colors.negative,
+    darkTheme: (props) => props.theme.colors.negative,
   },
   [VARIANT.PRIMARY_SECOND]: {
     lightTheme: (props) => props.theme.colors.secondaryAccent140,
@@ -152,6 +158,10 @@ const backgroundColor = themeVariant.variants('current', 'variant', {
 
 const contentColor = themeVariant.variants('current', 'variant', {
   [VARIANT.DEFAULT]: {
+    lightTheme: (props) => props.theme.colors.buttonPrimaryTitle,
+    darkTheme: (props) => props.theme.colors.buttonPrimaryTitle,
+  },
+  [VARIANT.WARNING]: {
     lightTheme: (props) => props.theme.colors.buttonPrimaryTitle,
     darkTheme: (props) => props.theme.colors.buttonPrimaryTitle,
   },
@@ -233,6 +243,9 @@ const getVariant = (props) => {
   if (props.danger) {
     return VARIANT.DANGER;
   }
+  if (props.warning) {
+    return VARIANT.WARNING;
+  }
   if (props.primarySecond) {
     return VARIANT.PRIMARY_SECOND;
   }
@@ -280,17 +293,8 @@ class Button extends React.Component<CombinedProps, State> {
   };
 
   renderButtonContent = (variant: string) => {
-    const {
-      isLoading,
-      title,
-      leftIconName,
-      leftIconStyle,
-      rightIconName,
-      rightIconStyle,
-      small,
-      textStyle,
-      theme,
-    } = this.props;
+    const { isLoading, title, leftIconName, leftIconStyle, rightIconName, rightIconStyle, small, textStyle, theme } =
+      this.props;
     const themeType = getThemeType(theme);
     const colors = getThemeColors(theme);
 

@@ -31,7 +31,7 @@ import LargeFiatTokenValueView from 'components/display/LargeFiatTokenValueView'
 import Text from 'components/core/Text';
 import TransactionDeploymentWarning from 'components/other/TransactionDeploymentWarning';
 import Icon from 'components/core/Icon';
-import SwipeButton from 'components/SwipeButton/SwipeButton';
+import LegacyButton from 'components/legacy/Button';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
@@ -107,9 +107,8 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
   }, [request, estimateCallRequestTransaction, callRequests, sdkInstances.length]);
 
   const { iconUrl, chain, errorMessage } = useViewData(request);
-  const { fee, gasSymbol, gasAddress, hasNotEnoughGas, isEstimating, estimationErrorMessage } = useTransactionFee(
-    request,
-  );
+  const { fee, gasSymbol, gasAddress, hasNotEnoughGas, isEstimating, estimationErrorMessage } =
+    useTransactionFee(request);
   const transactionPayload = useTransactionPayload(request);
 
   const handleConfirm = () => {
@@ -121,7 +120,7 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
   const value = wrapBigNumberOrNil(transactionPayload?.amount);
   const symbol = transactionPayload?.symbol;
   const assetAddress = transactionPayload?.contractAddress;
-  const confirmTitle = !hasNotEnoughGas ? t('button.swipeConfirm') : t('label.notEnoughGas');
+  const confirmTitle = !hasNotEnoughGas ? t('button.confirm') : t('label.notEnoughGas');
   const isConfirmDisabled = isEstimating || hasNotEnoughGas || !!errorMessage || isLoading;
   const loadFeeValue = isEstimating || isLoading;
 
@@ -172,7 +171,7 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
 
       {!!errorMessage && <ErrorMessage variant="small">{errorMessage}</ErrorMessage>}
 
-      <SwipeButton confirmTitle={confirmTitle} onPress={handleConfirm} warning={highFee} />
+      <LegacyButton title={confirmTitle} onPress={handleConfirm} warning={highFee} />
 
       {!loadFeeValue ? (
         <Button title={t('button.reject')} size="large" onPress={onReject} variant="text" style={styles.buttonStyle} />
@@ -324,7 +323,7 @@ const ErrorMessage = styled(Text)`
 const IconView = styled.View`
   margin-top: ${spacing.largePlus}px;
   text-align: center;
-  flexDirection: row;
+  flex-direction: row;
 `;
 
 const ServiceIcon = styled(Image)`
@@ -332,8 +331,8 @@ const ServiceIcon = styled(Image)`
   height: 76px;
   border-radius: 39px;
   margin-left: -48px;
-  borderWidth: 6px;
-  borderColor: ${({ theme }) => theme.colors.basic050};
+  border-width: 6px;
+  border-color: ${({ theme }) => theme.colors.basic050};
   overflow: hidden;
 `;
 

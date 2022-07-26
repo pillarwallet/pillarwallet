@@ -27,7 +27,7 @@ import { Container, Content, Spacing } from 'components/layout/Layout';
 import Icon from 'components/core/Icon';
 import Spinner from 'components/Spinner';
 import Banner from 'components/Banner/Banner';
-import SwipeButton from 'components/SwipeButton/SwipeButton';
+import Button from 'components/legacy/Button';
 import SendHighGasModal from 'components/HighGasFeeModals/SendHighGasModal';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Text from 'components/core/Text';
@@ -133,7 +133,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const txData = React.useMemo(() => {
     if (!buildTransactionData) return null;
     const { approvalTransactionData, transactionData } = buildTransactionData;
-
+    if (!approvalTransactionData) return [transactionData];
     return [approvalTransactionData, transactionData];
   }, [buildTransactionData]);
 
@@ -179,9 +179,8 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   };
 
   async function onSubmit() {
-    const { approvalTransactionData, transactionData } = buildTransactionData;
     const res = await etherspotService
-      .setTransactionsBatchAndSend([approvalTransactionData, transactionData], chain)
+      .setTransactionsBatchAndSend(txData, chain)
       .catch(() => catchError('Transaction Failed!', null));
     if (res) navigation.navigate(NI_TRANSACTION_COMPLETED, { transactionInfo: { chain: chain, ...res } });
   }
@@ -197,7 +196,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
 
   return (
     <Container>
-      <Content onScroll={() => Keyboard.dismiss()}>
+      <Content bounces={false} onScroll={() => Keyboard.dismiss()}>
         <Banner screenName={screenName} bottomPosition={false} />
         <FromAssetSelector
           assets={fromOptions}
@@ -237,9 +236,9 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
               highGasFeeModal={highGasFeeModal}
             />
             <Spacing h={20} />
-            <SwipeButton
+            <Button
               disabled={!isOnline || !feeInfo || !!errorMessage || isEstimating}
-              confirmTitle={t('button.swipeSend')}
+              title={t('button.swap')}
               onPress={onSubmit}
             />
           </FooterContent>
