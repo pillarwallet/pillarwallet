@@ -55,6 +55,7 @@ import {
   resetAppNotificationsBadgeNumber,
   getToastNotification,
 } from 'utils/notifications';
+import { logBreadcrumb } from 'utils/common';
 
 // Types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -119,11 +120,16 @@ const onFirebaseMessageAction = (message: FirebaseMessage) => {
 };
 
 export const hasFCMPermission = async () => {
-  const status = await firebaseMessaging.requestPermission();
-  return [
-    messaging.AuthorizationStatus.AUTHORIZED,
-    messaging.AuthorizationStatus.PROVISIONAL,
-  ].includes(status);
+  try {
+    const status = await firebaseMessaging.requestPermission();
+    return [
+      messaging.AuthorizationStatus.AUTHORIZED,
+      messaging.AuthorizationStatus.PROVISIONAL,
+    ].includes(status);
+  } catch (e) {
+    logBreadcrumb('Notification Actions', 'Notification Actions: failed firebase request permission', { e });
+    return null;
+  }
 };
 
 export const subscribeToPushNotificationsAction = () => {
