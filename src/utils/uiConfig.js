@@ -21,14 +21,7 @@
 import { useTranslation } from 'translations/translate';
 
 // Constants
-import {
-  ETH,
-  MATIC,
-  BNB,
-  XDAI,
-  AVAX,
-  ASSET_CATEGORY,
-} from 'constants/assetsConstants';
+import { ETH, MATIC, BNB, XDAI, AVAX, ASSET_CATEGORY } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // Utils
@@ -39,14 +32,13 @@ import type { IconName } from 'components/core/Icon';
 import type { AssetCategory } from 'models/AssetCategory';
 import type { Chain } from 'models/Chain';
 
-
 type ChainConfig = {|
   title: string,
-    titleShort: string,
-      iconName: IconName,
-        color: string,
-          gasSymbol: string,
-            iconUrl: string,
+  titleShort: string,
+  iconName: IconName,
+  color: string,
+  gasSymbol: string,
+  iconUrl: string,
 |};
 
 /**
@@ -104,8 +96,7 @@ export function useChainsConfig(): { [key: Chain]: ChainConfig } {
       iconName: 'optimism',
       color: colors.optimism,
       gasSymbol: ETH,
-      iconUrl:
-        'https://tokens.1inch.io/0x4200000000000000000000000000000000000042.png',
+      iconUrl: 'https://tokens.1inch.io/0x4200000000000000000000000000000000000042.png',
     },
   };
 }
@@ -117,9 +108,9 @@ export function useChainConfig(chain: Chain): ChainConfig {
 
 type AssetCategoryConfig = {|
   title: string,
-    titleShort: string,
-      iconName: IconName,
-        chartColor: string,
+  titleShort: string,
+  iconName: IconName,
+  chartColor: string,
 |};
 
 /**

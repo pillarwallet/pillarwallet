@@ -181,7 +181,6 @@ export class EtherspotService {
   }
 
   getSdkForChain(chain: Chain): ?EtherspotSdk {
-    console.log('');
     const network = networkNameFromChain(chain);
     if (!network) {
       logBreadcrumb('EtherspotService', 'getSdkForChain failed: no network', { chain });
