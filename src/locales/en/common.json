@@ -65,7 +65,8 @@
     "xdai": "xDai Network",
     "polygon": "Polygon",
     "avalanche": "Avalanche",
-    "optimism": "Optimism"
+    "optimism": "Optimism",
+    "optimism_kovan": "Optimism Kovan"
   },
 
   "chainsShort": {
@@ -74,7 +75,8 @@
     "xdai": "xDai",
     "polygon": "Polygon",
     "avalanche": "Avalanche",
-    "optimism":"Optimism"
+    "optimism":"Optimism",
+    "optimism_kovan": "Optimism Kovan"
   },
 
   "assetCategories": {

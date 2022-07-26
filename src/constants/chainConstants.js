@@ -56,5 +56,5 @@ export const CHAIN_ID = {
   FUJI: 43113,
   MUMBAI: 80001,
   OPTIMISM: 10,
-  OPTOMISM: 69,
+  OPTIMISM_KOVAN: 69,
 };

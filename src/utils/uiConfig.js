@@ -26,6 +26,7 @@ import { CHAIN } from 'constants/chainConstants';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
+import { isProdEnv } from 'utils/environment';
 
 // Types
 import type { IconName } from 'components/core/Icon';
@@ -91,8 +92,8 @@ export function useChainsConfig(): { [key: Chain]: ChainConfig } {
         'https://firebasestorage.googleapis.com/v0/b/pillar-project-1506420699556.appspot.com/o/app%2Fchains%2Favalanche%2Fassets%2Fassets%2FAvalanche_AVAX_RedWhite.png?alt=media&token=8e3bb7ba-76ac-4e64-a56e-d8623ab7a657',
     },
     [CHAIN.OPTIMISM]: {
-      title: t('chains.optimism'),
-      titleShort: t('chainsShort.optimism'),
+      title: isProdEnv() ? t('chains.optimism') : t('chains.optimism_kovan'),
+      titleShort: isProdEnv() ? t('chainsShort.optimism') : t('chains.optimism_kovan'),
       iconName: 'optimism',
       color: colors.optimism,
       gasSymbol: ETH,
