@@ -34,8 +34,8 @@ import { getNotificationsVisibleStatus } from 'utils/getNotification';
 // Constants
 import { GET_NOTIFICATIONS } from 'constants/navigationConstants';
 
-// Local
-import SelectNetworkModal from '../modal/SelectNetworkModal';
+// Modal
+import SelectNetworkModal from 'screens/AddCash/modal/SelectNetworkModal';
 
 interface Props {
   buttonDisable: boolean;
@@ -67,4 +67,5 @@ export default FooterContent;
 
 const Footer = styled.KeyboardAvoidingView`
   padding: 20px 20px 20px;
+  margin-bottom: 20px;
 `;

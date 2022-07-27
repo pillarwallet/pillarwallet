@@ -51,6 +51,7 @@ import Text from 'components/core/Text';
 import Modal from 'components/Modal';
 import BuyCryptoAccountNotActiveModal from 'components/BuyCryptoAccountNotActiveModal';
 import Banner from 'components/Banner/Banner';
+import FooterContent from 'components/FooterNetworkModalButton/FooterContent';
 
 // Selectors
 import { useFiatCurrency, accountsSelector, useRootSelector } from 'selectors';
@@ -62,7 +63,6 @@ import AddCashValueInputAccessoryHolder, {
   INPUT_ACCESSORY_NATIVE_ID,
 } from './components/AddCashAccessory/AddCashValueInputAccessoryHolder';
 import SelectResidentModal from './modal/SelectResidentModal';
-import FooterContent from './components/FooterContent';
 
 let visibleModal = false;
 const AddCash = () => {
@@ -129,7 +129,6 @@ const AddCash = () => {
     Keyboard.dismiss();
     setValue(accessoryValue);
   };
-
 
   const openWert = () => {
     const cryptoAddress = getCryptoPurchaseAddress();
