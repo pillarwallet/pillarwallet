@@ -39,15 +39,16 @@ import IconBinance from 'assets/icons/svg/icon-24-binance.svg';
 import IconXdai from 'assets/icons/svg/icon-24-xdai.svg';
 import IconPolygon from 'assets/icons/svg/icon-24-polygon.svg';
 import IconAvalanche from 'assets/icons/svg/icon-24-avalanche.svg';
+import IconOptimism from 'assets/icons/svg/icon-24-optimism.svg';
 
 type Props = {|
   url: ?string,
-  chain?: ?Chain,
-  size?: number,
-  style?: ViewStyleProp,
-  imageStyle?: ImageStyleProp,
-  chainIconStyle?: ViewStyleProp,
-  setMarginRight?: boolean,
+    chain ?: ? Chain,
+    size ?: number,
+    style ?: ViewStyleProp,
+    imageStyle ?: ImageStyleProp,
+    chainIconStyle ?: ViewStyleProp,
+    setMarginRight ?: boolean,
 |};
 
 function TokenIcon({ url, size = 48, chain, style, imageStyle, chainIconStyle, setMarginRight }: Props) {
@@ -97,6 +98,7 @@ const IconComponentPerChain = {
   binance: IconBinance,
   xdai: IconXdai,
   avalanche: IconAvalanche,
+  optimism: IconOptimism,
 };
 
 const Container = styled.View``;
