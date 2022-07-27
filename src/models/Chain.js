@@ -30,4 +30,5 @@ export type ChainRecord<T> = {
   xdai?: T,
   ethereum?: T,
   avalanche?: T,
+  optimism?: T,
 };

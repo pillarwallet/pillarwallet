@@ -59,6 +59,7 @@ function MultiChainHistoryEtherspot() {
     CHAIN.POLYGON,
     CHAIN.BINANCE,
     CHAIN.XDAI,
+    CHAIN.OPTIMISM,
   ];
 
   const items = chains.map((chain) => {

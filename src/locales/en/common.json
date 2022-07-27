@@ -64,7 +64,9 @@
     "binance": "Binance Smart Chain",
     "xdai": "xDai Network",
     "polygon": "Polygon",
-    "avalanche": "Avalanche"
+    "avalanche": "Avalanche",
+    "optimism": "Optimism",
+    "optimism_kovan": "Optimism Kovan"
   },
 
   "chainsShort": {
@@ -72,7 +74,9 @@
     "binance": "BSC",
     "xdai": "xDai",
     "polygon": "Polygon",
-    "avalanche": "Avalanche"
+    "avalanche": "Avalanche",
+    "optimism":"Optimism",
+    "optimism_kovan": "Optimism Kovan"
   },
 
   "assetCategories": {

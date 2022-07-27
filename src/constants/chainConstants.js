@@ -24,6 +24,7 @@ export const CHAIN = {
   BINANCE: ('binance': 'binance'),
   XDAI: ('xdai': 'xdai'),
   AVALANCHE: ('avalanche': 'avalanche'),
+  OPTIMISM: ('optimism': 'optimism'),
 };
 
 export const CHAIN_NAMES = {
@@ -32,6 +33,7 @@ export const CHAIN_NAMES = {
   BINANCE: 'binance',
   XDAI: 'xdai',
   AVALANCHE: 'avalanche',
+  OPTIMISM: 'optimism',
 };
 
 export const CHAIN_SHORT = {
@@ -40,6 +42,7 @@ export const CHAIN_SHORT = {
   BINANCE: 'BSC',
   XDAI: 'xDai',
   AVALANCHE: 'AVAX',
+  OPTIMISM: 'optimism',
 };
 
 // Based on: https://chainid.network/
@@ -52,4 +55,6 @@ export const CHAIN_ID = {
   AVALANCHE: 43114,
   FUJI: 43113,
   MUMBAI: 80001,
+  OPTIMISM: 10,
+  OPTIMISM_KOVAN: 69,
 };

@@ -59,13 +59,17 @@
     "ethereum": "Ethereum",
     "binance": "BSC",
     "xdai": "xDai",
-    "polygon": "Polygon"
+    "polygon": "Polygon",
+    "optimism": "Optimism",
+    "optimism_kovan": "Optimism Kovan"
   },
   "chainsShort": {
     "ethereum": "Ethereum",
     "binance": "BSC",
     "xdai": "xDai",
-    "polygon": "Polygon"
+    "polygon": "Polygon",
+    "optimism": "Optimism",
+    "optimism_kovan": "Optimism Kovan"
   },
   "assetCategories": {
     "wallet": "钱包",
