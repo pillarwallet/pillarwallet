@@ -76,6 +76,12 @@ const paraswapLightMonochrome = require('assets/images/exchangeProviders/paraswa
 const paraswapDarkVertical = require('assets/images/exchangeProviders/paraswapDarkVertical.png');
 const paraswapDarkHorizontal = require('assets/images/exchangeProviders/paraswapDarkHorizontal.png');
 const paraswapDarkMonochrome = require('assets/images/exchangeProviders/paraswapDarkMonochrome.png');
+const lifiLightHorizontal = require('assets/images/exchangeProviders/lifi_light.png');
+const lifiLightVertical = require('assets/images/exchangeProviders/lifi_light.png');
+const lifiLightMonochrome = require('assets/images/exchangeProviders/lifi_light.png');
+const lifiDarkVertical = require('assets/images/exchangeProviders/lifi_dark.png');
+const lifiDarkHorizontal = require('assets/images/exchangeProviders/lifi_dark.png');
+const lifiDarkMonochrome = require('assets/images/exchangeProviders/lifi_dark.png');
 
 export type ExchangeOptions = {
   fromOptions: AssetOption[],
@@ -132,6 +138,12 @@ export function useProvidersConfig(): { [key: ExchangeProvider]: ProviderConfig 
       iconVertical: isDarkTheme ? paraswapDarkVertical : paraswapLightVertical,
       iconHorizontal: isDarkTheme ? paraswapDarkHorizontal : paraswapLightHorizontal,
       iconMonochrome: isDarkTheme ? paraswapDarkMonochrome : paraswapLightMonochrome,
+    },
+    [PROVIDER.LIFI]: {
+      title: t('exchangeContent.providers.lifi'),
+      iconVertical: isDarkTheme ? lifiDarkVertical : lifiLightVertical,
+      iconHorizontal: isDarkTheme ? lifiDarkHorizontal : lifiLightHorizontal,
+      iconMonochrome: isDarkTheme ? lifiDarkMonochrome : lifiLightMonochrome,
     },
   };
 }

@@ -264,6 +264,7 @@ const exchangeProviderFromEtherspot = {
   [EtherspotExchangeProviders.Sushiswap]: EXCHANGE_PROVIDER.SUSHISWAP,
   [EtherspotExchangeProviders.Paraswap]: EXCHANGE_PROVIDER.PARASWAP,
   [EtherspotExchangeProviders.Honeyswap]: EXCHANGE_PROVIDER.HONEYSWAP,
+  [EXCHANGE_PROVIDER.LIFI]: EXCHANGE_PROVIDER.LIFI,
 };
 
 export const parseExchangeProvider = (provider: string): ?ExchangeProvider => {

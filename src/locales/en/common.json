@@ -1317,7 +1317,8 @@
       "synthetix": "Synthetix",
       "sushiswap": "Sushiswap",
       "honeyswap": "Honeyswap",
-      "paraswap": "Paraswap"
+      "paraswap": "Paraswap",
+      "lifi": "Lifi"
     },
     "modal": {
       "smartWalletIsNotActive": {
