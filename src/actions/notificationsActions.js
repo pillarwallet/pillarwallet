@@ -49,11 +49,13 @@ import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenSt
 import { firebaseMessaging } from 'services/firebase';
 
 // Utils
+import { getNotificationsVisibleStatus } from 'utils/getNotification';
 import {
   processNotification,
   resetAppNotificationsBadgeNumber,
   getToastNotification,
 } from 'utils/notifications';
+import { logBreadcrumb } from 'utils/common';
 
 // Types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -117,17 +119,22 @@ const onFirebaseMessageAction = (message: FirebaseMessage) => {
   };
 };
 
-const hasFCMPermission = async () => {
-  const status = await firebaseMessaging.requestPermission();
-  return [
-    messaging.AuthorizationStatus.AUTHORIZED,
-    messaging.AuthorizationStatus.PROVISIONAL,
-  ].includes(status);
+export const hasFCMPermission = async () => {
+  try {
+    const status = await firebaseMessaging.requestPermission();
+    return [
+      messaging.AuthorizationStatus.AUTHORIZED,
+      messaging.AuthorizationStatus.PROVISIONAL,
+    ].includes(status);
+  } catch (e) {
+    logBreadcrumb('Notification Actions', 'Notification Actions: failed firebase request permission', { e });
+    return null;
+  }
 };
 
 export const subscribeToPushNotificationsAction = () => {
   return async (dispatch: Dispatch) => {
-    if (await hasFCMPermission()) {
+    if (await getNotificationsVisibleStatus()) {
       if (notificationsListener !== null) return;
       notificationsListener = firebaseMessaging.onMessage(debounce(message => {
         dispatch(onFirebaseMessageAction(message));
