@@ -219,8 +219,9 @@ export class EtherspotService {
     const binance = await this.getAccount(CHAIN.BINANCE);
     const polygon = await this.getAccount(CHAIN.POLYGON);
     const xdai = await this.getAccount(CHAIN.XDAI);
+    const optimism = await this.getAccount(CHAIN.OPTIMISM);
 
-    return { ethereum, binance, polygon, xdai, avalanche };
+    return { ethereum, binance, polygon, xdai, avalanche, optimism };
   }
 
   getAccounts(): Promise<?(EtherspotAccount[])> {
