@@ -34,6 +34,7 @@ import TokenFiatValueAccessory from 'components/inputs/TokenValueInput/TokenFiat
 import { useWalletAssetBalance } from 'selectors/balances';
 
 // Utils
+import { isNativeAsset } from 'utils/assets';
 import { truncateDecimalPlaces } from 'utils/bigNumber';
 
 // Types
@@ -83,7 +84,7 @@ const FromAssetSelector = ({
     onValueChange(truncateDecimalPlaces(balance, 15));
   };
 
-  const disableUseMax = !editable || !selectedAsset;
+  const disableUseMax = !editable || isNativeAsset(selectedAsset?.chain, selectedAsset?.address);
 
   return (
     <Container style={style}>

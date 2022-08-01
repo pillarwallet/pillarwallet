@@ -278,7 +278,7 @@
     "walletDeployment": "Wallet deployment",
     "pleaseSelect": "Please select",
     "balanceFiatTokenFormat": "Balance {{balanceInFiat}} ({{balance}})",
-    "balanceTokenFormat": "Balance {{balance}}",
+    "balanceTokenFormat": "Balance: {{balance}}",
     "filterByName": "Filter by name",
     "username": "username",
     "assetMigrate": "Migrate assets to Etherspot",

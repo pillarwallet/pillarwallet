@@ -71,7 +71,7 @@ const TokenFiatValueAccessory = ({ chain, asset, value, onUseMax, disableUseMax,
       <Balance>{t('estimatedValue', { value: formattedFiatValue })}</Balance>
 
       <SubContainer>
-        {balance && balance.toNumber() > 0 && (
+        {chain && balance && (
           <TokenBalance>{t('label.balanceTokenFormat', { balance: balance?.toFixed(2) })}</TokenBalance>
         )}
         {!disableUseMax && (
