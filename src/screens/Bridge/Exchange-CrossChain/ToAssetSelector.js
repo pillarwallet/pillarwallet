@@ -28,6 +28,9 @@ import Modal from 'components/Modal';
 import TokenValueInput from 'components/inputs/TokenValueInput';
 import TokenFiatValueAccessory from 'components/inputs/TokenValueInput/TokenFiatValueAccessory';
 
+// Selectors
+import { useWalletAssetBalance } from 'selectors/balances';
+
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
 import type { AssetOption } from 'models/Asset';
@@ -41,6 +44,8 @@ type Props = {|
 |};
 
 const ToAssetSelector = ({ assets, selectedAsset, onSelectAsset, value, style }: Props) => {
+  const balance = useWalletAssetBalance(selectedAsset?.chain, selectedAsset?.address);
+
   const openSelectAsset = () => {
     Modal.open(() => <AssetSelectorModal tokens={assets} autoFocus onSelectToken={onSelectAsset} />);
   };
@@ -57,7 +62,13 @@ const ToAssetSelector = ({ assets, selectedAsset, onSelectAsset, value, style }:
         toFixedValue={4}
       />
 
-      <TokenFiatValueAccessory value={value} chain={selectedAsset?.chain} asset={selectedAsset} disableUseMax />
+      <TokenFiatValueAccessory
+        value={value}
+        balance={balance}
+        chain={selectedAsset?.chain}
+        asset={selectedAsset}
+        disableUseMax
+      />
     </Container>
   );
 };

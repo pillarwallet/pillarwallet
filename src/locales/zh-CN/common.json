@@ -263,7 +263,8 @@
     "balanceFiatTokenFormat": "余额 {{balanceInFiat}} ({{balance}})",
     "balanceTokenFormat": "余额{{balance}}",
     "filterByName": "按名称过滤",
-    "transaction_submitted": "交易提交"
+    "transaction_submitted": "交易提交",
+    "on_network": "上 {{network}}"
   },
   "button": {
     "activate": "启用",

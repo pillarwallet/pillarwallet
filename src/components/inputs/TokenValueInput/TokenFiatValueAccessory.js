@@ -49,9 +49,10 @@ type Props = {|
   disableUseMax?: boolean,
   useMaxTitle?: string,
   style?: ViewStyleProp,
+  balance?: ?BigNumber,
 |};
 
-const TokenFiatValueAccessory = ({ chain, asset, value, onUseMax, disableUseMax, useMaxTitle, style }: Props) => {
+const TokenFiatValueAccessory = ({ chain, asset, value, onUseMax, disableUseMax, balance, style }: Props) => {
   const { t } = useTranslation();
 
   const rates = useChainRates(chain);
@@ -69,11 +70,16 @@ const TokenFiatValueAccessory = ({ chain, asset, value, onUseMax, disableUseMax,
     <Container style={style}>
       <Balance>{t('estimatedValue', { value: formattedFiatValue })}</Balance>
 
-      {!disableUseMax && (
-        <TouchableOpacity hitSlop={hitSlop10} onPress={handleUseMaxValue}>
-          <TextButtonTitle>{useMaxTitle ?? t('button.useMax')}</TextButtonTitle>
-        </TouchableOpacity>
-      )}
+      <SubContainer>
+        {balance && balance.toNumber() > 0 && (
+          <TokenBalance>{t('label.balanceTokenFormat', { balance: balance?.toFixed(2) })}</TokenBalance>
+        )}
+        {!disableUseMax && (
+          <TouchableOpacity hitSlop={hitSlop10} onPress={handleUseMaxValue}>
+            <TextButtonTitle>{t('button.max')}</TextButtonTitle>
+          </TouchableOpacity>
+        )}
+      </SubContainer>
     </Container>
   );
 };
@@ -84,8 +90,18 @@ const Container = styled.View`
   flex-direction: row;
 `;
 
+const SubContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+`;
+
 const Balance = styled(Text)`
   flex: 1;
+  color: ${({ theme }) => theme.colors.secondaryText};
+`;
+
+const TokenBalance = styled(Text)`
   color: ${({ theme }) => theme.colors.secondaryText};
 `;
 
