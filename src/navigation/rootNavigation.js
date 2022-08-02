@@ -33,6 +33,7 @@ import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import ForgotPinScreen from 'screens/ForgotPin';
 import PermissionScreen from 'screens/Permissions';
 import MenuSelectAppearanceScreen from 'screens/AppAppearence';
+import LegalScreen from 'screens/LegalScreen/LegalScreen';
 
 // Utils
 import { modalTransition } from 'utils/common';
@@ -54,6 +55,7 @@ import {
   IMPORT_WALLET_LEGALS,
   PERMISSIONS,
   MENU_SELECT_APPEARANCE,
+  ONBOARDING_LEGAL_SCREEN,
 } from 'constants/navigationConstants';
 
 import type { NavigationNavigator } from 'react-navigation';
@@ -67,7 +69,7 @@ type Props = {
 const StackNavigatorConfig = {
   defaultNavigationOptions: {
     headerShown: false,
-    gestureEnabled: true,
+    gestureEnabled: false,
   },
   initialRouteName: Platform.OS === 'android' ? PERMISSIONS : SET_WALLET_PIN_CODE,
 };
@@ -80,15 +82,16 @@ const onBoardingFlow = createStackNavigator(
     [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
     [WELCOME_BACK]: WelcomeBackScreen,
     [IMPORT_WALLET_LEGALS]: ImportWalletLegalsScreen,
+    [ONBOARDING_LEGAL_SCREEN]: LegalScreen,
   },
   StackNavigatorConfig,
 );
 
 const authFlow = createStackNavigator(
   {
-    [MENU_SELECT_APPEARANCE]: MenuSelectAppearanceScreen,
     [PIN_CODE_UNLOCK]: PinCodeUnlockScreen,
     [FORGOT_PIN]: ForgotPinScreen,
+    [MENU_SELECT_APPEARANCE]: MenuSelectAppearanceScreen,
   },
   modalTransition,
 );
