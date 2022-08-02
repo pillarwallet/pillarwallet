@@ -115,6 +115,8 @@ const TokenValueInput = React.forwardRef<Props, Instance>((props, ref) => {
     PercentsInputAccessoryHolder.removeAccessory();
   };
 
+  const networkName = chain ? chain[0].toUpperCase() + chain.substring(1) : undefined;
+
   return (
     <Container style={style}>
       <BigNumberInput
@@ -133,8 +135,11 @@ const TokenValueInput = React.forwardRef<Props, Instance>((props, ref) => {
 
       {!!asset && (
         <TouchableTokenInfo disabled={!onTokenPress} onPress={onTokenPress}>
-          <TokenSymbol>{asset?.symbol}</TokenSymbol>
-          <TokenIcon url={asset?.iconUrl} size={24} chain={showChainIcon ? chain : undefined} />
+          <TokenContainer>
+            <TokenSymbol>{asset?.symbol}</TokenSymbol>
+            <TokenNetwork>{t('label.on_network', { network: networkName })}</TokenNetwork>
+          </TokenContainer>
+          <TokenIcon url={asset?.iconUrl} size={34} chain={showChainIcon ? chain : undefined} />
         </TouchableTokenInfo>
       )}
       {!asset && onTokenPress && (
@@ -159,12 +164,23 @@ const Container = styled.View`
   align-items: flex-end;
 `;
 
+const TokenContainer = styled.View`
+  align-items: flex-end;
+`;
+
 // Token symbol & icons are positioned by hand, because baseline alignment does not work for android.
 const TouchableTokenInfo = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   margin-left: ${spacing.medium}px;
   margin-bottom: ${spacing.small}px;
+`;
+
+const TokenNetwork = styled(Text)`
+  font-family: ${appFont.medium};
+  font-size: ${fontSizes.small}px;
+  padding-right: ${spacing.small}px;
+  color: ${({ theme }) => theme.colors.basic020};
 `;
 
 const TokenSymbol = styled(Text)`

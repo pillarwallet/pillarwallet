@@ -105,6 +105,7 @@ const FromAssetSelector = ({
         value={value}
         chain={selectedAsset?.chain}
         asset={selectedAsset}
+        balance={balance}
         onUseMax={handleUseMax}
         useMaxTitle={t('button.spendMax')}
         disableUseMax={disableUseMax}
