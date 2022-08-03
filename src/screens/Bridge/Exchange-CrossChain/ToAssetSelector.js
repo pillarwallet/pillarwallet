@@ -47,7 +47,7 @@ const ToAssetSelector = ({ assets, selectedAsset, onSelectAsset, value, style }:
   const balance = useWalletAssetBalance(selectedAsset?.chain, selectedAsset?.address);
 
   const openSelectAsset = () => {
-    Modal.open(() => <AssetSelectorModal tokens={assets} autoFocus onSelectToken={onSelectAsset} />);
+    Modal.open(() => <AssetSelectorModal tokens={assets} onSelectToken={onSelectAsset} />);
   };
 
   return (
