@@ -125,7 +125,6 @@ const AssetSelector = ({
           onSelectToken={handleSelectToken}
           collectibles={collectibles}
           onSelectCollectible={handleSelectCollectible}
-          autoFocus
         />
       ));
   };

@@ -72,7 +72,7 @@ const FromAssetSelector = ({
   };
 
   const openSelectAsset = () => {
-    Modal.open(() => <AssetSelectorModal autoFocus tokens={assets} onSelectToken={handleSelectToken} />);
+    Modal.open(() => <AssetSelectorModal tokens={assets} onSelectToken={handleSelectToken} />);
   };
 
   const handleTokenValueChange = (newTokenValue: ?BigNumber) => {
