@@ -83,7 +83,7 @@ function TokenListItem({
     <Container onPress={onPress} disabled={!onPress} style={style}>
       {!!leftAddOn && <LeftAddOn>{leftAddOn}</LeftAddOn>}
 
-      <TokenIcon url={iconUrl} setMarginRight />
+      <TokenIcon url={iconUrl} chain={chain} setMarginRight />
 
       <TitleContainer>
         <Title numberOfLines={1}>{name}</Title>
@@ -123,6 +123,7 @@ const TitleContainer = styled.View`
 
 const Title = styled(Text)`
   ${fontStyles.medium};
+  margin-left: 7px;
 `;
 
 const Subtitle = styled(Text)`
