@@ -84,7 +84,6 @@ const TokenValueInput = React.forwardRef<Props, Instance>((props, ref) => {
     style,
     textStyle,
     onTokenPress,
-    showChainIcon,
     toFixedValue,
   } = props;
 
@@ -139,7 +138,7 @@ const TokenValueInput = React.forwardRef<Props, Instance>((props, ref) => {
             <TokenSymbol>{asset?.symbol}</TokenSymbol>
             <TokenNetwork>{t('label.on_network', { network: networkName })}</TokenNetwork>
           </TokenContainer>
-          <TokenIcon url={asset?.iconUrl} size={34} chain={showChainIcon ? chain : undefined} />
+          <TokenIcon url={asset?.iconUrl} size={34} chain={chain} />
         </TouchableTokenInfo>
       )}
       {!asset && onTokenPress && (
