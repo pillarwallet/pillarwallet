@@ -37,7 +37,6 @@ import { useAccounts } from 'selectors';
 
 // Utils
 import { fontStyles, spacing } from 'utils/variables';
-import { hitSlop20 } from 'utils/common';
 import { useThemeColors } from 'utils/themes';
 
 // Screen
@@ -61,7 +60,7 @@ const UserNameAndImage = ({ user, address }: Props) => {
   };
 
   return (
-    <Wrapper onPress={canSwitchAccount ? onAccountSwitchPress : null} hitSlop={hitSlop20}>
+    <Wrapper onPress={canSwitchAccount ? onAccountSwitchPress : null}>
       <ProfileImage userName={!user ? address : user} diameter={24} />
 
       {user && <UserName>{user}</UserName>}
