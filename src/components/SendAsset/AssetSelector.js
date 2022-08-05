@@ -88,23 +88,6 @@ const AssetSelector = ({
   const tokenBalance = useWalletAssetBalance(selectedToken?.chain, selectedToken?.contractAddress);
   const tokenBalanceAfterFee = useTokenBalanceAfterFee(selectedToken, txFeeInfo);
 
-  React.useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
-
-  // Focus on token input after user changes asset
-  React.useEffect(() => {
-    let isCancelled = false;
-
-    setTimeout(() => {
-      if (!isCancelled) inputRef.current?.focus();
-    }, 650);
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [selectedToken]);
-
   const handleSelectToken = (token: AssetOption) => {
     onSelectCollectible?.(null);
     onValueChange(null);

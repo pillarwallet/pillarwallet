@@ -117,19 +117,6 @@ function Exchange({ fetchExchangeTitle }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Focus on from amount input after user changes fromAsset
-  React.useEffect(() => {
-    let isCancelled = false;
-
-    setTimeout(() => {
-      if (!isCancelled) fromInputRef.current?.focus();
-    }, 650);
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [dispatch, fromAsset]);
-
   React.useEffect(() => {
     if (isLogV2AppEvents() && fromAsset && toAsset && activeAccount) {
       dispatch(
