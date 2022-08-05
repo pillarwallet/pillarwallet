@@ -149,19 +149,6 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
     toAssetValue && setToValue(toAssetValue);
   }, [toAssetValue]);
 
-  // Focus on from amount input after user changes fromAsset
-  React.useEffect(() => {
-    let isCancelled = false;
-
-    setTimeout(() => {
-      if (!isCancelled) fromInputRef.current?.focus();
-    }, 650);
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [dispatch, fromAsset]);
-
   const handleSelectFromAsset = (asset: AssetOption) => {
     setChain(asset.chain);
     setFromAddress(asset.address);
