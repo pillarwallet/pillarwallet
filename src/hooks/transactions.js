@@ -63,7 +63,7 @@ export function useTransactionsEstimate(
   chain: Chain,
   transactions: ?(EthereumTransaction[]),
 ): UseTransactionEstimateResult {
-  const enabled = !!transactions?.length;
+  const enabled = !!transactions?.length && chain;
 
   const query: QueryResult<TransactionFeeInfo> = useQuery(
     ['TransactionsEstimate', transactions],
@@ -92,7 +92,7 @@ export function useTransactionsEstimate(
 
 type UseTransactionFeeCheckResult = {|
   isEnoughForFee: boolean,
-  errorMessage?: string,
+    errorMessage?: string,
 |};
 
 export function useTransactionFeeCheck(

@@ -27,8 +27,6 @@ import { useTranslation } from 'translations/translate';
 // Actions
 import { fetchGasThresholds } from 'redux/actions/gas-threshold-actions';
 
-// Configs
-import { getPlrAddressForChain } from 'configs/assetsConfig';
 
 // Components
 import { Container, Content, Spacing } from 'components/layout/Layout';
@@ -39,7 +37,6 @@ import Toast from 'components/Toast';
 import Banner from 'components/Banner/Banner';
 
 // Constants
-import { CHAIN } from 'constants/chainConstants';
 import { EXCHANGE_CONFIRM } from 'constants/navigationConstants';
 
 // Utils
@@ -82,10 +79,10 @@ function Exchange({ fetchExchangeTitle }: Props) {
   const fromInputRef: any = React.useRef();
   const screenName = getActiveScreenName(navigation);
 
-  const initialChain: Chain = navigation.getParam('chain') || CHAIN.ETHEREUM;
+  const initialChain: Chain = navigation.getParam('chain');
   const initialFromAddress: string =
     navigation.getParam('fromAssetAddress') || nativeAssetPerChain[initialChain]?.address;
-  const initialToAddress: string = navigation.getParam('toAssetAddress') || getPlrAddressForChain(initialChain);
+  const initialToAddress: string = navigation.getParam('toAssetAddress')
 
   const [chain, setChain] = React.useState(initialChain);
   const [fromAddress, setFromAddress] = React.useState(initialFromAddress);
@@ -176,7 +173,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
 
   const toValue = maxBy(offers, (offer: any) => offer.toAmount)?.toAmount.precision(6);
   const customTitle =
-    nativeAssetPerChain[CHAIN.ETHEREUM]?.address === fromAddress && chain === CHAIN.ETHEREUM
+    !chain
       ? t('exchangeContent.title.initialExchange')
       : t('exchangeContent.title.exchange', { chain: chainConfig.titleShort });
 
