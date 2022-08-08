@@ -92,7 +92,7 @@ export function useTransactionsEstimate(
 
 type UseTransactionFeeCheckResult = {|
   isEnoughForFee: boolean,
-    errorMessage?: string,
+  errorMessage?: string,
 |};
 
 export function useTransactionFeeCheck(
