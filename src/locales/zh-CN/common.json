@@ -1222,7 +1222,9 @@
       "exchange": "在 {{chain}} 上交换",
       "crossChain": "跨链桥",
       "initialExchange": "交换",
-      "confirm": "审查"
+      "confirm": "审查",
+      "choose_token_swap": "选择要交换的代币",
+      "choose_token": "在 {{chain}} 上选择令牌"
     },
     "label": {
       "exchangeDetails": "交流详情",

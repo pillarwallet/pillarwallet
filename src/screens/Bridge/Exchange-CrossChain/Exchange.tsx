@@ -172,10 +172,9 @@ function Exchange({ fetchExchangeTitle }: Props) {
   };
 
   const toValue = maxBy(offers, (offer: any) => offer.toAmount)?.toAmount.precision(6);
-  const customTitle =
-    !chain
-      ? t('exchangeContent.title.initialExchange')
-      : t('exchangeContent.title.exchange', { chain: chainConfig.titleShort });
+const customTitle = !chain
+  ? t('exchangeContent.title.initialExchange')
+  : t('exchangeContent.title.exchange', { chain: chainConfig.titleShort });
 
   React.useEffect(() => {
     fetchExchangeTitle && fetchExchangeTitle(customTitle);
@@ -189,6 +188,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
       <Content onScroll={() => Keyboard.dismiss()}>
         <Banner screenName={screenName} bottomPosition={false} />
         <FromAssetSelector
+          title={t('exchangeContent.title.choose_token_swap')}
           assets={fromOptions}
           selectedAsset={fromAsset}
           onSelectAsset={handleSelectFromAsset}
@@ -203,6 +203,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
         </TouchableSwapIcon>
 
         <ToAssetSelector
+          title={t('exchangeContent.title.choose_token_swap')}
           assets={toOptions}
           selectedAsset={toAsset}
           onSelectAsset={handleSelectToAsset}

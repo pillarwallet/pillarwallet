@@ -48,7 +48,6 @@ import type { Chain } from 'models/Chain';
 import type { Collectible } from 'models/Collectible';
 
 // Local
-import ChainSectionHeader from './ChainSectionHeader';
 import ChainSectionFooter from './ChainSectionFooter';
 
 type Props = {|
@@ -56,9 +55,10 @@ type Props = {|
   onSelectToken: (token: AssetOption) => mixed,
   collectibles?: Collectible[],
   onSelectCollectible?: (collectible: Collectible) => mixed,
+  isNewtworkSelected?: Chain | null,
 |};
 
-const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollectible }: Props) => {
+const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollectible, isNewtworkSelected }: Props) => {
   const handleShowMore = (chain: Chain) => {
     Keyboard.dismiss();
     Modal.open(() => (
@@ -72,17 +72,12 @@ const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollect
     ));
   };
 
-  const { isChainCollapsed, toggleChain } = useCollapseChain();
+  const { isChainCollapsed } = useCollapseChain();
   const sections = useSectionData(tokens, collectibles ?? [], isChainCollapsed);
 
-  const renderSectionHeader = ({ chain }: Section) => {
-    return (
-      <ChainSectionHeader chain={chain} onPress={() => toggleChain(chain)} isCollapsed={isChainCollapsed[chain]} />
-    );
-  };
 
   const renderSectionFooter = ({ chain, showMore }: Section) => {
-    if (isChainCollapsed[chain]) return null;
+    if (isChainCollapsed[chain] || !isNewtworkSelected) return null;
     return <ChainSectionFooter showMore={showMore} onPress={() => handleShowMore(chain)} />;
   };
 
@@ -130,7 +125,6 @@ const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollect
   return (
     <SectionList
       sections={sections}
-      renderSectionHeader={({ section }) => renderSectionHeader(section)}
       renderSectionFooter={({ section }) => renderSectionFooter(section)}
       renderItem={({ item }) => renderItem(item)}
       keyExtractor={getItemKey}

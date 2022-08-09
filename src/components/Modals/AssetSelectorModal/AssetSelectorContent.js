@@ -21,13 +21,22 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
+import { FlatList } from 'react-native';
 
 // Components
 import SearchBar from 'components/SearchBar';
+import Icon from 'components/core/Icon';
+
+// Selector
+import { useSupportedChains } from 'selectors/chains';
+
+// Utils
+import { useChainsConfig } from 'utils/uiConfig';
 
 // Types
 import type { AssetOption } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
+import type { Chain } from 'models/Chain';
 
 // Local
 import DefaultAssetList from './DefaultAssetList';
@@ -49,27 +58,64 @@ const AssetSelectorContent = ({
   autoFocus = false,
 }: Props) => {
   const [query, setQuery] = React.useState('');
+  const [selectedChain, setSelectedChain] = React.useState<Chain | null>(null);
+
+  const tokenFiltered = selectedChain ? tokens?.filter((res) => res.chain === selectedChain) : tokens;
+  const collectibleFiltered = selectedChain ? collectibles?.filter((res) => res.chain === selectedChain) : collectibles;
+
+  const chains = useSupportedChains();
 
   const showSearchResults = query.length >= 2;
 
+  const chainConfig = useChainsConfig();
+
+  const renderItem = (chain: Chain) => {
+    const asset = chainConfig[chain];
+
+    return (
+      <Button onPress={() => onPressChain(chain)} isSelected={selectedChain === chain}>
+        <ChainIcon name={asset.iconName} width={40} height={40} />
+      </Button>
+    );
+  };
+
+  const onPressChain = (chain: Chain) => {
+    if (selectedChain === chain) {
+      setSelectedChain(null);
+    } else {
+      setSelectedChain(chain);
+    }
+  };
+
   return (
     <Container>
-      <SearchBar autoFocus={autoFocus} query={query} onQueryChange={setQuery} placeholder={t('label.filterByName')} />
+      <ListContainer>
+        <FlatList
+          horizontal
+          data={chains}
+          renderItem={({ item }) => renderItem(item)}
+          style={{ marginLeft: 20, marginVertical: 10, maxHeight: 70 }}
+          keyboardShouldPersistTaps="always"
+        />
+      </ListContainer>
+
+      <SearchBar autoFocus={autoFocus} query={query} onQueryChange={setQuery} placeholder={t('label.search')} />
 
       {!showSearchResults && (
         <DefaultAssetList
-          tokens={tokens}
+          isNewtworkSelected={selectedChain}
+          tokens={tokenFiltered}
           onSelectToken={onSelectToken}
-          collectibles={collectibles}
+          collectibles={collectibleFiltered}
           onSelectCollectible={onSelectCollectible}
         />
       )}
 
       {showSearchResults && (
         <SearchResultAssetList
-          tokens={tokens}
+          tokens={tokenFiltered}
           onSelectToken={onSelectToken}
-          collectibles={collectibles}
+          collectibles={collectibleFiltered}
           onSelectCollectible={onSelectCollectible}
           query={query}
         />
@@ -82,4 +128,20 @@ export default AssetSelectorContent;
 
 const Container = styled.View`
   flex: 1;
+`;
+
+const Button = styled.TouchableOpacity`
+  height: 55px;
+  width: 55px;
+  margin-right: 10px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background-color: ${({ theme, isSelected }) => (isSelected ? theme.colors.basic040 : theme.colors.basic050)};
+`;
+
+const ChainIcon = styled(Icon)``;
+
+const ListContainer = styled.View`
+  height: 90px;
 `;
