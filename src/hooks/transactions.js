@@ -63,7 +63,7 @@ export function useTransactionsEstimate(
   chain: Chain,
   transactions: ?(EthereumTransaction[]),
 ): UseTransactionEstimateResult {
-  const enabled = !!transactions?.length;
+  const enabled = !!transactions?.length && chain;
 
   const query: QueryResult<TransactionFeeInfo> = useQuery(
     ['TransactionsEstimate', transactions],

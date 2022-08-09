@@ -85,7 +85,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const fiatCurrency = useFiatCurrency();
   const gasThresholds = useRootSelector(gasThresholdsSelector);
   const isOnline = useRootSelector((root) => root.session.data.isOnline);
-  const initialChain: Chain = navigation.getParam('chain') || CHAIN.ETHEREUM;
+  const initialChain: Chain = navigation.getParam('chain')
   const initialFromAddress: string =
     navigation.getParam('fromAssetAddress') || nativeAssetPerChain[initialChain]?.address;
 
@@ -138,12 +138,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   }, [buildTransactionData]);
 
   const { feeInfo, errorMessage: estimationErrorMessage, isEstimating } = useTransactionsEstimate(chain, txData);
-  const { errorMessage: notEnoughForFeeErrorMessage, isEnoughForFee } = useTransactionFeeCheck(
-    chain,
-    feeInfo,
-    fromAsset,
-    fromValue,
-  );
+  const transactionFee = feeInfo && useTransactionFeeCheck(chain, feeInfo, fromAsset, fromValue);
 
   React.useEffect(() => {
     toAssetValue && setToValue(toAssetValue);
@@ -179,7 +174,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
     <SendHighGasModal value={fromValue} contact={fromAddress} chain={chain} txFeeInfo={feeInfo} />
   ) : null;
 
-  const errorMessage = estimationErrorMessage | notEnoughForFeeErrorMessage;
+  const errorMessage = estimationErrorMessage | transactionFee?.errorMessage;
 
   return (
     <Container>
@@ -219,7 +214,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
               gasToken={feeInfo.gasToken}
               chain={chain}
               isLoading={isEstimating}
-              hasError={!isEnoughForFee}
+              hasError={!transactionFee?.isEnoughForFee}
               highGasFeeModal={highGasFeeModal}
             />
             <Spacing h={20} />
