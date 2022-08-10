@@ -20,6 +20,7 @@
 
 import * as React from 'react';
 import { BigNumber } from 'bignumber.js';
+import { useTranslation } from 'translations/translate';
 
 // Components
 import AssetSelectorModal from 'components/Modals/AssetSelectorModal';
@@ -76,6 +77,7 @@ const AssetSelector = ({
   hideFiatValueInput,
   disableAssetSelectorModal = false,
 }: Props) => {
+  const { t } = useTranslation();
   const inputRef = React.useRef();
 
   const tokens = useRootSelector(accountAssetsWithBalanceSelector);
@@ -105,6 +107,7 @@ const AssetSelector = ({
       Modal.open(() => (
         <AssetSelectorModal
           tokens={tokens}
+          title={t('assetSelector.choose_token_send')}
           onSelectToken={handleSelectToken}
           collectibles={collectibles}
           onSelectCollectible={handleSelectCollectible}

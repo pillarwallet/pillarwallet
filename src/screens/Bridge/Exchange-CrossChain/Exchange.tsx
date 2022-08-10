@@ -27,7 +27,6 @@ import { useTranslation } from 'translations/translate';
 // Actions
 import { fetchGasThresholds } from 'redux/actions/gas-threshold-actions';
 
-
 // Components
 import { Container, Content, Spacing } from 'components/layout/Layout';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -82,7 +81,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
   const initialChain: Chain = navigation.getParam('chain');
   const initialFromAddress: string =
     navigation.getParam('fromAssetAddress') || nativeAssetPerChain[initialChain]?.address;
-  const initialToAddress: string = navigation.getParam('toAssetAddress')
+  const initialToAddress: string = navigation.getParam('toAssetAddress');
 
   const [chain, setChain] = React.useState(initialChain);
   const [fromAddress, setFromAddress] = React.useState(initialFromAddress);
@@ -172,9 +171,9 @@ function Exchange({ fetchExchangeTitle }: Props) {
   };
 
   const toValue = maxBy(offers, (offer: any) => offer.toAmount)?.toAmount.precision(6);
-const customTitle = !chain
-  ? t('exchangeContent.title.initialExchange')
-  : t('exchangeContent.title.exchange', { chain: chainConfig.titleShort });
+  const customTitle = !chain
+    ? t('exchangeContent.title.initialExchange')
+    : t('exchangeContent.title.exchange', { chain: chainConfig.titleShort });
 
   React.useEffect(() => {
     fetchExchangeTitle && fetchExchangeTitle(customTitle);
@@ -188,7 +187,7 @@ const customTitle = !chain
       <Content onScroll={() => Keyboard.dismiss()}>
         <Banner screenName={screenName} bottomPosition={false} />
         <FromAssetSelector
-          title={t('exchangeContent.title.choose_token_swap')}
+          title={t('assetSelector.choose_token_swap')}
           assets={fromOptions}
           selectedAsset={fromAsset}
           onSelectAsset={handleSelectFromAsset}
@@ -203,7 +202,7 @@ const customTitle = !chain
         </TouchableSwapIcon>
 
         <ToAssetSelector
-          title={t('exchangeContent.title.choose_token_swap')}
+          title={t('assetSelector.choose_token_swap')}
           assets={toOptions}
           selectedAsset={toAsset}
           onSelectAsset={handleSelectToAsset}

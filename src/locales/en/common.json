@@ -691,7 +691,11 @@
   },
 
   "assetSelector": {
-    "title": "Select asset"
+    "title": "Select asset",
+    "choose_token_swap": "Choose token to swap",
+    "choose_token_crosschain": "Choose token to cross-chain",
+    "choose_token_send": "Choose token to send",
+    "choose_token": "Choose token on {{chain}}"
   },
 
   "chainAssetSelector": {
@@ -1334,9 +1338,7 @@
       "exchange": "Swap on {{chain}}",
       "crossChain": "Cross-chain bridge",
       "initialExchange": "Swap",
-      "confirm": "Review",
-      "choose_token_swap": "Choose token to swap",
-      "choose_token": "Choose token on {{chain}}"
+      "confirm": "Review"
     },
     "label": {
       "exchangeDetails": "Exchange details",

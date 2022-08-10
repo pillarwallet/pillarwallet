@@ -646,7 +646,11 @@
     }
   },
   "assetSelector": {
-    "title": "选择资产"
+    "title": "选择资产",
+    "choose_token_swap": "选择要交换的代币",
+    "choose_token_crosschain": "选择代币跨链",
+    "choose_token_send": "选择要发送的令牌",
+    "choose_token": "在 {{chain}} 上选择令牌"
   },
   "chainAssetSelector": {
     "title": "{{chain}} 个资产",
@@ -1222,9 +1226,7 @@
       "exchange": "在 {{chain}} 上交换",
       "crossChain": "跨链桥",
       "initialExchange": "交换",
-      "confirm": "审查",
-      "choose_token_swap": "选择要交换的代币",
-      "choose_token": "在 {{chain}} 上选择令牌"
+      "confirm": "审查"
     },
     "label": {
       "exchangeDetails": "交流详情",

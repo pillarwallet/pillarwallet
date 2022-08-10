@@ -56,6 +56,7 @@ const AssetSelectorModal = ({
 }: Props) => {
   const { t } = useTranslationWithPrefix('assetSelector');
   const colors = useThemeColors();
+  const [selectedAssetChain, setSelectedAssetChain] = React.useState(null);
 
   const modalRef = React.useRef(null);
 
@@ -74,20 +75,17 @@ const AssetSelectorModal = ({
     onSelectCollectible?.(collectible);
   };
 
-  title = title || t('title');
+  title = (selectedAssetChain ? t('choose_token', { chain: selectedAssetChain }) : title) || t('title');
 
   return (
     <SlideModal ref={modalRef} fullScreen noSwipeToDismiss noClose backgroundColor={colors.basic050} noTopPadding>
       <Container>
-        <HeaderBlock
-          leftItems={[{ close: true }]}
-          centerItems={[{ title }]}
-          onClose={close}
-          noPaddingTop
-        />
+        <HeaderBlock leftItems={[{ close: true }]} centerItems={[{ title }]} onClose={close} noPaddingTop />
 
         <AssetSelectorContent
           tokens={tokens}
+          selectedAssetChain={selectedAssetChain}
+          onSelectAssetChain={setSelectedAssetChain}
           onSelectToken={selectToken}
           collectibles={collectibles}
           onSelectCollectible={selectCollectible}

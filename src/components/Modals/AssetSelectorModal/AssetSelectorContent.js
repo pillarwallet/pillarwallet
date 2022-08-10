@@ -48,6 +48,8 @@ type Props = {|
   collectibles?: Collectible[],
   onSelectCollectible?: (collectible: Collectible) => mixed,
   autoFocus?: boolean,
+  selectedAssetChain: ?Chain,
+  onSelectAssetChain: (val: ?Chain) => void,
 |};
 
 const AssetSelectorContent = ({
@@ -56,12 +58,15 @@ const AssetSelectorContent = ({
   onSelectToken,
   onSelectCollectible,
   autoFocus = false,
+  selectedAssetChain,
+  onSelectAssetChain,
 }: Props) => {
   const [query, setQuery] = React.useState('');
-  const [selectedChain, setSelectedChain] = React.useState<Chain | null>(null);
 
-  const tokenFiltered = selectedChain ? tokens?.filter((res) => res.chain === selectedChain) : tokens;
-  const collectibleFiltered = selectedChain ? collectibles?.filter((res) => res.chain === selectedChain) : collectibles;
+  const tokenFiltered = selectedAssetChain ? tokens?.filter((res) => res.chain === selectedAssetChain) : tokens;
+  const collectibleFiltered = selectedAssetChain
+    ? collectibles?.filter((res) => res.chain === selectedAssetChain)
+    : collectibles;
 
   const chains = useSupportedChains();
 
@@ -73,17 +78,17 @@ const AssetSelectorContent = ({
     const asset = chainConfig[chain];
 
     return (
-      <Button onPress={() => onPressChain(chain)} isSelected={selectedChain === chain}>
+      <Button onPress={() => onPressChain(chain)} isSelected={selectedAssetChain === chain}>
         <ChainIcon name={asset.iconName} width={40} height={40} />
       </Button>
     );
   };
 
   const onPressChain = (chain: Chain) => {
-    if (selectedChain === chain) {
-      setSelectedChain(null);
+    if (selectedAssetChain === chain) {
+      onSelectAssetChain(null);
     } else {
-      setSelectedChain(chain);
+      onSelectAssetChain(chain);
     }
   };
 
@@ -103,7 +108,7 @@ const AssetSelectorContent = ({
 
       {!showSearchResults && (
         <DefaultAssetList
-          isNewtworkSelected={selectedChain}
+          isNewtworkSelected={selectedAssetChain}
           tokens={tokenFiltered}
           onSelectToken={onSelectToken}
           collectibles={collectibleFiltered}
