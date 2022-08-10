@@ -96,13 +96,7 @@ const BackupPhraseValidate = ({ navigation, backupWallet }: Props) => {
           size="large"
         />
         {mnemonicPhrase ? (
-          <Button
-            title={t('button.copyToClipboard')}
-            variant="text"
-            style={styles.button}
-            size="large"
-            onPress={() => handleCopyToClipboard(mnemonicPhrase)}
-          />
+          null
         ) : (
           <Button
             title={t('button.copyToClipboard')}

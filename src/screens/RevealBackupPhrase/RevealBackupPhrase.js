@@ -119,12 +119,6 @@ class RevealBackupPhrase extends React.Component<Props, State> {
               <Logo source={walletBackupImage} />
               <MnemonicPhrase phrase={mnemonicPhrase} />
             </Content>
-            <Button
-              title={t('button.copyToClipboard')}
-              style={styles.button}
-              size="large"
-              onPress={() => this.handleCopyToClipboard(mnemonicPhrase)}
-            />
           </NonScrollableContent>
         </Container>
       );
