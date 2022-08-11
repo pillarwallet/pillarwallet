@@ -68,6 +68,7 @@ export const REMOTE_CONFIG = {
   INFURA_PROJECT_ID: 'infura_project_id',
   FEATURE_ONBOARDING_ENS: 'feature_onboarding_ens',
   APP_IPFS_SERVICE_URL: 'app_ipfs_service_url',
+  APP_CHAIN_SWITCH_43114: 'app_chain_switch_43114',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values
@@ -120,4 +121,5 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.INFURA_PROJECT_ID]: '',
   [REMOTE_CONFIG.FEATURE_ONBOARDING_ENS]: false,
   [REMOTE_CONFIG.APP_IPFS_SERVICE_URL]: 'https://ipfs.io/ipfs',
+  [REMOTE_CONFIG.APP_CHAIN_SWITCH_43114]: false,
 };
