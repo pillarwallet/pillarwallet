@@ -72,14 +72,16 @@ function TokenIcon({ url, size = 48, chain, style, imageStyle, chainIconStyle, s
 
   return (
     <Container style={style}>
-      <CollectibleImage
-        source={source}
-        resizeMode="contain"
-        width={size}
-        height={size}
-        style={[imageSizeStyle, imageStyle]}
-        fallbackSource={genericToken}
-      />
+      <IconContainer size={size}>
+        <CollectibleImage
+          source={source}
+          resizeMode="cover"
+          width={size}
+          height={size}
+          style={[imageSizeStyle, imageStyle]}
+          fallbackSource={genericToken}
+        />
+      </IconContainer>
 
       {!!ChainIcon && (
         <ChainIconWrapper style={[chainIconSizeStyle, chainIconStyle]}>
@@ -108,4 +110,11 @@ const ChainIconWrapper = styled.View`
   top: -1px;
   right: -1px;
   border-width: 1px;
+`;
+
+const IconContainer = styled.View`
+  height: ${({ size }) => size};
+  width: ${({ size }) => size};
+  background-color: ${({ theme }) => theme.colors.basic050};
+  border-radius: ${({ size }) => size / 2};
 `;
