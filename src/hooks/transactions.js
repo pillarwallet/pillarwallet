@@ -63,7 +63,7 @@ export function useTransactionsEstimate(
   chain: Chain,
   transactions: ?(EthereumTransaction[]),
 ): UseTransactionEstimateResult {
-  const enabled = !!transactions?.length && chain;
+  const enabled = !!transactions?.length && !!chain;
 
   const query: QueryResult<TransactionFeeInfo> = useQuery(
     ['TransactionsEstimate', transactions],
@@ -139,11 +139,13 @@ export function useEtherspotDeploymentFee(
   // we cannot calculate fee based on non native gas token
   const isPaidWithNativeToken = !gasToken?.address || addressesEqual(gasToken.address, nativeAssetAddress);
 
-  if (!transactionFee
-    || !gasPrice
-    || !isPaidWithNativeToken
-    || !isEtherspotAccount(activeAccount)
-    || isDeployedOnChain?.[chain]) {
+  if (
+    !transactionFee ||
+    !gasPrice ||
+    !isPaidWithNativeToken ||
+    !isEtherspotAccount(activeAccount) ||
+    isDeployedOnChain?.[chain]
+  ) {
     return { deploymentFee: null, feeWithoutDeployment: transactionFee };
   }
 
