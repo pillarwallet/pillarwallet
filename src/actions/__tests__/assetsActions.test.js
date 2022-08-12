@@ -43,7 +43,6 @@ import {
   mockSupportedAssets,
 } from 'testUtils/jestSetup';
 
-
 const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
 
 const getTransactionCountMock = jest.fn(() => {
@@ -57,11 +56,13 @@ const mockWallet: Object = {
   provider: { getTransactionCount: getTransactionCountMock },
 };
 
-const mockAccounts: Object[] = [{
-  id: '0x9c',
-  address: '0x9c',
-  isActive: true,
-}];
+const mockAccounts: Object[] = [
+  {
+    id: '0x9c',
+    address: '0x9c',
+    isActive: true,
+  },
+];
 
 const mockEthBalance = { balance: '0.000000000000000001', symbol: 'ETH', address: mockEthAddress };
 
@@ -128,15 +129,15 @@ describe('Assets actions', () => {
       { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.BINANCE, rates: mockNativeAssetExchangeRates } },
       { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.XDAI, rates: mockNativeAssetExchangeRates } },
       { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.AVALANCHE, rates: mockNativeAssetExchangeRates } },
+      { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.OPTIMISM, rates: mockNativeAssetExchangeRates } },
       { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.ETHEREUM, rates: mockExchangeRates } },
       { type: SET_FETCHING_RATES, payload: false },
       { type: SET_FETCHING_ASSETS_BALANCES, payload: false },
     ];
 
-    return store.dispatch(fetchAssetsBalancesAction())
-      .then(() => {
-        const actualActions = store.getActions();
-        expect(actualActions).toEqual(expectedActions);
-      });
+    return store.dispatch(fetchAssetsBalancesAction()).then(() => {
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expectedActions);
+    });
   });
 });

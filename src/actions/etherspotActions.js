@@ -223,6 +223,8 @@ const getChain = (chain: Chain) => {
       return CHAIN_SHORT.POLYGON.toLowerCase();
     case CHAIN_NAMES.AVALANCHE:
       return CHAIN_SHORT.AVALANCHE.toLowerCase();
+    case CHAIN_NAMES.OPTIMISM:
+      return CHAIN_SHORT.OPTIMISM.toLowerCase();
     default:
       return '';
   }

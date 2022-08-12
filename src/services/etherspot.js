@@ -110,6 +110,7 @@ export class EtherspotService {
       isMainnet ? NetworkNames.Matic : NetworkNames.Mumbai,
       NetworkNames.Xdai,
       isMainnet ? NetworkNames.Avalanche : NetworkNames.Fuji,
+      isMainnet ? NetworkNames.Optimism : NetworkNames.OptimismKovan,
     ];
 
     const primaryNetworkName = isMainnet ? NetworkNames.Mainnet : NetworkNames.Kovan;
@@ -121,7 +122,10 @@ export class EtherspotService {
     await Promise.all(
       this.supportedNetworks.map(async (networkName) => {
         const env =
-          networkName !== NetworkNames.Kovan && networkName !== NetworkNames.Fuji && networkName !== NetworkNames.Mumbai
+          networkName !== NetworkNames.Kovan &&
+          networkName !== NetworkNames.Fuji &&
+          networkName !== NetworkNames.Mumbai &&
+          networkName !== NetworkNames.OptimismKovan
             ? EnvNames.MainNets
             : EnvNames.TestNets;
         this.instances[networkName] = new EtherspotSdk(privateKey, {
@@ -215,8 +219,9 @@ export class EtherspotService {
     const binance = await this.getAccount(CHAIN.BINANCE);
     const polygon = await this.getAccount(CHAIN.POLYGON);
     const xdai = await this.getAccount(CHAIN.XDAI);
+    const optimism = await this.getAccount(CHAIN.OPTIMISM);
 
-    return { ethereum, binance, polygon, xdai, avalanche };
+    return { ethereum, binance, polygon, xdai, avalanche, optimism };
   }
 
   getAccounts(): Promise<?(EtherspotAccount[])> {
@@ -608,6 +613,9 @@ export class EtherspotService {
       case CHAIN.AVALANCHE:
         blockchainExplorerUrl = getEnv().TX_DETAILS_URL_AVALANCHE;
         break;
+      case CHAIN.OPTIMISM:
+        blockchainExplorerUrl = getEnv().TX_DETAILS_URL_OPTIMISM;
+        break;
       default:
         blockchainExplorerUrl = getEnv().TX_DETAILS_URL_ETHEREUM;
         break;
@@ -954,6 +962,8 @@ function networkNameFromChain(chain: Chain): ?string {
       return NetworkNames.Xdai;
     case CHAIN.AVALANCHE:
       return isProdEnv() ? NetworkNames.Avalanche : NetworkNames.Fuji;
+    case CHAIN.OPTIMISM:
+      return isProdEnv() ? NetworkNames.Optimism : NetworkNames.OptimismKovan;
     default:
       return null;
   }
@@ -974,6 +984,9 @@ function chainFromNetworkName(networkName: string): ?Chain {
     case NetworkNames.Avalanche:
     case NetworkNames.Fuji:
       return CHAIN.AVALANCHE;
+    case NetworkNames.Optimism:
+    case NetworkNames.OptimismKovan:
+      return CHAIN.OPTIMISM;
     default:
       return null;
   }

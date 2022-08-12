@@ -85,7 +85,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const fiatCurrency = useFiatCurrency();
   const gasThresholds = useRootSelector(gasThresholdsSelector);
   const isOnline = useRootSelector((root) => root.session.data.isOnline);
-  const initialChain: Chain = navigation.getParam('chain') || CHAIN.ETHEREUM;
+  const initialChain: Chain = navigation.getParam('chain');
   const initialFromAddress: string =
     navigation.getParam('fromAssetAddress') || nativeAssetPerChain[initialChain]?.address;
 
@@ -138,29 +138,11 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   }, [buildTransactionData]);
 
   const { feeInfo, errorMessage: estimationErrorMessage, isEstimating } = useTransactionsEstimate(chain, txData);
-  const { errorMessage: notEnoughForFeeErrorMessage, isEnoughForFee } = useTransactionFeeCheck(
-    chain,
-    feeInfo,
-    fromAsset,
-    fromValue,
-  );
+  const transactionFee = feeInfo && useTransactionFeeCheck(chain, feeInfo, fromAsset, fromValue);
 
   React.useEffect(() => {
     toAssetValue && setToValue(toAssetValue);
   }, [toAssetValue]);
-
-  // Focus on from amount input after user changes fromAsset
-  React.useEffect(() => {
-    let isCancelled = false;
-
-    setTimeout(() => {
-      if (!isCancelled) fromInputRef.current?.focus();
-    }, 650);
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [dispatch, fromAsset]);
 
   const handleSelectFromAsset = (asset: AssetOption) => {
     setChain(asset.chain);
@@ -192,13 +174,14 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
     <SendHighGasModal value={fromValue} contact={fromAddress} chain={chain} txFeeInfo={feeInfo} />
   ) : null;
 
-  const errorMessage = estimationErrorMessage | notEnoughForFeeErrorMessage;
+  const errorMessage = estimationErrorMessage | transactionFee?.errorMessage;
 
   return (
     <Container>
       <Content bounces={false} onScroll={() => Keyboard.dismiss()}>
         <Banner screenName={screenName} bottomPosition={false} />
         <FromAssetSelector
+          title={t('assetSelector.choose_token_crosschain')}
           assets={fromOptions}
           selectedAsset={fromAsset}
           onSelectAsset={handleSelectFromAsset}
@@ -211,6 +194,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
         <IconWrapper>{toAsset ? <Icon name="arrow-down" /> : <Spacing h={24} />}</IconWrapper>
 
         <ToAssetSelector
+          title={t('assetSelector.choose_token_crosschain')}
           assets={toOptions}
           selectedAsset={toAsset}
           onSelectAsset={handleSelectToAsset}
@@ -232,7 +216,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
               gasToken={feeInfo.gasToken}
               chain={chain}
               isLoading={isEstimating}
-              hasError={!isEnoughForFee}
+              hasError={!transactionFee?.isEnoughForFee}
               highGasFeeModal={highGasFeeModal}
             />
             <Spacing h={20} />

@@ -21,24 +21,17 @@
 import { useTranslation } from 'translations/translate';
 
 // Constants
-import {
-  ETH,
-  MATIC,
-  BNB,
-  XDAI,
-  AVAX,
-  ASSET_CATEGORY,
-} from 'constants/assetsConstants';
+import { ETH, MATIC, BNB, XDAI, AVAX, ASSET_CATEGORY } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
+import { isProdEnv } from 'utils/environment';
 
 // Types
 import type { IconName } from 'components/core/Icon';
 import type { AssetCategory } from 'models/AssetCategory';
 import type { Chain } from 'models/Chain';
-
 
 type ChainConfig = {|
   title: string,
@@ -52,7 +45,7 @@ type ChainConfig = {|
 /**
  * Returns common UI aspects (texts, icons, color) for displaying main Ethereum chain and side chains.
  */
-export function useChainsConfig(): { [key: Chain]: ChainConfig} {
+export function useChainsConfig(): { [key: Chain]: ChainConfig } {
   const { t } = useTranslation();
   const colors = useThemeColors();
 
@@ -71,7 +64,7 @@ export function useChainsConfig(): { [key: Chain]: ChainConfig} {
       iconName: 'binance',
       color: colors.binance,
       gasSymbol: BNB,
-      iconUrl: 'https://tokens.1inch.exchange/0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c.png',
+      iconUrl: 'https://images.prismic.io/pillar-app/d8e73973-82f1-4b20-a068-fe20e21816b0_0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c_1.png?auto=compress,format',
     },
     [CHAIN.XDAI]: {
       title: t('chains.xdai'),
@@ -96,7 +89,15 @@ export function useChainsConfig(): { [key: Chain]: ChainConfig} {
       color: colors.ethereum,
       gasSymbol: AVAX,
       iconUrl:
-        'https://firebasestorage.googleapis.com/v0/b/pillar-project-1506420699556.appspot.com/o/app%2Fchains%2Favalanche%2Fassets%2Fassets%2FAvalanche_AVAX_RedWhite.png?alt=media&token=8e3bb7ba-76ac-4e64-a56e-d8623ab7a657',
+        'https://images.prismic.io/pillar-app/4c8def2b-a244-4134-b871-3d5784c4b130_Avalanche_AVAX_RedWhite.png?auto=compress,format',
+    },
+    [CHAIN.OPTIMISM]: {
+      title: isProdEnv() ? t('chains.optimism') : t('chains.optimism_kovan'),
+      titleShort: isProdEnv() ? t('chainsShort.optimism') : t('chains.optimism_kovan'),
+      iconName: 'optimism',
+      color: colors.optimism,
+      gasSymbol: ETH,
+      iconUrl: 'https://tokens.1inch.io/0x4200000000000000000000000000000000000042.png',
     },
   };
 }

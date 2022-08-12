@@ -96,7 +96,7 @@ const SendAsset = ({
   resetEstimateTransaction,
   reduxFetchGasThresholds,
 }: Props) => {
-  let defaultAssetData = navigation.getParam('assetData');
+  let defaultAssetData: any = navigation.getParam('assetData');
 
   if (
     !defaultAssetData?.token &&
@@ -107,15 +107,7 @@ const SendAsset = ({
     defaultAssetData = getAssetData(assetsWithBalance, defaultAssetData);
   }
 
-  const defaultAssetOption = defaultAssetData &&
-  defaultAssetData?.token && {
-    ...defaultAssetData,
-    symbol: defaultAssetData.token,
-  };
-
-  const [assetData, setAssetData] = useState<AssetOption | Collectible>(
-    defaultAssetData?.tokenType ? defaultAssetData : defaultAssetOption || assetsWithBalance[0],
-  );
+  const [assetData, setAssetData] = useState<null | AssetOption | Collectible>(defaultAssetData);
   const [value, setValue] = useState(null);
   const [selectedContact, setSelectedContact] = useState(defaultContact);
   const [submitPressed, setSubmitPressed] = useState(false);
@@ -123,7 +115,7 @@ const SendAsset = ({
   const gasThresholds = useRootSelector(gasThresholdsSelector);
 
   const assetAddress = assetData?.contractAddress;
-  const chain = assetData?.chain;
+  const chain: Chain | any = assetData?.chain;
   const balances = accountAssetsBalances?.[chain]?.wallet ?? {};
   const balance = getBalanceBN(balances, assetAddress);
 
@@ -334,7 +326,7 @@ export default connect(combinedMapStateToProps, mapDispatchToProps)(SendAsset);
 const renderFeeToggle = (
   txFeeInfo: ?TransactionFeeInfo,
   showFee: boolean,
-  chain: Chain,
+  chain: ?Chain,
   feeError: ?string,
   isLoading: boolean,
   enoughBalance: boolean,

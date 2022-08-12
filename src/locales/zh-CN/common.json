@@ -59,13 +59,17 @@
     "ethereum": "Ethereum",
     "binance": "BSC",
     "xdai": "xDai",
-    "polygon": "Polygon"
+    "polygon": "Polygon",
+    "optimism": "Optimism",
+    "optimism_kovan": "Optimism Kovan"
   },
   "chainsShort": {
     "ethereum": "Ethereum",
     "binance": "BSC",
     "xdai": "xDai",
-    "polygon": "Polygon"
+    "polygon": "Polygon",
+    "optimism": "Optimism",
+    "optimism_kovan": "Optimism Kovan"
   },
   "assetCategories": {
     "wallet": "钱包",
@@ -257,9 +261,10 @@
     "walletDeployment": "钱包部署",
     "pleaseSelect": "请选择",
     "balanceFiatTokenFormat": "余额 {{balanceInFiat}} ({{balance}})",
-    "balanceTokenFormat": "余额{{balance}}",
+    "balanceTokenFormat": "余额:{{balance}}",
     "filterByName": "按名称过滤",
-    "transaction_submitted": "交易提交"
+    "transaction_submitted": "交易提交",
+    "on_network": "上 {{network}}"
   },
   "button": {
     "activate": "启用",
@@ -641,7 +646,11 @@
     }
   },
   "assetSelector": {
-    "title": "选择资产"
+    "title": "选择资产",
+    "choose_token_swap": "选择要交换的代币",
+    "choose_token_crosschain": "选择代币跨链",
+    "choose_token_send": "选择要发送的令牌",
+    "choose_token": "在 {{chain}} 上选择令牌"
   },
   "chainAssetSelector": {
     "title": "{{chain}} 个资产",
@@ -1201,7 +1210,8 @@
       "oneInch": "1英尺",
       "synthetix": "合成器",
       "sushiswap": "寿司卷",
-      "honeyswap": "蜜糖交换"
+      "honeyswap": "蜜糖交换",
+      "lifi": "利菲"
     },
     "modal": {
       "smartWalletIsNotActive": {
@@ -1310,7 +1320,8 @@
     "transactionSentPending": "{{tokenValue}} 正在发送。",
     "transactionSentConfirmed": "{{tokenValue}} 已发送。",
     "receivedCollectible": "您收到了 NFT。",
-    "collectibleSentAndReceived": "您的 NFT 已收到。"
+    "collectibleSentAndReceived": "您的 NFT 已收到。",
+    "notification_enable": "启用通知"
   },
   "graph": {
     "timeRangeButtons": {
@@ -1438,5 +1449,9 @@
       "seedPhraseWarning": "在区块链上，没有与电子邮件或电话号码绑定的传统帐户。相反，有一个种子短语作为您的“密码”。如果它丢失了，您的资金就会丢失。确保你的 12 个单词保存得很好而且安全。",
       "privateKeyWarning": "您的私钥用于在设备丢失/更改或删除您的钱包时恢复/导入您的钱包。丢失私钥会导致无法访问您的资金。"
     }
+  },
+   "getNotifications":{
+    "title": "得到通知",
+    "description": "Pillar 将通知您的交易状态和来自 dapp 的请求。从不垃圾邮件，永远在点。"
   }
 }

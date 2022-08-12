@@ -25,6 +25,7 @@ export const EXCHANGE_PROVIDER = {
   SUSHISWAP: ('Sushiswap': 'Sushiswap'),
   HONEYSWAP: ('Honeyswap': 'Honeyswap'),
   PARASWAP: ('Paraswap': 'Paraswap'),
+  LIFI: ('Lifi': 'Lifi'),
 };
 
 // Hardcoded in Etherspot backend

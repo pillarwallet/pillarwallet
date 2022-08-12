@@ -24,6 +24,10 @@ import { isProdEnv } from 'utils/environment';
 // Constants
 import { ETH, MATIC, BNB, AVAX, XDAI, ADDRESS_ZERO } from 'constants/assetsConstants';
 import { CHAIN, CHAIN_ID } from 'constants/chainConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+
+// Services
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // Utils
 import { isEtherspotAccount } from 'utils/accounts';
@@ -42,6 +46,8 @@ export const chainFromChainId: { [number]: Chain } = {
   [CHAIN_ID.MUMBAI]: CHAIN.POLYGON,
   [CHAIN_ID.AVALANCHE]: CHAIN.AVALANCHE,
   [CHAIN_ID.FUJI]: CHAIN.AVALANCHE,
+  [CHAIN_ID.OPTIMISM]: CHAIN.OPTIMISM,
+  [CHAIN_ID.OPTIMISM_KOVAN]: CHAIN.OPTIMISM,
 };
 
 /**
@@ -53,6 +59,7 @@ export function mapChainToChainId(chain: Chain): number {
   if (chain === CHAIN.BINANCE) return CHAIN_ID.BINANCE;
   if (chain === CHAIN.XDAI) return CHAIN_ID.XDAI;
   if (chain === CHAIN.AVALANCHE) return isProdEnv() ? CHAIN_ID.AVALANCHE : CHAIN_ID.FUJI;
+  if (chain === CHAIN.OPTIMISM) return isProdEnv() ? CHAIN_ID.OPTIMISM : CHAIN_ID.OPTIMISM_KOVAN;
 
   // Default to Ethereum, should not happen as above check is exhaustive.
   return isProdEnv() ? CHAIN_ID.ETHEREUM_MAINNET : CHAIN_ID.ETHEREUM_KOVAN;
@@ -62,8 +69,13 @@ export function getSupportedChains(account: ?Account): Chain[] {
   if (!isEtherspotAccount(account)) {
     return [CHAIN.ETHEREUM];
   }
+  const visibleAvalanche = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_CHAIN_SWITCH_43114);
 
-  return [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM, CHAIN.AVALANCHE];
+  if (!visibleAvalanche) {
+    return [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM, CHAIN.OPTIMISM];
+  }
+
+  return [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM, CHAIN.AVALANCHE, CHAIN.OPTIMISM];
 }
 
 /* eslint-disable i18next/no-literal-string */
@@ -107,6 +119,14 @@ export const nativeAssetPerChain = {
     symbol: AVAX,
     decimals: 18,
     iconUrl: 'https://image.pngaaa.com/19/5554019-middle.png',
+  },
+  optimism: {
+    chain: CHAIN.OPTIMISM,
+    address: ADDRESS_ZERO,
+    name: 'Optimism',
+    symbol: ETH,
+    decimals: 18,
+    iconUrl: 'https://tokens.1inch.io/0x4200000000000000000000000000000000000042.png',
   },
 };
 

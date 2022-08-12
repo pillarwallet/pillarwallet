@@ -27,9 +27,6 @@ import { useTranslation } from 'translations/translate';
 // Actions
 import { fetchGasThresholds } from 'redux/actions/gas-threshold-actions';
 
-// Configs
-import { getPlrAddressForChain } from 'configs/assetsConfig';
-
 // Components
 import { Container, Content, Spacing } from 'components/layout/Layout';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -39,7 +36,6 @@ import Toast from 'components/Toast';
 import Banner from 'components/Banner/Banner';
 
 // Constants
-import { CHAIN } from 'constants/chainConstants';
 import { EXCHANGE_CONFIRM } from 'constants/navigationConstants';
 
 // Utils
@@ -82,10 +78,10 @@ function Exchange({ fetchExchangeTitle }: Props) {
   const fromInputRef: any = React.useRef();
   const screenName = getActiveScreenName(navigation);
 
-  const initialChain: Chain = navigation.getParam('chain') || CHAIN.ETHEREUM;
+  const initialChain: Chain = navigation.getParam('chain');
   const initialFromAddress: string =
     navigation.getParam('fromAssetAddress') || nativeAssetPerChain[initialChain]?.address;
-  const initialToAddress: string = navigation.getParam('toAssetAddress') || getPlrAddressForChain(initialChain);
+  const initialToAddress: string = navigation.getParam('toAssetAddress');
 
   const [chain, setChain] = React.useState(initialChain);
   const [fromAddress, setFromAddress] = React.useState(initialFromAddress);
@@ -116,19 +112,6 @@ function Exchange({ fetchExchangeTitle }: Props) {
     dispatch(fetchGasThresholds());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // Focus on from amount input after user changes fromAsset
-  React.useEffect(() => {
-    let isCancelled = false;
-
-    setTimeout(() => {
-      if (!isCancelled) fromInputRef.current?.focus();
-    }, 650);
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [dispatch, fromAsset]);
 
   React.useEffect(() => {
     if (isLogV2AppEvents() && fromAsset && toAsset && activeAccount) {
@@ -188,10 +171,9 @@ function Exchange({ fetchExchangeTitle }: Props) {
   };
 
   const toValue = maxBy(offers, (offer: any) => offer.toAmount)?.toAmount.precision(6);
-  const customTitle =
-    nativeAssetPerChain[CHAIN.ETHEREUM]?.address === fromAddress && chain === CHAIN.ETHEREUM
-      ? t('exchangeContent.title.initialExchange')
-      : t('exchangeContent.title.exchange', { chain: chainConfig.titleShort });
+  const customTitle = !chain
+    ? t('exchangeContent.title.initialExchange')
+    : t('exchangeContent.title.exchange', { chain: chainConfig.titleShort });
 
   React.useEffect(() => {
     fetchExchangeTitle && fetchExchangeTitle(customTitle);
@@ -205,6 +187,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
       <Content onScroll={() => Keyboard.dismiss()}>
         <Banner screenName={screenName} bottomPosition={false} />
         <FromAssetSelector
+          title={t('assetSelector.choose_token_swap')}
           assets={fromOptions}
           selectedAsset={fromAsset}
           onSelectAsset={handleSelectFromAsset}
@@ -219,6 +202,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
         </TouchableSwapIcon>
 
         <ToAssetSelector
+          title={t('assetSelector.choose_token_swap')}
           assets={toOptions}
           selectedAsset={toAsset}
           onSelectAsset={handleSelectToAsset}

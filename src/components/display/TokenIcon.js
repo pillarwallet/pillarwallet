@@ -39,6 +39,7 @@ import IconBinance from 'assets/icons/svg/icon-24-binance.svg';
 import IconXdai from 'assets/icons/svg/icon-24-xdai.svg';
 import IconPolygon from 'assets/icons/svg/icon-24-polygon.svg';
 import IconAvalanche from 'assets/icons/svg/icon-24-avalanche.svg';
+import IconOptimism from 'assets/icons/svg/icon-24-optimism.svg';
 
 type Props = {|
   url: ?string,
@@ -67,18 +68,20 @@ function TokenIcon({ url, size = 48, chain, style, imageStyle, chainIconStyle, s
   const ChainIcon = chain ? IconComponentPerChain[chain] : undefined;
 
   const chainIconSize = size / 2;
-  const chainIconSizeStyle = { borderRadius: chainIconSize / 2, borderColor: colors.card };
+  const chainIconSizeStyle = { borderRadius: chainIconSize, borderColor: colors.card };
 
   return (
     <Container style={style}>
-      <CollectibleImage
-        source={source}
-        resizeMode="contain"
-        width={size}
-        height={size}
-        style={[imageSizeStyle, imageStyle]}
-        fallbackSource={genericToken}
-      />
+      <IconContainer size={size}>
+        <CollectibleImage
+          source={source}
+          resizeMode="cover"
+          width={size}
+          height={size}
+          style={[imageSizeStyle, imageStyle]}
+          fallbackSource={genericToken}
+        />
+      </IconContainer>
 
       {!!ChainIcon && (
         <ChainIconWrapper style={[chainIconSizeStyle, chainIconStyle]}>
@@ -97,6 +100,7 @@ const IconComponentPerChain = {
   binance: IconBinance,
   xdai: IconXdai,
   avalanche: IconAvalanche,
+  optimism: IconOptimism,
 };
 
 const Container = styled.View``;
@@ -106,4 +110,11 @@ const ChainIconWrapper = styled.View`
   top: -1px;
   right: -1px;
   border-width: 1px;
+`;
+
+const IconContainer = styled.View`
+  height: ${({ size }) => size};
+  width: ${({ size }) => size};
+  background-color: ${({ theme }) => theme.colors.basic050};
+  border-radius: ${({ size }) => size / 2};
 `;

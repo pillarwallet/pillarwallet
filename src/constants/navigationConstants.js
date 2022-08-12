@@ -24,6 +24,7 @@ export const MAIN_FLOW = 'MAIN_FLOW';
 export const ASSETS = 'ASSETS';
 export const SERVICES = 'SERVICES';
 export const ADD_CASH = 'ADD_CASH';
+export const GET_NOTIFICATIONS = 'GET_NOTIFICATIONS';
 export const SERVICES_FLOW = 'SERVICES_FLOW';
 export const ME_TAB = 'ME_TAB';
 export const ASSET = 'ASSET';
@@ -74,6 +75,7 @@ export const SET_WALLET_PIN_CODE = 'SET_WALLET_PIN_CODE';
 export const PIN_CODE_CONFIRMATION = 'PIN_CODE_CONFIRMATION';
 export const PERMISSIONS = 'PERMISSIONS';
 export const BIOMETRICS_PROMPT = 'BIOMETRICS_PROMPT';
+export const ONBOARDING_LEGAL_SCREEN = 'ONBOARDING_LEGAL_SCREEN';
 
 // PINCODE FLOW
 export const AUTH_FLOW = 'AUTH_FLOW';

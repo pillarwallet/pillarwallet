@@ -29,7 +29,7 @@ import IconButton from 'components/IconButton';
 import SvgIcon from 'components/core/Icon';
 import Image from 'components/Image';
 import { getColorByTheme, getColorByThemeOutsideStyled, getThemeColors } from 'utils/themes';
-import { noop } from 'utils/common';
+import { noop, hitSlop20 } from 'utils/common';
 
 // types
 import type { Theme } from 'models/Theme';
@@ -300,7 +300,7 @@ class HeaderBlock extends React.Component<Props> {
       if (type === RIGHT) additionalIconStyle.marginRight = -10;
       return (
         <View style={[commonStyle, itemStyle, additionalIconStyle]} key={item.svgIcon}>
-          <TouchableOpacity onPress={item.onPress}>
+          <TouchableOpacity onPress={item.onPress} hitSlop={hitSlop20}>
             <ActionSvgIcon
               name={item.svgIcon}
               color={

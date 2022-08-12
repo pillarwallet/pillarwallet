@@ -39,7 +39,6 @@ import type { AssetOption } from 'models/Asset';
 import type { ExchangeOffer, ExchangeProvider } from 'models/Exchange';
 import type { Chain } from 'models/Chain';
 
-
 // Images
 const uniswapLightVertical = require('assets/images/exchangeProviders/uniswapLightVertical.png');
 const uniswapLightHorizontal = require('assets/images/exchangeProviders/uniswapLightHorizontal.png');
@@ -77,6 +76,12 @@ const paraswapLightMonochrome = require('assets/images/exchangeProviders/paraswa
 const paraswapDarkVertical = require('assets/images/exchangeProviders/paraswapDarkVertical.png');
 const paraswapDarkHorizontal = require('assets/images/exchangeProviders/paraswapDarkHorizontal.png');
 const paraswapDarkMonochrome = require('assets/images/exchangeProviders/paraswapDarkMonochrome.png');
+const lifiLightHorizontal = require('assets/images/exchangeProviders/lifi_light.png');
+const lifiLightVertical = require('assets/images/exchangeProviders/lifi_light.png');
+const lifiLightMonochrome = require('assets/images/exchangeProviders/lifi_light.png');
+const lifiDarkVertical = require('assets/images/exchangeProviders/lifi_dark.png');
+const lifiDarkHorizontal = require('assets/images/exchangeProviders/lifi_dark.png');
+const lifiDarkMonochrome = require('assets/images/exchangeProviders/lifi_dark.png');
 
 export type ExchangeOptions = {
   fromOptions: AssetOption[],
@@ -134,6 +139,12 @@ export function useProvidersConfig(): { [key: ExchangeProvider]: ProviderConfig 
       iconHorizontal: isDarkTheme ? paraswapDarkHorizontal : paraswapLightHorizontal,
       iconMonochrome: isDarkTheme ? paraswapDarkMonochrome : paraswapLightMonochrome,
     },
+    [PROVIDER.LIFI]: {
+      title: t('exchangeContent.providers.lifi'),
+      iconVertical: isDarkTheme ? lifiDarkVertical : lifiLightVertical,
+      iconHorizontal: isDarkTheme ? lifiDarkHorizontal : lifiLightHorizontal,
+      iconMonochrome: isDarkTheme ? lifiDarkMonochrome : lifiLightMonochrome,
+    },
   };
 }
 
@@ -170,6 +181,10 @@ export const getCaptureFeeDestinationAddress = (chain: Chain): ?string => {
 
   if (chain === CHAIN.AVALANCHE) {
     return firebaseRemoteConfig.getString(REMOTE_CONFIG.EXCHANGE_FEE_AVAX_CAPTURE_ADDRESS);
+  }
+
+  if (chain === CHAIN.OPTIMISM) {
+    return firebaseRemoteConfig.getString(REMOTE_CONFIG.EXCHANGE_FEE_OPTIMISM_CAPTURE_ADDRESS);
   }
 
   return null;
