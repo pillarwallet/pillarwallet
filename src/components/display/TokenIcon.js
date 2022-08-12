@@ -43,12 +43,12 @@ import IconOptimism from 'assets/icons/svg/icon-24-optimism.svg';
 
 type Props = {|
   url: ?string,
-    chain ?: ? Chain,
-    size ?: number,
-    style ?: ViewStyleProp,
-    imageStyle ?: ImageStyleProp,
-    chainIconStyle ?: ViewStyleProp,
-    setMarginRight ?: boolean,
+  chain?: ?Chain,
+  size?: number,
+  style?: ViewStyleProp,
+  imageStyle?: ImageStyleProp,
+  chainIconStyle?: ViewStyleProp,
+  setMarginRight?: boolean,
 |};
 
 function TokenIcon({ url, size = 48, chain, style, imageStyle, chainIconStyle, setMarginRight }: Props) {
@@ -68,18 +68,20 @@ function TokenIcon({ url, size = 48, chain, style, imageStyle, chainIconStyle, s
   const ChainIcon = chain ? IconComponentPerChain[chain] : undefined;
 
   const chainIconSize = size / 2;
-  const chainIconSizeStyle = { borderRadius: chainIconSize / 2, borderColor: colors.card };
+  const chainIconSizeStyle = { borderRadius: chainIconSize, borderColor: colors.card };
 
   return (
     <Container style={style}>
-      <CollectibleImage
-        source={source}
-        resizeMode="contain"
-        width={size}
-        height={size}
-        style={[imageSizeStyle, imageStyle]}
-        fallbackSource={genericToken}
-      />
+      <IconContainer size={size}>
+        <CollectibleImage
+          source={source}
+          resizeMode="cover"
+          width={size}
+          height={size}
+          style={[imageSizeStyle, imageStyle]}
+          fallbackSource={genericToken}
+        />
+      </IconContainer>
 
       {!!ChainIcon && (
         <ChainIconWrapper style={[chainIconSizeStyle, chainIconStyle]}>
@@ -108,4 +110,11 @@ const ChainIconWrapper = styled.View`
   top: -1px;
   right: -1px;
   border-width: 1px;
+`;
+
+const IconContainer = styled.View`
+  height: ${({ size }) => size};
+  width: ${({ size }) => size};
+  background-color: ${({ theme }) => theme.colors.basic050};
+  border-radius: ${({ size }) => size / 2};
 `;

@@ -85,7 +85,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const fiatCurrency = useFiatCurrency();
   const gasThresholds = useRootSelector(gasThresholdsSelector);
   const isOnline = useRootSelector((root) => root.session.data.isOnline);
-  const initialChain: Chain = navigation.getParam('chain')
+  const initialChain: Chain = navigation.getParam('chain');
   const initialFromAddress: string =
     navigation.getParam('fromAssetAddress') || nativeAssetPerChain[initialChain]?.address;
 
@@ -181,6 +181,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
       <Content bounces={false} onScroll={() => Keyboard.dismiss()}>
         <Banner screenName={screenName} bottomPosition={false} />
         <FromAssetSelector
+          title={t('assetSelector.choose_token_crosschain')}
           assets={fromOptions}
           selectedAsset={fromAsset}
           onSelectAsset={handleSelectFromAsset}
@@ -193,6 +194,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
         <IconWrapper>{toAsset ? <Icon name="arrow-down" /> : <Spacing h={24} />}</IconWrapper>
 
         <ToAssetSelector
+          title={t('assetSelector.choose_token_crosschain')}
           assets={toOptions}
           selectedAsset={toAsset}
           onSelectAsset={handleSelectToAsset}

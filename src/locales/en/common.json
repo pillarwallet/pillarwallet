@@ -691,7 +691,11 @@
   },
 
   "assetSelector": {
-    "title": "Select asset"
+    "title": "Select asset",
+    "choose_token_swap": "Choose token to swap",
+    "choose_token_crosschain": "Choose token to cross-chain",
+    "choose_token_send": "Choose token to send",
+    "choose_token": "Choose token on {{chain}}"
   },
 
   "chainAssetSelector": {

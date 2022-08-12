@@ -41,13 +41,14 @@ type Props = {|
   onSelectAsset: (asset: AssetOption) => mixed,
   value: ?BigNumber,
   style?: ViewStyleProp,
+  title?: string,
 |};
 
-const ToAssetSelector = ({ assets, selectedAsset, onSelectAsset, value, style }: Props) => {
+const ToAssetSelector = ({ assets, selectedAsset, onSelectAsset, value, style, title }: Props) => {
   const balance = useWalletAssetBalance(selectedAsset?.chain, selectedAsset?.address);
 
   const openSelectAsset = () => {
-    Modal.open(() => <AssetSelectorModal tokens={assets} onSelectToken={onSelectAsset} />);
+    Modal.open(() => <AssetSelectorModal title={title} tokens={assets} onSelectToken={onSelectAsset} />);
   };
 
   return (

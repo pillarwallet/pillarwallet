@@ -22,6 +22,7 @@ import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
+import { useTranslation } from 'react-i18next';
 
 // Components
 import Text from 'components/core/Text';
@@ -65,19 +66,19 @@ function TokenListItem({
   balance,
   onPress,
   onPressBalance,
-  subtitle,
   leftAddOn,
   style,
 }: Props) {
   const rates = useChainRates(chain);
   const currency = useFiatCurrency();
+  const { t } = useTranslation();
 
   const balanceInFiat = getAssetValueInFiat(balance, address, rates, currency);
 
   const formattedBalance = formatTokenValue(balance, symbol);
-  const formattedBalanceInFiat = formatFiatValue(balanceInFiat, currency);
+  const formattedBalanceInFiat = formatFiatValue(balanceInFiat ?? 0, currency);
 
-  const showBalance = !!balance?.gt(0);
+  const networkName = chain ? chain[0].toUpperCase() + chain.substring(1) : undefined;
 
   return (
     <Container onPress={onPress} disabled={!onPress} style={style}>
@@ -87,15 +88,13 @@ function TokenListItem({
 
       <TitleContainer>
         <Title numberOfLines={1}>{name}</Title>
-        {!!subtitle && <Subtitle numberOfLines={1}>{subtitle}</Subtitle>}
+        {!!chain && <Subtitle numberOfLines={1}>{t('label.on_network', { network: networkName })}</Subtitle>}
       </TitleContainer>
 
-      {showBalance && (
-        <BalanceWrapper onPress={onPressBalance} disabled={!onPressBalance}>
-          <BalanceFiatValue numberOfLines={1}>{formattedBalanceInFiat ?? ' '}</BalanceFiatValue>
-          <BalanceTokenValue numberOfLines={1}>{formattedBalance}</BalanceTokenValue>
-        </BalanceWrapper>
-      )}
+      <BalanceWrapper onPress={onPressBalance} disabled={!onPressBalance}>
+        <BalanceFiatValue numberOfLines={1}>{formattedBalanceInFiat ?? ' '}</BalanceFiatValue>
+        <BalanceTokenValue numberOfLines={1}>{balanceInFiat ? formattedBalance : symbol}</BalanceTokenValue>
+      </BalanceWrapper>
     </Container>
   );
 }
@@ -119,11 +118,11 @@ const LeftAddOn = styled.View`
 const TitleContainer = styled.View`
   flex: 1;
   justify-content: center;
+  padding-left: 10px;
 `;
 
 const Title = styled(Text)`
   ${fontStyles.medium};
-  margin-left: 7px;
 `;
 
 const Subtitle = styled(Text)`

@@ -50,6 +50,7 @@ type Props = {|
   editable?: boolean,
   valueInputRef?: React.Ref<typeof RNTextInput>,
   style?: ViewStyleProp,
+  title?: string,
 |};
 
 const FromAssetSelector = ({
@@ -61,6 +62,7 @@ const FromAssetSelector = ({
   editable,
   valueInputRef,
   style,
+  title,
 }: Props) => {
   const { t } = useTranslation();
 
@@ -72,7 +74,9 @@ const FromAssetSelector = ({
   };
 
   const openSelectAsset = () => {
-    Modal.open(() => <AssetSelectorModal tokens={assets} onSelectToken={handleSelectToken} />);
+    Modal.open(() => (
+      <AssetSelectorModal isFromSelect title={title} tokens={assets} onSelectToken={handleSelectToken} />
+    ));
   };
 
   const handleTokenValueChange = (newTokenValue: ?BigNumber) => {
