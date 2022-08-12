@@ -74,7 +74,9 @@ const FromAssetSelector = ({
   };
 
   const openSelectAsset = () => {
-    Modal.open(() => <AssetSelectorModal title={title} tokens={assets} onSelectToken={handleSelectToken} />);
+    Modal.open(() => (
+      <AssetSelectorModal isFromSelect title={title} tokens={assets} onSelectToken={handleSelectToken} />
+    ));
   };
 
   const handleTokenValueChange = (newTokenValue: ?BigNumber) => {

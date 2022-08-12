@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { Keyboard, SectionList, LayoutAnimation } from 'react-native';
+import { Keyboard, SectionList, LayoutAnimation, FlatList } from 'react-native';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
@@ -56,9 +56,17 @@ type Props = {|
   collectibles?: Collectible[],
   onSelectCollectible?: (collectible: Collectible) => mixed,
   isNewtworkSelected?: Chain | null,
+  isFromSelect?: boolean,
 |};
 
-const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollectible, isNewtworkSelected }: Props) => {
+const DefaultAssetList = ({
+  tokens,
+  collectibles,
+  onSelectToken,
+  onSelectCollectible,
+  isNewtworkSelected,
+  isFromSelect,
+}: Props) => {
   const handleShowMore = (chain: Chain) => {
     Keyboard.dismiss();
     Modal.open(() => (
@@ -75,6 +83,13 @@ const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollect
   const { isChainCollapsed } = useCollapseChain();
   const sections = useSectionData(tokens, collectibles ?? [], isChainCollapsed);
 
+  const sortTokensList = React.useMemo(() => {
+    const arr = [];
+    sections?.forEach((item) => {
+      arr.push(...item.data);
+    });
+    return arr?.sort((a, b) => b?.token?.balance?.balanceInFiat - a?.token?.balance?.balanceInFiat);
+  }, [sections]);
 
   const renderSectionFooter = ({ chain, showMore }: Section) => {
     if (isChainCollapsed[chain] || !isNewtworkSelected) return null;
@@ -122,7 +137,17 @@ const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollect
     );
   };
 
-  return (
+  return isFromSelect ? (
+    <FlatList
+      data={sortTokensList}
+      renderItem={({ item }) => renderItem(item)}
+      keyExtractor={getItemKey}
+      keyboardShouldPersistTaps="always"
+      ListEmptyComponent={renderEmptyState()}
+      contentInsetAdjustmentBehavior="scrollableAxes"
+      contentContainerStyle={styles.contentContainer}
+    />
+  ) : (
     <SectionList
       sections={sections}
       renderSectionFooter={({ section }) => renderSectionFooter(section)}

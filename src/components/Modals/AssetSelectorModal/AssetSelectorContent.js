@@ -50,6 +50,7 @@ type Props = {|
   autoFocus?: boolean,
   selectedAssetChain: ?Chain,
   onSelectAssetChain: (val: ?Chain) => void,
+  isFromSelect?: boolean,
 |};
 
 const AssetSelectorContent = ({
@@ -60,6 +61,7 @@ const AssetSelectorContent = ({
   autoFocus = false,
   selectedAssetChain,
   onSelectAssetChain,
+  isFromSelect,
 }: Props) => {
   const [query, setQuery] = React.useState('');
 
@@ -108,6 +110,7 @@ const AssetSelectorContent = ({
 
       {!showSearchResults && (
         <DefaultAssetList
+          isFromSelect={isFromSelect}
           isNewtworkSelected={selectedAssetChain}
           tokens={tokenFiltered}
           onSelectToken={onSelectToken}

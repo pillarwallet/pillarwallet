@@ -44,6 +44,7 @@ type Props = {|
   onSelectCollectible?: (collectible: Collectible) => mixed,
   title?: string,
   autoFocus?: boolean,
+  isFromSelect?: boolean,
 |};
 
 const AssetSelectorModal = ({
@@ -53,6 +54,7 @@ const AssetSelectorModal = ({
   onSelectCollectible,
   title,
   autoFocus = false,
+  isFromSelect,
 }: Props) => {
   const { t } = useTranslationWithPrefix('assetSelector');
   const colors = useThemeColors();
@@ -83,6 +85,7 @@ const AssetSelectorModal = ({
         <HeaderBlock leftItems={[{ close: true }]} centerItems={[{ title }]} onClose={close} noPaddingTop />
 
         <AssetSelectorContent
+          isFromSelect={isFromSelect}
           tokens={tokens}
           selectedAssetChain={selectedAssetChain}
           onSelectAssetChain={setSelectedAssetChain}
