@@ -99,10 +99,12 @@ const AssetSelectorContent = ({
       <ListContainer>
         <FlatList
           horizontal
+          bounces={false}
           data={chains}
           renderItem={({ item }) => renderItem(item)}
-          style={{ marginLeft: 20, marginVertical: 10, maxHeight: 70 }}
+          style={{ marginHorizontal: 20, marginVertical: 10, maxHeight: 70, alignSelf: 'center' }}
           keyboardShouldPersistTaps="always"
+          showsHorizontalScrollIndicator={false}
         />
       </ListContainer>
 
