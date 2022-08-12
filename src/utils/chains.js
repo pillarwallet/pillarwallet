@@ -24,6 +24,10 @@ import { isProdEnv } from 'utils/environment';
 // Constants
 import { ETH, MATIC, BNB, AVAX, XDAI, ADDRESS_ZERO } from 'constants/assetsConstants';
 import { CHAIN, CHAIN_ID } from 'constants/chainConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+
+// Services
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // Utils
 import { isEtherspotAccount } from 'utils/accounts';
@@ -64,6 +68,11 @@ export function mapChainToChainId(chain: Chain): number {
 export function getSupportedChains(account: ?Account): Chain[] {
   if (!isEtherspotAccount(account)) {
     return [CHAIN.ETHEREUM];
+  }
+  const visibleAvalanche = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_CHAIN_SWITCH_43114);
+
+  if (!visibleAvalanche) {
+    return [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM, CHAIN.OPTIMISM];
   }
 
   return [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM, CHAIN.AVALANCHE, CHAIN.OPTIMISM];
