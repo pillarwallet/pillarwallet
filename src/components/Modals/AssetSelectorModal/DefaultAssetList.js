@@ -119,7 +119,6 @@ const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollect
   ) : (
     <SectionList
       sections={sections}
-      // renderSectionFooter={({ section }) => renderSectionFooter(section)}
       renderItem={({ item }) => renderItem(item)}
       keyExtractor={getItemKey}
       keyboardShouldPersistTaps="always"
