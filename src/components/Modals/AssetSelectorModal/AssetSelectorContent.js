@@ -113,7 +113,6 @@ const AssetSelectorContent = ({
       {!showSearchResults && (
         <DefaultAssetList
           isFromSelect={isFromSelect}
-          isNewtworkSelected={selectedAssetChain}
           tokens={tokenFiltered}
           onSelectToken={onSelectToken}
           collectibles={collectibleFiltered}

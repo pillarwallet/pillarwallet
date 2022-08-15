@@ -33,6 +33,7 @@ import { useThemeColors } from 'utils/themes';
 // Types
 import type { AssetOption } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
+import type { Chain } from 'models/Chain';
 
 // Local
 import AssetSelectorContent from './AssetSelectorContent';
@@ -45,6 +46,7 @@ type Props = {|
   title?: string,
   autoFocus?: boolean,
   isFromSelect?: boolean,
+  chain?: Chain | null,
 |};
 
 const AssetSelectorModal = ({
@@ -55,10 +57,11 @@ const AssetSelectorModal = ({
   title,
   autoFocus = false,
   isFromSelect,
+  chain,
 }: Props) => {
   const { t } = useTranslationWithPrefix('assetSelector');
   const colors = useThemeColors();
-  const [selectedAssetChain, setSelectedAssetChain] = React.useState(null);
+  const [selectedAssetChain, setSelectedAssetChain] = React.useState(chain);
 
   const modalRef = React.useRef(null);
 

@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { Keyboard, SectionList, LayoutAnimation, FlatList } from 'react-native';
+import { SectionList, LayoutAnimation, FlatList } from 'react-native';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
@@ -27,8 +27,6 @@ import t from 'translations/translate';
 import { Spacing } from 'components/layout/Layout';
 import TokenListItem from 'components/lists/TokenListItem';
 import CollectibleListItem from 'components/lists/CollectibleListItem';
-import Modal from 'components/Modal';
-import ChainAssetSelectorModal from 'components/Modals/ChainAssetSelectorModal';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 // Selectors
@@ -47,39 +45,15 @@ import type { AssetOption } from 'models/Asset';
 import type { Chain } from 'models/Chain';
 import type { Collectible } from 'models/Collectible';
 
-// Local
-import ChainSectionFooter from './ChainSectionFooter';
-
 type Props = {|
   tokens: AssetOption[],
   onSelectToken: (token: AssetOption) => mixed,
   collectibles?: Collectible[],
   onSelectCollectible?: (collectible: Collectible) => mixed,
-  isNewtworkSelected?: Chain | null,
   isFromSelect?: boolean,
 |};
 
-const DefaultAssetList = ({
-  tokens,
-  collectibles,
-  onSelectToken,
-  onSelectCollectible,
-  isNewtworkSelected,
-  isFromSelect,
-}: Props) => {
-  const handleShowMore = (chain: Chain) => {
-    Keyboard.dismiss();
-    Modal.open(() => (
-      <ChainAssetSelectorModal
-        chain={chain}
-        tokens={tokens}
-        onSelectToken={onSelectToken}
-        collectibles={collectibles}
-        onSelectCollectible={onSelectCollectible}
-      />
-    ));
-  };
-
+const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollectible, isFromSelect }: Props) => {
   const { isChainCollapsed } = useCollapseChain();
   const sections = useSectionData(tokens, collectibles ?? [], isChainCollapsed);
 
@@ -90,11 +64,6 @@ const DefaultAssetList = ({
     });
     return arr?.sort((a, b) => b?.token?.balance?.balanceInFiat - a?.token?.balance?.balanceInFiat);
   }, [sections]);
-
-  const renderSectionFooter = ({ chain, showMore }: Section) => {
-    if (isChainCollapsed[chain] || !isNewtworkSelected) return null;
-    return <ChainSectionFooter showMore={showMore} onPress={() => handleShowMore(chain)} />;
-  };
 
   const renderItem = (item: Item) => {
     const { token, collectible } = item;
@@ -150,7 +119,6 @@ const DefaultAssetList = ({
   ) : (
     <SectionList
       sections={sections}
-      renderSectionFooter={({ section }) => renderSectionFooter(section)}
       renderItem={({ item }) => renderItem(item)}
       keyExtractor={getItemKey}
       keyboardShouldPersistTaps="always"
@@ -218,8 +186,8 @@ function buildSection(
   const items = [...tokenItems, ...collectibleItems];
 
   const showMore = items.length > MAX_ITEMS;
-  const firstItems = items.slice(0, MAX_ITEMS);
-  return { key: chain, chain, data: firstItems, showMore };
+
+  return { key: chain, chain, data: items, showMore };
 }
 
 function getMatchingTokens(tokens: AssetOption[], chain: Chain) {

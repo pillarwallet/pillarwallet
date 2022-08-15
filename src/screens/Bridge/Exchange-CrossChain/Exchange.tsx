@@ -202,6 +202,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
         </TouchableSwapIcon>
 
         <ToAssetSelector
+          chain={chain}
           title={t('assetSelector.choose_token_swap')}
           assets={toOptions}
           selectedAsset={toAsset}
