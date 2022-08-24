@@ -34,6 +34,7 @@ import { useWalletAssetBalance } from 'selectors/balances';
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
 import type { AssetOption } from 'models/Asset';
+import type { Chain } from 'models/Chain';
 
 type Props = {|
   assets: AssetOption[],
@@ -42,13 +43,14 @@ type Props = {|
   value: ?BigNumber,
   style?: ViewStyleProp,
   title?: string,
+  chain?: Chain | null,
 |};
 
-const ToAssetSelector = ({ assets, selectedAsset, onSelectAsset, value, style, title }: Props) => {
+const ToAssetSelector = ({ assets, selectedAsset, onSelectAsset, value, style, title, chain }: Props) => {
   const balance = useWalletAssetBalance(selectedAsset?.chain, selectedAsset?.address);
 
   const openSelectAsset = () => {
-    Modal.open(() => <AssetSelectorModal title={title} tokens={assets} onSelectToken={onSelectAsset} />);
+    Modal.open(() => <AssetSelectorModal chain={chain} title={title} tokens={assets} onSelectToken={onSelectAsset} />);
   };
 
   return (
