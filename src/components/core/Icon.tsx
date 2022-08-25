@@ -125,13 +125,13 @@ import ExclamationLight from 'assets/icons/svg/exclamationLight.svg';
 // Assets: services icons
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
 import IconBinance from 'assets/icons/svg/icon-24-binance.svg';
-import IconXdai from 'assets/icons/svg/icon-24-xdai.svg';
 import IconPolygon from 'assets/icons/svg/icon-24-polygon.svg';
 import IconAvalanche from 'assets/icons/svg/icon-24-avalanche.svg';
 import IconWalletConnect from 'assets/icons/svg/icon-24-wallet-connect.svg';
 import IconAllNetworks from 'assets/icons/svg/services-48-circle-pillar-exchange.svg';
 import IconAllNetworksLight from 'assets/icons/svg/services-48-circle-pillar-exchange-light.svg';
 import IconOptimism from 'assets/icons/svg/icon-24-optimism.svg';
+import IconGnosis from 'assets/icons/svg/icon-24-gnosis.svg';
 
 const components = {
   // Generic icons
@@ -230,7 +230,7 @@ const components = {
   binance: IconBinance,
   ethereum: IconEthereum,
   polygon: IconPolygon,
-  xdai: IconXdai,
+  xdai: IconGnosis,
   avalanche: IconAvalanche,
   optimism: IconOptimism,
   'wallet-connect': IconWalletConnect,
