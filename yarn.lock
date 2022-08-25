@@ -9252,10 +9252,10 @@ ethers@5.0.19:
     "@ethersproject/web" "5.0.9"
     "@ethersproject/wordlists" "5.0.5"
 
-etherspot@1.34.3:
-  version "1.34.3"
-  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.34.3.tgz#4730d39baedf53b740eaea0d79aa57d5cb8ee3fa"
-  integrity sha512-cdwCv6AGl+vZ9MbE0yPBFQpyfCDBowwXtqqx87QfWZtk8F3XNkHOI4Y3tgTwm3/iJxeWUDKCJ4AHwnypneFqyQ==
+etherspot@1.35.3:
+  version "1.35.3"
+  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.35.3.tgz#b909cf3b44ec6730bbbe8f8dc90fb5fb06c232db"
+  integrity sha512-nA7kSqqbEfA3liN7cthHAiuSiZpIh15LNsP9wifUgYXmeJNFXqocMc+sOnAL4A2gfIvhmDGulcOGQprjN+OgEw==
   dependencies:
     "@apollo/client" "3.4.0"
     "@etherspot/contracts" "1.8.0"
