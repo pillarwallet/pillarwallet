@@ -782,6 +782,7 @@ export class EtherspotService {
         fromTokenAddress: fromAsset.address,
         toTokenAddress: toAsset.address,
         fromAmount: fromAmountEthers,
+        // Optional
         fromChainId: mapChainToChainId(chain),
       });
 
