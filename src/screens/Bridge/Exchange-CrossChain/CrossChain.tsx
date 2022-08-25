@@ -138,7 +138,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   }, [buildTransactionData]);
 
   const { feeInfo, errorMessage: estimationErrorMessage, isEstimating } = useTransactionsEstimate(chain, txData);
-  const transactionFee = feeInfo && useTransactionFeeCheck(chain, feeInfo, fromAsset, fromValue);
+  const transactionFee = useTransactionFeeCheck(chain || CHAIN.ETHEREUM, feeInfo, fromAsset, fromValue);
 
   React.useEffect(() => {
     toAssetValue && setToValue(toAssetValue);
@@ -175,6 +175,8 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   ) : null;
 
   const errorMessage = estimationErrorMessage | transactionFee?.errorMessage;
+
+  console.log('transactionFee', !isOnline, !feeInfo, !!errorMessage, isEstimating);
 
   return (
     <Container>
