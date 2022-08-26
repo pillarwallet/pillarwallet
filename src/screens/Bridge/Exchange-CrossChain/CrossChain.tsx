@@ -176,8 +176,6 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
 
   const errorMessage = estimationErrorMessage | transactionFee?.errorMessage;
 
-  console.log('transactionFee', !isOnline, !feeInfo, !!errorMessage, isEstimating);
-
   return (
     <Container>
       <Content bounces={false} onScroll={() => Keyboard.dismiss()}>
