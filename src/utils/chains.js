@@ -110,7 +110,7 @@ export const nativeAssetPerChain = {
     name: 'xDAI',
     symbol: XDAI,
     decimals: 18,
-    iconUrl: 'https://tokens.1inch.exchange/0x6810e776880c02933d47db1b9fc05908e5386b96.png',
+    iconUrl: 'https://tokens.1inch.exchange/0x6b175474e89094c44da98b954eedeac495271d0f.png',
   },
   avalanche: {
     chain: CHAIN.AVALANCHE,
