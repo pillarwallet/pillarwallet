@@ -35,6 +35,10 @@ import { useChainRates, useFiatCurrency } from 'selectors';
 import { formatTokenValue, formatFiatValue } from 'utils/format';
 import { getAssetValueInFiat } from 'utils/rates';
 import { fontStyles, spacing } from 'utils/variables';
+import { useChainConfig } from 'utils/uiConfig';
+
+// Constants
+import { CHAIN } from 'constants/chainConstants';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
@@ -78,7 +82,9 @@ function TokenListItem({
   const formattedBalance = formatTokenValue(balance, symbol);
   const formattedBalanceInFiat = formatFiatValue(balanceInFiat ?? 0, currency);
 
-  const networkName = chain ? chain[0].toUpperCase() + chain.substring(1) : undefined;
+  const config = useChainConfig(chain || CHAIN.ETHEREUM);
+
+  const networkName = chain ? config.title : undefined;
 
   return (
     <Container onPress={onPress} disabled={!onPress} style={style}>
