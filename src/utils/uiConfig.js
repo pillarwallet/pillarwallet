@@ -64,7 +64,8 @@ export function useChainsConfig(): { [key: Chain]: ChainConfig } {
       iconName: 'binance',
       color: colors.binance,
       gasSymbol: BNB,
-      iconUrl: 'https://images.prismic.io/pillar-app/d8e73973-82f1-4b20-a068-fe20e21816b0_0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c_1.png?auto=compress,format',
+      iconUrl:
+        'https://images.prismic.io/pillar-app/d8e73973-82f1-4b20-a068-fe20e21816b0_0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c_1.png?auto=compress,format',
     },
     [CHAIN.XDAI]: {
       title: t('chains.xdai'),
@@ -72,7 +73,7 @@ export function useChainsConfig(): { [key: Chain]: ChainConfig } {
       iconName: 'xdai',
       color: colors.xdai,
       gasSymbol: XDAI,
-      iconUrl: 'https://tokens.1inch.exchange/0x6b175474e89094c44da98b954eedeac495271d0f.png',
+      iconUrl: 'https://tokens.1inch.exchange/0x6810e776880c02933d47db1b9fc05908e5386b96.png',
     },
     [CHAIN.ETHEREUM]: {
       title: t('chains.ethereum'),
