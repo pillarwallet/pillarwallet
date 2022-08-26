@@ -42,6 +42,10 @@ import TokenIcon from 'components/display/TokenIcon';
 // Utils
 import { truncateDecimalPlaces } from 'utils/bigNumber';
 import { appFont, fontSizes, spacing } from 'utils/variables';
+import { useChainConfig } from 'utils/uiConfig';
+
+// Constants
+import { CHAIN } from 'constants/chainConstants';
 
 // Types
 import type { ViewStyleProp, TextStyleProp } from 'utils/types/react-native';
@@ -114,7 +118,9 @@ const TokenValueInput = React.forwardRef<Props, Instance>((props, ref) => {
     PercentsInputAccessoryHolder.removeAccessory();
   };
 
-  const networkName = chain ? chain[0].toUpperCase() + chain.substring(1) : undefined;
+  const config = useChainConfig(chain || CHAIN.ETHEREUM);
+
+  const networkName = chain ? config.title : undefined;
 
   return (
     <Container style={style}>
