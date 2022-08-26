@@ -76,7 +76,7 @@ const chainToCoinGeckoNetwork = {
   [CHAIN.BINANCE]: 'binance-smart-chain',
   [CHAIN.XDAI]: 'xdai',
   [CHAIN.AVALANCHE]: 'avalanche-2',
-  [CHAIN.OPTIMISM]: 'optimism',
+  [CHAIN.OPTIMISM]: 'optimistic-ethereum',
 };
 /* eslint-enable i18next/no-literal-string */
 
