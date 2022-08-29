@@ -1344,6 +1344,7 @@
       "exchangeDetails": "Exchange details",
       "network": "Network",
       "exchangeRate": "Exchange rate",
+      "estFee": "Est. fee",
       "exchangeRateLayout": "{{rate}} {{toAssetCode}}/{{fromAssetCode}}",
       "maxSlippage": "Max. slippage"
     },
