@@ -26,34 +26,73 @@ import { useTranslation } from 'translations/translate';
 import Button from 'components/core/Button';
 import Text from 'components/core/Text';
 import DynamicSizeImage from 'components/DynamicSizeImage';
+import { TableFee } from 'components/legacy/Table';
+import Spinner from 'components/Spinner';
 
 // Utils
-import { useProviderConfig } from 'utils/exchange';
-import { formatTokenValue, formatExchangeRate } from 'utils/format';
+import { useProviderConfig, appendFeeCaptureTransactionIfNeeded } from 'utils/exchange';
+import { formatTokenValue, formatFiatValue } from 'utils/format';
 import { spacing, fontStyles } from 'utils/variables';
+import { getAssetValueInFiat } from 'utils/rates';
+import { getAccountAddress } from 'utils/accounts';
+import { isHighGasFee } from 'utils/transactions';
 
 // Types
 import type { ExchangeOffer } from 'models/Exchange';
+
+// Selectors
+import { useRootSelector, useFiatCurrency, useChainRates, useActiveAccount } from 'selectors';
+import { gasThresholdsSelector } from 'redux/selectors/gas-threshold-selector';
+
+// Hooks
+import { useTransactionsEstimate } from 'hooks/transactions';
 
 type Props = {
   offer: ExchangeOffer,
   onPress: () => Promise<void>,
   disabled?: boolean,
+  crossChainTxs?: any[],
 };
 
-function OfferCard({ offer, onPress, disabled }: Props) {
+function OfferCard({ offer, onPress, disabled, crossChainTxs }: Props) {
   const { t } = useTranslation();
   const config = useProviderConfig(offer.provider);
+  const activeAccount: any = useActiveAccount();
+  const fiatCurrency = useFiatCurrency();
+  const gasThresholds = useRootSelector(gasThresholdsSelector);
+  const [offerInfo, setOfferInfo] = React.useState(null);
+
+  React.useEffect(() => {
+    async function call() {
+      const addTxsOffer = await appendFeeCaptureTransactionIfNeeded(offer, getAccountAddress(activeAccount));
+      setOfferInfo(addTxsOffer);
+    }
+    call();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [offer]);
+
+  const { chain, toAsset, toAmount } = offer;
+
+  const rates = useChainRates(chain);
+  const currency = useFiatCurrency();
+
+  const fiatValue = getAssetValueInFiat(toAmount, toAsset?.address, rates, currency) ?? null;
+  const formattedFiatValue = formatFiatValue(fiatValue, currency);
+
+  const { feeInfo, isEstimating } = useTransactionsEstimate(chain, crossChainTxs || offerInfo?.transactions);
+  const chainRates = useChainRates(chain);
+
+  const highFee = isHighGasFee(chain, feeInfo?.fee, feeInfo?.gasToken, chainRates, fiatCurrency, gasThresholds);
 
   const buttonTitle = formatTokenValue(offer.toAmount, offer.toAsset.symbol) ?? '';
+
+  // eslint-disable-next-line i18next/no-literal-string
+  const title = `${buttonTitle}  •  ${formattedFiatValue || ''}`;
 
   return (
     <TouchableContainer disabled={disabled} onPress={onPress}>
       <Row>
-        <LeftColumn>
-          <Label>{t('exchangeContent.label.exchangeRate')}</Label>
-          <Value>{formatExchangeRate(offer.exchangeRate, offer.fromAsset.symbol, offer.toAsset.symbol)}</Value>
-        </LeftColumn>
+        <LeftColumn />
 
         <RightColumn>
           {!!config?.iconHorizontal && (
@@ -63,10 +102,21 @@ function OfferCard({ offer, onPress, disabled }: Props) {
       </Row>
 
       <Row topSeparator>
-        <LeftColumn />
+        <LeftColumn>
+          {isEstimating ? (
+            <EmptyStateWrapper>
+              <Spinner size={20} />
+            </EmptyStateWrapper>
+          ) : (
+            <>
+              <Label>{t('exchangeContent.label.estFee')}</Label>
+              <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={chain} highFee={highFee} />
+            </>
+          )}
+        </LeftColumn>
 
         <RightColumn>
-          <Button title={buttonTitle} onPress={onPress} disabled={disabled} size="compact" />
+          <Button title={title} onPress={onPress} disabled={disabled} size="compact" style={{ borderRadius: 6 }} />
         </RightColumn>
       </Row>
     </TouchableContainer>
@@ -105,6 +155,7 @@ const Label = styled(Text)`
   color: ${({ theme }) => theme.colors.secondaryText};
 `;
 
-const Value = styled(Text)`
-  ${fontStyles.medium};
+const EmptyStateWrapper = styled.View`
+  justify-content: center;
+  align-items: center;
 `;
