@@ -21,7 +21,6 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
-import { BigNumber } from 'bignumber.js';
 
 // Components
 import Button from 'components/core/Button';
@@ -52,9 +51,10 @@ type Props = {
   offer: ExchangeOffer,
   onPress: () => Promise<void>,
   disabled?: boolean,
+  crossChainTxs?: any[],
 };
 
-function OfferCard({ offer, onPress, disabled }: Props) {
+function OfferCard({ offer, onPress, disabled, crossChainTxs }: Props) {
   const { t } = useTranslation();
   const config = useProviderConfig(offer.provider);
   const activeAccount: any = useActiveAccount();
@@ -76,10 +76,10 @@ function OfferCard({ offer, onPress, disabled }: Props) {
   const rates = useChainRates(chain);
   const currency = useFiatCurrency();
 
-  const fiatValue = getAssetValueInFiat(toAmount, toAsset?.address, rates, currency) ?? BigNumber(0);
+  const fiatValue = getAssetValueInFiat(toAmount, toAsset?.address, rates, currency) ?? null;
   const formattedFiatValue = formatFiatValue(fiatValue, currency);
 
-  const { feeInfo, isEstimating } = useTransactionsEstimate(chain, offerInfo?.transactions);
+  const { feeInfo, isEstimating } = useTransactionsEstimate(chain, crossChainTxs || offerInfo?.transactions);
   const chainRates = useChainRates(chain);
 
   const highFee = isHighGasFee(chain, feeInfo?.fee, feeInfo?.gasToken, chainRates, fiatCurrency, gasThresholds);
