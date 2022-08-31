@@ -18,11 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import set from 'lodash.set';
-import { Appearance } from 'react-native-appearance';
 import t from 'translations/translate';
 
 // constants
-import { DARK_PREFERENCE, DARK_THEME, LIGHT_THEME, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { DARK_THEME, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -149,7 +148,8 @@ export const handleSystemDefaultThemeChangeAction = () => {
     } = getState();
 
     if (isManualThemeSelection) return;
-    const themeToSet = Appearance.getColorScheme() === DARK_PREFERENCE ? DARK_THEME : LIGHT_THEME;
+    const themeToSet = DARK_THEME;
+
     if (themeToSet === themeType) return;
 
     dispatch(setAppThemeAction(themeToSet));
