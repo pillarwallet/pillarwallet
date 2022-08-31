@@ -58,7 +58,7 @@
   "chains": {
     "ethereum": "Ethereum",
     "binance": "BSC",
-    "xdai": "xDai",
+    "xdai": "Gnosis",
     "polygon": "Polygon",
     "optimism": "Optimism",
     "optimism_kovan": "Optimism Kovan"
@@ -66,7 +66,7 @@
   "chainsShort": {
     "ethereum": "Ethereum",
     "binance": "BSC",
-    "xdai": "xDai",
+    "xdai": "Gnosis",
     "polygon": "Polygon",
     "optimism": "Optimism",
     "optimism_kovan": "Optimism Kovan"

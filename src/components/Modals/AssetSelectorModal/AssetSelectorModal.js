@@ -29,11 +29,15 @@ import SlideModal from 'components/Modals/SlideModal';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
+import { useChainConfig } from 'utils/uiConfig';
 
 // Types
 import type { AssetOption } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { Chain } from 'models/Chain';
+
+// constants
+import { CHAIN } from 'constants/chainConstants';
 
 // Local
 import AssetSelectorContent from './AssetSelectorContent';
@@ -80,7 +84,9 @@ const AssetSelectorModal = ({
     onSelectCollectible?.(collectible);
   };
 
-  title = (selectedAssetChain ? t('choose_token', { chain: selectedAssetChain }) : title) || t('title');
+  const config = useChainConfig(selectedAssetChain || CHAIN.ETHEREUM);
+
+  title = (selectedAssetChain ? t('choose_token', { chain: config?.titleShort }) : title) || t('title');
 
   return (
     <SlideModal ref={modalRef} fullScreen noSwipeToDismiss noClose backgroundColor={colors.basic050} noTopPadding>
