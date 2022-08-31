@@ -815,7 +815,7 @@ export class EtherspotService {
 
       if (!quote) return null;
 
-      if (!quote?.approvalData) return { transactionData: quote.transaction };
+      if (!quote?.approvalData) return { transactionData: quote.transaction, quote };
 
       const tokenAddres = quote.estimate.data.fromToken.address;
       const { approvalAddress, amount } = quote.approvalData;
@@ -826,11 +826,11 @@ export class EtherspotService {
         tokenAddres,
       );
 
-      if (!erc20Contract) return { transactionData: quote.transaction };
+      if (!erc20Contract) return { transactionData: quote.transaction, quote };
 
       const approvalTransactionData = erc20Contract.encodeApprove(approvalAddress, amount);
 
-      return { approvalTransactionData, transactionData: quote.transaction };
+      return { approvalTransactionData, transactionData: quote.transaction, quote };
     } catch (e) {
       logBreadcrumb('buildCrossChainBridgeTransaction failed!', 'failed cross chain bridge routes', { e });
       return null;

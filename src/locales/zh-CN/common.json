@@ -1232,6 +1232,7 @@
       "exchangeDetails": "交流详情",
       "network": "网络",
       "exchangeRate": "汇率",
+      "estFee": "美东时间。费用",
       "exchangeRateLayout": "{{rate}} {{toAssetCode}}/{{fromAssetCode}}",
       "maxSlippage": "最大限度。滑移"
     },
