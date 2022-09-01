@@ -62,7 +62,7 @@
   "chains": {
     "ethereum": "Ethereum",
     "binance": "Binance Smart Chain",
-    "xdai": "xDai Network",
+    "xdai": "Gnosis",
     "polygon": "Polygon",
     "avalanche": "Avalanche",
     "optimism": "Optimism",
@@ -72,7 +72,7 @@
   "chainsShort": {
     "ethereum": "Ethereum",
     "binance": "BSC",
-    "xdai": "xDai",
+    "xdai": "Gnosis",
     "polygon": "Polygon",
     "avalanche": "Avalanche",
     "optimism":"Optimism",
@@ -1344,6 +1344,7 @@
       "exchangeDetails": "Exchange details",
       "network": "Network",
       "exchangeRate": "Exchange rate",
+      "estFee": "Est. fee",
       "exchangeRateLayout": "{{rate}} {{toAssetCode}}/{{fromAssetCode}}",
       "maxSlippage": "Max. slippage"
     },
