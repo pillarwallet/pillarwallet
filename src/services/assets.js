@@ -24,6 +24,7 @@ import isEmpty from 'lodash.isempty';
 // constants
 import { ETH } from 'constants/assetsConstants';
 import { ERC721_TRANSFER_METHODS, ERROR_TYPE } from 'constants/transactionsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { getEthereumProvider, parseTokenBigNumberAmount, logBreadcrumb, addressAsKey } from 'utils/common';
@@ -297,6 +298,16 @@ export async function getExchangeRates(chain: string, assets: Asset[]): Promise<
     if (!isEmpty(nativeAssetPrice)) {
       // $FlowFixMe
       rates = { ...rates, [addressAsKey(nativeAssetAddress)]: nativeAssetPrice };
+    }
+  }
+
+  const isEthOptimism = assets?.find((item) => item.chain === CHAIN.OPTIMISM && item.symbol === ETH);
+
+  if (isEthOptimism) {
+    const coinId = chainToCoinGeckoCoinId[CHAIN.ETHEREUM];
+    const nativeAssetPrice = await getCoinGeckoPricesByCoinId(coinId);
+    if (!isEmpty(nativeAssetPrice)) {
+      rates = { ...rates, [addressAsKey(isEthOptimism.address)]: nativeAssetPrice };
     }
   }
 
