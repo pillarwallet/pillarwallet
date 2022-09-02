@@ -314,24 +314,6 @@ export async function getExchangeRates(chain: string, assets: Asset[]): Promise<
   );
 }
 
-export async function calculateCrossChainToAssetValue(fromValue: string, fromAsset: Asset, toAsset: Asset) {
-  if (!fromValue || !toAsset || !fromAsset) return;
-
-  const fromRate: Object = await getExchangeRates(fromAsset.chain, [fromAsset]);
-  const toRate: Object = await getExchangeRates(toAsset.chain, [toAsset]);
-
-  const fromRateValue: Object = Object.values(fromRate);
-  const toRateValue: Object = Object.values(toRate);
-
-  const fromRateInUsd = fromRateValue ? fromRateValue[0]?.USD : 0;
-  const toRateInUsd = toRateValue ? toRateValue[0]?.USD : 0;
-
-  const toValue = (fromRateInUsd * JSON.parse(fromValue)) / toRateInUsd;
-
-  // eslint-disable-next-line consistent-return
-  return toValue;
-}
-
 export function transferSigned(signed: ?string) {
   const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
   return provider.sendTransaction(signed);

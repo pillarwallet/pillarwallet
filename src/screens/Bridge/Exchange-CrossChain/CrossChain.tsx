@@ -47,12 +47,7 @@ import type { Chain } from 'models/Chain';
 // Local
 import FromAssetSelector from './FromAssetSelector';
 import ToAssetSelector from './ToAssetSelector';
-import {
-  useFromAssets,
-  useToAssetsCrossChain,
-  useCrossChainBuildTransactionQuery,
-  useToAssetValueQuery,
-} from './utils';
+import { useFromAssets, useToAssetsCrossChain, useCrossChainBuildTransactionQuery } from './utils';
 import OfferCard from './OfferCard';
 
 // Actions
@@ -80,7 +75,6 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const [fromAddress, setFromAddress] = React.useState(initialFromAddress);
   const [toAddress, setToAddress] = React.useState(null);
   const [fromValue, setFromValue] = React.useState(null);
-  const [toValue, setToValue] = React.useState(null);
 
   const fromOptions = useFromAssets();
   const toOptions = useToAssetsCrossChain(chain);
@@ -112,8 +106,6 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const buildTractionQuery = useCrossChainBuildTransactionQuery(fromAsset, toAsset, fromValue);
   const buildTransactionData = buildTractionQuery.data;
   const buildTransactionFetched = buildTractionQuery.isFetched;
-  const toAssetValueQuery = useToAssetValueQuery(fromAsset, toAsset, fromValue);
-  const toAssetValue = toAssetValueQuery.data;
 
   const txData = React.useMemo(() => {
     if (!buildTransactionData) return null;
@@ -126,9 +118,13 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
     if (!buildTransactionData) return null;
     const {
       provider,
-      estimate: { data },
+      estimate: { data, toAmount, fromAmount },
     } = buildTransactionData.quote;
     const { fromToken, toToken } = data;
+
+    const decimalValue: any = `10e${toToken?.decimals - 1}`;
+
+    const amount: any = parseInt(toAmount) / (decimalValue ?? 1);
 
     return {
       provider: provider === 'lifi' ? 'Lifi' : provider,
@@ -137,19 +133,14 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
       fromAsset: fromToken,
       toAsset: toToken,
       fromAmount: fromValue,
-      toAmount: new BigNumber(toValue),
-      exchangeRate: toValue,
+      toAmount: new BigNumber(amount),
+      exchangeRate: amount,
     };
   }, [buildTransactionData]);
-
-  React.useEffect(() => {
-    toAssetValue && setToValue(toAssetValue);
-  }, [toAssetValue]);
 
   const handleSelectFromAsset = (asset: AssetOption) => {
     setChain(asset.chain);
     setFromAddress(asset.address);
-    setToValue(null);
     if (chain !== asset.chain) {
       setToAddress(null);
       setToAddressChain(null);
@@ -159,7 +150,6 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const handleSelectToAsset = (asset: AssetOption) => {
     setToAddress(asset.address);
     setToAddressChain(asset.chain);
-    setToValue(null);
   };
 
   const showLoading = buildTractionQuery.isLoading;
@@ -186,7 +176,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
           assets={toOptions}
           selectedAsset={toAsset}
           onSelectAsset={handleSelectToAsset}
-          value={toValue}
+          value={offer?.exchangeRate}
         />
 
         <Spacing h={40} />
