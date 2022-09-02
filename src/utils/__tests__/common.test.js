@@ -55,9 +55,11 @@ describe('Common utils', () => {
     it('should return a resolved delayed promise with specified timeout', () => {
       const timeout = 500;
       let value;
-      delay(timeout).then(() => {
-        value = true;
-      }).catch(() => { });
+      delay(timeout)
+        .then(() => {
+          value = true;
+        })
+        .catch(() => {});
       expect(value).toBeUndefined();
       setTimeout(() => {
         expect(value).not.toBeUndefined();
@@ -168,8 +170,15 @@ describe('Common utils', () => {
 
   describe('uniqBy', () => {
     it('returns uniq items by key', () => {
-      const expected = [{ id: 1, name: 'Jon' }, { id: 2, name: 'Snow' }];
-      const input = [{ id: 1, name: 'Jon' }, { id: 2, name: 'Snow' }, { id: 2, name: 'Snow' }];
+      const expected = [
+        { id: 1, name: 'Jon' },
+        { id: 2, name: 'Snow' },
+      ];
+      const input = [
+        { id: 1, name: 'Jon' },
+        { id: 2, name: 'Snow' },
+        { id: 2, name: 'Snow' },
+      ];
 
       expect(uniqBy(input, 'id')).toEqual(expected);
     });
@@ -231,24 +240,24 @@ describe('Common utils', () => {
       const expectedValue = '€14.30';
       expect(formatFiat('14.3', 'EUR')).toBe(expectedValue);
     });
-    it('should add default (£) currency symbol to value string if no currency is provided', () => {
-      const expectedValue = '£14.30';
+    it('should add default ($) currency symbol to value string if no currency is provided', () => {
+      const expectedValue = '$14.30';
       expect(formatFiat('14.3')).toBe(expectedValue);
     });
     it('should round value and show two decimals only', () => {
-      const expectedValue = '£14.34';
+      const expectedValue = '$14.34';
       expect(formatFiat('14.336')).toBe(expectedValue);
     });
     it('should add trailing zeros to values missing second decimal', () => {
-      const expectedValue = '£14.30';
+      const expectedValue = '$14.30';
       expect(formatFiat('14.3')).toBe(expectedValue);
     });
     it('should add trailing zeros to values missing decimals', () => {
-      const expectedValue = '£14.00';
+      const expectedValue = '$14.00';
       expect(formatFiat('14')).toBe(expectedValue);
     });
     it('should show just 0 (without decimals) if value is less than 0', () => {
-      const expectedValue = '£0';
+      const expectedValue = '$0';
       expect(formatFiat('0.00')).toBe(expectedValue);
     });
   });
@@ -334,7 +343,7 @@ describe('Common utils', () => {
       expect(formatTokenAmount('123.450000000', ETH)).toEqual('123.45');
     });
     it('formats high value tokens correctly', () => {
-      HIGH_VALUE_TOKENS.forEach(token => {
+      HIGH_VALUE_TOKENS.forEach((token) => {
         // 8 decimals
         expect(formatTokenAmount('123.123456789', token)).toEqual('123.12345678');
       });
