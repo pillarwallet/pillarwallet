@@ -129,6 +129,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
     return {
       provider: provider === 'lifi' ? 'Lifi' : provider,
       chain,
+      toChain: toAddressChain,
       transactions: txData,
       fromAsset: fromToken,
       toAsset: toToken,
