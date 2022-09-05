@@ -178,6 +178,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
           selectedAsset={toAsset}
           onSelectAsset={handleSelectToAsset}
           value={offer?.exchangeRate}
+          isFetching={showLoading}
         />
 
         <Spacing h={40} />
