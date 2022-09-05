@@ -208,6 +208,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
           selectedAsset={toAsset}
           onSelectAsset={handleSelectToAsset}
           value={toValue}
+          isFetching={showLoading}
         />
 
         <Spacing h={40} />
