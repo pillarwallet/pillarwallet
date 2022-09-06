@@ -28,6 +28,8 @@
   "tokenValue": "{{value}} {{token}}",
   "totalValue": "总计 {{value}}",
   "estimatedValue": "≈ {{value}}",
+  "fetching": "正在获取价格…",
+  "fetch_failed": "无法获取费率",
   "availableValue": "可用：{{value}}",
   "ofValue": "{{value}} 个",
   "valueOfValue": "{{partOfValue}} 个，共 {{allValue}} 个",

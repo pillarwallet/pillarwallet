@@ -71,9 +71,9 @@ function OfferCard({ offer, onPress, disabled, crossChainTxs }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [offer]);
 
-  const { chain, toAsset, toAmount } = offer;
+  const { chain, toChain, toAsset, toAmount } = offer;
 
-  const rates = useChainRates(chain);
+  const rates = useChainRates(toChain || chain);
   const currency = useFiatCurrency();
 
   const fiatValue = getAssetValueInFiat(toAmount, toAsset?.address, rates, currency) ?? null;

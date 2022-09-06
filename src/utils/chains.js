@@ -123,10 +123,10 @@ export const nativeAssetPerChain = {
   optimism: {
     chain: CHAIN.OPTIMISM,
     address: ADDRESS_ZERO,
-    name: 'Optimism',
+    name: 'Ethereum',
     symbol: ETH,
     decimals: 18,
-    iconUrl: 'https://tokens.1inch.io/0x4200000000000000000000000000000000000042.png',
+    iconUrl: 'https://tokens.1inch.exchange/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png',
   },
 };
 

@@ -44,9 +44,10 @@ type Props = {|
   style?: ViewStyleProp,
   title?: string,
   chain?: Chain | null,
+  isFetching: boolean,
 |};
 
-const ToAssetSelector = ({ assets, selectedAsset, onSelectAsset, value, style, title, chain }: Props) => {
+const ToAssetSelector = ({ assets, selectedAsset, onSelectAsset, value, style, title, chain, isFetching }: Props) => {
   const balance = useWalletAssetBalance(selectedAsset?.chain, selectedAsset?.address);
 
   const openSelectAsset = () => {
@@ -70,6 +71,8 @@ const ToAssetSelector = ({ assets, selectedAsset, onSelectAsset, value, style, t
         balance={balance}
         chain={selectedAsset?.chain}
         asset={selectedAsset}
+        isFetching={isFetching}
+        isToSelector
         disableUseMax
       />
     </Container>

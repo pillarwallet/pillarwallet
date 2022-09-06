@@ -50,9 +50,21 @@ type Props = {|
   useMaxTitle?: string,
   style?: ViewStyleProp,
   balance?: ?BigNumber,
+  isFetching?: boolean,
+  isToSelector?: boolean,
 |};
 
-const TokenFiatValueAccessory = ({ chain, asset, value, onUseMax, disableUseMax, balance, style }: Props) => {
+const TokenFiatValueAccessory = ({
+  chain,
+  asset,
+  value,
+  onUseMax,
+  disableUseMax,
+  balance,
+  style,
+  isFetching,
+  isToSelector,
+}: Props) => {
   const { t } = useTranslation();
 
   const rates = useChainRates(chain);
@@ -66,9 +78,21 @@ const TokenFiatValueAccessory = ({ chain, asset, value, onUseMax, disableUseMax,
   const fiatValue = getAssetValueInFiat(value, asset?.address, rates, currency) ?? BigNumber(0);
   const formattedFiatValue = formatFiatValue(fiatValue, currency);
 
+  const toSelectorFetchStatus =
+    // eslint-disable-next-line no-nested-ternary
+    parseFloat(fiatValue) !== 0
+      ? t('estimatedValue', { value: formattedFiatValue })
+      : isFetching
+        ? t('fetching')
+        : value && t('fetch_failed');
+
+  const balanceStatusVal = isToSelector
+    ? toSelectorFetchStatus
+    : value && t('estimatedValue', { value: formattedFiatValue });
+
   return (
     <Container style={style}>
-      <Balance>{t('estimatedValue', { value: formattedFiatValue })}</Balance>
+      <Balance>{balanceStatusVal}</Balance>
 
       <SubContainer>
         {chain && balance && (

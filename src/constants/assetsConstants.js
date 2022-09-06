@@ -36,6 +36,7 @@ export const MATIC = 'MATIC';
 export const BNB = 'BNB';
 export const XDAI = 'xDAI';
 export const AVAX = 'AVAX';
+export const OP = 'OP';
 
 export const SNX = 'SNX';
 export const RSPT = 'RSPT';
