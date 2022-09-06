@@ -36,6 +36,7 @@ export const MATIC = 'MATIC';
 export const BNB = 'BNB';
 export const XDAI = 'xDAI';
 export const AVAX = 'AVAX';
+export const OP = 'OP';
 
 export const SNX = 'SNX';
 export const RSPT = 'RSPT';
@@ -79,7 +80,7 @@ export const SYNTHETIC = 'SYNTHETIC';
 export const NONSYNTHETIC = 'NONSYNTHETIC';
 export const ETHEREUM_ADDRESS_PREFIX = 'ethereum';
 
-export const defaultFiatCurrency = GBP;
+export const defaultFiatCurrency = USD;
 export const supportedFiatCurrencies = [GBP, USD, EUR];
 
 export const rateKeys = [USD, EUR, GBP, ETH];

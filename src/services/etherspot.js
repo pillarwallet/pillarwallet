@@ -135,6 +135,11 @@ export class EtherspotService {
         });
         if (fcmToken) {
           try {
+            await this.instances[networkName].createSession({ fcmToken });
+          } catch (error) {
+            reportErrorLog('EtherspotService network init failed at createSession', { networkName, error });
+          }
+          try {
             await this.instances[networkName].computeContractAccount({ sync: true });
           } catch (error) {
             reportErrorLog('EtherspotService network init failed at computeContractAccount', { networkName, error });

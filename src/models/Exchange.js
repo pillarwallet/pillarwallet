@@ -36,4 +36,5 @@ export type ExchangeOffer = {
   transactions: TransactionData[],
   chain: Chain,
   captureFee: BigNumber,
+  toChain?: Chain,
 };
