@@ -57,11 +57,13 @@ type UseTransactionEstimateResult = {|
   feeInfo: ?TransactionFeeInfo,
   errorMessage?: string,
   isEstimating: boolean,
+  hideErrorNotification?: boolean,
 |};
 
 export function useTransactionsEstimate(
   chain: Chain,
   transactions: ?(EthereumTransaction[]),
+  hideErrorNotification?: boolean,
 ): UseTransactionEstimateResult {
   const enabled = !!transactions?.length && !!chain;
 
@@ -74,14 +76,14 @@ export function useTransactionsEstimate(
   const errorMessage = query.isError ? t('toast.transactionFeeEstimationFailed') : undefined;
 
   React.useEffect(() => {
-    if (!errorMessage) return;
+    if (!errorMessage || hideErrorNotification) return;
 
     Toast.show({
       message: errorMessage,
       emoji: 'woman-shrugging',
       supportLink: true,
     });
-  }, [errorMessage]);
+  }, [errorMessage, hideErrorNotification]);
 
   return {
     feeInfo: query.data,
