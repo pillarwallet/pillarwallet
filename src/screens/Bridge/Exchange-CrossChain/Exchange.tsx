@@ -87,6 +87,8 @@ function Exchange({ fetchExchangeTitle }: Props) {
   const [fromAddress, setFromAddress] = React.useState(initialFromAddress);
   const [toAddress, setToAddress] = React.useState(initialToAddress);
 
+  const [faileEstimateOffers, setFailEstimateOffers] = React.useState(0);
+
   const [fromValue, setFromValue] = React.useState(null);
   const [debouncedFromValue] = useDebounce(fromValue, 500);
 
@@ -182,6 +184,14 @@ function Exchange({ fetchExchangeTitle }: Props) {
   const showLoading = offersQuery.isFetching;
   const showEmptyState = !offers?.length && !offersQuery.isIdle && !offersQuery.isFetching;
 
+  React.useEffect(() => {
+    if (showLoading) {
+      setFailEstimateOffers(0);
+    }
+  }, [showLoading]);
+
+  const showOfferEstimateFailState = faileEstimateOffers === offers?.length;
+
   return (
     <Container>
       <Content onScroll={() => Keyboard.dismiss()}>
@@ -229,10 +239,13 @@ function Exchange({ fetchExchangeTitle }: Props) {
               disabled={false}
               isLoading={false}
               onPress={() => handleOfferPress(offer)}
+              onEstimateFail={() => {
+                setFailEstimateOffers(faileEstimateOffers + 1);
+              }}
             />
           ))}
 
-        {showEmptyState && (
+        {(showEmptyState || showOfferEstimateFailState) && (
           <EmptyStateWrapper>
             <EmptyStateParagraph
               title={t('exchangeContent.emptyState.offers.title')}
