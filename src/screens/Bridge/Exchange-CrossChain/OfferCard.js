@@ -52,9 +52,10 @@ type Props = {
   onPress: () => Promise<void>,
   disabled?: boolean,
   crossChainTxs?: any[],
+  onEstimateFail?: () => void,
 };
 
-function OfferCard({ offer, onPress, disabled, crossChainTxs }: Props) {
+function OfferCard({ offer, onPress, disabled, crossChainTxs, onEstimateFail }: Props) {
   const { t } = useTranslation();
   const config = useProviderConfig(offer.provider);
   const activeAccount: any = useActiveAccount();
@@ -92,6 +93,13 @@ function OfferCard({ offer, onPress, disabled, crossChainTxs }: Props) {
 
   // eslint-disable-next-line i18next/no-literal-string
   const title = `${buttonTitle}  •  ${formattedFiatValue || ''}`;
+
+  React.useEffect(() => {
+    if (estimationErrorMessage) {
+      onEstimateFail && onEstimateFail();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [estimationErrorMessage]);
 
   if (estimationErrorMessage) {
     return null;

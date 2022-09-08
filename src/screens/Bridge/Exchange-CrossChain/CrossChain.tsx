@@ -76,6 +76,8 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const [toAddress, setToAddress] = React.useState(null);
   const [fromValue, setFromValue] = React.useState(null);
 
+  const [failEstimateOffer, setFailEstimateOffer] = React.useState(false);
+
   const fromOptions = useFromAssets();
   const toOptions = useToAssetsCrossChain(chain);
   const chainConfig = useChainConfig(chain);
@@ -155,6 +157,12 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
 
   const showLoading = buildTractionQuery.isLoading;
 
+  React.useEffect(() => {
+    if (showLoading) {
+      setFailEstimateOffer(false);
+    }
+  }, [showLoading]);
+
   return (
     <Container>
       <Content bounces={false} onScroll={() => Keyboard.dismiss()}>
@@ -199,10 +207,13 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
             onPress={() => {
               navigation.navigate(EXCHANGE_CONFIRM, { offer });
             }}
+            onEstimateFail={() => {
+              setFailEstimateOffer(true);
+            }}
           />
         )}
 
-        {!buildTransactionData && buildTransactionFetched && (
+        {((!buildTransactionData && buildTransactionFetched) || failEstimateOffer) && (
           <EmptyStateWrapper>
             <EmptyStateParagraph
               title={t('exchangeContent.emptyState.routes.title')}
