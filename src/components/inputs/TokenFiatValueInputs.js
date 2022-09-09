@@ -119,6 +119,7 @@ const TokenFiatValueInputs = ({
         referenceDisableMax={disableMaxValue}
         onTokenPress={onTokenPress}
         showChainIcon={showChainIcon}
+        editable
       />
 
       <TokenBalanceAccessory
