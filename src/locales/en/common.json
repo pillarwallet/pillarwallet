@@ -30,6 +30,8 @@
   "tokenValue": "{{value}} {{token}}",
   "totalValue": "Total {{value}}",
   "estimatedValue": "≈ {{value}}",
+  "fetching": "Fetching rates…",
+  "fetch_failed": "Could not fetch rates",
   "availableValue": "Available: {{value}}",
   "ofValue": "of {{value}}",
   "valueOfValue": "{{partOfValue}} of {{allValue}}",

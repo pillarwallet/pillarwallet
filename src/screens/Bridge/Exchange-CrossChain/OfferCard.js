@@ -52,9 +52,10 @@ type Props = {
   onPress: () => Promise<void>,
   disabled?: boolean,
   crossChainTxs?: any[],
+  onEstimateFail?: () => void,
 };
 
-function OfferCard({ offer, onPress, disabled, crossChainTxs }: Props) {
+function OfferCard({ offer, onPress, disabled, crossChainTxs, onEstimateFail }: Props) {
   const { t } = useTranslation();
   const config = useProviderConfig(offer.provider);
   const activeAccount: any = useActiveAccount();
@@ -71,15 +72,19 @@ function OfferCard({ offer, onPress, disabled, crossChainTxs }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [offer]);
 
-  const { chain, toAsset, toAmount } = offer;
+  const { chain, toChain, toAsset, toAmount } = offer;
 
-  const rates = useChainRates(chain);
+  const rates = useChainRates(toChain || chain);
   const currency = useFiatCurrency();
 
   const fiatValue = getAssetValueInFiat(toAmount, toAsset?.address, rates, currency) ?? null;
   const formattedFiatValue = formatFiatValue(fiatValue, currency);
 
-  const { feeInfo, isEstimating } = useTransactionsEstimate(chain, crossChainTxs || offerInfo?.transactions);
+  const {
+    feeInfo,
+    errorMessage: estimationErrorMessage,
+    isEstimating,
+  } = useTransactionsEstimate(chain, crossChainTxs || offerInfo?.transactions, true);
   const chainRates = useChainRates(chain);
 
   const highFee = isHighGasFee(chain, feeInfo?.fee, feeInfo?.gasToken, chainRates, fiatCurrency, gasThresholds);
@@ -89,8 +94,19 @@ function OfferCard({ offer, onPress, disabled, crossChainTxs }: Props) {
   // eslint-disable-next-line i18next/no-literal-string
   const title = `${buttonTitle}  •  ${formattedFiatValue || ''}`;
 
+  React.useEffect(() => {
+    if (estimationErrorMessage) {
+      onEstimateFail && onEstimateFail();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [estimationErrorMessage]);
+
+  if (estimationErrorMessage) {
+    return null;
+  }
+
   return (
-    <TouchableContainer disabled={disabled} onPress={onPress}>
+    <TouchableContainer disabled={disabled || isEstimating} onPress={onPress}>
       <Row>
         <LeftColumn />
 
@@ -116,7 +132,13 @@ function OfferCard({ offer, onPress, disabled, crossChainTxs }: Props) {
         </LeftColumn>
 
         <RightColumn>
-          <Button title={title} onPress={onPress} disabled={disabled} size="compact" style={{ borderRadius: 6 }} />
+          <Button
+            title={title}
+            onPress={onPress}
+            disabled={disabled || isEstimating}
+            size="compact"
+            style={{ borderRadius: 6 }}
+          />
         </RightColumn>
       </Row>
     </TouchableContainer>

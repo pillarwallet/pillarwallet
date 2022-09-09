@@ -47,12 +47,7 @@ import type { Chain } from 'models/Chain';
 // Local
 import FromAssetSelector from './FromAssetSelector';
 import ToAssetSelector from './ToAssetSelector';
-import {
-  useFromAssets,
-  useToAssetsCrossChain,
-  useCrossChainBuildTransactionQuery,
-  useToAssetValueQuery,
-} from './utils';
+import { useFromAssets, useToAssetsCrossChain, useCrossChainBuildTransactionQuery } from './utils';
 import OfferCard from './OfferCard';
 
 // Actions
@@ -80,7 +75,8 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const [fromAddress, setFromAddress] = React.useState(initialFromAddress);
   const [toAddress, setToAddress] = React.useState(null);
   const [fromValue, setFromValue] = React.useState(null);
-  const [toValue, setToValue] = React.useState(null);
+
+  const [failEstimateOffer, setFailEstimateOffer] = React.useState(false);
 
   const fromOptions = useFromAssets();
   const toOptions = useToAssetsCrossChain(chain);
@@ -112,8 +108,6 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const buildTractionQuery = useCrossChainBuildTransactionQuery(fromAsset, toAsset, fromValue);
   const buildTransactionData = buildTractionQuery.data;
   const buildTransactionFetched = buildTractionQuery.isFetched;
-  const toAssetValueQuery = useToAssetValueQuery(fromAsset, toAsset, fromValue);
-  const toAssetValue = toAssetValueQuery.data;
 
   const txData = React.useMemo(() => {
     if (!buildTransactionData) return null;
@@ -126,30 +120,30 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
     if (!buildTransactionData) return null;
     const {
       provider,
-      estimate: { data },
+      estimate: { data, toAmount, fromAmount },
     } = buildTransactionData.quote;
     const { fromToken, toToken } = data;
+
+    const decimalValue: any = `10e${toToken?.decimals - 1}`;
+
+    const amount: any = parseInt(toAmount) / (decimalValue ?? 1);
 
     return {
       provider: provider === 'lifi' ? 'Lifi' : provider,
       chain,
+      toChain: toAddressChain,
       transactions: txData,
       fromAsset: fromToken,
       toAsset: toToken,
       fromAmount: fromValue,
-      toAmount: new BigNumber(toValue),
-      exchangeRate: toValue,
+      toAmount: new BigNumber(amount),
+      exchangeRate: amount,
     };
   }, [buildTransactionData]);
-
-  React.useEffect(() => {
-    toAssetValue && setToValue(toAssetValue);
-  }, [toAssetValue]);
 
   const handleSelectFromAsset = (asset: AssetOption) => {
     setChain(asset.chain);
     setFromAddress(asset.address);
-    setToValue(null);
     if (chain !== asset.chain) {
       setToAddress(null);
       setToAddressChain(null);
@@ -159,10 +153,15 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const handleSelectToAsset = (asset: AssetOption) => {
     setToAddress(asset.address);
     setToAddressChain(asset.chain);
-    setToValue(null);
   };
 
   const showLoading = buildTractionQuery.isLoading;
+
+  React.useEffect(() => {
+    if (showLoading) {
+      setFailEstimateOffer(false);
+    }
+  }, [showLoading]);
 
   return (
     <Container>
@@ -186,7 +185,8 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
           assets={toOptions}
           selectedAsset={toAsset}
           onSelectAsset={handleSelectToAsset}
-          value={toValue}
+          value={offer?.exchangeRate}
+          isFetching={showLoading}
         />
 
         <Spacing h={40} />
@@ -207,10 +207,13 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
             onPress={() => {
               navigation.navigate(EXCHANGE_CONFIRM, { offer });
             }}
+            onEstimateFail={() => {
+              setFailEstimateOffer(true);
+            }}
           />
         )}
 
-        {!buildTransactionData && buildTransactionFetched && (
+        {((!buildTransactionData && buildTransactionFetched) || failEstimateOffer) && (
           <EmptyStateWrapper>
             <EmptyStateParagraph
               title={t('exchangeContent.emptyState.routes.title')}

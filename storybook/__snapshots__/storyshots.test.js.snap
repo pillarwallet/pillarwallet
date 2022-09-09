@@ -32749,7 +32749,7 @@ exports[`Storyshots FeeLabelToggle default 1`] = `
               ]
             }
           >
-            £17562.40
+            $24071.00
           </Text>
         </View>
       </View>
@@ -32867,7 +32867,7 @@ exports[`Storyshots FeeLabelToggle not enough token 1`] = `
               ]
             }
           >
-            £17562.40
+            $24071.00
           </Text>
         </View>
       </View>
@@ -42921,7 +42921,7 @@ exports[`Storyshots Table default 1`] = `
                     ]
                   }
                 >
-                  £0
+                  $0
                 </Text>
               </View>
             </View>
@@ -43204,7 +43204,7 @@ exports[`Storyshots Table default 1`] = `
                     ]
                   }
                 >
-                  £0
+                  $0
                 </Text>
               </View>
             </View>
@@ -43302,7 +43302,7 @@ exports[`Storyshots Table default 1`] = `
                     ]
                   }
                 >
-                  £0
+                  $0
                 </Text>
               </View>
             </View>

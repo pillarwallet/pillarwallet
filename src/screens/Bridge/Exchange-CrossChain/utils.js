@@ -37,7 +37,6 @@ import { logBreadcrumb } from 'utils/common';
 
 // Services
 import etherspotService from 'services/etherspot';
-import { calculateCrossChainToAssetValue } from 'services/assets';
 
 // Types
 import type { QueryResult } from 'utils/types/react-query';
@@ -170,16 +169,6 @@ export function useCrossChainBuildTransactionQuery(fromAsset: AssetOption, toAss
   return useQuery(
     ['buildCrossChainBridgeTransaction', fromAsset, toAsset, fromValue],
     () => etherspotService.buildCrossChainBridgeTransaction(fromAsset, toAsset, fromValue),
-    { enabled, cacheTime: 0 },
-  );
-}
-
-export function useToAssetValueQuery(fromAsset: AssetOption, toAsset: AssetOption, fromValue: string) {
-  const enabled = !!fromAsset && !!toAsset && !!fromValue;
-
-  return useQuery(
-    ['calculateCrossChainToAssetValue', fromAsset, toAsset, fromValue],
-    () => calculateCrossChainToAssetValue(fromValue, fromAsset, toAsset),
     { enabled, cacheTime: 0 },
   );
 }

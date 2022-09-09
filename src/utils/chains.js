@@ -102,7 +102,8 @@ export const nativeAssetPerChain = {
     name: 'BNB',
     symbol: BNB,
     decimals: 18,
-    iconUrl: 'https://tokens.1inch.exchange/0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c.png',
+    iconUrl:
+      'https://images.prismic.io/pillar-app/d8e73973-82f1-4b20-a068-fe20e21816b0_0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c_1.png?auto=compress,format',
   },
   xdai: {
     chain: CHAIN.XDAI,
@@ -123,10 +124,10 @@ export const nativeAssetPerChain = {
   optimism: {
     chain: CHAIN.OPTIMISM,
     address: ADDRESS_ZERO,
-    name: 'Optimism',
+    name: 'Ethereum',
     symbol: ETH,
     decimals: 18,
-    iconUrl: 'https://tokens.1inch.io/0x4200000000000000000000000000000000000042.png',
+    iconUrl: 'https://tokens.1inch.exchange/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png',
   },
 };
 

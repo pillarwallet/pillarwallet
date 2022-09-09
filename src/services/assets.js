@@ -24,6 +24,7 @@ import isEmpty from 'lodash.isempty';
 // constants
 import { ETH } from 'constants/assetsConstants';
 import { ERC721_TRANSFER_METHODS, ERROR_TYPE } from 'constants/transactionsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { getEthereumProvider, parseTokenBigNumberAmount, logBreadcrumb, addressAsKey } from 'utils/common';
@@ -300,6 +301,16 @@ export async function getExchangeRates(chain: string, assets: Asset[]): Promise<
     }
   }
 
+  const isEthOptimism = assets?.find((item) => item.chain === CHAIN.OPTIMISM && item.symbol === ETH);
+
+  if (isEthOptimism) {
+    const coinId = chainToCoinGeckoCoinId[CHAIN.ETHEREUM];
+    const nativeAssetPrice = await getCoinGeckoPricesByCoinId(coinId);
+    if (!isEmpty(nativeAssetPrice)) {
+      rates = { ...rates, [addressAsKey(isEthOptimism.address)]: nativeAssetPrice };
+    }
+  }
+
   if (!rates) {
     logBreadcrumb('getExchangeRates', 'failed: no rates data', { rates, assets });
     return null;
@@ -312,24 +323,6 @@ export async function getExchangeRates(chain: string, assets: Asset[]): Promise<
     }),
     {},
   );
-}
-
-export async function calculateCrossChainToAssetValue(fromValue: string, fromAsset: Asset, toAsset: Asset) {
-  if (!fromValue || !toAsset || !fromAsset) return;
-
-  const fromRate: Object = await getExchangeRates(fromAsset.chain, [fromAsset]);
-  const toRate: Object = await getExchangeRates(toAsset.chain, [toAsset]);
-
-  const fromRateValue: Object = Object.values(fromRate);
-  const toRateValue: Object = Object.values(toRate);
-
-  const fromRateInUsd = fromRateValue ? fromRateValue[0]?.USD : 0;
-  const toRateInUsd = toRateValue ? toRateValue[0]?.USD : 0;
-
-  const toValue = (fromRateInUsd * JSON.parse(fromValue)) / toRateInUsd;
-
-  // eslint-disable-next-line consistent-return
-  return toValue;
 }
 
 export function transferSigned(signed: ?string) {
