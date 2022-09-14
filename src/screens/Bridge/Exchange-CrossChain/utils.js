@@ -75,6 +75,29 @@ export function useFromAssets(): AssetOption[] {
   ]);
 }
 
+export function useGasFeeAssets(chain: Chain) {
+  const listOfBalanceAssets = useFromAssets();
+
+  const chainAssets = React.useMemo(() => {
+    if (!listOfBalanceAssets?.[0] || !chain) return null;
+    const currentChainAssets = listOfBalanceAssets.filter((item) => item.chain === chain);
+    return currentChainAssets;
+  }, [chain, listOfBalanceAssets]);
+
+  if (!chainAssets?.[0]) return null;
+
+  const nativeAssetSymbol = nativeAssetPerChain[chain].symbol;
+
+  const stableAssets: any[] = chainAssets.filter(
+    (item) =>
+      item.symbol === nativeAssetSymbol || item.symbol === 'DAI' || item.symbol === 'USDT' || item.symbol === 'USDC',
+  );
+
+  stableAssets?.sort((a, b) => b?.balance?.balanceInFiat - a?.balance?.balanceInFiat);
+
+  return stableAssets;
+}
+
 export function useToAssetsCrossChain(removeChainNm: Chain): AssetOption[] {
   const supportedChains = useSupportedChains();
   const filteredSupportedList = supportedChains.filter((chainNm: Chain) => chainNm !== removeChainNm);

@@ -47,13 +47,12 @@ import type { Chain } from 'models/Chain';
 // Local
 import FromAssetSelector from './FromAssetSelector';
 import ToAssetSelector from './ToAssetSelector';
-import { useFromAssets, useToAssetsCrossChain, useCrossChainBuildTransactionQuery } from './utils';
+import { useFromAssets, useToAssetsCrossChain, useCrossChainBuildTransactionQuery, useGasFeeAssets } from './utils';
 import OfferCard from './OfferCard';
+import GasFeeAssetSelection from './GasFeeAssetSelection';
 
 // Actions
 import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
-
-// Hooks
 
 interface Props {
   fetchCrossChainTitle: (val: string) => void;
@@ -82,6 +81,8 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const toOptions = useToAssetsCrossChain(chain);
   const chainConfig = useChainConfig(chain);
   const toChainConfig = useChainConfig(toAddressChain || CHAIN.ETHEREUM);
+
+  const gasFeeAssets = useGasFeeAssets(chain);
 
   React.useEffect(() => {
     dispatch(resetEstimateTransactionAction());
@@ -188,6 +189,10 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
           value={offer?.exchangeRate}
           isFetching={showLoading}
         />
+
+        <Spacing h={20} />
+
+        {gasFeeAssets && <GasFeeAssetSelection assets={gasFeeAssets} chain={chain} />}
 
         <Spacing h={40} />
 

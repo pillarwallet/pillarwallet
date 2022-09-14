@@ -1362,6 +1362,10 @@
         "title": "No routes available",
         "paragraph": "Currently no matching routes from cross-chain services are provided."
       }
+    },
+    "gas_fee_asset":{
+      "title":"Paying fees with",
+      "left":"left"
     }
   },
 
