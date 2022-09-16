@@ -33,42 +33,38 @@ import { borderRadiusSizes, fontStyles, spacing } from 'utils/variables';
 import type { Asset, AssetOption } from 'models/Asset';
 import type { Chain } from 'models/Chain';
 
-import etherspotService from 'services/etherspot';
-
 type Props = {
-  assets: AssetOption | any;
+  assets: AssetOption[] | Asset[];
   chain: Chain;
+  selectAsset: AssetOption | Asset;
+  onSelectAsset: (res: Asset | AssetOption) => void;
 };
 
-export default function ({ assets, chain }: Props) {
+export default function ({ assets, chain, selectAsset, onSelectAsset }: Props) {
   const { t } = useTranslation();
   const [showAsset, setShowAsset] = React.useState(false);
-  const [selectAsset, setSelectAsset] = React.useState<Asset | null>(null);
 
   React.useEffect(() => {
-    setSelectAsset(null);
+    onSelectAsset(assets[0]);
   }, [chain]);
 
-  async function onSelectAsset(item) {
-    if (selectAsset?.symbol === item?.symbol) setSelectAsset(null);
-    else setSelectAsset(item);
-  }
-
   const renderItem = (item, index) => {
-    const { iconUrl, symbol, formattedBalanceInFiat, balance } = item;
+    const { iconUrl, symbol } = item;
     return (
       <Container
         style={containerStyle}
         key={'asset__' + index.toString()}
         onPress={async () => {
-          await onSelectAsset(item);
+          onSelectAsset(item);
         }}
       >
         <ItemContainer isSelected={selectAsset?.symbol === symbol}>
           <RowContainer>
             <TokenIcon size={24} url={iconUrl} />
             <Title style={left10}>
-              {balance.balance?.toFixed(1) + ' ' + symbol + '  •  ' + formattedBalanceInFiat}
+              {item?.balance
+                ? item.balance.balance?.toFixed(1) + ' ' + symbol + '  •  ' + item?.formattedBalanceInFiat
+                : symbol}
             </Title>
             <Value style={flex}>{''}</Value>
             <RadioButton visible={selectAsset?.symbol === symbol} />
@@ -92,10 +88,9 @@ export default function ({ assets, chain }: Props) {
             <TokenIcon size={16} url={selectAsset.iconUrl} style={{ marginHorizontal: 5 }} />
             <Title style={flex}>
               {selectAsset.symbol +
-                '  •  ' +
-                selectAsset.formattedBalanceInFiat +
-                ' ' +
-                t('exchangeContent.gas_fee_asset.left')}
+                (selectAsset?.formattedBalanceInFiat
+                  ? '  •  ' + selectAsset.formattedBalanceInFiat + ' ' + t('exchangeContent.gas_fee_asset.left')
+                  : '')}
             </Title>
           </>
         )}

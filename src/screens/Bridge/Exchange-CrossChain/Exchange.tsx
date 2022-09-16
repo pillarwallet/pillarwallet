@@ -93,6 +93,8 @@ function Exchange({ fetchExchangeTitle }: Props) {
   const [fromValue, setFromValue] = React.useState(null);
   const [debouncedFromValue] = useDebounce(fromValue, 500);
 
+  const [gasFeeAsset, setGasFeeAsset] = React.useState<AssetOption | null>(null);
+
   const fromOptions = useFromAssets();
   const toOptions = useToAssets(chain);
 
@@ -160,6 +162,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
     }
 
     const offer = await appendFeeCaptureTransactionIfNeeded(selectedOffer, getAccountAddress(activeAccount));
+    offer.gasFeeAsset = gasFeeAsset;
     navigation.navigate(EXCHANGE_CONFIRM, { offer });
   };
 
@@ -230,7 +233,14 @@ function Exchange({ fetchExchangeTitle }: Props) {
 
         <Spacing h={20} />
 
-        {gasFeeAssets && <GasFeeAssetSelection assets={gasFeeAssets} chain={chain} />}
+        {gasFeeAssets && toAddress && fromValue && (
+          <GasFeeAssetSelection
+            chain={chain}
+            assets={gasFeeAssets}
+            selectAsset={gasFeeAsset}
+            onSelectAsset={setGasFeeAsset}
+          />
+        )}
 
         <Spacing h={40} />
 
@@ -247,6 +257,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
               offer={offer}
               disabled={false}
               isLoading={false}
+              gasFeeAsset={gasFeeAsset}
               onPress={() => handleOfferPress(offer)}
               onEstimateFail={() => {
                 setFailEstimateOffers(faileEstimateOffers + 1);

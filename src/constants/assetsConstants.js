@@ -49,6 +49,7 @@ export const USDT = 'USDT';
 export const USDC = 'USDC';
 const PPT = 'PPT';
 export const DAI = 'DAI';
+export const BUSD = 'BUSD';
 const KNC = 'KNC';
 const VERI = 'VERI';
 const BNT = 'BNT';

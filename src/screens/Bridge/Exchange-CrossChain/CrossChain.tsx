@@ -77,6 +77,8 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
 
   const [failEstimateOffer, setFailEstimateOffer] = React.useState(false);
 
+  const [gasFeeAsset, setGasFeeAsset] = React.useState<AssetOption | null>(null);
+
   const fromOptions = useFromAssets();
   const toOptions = useToAssetsCrossChain(chain);
   const chainConfig = useChainConfig(chain);
@@ -132,6 +134,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
     return {
       provider: provider === 'lifi' ? 'Lifi' : provider,
       chain,
+      gasFeeAsset,
       toChain: toAddressChain,
       transactions: txData,
       fromAsset: fromToken,
@@ -192,7 +195,14 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
 
         <Spacing h={20} />
 
-        {gasFeeAssets && <GasFeeAssetSelection assets={gasFeeAssets} chain={chain} />}
+        {gasFeeAssets && toAddress && fromValue && (
+          <GasFeeAssetSelection
+            assets={gasFeeAssets}
+            chain={chain}
+            selectAsset={gasFeeAsset}
+            onSelectAsset={setGasFeeAsset}
+          />
+        )}
 
         <Spacing h={40} />
 
@@ -209,6 +219,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
             offer={offer}
             disabled={false}
             isLoading={false}
+            gasFeeAsset={gasFeeAsset}
             onPress={() => {
               navigation.navigate(EXCHANGE_CONFIRM, { offer });
             }}

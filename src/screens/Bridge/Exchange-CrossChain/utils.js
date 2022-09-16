@@ -38,6 +38,10 @@ import { logBreadcrumb } from 'utils/common';
 // Services
 import etherspotService from 'services/etherspot';
 
+// Constants
+import { CHAIN } from 'constants/chainConstants';
+import { DAI, USDT, USDC, BUSD } from 'constants/assetsConstants';
+
 // Types
 import type { QueryResult } from 'utils/types/react-query';
 import type { Asset, AssetByAddress, AssetOption, AssetsPerChain } from 'models/Asset';
@@ -86,12 +90,20 @@ export function useGasFeeAssets(chain: Chain) {
 
   if (!chainAssets?.[0]) return null;
 
-  const nativeAssetSymbol = nativeAssetPerChain[chain].symbol;
+  const nativeAsset = nativeAssetPerChain[chain];
 
-  const stableAssets: any[] = chainAssets.filter(
-    (item) =>
-      item.symbol === nativeAssetSymbol || item.symbol === 'DAI' || item.symbol === 'USDT' || item.symbol === 'USDC',
+  const stableCoin = [DAI, USDC, USDT];
+  const xDaiStableCoin = [USDC];
+  const binanceStableCoin = [...stableCoin, BUSD];
+
+  // eslint-disable-next-line no-nested-ternary
+  const stableCoins = chain === CHAIN.BINANCE ? binanceStableCoin : chain === CHAIN.XDAI ? xDaiStableCoin : stableCoin;
+
+  const stableAssets: any = chainAssets?.filter(
+    (item) => item.symbol === nativeAsset.symbol || stableCoins.includes(item.symbol),
   );
+
+  if (!stableAssets?.[0]) return [nativeAsset];
 
   stableAssets?.sort((a, b) => b?.balance?.balanceInFiat - a?.balance?.balanceInFiat);
 
