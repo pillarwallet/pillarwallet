@@ -229,6 +229,19 @@ export const shouldTriggerSearch = (
   );
 };
 
+export const assetTitle = (item) => {
+  if (!item?.balance) return item.symbol;
+
+  const {
+    balance: { balance: fiatBalance },
+    formattedBalanceInFiat,
+    symbol,
+  } = item;
+
+  // eslint-disable-next-line i18next/no-literal-string
+  return `${fiatBalance?.toFixed(1)} ${symbol}  •  ${formattedBalanceInFiat}`;
+};
+
 const isEnoughAssetBalance = (assetBalance: ?string, amount: string): boolean => {
   try {
     const amountBN = new BigNumber(amount);

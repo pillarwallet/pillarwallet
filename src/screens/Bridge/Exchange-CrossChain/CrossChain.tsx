@@ -204,7 +204,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
           />
         )}
 
-        <Spacing h={40} />
+        <Spacing h={20} />
 
         {showLoading && (
           <EmptyStateWrapper>

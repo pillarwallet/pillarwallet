@@ -33,6 +33,9 @@ import { borderRadiusSizes, fontStyles, spacing } from 'utils/variables';
 import type { Asset, AssetOption } from 'models/Asset';
 import type { Chain } from 'models/Chain';
 
+// Local
+import { assetTitle } from './utils';
+
 type Props = {
   assets: AssetOption[] | Asset[];
   chain: Chain;
@@ -50,22 +53,21 @@ export default function ({ assets, chain, selectAsset, onSelectAsset }: Props) {
 
   const renderItem = (item, index) => {
     const { iconUrl, symbol } = item;
+
+    const availBalance = !!item?.balance;
+
     return (
       <Container
         style={containerStyle}
         key={'asset__' + index.toString()}
-        onPress={async () => {
+        onPress={() => {
           onSelectAsset(item);
         }}
       >
         <ItemContainer isSelected={selectAsset?.symbol === symbol}>
           <RowContainer>
             <TokenIcon size={24} url={iconUrl} />
-            <Title style={left10}>
-              {item?.balance
-                ? item.balance.balance?.toFixed(1) + ' ' + symbol + '  •  ' + item?.formattedBalanceInFiat
-                : symbol}
-            </Title>
+            <Title style={left10}>{assetTitle(item)}</Title>
             <Value style={flex}>{''}</Value>
             <RadioButton visible={selectAsset?.symbol === symbol} />
           </RowContainer>

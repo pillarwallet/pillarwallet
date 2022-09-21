@@ -231,7 +231,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
 
         <Banner screenName={screenName} bottomPosition />
 
-        <Spacing h={20} />
+        <Spacing h={10} />
 
         {gasFeeAssets && toAddress && fromValue && (
           <GasFeeAssetSelection
@@ -242,7 +242,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
           />
         )}
 
-        <Spacing h={40} />
+        <Spacing h={20} />
 
         {showLoading && (
           <EmptyStateWrapper>
