@@ -39,13 +39,14 @@ import { isHighGasFee } from 'utils/transactions';
 
 // Types
 import type { ExchangeOffer } from 'models/Exchange';
+import type { Asset, AssetOption } from 'models/Asset';
 
 // Selectors
 import { useRootSelector, useFiatCurrency, useChainRates, useActiveAccount } from 'selectors';
 import { gasThresholdsSelector } from 'redux/selectors/gas-threshold-selector';
 
 // Hooks
-import { useTransactionsEstimate } from 'hooks/transactions';
+import { useTransactionsEstimate, useAssetRates } from 'hooks/transactions';
 
 type Props = {
   offer: ExchangeOffer,
@@ -53,9 +54,10 @@ type Props = {
   disabled?: boolean,
   crossChainTxs?: any[],
   onEstimateFail?: () => void,
+  gasFeeAsset: Asset | AssetOption,
 };
 
-function OfferCard({ offer, onPress, disabled, crossChainTxs, onEstimateFail }: Props) {
+function OfferCard({ offer, onPress, disabled, crossChainTxs, onEstimateFail, gasFeeAsset }: Props) {
   const { t } = useTranslation();
   const config = useProviderConfig(offer.provider);
   const activeAccount: any = useActiveAccount();
@@ -74,7 +76,7 @@ function OfferCard({ offer, onPress, disabled, crossChainTxs, onEstimateFail }: 
 
   const { chain, toChain, toAsset, toAmount } = offer;
 
-  const rates = useChainRates(toChain || chain);
+  const rates = useAssetRates(toChain || chain, toAsset);
   const currency = useFiatCurrency();
 
   const fiatValue = getAssetValueInFiat(toAmount, toAsset?.address, rates, currency) ?? null;
@@ -84,7 +86,7 @@ function OfferCard({ offer, onPress, disabled, crossChainTxs, onEstimateFail }: 
     feeInfo,
     errorMessage: estimationErrorMessage,
     isEstimating,
-  } = useTransactionsEstimate(chain, crossChainTxs || offerInfo?.transactions, true);
+  } = useTransactionsEstimate(chain, crossChainTxs || offerInfo?.transactions, true, gasFeeAsset?.address);
   const chainRates = useChainRates(chain);
 
   const highFee = isHighGasFee(chain, feeInfo?.fee, feeInfo?.gasToken, chainRates, fiatCurrency, gasThresholds);
