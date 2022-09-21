@@ -38,6 +38,10 @@ import { logBreadcrumb } from 'utils/common';
 // Services
 import etherspotService from 'services/etherspot';
 
+// Constants
+import { CHAIN } from 'constants/chainConstants';
+import { DAI, USDT, USDC, BUSD } from 'constants/assetsConstants';
+
 // Types
 import type { QueryResult } from 'utils/types/react-query';
 import type { Asset, AssetByAddress, AssetOption, AssetsPerChain } from 'models/Asset';
@@ -73,6 +77,37 @@ export function useFromAssets(): AssetOption[] {
     ratesPerChain,
     currency,
   ]);
+}
+
+export function useGasFeeAssets(chain: Chain) {
+  const listOfBalanceAssets = useFromAssets();
+
+  const chainAssets = React.useMemo(() => {
+    if (!listOfBalanceAssets?.[0] || !chain) return null;
+    const currentChainAssets = listOfBalanceAssets.filter((item) => item.chain === chain);
+    return currentChainAssets;
+  }, [chain, listOfBalanceAssets]);
+
+  if (!chainAssets?.[0]) return null;
+
+  const nativeAsset = nativeAssetPerChain[chain];
+
+  const stableCoin = [DAI, USDC, USDT];
+  const xDaiStableCoin = [USDC];
+  const binanceStableCoin = [...stableCoin, BUSD];
+
+  // eslint-disable-next-line no-nested-ternary
+  const stableCoins = chain === CHAIN.BINANCE ? binanceStableCoin : chain === CHAIN.XDAI ? xDaiStableCoin : stableCoin;
+
+  const stableAssets: any = chainAssets?.filter(
+    (item) => item.symbol === nativeAsset.symbol || stableCoins.includes(item.symbol),
+  );
+
+  if (!stableAssets?.[0]) return [nativeAsset];
+
+  stableAssets?.sort((a, b) => b?.balance?.balanceInFiat - a?.balance?.balanceInFiat);
+
+  return stableAssets;
 }
 
 export function useToAssetsCrossChain(removeChainNm: Chain): AssetOption[] {
@@ -192,6 +227,19 @@ export const shouldTriggerSearch = (
     fromAsset.chain === toAsset.chain &&
     isEnoughAssetBalance(fromAsset.assetBalance, fromAmount)
   );
+};
+
+export const assetTitle = (item: any) => {
+  if (!item?.balance) return item.symbol;
+
+  const {
+    balance: { balance: fiatBalance },
+    formattedBalanceInFiat,
+    symbol,
+  } = item;
+
+  // eslint-disable-next-line i18next/no-literal-string
+  return `${fiatBalance?.toFixed(1)} ${symbol}  •  ${formattedBalanceInFiat}`;
 };
 
 const isEnoughAssetBalance = (assetBalance: ?string, amount: string): boolean => {

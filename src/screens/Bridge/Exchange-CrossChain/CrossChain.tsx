@@ -47,13 +47,12 @@ import type { Chain } from 'models/Chain';
 // Local
 import FromAssetSelector from './FromAssetSelector';
 import ToAssetSelector from './ToAssetSelector';
-import { useFromAssets, useToAssetsCrossChain, useCrossChainBuildTransactionQuery } from './utils';
+import { useFromAssets, useToAssetsCrossChain, useCrossChainBuildTransactionQuery, useGasFeeAssets } from './utils';
 import OfferCard from './OfferCard';
+import GasFeeAssetSelection from './GasFeeAssetSelection';
 
 // Actions
 import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
-
-// Hooks
 
 interface Props {
   fetchCrossChainTitle: (val: string) => void;
@@ -78,10 +77,14 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
 
   const [failEstimateOffer, setFailEstimateOffer] = React.useState(false);
 
+  const [gasFeeAsset, setGasFeeAsset] = React.useState<AssetOption | null>(null);
+
   const fromOptions = useFromAssets();
   const toOptions = useToAssetsCrossChain(chain);
   const chainConfig = useChainConfig(chain);
   const toChainConfig = useChainConfig(toAddressChain || CHAIN.ETHEREUM);
+
+  const gasFeeAssets = useGasFeeAssets(chain);
 
   React.useEffect(() => {
     dispatch(resetEstimateTransactionAction());
@@ -131,6 +134,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
     return {
       provider: provider === 'lifi' ? 'Lifi' : provider,
       chain,
+      gasFeeAsset,
       toChain: toAddressChain,
       transactions: txData,
       fromAsset: fromToken,
@@ -189,7 +193,18 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
           isFetching={showLoading}
         />
 
-        <Spacing h={40} />
+        <Spacing h={20} />
+
+        {gasFeeAssets && toAddress && fromValue && (
+          <GasFeeAssetSelection
+            assets={gasFeeAssets}
+            chain={chain}
+            selectAsset={gasFeeAsset}
+            onSelectAsset={setGasFeeAsset}
+          />
+        )}
+
+        <Spacing h={20} />
 
         {showLoading && (
           <EmptyStateWrapper>
@@ -204,6 +219,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
             offer={offer}
             disabled={false}
             isLoading={false}
+            gasFeeAsset={gasFeeAsset}
             onPress={() => {
               navigation.navigate(EXCHANGE_CONFIRM, { offer });
             }}
