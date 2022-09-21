@@ -31,6 +31,7 @@ import Toast from 'components/Toast';
 
 // Services
 import etherspotService from 'services/etherspot';
+import { getExchangeRates } from 'services/assets';
 
 // Selectors
 import { useActiveAccount, useRootSelector } from 'selectors';
@@ -42,6 +43,7 @@ import { useChainConfig } from 'utils/uiConfig';
 import { nativeAssetPerChain } from 'utils/chains';
 import { isEtherspotAccount } from 'utils/accounts';
 import { wrapBigNumber } from 'utils/bigNumber';
+import { EMPTY_OBJECT } from 'utils/common';
 
 // Hooks
 import { useDeploymentStatus } from 'hooks/deploymentStatus';
@@ -156,4 +158,19 @@ export function useEtherspotDeploymentFee(
   const feeWithoutDeployment = wrapBigNumber(transactionFee).minus(deploymentFee);
 
   return { deploymentFee, feeWithoutDeployment };
+}
+
+export function useAssetRates(chain: ?Chain, asset: any) {
+  const [assetRates, setAssetRates] = React.useState(null);
+
+  React.useEffect(() => {
+    async function call() {
+      if (chain && asset) {
+        setAssetRates(await getExchangeRates(chain, [asset]));
+      }
+    }
+    call();
+  }, [asset, chain]);
+
+  return assetRates ?? EMPTY_OBJECT;
 }
