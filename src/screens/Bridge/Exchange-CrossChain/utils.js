@@ -229,7 +229,7 @@ export const shouldTriggerSearch = (
   );
 };
 
-export const assetTitle = (item) => {
+export const assetTitle = (item: any) => {
   if (!item?.balance) return item.symbol;
 
   const {

@@ -54,8 +54,6 @@ export default function ({ assets, chain, selectAsset, onSelectAsset }: Props) {
   const renderItem = (item, index) => {
     const { iconUrl, symbol } = item;
 
-    const availBalance = !!item?.balance;
-
     return (
       <Container
         style={containerStyle}
