@@ -64,7 +64,8 @@ import { useActiveAccount } from 'selectors';
 import FromAssetSelector from './FromAssetSelector';
 import ToAssetSelector from './ToAssetSelector';
 import OfferCard from './OfferCard';
-import { useFromAssets, useToAssets, useOffersQuery, sortOffers } from './utils';
+import { useFromAssets, useToAssets, useOffersQuery, sortOffers, useGasFeeAssets } from './utils';
+import GasFeeAssetSelection from './GasFeeAssetSelection';
 
 interface Props {
   fetchExchangeTitle: (val: string) => void;
@@ -92,8 +93,12 @@ function Exchange({ fetchExchangeTitle }: Props) {
   const [fromValue, setFromValue] = React.useState(null);
   const [debouncedFromValue] = useDebounce(fromValue, 500);
 
+  const [gasFeeAsset, setGasFeeAsset] = React.useState<AssetOption | null>(null);
+
   const fromOptions = useFromAssets();
   const toOptions = useToAssets(chain);
+
+  const gasFeeAssets = useGasFeeAssets(chain);
 
   const chainConfig = useChainConfig(chain);
 
@@ -157,6 +162,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
     }
 
     const offer = await appendFeeCaptureTransactionIfNeeded(selectedOffer, getAccountAddress(activeAccount));
+    offer.gasFeeAsset = gasFeeAsset;
     navigation.navigate(EXCHANGE_CONFIRM, { offer });
   };
 
@@ -221,9 +227,22 @@ function Exchange({ fetchExchangeTitle }: Props) {
           isFetching={showLoading}
         />
 
-        <Spacing h={40} />
+        <Spacing h={20} />
 
         <Banner screenName={screenName} bottomPosition />
+
+        <Spacing h={10} />
+
+        {gasFeeAssets && toAddress && fromValue && (
+          <GasFeeAssetSelection
+            chain={chain}
+            assets={gasFeeAssets}
+            selectAsset={gasFeeAsset}
+            onSelectAsset={setGasFeeAsset}
+          />
+        )}
+
+        <Spacing h={20} />
 
         {showLoading && (
           <EmptyStateWrapper>
@@ -238,6 +257,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
               offer={offer}
               disabled={false}
               isLoading={false}
+              gasFeeAsset={gasFeeAsset}
               onPress={() => handleOfferPress(offer)}
               onEstimateFail={() => {
                 setFailEstimateOffers(faileEstimateOffers + 1);

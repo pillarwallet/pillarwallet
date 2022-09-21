@@ -441,8 +441,10 @@ export class EtherspotService {
       throw new Error(t('error.unableToEstimateTransaction'));
     }
 
+    const isNativeAddress = useGasTokenAddress === ADDRESS_ZERO;
+
     return sdk
-      .estimateGatewayBatch({ refundToken: useGasTokenAddress })
+      .estimateGatewayBatch({ feeToken: isNativeAddress ? null : useGasTokenAddress })
       .then((result) => result?.estimation)
       .catch((error) => {
         let etherspotErrorMessage;

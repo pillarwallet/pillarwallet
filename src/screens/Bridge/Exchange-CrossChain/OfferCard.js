@@ -39,6 +39,7 @@ import { isHighGasFee } from 'utils/transactions';
 
 // Types
 import type { ExchangeOffer } from 'models/Exchange';
+import type { Asset, AssetOption } from 'models/Asset';
 
 // Selectors
 import { useRootSelector, useFiatCurrency, useChainRates, useActiveAccount } from 'selectors';
@@ -53,9 +54,10 @@ type Props = {
   disabled?: boolean,
   crossChainTxs?: any[],
   onEstimateFail?: () => void,
+  gasFeeAsset: Asset | AssetOption,
 };
 
-function OfferCard({ offer, onPress, disabled, crossChainTxs, onEstimateFail }: Props) {
+function OfferCard({ offer, onPress, disabled, crossChainTxs, onEstimateFail, gasFeeAsset }: Props) {
   const { t } = useTranslation();
   const config = useProviderConfig(offer.provider);
   const activeAccount: any = useActiveAccount();
@@ -84,7 +86,7 @@ function OfferCard({ offer, onPress, disabled, crossChainTxs, onEstimateFail }: 
     feeInfo,
     errorMessage: estimationErrorMessage,
     isEstimating,
-  } = useTransactionsEstimate(chain, crossChainTxs || offerInfo?.transactions, true);
+  } = useTransactionsEstimate(chain, crossChainTxs || offerInfo?.transactions, true, gasFeeAsset?.address);
   const chainRates = useChainRates(chain);
 
   const highFee = isHighGasFee(chain, feeInfo?.fee, feeInfo?.gasToken, chainRates, fiatCurrency, gasThresholds);
