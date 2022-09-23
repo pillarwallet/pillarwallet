@@ -86,7 +86,8 @@ function OfferCard({ offer, onPress, disabled, crossChainTxs, onEstimateFail, ga
     feeInfo,
     errorMessage: estimationErrorMessage,
     isEstimating,
-  } = useTransactionsEstimate(chain, crossChainTxs || offerInfo?.transactions, true, gasFeeAsset?.address);
+  } = useTransactionsEstimate(chain, crossChainTxs || offerInfo?.transactions, true, gasFeeAsset);
+
   const chainRates = useChainRates(chain);
 
   const highFee = isHighGasFee(chain, feeInfo?.fee, feeInfo?.gasToken, chainRates, fiatCurrency, gasThresholds);
