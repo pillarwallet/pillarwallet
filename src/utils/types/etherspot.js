@@ -57,6 +57,7 @@ export type GatewayEstimatedBatch = {
   createdAt: Date,
   expiredAt: Date,
   estimatedGas: number,
+  feeAmount: EthersBigNumber,
   estimatedGasPrice: EthersBigNumber,
   refundAmount: EthersBigNumber,
   refundTokenPayee: string,
