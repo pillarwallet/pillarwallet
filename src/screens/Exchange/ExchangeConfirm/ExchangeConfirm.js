@@ -85,7 +85,7 @@ const ExchangeConfirmScreen = () => {
     feeInfo,
     errorMessage: estimationErrorMessage,
     isEstimating,
-  } = useTransactionsEstimate(chainName, offer.transactions, false, gasFeeAsset?.address);
+  } = useTransactionsEstimate(chainName, offer.transactions, false, gasFeeAsset);
   const { errorMessage: notEnoughForFeeErrorMessage } = useTransactionFeeCheck(
     chainName,
     feeInfo,

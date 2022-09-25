@@ -30,11 +30,7 @@ import {
 } from 'etherspot';
 
 // constants
-import {
-  TX_CONFIRMED_STATUS,
-  TX_FAILED_STATUS,
-  TX_PENDING_STATUS,
-} from 'constants/historyConstants';
+import { TX_CONFIRMED_STATUS, TX_FAILED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
 import { ASSET_CATEGORY } from 'constants/assetsConstants';
 import { EXCHANGE_PROVIDER } from 'constants/exchangeConstants';
 import { TRANSACTION_STATUS } from 'models/History';
@@ -89,8 +85,8 @@ export const parseEtherspotTransactions = (
   chain: Chain,
   etherspotTransactions: EtherspotTransaction[],
   supportedAssets: Asset[],
-): Transaction[] => etherspotTransactions
-  .reduce((mappedHistoryTransactions, etherspotTransaction) => {
+): Transaction[] =>
+  etherspotTransactions.reduce((mappedHistoryTransactions, etherspotTransaction) => {
     const {
       gasLimit,
       gasPrice,
@@ -184,23 +180,22 @@ export const buildEtherspotTxFeeInfo = (
 
 export const parseEtherspotTransactionState = (state: GatewayBatchStates): ?string => {
   switch (state) {
-    case GatewayBatchStates.Sent: return TX_CONFIRMED_STATUS;
-    case GatewayBatchStates.Sending: return TX_PENDING_STATUS;
-    case GatewayBatchStates.Resending: return TX_PENDING_STATUS;
-    case GatewayBatchStates.Queued: return TX_PENDING_STATUS;
-    case GatewayBatchStates.Reverted: return TX_FAILED_STATUS;
-    default: return null;
+    case GatewayBatchStates.Sent:
+      return TX_CONFIRMED_STATUS;
+    case GatewayBatchStates.Sending:
+      return TX_PENDING_STATUS;
+    case GatewayBatchStates.Resending:
+      return TX_PENDING_STATUS;
+    case GatewayBatchStates.Queued:
+      return TX_PENDING_STATUS;
+    case GatewayBatchStates.Reverted:
+      return TX_FAILED_STATUS;
+    default:
+      return null;
   }
 };
 
-export const parseTokenListToken = ({
-  address,
-  name,
-  symbol,
-  decimals,
-  logoURI,
-  chainId,
-}: TokenListToken): Asset => {
+export const parseTokenListToken = ({ address, name, symbol, decimals, logoURI, chainId }: TokenListToken): Asset => {
   const hasValidIconUrl = logoURI?.startsWith('https://') || logoURI?.startsWith('http://');
 
   return {
@@ -251,10 +246,10 @@ export const appendNativeAssetIfNeeded = (chain: Chain, assets: Asset[]): Asset[
 export const buildTransactionFeeInfo = (estimated: ?GatewayEstimatedBatch): TransactionFeeInfo => {
   if (!estimated) return { fee: null };
 
-  const { estimatedGas, estimatedGasPrice } = estimated;
+  const { feeAmount } = estimated;
+  // const nativeFee = fromEthersBigNumber(estimatedGasPrice, 0).times(estimatedGas);
 
-  const nativeFee = fromEthersBigNumber(estimatedGasPrice, 0).times(estimatedGas);
-  return { fee: nativeFee };
+  return { fee: feeAmount };
 };
 
 const exchangeProviderFromEtherspot = {
