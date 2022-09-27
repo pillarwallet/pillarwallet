@@ -566,6 +566,13 @@ export class EtherspotService {
 
     const etherspotTransactions = await mapToEthereumTransactions(transaction, fromAccountAddress);
 
+    if (transaction?.gasToken) {
+      const {
+        gasToken: { address: gasFeeAddress },
+      } = transaction;
+      return this.setTransactionsBatchAndSend(etherspotTransactions, chain, gasFeeAddress);
+    }
+
     return this.setTransactionsBatchAndSend(etherspotTransactions, chain);
   }
 
@@ -836,6 +843,7 @@ export class EtherspotService {
       if (!erc20Contract) return { transactionData: quote.transaction, quote };
 
       const approvalTransactionData = erc20Contract.encodeApprove(approvalAddress, amount);
+      approvalTransactionData.value = '0';
 
       return { approvalTransactionData, transactionData: quote.transaction, quote };
     } catch (e) {
