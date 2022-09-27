@@ -111,12 +111,14 @@ function BalanceSection({ balanceInFiat, changeInFiat, showBalance, onBalanceCli
           </SecondColumn>
         )}
       </Container>
-      <Tooltip
-        isVisible={visibleTooltip}
-        body={tRoot('tooltip.start_by_cash')}
-        wrapperStyle={wrapperStyle}
-        onPress={onAddCashPress}
-      />
+      {!isKeyBasedAccount(activeAccount) && (
+        <Tooltip
+          isVisible={visibleTooltip}
+          body={tRoot('tooltip.start_by_cash')}
+          wrapperStyle={wrapperStyle}
+          onPress={onAddCashPress}
+        />
+      )}
     </>
   );
 }
