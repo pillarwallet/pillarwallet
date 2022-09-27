@@ -102,6 +102,7 @@ const ExchangeConfirmScreen = () => {
     }
 
     const transactionPayload = mapTransactionsToTransactionPayload(chainName, offer.transactions);
+    transactionPayload.gasToken = gasFeeAsset;
 
     if (activeAccount && isLogV2AppEvents) {
       dispatch(
