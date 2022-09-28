@@ -53,6 +53,8 @@
   "minute_plural": "{{count}} minutes",
   "tutorialTitle": "Welcome to Pillar!",
   "tutorialSubtitle": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  "smart_wallet":"Smart Wallet",
+  "key_wallet":"Key Wallet",
 
   "units": {
     "1e3": "{{value}}K",
