@@ -265,6 +265,13 @@ export const dismissSignInDeFiTooltipAction = () => {
   };
 };
 
+export const dismissSwitchAccountTooltipAction = (status: boolean) => {
+  return (dispatch: Dispatch) => {
+    dispatch(saveDbAction('app_settings', { appSettings: { switchAccountTooltipDismissed: status } }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: { switchAccountTooltipDismissed: status } });
+  };
+};
+
 export const setDeviceUniqueIdIfNeededAction = (deviceUniqueId: string) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const { deviceUniqueId: currentDeviceUniqueId } = getState().appSettings.data;

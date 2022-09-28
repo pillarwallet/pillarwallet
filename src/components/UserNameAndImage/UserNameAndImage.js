@@ -24,7 +24,7 @@ import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
 
 // Actions
-import { dismissAccountSwitchTooltipAction } from 'actions/appSettingsActions';
+import { dismissAccountSwitchTooltipAction, dismissSwitchAccountTooltipAction } from 'actions/appSettingsActions';
 
 // Components
 import ProfileImage from 'components/ProfileImage';
@@ -56,6 +56,7 @@ const UserNameAndImage = ({ user, address }: Props) => {
 
   const onAccountSwitchPress = () => {
     dispatch(dismissAccountSwitchTooltipAction());
+    dispatch(dismissSwitchAccountTooltipAction(true));
     Modal.open(() => <AccountsModal navigation={navigation} name={user} />);
   };
 
