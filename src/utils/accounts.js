@@ -126,7 +126,7 @@ export const getAccountName = (accountType: AccountTypes | TranslatedString): st
     case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
       return t('smartWallet');
     case ACCOUNT_TYPES.KEY_BASED:
-      return t('keyWallet');
+      return t('key_wallet');
     default:
       return '';
   }
