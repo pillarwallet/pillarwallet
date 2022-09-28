@@ -19,6 +19,8 @@
 */
 
 import * as React from 'react';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 import { Keyboard } from 'react-native';
@@ -34,16 +36,25 @@ import useWalletConnect from 'hooks/useWalletConnect';
 
 // Types
 import type { WalletConnectConnector } from 'models/WalletConnect';
-
+import type { Account } from 'models/Account';
 // Utils
 import { chainFromChainId, mapChainToChainId } from 'utils/chains';
 import { spacing, fontStyles } from 'utils/variables';
 import { useThemedImages } from 'utils/images';
 import { parsePeerName, pickPeerIcon } from 'utils/walletConnect';
 import { useChainsConfig } from 'utils/uiConfig';
+import { getActiveAccount, findKeyBasedAccount } from 'utils/accounts';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
+import { ETHERSPOT } from 'constants/walletConstants';
+
+// Selectors
+import { useAccounts } from 'selectors';
+
+// Actions
+import { switchAccountAction } from 'actions/accountsActions';
+import { dismissSwitchAccountTooltipAction } from 'actions/appSettingsActions';
 
 type Props = {|
   connector: WalletConnectConnector,
@@ -54,14 +65,27 @@ function WalletConnectConnectorRequestModal({ connector, chainId }: Props) {
   const ref = React.useRef();
   const { genericToken } = useThemedImages();
   const chainsConfig = useChainsConfig();
+  const dispatch = useDispatch();
   const chain = chainFromChainId[chainId] ?? CHAIN.ETHEREUM;
   const { title: chainName } = chainsConfig[chain];
+  const accounts = useAccounts();
+
+  const keyBasedAccount: ?Account = findKeyBasedAccount(accounts);
+  const activeAccount: ?Account = getActiveAccount(accounts);
 
   // Note: this will map chain id to testnet in test env.
   const mappedChainId = mapChainToChainId(chain);
 
   const { approveConnectorRequest, rejectConnectorRequest } = useWalletConnect();
   const { app: appName, description, peerID, iconUrl } = getViewData(connector);
+
+  useEffect(() => {
+    if (activeAccount !== keyBasedAccount && appName === ETHERSPOT) {
+      keyBasedAccount?.id && dispatch(switchAccountAction(keyBasedAccount.id));
+      dispatch(dismissSwitchAccountTooltipAction(false));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeAccount, appName, keyBasedAccount]);
 
   const onApprovePress = () => {
     Keyboard.dismiss();
@@ -123,8 +147,8 @@ const styles = {
 };
 
 const Description = styled(Text)`
- text-align: center;
- margin-bottom: ${spacing.largePlus}px;
- color: ${({ theme }) => theme.colors.tertiaryText};
- ${fontStyles.medium};
+  text-align: center;
+  margin-bottom: ${spacing.largePlus}px;
+  color: ${({ theme }) => theme.colors.tertiaryText};
+  ${fontStyles.medium};
 `;

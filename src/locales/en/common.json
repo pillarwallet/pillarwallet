@@ -53,6 +53,8 @@
   "minute_plural": "{{count}} minutes",
   "tutorialTitle": "Welcome to Pillar!",
   "tutorialSubtitle": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  "smart_wallet":"Smart Wallet",
+  "key_wallet":"Key Wallet",
 
   "units": {
     "1e3": "{{value}}K",
@@ -1563,6 +1565,7 @@
   "tooltip": {
     "switchAccountsByTappingHere": "You can switch accounts by tapping here",
     "start_by_cash":"Start by adding cash",
+    "switch_account": "Switched to your Key Wallet for the Etherspot Dashboard",
     "signInDeFi":"Sign in to DeFi",
     "includesDeploymentFee": "One-time Smart Wallet deployment fee",
     "registerENS": "Register your unique ENS name"

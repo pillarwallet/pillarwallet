@@ -112,7 +112,7 @@ const MultiBannerContainer = ({ bannerData, index, theme }) => {
         </Summary>
         <BannerImage source={{ uri: bannerIcon }} />
         <CloseContainer onPress={onClose}>
-          <Icon name={'close'} width={24} height={24} />
+          <Icon name={'close'} width={24} height={24} color={bannerForgroundColor} />
         </CloseContainer>
       </ImageContainer>
     </TouchableContainer>
