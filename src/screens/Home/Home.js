@@ -63,7 +63,7 @@ import { sumRecord } from 'utils/bigNumber';
 import { calculateTotalBalancePerCategory } from 'utils/totalBalances';
 import { useThemeColors } from 'utils/themes';
 import { getSupportedBiometryType } from 'utils/keychain';
-import { getEnsNodeState } from 'utils/accounts';
+import { getEnsNodeState, getActiveAccount, findKeyBasedAccount } from 'utils/accounts';
 import { getActiveScreenName } from 'utils/navigation';
 
 // Local
@@ -95,9 +95,17 @@ function Home() {
   const etherspotAccount = useRootSelector(etherspotAccountSelector);
   const wallet = useRootSelector((root) => root.wallet.data);
   const accountAddress = useRootSelector(activeAccountAddressSelector);
+  const { switchAccountTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
+
   const [showAccountSwitchTooltip, setShowAccountSwitchTooltip] = React.useState(false);
   const [showENSTooltip, setShowENSSwitchTooltip] = React.useState(false);
   const [balanceVisible, setBalanceVisible] = React.useState(true);
+
+  const accounts = useAccounts();
+  const keyBasedAccount: any = findKeyBasedAccount(accounts);
+  const activeAccount: any = getActiveAccount(accounts);
+
+  const isKeyBasedAccount = activeAccount === keyBasedAccount;
 
   const canSwitchAccount = useAccounts().length > 1;
   const ensNodeState = getEnsNodeState(etherspotAccount);
@@ -185,6 +193,12 @@ function Home() {
           wrapperStyle={{ zIndex: 9999, top: -10, position: 'relative' }}
         />
       )}
+
+      <Tooltip
+        isVisible={!switchAccountTooltipDismissed && isKeyBasedAccount && !showAccountSwitchTooltip}
+        body={t('tooltip.switch_account')}
+        wrapperStyle={{ zIndex: 9999, top: -10, position: 'relative' }}
+      />
 
       {showEnsTooltip && (
         <Tooltip

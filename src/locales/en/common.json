@@ -1563,6 +1563,7 @@
   "tooltip": {
     "switchAccountsByTappingHere": "You can switch accounts by tapping here",
     "start_by_cash":"Start by adding cash",
+    "switch_account": "Switched to your Key Wallet for the Etherspot Dashboard",
     "signInDeFi":"Sign in to DeFi",
     "includesDeploymentFee": "One-time Smart Wallet deployment fee",
     "registerENS": "Register your unique ENS name"
