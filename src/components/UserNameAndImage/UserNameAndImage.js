@@ -38,6 +38,7 @@ import { useAccounts } from 'selectors';
 // Utils
 import { fontStyles, spacing } from 'utils/variables';
 import { useThemeColors } from 'utils/themes';
+import { getUserTitle } from 'utils/accounts';
 
 // Screen
 import AccountsModal from 'src/screens/Accounts';
@@ -53,6 +54,9 @@ const UserNameAndImage = ({ user, address }: Props) => {
   const dispatch = useDispatch();
 
   const canSwitchAccount = useAccounts().length > 1;
+  const accounts = useAccounts();
+
+  const userTitle = getUserTitle(accounts, address);
 
   const onAccountSwitchPress = () => {
     dispatch(dismissAccountSwitchTooltipAction());
@@ -68,7 +72,7 @@ const UserNameAndImage = ({ user, address }: Props) => {
 
       {!user && (
         <Address numberOfLines={1} ellipsizeMode="middle">
-          {address}
+          {userTitle}
         </Address>
       )}
 
