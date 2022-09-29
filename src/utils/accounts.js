@@ -113,6 +113,17 @@ export const getUserTitle = (accounts: Account[], address: ?string): ?string => 
   return address;
 };
 
+export const getENSUserTitle = (accounts: Account[], user: ?string): ?string => {
+  if (!user) return null;
+
+  const type = getActiveAccountType(accounts);
+
+  if (type === ACCOUNT_TYPES.KEY_BASED) {
+    return t('key_wallet');
+  }
+  return user;
+};
+
 export const isArchanovaAccount = (account: ?Account): boolean %checks =>
   isAccountType(account, ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET);
 
