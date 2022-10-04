@@ -25,12 +25,7 @@ import t from 'translations/translate';
 
 // constants
 import { SET_WALLET, UPDATE_WALLET_BACKUP_STATUS } from 'constants/walletConstants';
-import {
-  APP_FLOW,
-  TUTORIAL_FLOW,
-  HOME,
-  WELCOME_BACK,
-} from 'constants/navigationConstants';
+import { APP_FLOW, TUTORIAL_FLOW, HOME, WELCOME_BACK } from 'constants/navigationConstants';
 import { SET_USER } from 'constants/userConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import {
@@ -66,10 +61,7 @@ import etherspotService from 'services/etherspot';
 // actions
 import { importArchanovaAccountsIfNeededAction, managePPNInitFlagAction } from 'actions/smartWalletActions';
 import { saveDbAction } from 'actions/dbActions';
-import {
-  checkForWalletBackupToastAction,
-  encryptAndSaveWalletAction,
-} from 'actions/walletActions';
+import { checkForWalletBackupToastAction, encryptAndSaveWalletAction } from 'actions/walletActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
 import { addMissingWalletEventsIfNeededAction } from 'actions/walletEventsActions';
@@ -82,11 +74,12 @@ import {
   resetAndStartImportWalletAction,
 } from 'actions/authActions';
 import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedAssetTransferActions';
+import { importEtherspotAccountsAction, initEtherspotServiceAction } from 'actions/etherspotActions';
 import {
-  importEtherspotAccountsAction,
-  initEtherspotServiceAction,
-} from 'actions/etherspotActions';
-import { fetchSupportedAssetsAction, fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
+  fetchSupportedAssetsAction,
+  fetchOfflineLocalAssets,
+  fetchAllAccountsTotalBalancesAction,
+} from 'actions/assetsActions';
 import { fetchTutorialDataIfNeededAction, bannerDataAction } from 'actions/cmsActions';
 import { initialDeepLinkExecutedAction } from 'actions/appSettingsActions';
 import { addAccountAction } from 'actions/accountsActions';
@@ -352,6 +345,8 @@ export const setupAppServicesAction = (privateKey: ?string) => {
       logBreadcrumb('onboarding', 'setupAppServicesAction failed: no private key');
       return;
     }
+
+    await dispatch(fetchOfflineLocalAssets());
 
     logBreadcrumb('onboarding', 'onboardingAction.js: checking user is online or not');
 
@@ -720,4 +715,3 @@ export const resetWalletImportErrorAction = () => {
     });
   };
 };
-
