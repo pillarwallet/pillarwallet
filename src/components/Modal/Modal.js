@@ -167,6 +167,7 @@ class Modal extends React.Component<Props, State> {
         onSwipeComplete={!isSwipeClose ? this.close : null}
         onBackdropPress={!backdropDismissable ? this.close : null}
         onBackButtonPress={this.close}
+        avoidKeyboard
         style={{ margin: 0 }}
         {...props}
         onModalHide={this.onHide}

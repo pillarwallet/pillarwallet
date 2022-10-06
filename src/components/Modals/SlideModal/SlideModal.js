@@ -294,6 +294,7 @@ class SlideModal extends React.Component<Props, State> {
           zIndex: 10,
         }}
         {...fwdProps}
+        avoidKeyboard={false}
       >
         <ContentWrapper fullScreen={fullScreen} bgColor={backgroundColor} noTopPadding={noTopPadding}>
           <TouchableBackground activeOpacity={1} onPress={onClose} />
