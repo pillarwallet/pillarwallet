@@ -74,6 +74,7 @@ import { accountsSelector, activeAccountAddressSelector } from 'selectors';
 
 // actions
 import { getTranslationsResourcesAndSetLanguageOnAppOpenAction } from 'actions/localisationActions';
+import { fetchOfflineLocalAssets } from 'actions/assetsActions';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -86,6 +87,8 @@ export const initAppAndRedirectAction = () => {
 
     let storageData = await storage.getAll();
     await storage.migrateFromPouchDB(storageData);
+
+    await dispatch(fetchOfflineLocalAssets());
 
     storageData = await migrate('app_settings', storageData, dispatch, getState, 'appSettings');
     const { appSettings = {} } = get(storageData, 'app_settings', {});

@@ -1,0 +1,666 @@
+[
+  {
+    "chain": "avalanche",
+    "address": "0x0000000000000000000000000000000000000000",
+    "name": "Avalanche",
+    "symbol": "AVAX",
+    "decimals": 18,
+    "iconUrl": "https://image.pngaaa.com/19/5554019-middle.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd",
+    "name": "TraderJoe Token",
+    "symbol": "JOE",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x60781C2586D68229fde47564546784ab3fACA982",
+    "name": "Pangolin",
+    "symbol": "PNG",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x60781C2586D68229fde47564546784ab3fACA982/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
+    "name": "Wrapped AVAX",
+    "symbol": "WAVAX",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xd1c3f94DE7e5B45fa4eDBBA472491a9f4B166FC4",
+    "name": "Avalaunch",
+    "symbol": "XAVA",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xd1c3f94DE7e5B45fa4eDBBA472491a9f4B166FC4/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x846D50248BAf8b7ceAA9d9B53BFd12d7D7FBB25a",
+    "name": "VersoToken",
+    "symbol": "VSO",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x846D50248BAf8b7ceAA9d9B53BFd12d7D7FBB25a/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x65378b697853568dA9ff8EaB60C13E1Ee9f4a654",
+    "name": "Husky",
+    "symbol": "HUSKY",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x65378b697853568dA9ff8EaB60C13E1Ee9f4a654/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xE1C110E1B1b4A1deD0cAf3E42BfBdbB7b5d7cE1C",
+    "name": "Elk",
+    "symbol": "ELK",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xE1C110E1B1b4A1deD0cAf3E42BfBdbB7b5d7cE1C/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x82FE038Ea4b50f9C957da326C412ebd73462077C",
+    "name": "JoeHatToken",
+    "symbol": "HAT",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x82FE038Ea4b50f9C957da326C412ebd73462077C/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xd586E7F844cEa2F87f50152665BCbc2C279D8d70",
+    "name": "Dai Stablecoin",
+    "symbol": "DAI.e",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xd586E7F844cEa2F87f50152665BCbc2C279D8d70/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x5947BB275c521040051D82396192181b413227A3",
+    "name": "ChainLink Token",
+    "symbol": "LINK.e",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x5947BB275c521040051D82396192181b413227A3/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xc7198437980c041c805A1EDcbA50c1Ce5db95118",
+    "name": "Tether Token - Bridged",
+    "symbol": "USDT.e",
+    "decimals": 6,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xc7198437980c041c805A1EDcbA50c1Ce5db95118/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x50b7545627a5162F82A992c33b87aDc75187B218",
+    "name": "Wrapped BTC",
+    "symbol": "WBTC.e",
+    "decimals": 8,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x50b7545627a5162F82A992c33b87aDc75187B218/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x49D5c2BdFfac6CE2BFdB6640F4F80f226bc10bAB",
+    "name": "Wrapped Ether",
+    "symbol": "WETH.e",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x49D5c2BdFfac6CE2BFdB6640F4F80f226bc10bAB/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x59414b3089ce2AF0010e7523Dea7E2b35d776ec7",
+    "name": "Yak Token",
+    "symbol": "YAK",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x59414b3089ce2AF0010e7523Dea7E2b35d776ec7/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x8729438EB15e2C8B576fCc6AeCdA6A148776C0F5",
+    "name": "Benqi",
+    "symbol": "QI",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x8729438EB15e2C8B576fCc6AeCdA6A148776C0F5/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664",
+    "name": "USD Coin - Bridged",
+    "symbol": "USDC.e",
+    "decimals": 6,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x130966628846BFd36ff31a822705796e8cb8C18D",
+    "name": "Magic Internet Money",
+    "symbol": "MIM",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x130966628846BFd36ff31a822705796e8cb8C18D/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x1f1E7c893855525b303f99bDF5c3c05Be09ca251",
+    "name": "Synapse",
+    "symbol": "SYN",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x1f1E7c893855525b303f99bDF5c3c05Be09ca251/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xb54f16fB19478766A268F172C9480f8da1a7c9C3",
+    "name": "Time",
+    "symbol": "TIME",
+    "decimals": 9,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xb54f16fB19478766A268F172C9480f8da1a7c9C3/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xCE1bFFBD5374Dac86a2893119683F4911a2F7814",
+    "name": "Spell Token",
+    "symbol": "SPELL",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xCE1bFFBD5374Dac86a2893119683F4911a2F7814/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x264c1383EA520f73dd837F915ef3a732e204a493",
+    "name": "Binance",
+    "symbol": "BNB",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x264c1383EA520f73dd837F915ef3a732e204a493/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xd6070ae98b8069de6B494332d1A1a81B6179D960",
+    "name": "Beefy Finance",
+    "symbol": "BIFI",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xd6070ae98b8069de6B494332d1A1a81B6179D960/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x63a72806098Bd3D9520cC43356dD78afe5D386D9",
+    "name": "Aave Token",
+    "symbol": "AAVE.e",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x63a72806098Bd3D9520cC43356dD78afe5D386D9/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xb27c8941a7Df8958A1778c0259f76D1F8B711C35",
+    "name": "Kalao Token",
+    "symbol": "KLO",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xb27c8941a7Df8958A1778c0259f76D1F8B711C35/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xfB98B335551a418cD0737375a2ea0ded62Ea213b",
+    "name": "Pendle",
+    "symbol": "PENDLE",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xfB98B335551a418cD0737375a2ea0ded62Ea213b/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xA32608e873F9DdEF944B24798db69d80Bbb4d1ed",
+    "name": "Crabada Token",
+    "symbol": "CRA",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xA32608e873F9DdEF944B24798db69d80Bbb4d1ed/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xf693248F96Fe03422FEa95aC0aFbBBc4a8FdD172",
+    "name": "Treasure Under Sea",
+    "symbol": "TUS",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xf693248F96Fe03422FEa95aC0aFbBBc4a8FdD172/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x47EB6F7525C1aA999FBC9ee92715F5231eB1241D",
+    "name": "Defrost Finance Token",
+    "symbol": "MELT",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x47EB6F7525C1aA999FBC9ee92715F5231eB1241D/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x321E7092a180BB43555132ec53AaA65a5bF84251",
+    "name": "Governance OHM",
+    "symbol": "gOHM",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x321E7092a180BB43555132ec53AaA65a5bF84251/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xec3492a2508DDf4FDc0cD76F31f340b30d1793e6",
+    "name": "Colony Token",
+    "symbol": "CLY",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xec3492a2508DDf4FDc0cD76F31f340b30d1793e6/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
+    "name": "USD Coin",
+    "symbol": "USDC",
+    "decimals": 6,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x026187BdbC6b751003517bcb30Ac7817D5B766f8",
+    "name": "Defrost Finance H2O",
+    "symbol": "H2O",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x026187BdbC6b751003517bcb30Ac7817D5B766f8/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x22d4002028f537599bE9f666d1c4Fa138522f9c8",
+    "name": "Platypus",
+    "symbol": "PTP",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x22d4002028f537599bE9f666d1c4Fa138522f9c8/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x2147EFFF675e4A4eE1C2f918d181cDBd7a8E208f",
+    "name": "Alpha",
+    "symbol": "ALPHA.e",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x2147EFFF675e4A4eE1C2f918d181cDBd7a8E208f/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xF891214fdcF9cDaa5fdC42369eE4F27F226AdaD6",
+    "name": "Imperium Empires Token",
+    "symbol": "IME",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xF891214fdcF9cDaa5fdC42369eE4F27F226AdaD6/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x7761E2338B35bCEB6BdA6ce477EF012bde7aE611",
+    "name": "Chikn Egg",
+    "symbol": "EGG",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x7761E2338B35bCEB6BdA6ce477EF012bde7aE611/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x3EeFb18003D033661f84e48360eBeCD181A84709",
+    "name": "Islander",
+    "symbol": "ISA",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x3EeFb18003D033661f84e48360eBeCD181A84709/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x637afeff75ca669fF92e4570B14D6399A658902f",
+    "name": "Poly-Peg Cook",
+    "symbol": "COOK",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x637afeff75ca669fF92e4570B14D6399A658902f/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7",
+    "name": "Tether Token",
+    "symbol": "USDT",
+    "decimals": 6,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x62edc0692BD897D2295872a9FFCac5425011c661",
+    "name": "GMX",
+    "symbol": "GMX",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x62edc0692BD897D2295872a9FFCac5425011c661/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x250bdca7D1845cd543BB55E7D82dcA24D48E9f0F",
+    "name": "Dragon Crypto Argenti",
+    "symbol": "DCAR",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x250bdca7D1845cd543BB55E7D82dcA24D48E9f0F/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x100Cc3a819Dd3e8573fD2E46D1E66ee866068f30",
+    "name": "Dragon Crypto Aurum",
+    "symbol": "DCAU",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x100Cc3a819Dd3e8573fD2E46D1E66ee866068f30/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x8F47416CaE600bccF9530E9F3aeaA06bdD1Caa79",
+    "name": "THOR v2",
+    "symbol": "THOR",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x8F47416CaE600bccF9530E9F3aeaA06bdD1Caa79/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xd9D90f882CDdD6063959A9d837B05Cb748718A05",
+    "name": "More Token",
+    "symbol": "MORE",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xd9D90f882CDdD6063959A9d837B05Cb748718A05/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xEd2b42D3C9c6E97e11755BB37df29B6375ede3EB",
+    "name": "Hon Token",
+    "symbol": "HON",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xed2b42d3c9c6e97e11755bb37df29b6375ede3eb/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xFc6Da929c031162841370af240dEc19099861d3B",
+    "name": "Domi",
+    "symbol": "DOMI",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xFc6Da929c031162841370af240dEc19099861d3B/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xfcc6CE74f4cd7eDEF0C5429bB99d38A3608043a5",
+    "name": "FIRE",
+    "symbol": "FIRE",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xfcc6ce74f4cd7edef0c5429bb99d38a3608043a5/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x83a283641C6B4DF383BCDDf807193284C84c5342",
+    "name": "VaporNodes",
+    "symbol": "VPND",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x83a283641C6B4DF383BCDDf807193284C84c5342/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x2b2C81e08f1Af8835a78Bb2A90AE924ACE0eA4bE",
+    "name": "Staked AVAX",
+    "symbol": "sAVAX",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x2b2C81e08f1Af8835a78Bb2A90AE924ACE0eA4bE/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x5817D4F0b62A59b17f75207DA1848C2cE75e7AF4",
+    "name": "Vector",
+    "symbol": "VTX",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x5817D4F0b62A59b17f75207DA1848C2cE75e7AF4/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x060556209E507d30f2167a101bFC6D256Ed2f3e1",
+    "name": "Vector PTP",
+    "symbol": "xPTP",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x060556209E507d30f2167a101bFC6D256Ed2f3e1/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x769bfeb9fAacD6Eb2746979a8dD0b7e9920aC2A4",
+    "name": "Vector JOE",
+    "symbol": "zJOE",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x769bfeb9fAacD6Eb2746979a8dD0b7e9920aC2A4/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xeb8343D5284CaEc921F035207ca94DB6BAaaCBcd",
+    "name": "Echidna",
+    "symbol": "ECD",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xeb8343d5284caec921f035207ca94db6baaacbcd/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xb2C5172E5C15aF6aDD1ec92e518A5Ea1c7DeD2ad",
+    "name": "Echidna PTP",
+    "symbol": "ecdPTP",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xb2C5172E5C15aF6aDD1ec92e518A5Ea1c7DeD2ad/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x490bf3ABcAb1fB5c88533d850F2a8d6D38298465",
+    "name": "Playmates",
+    "symbol": "PLAYMATES",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x490bf3ABcAb1fB5c88533d850F2a8d6D38298465/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x6121191018BAf067c6Dc6B18D42329447a164F05",
+    "name": "Pizza",
+    "symbol": "PIZZA",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x6121191018BAf067c6Dc6B18D42329447a164F05/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x0f577433Bf59560Ef2a79c124E9Ff99fCa258948",
+    "name": "Moremoney USD",
+    "symbol": "MONEY",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x0f577433Bf59560Ef2a79c124E9Ff99fCa258948/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xAfE3d2A31231230875DEe1fa1eEF14a412443d22",
+    "name": "DeFiato",
+    "symbol": "DFIAT",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xAfE3d2A31231230875DEe1fa1eEF14a412443d22/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x78Ea3fef1c1f07348199Bf44f45b803b9B0Dbe28",
+    "name": "FLY",
+    "symbol": "FLY",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x78Ea3fef1c1f07348199Bf44f45b803b9B0Dbe28/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x9f285507Ea5B4F33822CA7aBb5EC8953ce37A645",
+    "name": "DegisToken",
+    "symbol": "DEG",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x9f285507Ea5B4F33822CA7aBb5EC8953ce37A645/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x0802d66f029c46E042b74d543fC43B6705ccb4ba",
+    "name": "ApeCoin",
+    "symbol": "APE",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x0802d66f029c46E042b74d543fC43B6705ccb4ba/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x4Bfc90322dD638F81F034517359BD447f8E0235a",
+    "name": "New Order",
+    "symbol": "NEWO",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x4Bfc90322dD638F81F034517359BD447f8E0235a/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xb599c3590F42f8F995ECfa0f85D2980B76862fc1",
+    "name": "Wormhole UST",
+    "symbol": "UST",
+    "decimals": 6,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xb599c3590F42f8F995ECfa0f85D2980B76862fc1/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x2F6F07CDcf3588944Bf4C42aC74ff24bF56e7590",
+    "name": "StargateToken",
+    "symbol": "STG",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x2F6F07CDcf3588944Bf4C42aC74ff24bF56e7590/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x1B88D7aD51626044Ec62eF9803EA264DA4442F32",
+    "name": "Zoo Token",
+    "symbol": "ZOO",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x1B88D7aD51626044Ec62eF9803EA264DA4442F32/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x449674B82F05d498E126Dd6615a1057A9c088f2C",
+    "name": "LostToken",
+    "symbol": "LOST",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x449674B82F05d498E126Dd6615a1057A9c088f2C/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x9466Ab927611725B9AF76b9F31B2F879Ff14233d",
+    "name": "Ripae",
+    "symbol": "PAE",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x9466Ab927611725B9AF76b9F31B2F879Ff14233d/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x4f60a160D8C2DDdaAfe16FCC57566dB84D674BD6",
+    "name": "Jewels",
+    "symbol": "JEWEL",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x4f60a160D8C2DDdaAfe16FCC57566dB84D674BD6/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x6C1c0319d8dDcb0ffE1a68C5b3829Fd361587DB4",
+    "name": "POLAR",
+    "symbol": "POLAR",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x6C1c0319d8dDcb0ffE1a68C5b3829Fd361587DB4/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x1111111111182587795eF1098ac7da81a108C97a",
+    "name": "Bold Point Token",
+    "symbol": "BPT",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x1111111111182587795eF1098ac7da81a108C97a/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x111111111111ed1D73f860F57b2798b683f2d325",
+    "name": "YUSD Stablecoin",
+    "symbol": "YUSD",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x111111111111ed1D73f860F57b2798b683f2d325/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x77777777777d4554c39223C354A05825b2E8Faa3",
+    "name": "Yeti Finance",
+    "symbol": "YETI",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x77777777777d4554c39223C354A05825b2E8Faa3/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x5085434227aB73151fAd2DE546210Cbc8663dF96",
+    "name": "Metaderby token",
+    "symbol": "DBY",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x5085434227aB73151fAd2DE546210Cbc8663dF96/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xe0bb6feD446A2dbb27F84D3C27C4ED8EA7603366",
+    "name": "Metaderby game token",
+    "symbol": "HOOF",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xe0bb6feD446A2dbb27F84D3C27C4ED8EA7603366/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xab592d197ACc575D16C3346f4EB70C703F308D1E",
+    "name": "Chikn feed",
+    "symbol": "FEED",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xab592d197ACc575D16C3346f4EB70C703F308D1E/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x9C846D808A41328A209e235B5e3c4E626DAb169E",
+    "name": "Chikn fert",
+    "symbol": "FERT",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x9C846D808A41328A209e235B5e3c4E626DAb169E/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xb279f8DD152B99Ec1D84A489D32c35bC0C7F5674",
+    "name": "STEAK",
+    "symbol": "STEAK",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xb279f8DD152B99Ec1D84A489D32c35bC0C7F5674/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x152b9d0FdC40C096757F570A51E494bd4b943E50",
+    "name": "Bitcoin",
+    "symbol": "BTC.b",
+    "decimals": 8,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x152b9d0FdC40C096757F570A51E494bd4b943E50/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xcCf719c44e2C36E919335692E89d22Cf13D6aaEB",
+    "name": "Openblox Token",
+    "symbol": "OBX",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xcCf719c44e2C36E919335692E89d22Cf13D6aaEB/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xA1AfCC973d44cE1C65a21D9e644CB82489d26503",
+    "name": "RunBlox Token",
+    "symbol": "RUX",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xA1AfCC973d44cE1C65a21D9e644CB82489d26503/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0xe7250b05bd8DEE615ecC681eda1196aDD5156F2B",
+    "name": "hJoe v2",
+    "symbol": "hJoe",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0xe7250b05bd8DEE615ecC681eda1196aDD5156F2B/logo.png"
+  },
+  {
+    "chain": "avalanche",
+    "address": "0x48f88A3fE843ccb0b5003e70B4192c1d7448bEf0",
+    "name": "Colony Avalanche Index",
+    "symbol": "CAI",
+    "decimals": 18,
+    "iconUrl": "https://raw.githubusercontent.com/traderjoe-xyz/joe-tokenlists/main/logos/0x48f88A3fE843ccb0b5003e70B4192c1d7448bEf0/logo.png"
+  }
+]

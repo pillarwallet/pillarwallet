@@ -47,11 +47,7 @@ import KeyBasedWallet from 'services/keyBasedWallet';
 
 // utils
 import { transformBalancesToObject } from 'utils/assets';
-import {
-  chainFromChainId,
-  getSupportedChains,
-  nativeAssetPerChain,
-} from 'utils/chains';
+import { chainFromChainId, getSupportedChains, nativeAssetPerChain } from 'utils/chains';
 import { BigNumber, parseTokenAmount, reportErrorLog, logBreadcrumb } from 'utils/common';
 import { buildHistoryTransaction, parseFeeWithGasToken } from 'utils/history';
 import {
@@ -65,13 +61,20 @@ import {
 import { catchTransactionError } from 'utils/wallet';
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
 import { assetsCategoryFromEtherspotBalancesCategory } from 'utils/etherspot';
+import { isProdEnv } from 'utils/environment';
+import PolygonTokens from 'utils/tokens/polygon-tokens';
+import MumbaiTokens from 'utils/tokens/mumbai-tokens';
+import EthereumTokens from 'utils/tokens/ethereum-tokens';
+import EthereumKovanTokens from 'utils/tokens/ethereum-kovan-tokens';
+import FujiTokens from 'utils/tokens/fuji-tokens.json';
+import AvalancheTokens from 'utils/tokens/avalanche-tokens';
+import BinanceTokens from 'utils/tokens/binance-tokens';
+import OptimismKovanTokens from 'utils/tokens/optimism-kovan-tokens';
+import OptimismTokens from 'utils/tokens/optimism-tokens';
+import XdaiTokens from 'utils/tokens/xdai-tokens';
 
 // selectors
-import {
-  accountsSelector,
-  activeAccountSelector,
-  supportedAssetsPerChainSelector,
-} from 'selectors';
+import { accountsSelector, activeAccountSelector, supportedAssetsPerChainSelector } from 'selectors';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
 
 // types
@@ -151,11 +154,7 @@ export const sendENSTransactionAction = (
       return;
     }
 
-    logBreadcrumb(
-      'Send Flow',
-      'sendAssetAction transaction sent',
-      { transactionHash, transactionBatchHash },
-    );
+    logBreadcrumb('Send Flow', 'sendAssetAction transaction sent', { transactionHash, transactionBatchHash });
     callback({
       isSuccess: true,
       error: null,
@@ -192,20 +191,15 @@ export const sendAssetAction = (
     // fetch latest
     if (isCollectibleTransaction) {
       logTransactionType = 'ERC721'; // eslint-disable-line i18next/no-literal-string
-      logBreadcrumb(
-        'Send Flow',
-        'sendAssetAction: collectible transaction dispatching fetchCollectiblesAction',
-        { type: logTransactionType },
-      );
+      logBreadcrumb('Send Flow', 'sendAssetAction: collectible transaction dispatching fetchCollectiblesAction', {
+        type: logTransactionType,
+      });
       await dispatch(fetchCollectiblesAction());
     } else {
       logTransactionType = symbol === ETH ? 'ETH' : 'ERC20'; // eslint-disable-line i18next/no-literal-string
     }
 
-    logBreadcrumb(
-      'Send Flow',
-      'sendAssetAction: checking for active account',
-    );
+    logBreadcrumb('Send Flow', 'sendAssetAction: checking for active account');
     const activeAccount = activeAccountSelector(getState());
     if (!activeAccount) {
       logBreadcrumb('sendAssetAction', 'failed: no active account');
@@ -219,17 +213,13 @@ export const sendAssetAction = (
 
     let collectibleInfo;
     if (isCollectibleTransaction) {
-      logBreadcrumb(
-        'Send Flow',
-        'sendAssetAction: collectible transaction fetching collectibleInfo',
-        { chain, collectibles: accountCollectiblesOnChain },
-      );
-      collectibleInfo = accountCollectiblesOnChain.find(item => item.id === transaction.tokenId);
+      logBreadcrumb('Send Flow', 'sendAssetAction: collectible transaction fetching collectibleInfo', {
+        chain,
+        collectibles: accountCollectiblesOnChain,
+      });
+      collectibleInfo = accountCollectiblesOnChain.find((item) => item.id === transaction.tokenId);
       if (!collectibleInfo) {
-        logBreadcrumb(
-          'Send Flow',
-          'sendAssetAction: failed to fetch collectibleInfo, ERROR_TYPE.NOT_OWNED',
-        );
+        logBreadcrumb('Send Flow', 'sendAssetAction: failed to fetch collectibleInfo, ERROR_TYPE.NOT_OWNED');
         callback({
           isSuccess: false,
           error: ERROR_TYPE.NOT_OWNED,
@@ -239,15 +229,9 @@ export const sendAssetAction = (
       }
     }
 
-    logBreadcrumb(
-      'Send Flow',
-      'sendAssetAction: building fee with gas token if present',
-    );
+    logBreadcrumb('Send Flow', 'sendAssetAction: building fee with gas token if present');
     // build fee with gas token if present
-    const feeWithGasToken = !isEmpty(gasToken)
-      ? parseFeeWithGasToken(gasToken, txFeeInWei)
-      : null;
-
+    const feeWithGasToken = !isEmpty(gasToken) ? parseFeeWithGasToken(gasToken, txFeeInWei) : null;
 
     let transactionResult: ?TransactionResult;
     let transactionErrorMessage: ?string;
@@ -255,29 +239,32 @@ export const sendAssetAction = (
     try {
       switch (getAccountType(activeAccount)) {
         case ACCOUNT_TYPES.KEY_BASED:
-          logBreadcrumb(
-            'Send Flow',
-            'sendAssetAction: account type: key based wallet sending transaction',
-            { transaction, accountAddress, chain },
-          );
+          logBreadcrumb('Send Flow', 'sendAssetAction: account type: key based wallet sending transaction', {
+            transaction,
+            accountAddress,
+            chain,
+          });
           const keyBasedWallet = new KeyBasedWallet(privateKey);
-          const { transactionEstimate: { feeInfo } } = getState();
+          const {
+            transactionEstimate: { feeInfo },
+          } = getState();
           transactionResult = await keyBasedWallet.sendTransaction(transaction, accountAddress, feeInfo);
           break;
         case ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET:
-          logBreadcrumb(
-            'Send Flow',
-            'sendAssetAction: account type: archanova smart wallet sending transaction',
-            { transaction, accountAddress, usePPN },
-          );
+          logBreadcrumb('Send Flow', 'sendAssetAction: account type: archanova smart wallet sending transaction', {
+            transaction,
+            accountAddress,
+            usePPN,
+          });
           transactionResult = await archanovaService.sendTransaction(transaction, accountAddress, usePPN);
           break;
         case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
-          logBreadcrumb(
-            'Send Flow',
-            'sendAssetAction: account type: etherspot smart wallet sending transaction',
-            { transaction, accountAddress, chain, usePPN },
-          );
+          logBreadcrumb('Send Flow', 'sendAssetAction: account type: etherspot smart wallet sending transaction', {
+            transaction,
+            accountAddress,
+            chain,
+            usePPN,
+          });
           transactionResult = await etherspotService.sendTransaction(transaction, accountAddress, chain, usePPN);
           break;
         default:
@@ -321,16 +308,12 @@ export const sendAssetAction = (
      * How long batch takes to proceed? According to Etherspot team there are 4 nodes working
      * with transactions and this number can be increased if batches are queuing for longer times.
      */
-    if (isEtherspotAccount(activeAccount)
-      && waitForActualTransactionHash
-      && !transactionHash
-      && transactionBatchHash) {
+    if (isEtherspotAccount(activeAccount) && waitForActualTransactionHash && !transactionHash && transactionBatchHash) {
       try {
-        logBreadcrumb(
-          'Send Flow',
-          'sendAssetAction: etherspot account fetching transaction hash',
-          { chain, batchHash: transactionBatchHash },
-        );
+        logBreadcrumb('Send Flow', 'sendAssetAction: etherspot account fetching transaction hash', {
+          chain,
+          batchHash: transactionBatchHash,
+        });
         transactionHash = await etherspotService.waitForTransactionHashFromSubmittedBatch(chain, transactionBatchHash);
       } catch (error) {
         reportErrorLog('Exception in wallet transaction: waitForTransactionHashFromSubmittedBatch failed', { error });
@@ -349,9 +332,8 @@ export const sendAssetAction = (
       return;
     }
 
-    const transactionValue = !isCollectibleTransaction && transaction.amount
-      ? parseTokenAmount(transaction.amount, transaction.decimals)
-      : 0;
+    const transactionValue =
+      !isCollectibleTransaction && transaction.amount ? parseTokenAmount(transaction.amount, transaction.decimals) : 0;
 
     logBreadcrumb('Send Flow', 'sendAssetAction: buildHistoryTransaction');
     let historyTx = buildHistoryTransaction({
@@ -423,10 +405,7 @@ export const sendAssetAction = (
       });
 
       const {
-        collectibles: {
-          data: updatedCollectibles,
-          transactionHistory: updatedCollectiblesHistory,
-        },
+        collectibles: { data: updatedCollectibles, transactionHistory: updatedCollectiblesHistory },
       } = getState();
 
       logBreadcrumb(
@@ -436,10 +415,11 @@ export const sendAssetAction = (
       dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: updatedCollectiblesHistory }, true));
       dispatch(saveDbAction('collectibles', { collectibles: updatedCollectibles }, true));
     } else {
-      logBreadcrumb(
-        'Send Flow',
-        'sendAssetAction: dispatching ADD_HISTORY_TRANSACTION', { accountId, historyTx, chain },
-      );
+      logBreadcrumb('Send Flow', 'sendAssetAction: dispatching ADD_HISTORY_TRANSACTION', {
+        accountId,
+        historyTx,
+        chain,
+      });
       dispatch({
         type: ADD_HISTORY_TRANSACTION,
         payload: {
@@ -448,28 +428,22 @@ export const sendAssetAction = (
           chain,
         },
       });
-      const { history: { data: updatedHistory } } = getState();
-      logBreadcrumb(
-        'Send Flow',
-        'sendAssetAction: dispatching saveDbAction to update transaction history',
-      );
+      const {
+        history: { data: updatedHistory },
+      } = getState();
+      logBreadcrumb('Send Flow', 'sendAssetAction: dispatching saveDbAction to update transaction history');
       dispatch(saveDbAction('history', { history: updatedHistory }, true));
     }
 
     if (receiverEnsName) {
-      logBreadcrumb(
-        'Send Flow',
-        'sendAssetAction: recieverENSName available dispatching addEnsRegistryRecordAction',
-        { to, receiverEnsName },
-      );
+      logBreadcrumb('Send Flow', 'sendAssetAction: recieverENSName available dispatching addEnsRegistryRecordAction', {
+        to,
+        receiverEnsName,
+      });
       dispatch(addEnsRegistryRecordAction(to, receiverEnsName));
     }
 
-    logBreadcrumb(
-      'Send Flow',
-      'sendAssetAction transaction sent',
-      { transactionHash, transactionBatchHash },
-    );
+    logBreadcrumb('Send Flow', 'sendAssetAction transaction sent', { transactionHash, transactionBatchHash });
     callback({
       isSuccess: true,
       error: null,
@@ -509,27 +483,27 @@ export const fetchAccountWalletBalancesAction = (account: Account) => {
     const chains = getSupportedChains(account);
     const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
 
-    await Promise.all(chains.map(async (chain) => {
-      let newBalances = [];
-      try {
-        const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
-        newBalances = await etherspotService.getBalances(chain, walletAddress, chainSupportedAssets);
-      } catch (error) {
-        reportErrorLog('fetchAccountWalletBalancesAction failed to fetch chain balances', {
-          accountId,
-          accountType: account.type,
-          chain,
-        });
-      }
+    await Promise.all(
+      chains.map(async (chain) => {
+        let newBalances = [];
+        try {
+          const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
+          newBalances = await etherspotService.getBalances(chain, walletAddress, chainSupportedAssets);
+        } catch (error) {
+          reportErrorLog('fetchAccountWalletBalancesAction failed to fetch chain balances', {
+            accountId,
+            accountType: account.type,
+            chain,
+          });
+        }
 
-      if (isEmpty(newBalances)) return;
+        if (isEmpty(newBalances)) return;
 
-      await dispatch(updateAccountWalletAssetsBalancesForChainAction(
-        accountId,
-        chain,
-        transformBalancesToObject(newBalances),
-      ));
-    }));
+        await dispatch(
+          updateAccountWalletAssetsBalancesForChainAction(accountId, chain, transformBalancesToObject(newBalances)),
+        );
+      }),
+    );
 
     const accountsTotalBalances = getState().totalBalances.data;
     dispatch(saveDbAction('totalBalances', { data: accountsTotalBalances }, true));
@@ -544,72 +518,63 @@ export const fetchAllAccountsTotalBalancesAction = () => {
 
     const accounts = accountsSelector(getState());
 
-    await Promise.all(accounts.map(async (account) => {
-      dispatch(fetchCollectiblesAction(account));
+    await Promise.all(
+      accounts.map(async (account) => {
+        dispatch(fetchCollectiblesAction(account));
 
-      const accountId = getAccountId(account);
-      const accountAddress = getAccountAddress(account);
+        const accountId = getAccountId(account);
+        const accountAddress = getAccountAddress(account);
 
-      // we're fetching and storing values in USD and converting rates by app selected currency later
-      const accountTotalBalances = await etherspotService.getAccountTotalBalances(accountAddress, USD);
-      if (!accountTotalBalances) return;
+        // we're fetching and storing values in USD and converting rates by app selected currency later
+        const accountTotalBalances = await etherspotService.getAccountTotalBalances(accountAddress, USD);
+        if (!accountTotalBalances) return;
 
-      accountTotalBalances.forEach(({
-        balances,
-        category: balancesCategory,
-        chainId,
-        totalBalance,
-      }) => {
-        const chain = chainFromChainId[chainId];
-        const assetsCategory = assetsCategoryFromEtherspotBalancesCategory[balancesCategory];
-        if (!assetsCategory) {
-          logBreadcrumb(
-            'fetchAllAccountsTotalBalancesAction',
-            'Cannot map Etherspot balances category into assets category',
-            { balancesCategory },
+        accountTotalBalances.forEach(({ balances, category: balancesCategory, chainId, totalBalance }) => {
+          const chain = chainFromChainId[chainId];
+          const assetsCategory = assetsCategoryFromEtherspotBalancesCategory[balancesCategory];
+          if (!assetsCategory) {
+            logBreadcrumb(
+              'fetchAllAccountsTotalBalancesAction',
+              'Cannot map Etherspot balances category into assets category',
+              { balancesCategory },
+            );
+            return;
+          }
+
+          const mappedBalances = balances.map(
+            ({ key, title, serviceTitle, address, iconUrl, share, value: valueInUsd }) => ({
+              key,
+              service: serviceTitle,
+              title,
+              address,
+              iconUrl,
+              share: wrapBigNumberOrNil(share),
+              valueInUsd: BigNumber(valueInUsd),
+            }),
           );
-          return;
-        }
 
-        const mappedBalances = balances.map(({
-          key,
-          title,
-          serviceTitle,
-          address,
-          iconUrl,
-          share,
-          value: valueInUsd,
-        }) => ({
-          key,
-          service: serviceTitle,
-          title,
-          address,
-          iconUrl,
-          share: wrapBigNumberOrNil(share),
-          valueInUsd: BigNumber(valueInUsd),
-        }));
+          dispatch({
+            type: SET_ACCOUNT_ASSETS_BALANCES,
+            payload: {
+              accountId,
+              chain,
+              category: assetsCategory,
+              balances: mappedBalances,
+            },
+          });
 
-        dispatch({
-          type: SET_ACCOUNT_ASSETS_BALANCES,
-          payload: {
-            accountId,
-            chain,
-            category: assetsCategory,
-            balances: mappedBalances,
-          },
+          dispatch({
+            type: SET_ACCOUNT_CATEGORY_CHAIN_TOTAL_BALANCE,
+            payload: {
+              accountId,
+              category: assetsCategory,
+              chain,
+              balance: totalBalance,
+            },
+          });
         });
-
-        dispatch({
-          type: SET_ACCOUNT_CATEGORY_CHAIN_TOTAL_BALANCE,
-          payload: {
-            accountId,
-            category: assetsCategory,
-            chain,
-            balance: totalBalance,
-          },
-        });
-      });
-    }));
+      }),
+    );
 
     dispatch({ type: SET_FETCHING_TOTAL_BALANCES, payload: false });
 
@@ -626,7 +591,9 @@ export const fetchAssetsBalancesAction = () => {
     const {
       accounts: { data: accounts },
       assetsBalances: { isFetching },
-      session: { data: { isOnline } },
+      session: {
+        data: { isOnline },
+      },
     } = getState();
 
     const activeAccount = getActiveAccount(accounts);
@@ -665,7 +632,9 @@ export const fetchAllAccountsAssetsBalancesAction = () => {
     const {
       assetsBalances: { isFetching },
       accounts: { data: accounts },
-      session: { data: { isOnline } },
+      session: {
+        data: { isOnline },
+      },
     } = getState();
 
     const activeAccount = getActiveAccount(accounts);
@@ -677,9 +646,9 @@ export const fetchAllAccountsAssetsBalancesAction = () => {
 
     const promises = accounts.map((account) => dispatch(fetchAccountWalletBalancesAction(account)));
 
-    await Promise
-      .all(promises)
-      .catch((error) => reportErrorLog('fetchAllAccountsAssetsBalancesAction failed', { error }));
+    await Promise.all(promises).catch((error) =>
+      reportErrorLog('fetchAllAccountsAssetsBalancesAction failed', { error }),
+    );
 
     dispatch(fetchAssetsRatesAction());
 
@@ -693,24 +662,74 @@ export const fetchAllAccountsAssetsBalancesAction = () => {
 
 export const fetchSupportedAssetsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { session: { data: { isOnline } } } = getState();
+    const {
+      session: {
+        data: { isOnline },
+      },
+    } = getState();
 
     // nothing to do if offline
     if (!isOnline) return;
 
-    await Promise.all(Object.keys(CHAIN).map(async (chainKey) => {
-      const chain = CHAIN[chainKey];
-      const chainSupportedAssets = await etherspotService.getSupportedAssets(chain);
-      // nothing to do if returned empty
-      if (isEmpty(chainSupportedAssets)) return;
+    await Promise.all(
+      Object.keys(CHAIN).map(async (chainKey) => {
+        const chain = CHAIN[chainKey];
+        const chainSupportedAssets = await etherspotService.getSupportedAssets(chain);
 
-      dispatch({
-        type: SET_CHAIN_SUPPORTED_ASSETS,
-        payload: { chain, assets: chainSupportedAssets },
-      });
-    }));
+        // nothing to do if returned empty
+        if (isEmpty(chainSupportedAssets)) return;
+
+        dispatch({
+          type: SET_CHAIN_SUPPORTED_ASSETS,
+          payload: { chain, assets: chainSupportedAssets },
+        });
+      }),
+    );
 
     const updatedSupportedAssets = supportedAssetsPerChainSelector(getState());
     dispatch(saveDbAction('supportedAssets', { supportedAssets: updatedSupportedAssets }, true));
   };
+};
+
+export const fetchOfflineLocalAssets = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    await Promise.all(
+      Object.keys(CHAIN).map(async (chainKey) => {
+        const chain = CHAIN[chainKey];
+
+        const chainSupportedAssets = localAssets(chain);
+
+        dispatch({
+          type: SET_CHAIN_SUPPORTED_ASSETS,
+          payload: { chain, assets: chainSupportedAssets },
+        });
+      }),
+    );
+
+    const updatedSupportedAssets = supportedAssetsPerChainSelector(getState());
+    dispatch(saveDbAction('supportedAssets', { supportedAssets: updatedSupportedAssets }, true));
+  };
+};
+
+export const localAssets = (chain: Chain) => {
+  const isMainnet = isProdEnv();
+  if (chain === CHAIN.POLYGON) {
+    return isMainnet ? PolygonTokens : MumbaiTokens;
+  }
+  if (chain === CHAIN.ETHEREUM) {
+    return isMainnet ? EthereumTokens : EthereumKovanTokens;
+  }
+  if (chain === CHAIN.BINANCE) {
+    return BinanceTokens;
+  }
+  if (chain === CHAIN.XDAI) {
+    return XdaiTokens;
+  }
+  if (chain === CHAIN.AVALANCHE) {
+    return isMainnet ? AvalancheTokens : FujiTokens;
+  }
+  if (chain === CHAIN.OPTIMISM) {
+    return isMainnet ? OptimismTokens : OptimismKovanTokens;
+  }
+  return { ethereum: [] };
 };
