@@ -784,26 +784,31 @@ export class EtherspotService {
 
     const chainId = mapChainToChainId(chain);
 
-    const response = await sdk.resolveName({
-      chainId,
-      name,
-    });
+    try {
+      const response = await sdk.resolveName({
+        chainId,
+        name,
+      });
 
-    logBreadcrumb('Resolve Name!', 'resolveName response', { response, name });
+      logBreadcrumb('Resolve Name!', 'resolveName response', { response, name });
 
-    if (response.failed) return null;
+      if (response.failed) return null;
 
-    if (response.results) {
-      const { ens, fio, unstoppabledomains } = response.results;
-      if (ens?.[0]) {
-        return ens?.[0];
+      if (response.results) {
+        const { ens, fio, unstoppabledomains } = response.results;
+        if (ens?.[0]) {
+          return ens?.[0];
+        }
+        if (fio?.[0]) {
+          return fio?.[0];
+        }
+        if (unstoppabledomains?.[0]) {
+          return unstoppabledomains?.[0];
+        }
+        return null;
       }
-      if (fio?.[0]) {
-        return fio?.[0];
-      }
-      if (unstoppabledomains?.[0]) {
-        return unstoppabledomains?.[0];
-      }
+    } catch (e) {
+      reportErrorLog('EtherspotService resolveName failed', { chain, name });
       return null;
     }
     return null;

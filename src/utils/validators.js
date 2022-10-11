@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { utils } from 'ethers';
-import { ETH } from 'constants/assetsConstants';
 import { pipe, decodeETHAddress } from 'utils/common';
 import t from 'translations/translate';
 import { useQuery } from 'react-query';
@@ -31,10 +30,8 @@ import type { Chain } from 'models/Chain';
 // Services
 import etherspotService from 'services/etherspot';
 
-type AddressValidator = {
-  validator: (address: string) => boolean,
-  message: string,
-};
+// Constants
+import { CHAIN } from 'constants/chainConstants';
 
 export const validatePin = (pin: string, maxPinLength: number): string => {
   if (pin.length !== maxPinLength) {
@@ -53,17 +50,6 @@ export const validatePinWithConfirmation = (pin: string, confirmationPin: string
   return validatePin(pin, maxPinLength);
 };
 
-/* eslint-disable i18next/no-literal-string */
-const supportedDomains = ['eth', 'crypto', 'zil', 'nft', 'x', 'wallet', 'bitcoin', 'dao', '888', 'coin', 'blockchain'];
-
-export const isEnsName = (input: ?string): boolean => {
-  if (!input || !input.toString().includes('.')) return false;
-
-  const domain = input.split('.').pop().toLowerCase();
-
-  return supportedDomains.includes(domain);
-};
-
 export const isValidAddress = (input: ?string): boolean => {
   if (!input) return false;
 
@@ -76,13 +62,16 @@ export const isValidAddress = (input: ?string): boolean => {
 };
 
 export const isValidAddressOrEnsName = (input: ?string): boolean => {
-  return isEnsName(input) || isValidAddress(input);
+  return isValidAddress(input);
 };
 
-export function useNameValid(chain: Chain, input: ?string): any {
+export function useNameValid(input: ?string, chain?: ?Chain): any {
   const enabled = !!input;
 
-  return useQuery(['useNameValid', input], () => etherspotService.resolveName(chain, input), { enabled, cacheTime: 0 });
+  return useQuery(['useNameValid', input], () => etherspotService.resolveName(chain ?? CHAIN.ETHEREUM, input), {
+    enabled,
+    cacheTime: 0,
+  });
 }
 
 export const supportedAddressValidator = (address: string): boolean => {
@@ -90,25 +79,6 @@ export const supportedAddressValidator = (address: string): boolean => {
     return true;
   }
   return false;
-};
-
-export const addressValidator = (token: string): AddressValidator => {
-  const validators = {
-    [ETH]: {
-      validator: isValidAddressOrEnsName,
-      message: t('auth:error.invalidEthereumAddress.default'),
-    },
-  };
-
-  const validator = validators[token];
-  if (validator) {
-    return validator;
-  }
-
-  return {
-    validator: isValidAddressOrEnsName,
-    message: t('auth:error.invalidAddress.default'),
-  };
 };
 
 export function hasAllValues(object: ?Object) {

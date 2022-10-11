@@ -45,15 +45,12 @@ import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 // Utils
 import { addressesEqual } from 'utils/assets';
 import { filterContacts, getContactKey } from 'utils/contacts';
-import { isValidAddressOrEnsName, useNameValid, isValidAddress } from 'utils/validators';
+import { useNameValid, isValidAddress } from 'utils/validators';
 import { spacing } from 'utils/variables';
 
 // Types
 import type { Contact } from 'models/Contact';
 import type { Chain } from 'models/Chain';
-
-// Constants
-import { CHAIN } from 'constants/chainConstants';
 
 // Local
 import SendWarning from './SendWarning';
@@ -102,7 +99,7 @@ const ContactSelectorModalContent = ({ chain, contacts = [], onSelectContact, qu
 
   const items = filterContacts(contacts, query);
 
-  const validInputQuery = useNameValid(chain ?? CHAIN.ETHEREUM, debounceQuery);
+  const validInputQuery = useNameValid(debounceQuery, chain);
   const { isLoading, data } = validInputQuery;
 
   const getValidationError = () => {
@@ -124,7 +121,7 @@ const ContactSelectorModalContent = ({ chain, contacts = [], onSelectContact, qu
     }
 
     const hasExistingContact = !!filterContacts(contacts, query).length;
-    if (hasExistingContact || !isValidAddressOrEnsName(query)) return null;
+    if (hasExistingContact || !isValidAddress(query)) return null;
 
     return { ethAddress: query, name: '' };
   };
