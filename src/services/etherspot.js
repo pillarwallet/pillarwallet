@@ -778,6 +778,37 @@ export class EtherspotService {
     this.sdk = null;
   }
 
+  async resolveName(chain: Chain, name: ?string): Promise<any | null> {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) return null;
+
+    const chainId = mapChainToChainId(chain);
+
+    const response = await sdk.resolveName({
+      chainId,
+      name,
+    });
+
+    logBreadcrumb('Resolve Name!', 'resolveName response', { response, name });
+
+    if (response.failed) return null;
+
+    if (response.results) {
+      const { ens, fio, unstoppabledomains } = response.results;
+      if (ens?.[0]) {
+        return ens?.[0];
+      }
+      if (fio?.[0]) {
+        return fio?.[0];
+      }
+      if (unstoppabledomains?.[0]) {
+        return unstoppabledomains?.[0];
+      }
+      return null;
+    }
+    return null;
+  }
+
   async getExchangeOffers(
     chain: Chain,
     fromAsset: ?AssetCore,

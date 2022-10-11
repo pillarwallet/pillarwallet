@@ -29,6 +29,7 @@
   "totalValue": "总计 {{value}}",
   "estimatedValue": "≈ {{value}}",
   "fetching": "正在获取价格…",
+  "fetchingAddress": "获取地址...",
   "fetch_failed": "无法获取费率",
   "availableValue": "可用：{{value}}",
   "ofValue": "{{value}} 个",

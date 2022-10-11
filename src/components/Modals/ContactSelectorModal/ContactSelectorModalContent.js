@@ -25,6 +25,7 @@ import Clipboard from '@react-native-community/clipboard';
 import SafeAreaView from 'react-native-safe-area-view';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
+import { useDebounce } from 'use-debounce';
 
 // Actions
 import { addContactAction } from 'actions/contactsActions';
@@ -36,6 +37,7 @@ import ContactDetailsModal from 'components/ContactDetailsModal';
 import ContactListItem from 'components/lists/ContactListItem';
 import Modal from 'components/Modal';
 import SearchBar from 'components/SearchBar';
+import Spinner from 'components/Spinner';
 
 // Selectors
 import { useRootSelector, activeAccountAddressSelector } from 'selectors';
@@ -43,11 +45,15 @@ import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 // Utils
 import { addressesEqual } from 'utils/assets';
 import { filterContacts, getContactKey } from 'utils/contacts';
-import { isValidAddressOrEnsName } from 'utils/validators';
+import { isValidAddressOrEnsName, useNameValid, isValidAddress } from 'utils/validators';
 import { spacing } from 'utils/variables';
 
 // Types
 import type { Contact } from 'models/Contact';
+import type { Chain } from 'models/Chain';
+
+// Constants
+import { CHAIN } from 'constants/chainConstants';
 
 // Local
 import SendWarning from './SendWarning';
@@ -57,6 +63,7 @@ type Props = {|
   onSelectContact: (contact: Contact) => mixed,
   query: string,
   onQueryChange: (query: string) => mixed,
+  chain?: ?Chain,
 |};
 
 /**
@@ -64,13 +71,14 @@ type Props = {|
  *
  * Screen using it should implement it's own header.
  */
-const ContactSelectorModalContent = ({ contacts = [], onSelectContact, query, onQueryChange }: Props) => {
+const ContactSelectorModalContent = ({ chain, contacts = [], onSelectContact, query, onQueryChange }: Props) => {
   const { t, tRoot } = useTranslationWithPrefix('contactSelector');
   const dispatch = useDispatch();
 
   const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
 
   const [warningAccepted, setWarningAccepted] = React.useState(false);
+  const [debounceQuery] = useDebounce(query, 1000);
 
   const handleAddToContactsPress = async (contact: Contact) => {
     Modal.open(() => (
@@ -94,12 +102,15 @@ const ContactSelectorModalContent = ({ contacts = [], onSelectContact, query, on
 
   const items = filterContacts(contacts, query);
 
+  const validInputQuery = useNameValid(chain ?? CHAIN.ETHEREUM, debounceQuery);
+  const { isLoading, data } = validInputQuery;
+
   const getValidationError = () => {
-    if (addressesEqual(query, activeAccountAddress)) {
+    if (addressesEqual(data?.address || query, activeAccountAddress)) {
       return t('error.cannotSendToYourself');
     }
 
-    if (query && !items.length && !isValidAddressOrEnsName(query)) {
+    if (query && !items.length && !isValidAddress(query) && !data) {
       return t('error.incorrectAddress');
     }
 
@@ -107,6 +118,11 @@ const ContactSelectorModalContent = ({ contacts = [], onSelectContact, query, on
   };
 
   const getCustomContact = (): ?Contact => {
+    if (data) {
+      const { address, name } = data;
+      return { ethAddress: address, name };
+    }
+
     const hasExistingContact = !!filterContacts(contacts, query).length;
     if (hasExistingContact || !isValidAddressOrEnsName(query)) return null;
 
@@ -121,8 +137,8 @@ const ContactSelectorModalContent = ({ contacts = [], onSelectContact, query, on
   };
 
   const renderActionButtons = () => {
-    if (errorMessage) {
-      return <Button title={errorMessage} disabled size="large" />;
+    if (errorMessage || isLoading) {
+      return <Button title={isLoading ? tRoot('fetchingAddress') : errorMessage} disabled size="large" />;
     }
 
     if (customContact) {
@@ -163,6 +179,8 @@ const ContactSelectorModalContent = ({ contacts = [], onSelectContact, query, on
         error={!!errorMessage}
         autoFocus
       />
+
+      {isLoading && <Spinner size={40} />}
 
       {renderSendWarning()}
 
