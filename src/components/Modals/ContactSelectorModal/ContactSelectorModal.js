@@ -38,6 +38,7 @@ import { useThemeColors } from 'utils/themes';
 
 // Types
 import type { Contact } from 'models/Contact';
+import type { Chain } from 'models/Chain';
 
 // Local
 import ContactSelectorModalContent from './ContactSelectorModalContent';
@@ -46,9 +47,10 @@ type Props = {|
   contacts?: Contact[],
   onSelectContact?: (contact: ?Contact) => mixed,
   title?: string,
+  chain?: ?Chain,
 |};
 
-const ContactSelectorModal = ({ contacts = [], onSelectContact, title = t('label.sendTo') }: Props) => {
+const ContactSelectorModal = ({ chain, contacts = [], onSelectContact, title = t('label.sendTo') }: Props) => {
   const colors = useThemeColors();
 
   const modalRef = React.useRef(null);
@@ -104,6 +106,7 @@ const ContactSelectorModal = ({ contacts = [], onSelectContact, title = t('label
         />
 
         <ContactSelectorModalContent
+          chain={chain}
           contacts={contacts}
           onSelectContact={handleSelectContact}
           query={query}

@@ -18,19 +18,20 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { utils } from 'ethers';
-import { ETH } from 'constants/assetsConstants';
 import { pipe, decodeETHAddress } from 'utils/common';
 import t from 'translations/translate';
+import { useQuery } from 'react-query';
 import * as tForm from 'tcomb-form-native';
 
 // types
 import type { TranslatedString } from 'models/Translations';
+import type { Chain } from 'models/Chain';
 
+// Services
+import etherspotService from 'services/etherspot';
 
-type AddressValidator = {
-  validator: (address: string) => boolean,
-  message: string,
-};
+// Constants
+import { CHAIN } from 'constants/chainConstants';
 
 export const validatePin = (pin: string, maxPinLength: number): string => {
   if (pin.length !== maxPinLength) {
@@ -49,29 +50,6 @@ export const validatePinWithConfirmation = (pin: string, confirmationPin: string
   return validatePin(pin, maxPinLength);
 };
 
-/* eslint-disable i18next/no-literal-string */
-const supportedDomains = [
-  'eth',
-  'crypto',
-  'zil',
-  'nft',
-  'x',
-  'wallet',
-  'bitcoin',
-  'dao',
-  '888',
-  'coin',
-  'blockchain',
-];
-
-export const isEnsName = (input: ?string): boolean => {
-  if (!input || !input.toString().includes('.')) return false;
-
-  const domain = input.split('.').pop().toLowerCase();
-
-  return supportedDomains.includes(domain);
-};
-
 export const isValidAddress = (input: ?string): boolean => {
   if (!input) return false;
 
@@ -84,33 +62,23 @@ export const isValidAddress = (input: ?string): boolean => {
 };
 
 export const isValidAddressOrEnsName = (input: ?string): boolean => {
-  return isEnsName(input) || isValidAddress(input);
+  return isValidAddress(input);
 };
+
+export function useNameValid(input: ?string, chain?: ?Chain): any {
+  const enabled = !!input;
+
+  return useQuery(['useNameValid', input], () => etherspotService.resolveName(chain ?? CHAIN.ETHEREUM, input), {
+    enabled,
+    cacheTime: 0,
+  });
+}
 
 export const supportedAddressValidator = (address: string): boolean => {
   if (pipe(decodeETHAddress, isValidAddressOrEnsName)(address)) {
     return true;
   }
   return false;
-};
-
-export const addressValidator = (token: string): AddressValidator => {
-  const validators = {
-    [ETH]: {
-      validator: isValidAddressOrEnsName,
-      message: t('auth:error.invalidEthereumAddress.default'),
-    },
-  };
-
-  const validator = validators[token];
-  if (validator) {
-    return validator;
-  }
-
-  return {
-    validator: isValidAddressOrEnsName,
-    message: t('auth:error.invalidAddress.default'),
-  };
 };
 
 export function hasAllValues(object: ?Object) {
@@ -122,7 +90,9 @@ export function hasAllValues(object: ?Object) {
 
 export function isValidEmail(email: string) {
   // eslint-disable-next-line
-  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const re =
+    // eslint-disable-next-line max-len
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(email);
 }
 

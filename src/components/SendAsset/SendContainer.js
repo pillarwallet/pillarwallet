@@ -86,6 +86,7 @@ const SendContainer = ({
   const navigation = useNavigation();
   const { titleShort: chainTitle } = useChainConfig(chain);
   const screenName = getActiveScreenName(navigation);
+  customSelectorProps.chain = chain;
 
   // Bridge props from legacy value input data to modern token value input data
   const selectedToken: ?AssetOption = assetData?.tokenType !== ASSET_TYPES.COLLECTIBLE ? (assetData: any) : null;
