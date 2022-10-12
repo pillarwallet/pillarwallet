@@ -1,0 +1,58 @@
+[
+  {
+    "chain": "polygon",
+    "address": "0x0000000000000000000000000000000000000000",
+    "name": "Matic",
+    "symbol": "MATIC",
+    "decimals": 18,
+    "iconUrl": "https://tokens.1inch.exchange/0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0.png"
+  },
+  {
+    "chain": "polygon",
+    "address": "0xbb5253F7F9A2FFdcA2e7bfDC96570F363bdA1342",
+    "name": "Lithium",
+    "symbol": "LITH",
+    "decimals": 18,
+    "iconUrl": ""
+  },
+  {
+    "chain": "polygon",
+    "address": "0x15F0Ca26781C3852f8166eD2ebce5D18265cceb7",
+    "name": "fDAI Fake Token",
+    "symbol": "fDAI",
+    "decimals": 18,
+    "iconUrl": ""
+  },
+  {
+    "chain": "polygon",
+    "address": "0x79f1E9c420B6b6F75EFAC6ca45BaBf00D51E71EC",
+    "name": "AIRDROP-Test",
+    "symbol": "AIR8",
+    "decimals": 8,
+    "iconUrl": ""
+  },
+  {
+    "chain": "polygon",
+    "address": "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889",
+    "name": "Wrapped Matic",
+    "symbol": "WMATIC",
+    "decimals": 18,
+    "iconUrl": ""
+  },
+  {
+    "chain": "polygon",
+    "address": "0x3C5f6B3Ea031FBD7A762c0b9df2C63fC263FAa29",
+    "name": "DAI",
+    "symbol": "DAI",
+    "decimals": 18,
+    "iconUrl": "https://images.prismic.io/pillar-app/ef740633-e371-48bf-b1b0-44e8e3bf9056_multi-collateral-dai-dai-logo.png?auto=compress,format"
+  },
+  {
+    "chain": "polygon",
+    "address": "0x92334318FB7f002c2ca3a6A146250133108f462b",
+    "name": "Pillar",
+    "symbol": "PLR",
+    "decimals": 18,
+    "iconUrl": "https://images.prismic.io/pillar-app/cb9df2db-9ac7-431d-97c1-8628a494e469_plr-token-logo.png?auto=compress,format"
+  }
+]

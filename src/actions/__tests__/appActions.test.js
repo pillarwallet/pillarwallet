@@ -32,6 +32,10 @@ import localeConfig from 'configs/localeConfig';
 import { getDefaultSupportedUserLanguage } from 'services/localisation/translations';
 import { firebaseRemoteConfig } from 'services/firebase';
 import { TEST_TRANSLATIONS_BASE_URL, TEST_TRANSLATIONS_TIME_STAMP } from 'constants/localesConstants';
+import { SET_CHAIN_SUPPORTED_ASSETS } from 'constants/assetsConstants';
+import { CHAIN } from 'constants/chainConstants';
+
+import { localAssets } from 'actions/assetsActions';
 
 const storage = Storage.getInstance('db');
 
@@ -51,7 +55,6 @@ const initialSessionState = {
 const initialCacheState = {
   cachedUrls: {},
 };
-
 
 const mockedFirebaseConfigGetString = (key) => {
   switch (key) {
@@ -75,11 +78,10 @@ describe('App actions', () => {
   });
 
   const defaultLanguage = getDefaultSupportedUserLanguage();
-  const authTranslationsUrl =
-    `${TEST_TRANSLATIONS_BASE_URL}${defaultLanguage}/auth_${TEST_TRANSLATIONS_TIME_STAMP}.json`;
-  const commonTranslationsUrl =
-    `${TEST_TRANSLATIONS_BASE_URL}${defaultLanguage}/common_${TEST_TRANSLATIONS_TIME_STAMP}.json`;
-
+  // eslint-disable-next-line max-len
+  const authTranslationsUrl = `${TEST_TRANSLATIONS_BASE_URL}${defaultLanguage}/auth_${TEST_TRANSLATIONS_TIME_STAMP}.json`;
+  // eslint-disable-next-line max-len
+  const commonTranslationsUrl = `${TEST_TRANSLATIONS_BASE_URL}${defaultLanguage}/common_${TEST_TRANSLATIONS_TIME_STAMP}.json`;
 
   it(`initAppAndRedirectAction - should trigger the app settings updated
   with any redirection due to the empty storage`, async () => {
@@ -101,12 +103,12 @@ describe('App actions', () => {
           sessionLanguageVersion: TEST_TRANSLATIONS_TIME_STAMP,
         },
       },
+      { type: SET_CHAIN_SUPPORTED_ASSETS, payload: { chain: CHAIN.ETHEREUM, assets: localAssets(CHAIN.ETHEREUM) } },
     ];
 
-    return store.dispatch(initAppAndRedirectAction())
-      .then(() => {
-        const actualActions = store.getActions();
-        expect(actualActions).toEqual(expectedActions);
-      });
+    return store.dispatch(initAppAndRedirectAction()).then(() => {
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expect.arrayContaining(expectedActions));
+    });
   });
 });

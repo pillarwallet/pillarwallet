@@ -31,6 +31,7 @@
   "totalValue": "Total {{value}}",
   "estimatedValue": "≈ {{value}}",
   "fetching": "Fetching rates…",
+  "fetchingAddress": "Fetching address...",
   "fetch_failed": "Could not fetch rates",
   "availableValue": "Available: {{value}}",
   "ofValue": "of {{value}}",

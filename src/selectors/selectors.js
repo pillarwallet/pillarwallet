@@ -96,7 +96,7 @@ export const activeAccountAddressSelector = createSelector(
 export const syntheticAssetsSelector = ({ synthetics }: RootReducerState) => synthetics.data;
 
 export const supportedAssetsPerChainSelector = (root: RootReducerState): AssetsPerChain =>
-  root.assets.supportedAssets ?? EMPTY_OBJECT;
+  root.assets?.supportedAssets ?? EMPTY_OBJECT;
 
 export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>
   get(appSettings, 'data.blockchainNetwork', 'Ethereum');

@@ -36,11 +36,8 @@ import { CHAIN } from 'constants/chainConstants';
 import { SET_FETCHING_TOTAL_BALANCES } from 'constants/totalsBalancesConstants';
 
 // actions
-import {
-  setupAppServicesAction,
-  setupUserAction,
-  setupWalletAction,
-} from 'actions/onboardingActions';
+import { setupAppServicesAction, setupUserAction, setupWalletAction } from 'actions/onboardingActions';
+import { localAssets } from 'actions/assetsActions';
 
 // services
 import etherspotService from 'services/etherspot';
@@ -64,7 +61,6 @@ import {
 
 // types
 import type { EthereumWallet } from 'models/Wallet';
-
 
 global.WebSocket = WebSocket;
 
@@ -102,10 +98,8 @@ const mockBackupStatus: Object = {
 const mockFcmToken = '12x2342x212';
 const randomPrivateKey = '0x09e910621c2e988e9f7f6ffcd7024f54ec1461fa6e86a4b545e9e1fe21c28866';
 
-
 const mockNewArchanovaAccount = { ...mockArchanovaAccount, extra: mockArchanovaAccountApiData };
 const mockNewEtherspotAccount = { ...mockEtherspotAccount, extra: mockEtherspotAccountExtra };
-
 
 const mockAssetsBalancesStore = {
   data: {
@@ -141,11 +135,10 @@ describe('Onboarding actions', () => {
       { type: SET_WALLET_IS_ENCRYPTING, payload: false },
     ];
 
-    return store.dispatch(setupWalletAction())
-      .then(() => {
-        const actualActions = store.getActions();
-        expect(actualActions).toEqual(expectedActions);
-      });
+    return store.dispatch(setupWalletAction()).then(() => {
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expectedActions);
+    });
   });
 
   it(`should expect series of actions with payload to be
@@ -166,11 +159,10 @@ describe('Onboarding actions', () => {
       { type: SET_WALLET_IS_ENCRYPTING, payload: false },
     ];
 
-    return store.dispatch(setupWalletAction())
-      .then(() => {
-        const actualActions = store.getActions();
-        expect(actualActions).toEqual(expectedActions);
-      });
+    return store.dispatch(setupWalletAction()).then(() => {
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expectedActions);
+    });
   });
 
   it(`should expect series of actions with payload to be
@@ -191,11 +183,10 @@ describe('Onboarding actions', () => {
       { type: SET_REGISTERING_USER, payload: false },
     ];
 
-    return store.dispatch(setupUserAction(mockUser.username))
-      .then(() => {
-        const actualActions = store.getActions();
-        expect(actualActions).toEqual(expectedActions);
-      });
+    return store.dispatch(setupUserAction(mockUser.username)).then(() => {
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expectedActions);
+    });
   });
 
   it(`should expect series of actions with payload to be
@@ -215,11 +206,10 @@ describe('Onboarding actions', () => {
       { type: SET_REGISTERING_USER, payload: false },
     ];
 
-    return store.dispatch(setupUserAction(mockUser.username))
-      .then(() => {
-        const actualActions = store.getActions();
-        expect(actualActions).toEqual(expectedActions);
-      });
+    return store.dispatch(setupUserAction(mockUser.username)).then(() => {
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expectedActions);
+    });
   });
 
   it(`should expect series of actions with payload to be
@@ -270,11 +260,10 @@ describe('Onboarding actions', () => {
       // TODO: etherspot history update tba with separate PR
     ];
 
-    return store.dispatch(setupAppServicesAction(randomPrivateKey))
-      .then(() => {
-        const actualActions = store.getActions();
-        expect(actualActions).toEqual(expect.arrayContaining(expectedActions));
-      });
+    return store.dispatch(setupAppServicesAction(randomPrivateKey)).then(() => {
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expect.arrayContaining(expectedActions));
+    });
   });
 
   it(`should expect series of actions with payload to be
@@ -331,11 +320,10 @@ describe('Onboarding actions', () => {
       // TODO: etherspot history update tba with separate PR
     ];
 
-    return store.dispatch(setupAppServicesAction(randomPrivateKey))
-      .then(() => {
-        const actualActions = store.getActions();
-        expect(actualActions).toEqual(expect.arrayContaining(expectedActions));
-      });
+    return store.dispatch(setupAppServicesAction(randomPrivateKey)).then(() => {
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expect.arrayContaining(expectedActions));
+    });
   });
 
   it(`should expect series of actions with payload to be
@@ -347,14 +335,16 @@ describe('Onboarding actions', () => {
         data: mockImportedWallet,
       },
       user: { data: mockUser },
+      assets: { supportedAssets: { ethereum: localAssets(CHAIN.ETHEREUM) } },
     });
 
-    const expectedActions = [];
+    const expectedActions = [
+      { type: SET_CHAIN_SUPPORTED_ASSETS, payload: { chain: CHAIN.ETHEREUM, assets: localAssets(CHAIN.ETHEREUM) } },
+    ];
 
-    return store.dispatch(setupAppServicesAction(randomPrivateKey))
-      .then(() => {
-        const actualActions = store.getActions();
-        expect(actualActions).toEqual(expectedActions);
-      });
+    return store.dispatch(setupAppServicesAction(randomPrivateKey)).then(() => {
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expect.arrayContaining(expectedActions));
+    });
   });
 });
