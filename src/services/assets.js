@@ -38,7 +38,8 @@ import ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM from 'abi/erc721_safeTransferFrom.
 import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
 
 // services
-import { getCoinGeckoTokenPrices, getCoinGeckoPricesByCoinId, chainToCoinGeckoCoinId } from 'services/coinGecko';
+import { getCoinGeckoPricesByCoinId, chainToCoinGeckoCoinId } from 'services/coinGecko';
+import { getExchangeTokenPrices } from 'services/rates';
 
 // types
 import type { Asset } from 'models/Asset';
@@ -286,7 +287,7 @@ export async function getExchangeRates(chain: string, assets: Asset[]): Promise<
   }
 
   // $FlowFixMe
-  let rates = !isEmpty(assets) ? await getCoinGeckoTokenPrices(chain, assets) : {};
+  let rates = !isEmpty(assets) ? await getExchangeTokenPrices(chain, assets) : {};
 
   const nativeAssetAddress = nativeAssetPerChain[chain].address;
   const listHasNativeAsset = assets.some(({ address }) => addressesEqual(address, nativeAssetAddress));
