@@ -33,11 +33,11 @@ import type { Chain } from 'models/Chain';
 //  Local
 import etherspotService from './etherspot';
 
-type CoinGeckoAssetsPrices = {
-  [coinGeckoAssetId: string]: CoinGeckoPriceEntry;
+type ExchangeAssetsPrices = {
+  [coinGeckoAssetId: string]: ExchangeAssetsPrices;
 };
 
-type CoinGeckoPriceEntry = {
+type ExchangePriceEntry = {
   address?: string;
   usd?: number;
   eur?: number;
@@ -45,7 +45,7 @@ type CoinGeckoPriceEntry = {
   eth?: number;
 };
 
-const mapWalletAndExchangePrices = (responseData: CoinGeckoAssetsPrices): RatesByAssetAddress =>
+const mapWalletAndExchangePrices = (responseData: ExchangeAssetsPrices): RatesByAssetAddress =>
   Object.keys(responseData).reduce(
     (mappedResponseData, contractAddress) => ({
       ...mappedResponseData,
@@ -65,10 +65,6 @@ export const getExchangeTokenPrices = async (chain: Chain, assets?: Asset[]): Pr
   try {
     const result = await etherspotService.fetchExchangeRates(chain, assetsContractAddresses);
 
-    console.log('====================================');
-    console.log('RESULT', result.items, mapWalletAndExchangePrices(result?.items), chain);
-    console.log('====================================');
-
     return mapWalletAndExchangePrices(result?.items);
   } catch (error) {
     reportErrorLog('Fetch Rates failed: request error', {
@@ -79,7 +75,7 @@ export const getExchangeTokenPrices = async (chain: Chain, assets?: Asset[]): Pr
   }
 };
 
-const mapPricesToRates = (prices: CoinGeckoPriceEntry | any): Rates | any => {
+const mapPricesToRates = (prices: ExchangePriceEntry | any): Rates | any => {
   if (isEmpty(prices)) return null;
   return {
     USD: prices.usd,
