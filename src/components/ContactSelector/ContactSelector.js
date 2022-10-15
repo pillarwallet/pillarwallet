@@ -73,7 +73,7 @@ const ContactSelector = ({
 
   const handleSelectContact = async (contact: ?Contact) => {
     setIsResolvingContact(true);
-    const resolvedContact = await resolveContact(contact);
+    const resolvedContact = await resolveContact(contact, chain);
     setIsResolvingContact(false);
 
     onSelectContact?.(resolvedContact);

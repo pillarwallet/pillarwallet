@@ -104,7 +104,7 @@ function NIInputField({ itemInfo, chain, value, onChangeValue, txFeeInfo, disabl
     if (addressesEqual(value, activeAccountAddress)) {
       return t('error.cannotSendToYourself');
     }
-    if (value && !isValidAddress(value) && !data) {
+    if (value && !isValidAddress(value) && !data?.[0]) {
       return t('error.incorrectAddress');
     }
     return null;

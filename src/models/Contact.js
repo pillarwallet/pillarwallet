@@ -21,4 +21,9 @@ export type Contact = {
   name: string,
   ethAddress: string,
   ensName?: ?string,
+  zone?: 'UNS' | 'ENS' | 'FIO',
+  address?: string,
+  hash?: string,
+  label?: string,
+  state?: any,
 };
