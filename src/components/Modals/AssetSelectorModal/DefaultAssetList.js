@@ -77,7 +77,9 @@ const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollect
           name={token.name}
           iconUrl={token.iconUrl}
           balance={wrapBigNumberOrNil(token.balance?.balance)}
-          onPress={() => onSelectToken(token)}
+          onPress={async () => {
+            await onSelectToken(token);
+          }}
         />
       );
     }
