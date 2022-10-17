@@ -193,11 +193,13 @@ function buildSection(
 }
 
 function getMatchingTokens(tokens: AssetOption[], chain: Chain) {
+  if (!tokens?.[0]) return [];
   const matchingItems = tokens.filter((item) => item.chain === chain);
   return defaultSortAssetOptions(matchingItems);
 }
 
 function getMatchingCollectibles(collectibles: Collectible[], chain: Chain) {
+  if (!collectibles?.[0]) return [];
   const matchingItems = collectibles.filter((item) => item.chain === chain);
   return defaultSortCollectibles(matchingItems);
 }
