@@ -64,7 +64,7 @@ export const getExchangeTokenPrices = async (chain: Chain, assets: Asset[]): Pro
   try {
     const result = await etherspotService.fetchExchangeRates(chain, assetsContractAddresses);
 
-    return mapWalletAndExchangePrices(result?.items);
+    return mapWalletAndExchangePrices(result.items);
   } catch (error) {
     reportErrorLog('Fetch Rates failed: request error', {
       error,
@@ -78,7 +78,7 @@ export const getNativeTokenPrice = async (chain: Chain): Promise<Rates | any> =>
   try {
     const result = await etherspotService.fetchExchangeRates(chain, [nativeAssetPerChain[chain]?.address]);
 
-    return mapPricesToRates(result?.items[0]);
+    return mapPricesToRates(result.items[0]);
   } catch (error) {
     reportErrorLog('Fetch Rates failed: request error', {
       error,
