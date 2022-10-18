@@ -87,7 +87,12 @@ function TokenListItem({
   const networkName = chain ? config.title : undefined;
 
   return (
-    <Container onPress={onPress} disabled={!onPress} style={style}>
+    <Container
+      onPress={onPress}
+      disabled={!onPress}
+      style={style}
+      hitSlop={{ top: spacing.medium, bottom: spacing.medium }}
+    >
       {!!leftAddOn && <LeftAddOn>{leftAddOn}</LeftAddOn>}
 
       <TokenIcon url={iconUrl} chain={chain} setMarginRight />
