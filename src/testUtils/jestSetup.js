@@ -400,13 +400,9 @@ export const mockSupportedAssets = [
 
 jest.setMock('configs/localeConfig', localeConfigMock);
 
-jest.setMock('services/coinGecko', {
-  getCoinGeckoPricesByCoinId: () => Promise.resolve(mockEtherExchangeRates),
-  chainToCoinGeckoCoinId: {},
-});
-
 jest.setMock('services/rates', {
-  getExchangeTokenPrices: () => Promise.resolve(mockTokensExchangeRates),
+  getExchangeTokenPrices: () => Promise.resolve(mockExchangeRates),
+  getNativeTokenPrice: () => Promise.resolve(mockEtherExchangeRates),
 });
 
 const getMockedTranslations = (url) => {

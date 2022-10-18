@@ -24,7 +24,6 @@ import { isEmpty } from 'lodash';
 import { reportErrorLog, addressAsKey } from 'utils/common';
 import { nativeAssetPerChain } from 'utils/chains';
 import { addressesEqual } from 'utils/assets';
-
 // Types
 import type { Asset } from 'models/Asset';
 import type { Rates, RatesByAssetAddress } from 'models/Rates';
@@ -54,7 +53,7 @@ const mapWalletAndExchangePrices = (responseData: ExchangeAssetsPrices): RatesBy
     {},
   );
 
-export const getExchangeTokenPrices = async (chain: Chain, assets?: Asset[]): Promise<RatesByAssetAddress | any> => {
+export const getExchangeTokenPrices = async (chain: Chain, assets: Asset[]): Promise<RatesByAssetAddress | any> => {
   // native asset not always fit into token price endpoint, it is fetched with other API call
   const assetsWithoutNativeAsset = assets.filter(
     ({ address }) => !addressesEqual(address, nativeAssetPerChain[chain].address),
@@ -70,6 +69,20 @@ export const getExchangeTokenPrices = async (chain: Chain, assets?: Asset[]): Pr
     reportErrorLog('Fetch Rates failed: request error', {
       error,
       assetsContractAddresses,
+    });
+    return null;
+  }
+};
+
+export const getNativeTokenPrice = async (chain: Chain): Promise<Rates | any> => {
+  try {
+    const result = await etherspotService.fetchExchangeRates(chain, [nativeAssetPerChain[chain]?.address]);
+
+    return mapPricesToRates(result?.items[0]);
+  } catch (error) {
+    reportErrorLog('Fetch Rates failed: request error', {
+      error,
+      chain,
     });
     return null;
   }
