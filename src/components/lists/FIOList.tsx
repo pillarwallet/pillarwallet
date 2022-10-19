@@ -43,14 +43,14 @@ type Props = {
 };
 
 function FIOList({ selectedContact, data, onSelect, style }: Props) {
-  if (!data || data?.length === 1) {
+  if (!data || data.length === 1) {
     return null;
   }
 
-  const renderItem = (item) => {
+  const renderItem = (item, index) => {
     const { label, address, zone } = item;
     return (
-      <Container onPress={() => onSelect(item)} style={style}>
+      <Container key={'___list' + index + label} onPress={() => onSelect(item)} style={style}>
         <RadioButton visible={selectedContact?.address === address} />
         <TitleContainer>
           <Title numberOfLines={1}>{zone === 'FIO' ? address : label}</Title>
@@ -59,7 +59,7 @@ function FIOList({ selectedContact, data, onSelect, style }: Props) {
     );
   };
 
-  return <>{data?.map(renderItem)}</>;
+  return <>{data.map(renderItem)}</>;
 }
 
 export default FIOList;

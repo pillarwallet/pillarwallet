@@ -70,7 +70,7 @@ export const resolveContact = async (
     return contact;
   }
 
-  if (contact?.zone) {
+  if (contact.zone) {
     const resolvedAddress = await resolveEnsName(contact.ethAddress);
 
     if (!resolvedAddress && showNotificationOption) {
