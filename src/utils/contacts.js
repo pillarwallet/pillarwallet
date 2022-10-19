@@ -31,7 +31,6 @@ import etherspotService from 'services/etherspot';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
-import { FIO } from 'constants/assetsConstants';
 
 // utils
 import { resolveEnsName } from './common';
@@ -72,8 +71,6 @@ export const resolveContact = async (
   }
 
   if (contact?.zone) {
-    if (contact?.zone === FIO) return contact;
-
     const resolvedAddress = await resolveEnsName(contact.ethAddress);
 
     if (!resolvedAddress && showNotificationOption) {

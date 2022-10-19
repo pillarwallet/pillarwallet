@@ -48,9 +48,6 @@ import { getThemeColors } from 'utils/themes';
 import { useNameValid, isValidAddress } from 'utils/validators';
 import { fontStyles, spacing } from 'utils/variables';
 
-// Constants
-import { FIO } from 'constants/assetsConstants';
-
 // Types
 import type { Contact } from 'models/Contact';
 import type { Chain } from 'models/Chain';
@@ -83,7 +80,6 @@ const ContactDetailsModal = ({ chain, contact, onSave, title, contacts, showQRSc
       .required(t('error.emptyAddress'))
       .test('isValid', t('error.invalid.address'), (value) => {
         setQuery(value);
-        if (contact?.zone === FIO) return true;
         return isValidAddress(value) && !data?.[0];
       })
       .test(
