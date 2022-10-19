@@ -809,13 +809,13 @@ export class EtherspotService {
       if (response.results) {
         const { ens, fio, unstoppabledomains } = response.results;
         if (ens?.[0]) {
-          return ens?.[0];
+          return ens;
         }
         if (fio?.[0]) {
-          return fio?.[0];
+          return fio;
         }
         if (unstoppabledomains?.[0]) {
-          return unstoppabledomains?.[0];
+          return unstoppabledomains;
         }
         return null;
       }

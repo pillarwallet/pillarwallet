@@ -24,6 +24,7 @@ import Toast from 'components/Toast';
 
 // types
 import type { Contact } from 'models/Contact';
+import type { Chain } from 'models/Chain';
 
 // Services
 import etherspotService from 'services/etherspot';
@@ -56,18 +57,20 @@ type ResolveContactOptions = {|
  * @returns {Contact} with `ethAddress` being correct hex address`.
  * @returns {null} if ENS name resultion fails or `ethAddress` is neither valid address nor valid ENS name.
  */
-export const resolveContact = async (contact: ?Contact, options?: ResolveContactOptions): Promise<?Contact> => {
+export const resolveContact = async (
+  contact: ?Contact,
+  chain: ?Chain,
+  options?: ResolveContactOptions,
+): Promise<?Contact> => {
   if (!contact) return null;
 
   const showNotificationOption = options?.showNotification ?? true;
-
-  const recivedENSInfo = await etherspotService.resolveName(CHAIN.ETHEREUM, contact.ethAddress);
 
   if (isValidAddress(contact.ethAddress)) {
     return contact;
   }
 
-  if (recivedENSInfo) {
+  if (contact.zone) {
     const resolvedAddress = await resolveEnsName(contact.ethAddress);
 
     if (!resolvedAddress && showNotificationOption) {
@@ -91,7 +94,7 @@ export const getReceiverWithEnsName = async (
 
   const recivedENSInfo = await etherspotService.resolveName(CHAIN.ETHEREUM, ethAddressOrEnsName);
 
-  if (recivedENSInfo) {
+  if (recivedENSInfo?.[0]) {
     const resolvedAddress = await resolveEnsName(ethAddressOrEnsName);
 
     if (!resolvedAddress && showNotification) {
