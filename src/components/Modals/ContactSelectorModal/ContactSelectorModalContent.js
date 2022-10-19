@@ -35,6 +35,7 @@ import { Spacing } from 'components/layout/Layout';
 import Button from 'components/core/Button';
 import ContactDetailsModal from 'components/ContactDetailsModal';
 import ContactListItem from 'components/lists/ContactListItem';
+import FIOList from 'components/lists/FIOList';
 import Modal from 'components/Modal';
 import SearchBar from 'components/SearchBar';
 import Spinner from 'components/Spinner';
@@ -75,11 +76,20 @@ const ContactSelectorModalContent = ({ chain, contacts = [], onSelectContact, qu
   const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
 
   const [warningAccepted, setWarningAccepted] = React.useState(false);
+  const [selectedContact, setContact] = React.useState<Contact | null>(null);
   const [debounceQuery] = useDebounce(query, 1000);
+
+  const validInputQuery = useNameValid(debounceQuery, chain);
+  const { isLoading, data } = validInputQuery;
+
+  React.useEffect(() => {
+    setContact(data?.[0]);
+  }, [data]);
 
   const handleAddToContactsPress = async (contact: Contact) => {
     Modal.open(() => (
       <ContactDetailsModal
+        chain={chain}
         title={tRoot('title.addNewContact')}
         contact={contact}
         contacts={contacts}
@@ -99,15 +109,12 @@ const ContactSelectorModalContent = ({ chain, contacts = [], onSelectContact, qu
 
   const items = filterContacts(contacts, query);
 
-  const validInputQuery = useNameValid(debounceQuery, chain);
-  const { isLoading, data } = validInputQuery;
-
   const getValidationError = () => {
-    if (addressesEqual(data?.address || query, activeAccountAddress)) {
+    if (addressesEqual(selectedContact?.address || query, activeAccountAddress)) {
       return t('error.cannotSendToYourself');
     }
 
-    if (query && !items.length && !isValidAddress(query) && !data) {
+    if (query && !items.length && !isValidAddress(query) && !selectedContact) {
       return t('error.incorrectAddress');
     }
 
@@ -115,9 +122,9 @@ const ContactSelectorModalContent = ({ chain, contacts = [], onSelectContact, qu
   };
 
   const getCustomContact = (): ?Contact => {
-    if (data) {
-      const { address, name } = data;
-      return { ethAddress: address, name };
+    if (selectedContact) {
+      const { address, ethAddress, ...rest } = selectedContact;
+      return { ...rest, ethAddress: ethAddress ?? address };
     }
 
     const hasExistingContact = !!filterContacts(contacts, query).length;
@@ -178,6 +185,8 @@ const ContactSelectorModalContent = ({ chain, contacts = [], onSelectContact, qu
       />
 
       {isLoading && <Spinner size={40} />}
+
+      <FIOList data={data} selectedContact={selectedContact} onSelect={setContact} />
 
       {renderSendWarning()}
 

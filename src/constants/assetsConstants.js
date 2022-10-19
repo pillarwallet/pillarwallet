@@ -60,6 +60,7 @@ const ZRX = 'ZRX';
 export const TUSD = 'TUSD';
 export const mUSD = 'mUSD';
 const YFI = 'YFI';
+export const FIO = 'FIO';
 
 // BTC tokens
 export const BTC = 'BTC';

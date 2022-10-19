@@ -50,6 +50,7 @@ import { fontStyles, spacing } from 'utils/variables';
 
 // Types
 import type { Contact } from 'models/Contact';
+import type { Chain } from 'models/Chain';
 
 type Props = {|
   onSave: (contact: Contact) => void,
@@ -58,6 +59,7 @@ type Props = {|
   contacts: Contact[],
   showQRScanner?: boolean,
   onModalHide?: () => void,
+  chain?: ?Chain,
 |};
 
 type FormData = {|
@@ -65,11 +67,11 @@ type FormData = {|
   name: string,
 |};
 
-const ContactDetailsModal = ({ contact, onSave, title, contacts, showQRScanner, onModalHide }: Props) => {
+const ContactDetailsModal = ({ chain, contact, onSave, title, contacts, showQRScanner, onModalHide }: Props) => {
   const modalRef = useRef();
   const [query, setQuery] = useState('');
 
-  const validInputQuery = useNameValid(query);
+  const validInputQuery = useNameValid(query, chain);
   const { data } = validInputQuery;
 
   const formSchema = yup.object().shape({
@@ -78,7 +80,7 @@ const ContactDetailsModal = ({ contact, onSave, title, contacts, showQRScanner, 
       .required(t('error.emptyAddress'))
       .test('isValid', t('error.invalid.address'), (value) => {
         setQuery(value);
-        return isValidAddress(value) && !data;
+        return isValidAddress(value) && !data?.[0];
       })
       .test(
         'alreadyExists',

@@ -92,7 +92,7 @@ const ContactsList = () => {
 
   const handleQueryChange = (value: string) => {
     setQuery(value);
-    const isValid = !isValidAddress(value) && !data && !filterContacts(contacts, value).length;
+    const isValid = !isValidAddress(value) && !data?.[0] && !filterContacts(contacts, value).length;
     setCustomAddressContact(isValid ? { ethAddress: value, name: '' } : null);
   };
 
