@@ -171,7 +171,7 @@ const ContactsList = () => {
       <SearchBar
         query={query}
         onQueryChange={handleQueryChange}
-        placeholder={t('label.addressEnsUsername')}
+        placeholder={t('label.addressSupportedNames')}
         autoFocus
       />
 
