@@ -179,7 +179,7 @@ const ContactSelectorModalContent = ({ chain, contacts = [], onSelectContact, qu
       <SearchBar
         query={query}
         onQueryChange={onQueryChange}
-        placeholder={tRoot('label.addressEnsUsername')}
+        placeholder={tRoot('label.addressSupportedNames')}
         error={!!errorMessage}
         autoFocus
       />

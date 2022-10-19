@@ -224,6 +224,7 @@
     "sendTo": "Send to",
     "walletAddress": "Wallet address",
     "addressEnsUsername": "Address, ENS, Unstoppable Domains, FIO",
+    "addressSupportedNames": "Address, ENS, Unstoppable Domains, FIO",
     "walletNotDeployed": "Wallet is not deployed",
     "tokens": "Tokens",
     "collectibles": "NFTs",
