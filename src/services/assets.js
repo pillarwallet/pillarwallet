@@ -24,7 +24,6 @@ import isEmpty from 'lodash.isempty';
 // constants
 import { ETH } from 'constants/assetsConstants';
 import { ERC721_TRANSFER_METHODS, ERROR_TYPE } from 'constants/transactionsConstants';
-import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { getEthereumProvider, parseTokenBigNumberAmount, logBreadcrumb, addressAsKey } from 'utils/common';
@@ -38,7 +37,7 @@ import ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM from 'abi/erc721_safeTransferFrom.
 import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
 
 // services
-import { getCoinGeckoTokenPrices, getCoinGeckoPricesByCoinId, chainToCoinGeckoCoinId } from 'services/coinGecko';
+import { getExchangeTokenPrices, getNativeTokenPrice } from 'services/rates';
 
 // types
 import type { Asset } from 'models/Asset';
@@ -286,28 +285,17 @@ export async function getExchangeRates(chain: string, assets: Asset[]): Promise<
   }
 
   // $FlowFixMe
-  let rates = !isEmpty(assets) ? await getCoinGeckoTokenPrices(chain, assets) : {};
+  let rates = !isEmpty(assets) ? await getExchangeTokenPrices(chain, assets) : {};
 
   const nativeAssetAddress = nativeAssetPerChain[chain].address;
   const listHasNativeAsset = assets.some(({ address }) => addressesEqual(address, nativeAssetAddress));
 
   // if empty assets still proceed to fetch native token rate for deployment calculations
   if (listHasNativeAsset || isEmpty(assets)) {
-    const coinId = chainToCoinGeckoCoinId[chain];
-    const nativeAssetPrice = await getCoinGeckoPricesByCoinId(coinId);
+    const nativeAssetPrice = await getNativeTokenPrice(chain);
     if (!isEmpty(nativeAssetPrice)) {
       // $FlowFixMe
       rates = { ...rates, [addressAsKey(nativeAssetAddress)]: nativeAssetPrice };
-    }
-  }
-
-  const isEthOptimism = assets?.find((item) => item.chain === CHAIN.OPTIMISM && item.symbol === ETH);
-
-  if (isEthOptimism) {
-    const coinId = chainToCoinGeckoCoinId[CHAIN.ETHEREUM];
-    const nativeAssetPrice = await getCoinGeckoPricesByCoinId(coinId);
-    if (!isEmpty(nativeAssetPrice)) {
-      rates = { ...rates, [addressAsKey(isEthOptimism.address)]: nativeAssetPrice };
     }
   }
 

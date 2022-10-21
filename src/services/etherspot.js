@@ -36,6 +36,7 @@ import {
   Currencies as EtherspotCurrencies,
   AccountStates,
   CrossChainServiceProvider,
+  RateData,
 } from 'etherspot';
 import { map } from 'rxjs/operators';
 import type { Subscription } from 'rxjs';
@@ -199,6 +200,17 @@ export class EtherspotService {
     }
 
     return sdk;
+  }
+
+  async fetchExchangeRates(chain: Chain, assetsAddresses: string[]): Promise<RateData> {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) return null;
+
+    const chainId = mapChainToChainId(chain);
+
+    const rateData = await sdk.fetchExchangeRates({ chainId, tokens: assetsAddresses });
+
+    return rateData;
   }
 
   getAccountAddress(chain: Chain): ?string {
