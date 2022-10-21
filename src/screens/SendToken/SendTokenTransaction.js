@@ -54,6 +54,7 @@ import { CHAIN } from 'constants/chainConstants';
 
 // Actions
 import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
+import { fetchAllAccountsAssetsBalancesAction } from 'actions/assetsActions';
 
 // Types
 import type { TransactionPayload } from 'models/Transaction';
@@ -66,7 +67,6 @@ import etherspotService from 'services/etherspot';
 
 const animationSuccess = require('assets/animations/transactionSentConfirmationAnimation.json');
 const animationFailure = require('assets/animations/transactionFailureAnimation.json');
-
 
 const getTransactionErrorMessage = (error: ?string): string => {
   if (error) {
@@ -131,10 +131,11 @@ function SendTokenTransaction() {
         setisResolvingHash(true);
         setHash(await etherspotService.waitForTransactionHashFromSubmittedBatch(chain, batchHash));
         setisResolvingHash(false);
+        dispatch(fetchAllAccountsAssetsBalancesAction());
       }
     };
     handleHashChange();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [transactionPayload]);
 
   const viewOnBlockchain = () => {
@@ -147,11 +148,7 @@ function SendTokenTransaction() {
 
     if (isLiquidityPoolsTransactionTag(txTag)) {
       let toastMessage = null;
-      const {
-        extra: {
-          amount, pool,
-        } = {},
-      } = transactionPayload;
+      const { extra: { amount, pool } = {} } = transactionPayload;
       navigation.navigate(LIQUIDITY_POOL_DASHBOARD, { pool });
       if (txTag === LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION) {
         toastMessage = t('toast.liquidityPoolsAddLiquidity', { value: amount, token: pool.symbol });
@@ -203,17 +200,18 @@ function SendTokenTransaction() {
   };
 
   const renderSuccess = () => {
-    const successButtonText = transactionType === TRANSACTION_TYPE.EXCHANGE
-      ? t('button.finish')
-      : t('button.magic', { exclamation: true });
+    const successButtonText =
+      transactionType === TRANSACTION_TYPE.EXCHANGE ? t('button.finish') : t('button.magic', { exclamation: true });
     return (
       <ButtonContainer>
         <ButtonWrapper>
           <Button onPress={handleDismissal} title={successButtonText} />
         </ButtonWrapper>
-        {isResolvingHash
-        ? <LoadingSpinner size={25} />
-        : <Button variant="text" title={t('button.viewOnBlockchain')} onPress={viewOnBlockchain} />}
+        {isResolvingHash ? (
+          <LoadingSpinner size={25} />
+        ) : (
+          <Button variant="text" title={t('button.viewOnBlockchain')} onPress={viewOnBlockchain} />
+        )}
       </ButtonContainer>
     );
   };
