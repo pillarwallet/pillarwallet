@@ -25,7 +25,7 @@ import { useTranslation } from 'translations/translate';
 import { ENSNodeStates } from 'etherspot';
 
 // Actions
-import { fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
+import { fetchAllAccountsAssetsBalancesAction } from 'actions/assetsActions';
 import { refreshEtherspotAccountsAction } from 'actions/etherspotActions';
 
 // Components
@@ -119,7 +119,7 @@ function Home() {
   const totalBalance = sumRecord(balancePerCategory);
   const screenName = getActiveScreenName(navigation);
 
-  const isRefreshing = useRootSelector(({ totalBalances }) => !!totalBalances.isFetching);
+  const isRefreshing = useRootSelector(({ assetsBalances }) => !!assetsBalances.isFetching);
 
   React.useEffect(() => {
     dispatch(fetchNativeIntegration());
@@ -162,8 +162,8 @@ function Home() {
   }, [canSwitchAccount, accountSwitchTooltipDismissed]);
 
   const onRefresh = () => {
+    dispatch(fetchAllAccountsAssetsBalancesAction());
     dispatch(refreshEtherspotAccountsAction());
-    dispatch(fetchAllAccountsTotalBalancesAction());
   };
 
   const onBalanceClick = async () => {
