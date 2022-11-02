@@ -38,6 +38,8 @@ export const XDAI = 'xDAI';
 export const AVAX = 'AVAX';
 export const OP = 'OP';
 
+export const NFT = 'NFT';
+
 export const SNX = 'SNX';
 export const RSPT = 'RSPT';
 export const WETH = 'WETH';
