@@ -152,6 +152,12 @@ export function useAssetCategoriesConfig(): { [key: AssetCategory]: AssetCategor
       iconName: 'collectible',
       chartColor: '#e91e63',
     },
+    [ASSET_CATEGORY.APPS]: {
+      title: t('home.apps.title'),
+      titleShort: t('home.apps.title'),
+      iconName: 'investment',
+      chartColor: '#5727b0',
+    },
     [ASSET_CATEGORY.REWARDS]: {
       title: t('assetCategories.rewards'),
       titleShort: t('assetCategoriesShort.rewards'),
