@@ -135,6 +135,7 @@ export const ASSET_CATEGORY = {
   INVESTMENTS: ('investments': 'investments'),
   LIQUIDITY_POOLS: ('liquidityPools': 'liquidityPools'),
   COLLECTIBLES: ('collectibles': 'collectibles'),
+  APPS: ('apps': 'apps'),
   REWARDS: ('rewards': 'rewards'),
 };
 

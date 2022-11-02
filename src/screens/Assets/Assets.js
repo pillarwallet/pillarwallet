@@ -38,11 +38,8 @@ import type { AssetCategory } from 'models/AssetCategory';
 
 // Local
 import WalletTab from './wallet/WalletTab';
-import DepositsTab from './deposits/DepositsTab';
 import InvestmentsTab from './investments/InvestmentsTab';
-import LiquidityPoolsTab from './liquidityPools/LiquidityPoolsTab';
 import CollectiblesTab from './collectibles/CollectiblesTab';
-
 
 function Assets() {
   const navigation = useNavigation();
@@ -51,9 +48,9 @@ function Assets() {
 
   const items = [
     { key: CATEGORY.WALLET, title: config[CATEGORY.WALLET].title, component: WalletTab },
-    { key: CATEGORY.DEPOSITS, title: config[CATEGORY.DEPOSITS].title, component: DepositsTab },
-    { key: CATEGORY.INVESTMENTS, title: config[CATEGORY.INVESTMENTS].title, component: InvestmentsTab },
-    { key: CATEGORY.LIQUIDITY_POOLS, title: config[CATEGORY.LIQUIDITY_POOLS].title, component: LiquidityPoolsTab },
+    // { key: CATEGORY.DEPOSITS, title: config[CATEGORY.DEPOSITS].title, component: DepositsTab },
+    // { key: CATEGORY.INVESTMENTS, title: config[CATEGORY.INVESTMENTS].title, component: InvestmentsTab },
+    { key: CATEGORY.APPS, title: config[CATEGORY.APPS].title, component: InvestmentsTab },
     // Temporarily hide rewards tab until rewards fetching is implemented
     // { key: CATEGORY.REWARDS, title: config[CATEGORY.REWARDS].title, component: RewardsTab },
     { key: CATEGORY.COLLECTIBLES, title: config[CATEGORY.COLLECTIBLES].title, component: CollectiblesTab },
@@ -66,12 +63,8 @@ function Assets() {
 
   return (
     <Container>
-      <HeaderBlock
-        centerItems={[{ title: t('title.assets') }]}
-        navigation={navigation}
-        noPaddingTop
-      />
-      <TabView items={items} tabIndex={tabIndex} onTabIndexChange={setTabIndex} scrollEnabled />
+      <HeaderBlock centerItems={[{ title: t('title.assets') }]} navigation={navigation} noPaddingTop />
+      <TabView items={items} tabIndex={tabIndex} onTabIndexChange={setTabIndex} />
     </Container>
   );
 }
