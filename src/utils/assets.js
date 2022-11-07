@@ -38,6 +38,7 @@ import { nativeAssetPerChain } from 'utils/chains';
 import { getAssetRateInFiat } from 'utils/rates';
 import { caseInsensitiveIncludes } from 'utils/strings';
 import { getGasAddress } from 'utils/transactions';
+import { useFromAssets } from 'screens/Bridge/Exchange-CrossChain/utils';
 
 // types
 import type {
@@ -56,6 +57,8 @@ import type { Currency, RatesByAssetAddress } from 'models/Rates';
 import type { Value } from 'models/Value';
 import { omitNilProps } from 'utils/object';
 
+// Selector
+import { useRootSelector, stableTokensSelector } from 'selectors';
 
 const sortAssetsFn = (a: Asset, b: Asset): number => {
   return a.symbol.localeCompare(b.symbol);
@@ -65,15 +68,17 @@ export const sortAssetsArray = (assets: Asset[]): Asset[] => {
   return assets.sort(sortAssetsFn);
 };
 
-export const transformBalancesToObject = (
-  balancesArray: WalletAssetBalance[] = [],
-): WalletAssetsBalances => balancesArray.reduce((memo, balance) => ({
-  ...memo,
-  [addressAsKey(balance.address)]: balance,
-}), {});
+export const transformBalancesToObject = (balancesArray: WalletAssetBalance[] = []): WalletAssetsBalances =>
+  balancesArray.reduce(
+    (memo, balance) => ({
+      ...memo,
+      [addressAsKey(balance.address)]: balance,
+    }),
+    {},
+  );
 
 export const getAssetsAsList = (assetsObject: AssetByAddress): Asset[] => {
-  return Object.keys(assetsObject).map(id => assetsObject[id]);
+  return Object.keys(assetsObject).map((id) => assetsObject[id]);
 };
 
 export const sortAssets = (assets: AssetByAddress): Asset[] => {
@@ -184,7 +189,7 @@ export const addressesEqual = (address1: ?string, address2: ?string): boolean =>
 
 /** Checks if address list contains given address. Similar to `Array.includes`.  */
 export const addressesInclude = (addresses: string[], addressToFind: ?string): boolean => {
-  return addresses.some(item => isCaseInsensitiveMatch(item, addressToFind));
+  return addresses.some((item) => isCaseInsensitiveMatch(item, addressToFind));
 };
 
 export const isSupportedAssetAddress = (supportedAssets: Asset[], addressToCheck: ?string): boolean => {
@@ -216,8 +221,9 @@ export const getBalanceInFiat = (
   assetAddress: string,
 ): number => {
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  const assetBalanceInFiat = assetBalance ?
-    parseFloat(assetBalance.toString()) * getAssetRateInFiat(rates, assetAddress, fiatCurrency) : 0;
+  const assetBalanceInFiat = assetBalance
+    ? parseFloat(assetBalance.toString()) * getAssetRateInFiat(rates, assetAddress, fiatCurrency)
+    : 0;
   return assetBalanceInFiat;
 };
 
@@ -343,34 +349,41 @@ export const getAssetOptionSortPriority = ({ symbol, balance, imageUrl }: AssetO
 
 type CollectibleMatch = { contractAddress: string, id: string };
 
-export const isMatchingCollectible = (
-  a: CollectibleMatch,
-  b: CollectibleMatch,
-) => a.contractAddress
-  && addressesEqual(a.contractAddress, b.contractAddress)
-  && a.id
-  && a.id === b.id;
+export const isMatchingCollectible = (a: CollectibleMatch, b: CollectibleMatch) =>
+  a.contractAddress && addressesEqual(a.contractAddress, b.contractAddress) && a.id && a.id === b.id;
 
 export const mapWalletAssetsBalancesIntoAssetsByAddress = (
   walletAssetsBalances: WalletAssetsBalances,
   chainSupportedAssets: Asset[],
 ): AssetByAddress => {
-  const assetsByAddress = mapValues(
-    walletAssetsBalances,
-    ({ address }: WalletAssetBalance) => findAssetByAddress(chainSupportedAssets, address),
+  const assetsByAddress = mapValues(walletAssetsBalances, ({ address }: WalletAssetBalance) =>
+    findAssetByAddress(chainSupportedAssets, address),
   );
 
   // removes assets that were not found / no longer supported
   return omitNilProps(assetsByAddress);
 };
 
-export const sortSupportedAssets = (
-  supportedChainAssets: AssetsPerChain,
-) => mapValues(supportedChainAssets, sortAssetsArray);
+export const sortSupportedAssets = (supportedChainAssets: AssetsPerChain) =>
+  mapValues(supportedChainAssets, sortAssetsArray);
 
 export const isNativeAsset = (chain: ?Chain, assetAddress: ?string) => {
   if (!chain || !assetAddress) return false;
 
   const nativeAsset = nativeAssetPerChain[chain];
   return addressesEqual(assetAddress, nativeAsset?.address);
+};
+
+export const useStableAssets = () => {
+  const listOfStableToken = useRootSelector(stableTokensSelector);
+  const assets: any = useFromAssets();
+
+  if (!listOfStableToken || !assets?.[0]) return null;
+
+  const listOfSymbol = listOfStableToken.map((token) => token.symbol);
+  const listOfAddress = listOfStableToken.map((token) => token.address);
+
+  const tokens = assets.filter((token) => listOfSymbol.includes(token.symbol) && listOfAddress.includes(token.address));
+
+  return { tokens };
 };

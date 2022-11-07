@@ -63,7 +63,7 @@ import { mapToEthereumTransactions } from 'utils/transactions';
 import { getCaptureFee } from 'utils/exchange';
 
 // constants
-import { ETH, ADDRESS_ZERO, ROOT_TOKEN_ADDRESS } from 'constants/assetsConstants';
+import { ETH, ADDRESS_ZERO, ROOT_TOKEN_ADDRESS, CMC_STABLE_COINS } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 import { PROJECT_KEY } from 'constants/etherspotConstants';
@@ -730,6 +730,15 @@ export class EtherspotService {
         accountAddress,
         currencySymbol,
       });
+      return null;
+    }
+  }
+
+  async getStableAssets() {
+    try {
+      return await this.sdk.getTokenListTokens({ name: CMC_STABLE_COINS });
+    } catch (e) {
+      reportErrorLog('EtherspotService getStableAssets failed', { error: e });
       return null;
     }
   }

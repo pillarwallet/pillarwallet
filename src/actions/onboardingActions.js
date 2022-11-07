@@ -410,6 +410,9 @@ export const setupAppServicesAction = (privateKey: ?string) => {
 
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching loadRemoteConfigWithUserPropertiesAction');
     dispatch(loadRemoteConfigWithUserPropertiesAction());
+
+    // logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching setStableTokens');
+    // await dispatch(setStableTokens());
   };
 };
 
