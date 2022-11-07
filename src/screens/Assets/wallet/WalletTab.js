@@ -19,17 +19,14 @@
 */
 
 import * as React from 'react';
-import { SectionList } from 'react-native';
+import { FlatList } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import BalanceView from 'components/BalanceView';
-import ChainListHeader from 'components/lists/ChainListHeader';
-import ChainListFooter from 'components/lists/ChainListFooter';
 import FiatChangeView from 'components/display/FiatChangeView';
 import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
@@ -51,7 +48,6 @@ import {
   activeAccountAddressSelector,
 } from 'selectors';
 import { useIsPillarPaySupported } from 'selectors/archanova';
-import { useSupportedChains } from 'selectors/chains';
 
 // Utils
 import { findAssetByAddress } from 'utils/assets';
@@ -59,28 +55,32 @@ import { spacing } from 'utils/variables';
 import { isKeyBasedAccount } from 'utils/accounts';
 import { getActiveScreenName } from 'utils/navigation';
 
-// Types
-import type { SectionBase } from 'utils/types/react-native';
-import type { Chain } from 'models/Chain';
-
 // Local
 import PillarPaySummary from '../components/PillarPaySummary';
 import WalletListItem from './WalletListItem';
-import { type FlagPerChain, useExpandItemsPerChain, buildAssetDataNavigationParam } from '../utils';
-import { type WalletItem, useWalletTotalBalance, useWalletBalancePerChain, useWalletAssetsPerChain } from './selectors';
+import { buildAssetDataNavigationParam } from '../utils';
+import { type WalletItem, useWalletTotalBalance, useWalletAssetsPerChain } from './selectors';
 
 function WalletTab() {
   const { tRoot } = useTranslationWithPrefix('assets.wallet');
   const navigation = useNavigation();
   const safeArea = useSafeAreaInsets();
 
-  const initialChain: ?Chain = navigation.getParam('chain');
-  const { expandItemsPerChain, toggleExpandItems } = useExpandItemsPerChain(initialChain);
-
   const totalBalance = useWalletTotalBalance();
-  const sections = useSectionData(expandItemsPerChain);
   const currency = useFiatCurrency();
   const screenName = getActiveScreenName(navigation);
+
+  const assetsPerChain = useWalletAssetsPerChain();
+
+  const sortTokensList = React.useMemo(() => {
+    const arr = [];
+    const assets = Object.values(assetsPerChain);
+
+    assets?.forEach((item: any) => {
+      arr.push(...item);
+    });
+    return arr;
+  }, [assetsPerChain]);
 
   const supportedAssets = useRootSelector(supportedAssetsPerChainSelector);
 
@@ -121,16 +121,6 @@ function WalletTab() {
     );
   };
 
-  const renderSectionHeader = ({ chain, balance }: Section) => {
-    return (
-      <ChainListHeader
-        chain={chain}
-        balance={balance}
-        isExpanded={expandItemsPerChain[chain] ?? null}
-        onPress={() => toggleExpandItems(chain)}
-      />
-    );
-  };
 
   const renderItem = (item: WalletItem) => {
     return (
@@ -176,10 +166,9 @@ function WalletTab() {
 
   return (
     <Container>
-      <SectionList
-        sections={sections}
-        renderSectionHeader={({ section }) => renderSectionHeader(section)}
-        renderSectionFooter={() => <ChainListFooter />}
+
+      <FlatList
+        data={sortTokensList}
         renderItem={({ item }) => renderItem(item)}
         ListHeaderComponent={renderListHeader()}
         contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
@@ -192,24 +181,6 @@ function WalletTab() {
 
 export default WalletTab;
 
-type Section = {
-  ...SectionBase<WalletItem>,
-  chain: Chain,
-  balance: ?BigNumber,
-};
-
-const useSectionData = (expandItemsPerChain: FlagPerChain): Section[] => {
-  const chains = useSupportedChains();
-  const assetsPerChain = useWalletAssetsPerChain();
-  const balancePerChain = useWalletBalancePerChain();
-
-  return chains.map((chain) => {
-    const items = assetsPerChain[chain] ?? [];
-    const balance = balancePerChain[chain];
-    const data = expandItemsPerChain[chain] ? items : [];
-    return { key: chain, chain, balance, data };
-  });
-};
 
 const styles = {
   balanceChange: {

@@ -355,7 +355,8 @@ const renderFeeToggle = (
 const mapToAssetDataType = ({
   contractAddress,
   address,
-  symbol: token,
+  symbol,
+  token,
   decimals,
   tokenType,
   tokenId,
@@ -363,7 +364,7 @@ const mapToAssetDataType = ({
   isLegacy,
 }: Object): AssetData => ({
   contractAddress: address || contractAddress,
-  token,
+  token: symbol || token,
   decimals,
   tokenType,
   id: tokenId,

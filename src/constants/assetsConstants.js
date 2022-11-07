@@ -38,6 +38,8 @@ export const XDAI = 'xDAI';
 export const AVAX = 'AVAX';
 export const OP = 'OP';
 
+export const NFT = 'NFT';
+
 export const SNX = 'SNX';
 export const RSPT = 'RSPT';
 export const WETH = 'WETH';
@@ -135,6 +137,7 @@ export const ASSET_CATEGORY = {
   INVESTMENTS: ('investments': 'investments'),
   LIQUIDITY_POOLS: ('liquidityPools': 'liquidityPools'),
   COLLECTIBLES: ('collectibles': 'collectibles'),
+  APPS: ('apps': 'apps'),
   REWARDS: ('rewards': 'rewards'),
 };
 
