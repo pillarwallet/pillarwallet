@@ -33,3 +33,5 @@ export const SET_WALLET_IS_DECRYPTING = 'SET_WALLET_IS_DECRYPTING';
 export const SET_WALLET_IS_ENCRYPTING = 'SET_WALLET_IS_ENCRYPTING';
 export const SET_WALLET_IS_CHANGING_PIN = 'SET_WALLET_IS_CHANGING_PIN';
 export const ETHERSPOT = 'Etherspot';
+export const TOKENS = 'Tokens';
+export const STABLES = 'Stables';

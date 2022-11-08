@@ -398,6 +398,17 @@ export const mockSupportedAssets = [
   },
 ];
 
+export const mockStableAssets = [
+  {
+    address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+    chainId: 1,
+    decimals: 6,
+    logoURI: null,
+    name: 'Tether',
+    symbol: 'USDT',
+  },
+];
+
 jest.setMock('configs/localeConfig', localeConfigMock);
 
 jest.setMock('services/rates', {
@@ -470,6 +481,7 @@ jest.setMock('services/etherspot', {
   getAccounts: jest.fn(),
   getAccountPerChains: () => ({ ethereum: mockEtherspotApiAccount, xdai: null, binance: null, polygon: null }),
   getSupportedAssets: (chain) => Promise.resolve(chain === CHAIN.ETHEREUM ? mockSupportedAssets : []),
+  getStableAssets: (chain) => Promise.resolve(chain === CHAIN.ETHEREUM ? mockStableAssets : []),
   getBalances: mockEtherspotGetBalances,
   getAccountTotalBalances: () => Promise.resolve(),
 });

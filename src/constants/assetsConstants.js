@@ -151,3 +151,9 @@ export const PLR_ADDRESS_XDAI = ''; // TODO: to be added when available
 export const PLR_ADDRESS_ETHEREUM_MAINNET = '0xe3818504c1b32bf1557b16c238b2e01fd3149c17';
 export const PLR_ADDRESS_ETHEREUM_KOVAN_TESTNET = '0xdd3122831728404a7234e5981677a5fd0a9727fe';
 export const PLR_ADDRESS_AVALANCHE = ''; // TODO: to be added when available
+
+export const CMC_STABLE_COINS = 'CmcStableCoins';
+
+export const SET_STABLE_TOKEN = 'SET_STABLE_TOKEN';
+
+export const ETHERSPOT_STABLE_COIN = 'EtherspotStableCoins';
