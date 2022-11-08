@@ -42,6 +42,7 @@ export default function ({ items, tabIndex, onTabIndexChange }: Props) {
 
     return (
       <TouchableOpacity
+        key={'tabs__' + index}
         style={[{ width }, styles.btn, index === tabIndex && { backgroundColor: item.color }]}
         onPress={() => onTabIndexChange(index)}
       >

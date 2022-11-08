@@ -41,7 +41,7 @@ export const useStableAssets = () => {
 
   const percentage: any = ((tokens.length * 100) / assets.length).toFixed(0);
 
-  tokens?.sort((a, b) => b?.balance?.balanceInFiat - a?.balance?.balanceInFiat);
+  tokens && tokens.sort((a, b) => b?.balance?.balanceInFiat - a?.balance?.balanceInFiat);
 
   return { tokens, percentage: isNaN(percentage) ? 0 : percentage };
 };
@@ -66,7 +66,7 @@ export const useNonStableAssets = () => {
 
   const percentage: any = ((tokens.length * 100) / assets.length).toFixed(0);
 
-  tokens?.sort((a, b) => b?.balance?.balanceInFiat - a?.balance?.balanceInFiat);
+  tokens && tokens.sort((a, b) => b?.balance?.balanceInFiat - a?.balance?.balanceInFiat);
 
   return { tokens, percentage, totalPercentage: isNaN(percentage) ? 0 : percentage };
 };

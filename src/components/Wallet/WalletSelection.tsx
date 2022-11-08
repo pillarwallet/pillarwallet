@@ -73,7 +73,11 @@ export default function ({ category, accountTotalBalances, visibleBalance }: Pro
   const { tokens: nonStableTokens, percentage, totalPercentage } = useNonStableAssets();
 
   const colors = useThemeColors();
-  const listOfAssets = tabIndex === 0 ? nonStableTokens : tokens;
+  let listOfAssets = tabIndex === 0 ? nonStableTokens : tokens;
+
+  if (!listOfAssets?.[0]) {
+    listOfAssets = [];
+  }
 
   const items = [
     { key: TOKENS, title: TOKENS, component: null, color: colors.primaryAccent250 },
