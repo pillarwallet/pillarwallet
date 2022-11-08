@@ -75,10 +75,6 @@ export default function ({ category, accountTotalBalances, visibleBalance }: Pro
   const colors = useThemeColors();
   let listOfAssets = tabIndex === 0 ? nonStableTokens : tokens;
 
-  if (!listOfAssets?.[0]) {
-    listOfAssets = [];
-  }
-
   const items = [
     { key: TOKENS, title: TOKENS, component: null, color: colors.primaryAccent250 },
     { key: STABLES, title: STABLES, component: null, color: colors.synthetic180 },
