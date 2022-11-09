@@ -40,6 +40,7 @@
                 android:launchMode="singleInstance"
                 android:screenOrientation="portrait"
                 android:theme="@style/AppTheme"
+                android:exported="true"
                 android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -61,7 +62,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+        <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" android:exported="true"/>
 
         <!-- react-native-notifications override push notification subscription -->
         <service
