@@ -27,6 +27,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import BalanceView from 'components/BalanceView';
+import TokenListItem from 'components/lists/TokenListItem';
 import FiatChangeView from 'components/display/FiatChangeView';
 import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
@@ -43,23 +44,26 @@ import {
   useRootSelector,
   useFiatCurrency,
   useIsExchangeAvailable,
-  supportedAssetsPerChainSelector,
   useActiveAccount,
   activeAccountAddressSelector,
 } from 'selectors';
 import { useIsPillarPaySupported } from 'selectors/archanova';
 
 // Utils
-import { findAssetByAddress } from 'utils/assets';
 import { spacing } from 'utils/variables';
 import { isKeyBasedAccount } from 'utils/accounts';
 import { getActiveScreenName } from 'utils/navigation';
+import { useFromAssets } from 'screens/Bridge/Exchange-CrossChain/utils';
+import { wrapBigNumberOrNil } from 'utils/bigNumber';
+
+// Modals
+import type { Chain } from 'models/Chain';
 
 // Local
 import PillarPaySummary from '../components/PillarPaySummary';
-import WalletListItem from './WalletListItem';
 import { buildAssetDataNavigationParam } from '../utils';
-import { type WalletItem, useWalletTotalBalance, useWalletAssetsPerChain } from './selectors';
+import { useWalletTotalBalance } from './selectors';
+
 
 function WalletTab() {
   const { tRoot } = useTranslationWithPrefix('assets.wallet');
@@ -70,19 +74,9 @@ function WalletTab() {
   const currency = useFiatCurrency();
   const screenName = getActiveScreenName(navigation);
 
-  const assetsPerChain = useWalletAssetsPerChain();
+  const assets: any = useFromAssets();
 
-  const sortTokensList = React.useMemo(() => {
-    const arr = [];
-    const assets = Object.values(assetsPerChain);
-
-    assets?.forEach((item: any) => {
-      arr.push(...item);
-    });
-    return arr;
-  }, [assetsPerChain]);
-
-  const supportedAssets = useRootSelector(supportedAssetsPerChainSelector);
+  assets?.sort((a, b) => b?.balance?.balanceInFiat - a?.balance?.balanceInFiat);
 
   const activeAccount = useActiveAccount();
   const accountAddress = useRootSelector(activeAccountAddressSelector);
@@ -94,15 +88,8 @@ function WalletTab() {
     Modal.open(() => <ReceiveModal address={accountAddress} />);
   };
 
-  const navigateToAssetDetails = (item: WalletItem) => {
-    const { chain, assetAddress } = item;
-
-    const chainSupportedAssets = supportedAssets[chain] ?? [];
-
-    const asset = findAssetByAddress(chainSupportedAssets, assetAddress);
-    if (!asset) return;
-
-    const assetData = buildAssetDataNavigationParam(asset, chain);
+  const navigateToAssetDetails = (category: any, chain: Chain) => {
+    const assetData = buildAssetDataNavigationParam(category, chain);
     navigation.navigate(ASSET, { assetData });
   };
 
@@ -121,18 +108,18 @@ function WalletTab() {
     );
   };
 
-
-  const renderItem = (item: WalletItem) => {
+  const renderItem = (token: any) => {
     return (
-      <WalletListItem
-        title={item.title}
-        iconUrl={item.iconUrl}
-        value={item.value}
-        change={item.change}
-        assetSymbol={item.assetSymbol}
-        assetAddress={item.assetAddress}
-        onPress={() => navigateToAssetDetails(item)}
-        chain={item.chain}
+      <TokenListItem
+        chain={token.chain}
+        address={token.address}
+        symbol={token.symbol}
+        name={token.name}
+        iconUrl={token.iconUrl}
+        balance={wrapBigNumberOrNil(token.balance?.balance)}
+        onPress={async () => {
+          navigateToAssetDetails(token, token.chain);
+        }}
       />
     );
   };
@@ -166,9 +153,8 @@ function WalletTab() {
 
   return (
     <Container>
-
       <FlatList
-        data={sortTokensList}
+        data={assets}
         renderItem={({ item }) => renderItem(item)}
         ListHeaderComponent={renderListHeader()}
         contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
@@ -180,7 +166,6 @@ function WalletTab() {
 }
 
 export default WalletTab;
-
 
 const styles = {
   balanceChange: {
