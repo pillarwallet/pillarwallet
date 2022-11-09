@@ -2,10 +2,10 @@
 
 buildscript {
     ext {
-        buildToolsVersion = "29.0.3"
+        buildToolsVersion = "32.0.0"
         minSdkVersion = 28
-        compileSdkVersion = 31
-        targetSdkVersion = 31
+        compileSdkVersion = 32
+        targetSdkVersion = 32
         supportLibVersion = "28.0.0"
         multidex_version = "2.0.1" // custom multidex
         firebaseIidVersion = "19.0.0" // required by react-native-device-info for getting device ID
