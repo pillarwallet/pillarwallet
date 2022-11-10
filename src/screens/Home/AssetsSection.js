@@ -67,7 +67,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visible
   const { t } = useTranslationWithPrefix('home.assets');
   const navigation = useNavigation();
 
-  const [showChainsPerCategory, setShowChainsPerCategory] = React.useState<FlagPerCategory>({});
+  const [showChainsPerCategory, setShowChainsPerCategory] = React.useState<FlagPerCategory>({ wallet: true });
 
   const chains = useSupportedChains();
   const fiatCurrency = useFiatCurrency();
