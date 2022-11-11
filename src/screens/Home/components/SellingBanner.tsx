@@ -64,29 +64,38 @@ const MultiSellingBannerContainer = ({ index }) => {
       <HorizontalContainer>
         <Summary>
           <HorizontalContainer style={{ justifyContent: 'flex-start', paddingLeft: 0, paddingTop: 0 }}>
-            <Title>{'Selling 0.12 USDC'}</Title>
-            <Icon name={'polygon'} width={20} height={20} style={{ paddingHorizontal: 7 }} />
-            <SubText>{'($0.01) on'}</SubText>
-            <Icon name={'optimism'} width={20} height={20} style={{ justifyContent: 'center', paddingHorizontal: 7 }} />
+            <Title>
+              {'Selling 0.12 USDC'}
+              <Icon name={'polygon'} width={18} height={18} style={{ paddingHorizontal: 7, paddingTop: 5 }} />
+              <SubText>{'($0.01) on'}</SubText>
+              <Icon name={'optimism'} width={18} height={18} style={{ paddingHorizontal: 7, paddingTop: 5 }} />
+            </Title>
           </HorizontalContainer>
           <HorizontalContainer style={{ justifyContent: 'flex-start', paddingLeft: 0, paddingTop: 0 }}>
-            <Title>{'for 0.12 USDC'}</Title>
-            <Icon name={'xdai'} width={20} height={20} style={{ paddingHorizontal: 7 }} />
-            <SubText>{'($0.01) on'}</SubText>
-            <Icon name={'binance'} width={20} height={20} style={{ justifyContent: 'center', paddingHorizontal: 7 }} />
+            <Title>
+              {'for 0.12 USDC'}
+              <Icon name={'xdai'} width={18} height={18} style={{ paddingHorizontal: 7, paddingTop: 5 }} />
+              <SubText>{'($0.01) on'}</SubText>
+              <Icon
+                name={'binance'}
+                width={18}
+                height={18}
+                style={{ paddingHorizontal: 7, paddingTop: 7, justifyContent: 'center' }}
+              />
+            </Title>
           </HorizontalContainer>
         </Summary>
-        <CloseButtonContainer>
+        <ButtonContainer>
           <Icon color={colors.control} name={'close'} width={30} height={30} style={{}} />
-        </CloseButtonContainer>
+        </ButtonContainer>
       </HorizontalContainer>
       <Line />
       <HorizontalContainer>
         <SubText>{'Time: 30'}</SubText>
         <SubText style={{ marginRight: '20%' }}>{'Gas: $0.30'}</SubText>
-        <CloseButtonContainer>
+        <ButtonContainer>
           <Icon color={colors.control} name={'info'} width={24} height={24} style={{}} />
-        </CloseButtonContainer>
+        </ButtonContainer>
       </HorizontalContainer>
     </TouchableContainer>
   );
@@ -99,7 +108,7 @@ const TouchableContainer = styled.TouchableOpacity`
   margin: ${spacing.mediumLarge}px;
 `;
 
-const CloseButtonContainer = styled.TouchableOpacity`
+const ButtonContainer = styled.TouchableOpacity`
   align-self: flex-start;
 `;
 
@@ -129,11 +138,4 @@ const Title = styled(Text)`
 const SubText = styled(Text)`
   font-family: '${appFont.regular}';
   color: ${({ theme }) => theme.colors.control}; ;
-`;
-
-const CloseContainer = styled.TouchableOpacity`
-  padding: 8px 8px 10px 10px;
-  position: absolute;
-  top: 0px;
-  right: 0px;
 `;
