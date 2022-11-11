@@ -1470,10 +1470,10 @@
   dependencies:
     "@etherspot/archanova-contracts-migrator" "2.2.0"
 
-"@etherspot/contracts@1.9.0":
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/@etherspot/contracts/-/contracts-1.9.0.tgz#4e0732d1f989cff4ef42cdee8aa27739e06a387f"
-  integrity sha512-/uznl02r/GiQTkDbQJGQoNKm3HTq6Ud0p1tGbbKlmK/MLd/XgtCkOzCwebfVqx99CzjQG3ue//9cSvCJau0iyA==
+"@etherspot/contracts@1.9.4":
+  version "1.9.4"
+  resolved "https://registry.yarnpkg.com/@etherspot/contracts/-/contracts-1.9.4.tgz#d83453368ec8f1ee449308451d5aa17c1a0107ca"
+  integrity sha512-xLQhOUhoBSD52UEqLtcp4tp4Nd0a/g3iq6s/a5uucRcpCfR1Lrsk4o19oddhyqQ64rUb3YRo5+G47UTYQQnhlA==
 
 "@ethersproject/abi@5.0.7":
   version "5.0.7"
@@ -9897,13 +9897,13 @@ ethers@^5.6.9, ethers@^5.7.1:
     "@ethersproject/web" "5.7.1"
     "@ethersproject/wordlists" "5.7.0"
 
-etherspot@1.38.0:
-  version "1.38.0"
-  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.38.0.tgz#5a26792fafe263109db382d043b7448721e11c57"
-  integrity sha512-Sim/DUgGfnUqQA1UPvwymMHHhwznGC9rk+ruMhF5r0P91Dpkn/c76dykl7OfboSKs/Gf9v+NIzh/S6oQd+GpVQ==
+etherspot@1.40.1:
+  version "1.40.1"
+  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.40.1.tgz#20c66caa5e813f52ad4ca2d4bb9cb4be34ec3b35"
+  integrity sha512-gnfPCGUfcKYYBM/ECFpIAgDy9U95UST9w53GzaTnacbQTnsIfoYu8flIxBgRHdMOZh6ugq29PZsiI3UfEijUhQ==
   dependencies:
     "@apollo/client" "3.4.0"
-    "@etherspot/contracts" "1.9.0"
+    "@etherspot/contracts" "1.9.4"
     "@lifi/sdk" "1.6.0"
     "@nerdwallet/apollo-cache-policies" "1.2.1"
     class-transformer "0.4.0"
