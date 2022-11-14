@@ -35,7 +35,6 @@ import type { Asset, AssetsPerChain } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Chain } from 'models/Chain';
 
-
 export type Selector<Result, Props = void> = (state: RootReducerState, props?: Props) => Result;
 
 export const useRootSelector = <T>(selector: (state: RootReducerState) => T): T =>
@@ -61,6 +60,8 @@ export const useChainSupportedAssets = (chain: ?Chain): Asset[] => {
   return supportedAssetPerChain[chain] ?? EMPTY_ARRAY;
 };
 
+export const useExchangeNotification = () => useRootSelector((root) => root.exchangeNotification.data);
+
 export const useGasInfoPerChain = () => useRootSelector((root) => root.history.gasInfo);
 export const useChainGasInfo = (chain: Chain) => useGasInfoPerChain()[chain];
 
@@ -75,22 +76,18 @@ export const historySelector = ({ history }: RootReducerState) => history.data;
 
 export const bannerDataSelector = ({ onboarding }: RootReducerState) => onboarding.bannerData;
 
-export const paymentNetworkBalancesSelector =
-  ({ paymentNetwork }: RootReducerState) => paymentNetwork.balances;
+export const paymentNetworkBalancesSelector = ({ paymentNetwork }: RootReducerState) => paymentNetwork.balances;
 
 export const accountsSelector = ({ accounts }: RootReducerState) => accounts.data;
 
-export const activeAccountSelector =
-  ({ accounts }: RootReducerState) => accounts.data.find(({ isActive }) => isActive);
+export const activeAccountSelector = ({ accounts }: RootReducerState) => accounts.data.find(({ isActive }) => isActive);
 
-export const activeAccountIdSelector: Selector<string> = createSelector(
-  activeAccountSelector,
-  activeAccount => activeAccount ? activeAccount.id : null,
+export const activeAccountIdSelector: Selector<string> = createSelector(activeAccountSelector, (activeAccount) =>
+  activeAccount ? activeAccount.id : null,
 );
 
-export const activeAccountAddressSelector = createSelector(
-  activeAccountSelector,
-  activeAccount => activeAccount ? getAccountAddress(activeAccount) : '',
+export const activeAccountAddressSelector = createSelector(activeAccountSelector, (activeAccount) =>
+  activeAccount ? getAccountAddress(activeAccount) : '',
 );
 
 export const syntheticAssetsSelector = ({ synthetics }: RootReducerState) => synthetics.data;

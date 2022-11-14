@@ -73,7 +73,7 @@ import FloatingActions from './FloatingActions';
 import { useAccountCollectibleCounts } from './utils';
 import BiometricModal from '../../components/BiometricModal/BiometricModal';
 import AppsButton from './AppsButton';
-import SellingBanner from './components/SellingBanner';
+import ExchangeNotification from './components/ExchangeNotification';
 
 // Redux
 import { fetchNativeIntegration } from '../../redux/actions/native-integration-actions';
@@ -224,7 +224,7 @@ function Home() {
 
         <GovernanceCallBanner />
 
-        <SellingBanner />
+        <ExchangeNotification />
 
         <Banner screenName={screenName} bottomPosition={false} />
 

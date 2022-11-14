@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2021 Stiftung Pillar Project
+    Copyright (C) 2019 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,26 +18,15 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const EXCHANGE_PROVIDER = {
-  UNISWAP: ('Uniswap': 'Uniswap'),
-  ONE_INCH: ('OneInch': 'OneInch'),
-  SYNTHETIX: ('Synthetix': 'Synthetix'),
-  SUSHISWAP: ('Sushiswap': 'Sushiswap'),
-  HONEYSWAP: ('Honeyswap': 'Honeyswap'),
-  PARASWAP: ('Paraswap': 'Paraswap'),
-  LIFI: ('Lifi': 'Lifi'),
+// Constants
+import { EXCHANGE_NOTIFICATION_DATA } from 'constants/exchangeConstants';
+
+// Types
+import type { Dispatch } from 'reducers/rootReducer';
+
+export const exchangeNotificationActions = (transactionPayload: any) => {
+  return (dispatch: Dispatch) => {
+    if (!transactionPayload) return;
+    dispatch({ type: EXCHANGE_NOTIFICATION_DATA, payload: [transactionPayload] });
+  };
 };
-
-// Hardcoded in Etherspot backend
-export const ALLOWED_SLIPPAGE = 1; // 1%
-
-// deprecated: WBTC.Cafe
-export const WBTC_PENDING_TRANSACTION = 'WBTC_PENDING_TRANSACTION';
-export const WBTC_SETTLED_TRANSACTION = 'WBTC_SETTLED_TRANSACTION';
-
-export const BRIDGE_CATEGORY = {
-  EXCHANGE: ('Exchange': 'Exchange'),
-  CROSS_CHAIN: ('Cross-chain': 'Cross-chain'),
-};
-
-export const EXCHANGE_NOTIFICATION_DATA = 'EXCHANGE_NOTIFICATION_DATA';
