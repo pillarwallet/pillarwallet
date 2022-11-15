@@ -34,10 +34,9 @@ export const useStableAssets = () => {
       percentage: 0,
     };
 
-  const listOfSymbol = listOfStableToken.map((token) => token.symbol);
-  const listOfAddress = listOfStableToken.map((token) => token.address);
-
-  const tokens = assets.filter((token) => listOfSymbol.includes(token.symbol) && listOfAddress.includes(token.address));
+  const tokens = assets.filter((assetToken) =>
+    listOfStableToken.some((stableToken) => isSame(assetToken, stableToken)),
+  );
 
   const percentage: any = ((tokens.length * 100) / assets.length).toFixed(0);
 
@@ -48,6 +47,7 @@ export const useStableAssets = () => {
 
 export const useNonStableAssets = () => {
   const assets: any = useFromAssets();
+  const listOfStableToken = useRootSelector(stableTokensSelector);
   const { tokens: stableToken } = useStableAssets();
 
   if (!stableToken && !assets?.[0])
@@ -57,11 +57,8 @@ export const useNonStableAssets = () => {
       totalPercentage: 0,
     };
 
-  const listOfSymbol = stableToken.map((token) => token.symbol) ?? [];
-  const listOfAddress = stableToken.map((token) => token.address) ?? [];
-
   const tokens = assets.filter(
-    (token) => !listOfSymbol.includes(token.symbol) && !listOfAddress.includes(token.address),
+    (assetToken) => !listOfStableToken.some((stableToken) => isSame(assetToken, stableToken)),
   );
 
   const percentage: any = ((tokens.length * 100) / assets.length).toFixed(0);
@@ -70,3 +67,5 @@ export const useNonStableAssets = () => {
 
   return { tokens, percentage, totalPercentage: isNaN(percentage) ? 0 : percentage };
 };
+
+const isSame = (a, b) => a.symbol === b.symbol && a.address === b.address;

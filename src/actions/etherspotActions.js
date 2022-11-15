@@ -270,13 +270,13 @@ export const setStableTokens = () => {
 
     const tokens = await Promise.all(supportedChain.map((chain) => etherspotService.getStableAssets(chain)));
 
-    const filterArr = [];
+    const filteredArr = [];
 
     tokens.forEach((item: any) => {
-      filterArr.push(...item);
+      filteredArr.push(...item);
     });
 
-    dispatch({ type: SET_STABLE_TOKEN, payload: filterArr });
+    dispatch({ type: SET_STABLE_TOKEN, payload: filteredArr });
   };
 };
 

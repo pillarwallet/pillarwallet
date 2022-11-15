@@ -412,7 +412,7 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     dispatch(loadRemoteConfigWithUserPropertiesAction());
 
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching setStableTokens');
-    await dispatch(setStableTokens());
+    dispatch(setStableTokens());
   };
 };
 

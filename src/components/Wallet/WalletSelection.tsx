@@ -53,6 +53,7 @@ import { useFiatCurrency } from 'selectors';
 import type { AssetCategoryRecordKeys } from 'models/AssetCategory';
 import type { TotalBalances } from 'models/TotalBalances';
 import type { Chain } from 'models/Chain';
+import type { AssetOption } from 'models/Asset';
 
 type Props = {
   category: AssetCategoryRecordKeys;
@@ -80,7 +81,7 @@ export default function ({ category, accountTotalBalances, visibleBalance }: Pro
     { key: STABLES, title: STABLES, component: null, color: colors.synthetic180 },
   ];
 
-  const renderItem = (item: any) => {
+  const renderItem = (item: AssetOption) => {
     return (
       <TokenListItem
         chain={item.chain}
@@ -92,9 +93,6 @@ export default function ({ category, accountTotalBalances, visibleBalance }: Pro
         style={{ paddingLeft: 0, paddingRight: 0 }}
         onPress={() => {
           onNavigate(item, item.chain);
-          // const assetData = buildAssetDataNavigationParam(item, item.chain);
-          // assetData.backDashboad = true;
-          // navigation.navigate(ASSET, { assetData });
         }}
       />
     );

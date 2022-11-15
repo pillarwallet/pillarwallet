@@ -220,7 +220,7 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
     const keyBasedAccount = findKeyBasedAccount(accounts);
     if (!keyBasedAccount) dispatch(addAccountAction(address, ACCOUNT_TYPES.KEY_BASED));
 
-    await dispatch(setStableTokens());
+    dispatch(setStableTokens());
 
     dispatch(fetchTransactionsHistoryAction());
     dispatch(setEnsNameIfNeededAction());
