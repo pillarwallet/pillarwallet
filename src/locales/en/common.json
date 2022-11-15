@@ -1602,5 +1602,14 @@
   "getNotifications":{
     "title": "Get notifications",
     "description": "Pillar will notify on your transactions status and requests from dapps. Never spam, always on point."
+  },
+
+  "exchangeNotification":{
+    "selling":"Selling",
+    "sold":"Sold",
+    "on":"on",
+    "for":"for",
+    "gas":"Gas",
+    "time":"Time"
   }
 }

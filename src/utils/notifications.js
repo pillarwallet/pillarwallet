@@ -22,21 +22,26 @@ import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { Notifications } from 'react-native-notifications';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
+import { BigNumber } from 'bignumber.js';
 
 // $FlowFixMe – throws "react-native-android-badge" not found
 import BadgeAndroid from 'react-native-android-badge';
 
 // Constants
-import {
-  COLLECTIBLE,
-  BCX,
-  BADGE,
-  FCM_DATA_TYPE,
-} from 'constants/notificationConstants';
+import { COLLECTIBLE, BCX, BADGE, FCM_DATA_TYPE } from 'constants/notificationConstants';
 
 // Utils
 import { logBreadcrumb } from 'utils/common';
 import { addressesEqual } from 'utils/assets';
+import { getAssetValueInFiat } from 'utils/rates';
+import { formatFiatValue } from 'utils/format';
+import { chainFromChainId } from 'utils/chains';
+
+// Hooks
+import { useAssetRates } from 'hooks/transactions';
+
+// Selectors
+import { useFiatCurrency } from 'selectors';
 
 // Models
 import type { ApiNotification, Notification } from 'models/Notification';
@@ -98,14 +103,7 @@ export const getToastNotification = (data: mixed, myEthAddress: ?string): null |
   if (type === FCM_DATA_TYPE.BCX) {
     if (!validBcxTransaction(notification)) return null;
 
-    const {
-      asset,
-      status,
-      value,
-      decimals,
-      fromAddress: sender,
-      toAddress: receiver,
-    } = notification;
+    const { asset, status, value, decimals, fromAddress: sender, toAddress: receiver } = notification;
 
     const tokenValue = t('tokenValue', {
       value: utils.formatUnits(EthersBigNumber.from(value.toString()), decimals),
@@ -155,25 +153,26 @@ export const getToastNotification = (data: mixed, myEthAddress: ?string): null |
   return null;
 };
 
-export const mapInviteNotifications = (notifications: ApiNotification[]): Object[] => notifications
-  .map(({ createdAt, payload }) => {
-    let notification: Object = { createdAt };
+export const mapInviteNotifications = (notifications: ApiNotification[]): Object[] =>
+  notifications
+    .map(({ createdAt, payload }) => {
+      let notification: Object = { createdAt };
 
-    // note: payload.msg is optional and per Sentry reports might not be JSON
-    if (payload.msg) {
-      try {
-        const parsedMessage = JSON.parse(payload.msg);
-        notification = { ...notification, ...parsedMessage };
-      } catch (e) {
-        //
+      // note: payload.msg is optional and per Sentry reports might not be JSON
+      if (payload.msg) {
+        try {
+          const parsedMessage = JSON.parse(payload.msg);
+          notification = { ...notification, ...parsedMessage };
+        } catch (e) {
+          //
+        }
       }
-    }
 
-    return notification;
-  })
-  .filter(({ createdAt, ...rest }) => !isEmpty(rest)) // filter if notification empty after parsing
-  .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))
-  .sort((a, b) => b.createdAt - a.createdAt);
+      return notification;
+    })
+    .filter(({ createdAt, ...rest }) => !isEmpty(rest)) // filter if notification empty after parsing
+    .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))
+    .sort((a, b) => b.createdAt - a.createdAt);
 
 export const resetAppNotificationsBadgeNumber = () => {
   if (Platform.OS === 'ios') {
@@ -182,3 +181,32 @@ export const resetAppNotificationsBadgeNumber = () => {
   }
   BadgeAndroid.setBadge(0);
 };
+
+export function useExchangeAmountsNotification(offer: any) {
+  const { fromAmount, toAmount, fromAsset, toAsset, gasFeeAsset, feeInfo } = offer;
+
+  if (fromAsset?.chainId) {
+    fromAsset.chain = chainFromChainId[fromAsset.chainId];
+  }
+  if (toAsset?.chainId) {
+    toAsset.chain = chainFromChainId[toAsset.chainId];
+  }
+
+  const fromRates = useAssetRates(fromAsset.chain, fromAsset);
+  const toRates = useAssetRates(toAsset.chain, toAsset);
+  const gasFeeRates = useAssetRates(gasFeeAsset.chain, gasFeeAsset);
+  const currency = useFiatCurrency();
+
+  // eslint-disable-next-line i18next/no-literal-string
+  const decimalValue: any = `10e${gasFeeAsset?.decimals - 1}`;
+  const gasFee: any = parseInt(feeInfo.fee, 10) / (decimalValue ?? 1);
+
+  const fromFiatValue = getAssetValueInFiat(fromAmount, fromAsset?.address, fromRates, currency) ?? new BigNumber(0);
+  const fromFormattedFiatValue = formatFiatValue(fromFiatValue, currency);
+  const toFiatValue = getAssetValueInFiat(toAmount, toAsset?.address, toRates, currency) ?? new BigNumber(0);
+  const toFormattedFiatValue = formatFiatValue(toFiatValue, currency);
+  const gasFeeFiatValue = getAssetValueInFiat(gasFee, gasFeeAsset?.address, gasFeeRates, currency) ?? new BigNumber(0);
+  const gasFeeFormattedFiatValue = formatFiatValue(gasFeeFiatValue, currency);
+
+  return { fromValue: fromFormattedFiatValue, toValue: toFormattedFiatValue, gasValue: gasFeeFormattedFiatValue };
+}

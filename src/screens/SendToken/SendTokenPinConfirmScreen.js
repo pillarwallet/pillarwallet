@@ -29,10 +29,12 @@ import CheckAuth from 'components/CheckAuth';
 import { sendAssetAction } from 'actions/assetsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { logEventAction, appsFlyerlogEventAction } from 'actions/analyticsActions';
+import { exchangeNotificationActions } from 'actions/exchangeNotificationActions.js';
 
 // Constants
-import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
+import { SEND_TOKEN_TRANSACTION, HOME } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
+import { TRANSACTION_TYPE } from 'constants/transactionsConstants';
 
 // Types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -58,12 +60,13 @@ type Props = {
   logEvent: (name: string, properties: Object) => void,
   useBiometrics: boolean,
   logAppsFlyerEvent: (name: string, properties: Object) => void,
+  exchangeNotificationPayload: (payload: Object) => void,
 };
 
 type State = {
   transactionPayload: TransactionPayload,
   isChecking: boolean,
-  errorMessage?: ?string;
+  errorMessage?: ?string,
 };
 
 class SendTokenPinConfirmScreen extends React.Component<Props, State> {
@@ -73,7 +76,7 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { navigation } = props;
-    const transactionPayload = navigation.getParam('transactionPayload', { });
+    const transactionPayload = navigation.getParam('transactionPayload', {});
     this.source = navigation.getParam('source', '');
     this.goBackDismiss = navigation.getParam('goBackDismiss', false);
     this.state = {
@@ -83,13 +86,7 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
   }
 
   handleTransaction = async (pin, wallet) => {
-    const {
-      sendAsset,
-      isOnline,
-      logEvent,
-      logAppsFlyerEvent,
-      accounts,
-    } = this.props;
+    const { sendAsset, isOnline, logEvent, logAppsFlyerEvent, accounts } = this.props;
     const { transactionPayload } = this.state;
 
     if (!isOnline) {
@@ -132,11 +129,14 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
   };
 
   navigateToTransactionState = (params: ?Object) => {
-    const { navigation } = this.props;
+    const { navigation, exchangeNotificationPayload } = this.props;
     const { transactionPayload } = this.state;
     const transactionType = navigation.getParam('transactionType', '');
 
-    navigation.navigate(SEND_TOKEN_TRANSACTION, { ...params, transactionPayload, transactionType });
+    if (transactionType === TRANSACTION_TYPE.EXCHANGE) {
+      exchangeNotificationPayload({ ...transactionPayload, ...params });
+      navigation.navigate(HOME);
+    } else navigation.navigate(SEND_TOKEN_TRANSACTION, { ...params, transactionPayload, transactionType });
   };
 
   handleBack = () => {
@@ -168,8 +168,12 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   accounts: { data: accounts },
-  session: { data: { isOnline } },
-  appSettings: { data: { useBiometrics } },
+  session: {
+    data: { isOnline },
+  },
+  appSettings: {
+    data: { useBiometrics },
+  },
 }: RootReducerState): $Shape<Props> => ({
   useBiometrics,
   accounts,
@@ -177,15 +181,12 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  sendAsset: (
-    transaction: TransactionPayload,
-    privateKey: string,
-    callback: (status: TransactionStatus) => void,
-  ) => dispatch(sendAssetAction(transaction, privateKey, callback)),
+  sendAsset: (transaction: TransactionPayload, privateKey: string, callback: (status: TransactionStatus) => void) =>
+    dispatch(sendAssetAction(transaction, privateKey, callback)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   logEvent: (name: string, properties: Object) => dispatch(logEventAction(name, properties)),
   logAppsFlyerEvent: (name: string, properties: Object) => dispatch(appsFlyerlogEventAction(name, properties)),
+  exchangeNotificationPayload: (payload: Object) => dispatch(exchangeNotificationActions(payload)),
 });
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(SendTokenPinConfirmScreen);

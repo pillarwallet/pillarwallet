@@ -20,26 +20,29 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
-import { BigNumber } from 'bignumber.js';
+import { useTranslation } from 'react-i18next';
 
 // Components
 import Icon from 'components/core/Icon';
 import Text from 'components/core/Text';
 import TokenIcon from 'components/display/TokenIcon';
 
-// Hooks
-import { useAssetRates } from 'hooks/transactions';
-
 // Utils
 import { appFont, fontStyles, spacing } from 'utils/variables';
 import { useThemeColors } from 'utils/themes';
-import { getAssetValueInFiat } from 'utils/rates';
-import { formatFiatValue } from 'utils/format';
 import { chainFromChainId } from 'utils/chains';
+import { useExchangeAmountsNotification } from 'utils/notifications';
+
+// Services
+import etherspotService from 'services/etherspot';
+
+// Actions
+import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 
 // Selectors
-import { useExchangeNotification, useFiatCurrency } from 'selectors';
+import { useExchangeNotification } from 'selectors';
 import { STATUS, useTimer } from 'hooks/timer';
+import { useDispatch } from 'react-redux';
 
 export default function () {
   const response = useExchangeNotification();
@@ -53,13 +56,47 @@ export default function () {
 
 const ExchangeNotificationContainer = ({ data, index }) => {
   const colors = useThemeColors();
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   const [isVisible, setIsVisible] = React.useState(true);
   const [timerStatus, setTimerStatus] = React.useState(STATUS.STARTED);
+  const [hash, setHash] = React.useState(data?.hash);
 
   const time = useTimer(timerStatus, setTimerStatus);
+  const { fromValue, toValue, gasValue } = useExchangeAmountsNotification(data.offer);
 
-  const { fromAmount, toAmount, fromAsset, captureFee, toAsset, gasFeeAsset, feeInfo } = data.offer;
+  const { fromAmount, toAmount, fromAsset, toAsset } = data.offer;
+
+  React.useEffect(() => {
+    (async () => {
+      if (!hash && data?.batchHash) {
+        const submitedBatchHash = await etherspotService.waitForTransactionHashFromSubmittedBatch(
+          fromAsset.chain,
+          data?.batchHash,
+        );
+        setHash(submitedBatchHash);
+        setTimerStatus(STATUS.STOPPED);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const viewOnBlockchain = () => {
+    if (!hash) return;
+    dispatch(
+      viewTransactionOnBlockchainAction(fromAsset.chain, {
+        hash,
+        batchHash: data?.batchHash,
+        fromAddress: fromAsset.address,
+      }),
+    );
+  };
+
+  const onClose = () => {
+    setIsVisible(false);
+    setTimerStatus(STATUS.STOPPED);
+  };
 
   if (fromAsset?.chainId) {
     fromAsset.chain = chainFromChainId[fromAsset.chainId];
@@ -68,71 +105,59 @@ const ExchangeNotificationContainer = ({ data, index }) => {
     toAsset.chain = chainFromChainId[toAsset.chainId];
   }
 
-  const fromRates = useAssetRates(fromAsset.chain, fromAsset);
-  const toRates = useAssetRates(toAsset.chain, toAsset);
-  const gasFeeRates = useAssetRates(gasFeeAsset.chain, gasFeeAsset);
-  const currency = useFiatCurrency();
-
-  const decimalValue: any = `10e${gasFeeAsset?.decimals - 1}`;
-  const gasFee: any = parseInt(feeInfo.fee) / (decimalValue ?? 1);
-
-  const fromFiatValue = getAssetValueInFiat(fromAmount, fromAsset?.address, fromRates, currency) ?? new BigNumber(0);
-  const fromFormattedFiatValue = formatFiatValue(fromFiatValue, currency);
-  const toFiatValue = getAssetValueInFiat(toAmount, toAsset?.address, toRates, currency) ?? new BigNumber(0);
-  const toFormattedFiatValue = formatFiatValue(toFiatValue, currency);
-  const gasFeeFiatValue = getAssetValueInFiat(gasFee, gasFeeAsset?.address, gasFeeRates, currency) ?? new BigNumber(0);
-  const gasFeeFormattedFiatValue = formatFiatValue(gasFeeFiatValue, currency);
-
   if (!isVisible) return null;
   return (
-    <TouchableContainer key={index} onPress={() => {}}>
+    <TouchableContainer key={index} onPress={viewOnBlockchain}>
       <HorizontalContainer>
         <Summary>
-          <HorizontalContainer style={{ justifyContent: 'flex-start', paddingLeft: 0, paddingTop: 0 }}>
+          <HorizontalSubContainer>
             <Title>
-              {'Selling ' + fromAmount?.toFixed(4) + ' ' + fromAsset.symbol}
-              <TokenIcon
-                url={fromAsset?.logoURI || fromAsset?.iconUrl}
-                size={18}
-                style={{ paddingHorizontal: 7, paddingTop: 5 }}
-              />
-              <SubText>{'(' + fromFormattedFiatValue + ') on'}</SubText>
-              <Icon name={fromAsset.chain} width={18} height={18} style={{ paddingHorizontal: 7, paddingTop: 5 }} />
+              {(!hash ? t('exchangeNotification.selling') : t('exchangeNotification.sold')) +
+                ' ' +
+                fromAmount?.toFixed(4) +
+                ' ' +
+                fromAsset.symbol}
+              <NormalIcon nameOrUrl={fromAsset?.logoURI || fromAsset?.iconUrl} isUrl />
+              <SubText>{'(' + fromValue + ') ' + t('exchangeNotification.on')}</SubText>
+              <NormalIcon nameOrUrl={fromAsset.chain} />
             </Title>
-          </HorizontalContainer>
-          <HorizontalContainer style={{ justifyContent: 'flex-start', paddingLeft: 0, paddingTop: 0 }}>
+          </HorizontalSubContainer>
+          <HorizontalSubContainer>
             <Title>
-              {'for ' + toAmount?.toFixed(4) + ' ' + toAsset.symbol}
-              <TokenIcon
-                url={toAsset?.logoURI || toAsset?.iconUrl}
-                size={18}
-                style={{ paddingHorizontal: 7, paddingTop: 5 }}
-              />
-              <SubText>{'(' + toFormattedFiatValue + ') on'}</SubText>
-              <Icon
-                name={toAsset.chain}
-                width={18}
-                height={18}
-                style={{ paddingHorizontal: 7, paddingTop: 7, justifyContent: 'center' }}
-              />
+              {t('exchangeNotification.for') + ' ' + toAmount?.toFixed(4) + ' ' + toAsset.symbol}
+              <NormalIcon nameOrUrl={toAsset?.logoURI || toAsset?.iconUrl} isUrl />
+              <SubText>{'(' + toValue + ') ' + t('exchangeNotification.on')}</SubText>
+              <NormalIcon nameOrUrl={toAsset.chain} />
             </Title>
-          </HorizontalContainer>
+          </HorizontalSubContainer>
         </Summary>
-        <ButtonContainer onPress={() => setIsVisible(false)}>
+        <ButtonContainer onPress={onClose}>
           <Icon color={colors.control} name={'close'} width={30} height={30} style={{}} />
         </ButtonContainer>
       </HorizontalContainer>
       <Line />
       <HorizontalContainer>
-        <SubText>{'Time: ' + time}</SubText>
-        <SubText style={{ marginRight: '20%' }}>{'Gas: ' + gasFeeFormattedFiatValue}</SubText>
-        <ButtonContainer onPress={() => {}}>
+        <SubText style={{ width: '30%' }}>{t('exchangeNotification.time') + ': ' + time}</SubText>
+        <SubText style={{ flex: 1 }}>{t('exchangeNotification.gas') + ': ' + gasValue}</SubText>
+        <ButtonContainer onPress={viewOnBlockchain}>
           <Icon color={colors.control} name={'info'} width={24} height={24} style={{}} />
         </ButtonContainer>
       </HorizontalContainer>
     </TouchableContainer>
   );
 };
+
+type IconProps = {
+  nameOrUrl: any;
+  isUrl?: boolean;
+};
+
+const NormalIcon = ({ nameOrUrl, isUrl }: IconProps) =>
+  isUrl ? (
+    <TokenIcon url={nameOrUrl} size={18} style={{ paddingHorizontal: 7, paddingTop: 5 }} />
+  ) : (
+    <Icon name={nameOrUrl} width={18} height={18} style={{ paddingHorizontal: 7, paddingTop: 5 }} />
+  );
 
 const TouchableContainer = styled.TouchableOpacity`
   min-height: 120px;
@@ -160,6 +185,13 @@ const HorizontalContainer = styled.View`
   align-items: center;
   padding: 12px;
   justify-content: space-between;
+`;
+
+const HorizontalSubContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  padding: 0px 12px 12px 0px;
+  justify-content: flex-start;
 `;
 
 const Title = styled(Text)`
