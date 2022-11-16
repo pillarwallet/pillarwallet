@@ -48,10 +48,11 @@ export const CHAIN_SHORT = {
 // Based on: https://chainid.network/
 export const CHAIN_ID = {
   ETHEREUM_MAINNET: 1,
-  ETHEREUM_KOVAN: 42,
+  GOERLI: 5,
   POLYGON: 137,
   BINANCE: 56,
   XDAI: 100,
+  SOKOL: 77,
   AVALANCHE: 43114,
   FUJI: 43113,
   MUMBAI: 80001,

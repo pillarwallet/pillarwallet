@@ -106,10 +106,10 @@ export class EtherspotService {
      * function which is called from envConfig.js
      */
     this.supportedNetworks = [
-      isMainnet ? NetworkNames.Mainnet : NetworkNames.Kovan,
-      NetworkNames.Bsc,
+      isMainnet ? NetworkNames.Mainnet : NetworkNames.Goerli,
+      isMainnet ? NetworkNames.Bsc : NetworkNames.BscTest,
       isMainnet ? NetworkNames.Matic : NetworkNames.Mumbai,
-      NetworkNames.Xdai,
+      isMainnet ? NetworkNames.Xdai : NetworkNames.Sokol,
       isMainnet ? NetworkNames.Avalanche : NetworkNames.Fuji,
       isMainnet ? NetworkNames.Optimism : NetworkNames.OptimismKovan,
     ];
@@ -123,10 +123,11 @@ export class EtherspotService {
     await Promise.all(
       this.supportedNetworks.map(async (networkName) => {
         const env =
-          networkName !== NetworkNames.Kovan &&
+          networkName !== NetworkNames.Goerli &&
           networkName !== NetworkNames.Fuji &&
           networkName !== NetworkNames.Mumbai &&
-          networkName !== NetworkNames.OptimismKovan
+          networkName !== NetworkNames.Sokol &&
+          networkName !== NetworkNames.BscTest
             ? EnvNames.MainNets
             : EnvNames.TestNets;
         this.instances[networkName] = new EtherspotSdk(privateKey, {
@@ -1037,7 +1038,7 @@ function networkNameFromChain(chain: Chain): ?string {
 function chainFromNetworkName(networkName: string): ?Chain {
   switch (networkName) {
     case NetworkNames.Mainnet:
-    case NetworkNames.Kovan:
+    case NetworkNames.Goerli:
       return CHAIN.ETHEREUM;
     case NetworkNames.Bsc:
       return CHAIN.BINANCE;
@@ -1045,6 +1046,7 @@ function chainFromNetworkName(networkName: string): ?Chain {
     case NetworkNames.Mumbai:
       return CHAIN.POLYGON;
     case NetworkNames.Xdai:
+    case NetworkNames.Sokol:
       return CHAIN.XDAI;
     case NetworkNames.Avalanche:
     case NetworkNames.Fuji:

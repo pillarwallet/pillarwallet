@@ -39,9 +39,10 @@ import type { Chain, ChainRecord } from 'models/Chain';
 
 export const chainFromChainId: { [number]: Chain } = {
   [CHAIN_ID.ETHEREUM_MAINNET]: CHAIN.ETHEREUM,
-  [CHAIN_ID.ETHEREUM_KOVAN]: CHAIN.ETHEREUM,
+  [CHAIN_ID.GOERLI]: CHAIN.ETHEREUM,
   [CHAIN_ID.BINANCE]: CHAIN.BINANCE,
   [CHAIN_ID.XDAI]: CHAIN.XDAI,
+  [CHAIN_ID.SOKOL]: CHAIN.XDAI,
   [CHAIN_ID.POLYGON]: CHAIN.POLYGON,
   [CHAIN_ID.MUMBAI]: CHAIN.POLYGON,
   [CHAIN_ID.AVALANCHE]: CHAIN.AVALANCHE,
@@ -54,15 +55,15 @@ export const chainFromChainId: { [number]: Chain } = {
  * Maps chain value to chain id, supporting testnet(s) for test env.
  */
 export function mapChainToChainId(chain: Chain): number {
-  if (chain === CHAIN.ETHEREUM) return isProdEnv() ? CHAIN_ID.ETHEREUM_MAINNET : CHAIN_ID.ETHEREUM_KOVAN;
+  if (chain === CHAIN.ETHEREUM) return isProdEnv() ? CHAIN_ID.ETHEREUM_MAINNET : CHAIN_ID.GOERLI;
   if (chain === CHAIN.POLYGON) return isProdEnv() ? CHAIN_ID.POLYGON : CHAIN_ID.MUMBAI;
   if (chain === CHAIN.BINANCE) return CHAIN_ID.BINANCE;
-  if (chain === CHAIN.XDAI) return CHAIN_ID.XDAI;
+  if (chain === CHAIN.XDAI) return isProdEnv() ? CHAIN_ID.XDAI : CHAIN_ID.SOKOL;
   if (chain === CHAIN.AVALANCHE) return isProdEnv() ? CHAIN_ID.AVALANCHE : CHAIN_ID.FUJI;
   if (chain === CHAIN.OPTIMISM) return isProdEnv() ? CHAIN_ID.OPTIMISM : CHAIN_ID.OPTIMISM_KOVAN;
 
   // Default to Ethereum, should not happen as above check is exhaustive.
-  return isProdEnv() ? CHAIN_ID.ETHEREUM_MAINNET : CHAIN_ID.ETHEREUM_KOVAN;
+  return isProdEnv() ? CHAIN_ID.ETHEREUM_MAINNET : CHAIN_ID.GOERLI;
 }
 
 export function getSupportedChains(account: ?Account): Chain[] {
