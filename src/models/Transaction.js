@@ -211,6 +211,7 @@ export type CollectibleTransactionPayload = {
   gasLimit?: number,
   gasPrice?: number,
   signOnly?: ?boolean,
+  type?: string,
 };
 
 export type TransactionEthers = {
