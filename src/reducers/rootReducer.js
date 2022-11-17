@@ -63,7 +63,7 @@ import cacheReducer from './cacheReducer';
 import transactionEstimateReducer from './transactionEstimateReducer';
 import liquidityPoolsReducer from './liquidityPoolsReducer';
 import totalBalancesReducer from './totalBalancesReducer';
-import exchangeNotificationReducer from './exchangeNotificationReducer';
+import transactionNotificationReducer from './transactionNotificationReducer';
 
 // local types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
@@ -107,7 +107,7 @@ import type { OnboardingReducerAction, OnboardingReducerState } from './onboardi
 import type { TransactionEstimateReducerAction, TransactionEstimateReducerState } from './transactionEstimateReducer';
 import type { LiquidityPoolsReducerState, LiquidityPoolsReducerAction } from './liquidityPoolsReducer';
 import type { TotalBalancesReducerState, TotalBalancesReducerAction } from './totalBalancesReducer';
-import type { ExchangeNotificationState, ExchangeNotificationAction } from './exchangeNotificationReducer';
+import type { TransactionNotificationState, TransactionNotificationAction } from './transactionNotificationReducer.tsx';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -145,7 +145,7 @@ export type RootReducerState = {|
   firestore: IReduxFirestoreState,
   gasThreshold: IReduxGasThresholdState,
   nativeIntegration: IReduxNativeIntegrationState,
-  exchangeNotification: ExchangeNotificationState,
+  transactionNotification: TransactionNotificationState,
 |};
 
 type RootReducerAction =
@@ -175,7 +175,7 @@ type RootReducerAction =
   | LiquidityPoolsReducerAction
   | TotalBalancesReducerAction
   | RatesReducerAction
-  | ExchangeNotificationAction;
+  | TransactionNotificationAction;
 
 export type GetState = () => RootReducerState;
 export type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
@@ -221,7 +221,7 @@ const appReducer = combineReducers({
   firestore: firestoreReducer,
   gasThreshold: gasThresholdReducer,
   nativeIntegration: nativeIntegrationReducer,
-  exchangeNotification: exchangeNotificationReducer,
+  transactionNotification: transactionNotificationReducer,
 });
 
 export const initialState = appReducer(undefined, {});

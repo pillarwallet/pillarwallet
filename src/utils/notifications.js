@@ -29,19 +29,21 @@ import BadgeAndroid from 'react-native-android-badge';
 
 // Constants
 import { COLLECTIBLE, BCX, BADGE, FCM_DATA_TYPE } from 'constants/notificationConstants';
+import { TRANSACTION_TYPE } from 'constants/transactionsConstants';
 
 // Utils
-import { logBreadcrumb } from 'utils/common';
+import { logBreadcrumb, getCurrencySymbol } from 'utils/common';
 import { addressesEqual } from 'utils/assets';
 import { getAssetValueInFiat } from 'utils/rates';
 import { formatFiatValue } from 'utils/format';
 import { chainFromChainId } from 'utils/chains';
+import { getTxFeeInFiat } from 'utils/transactions';
 
 // Hooks
 import { useAssetRates } from 'hooks/transactions';
 
 // Selectors
-import { useFiatCurrency } from 'selectors';
+import { useFiatCurrency, useChainRates } from 'selectors';
 
 // Models
 import type { ApiNotification, Notification } from 'models/Notification';
@@ -209,4 +211,24 @@ export function useExchangeAmountsNotification(offer: any) {
   const gasFeeFormattedFiatValue = formatFiatValue(gasFeeFiatValue, currency);
 
   return { fromValue: fromFormattedFiatValue, toValue: toFormattedFiatValue, gasValue: gasFeeFormattedFiatValue };
+}
+
+export function useSendTransactionNotification(data: any) {
+  const { gasToken, assetData, chain, txFeeInWei, amount, type } = data;
+
+  const chainRates = useChainRates(chain);
+  const currency = useFiatCurrency();
+  const currencySymbol = getCurrencySymbol(currency);
+
+  const feeInFiat = getTxFeeInFiat(chain, txFeeInWei, gasToken, chainRates, currency);
+  const feeInFiatDisplayValue = `${currencySymbol}${feeInFiat.toFixed(2)}`;
+
+  if (type === TRANSACTION_TYPE.SENDNFT) {
+    return { value: data.name, gasValue: feeInFiatDisplayValue };
+  }
+
+  const fiatValue = getAssetValueInFiat(amount, assetData?.address, chainRates, currency) ?? new BigNumber(0);
+  const formattedFiatValue = formatFiatValue(fiatValue, currency);
+
+  return { value: formattedFiatValue, gasValue: feeInFiatDisplayValue };
 }

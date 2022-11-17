@@ -17,25 +17,28 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import React from 'react';
 
-export const TRANSACTION_TYPE = {
-  EXCHANGE: ('EXCHANGE': 'EXCHANGE'),
-  SEND: ('SEND': 'SEND'),
-  SENDNFT: ('SENDNFT': 'SENDNFT'),
-};
+// Constants
+import { TRANSACTION_TYPE } from 'constants/transactionsConstants';
 
-export const ERC721_TRANSFER_METHODS = {
-  TRANSFER: ('transfer': 'transfer'),
-  TRANSFER_FROM: ('transferFrom': 'transferFrom'),
-  SAFE_TRANSFER_FROM: ('safeTransferFrom': 'safeTransferFrom'),
-};
+// Selectors
+import { useTransactionNotification } from 'selectors';
 
-export const AAVE_LENDING_DEPOSIT_TRANSACTION = 'AAVE_LENDING_DEPOSIT_TRANSACTION';
-export const AAVE_LENDING_WITHDRAW_TRANSACTION = 'AAVE_LENDING_WITHDRAW_TRANSACTION';
+// Local
+import SendTokenNotification from './SendTokenNotification';
+import ExchangeNotification from './ExchangeNotification';
 
-export const ERROR_TYPE = {
-  CANT_BE_TRANSFERRED: 'can not be transferred',
-  NOT_OWNED: 'is not owned',
-  TRANSACTION_UNDERPRISED: 'transaction underpriced',
-  REPLACEMENT_TRANSACTION_UNDERPRISED: 'replacement transaction underpriced',
-};
+export default function () {
+  const response = useTransactionNotification();
+
+  if (!response?.[0]) return null;
+
+  return response.map((notificationData, index) =>
+    notificationData.type === TRANSACTION_TYPE.EXCHANGE ? (
+      <ExchangeNotification data={notificationData} index={index} />
+    ) : (
+      <SendTokenNotification data={notificationData} index={index} />
+    ),
+  );
+}

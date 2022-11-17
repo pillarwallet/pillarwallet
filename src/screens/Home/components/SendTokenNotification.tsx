@@ -25,12 +25,12 @@ import { useDispatch } from 'react-redux';
 // Components
 import Icon from 'components/core/Icon';
 import Text from 'components/core/Text';
+import TokenIcon from 'components/display/TokenIcon';
 
 // Utils
 import { appFont, fontStyles, spacing } from 'utils/variables';
 import { useThemeColors } from 'utils/themes';
-import { chainFromChainId } from 'utils/chains';
-import { useExchangeAmountsNotification } from 'utils/notifications';
+import { useSendTransactionNotification } from 'utils/notifications';
 
 // Services
 import etherspotService from 'services/etherspot';
@@ -39,11 +39,11 @@ import etherspotService from 'services/etherspot';
 import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 import { fetchAllAccountsAssetsBalancesAction } from 'actions/assetsActions';
 
+// Constants
+import { TRANSACTION_TYPE } from 'constants/transactionsConstants';
+
 // Hooks
 import { STATUS, useTimer } from 'hooks/timer';
-
-// Local
-import { NormalIcon } from './SendTokenNotification';
 
 export default function ({ data, index }) {
   const colors = useThemeColors();
@@ -53,18 +53,15 @@ export default function ({ data, index }) {
   const [timerStatus, setTimerStatus] = React.useState(STATUS.STARTED);
   const [hash, setHash] = React.useState(data?.hash);
 
+  const { value, gasValue } = useSendTransactionNotification(data);
   const time = useTimer(timerStatus, setTimerStatus);
-  const { fromValue, toValue, gasValue } = useExchangeAmountsNotification(data.offer);
 
-  const { fromAmount, toAmount, fromAsset, toAsset } = data.offer;
+  const { contractAddress, to, assetData, amount, chain, batchHash, type } = data;
 
   React.useEffect(() => {
     (async () => {
-      if (!hash && data?.batchHash) {
-        const submitedBatchHash = await etherspotService.waitForTransactionHashFromSubmittedBatch(
-          fromAsset.chain,
-          data?.batchHash,
-        );
+      if (!hash && batchHash) {
+        const submitedBatchHash = await etherspotService.waitForTransactionHashFromSubmittedBatch(chain, batchHash);
         setHash(submitedBatchHash);
         setTimerStatus(STATUS.STOPPED);
         dispatch(fetchAllAccountsAssetsBalancesAction());
@@ -73,13 +70,15 @@ export default function ({ data, index }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  if (!isVisible || !data?.isSuccess) return null;
+
   const viewOnBlockchain = () => {
     if (!hash) return;
     dispatch(
-      viewTransactionOnBlockchainAction(fromAsset.chain, {
+      viewTransactionOnBlockchainAction(chain, {
         hash,
-        batchHash: data?.batchHash,
-        fromAddress: fromAsset.address,
+        batchHash: batchHash,
+        fromAddress: contractAddress,
       }),
     );
   };
@@ -89,42 +88,45 @@ export default function ({ data, index }) {
     setTimerStatus(STATUS.STOPPED);
   };
 
-  if (fromAsset?.chainId) {
-    fromAsset.chain = chainFromChainId[fromAsset.chainId];
-  }
-  if (toAsset?.chainId) {
-    toAsset.chain = chainFromChainId[toAsset.chainId];
-  }
+  const NormalTitle = () => {
+    if (type === TRANSACTION_TYPE.SEND) {
+      return (
+        <Title>
+          {t('transactionNotification.sending') + ' ' + amount + ' ' + data.symbol}
+          <NormalIcon nameOrUrl={assetData?.iconUrl} isUrl />
+          <SubText>{'(' + value + ') ' + t('transactionNotification.on')}</SubText>
+          <NormalIcon nameOrUrl={chain} />
+        </Title>
+      );
+    }
+    return (
+      <Title>
+        {t('transactionNotification.sending') + ' ' + value}
+        <SubText>{' ' + t('transactionNotification.on')}</SubText>
+        <NormalIcon nameOrUrl={chain} />
+      </Title>
+    );
+  };
 
-  if (!isVisible || !data?.isSuccess) return null;
   return (
     <TouchableContainer key={index} onPress={viewOnBlockchain}>
       <HorizontalContainer>
         <Summary>
-          <HorizontalSubContainer>
+          <HorizontalSubContainer style={{ paddingBottom: 5 }}>
             <Icon
               name={hash ? 'checkmark-circle' : 'pending-process'}
               width={24}
               height={24}
               style={{ paddingRight: 5 }}
             />
-            {hash ? (
-              <Title>{t('transactionNotification.you_received')}</Title>
-            ) : (
-              <Title>
-                {t('transactionNotification.selling') + ' ' + fromAmount?.toFixed(4) + ' ' + fromAsset.symbol}
-                <NormalIcon nameOrUrl={fromAsset?.logoURI || fromAsset?.iconUrl} isUrl />
-                <SubText>{'(' + fromValue + ') ' + t('transactionNotification.on')}</SubText>
-                <NormalIcon nameOrUrl={fromAsset.chain} />
-              </Title>
-            )}
+            {hash ? <Title>{t('transactionNotification.you_sent')}</Title> : <NormalTitle />}
           </HorizontalSubContainer>
           <HorizontalSubContainer>
-            <Title style={{ marginLeft: 29 }}>
-              {(!hash ? t('transactionNotification.for') + ' ' : '') + toAmount?.toFixed(4) + ' ' + toAsset.symbol}
-              <NormalIcon nameOrUrl={toAsset?.logoURI || toAsset?.iconUrl} isUrl />
-              <SubText>{'(' + toValue + ') ' + t('transactionNotification.on')}</SubText>
-              <NormalIcon nameOrUrl={toAsset.chain} />
+            <Title numberOfLines={1} style={{ marginLeft: 29 }}>
+              {t('transactionNotification.to') + ' '}
+              <SubText>
+                {to.slice(0, 10)}...{to.slice(32, 42)}
+              </SubText>
             </Title>
           </HorizontalSubContainer>
         </Summary>
@@ -143,6 +145,18 @@ export default function ({ data, index }) {
     </TouchableContainer>
   );
 }
+
+type IconProps = {
+  nameOrUrl: any;
+  isUrl?: boolean;
+};
+
+export const NormalIcon = ({ nameOrUrl, isUrl }: IconProps) =>
+  isUrl ? (
+    <TokenIcon url={nameOrUrl} size={18} style={{ paddingHorizontal: 7, paddingTop: 5 }} />
+  ) : (
+    <Icon name={nameOrUrl} width={18} height={18} style={{ paddingHorizontal: 7, paddingTop: 5 }} />
+  );
 
 const TouchableContainer = styled.TouchableOpacity`
   min-height: 120px;

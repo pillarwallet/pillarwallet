@@ -60,7 +60,7 @@ export const useChainSupportedAssets = (chain: ?Chain): Asset[] => {
   return supportedAssetPerChain[chain] ?? EMPTY_ARRAY;
 };
 
-export const useExchangeNotification = () => useRootSelector((root) => root.exchangeNotification.data);
+export const useTransactionNotification = () => useRootSelector((root) => root.transactionNotification.data);
 
 export const useGasInfoPerChain = () => useRootSelector((root) => root.history.gasInfo);
 export const useChainGasInfo = (chain: Chain) => useGasInfoPerChain()[chain];
