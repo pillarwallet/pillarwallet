@@ -58,7 +58,7 @@ import {
   getChainTokenListName,
 } from 'utils/etherspot';
 import { addressesEqual, findAssetByAddress } from 'utils/assets';
-import { nativeAssetPerChain, mapChainToChainId } from 'utils/chains';
+import { nativeAssetPerChain, mapChainToChainId, mapProdChainId } from 'utils/chains';
 import { mapToEthereumTransactions } from 'utils/transactions';
 import { getCaptureFee } from 'utils/exchange';
 
@@ -114,7 +114,7 @@ export class EtherspotService {
       isMainnet ? NetworkNames.Optimism : NetworkNames.OptimismKovan,
     ];
 
-    const primaryNetworkName = isMainnet ? NetworkNames.Mainnet : NetworkNames.Kovan;
+    const primaryNetworkName = isMainnet ? NetworkNames.Mainnet : NetworkNames.Goerli;
 
     /**
      * Cycle through the supported networks and build an
@@ -207,7 +207,7 @@ export class EtherspotService {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) return null;
 
-    const chainId = mapChainToChainId(chain);
+    const chainId = mapProdChainId(chain);
 
     const rateData = await sdk.fetchExchangeRates({ chainId, tokens: assetsAddresses });
 
@@ -1019,9 +1019,9 @@ export default etherspot;
 function networkNameFromChain(chain: Chain): ?string {
   switch (chain) {
     case CHAIN.ETHEREUM:
-      return isProdEnv() ? NetworkNames.Mainnet : NetworkNames.Kovan;
+      return isProdEnv() ? NetworkNames.Mainnet : NetworkNames.Goerli;
     case CHAIN.BINANCE:
-      return NetworkNames.Bsc;
+      return isProdEnv() ? NetworkNames.Bsc : NetworkNames.BscTest;
     case CHAIN.POLYGON:
       return isProdEnv() ? NetworkNames.Matic : NetworkNames.Mumbai;
     case CHAIN.XDAI:
@@ -1041,6 +1041,7 @@ function chainFromNetworkName(networkName: string): ?Chain {
     case NetworkNames.Goerli:
       return CHAIN.ETHEREUM;
     case NetworkNames.Bsc:
+    case NetworkNames.BscTest:
       return CHAIN.BINANCE;
     case NetworkNames.Matic:
     case NetworkNames.Mumbai:
