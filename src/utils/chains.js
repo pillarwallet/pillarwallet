@@ -49,7 +49,7 @@ export const chainFromChainId: { [number]: Chain } = {
   [CHAIN_ID.AVALANCHE]: CHAIN.AVALANCHE,
   [CHAIN_ID.FUJI]: CHAIN.AVALANCHE,
   [CHAIN_ID.OPTIMISM]: CHAIN.OPTIMISM,
-  [CHAIN_ID.OPTIMISM_KOVAN]: CHAIN.OPTIMISM,
+  [CHAIN_ID.OPTIMISM_GOERLI]: CHAIN.OPTIMISM,
 };
 
 /**
@@ -61,7 +61,7 @@ export function mapChainToChainId(chain: Chain): number {
   if (chain === CHAIN.BINANCE) return isProdEnv() ? CHAIN_ID.BINANCE : CHAIN_ID.BINANCE_TESTNET;
   if (chain === CHAIN.XDAI) return isProdEnv() ? CHAIN_ID.XDAI : CHAIN_ID.SOKOL;
   if (chain === CHAIN.AVALANCHE) return isProdEnv() ? CHAIN_ID.AVALANCHE : CHAIN_ID.FUJI;
-  if (chain === CHAIN.OPTIMISM) return isProdEnv() ? CHAIN_ID.OPTIMISM : CHAIN_ID.OPTIMISM_KOVAN;
+  if (chain === CHAIN.OPTIMISM) return isProdEnv() ? CHAIN_ID.OPTIMISM : CHAIN_ID.OPTIMISM_GOERLI;
 
   // Default to Ethereum, should not happen as above check is exhaustive.
   return isProdEnv() ? CHAIN_ID.ETHEREUM_MAINNET : CHAIN_ID.GOERLI;

@@ -111,7 +111,7 @@ export class EtherspotService {
       isMainnet ? NetworkNames.Matic : NetworkNames.Mumbai,
       isMainnet ? NetworkNames.Xdai : NetworkNames.Sokol,
       isMainnet ? NetworkNames.Avalanche : NetworkNames.Fuji,
-      isMainnet ? NetworkNames.Optimism : NetworkNames.OptimismKovan,
+      isMainnet ? NetworkNames.Optimism : NetworkNames.OptimismGoerli,
     ];
 
     const primaryNetworkName = isMainnet ? NetworkNames.Mainnet : NetworkNames.Goerli;
@@ -127,7 +127,8 @@ export class EtherspotService {
           networkName !== NetworkNames.Fuji &&
           networkName !== NetworkNames.Mumbai &&
           networkName !== NetworkNames.Sokol &&
-          networkName !== NetworkNames.BscTest
+          networkName !== NetworkNames.BscTest &&
+          networkName !== NetworkNames.OptimismGoerli
             ? EnvNames.MainNets
             : EnvNames.TestNets;
         this.instances[networkName] = new EtherspotSdk(privateKey, {
@@ -1025,11 +1026,11 @@ function networkNameFromChain(chain: Chain): ?string {
     case CHAIN.POLYGON:
       return isProdEnv() ? NetworkNames.Matic : NetworkNames.Mumbai;
     case CHAIN.XDAI:
-      return NetworkNames.Xdai;
+      return isProdEnv() ? NetworkNames.Xdai : NetworkNames.Sokol;
     case CHAIN.AVALANCHE:
       return isProdEnv() ? NetworkNames.Avalanche : NetworkNames.Fuji;
     case CHAIN.OPTIMISM:
-      return isProdEnv() ? NetworkNames.Optimism : NetworkNames.OptimismKovan;
+      return isProdEnv() ? NetworkNames.Optimism : NetworkNames.OptimismGoerli;
     default:
       return null;
   }
@@ -1053,7 +1054,7 @@ function chainFromNetworkName(networkName: string): ?Chain {
     case NetworkNames.Fuji:
       return CHAIN.AVALANCHE;
     case NetworkNames.Optimism:
-    case NetworkNames.OptimismKovan:
+    case NetworkNames.OptimismGoerli:
       return CHAIN.OPTIMISM;
     default:
       return null;

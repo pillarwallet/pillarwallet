@@ -65,11 +65,12 @@ import { isProdEnv } from 'utils/environment';
 import PolygonTokens from 'utils/tokens/polygon-tokens';
 import MumbaiTokens from 'utils/tokens/mumbai-tokens';
 import EthereumTokens from 'utils/tokens/ethereum-tokens';
-import EthereumKovanTokens from 'utils/tokens/ethereum-kovan-tokens';
+import EthereumGoerliTokens from 'utils/tokens/ethereum-goerli-tokens.json';
+import BinanceTestnetTokens from 'utils/tokens/binance-testnet-tokens.json';
 import FujiTokens from 'utils/tokens/fuji-tokens.json';
 import AvalancheTokens from 'utils/tokens/avalanche-tokens';
 import BinanceTokens from 'utils/tokens/binance-tokens';
-import OptimismKovanTokens from 'utils/tokens/optimism-kovan-tokens';
+import OptimismGoerliTokens from 'utils/tokens/optimism-goerli-tokens.json';
 import OptimismTokens from 'utils/tokens/optimism-tokens';
 import XdaiTokens from 'utils/tokens/xdai-tokens';
 
@@ -717,10 +718,10 @@ export const localAssets = (chain: Chain) => {
     return isMainnet ? PolygonTokens : MumbaiTokens;
   }
   if (chain === CHAIN.ETHEREUM) {
-    return isMainnet ? EthereumTokens : EthereumKovanTokens;
+    return isMainnet ? EthereumTokens : EthereumGoerliTokens;
   }
   if (chain === CHAIN.BINANCE) {
-    return BinanceTokens;
+    return isMainnet ? BinanceTokens : BinanceTestnetTokens;
   }
   if (chain === CHAIN.XDAI) {
     return XdaiTokens;
@@ -729,7 +730,7 @@ export const localAssets = (chain: Chain) => {
     return isMainnet ? AvalancheTokens : FujiTokens;
   }
   if (chain === CHAIN.OPTIMISM) {
-    return isMainnet ? OptimismTokens : OptimismKovanTokens;
+    return isMainnet ? OptimismTokens : OptimismGoerliTokens;
   }
   return { ethereum: [] };
 };
