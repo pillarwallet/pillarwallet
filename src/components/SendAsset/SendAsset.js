@@ -204,7 +204,7 @@ const SendAsset = ({
       chain,
       assetData,
       gasToken: feeInfo.gasToken,
-      type: TRANSACTION_TYPE.SEND,
+      type: TRANSACTION_TYPE.SENDTOKEN,
     };
 
     if (feeInfo?.gasToken) transactionPayload.gasToken = feeInfo.gasToken;

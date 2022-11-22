@@ -21,12 +21,18 @@
 // Constants
 import { TRANSACTION_NOTIFICATION_DATA } from 'constants/exchangeConstants';
 
+// Actions
+import { logEventAction } from 'actions/analyticsActions';
+
 // Types
 import type { Dispatch } from 'reducers/rootReducer';
 
 export const transactionNotificationActions = (transactionPayload: any) => {
   return (dispatch: Dispatch) => {
     if (!transactionPayload) return;
+
+    dispatch(logEventAction('transaction_notification_payload', transactionPayload));
+
     dispatch({ type: TRANSACTION_NOTIFICATION_DATA, payload: [transactionPayload] });
   };
 };

@@ -89,7 +89,7 @@ export default function ({ data, index }) {
   };
 
   const NormalTitle = () => {
-    if (type === TRANSACTION_TYPE.SEND) {
+    if (type === TRANSACTION_TYPE.SENDTOKEN) {
       return (
         <Title>
           {t('transactionNotification.sending') + ' ' + amount + ' ' + data.symbol}
@@ -109,39 +109,25 @@ export default function ({ data, index }) {
   };
 
   return (
-    <TouchableContainer key={index} onPress={viewOnBlockchain}>
+    <TouchableContainer key={index} onPress={viewOnBlockchain} disabled={!hash}>
       <HorizontalContainer>
         <Summary>
           <HorizontalSubContainer style={{ paddingBottom: 5 }}>
-            <Icon
-              name={hash ? 'checkmark-circle' : 'pending-process'}
-              width={24}
-              height={24}
-              style={{ paddingRight: 5 }}
-            />
+            <ProgressIcon hash={hash} />
             {hash ? <Title>{t('transactionNotification.you_sent')}</Title> : <NormalTitle />}
           </HorizontalSubContainer>
           <HorizontalSubContainer>
             <Title numberOfLines={1} style={{ marginLeft: 29 }}>
               {t('transactionNotification.to') + ' '}
               <SubText>
-                {to.slice(0, 10)}...{to.slice(32, 42)}
+                {to?.slice(0, 10)}...{to?.slice(32, 42)}
               </SubText>
             </Title>
           </HorizontalSubContainer>
         </Summary>
-        <ButtonContainer onPress={onClose}>
-          <Icon color={colors.control} name={'close'} width={30} height={30} style={{}} />
-        </ButtonContainer>
+        <CloseButton onPress={onClose} colors={colors} />
       </HorizontalContainer>
-      <Line />
-      <HorizontalContainer>
-        <SubText style={{ width: '30%' }}>{t('transactionNotification.time') + ': ' + time}</SubText>
-        <SubText style={{ flex: 1 }}>{t('transactionNotification.gas') + ': ' + gasValue}</SubText>
-        <ButtonContainer onPress={viewOnBlockchain}>
-          <Icon color={colors.control} name={'info'} width={24} height={24} style={{}} />
-        </ButtonContainer>
-      </HorizontalContainer>
+      <BottomContainer t={t} onPress={viewOnBlockchain} time={time} gasValue={gasValue} colors={colors} />
     </TouchableContainer>
   );
 }
@@ -157,6 +143,29 @@ export const NormalIcon = ({ nameOrUrl, isUrl }: IconProps) =>
   ) : (
     <Icon name={nameOrUrl} width={18} height={18} style={{ paddingHorizontal: 7, paddingTop: 5 }} />
   );
+
+export const BottomContainer = ({ onPress, t, time, gasValue, colors }) => (
+  <>
+    <Line />
+    <HorizontalContainer>
+      <SubText style={{ width: '30%' }}>{t('transactionNotification.time') + ': ' + time}</SubText>
+      <SubText style={{ flex: 1 }}>{t('transactionNotification.gas') + ': ' + gasValue}</SubText>
+      <ButtonContainer onPress={onPress}>
+        <Icon color={colors.control} name={'info'} width={24} height={24} />
+      </ButtonContainer>
+    </HorizontalContainer>
+  </>
+);
+
+export const CloseButton = ({ colors, onPress }) => (
+  <ButtonContainer onPress={onPress}>
+    <Icon color={colors.control} name={'close'} width={30} height={30} />
+  </ButtonContainer>
+);
+
+export const ProgressIcon = ({ hash }) => (
+  <Icon name={hash ? 'checkmark-circle' : 'pending-process'} width={24} height={24} style={{ paddingRight: 5 }} />
+);
 
 const TouchableContainer = styled.TouchableOpacity`
   min-height: 120px;

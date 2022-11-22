@@ -23,7 +23,6 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 // Components
-import Icon from 'components/core/Icon';
 import Text from 'components/core/Text';
 
 // Utils
@@ -43,7 +42,7 @@ import { fetchAllAccountsAssetsBalancesAction } from 'actions/assetsActions';
 import { STATUS, useTimer } from 'hooks/timer';
 
 // Local
-import { NormalIcon } from './SendTokenNotification';
+import { BottomContainer, CloseButton, NormalIcon, ProgressIcon } from './SendTokenNotification';
 
 export default function ({ data, index }) {
   const colors = useThemeColors();
@@ -98,16 +97,11 @@ export default function ({ data, index }) {
 
   if (!isVisible || !data?.isSuccess) return null;
   return (
-    <TouchableContainer key={index} onPress={viewOnBlockchain}>
+    <TouchableContainer key={index} onPress={viewOnBlockchain} disabled={!hash}>
       <HorizontalContainer>
         <Summary>
           <HorizontalSubContainer>
-            <Icon
-              name={hash ? 'checkmark-circle' : 'pending-process'}
-              width={24}
-              height={24}
-              style={{ paddingRight: 5 }}
-            />
+            <ProgressIcon hash={hash} />
             {hash ? (
               <Title>{t('transactionNotification.you_received')}</Title>
             ) : (
@@ -128,18 +122,9 @@ export default function ({ data, index }) {
             </Title>
           </HorizontalSubContainer>
         </Summary>
-        <ButtonContainer onPress={onClose}>
-          <Icon color={colors.control} name={'close'} width={30} height={30} style={{}} />
-        </ButtonContainer>
+        <CloseButton onPress={onClose} colors={colors} />
       </HorizontalContainer>
-      <Line />
-      <HorizontalContainer>
-        <SubText style={{ width: '30%' }}>{t('transactionNotification.time') + ': ' + time}</SubText>
-        <SubText style={{ flex: 1 }}>{t('transactionNotification.gas') + ': ' + gasValue}</SubText>
-        <ButtonContainer onPress={viewOnBlockchain}>
-          <Icon color={colors.control} name={'info'} width={24} height={24} style={{}} />
-        </ButtonContainer>
-      </HorizontalContainer>
+      <BottomContainer t={t} onPress={viewOnBlockchain} time={time} gasValue={gasValue} colors={colors} />
     </TouchableContainer>
   );
 }
@@ -151,18 +136,8 @@ const TouchableContainer = styled.TouchableOpacity`
   margin: ${spacing.mediumLarge}px;
 `;
 
-const ButtonContainer = styled.TouchableOpacity`
-  align-self: flex-start;
-`;
-
 const Summary = styled.View`
   padding: 4px;
-`;
-
-const Line = styled.View`
-  width: 100%;
-  height: 1;
-  background-color: ${({ theme }) => theme.colors.background};
 `;
 
 const HorizontalContainer = styled.View`

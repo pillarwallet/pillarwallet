@@ -59,7 +59,7 @@ type Props = {
   logEvent: (name: string, properties: Object) => void,
   useBiometrics: boolean,
   logAppsFlyerEvent: (name: string, properties: Object) => void,
-  transactionNotificationPayload: (payload: Object) => void,
+  showTransactionNotificationAction: (payload: Object) => void,
 };
 
 type State = {
@@ -128,11 +128,11 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
   };
 
   navigateToTransactionState = (params: ?Object) => {
-    const { navigation, transactionNotificationPayload } = this.props;
+    const { navigation, showTransactionNotificationAction } = this.props;
     const { transactionPayload } = this.state;
     const transactionType = navigation.getParam('transactionType', '');
 
-    transactionNotificationPayload({ ...transactionPayload, ...params, transactionType });
+    showTransactionNotificationAction({ ...transactionPayload, ...params, transactionType });
     navigation.navigate(HOME);
   };
 
@@ -183,7 +183,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   logEvent: (name: string, properties: Object) => dispatch(logEventAction(name, properties)),
   logAppsFlyerEvent: (name: string, properties: Object) => dispatch(appsFlyerlogEventAction(name, properties)),
-  transactionNotificationPayload: (payload: Object) => dispatch(transactionNotificationActions(payload)),
+  showTransactionNotificationAction: (payload: Object) => dispatch(transactionNotificationActions(payload)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SendTokenPinConfirmScreen);

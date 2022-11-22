@@ -166,7 +166,7 @@ export const mapInviteNotifications = (notifications: ApiNotification[]): Object
           const parsedMessage = JSON.parse(payload.msg);
           notification = { ...notification, ...parsedMessage };
         } catch (e) {
-          //
+          logBreadcrumb('mapInviteNotifications', 'failed Invite notification payload', { e });
         }
       }
 
