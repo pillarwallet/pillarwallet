@@ -147,7 +147,7 @@ describe('Auth actions', () => {
     const pin = '123456';
     return store.dispatch(loginAction(pin)).then(() => {
       const actualActions = store.getActions();
-      expect(actualActions).toEqual(expectedActions);
+      expect(actualActions).toEqual(expect.arrayContaining(expectedActions));
     });
   });
 });
