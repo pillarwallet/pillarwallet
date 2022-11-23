@@ -45,6 +45,7 @@ import { SET_CACHED_URLS } from 'constants/cacheConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { NFT_FLAG } from 'constants/assetsConstants';
 
 // utils
 import { logBreadcrumb, reportLog } from 'utils/common';
@@ -146,6 +147,10 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
     } else {
       dispatch({ type: SET_WALLET, payload: unlockedWallet });
     }
+
+    const visibleNFTs = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_NFTS);
+    logBreadcrumb('onboarding', 'finishOnboardingAction: dispatching app nfts flag');
+    dispatch({ type: NFT_FLAG, payload: visibleNFTs });
 
     dispatch(setupLoggingServicesAction());
     dispatch(updatePinAttemptsAction(false));

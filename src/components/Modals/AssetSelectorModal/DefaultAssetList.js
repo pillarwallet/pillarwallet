@@ -31,6 +31,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 // Selectors
 import { useSupportedChains } from 'selectors/chains';
+import { useNftFlag } from 'selectors';
 
 // Utils
 import { mapNotNil } from 'utils/array';
@@ -56,6 +57,7 @@ type Props = {|
 const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollectible, isFromSelect }: Props) => {
   const { isChainCollapsed } = useCollapseChain();
   const sections = useSectionData(tokens, collectibles ?? [], isChainCollapsed);
+  const visibleNFTs = useNftFlag();
 
   const sortTokensList = React.useMemo(() => {
     const arr = [];
@@ -84,7 +86,7 @@ const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollect
       );
     }
 
-    if (collectible) {
+    if (collectible && visibleNFTs) {
       return <CollectibleListItem collectible={collectible} onPress={() => onSelectCollectible?.(collectible)} />;
     }
 

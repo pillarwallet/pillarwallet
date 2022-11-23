@@ -34,7 +34,7 @@ import { CHAIN } from 'constants/chainConstants';
 import { ASSET_CATEGORY } from 'constants/assetsConstants';
 
 // Selectors
-import { useFiatCurrency, useActiveAccount } from 'selectors';
+import { useFiatCurrency, useActiveAccount, useNftFlag } from 'selectors';
 import { useSupportedChains } from 'selectors/chains';
 
 // Hooks
@@ -69,6 +69,7 @@ type FlagPerCategory = { [AssetCategory]: ?boolean };
 function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visibleBalance }: Props) {
   const { t, tRoot } = useTranslationWithPrefix('home.assets');
   const navigation = useNavigation();
+  const visibleNFTs = useNftFlag();
 
   const [showChainsPerCategory, setShowChainsPerCategory] = React.useState<FlagPerCategory>({});
 
@@ -187,7 +188,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visible
     <Container>
       {categoriesToRender.map((category) => renderCategoryWithBalance(category))}
 
-      {renderCollectiblesCategory()}
+      {visibleNFTs && renderCollectiblesCategory()}
 
       {/* Temporary entry until other UI provided */}
       {isArchanovaAccount(activeAccount) && (

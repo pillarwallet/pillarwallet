@@ -157,3 +157,4 @@ export const CMC_STABLE_COINS = 'CmcStableCoins';
 export const SET_STABLE_TOKEN = 'SET_STABLE_TOKEN';
 
 export const ETHERSPOT_STABLE_COIN = 'EtherspotStableCoins';
+export const NFT_FLAG = 'NFT_FLAG';

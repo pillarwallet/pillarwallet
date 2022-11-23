@@ -35,6 +35,9 @@ import { wrapBigNumberOrNil } from 'utils/bigNumber';
 import { useChainsConfig } from 'utils/uiConfig';
 import { getCollectibleKey, defaultSortCollectibles, isCollectibleMatchedByQuery } from 'utils/collectibles';
 
+// Selectors
+import { useNftFlag } from 'selectors';
+
 // Types
 import type { AssetOption } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
@@ -49,7 +52,7 @@ type Props = {|
 
 const SearchResultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollectible, query }: Props) => {
   const data = useItemsData(tokens, collectibles ?? [], query);
-
+  const visibleNFTs = useNftFlag();
   const chainConfigs = useChainsConfig();
 
   const renderItem = (item: Item) => {
@@ -70,7 +73,7 @@ const SearchResultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCo
       );
     }
 
-    if (collectible) {
+    if (collectible && visibleNFTs) {
       return (
         <CollectibleListItem
           collectible={collectible}

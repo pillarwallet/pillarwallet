@@ -62,6 +62,7 @@ export const useChainSupportedAssets = (chain: ?Chain): Asset[] => {
 
 export const useGasInfoPerChain = () => useRootSelector((root) => root.history.gasInfo);
 export const useChainGasInfo = (chain: Chain) => useGasInfoPerChain()[chain];
+export const useNftFlag = () => useRootSelector((root) => root.nftFlag.visible);
 
 //
 // Global selectors here
