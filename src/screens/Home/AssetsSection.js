@@ -121,13 +121,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visible
           visibleBalance={visibleBalance}
           onPress={() => handlePressAssetCategory(category)}
         />
-        {showChains && title === tRoot('assetCategories.wallet') && (
-          <WalletSelection
-            category={category}
-            accountTotalBalances={accountTotalBalances}
-            visibleBalance={visibleBalance}
-          />
-        )}
+        {showChains && title === tRoot('assetCategories.wallet') && <WalletSelection />}
         {showChains &&
           title !== tRoot('assetCategories.wallet') &&
           chains.map((chain) => renderChainWithBalance(category, chain))}

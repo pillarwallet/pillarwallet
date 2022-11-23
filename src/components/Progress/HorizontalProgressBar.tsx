@@ -47,20 +47,20 @@ export default function ({ forgroundColor, backgroundColor, progress, selectedIn
               width: progress + '%',
               backgroundColor: forgroundColor,
             },
-            selectedIndex === 0 && { shadowColor: colors.primaryAccent200 },
             styles.shadow,
             styles.leftBorder,
+            selectedIndex === 0 && { shadowColor: colors.primaryAccent200 },
           ]}
         />
         <View
           style={[
             {
               width: 100 - progress + '%',
-              backgroundColor: backgroundColor,
+              backgroundColor,
             },
-            selectedIndex === 1 && { shadowColor: colors.primaryAccent100 },
             styles.shadow,
             styles.rightBorder,
+            selectedIndex === 1 && { shadowColor: colors.primaryAccent100 },
           ]}
         />
       </View>

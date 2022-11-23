@@ -18,14 +18,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { useState } from 'react';
+import React from 'react';
 import { FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
-import { BigNumber } from 'bignumber.js';
 
 // Hooks
 import { useStableAssets, useNonStableAssets } from 'hooks/assets';
-import { useChainsConfig } from 'utils/uiConfig';
 
 // Components
 import ButtonGroup from 'components/layout/ButtonGroup';
@@ -33,7 +31,6 @@ import { Spacing } from 'components/legacy/Layout';
 import TokenListItem from 'components/lists/TokenListItem';
 import Icon from 'components/core/Icon';
 import HorizontalProgressBar from 'components/Progress/HorizontalProgressBar';
-import ChainListItem from 'screens/Home/components/ChainListItem';
 
 // Constants
 import { TOKENS, STABLES } from 'constants/walletConstants';
@@ -43,34 +40,18 @@ import { ASSET, ASSETS } from 'constants/navigationConstants';
 import { useThemeColors } from 'utils/themes';
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
 import { buildAssetDataNavigationParam } from 'screens/Assets/utils';
-import { formatFiatValue } from 'utils/format';
-
-// Selector
-import { useSupportedChains } from 'selectors/chains';
-import { useFiatCurrency } from 'selectors';
 
 // Types
 import type { AssetCategoryRecordKeys } from 'models/AssetCategory';
 import type { TotalBalances } from 'models/TotalBalances';
-import type { Chain } from 'models/Chain';
 import type { AssetOption } from 'models/Asset';
 
-type Props = {
-  category: AssetCategoryRecordKeys;
-  accountTotalBalances: TotalBalances;
-  visibleBalance: boolean;
-};
-
-export default function ({ category, accountTotalBalances, visibleBalance }: Props) {
+export default function () {
   const [tabIndex, setTabIndex] = React.useState(0);
   const { tokens } = useStableAssets();
-  const chains = useSupportedChains();
   const navigation = useNavigation();
-  const fiatCurrency = useFiatCurrency();
 
-  const chainsConfig = useChainsConfig();
-
-  const { tokens: nonStableTokens, percentage, totalPercentage } = useNonStableAssets();
+  const { tokens: nonStableTokens, percentage } = useNonStableAssets();
 
   const colors = useThemeColors();
   let listOfAssets = tabIndex === 0 ? nonStableTokens : tokens;
@@ -80,9 +61,10 @@ export default function ({ category, accountTotalBalances, visibleBalance }: Pro
     { key: STABLES, title: STABLES, component: null, color: colors.synthetic180 },
   ];
 
-  const renderItem = (item: AssetOption) => {
+  const renderItem = (item: AssetOption, index: number) => {
     return (
       <TokenListItem
+        key={item.address + '__' + index}
         chain={item.chain}
         address={item.address}
         symbol={item.symbol}
@@ -102,31 +84,6 @@ export default function ({ category, accountTotalBalances, visibleBalance }: Pro
     assetData.backDashboad = true;
     navigation.navigate(ASSET, { assetData });
   };
-
-  const renderChainWithBalance = (category: AssetCategoryRecordKeys, chain: Chain) => {
-    const balance = accountTotalBalances?.[category]?.[chain] ?? new BigNumber(0);
-    const formattedBalance = formatFiatValue(balance, fiatCurrency);
-
-    const { title } = chainsConfig[chain];
-
-    return (
-      <ChainListItem
-        key={`${category}-${chain}`}
-        title={title}
-        value={formattedBalance}
-        visibleBalance={visibleBalance}
-        isDeployed={false}
-        onPress={() => {
-          onNavigate(category, chain);
-        }}
-        onPressDeploy={() => {}}
-      />
-    );
-  };
-
-  if (totalPercentage === 0) {
-    return chains.map((chain) => renderChainWithBalance(category, chain));
-  }
 
   return (
     <>
@@ -152,8 +109,9 @@ export default function ({ category, accountTotalBalances, visibleBalance }: Pro
       <Spacing h={10} />
 
       <FlatList
+        key={tabIndex}
         data={listOfAssets.slice(0, 5)}
-        renderItem={({ item }) => renderItem(item)}
+        renderItem={({ item, index }) => renderItem(item, index)}
         keyExtractor={(item) => item.symbol}
         contentContainerStyle={{ flexGrow: 1 }}
       />

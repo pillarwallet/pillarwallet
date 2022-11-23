@@ -23,20 +23,22 @@ import { stableTokensSelector, useRootSelector } from 'selectors';
 
 // Utils
 import { useFromAssets } from 'screens/Bridge/Exchange-CrossChain/utils';
+import NonStableTokens from 'utils/tokens/tokens.json';
+import StableTokens from 'utils/tokens/stable-tokens.json';
 
 export const useStableAssets = () => {
   const listOfStableToken = useRootSelector(stableTokensSelector);
   const assets: any = useFromAssets();
 
-  if (!listOfStableToken || !assets?.[0])
-    return {
-      tokens: [],
-      percentage: 0,
-    };
-
-  const tokens = assets.filter((assetToken) =>
+  const tokens = assets?.filter((assetToken) =>
     listOfStableToken.some((stableToken) => isSame(assetToken, stableToken)),
   );
+
+  if (!tokens?.[0] || !assets?.[0])
+    return {
+      tokens: StableTokens,
+      percentage: 50,
+    };
 
   const percentage: any = ((tokens.length * 100) / assets.length).toFixed(0);
 
@@ -48,18 +50,18 @@ export const useStableAssets = () => {
 export const useNonStableAssets = () => {
   const assets: any = useFromAssets();
   const listOfStableToken = useRootSelector(stableTokensSelector);
-  const { tokens: stableToken } = useStableAssets();
+  const { tokens: stableToken, percentage: stablePercentage } = useStableAssets();
 
-  if (!stableToken && !assets?.[0])
-    return {
-      tokens: [],
-      percentage: 0,
-      totalPercentage: 0,
-    };
-
-  const tokens = assets.filter(
+  const tokens = assets?.filter(
     (assetToken) => !listOfStableToken.some((stableToken) => isSame(assetToken, stableToken)),
   );
+
+  if (!tokens?.[0])
+    return {
+      tokens: NonStableTokens,
+      percentage: 100 - stablePercentage,
+      totalPercentage: 100,
+    };
 
   const percentage: any = ((tokens.length * 100) / assets.length).toFixed(0);
 
