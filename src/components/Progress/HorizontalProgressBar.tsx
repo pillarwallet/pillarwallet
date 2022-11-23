@@ -19,11 +19,10 @@
 */
 
 import * as React from 'react';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 // Components
 import Text from 'components/core/Text';
-import Progress from 'components/Progress';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
@@ -32,26 +31,61 @@ type Props = {
   forgroundColor: string;
   backgroundColor: string;
   progress: any;
+  selectedIndex: number;
 };
 
-export default function ({ forgroundColor, backgroundColor, progress }: Props) {
+export default function ({ forgroundColor, backgroundColor, progress, selectedIndex }: Props) {
   const colors = useThemeColors();
 
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
       <Text color={colors.text}>{progress}%</Text>
-      <View style={{ flex: 1, marginHorizontal: 5 }}>
-        <Progress
-          fullStatusValue={100}
-          currentStatusValue={progress}
-          height={10}
-          colorStart={forgroundColor ?? colors.primaryAccent250}
-          colorEnd={forgroundColor ?? colors.primaryAccent250}
-          emptyBarBackgroundColor={backgroundColor ?? colors.synthetic180}
-          barPadding={0}
+      <View style={{ flex: 1, marginHorizontal: 5, flexDirection: 'row', alignItems: 'center' }}>
+        <View
+          style={[
+            {
+              width: progress + '%',
+              backgroundColor: forgroundColor,
+            },
+            selectedIndex === 0 && { shadowColor: colors.primaryAccent200 },
+            styles.shadow,
+            styles.leftBorder,
+          ]}
+        />
+        <View
+          style={[
+            {
+              width: 100 - progress + '%',
+              backgroundColor: backgroundColor,
+            },
+            selectedIndex === 1 && { shadowColor: colors.primaryAccent100 },
+            styles.shadow,
+            styles.rightBorder,
+          ]}
         />
       </View>
       <Text color={colors.text}>{100 - progress}%</Text>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  shadow: {
+    height: 10,
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 3.35,
+    elevation: 3,
+  },
+  leftBorder: {
+    borderTopLeftRadius: 8,
+    borderBottomLeftRadius: 8,
+  },
+  rightBorder: {
+    borderTopRightRadius: 8,
+    borderBottomRightRadius: 8,
+  },
+});

@@ -37,7 +37,7 @@ import ChainListItem from 'screens/Home/components/ChainListItem';
 
 // Constants
 import { TOKENS, STABLES } from 'constants/walletConstants';
-import { ASSET } from 'constants/navigationConstants';
+import { ASSET, ASSETS } from 'constants/navigationConstants';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
@@ -63,7 +63,6 @@ type Props = {
 
 export default function ({ category, accountTotalBalances, visibleBalance }: Props) {
   const [tabIndex, setTabIndex] = React.useState(0);
-  const [showMore, setShowMore] = useState(false);
   const { tokens } = useStableAssets();
   const chains = useSupportedChains();
   const navigation = useNavigation();
@@ -138,18 +137,22 @@ export default function ({ category, accountTotalBalances, visibleBalance }: Pro
         tabIndex={tabIndex}
         onTabIndexChange={(val: number) => {
           setTabIndex(val);
-          setShowMore(false);
         }}
       />
 
       <Spacing h={20} />
 
-      <HorizontalProgressBar progress={percentage} forgroundColor={items[0].color} backgroundColor={items[1].color} />
+      <HorizontalProgressBar
+        selectedIndex={tabIndex}
+        progress={percentage}
+        forgroundColor={items[0].color}
+        backgroundColor={items[1].color}
+      />
 
       <Spacing h={10} />
 
       <FlatList
-        data={listOfAssets.slice(0, showMore ? listOfAssets?.length + 1 : 5)}
+        data={listOfAssets.slice(0, 5)}
         renderItem={({ item }) => renderItem(item)}
         keyExtractor={(item) => item.symbol}
         contentContainerStyle={{ flexGrow: 1 }}
@@ -160,9 +163,11 @@ export default function ({ category, accountTotalBalances, visibleBalance }: Pro
       {listOfAssets?.length > 5 && (
         <TouchableOpacity
           style={[styles.btn, { backgroundColor: colors.basic050 }]}
-          onPress={() => setShowMore(!showMore)}
+          onPress={() => {
+            navigation.navigate(ASSETS);
+          }}
         >
-          <Icon name={!showMore ? 'down-arrow' : 'up-arrow'} color={colors.text} width={16} height={16} />
+          <Icon name={'down-arrow'} color={colors.text} width={16} height={16} />
         </TouchableOpacity>
       )}
     </>
