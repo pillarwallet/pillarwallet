@@ -31,7 +31,6 @@ import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import { SET_CHAIN_SUPPORTED_ASSETS, NFT_FLAG } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { SET_FETCHING_ASSETS_BALANCES } from 'constants/assetsBalancesConstants';
-import { SET_FETCHING_AVAILABLE_KEY_BASED_COLLECTIBLES_TO_TRANSFER } from 'constants/keyBasedAssetTransferConstants';
 
 // actions
 import { loginAction } from 'actions/authActions';
@@ -134,7 +133,6 @@ describe('Auth actions', () => {
       // appends new key based account to reducer
       { type: UPDATE_ACCOUNTS, payload: [mockActiveSmartWalletAccount, mockNewKeyBasedAccount] },
 
-      { type: SET_FETCHING_AVAILABLE_KEY_BASED_COLLECTIBLES_TO_TRANSFER },
       { type: SET_FETCHING_ASSETS_BALANCES, payload: true },
 
       { type: SET_CHAIN_SUPPORTED_ASSETS, payload: { chain: CHAIN.ETHEREUM, assets: mockSupportedAssets } },
