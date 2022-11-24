@@ -405,6 +405,10 @@ export const setupAppServicesAction = (privateKey: ?string) => {
       dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
     }
 
+    const visibleNFTs = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_NFTS);
+    logBreadcrumb('onboarding', 'finishOnboardingAction: dispatching app nfts flag');
+    dispatch({ type: NFT_FLAG, payload: visibleNFTs });
+
     // check if wallet backup warning toast needed, balance can only be retrieved online
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching checkForWalletBackupToastAction');
     dispatch(checkForWalletBackupToastAction());
@@ -447,10 +451,6 @@ export const finishOnboardingAction = (retry?: boolean) => {
     } else {
       logBreadcrumb('finishOnboardingAction', 'errors recieved retry will happen in application', errorMessage);
     }
-
-    const visibleNFTs = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_NFTS);
-    logBreadcrumb('onboarding', 'finishOnboardingAction: dispatching app nfts flag');
-    dispatch({ type: NFT_FLAG, payload: visibleNFTs });
 
     /**
      * initial deep link executed setting is used to prevent deep links from execution before PIN screen,
