@@ -42,8 +42,6 @@ import { wrapBigNumberOrNil } from 'utils/bigNumber';
 import { buildAssetDataNavigationParam } from 'screens/Assets/utils';
 
 // Types
-import type { AssetCategoryRecordKeys } from 'models/AssetCategory';
-import type { TotalBalances } from 'models/TotalBalances';
 import type { AssetOption } from 'models/Asset';
 
 export default function () {

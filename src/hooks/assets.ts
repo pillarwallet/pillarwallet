@@ -50,7 +50,7 @@ export const useStableAssets = () => {
 export const useNonStableAssets = () => {
   const assets: any = useFromAssets();
   const listOfStableToken = useRootSelector(stableTokensSelector);
-  const { tokens: stableToken, percentage: stablePercentage } = useStableAssets();
+  const { percentage: stablePercentage } = useStableAssets();
 
   const tokens = assets?.filter(
     (assetToken) => !listOfStableToken.some((stableToken) => isSame(assetToken, stableToken)),
