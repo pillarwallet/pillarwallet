@@ -45,6 +45,9 @@ import { useChainsConfig, useAssetCategoriesConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
 import { isArchanovaAccount, isKeyBasedAccount } from 'utils/accounts';
 
+// Components
+import InvestmentListItem from 'components/lists/InvestmentListItem';
+
 // Types
 import type { AssetCategory, AssetCategoryRecordKeys } from 'models/AssetCategory';
 import type { Chain, ChainRecord } from 'models/Chain';
@@ -119,7 +122,10 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visible
           visibleBalance={visibleBalance}
           onPress={() => handlePressAssetCategory(category)}
         />
-        {showChains && chains.map((chain) => renderChainWithBalance(category, chain))}
+        {showChains &&
+          category !== ASSET_CATEGORY.APPS &&
+          chains.map((chain) => renderChainWithBalance(category, chain))}
+        {showChains && category === ASSET_CATEGORY.APPS && INVESTMENT_ITEM.map((item) => renderInvestments(item))}
       </React.Fragment>
     );
   };
@@ -141,6 +147,12 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visible
         onPressDeploy={() => showDeploymentInterjection(chain)}
       />
     );
+  };
+
+  const renderInvestments = (item: any) => {
+    const { name, network } = item;
+
+    return <InvestmentListItem key={`${name}-${network}`} {...item} onPress={() => {}} />;
   };
 
   const renderCollectiblesCategory = () => {
@@ -203,3 +215,41 @@ export default AssetsSection;
 const Container = styled.View`
   padding: 0 ${spacing.large}px;
 `;
+
+const INVESTMENT_ITEM = [
+  {
+    name: 'Loopring',
+    balance: '0x06c932e678fb2000',
+    network: 'ethereum',
+    position: 1,
+    logoURI: 'https://storage.googleapis.com/zapper-fi-assets/apps/loopring.png',
+  },
+  {
+    name: 'Reflexer',
+    balance: '0x01890747ccb84d27f41000',
+    network: 'ethereum',
+    position: 1,
+    logoURI: 'https://storage.googleapis.com/zapper-fi-assets/apps/reflexer.png',
+  },
+  {
+    name: 'Sablier',
+    balance: '0x266496846039f734e3',
+    network: 'ethereum',
+    position: 25,
+    logoURI: 'https://storage.googleapis.com/zapper-fi-assets/apps/sablier.png',
+  },
+  {
+    name: 'Uniswap V2',
+    balance: '0xbd5d6f281fe97775e8',
+    network: 'ethereum',
+    position: 4,
+    logoURI: 'https://storage.googleapis.com/zapper-fi-assets/apps/uniswap-v2.png',
+  },
+  {
+    name: 'Aave V2',
+    balance: '0x034a2a4c47c6dcb1f4',
+    network: 'ethereum',
+    position: 3,
+    logoURI: 'https://storage.googleapis.com/zapper-fi-assets/apps/aave-v2.png',
+  },
+];
