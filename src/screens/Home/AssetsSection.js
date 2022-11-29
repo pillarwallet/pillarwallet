@@ -36,6 +36,7 @@ import { useSupportedChains } from 'selectors/chains';
 
 // Hooks
 import { useDeploymentStatus } from 'hooks/deploymentStatus';
+import { useAppHoldings } from 'hooks/apps';
 
 // Utils
 import { formatValue, formatFiatValue } from 'utils/format';
@@ -70,6 +71,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visible
   const { t } = useTranslationWithPrefix('home.assets');
   const navigation = useNavigation();
   const visibleNFTs = useNftFlag();
+  const { totalBalanceOfHoldings, appHoldings } = useAppHoldings();
 
   const [showChainsPerCategory, setShowChainsPerCategory] = React.useState<FlagPerCategory>({});
 
@@ -106,7 +108,8 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visible
   };
 
   const renderCategoryWithBalance = (category: AssetCategoryRecordKeys) => {
-    const balance = balancePerCategory[category] ?? BigNumber(0);
+    const balance =
+      category === ASSET_CATEGORY.APPS ? totalBalanceOfHoldings : balancePerCategory[category] ?? BigNumber(0);
     const formattedBalance = formatFiatValue(balance, fiatCurrency);
 
     const { title, iconName } = categoriesConfig[category];
@@ -125,7 +128,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visible
         {showChains &&
           category !== ASSET_CATEGORY.APPS &&
           chains.map((chain) => renderChainWithBalance(category, chain))}
-        {showChains && category === ASSET_CATEGORY.APPS && INVESTMENT_ITEM.map((item) => renderInvestments(item))}
+        {showChains && category === ASSET_CATEGORY.APPS && appHoldings?.map((item) => renderInvestments(item))}
       </React.Fragment>
     );
   };
@@ -215,41 +218,3 @@ export default AssetsSection;
 const Container = styled.View`
   padding: 0 ${spacing.large}px;
 `;
-
-const INVESTMENT_ITEM = [
-  {
-    name: 'Loopring',
-    balance: '0x06c932e678fb2000',
-    network: 'ethereum',
-    position: 1,
-    logoURI: 'https://storage.googleapis.com/zapper-fi-assets/apps/loopring.png',
-  },
-  {
-    name: 'Reflexer',
-    balance: '0x01890747ccb84d27f41000',
-    network: 'ethereum',
-    position: 1,
-    logoURI: 'https://storage.googleapis.com/zapper-fi-assets/apps/reflexer.png',
-  },
-  {
-    name: 'Sablier',
-    balance: '0x266496846039f734e3',
-    network: 'ethereum',
-    position: 25,
-    logoURI: 'https://storage.googleapis.com/zapper-fi-assets/apps/sablier.png',
-  },
-  {
-    name: 'Uniswap V2',
-    balance: '0xbd5d6f281fe97775e8',
-    network: 'ethereum',
-    position: 4,
-    logoURI: 'https://storage.googleapis.com/zapper-fi-assets/apps/uniswap-v2.png',
-  },
-  {
-    name: 'Aave V2',
-    balance: '0x034a2a4c47c6dcb1f4',
-    network: 'ethereum',
-    position: 3,
-    logoURI: 'https://storage.googleapis.com/zapper-fi-assets/apps/aave-v2.png',
-  },
-];

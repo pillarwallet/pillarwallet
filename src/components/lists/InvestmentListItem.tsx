@@ -20,10 +20,9 @@
 
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
-import { BigNumber } from 'bignumber.js';
+
 import styled from 'styled-components/native';
 import { useTranslation } from 'react-i18next';
-import { formatFullAmount } from 'utils/common';
 
 // Components
 import Text from 'components/core/Text';
@@ -49,7 +48,7 @@ type Props = {
   name: string;
   position: number;
   logoURI: string;
-  balance?: BigNumber;
+  balance?: number;
   onPress?: () => void;
   style?: ViewStyleProp;
 };
@@ -66,12 +65,6 @@ export default function ({ network, name, balance, onPress, style, logoURI, posi
 
   const networkName = network ? config.title : undefined;
 
-  const aa = formatFullAmount(balance);
-
-  const decimalValue: any = `10e${17}`;
-
-  const amount: any = parseInt(aa) / (decimalValue ?? 1);
-
   return (
     <Container
       onPress={onPress}
@@ -87,7 +80,7 @@ export default function ({ network, name, balance, onPress, style, logoURI, posi
       </TitleContainer>
 
       <BalanceWrapper>
-        <BalanceFiatValue numberOfLines={1}>{currencySymbol + amount.toFixed(2) ?? ''}</BalanceFiatValue>
+        <BalanceFiatValue numberOfLines={1}>{currencySymbol + balance ?? ''}</BalanceFiatValue>
         <PositionValue numberOfLines={1}>{t('label.on_position', { position })}</PositionValue>
       </BalanceWrapper>
     </Container>
