@@ -27,14 +27,10 @@ import {
   ARCHANOVA_WALLET_UPGRADE_STATUSES,
 } from 'constants/archanovaConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import {
-  ACCOUNT_TYPES,
-  UPDATE_ACCOUNTS,
-} from 'constants/accountsConstants';
-import { SET_CHAIN_SUPPORTED_ASSETS } from 'constants/assetsConstants';
+import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
+import { SET_CHAIN_SUPPORTED_ASSETS, NFT_FLAG } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { SET_FETCHING_ASSETS_BALANCES } from 'constants/assetsBalancesConstants';
-import { SET_FETCHING_AVAILABLE_KEY_BASED_COLLECTIBLES_TO_TRANSFER } from 'constants/keyBasedAssetTransferConstants';
 
 // actions
 import { loginAction } from 'actions/authActions';
@@ -53,7 +49,6 @@ import {
   mockSupportedAssets,
   mockDeviceUniqueId,
 } from 'testUtils/jestSetup';
-
 
 jest.spyOn(etherspotService, 'getAccounts').mockImplementation(() => [mockEtherspotApiAccount]);
 
@@ -108,6 +103,7 @@ describe('Auth actions', () => {
       assetsBalances: { data: {} },
       user: { data: { username: 'test-username' } },
       walletEvents: { data: {} },
+      nftFlag: { visible: false },
     });
   });
 
@@ -119,6 +115,8 @@ describe('Auth actions', () => {
 
       { type: SET_WALLET, payload: mockWallet },
       { type: SET_WALLET, payload: { address: mockWallet.address } },
+
+      { type: NFT_FLAG, payload: undefined },
 
       { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
       { type: UPDATE_APP_SETTINGS, payload: { initialDeepLinkExecuted: true } },
@@ -135,18 +133,15 @@ describe('Auth actions', () => {
       // appends new key based account to reducer
       { type: UPDATE_ACCOUNTS, payload: [mockActiveSmartWalletAccount, mockNewKeyBasedAccount] },
 
-      { type: SET_FETCHING_AVAILABLE_KEY_BASED_COLLECTIBLES_TO_TRANSFER },
       { type: SET_FETCHING_ASSETS_BALANCES, payload: true },
 
       { type: SET_CHAIN_SUPPORTED_ASSETS, payload: { chain: CHAIN.ETHEREUM, assets: mockSupportedAssets } },
-
     ];
 
     const pin = '123456';
-    return store.dispatch(loginAction(pin))
-      .then(() => {
-        const actualActions = store.getActions();
-        expect(actualActions).toEqual(expectedActions);
-      });
+    return store.dispatch(loginAction(pin)).then(() => {
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expectedActions);
+    });
   });
 });

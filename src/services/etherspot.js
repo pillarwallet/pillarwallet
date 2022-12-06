@@ -548,7 +548,7 @@ export class EtherspotService {
     }
 
     // submit current batch
-    const { hash: batchHash } = await sdk.submitGatewayBatch();
+    const { hash: batchHash } = await sdk.submitGatewayBatch({ guarded: false });
 
     return { batchHash };
   }
@@ -598,7 +598,7 @@ export class EtherspotService {
     }
 
     // submit current batch
-    const { hash: batchHash } = await sdk.submitGatewayBatch();
+    const { hash: batchHash } = await sdk.submitGatewayBatch({ guarded: false });
 
     return { batchHash };
   }
