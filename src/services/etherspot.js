@@ -63,7 +63,7 @@ import { mapToEthereumTransactions } from 'utils/transactions';
 import { getCaptureFee } from 'utils/exchange';
 
 // constants
-import { ETH, ADDRESS_ZERO, ROOT_TOKEN_ADDRESS } from 'constants/assetsConstants';
+import { ETH, ADDRESS_ZERO, ROOT_TOKEN_ADDRESS, ETHERSPOT_STABLE_COIN } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 import { PROJECT_KEY } from 'constants/etherspotConstants';
@@ -548,7 +548,7 @@ export class EtherspotService {
     }
 
     // submit current batch
-    const { hash: batchHash } = await sdk.submitGatewayBatch();
+    const { hash: batchHash } = await sdk.submitGatewayBatch({ guarded: false });
 
     return { batchHash };
   }
@@ -598,7 +598,7 @@ export class EtherspotService {
     }
 
     // submit current batch
-    const { hash: batchHash } = await sdk.submitGatewayBatch();
+    const { hash: batchHash } = await sdk.submitGatewayBatch({ guarded: false });
 
     return { batchHash };
   }
@@ -732,6 +732,20 @@ export class EtherspotService {
         accountAddress,
         currencySymbol,
       });
+      return null;
+    }
+  }
+
+  async getStableAssets(chain: Chain) {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      logBreadcrumb('getStableAssets', 'failed: no sdk instance for chain', { chain });
+      return null;
+    }
+    try {
+      return await sdk.getTokenListTokens({ name: ETHERSPOT_STABLE_COIN });
+    } catch (e) {
+      reportErrorLog('EtherspotService getStableAssets failed', { error: e });
       return null;
     }
   }

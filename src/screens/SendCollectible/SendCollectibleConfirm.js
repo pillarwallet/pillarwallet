@@ -42,6 +42,7 @@ import { Paragraph } from 'components/legacy/Typography';
 // Constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
+import { TRANSACTION_TYPE } from 'constants/transactionsConstants';
 
 // Utils
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
@@ -115,6 +116,7 @@ const SendCollectibleConfirm = ({
     amount: 0,
     chain,
     useLegacyTransferMethod: isLegacy,
+    type: TRANSACTION_TYPE.SENDNFT,
   };
 
   if (receiverEnsName) {

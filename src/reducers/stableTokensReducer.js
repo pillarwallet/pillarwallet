@@ -18,26 +18,26 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const EXCHANGE_PROVIDER = {
-  UNISWAP: ('Uniswap': 'Uniswap'),
-  ONE_INCH: ('OneInch': 'OneInch'),
-  SYNTHETIX: ('Synthetix': 'Synthetix'),
-  SUSHISWAP: ('Sushiswap': 'Sushiswap'),
-  HONEYSWAP: ('Honeyswap': 'Honeyswap'),
-  PARASWAP: ('Paraswap': 'Paraswap'),
-  LIFI: ('Lifi': 'Lifi'),
+import { SET_STABLE_TOKEN } from 'constants/assetsConstants';
+
+export type StableTokensReducerState = {
+  data: any,
 };
 
-// Hardcoded in Etherspot backend
-export const ALLOWED_SLIPPAGE = 1; // 1%
-
-// deprecated: WBTC.Cafe
-export const WBTC_PENDING_TRANSACTION = 'WBTC_PENDING_TRANSACTION';
-export const WBTC_SETTLED_TRANSACTION = 'WBTC_SETTLED_TRANSACTION';
-
-export const BRIDGE_CATEGORY = {
-  EXCHANGE: ('Exchange': 'Exchange'),
-  CROSS_CHAIN: ('Cross-chain': 'Cross-chain'),
+export type TokensAction = {
+  type: string,
+  payload: any,
 };
 
-export const TRANSACTION_NOTIFICATION_DATA = 'TRANSACTION_NOTIFICATION_DATA';
+export const initialState = {
+  data: [],
+};
+
+export default function (state: StableTokensReducerState = initialState, action: TokensAction) {
+  switch (action.type) {
+    case SET_STABLE_TOKEN:
+      return { ...state, data: action.payload };
+    default:
+      return state;
+  }
+}

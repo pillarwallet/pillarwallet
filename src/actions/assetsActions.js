@@ -602,10 +602,10 @@ export const fetchAssetsBalancesAction = () => {
 
     dispatch({ type: SET_FETCHING_ASSETS_BALANCES, payload: true });
 
-    await dispatch(fetchSupportedAssetsAction());
+    dispatch(fetchSupportedAssetsAction());
 
-    await dispatch(fetchAccountWalletBalancesAction(activeAccount));
-    await dispatch(fetchAssetsRatesAction());
+    dispatch(fetchAccountWalletBalancesAction(activeAccount));
+    dispatch(fetchAssetsRatesAction());
 
     if (isArchanovaAccount(activeAccount)) {
       dispatch(fetchVirtualAccountBalanceAction());

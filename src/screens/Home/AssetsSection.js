@@ -25,13 +25,16 @@ import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
 
+// Components
+import WalletSelection from 'components/Wallet/WalletSelection';
+
 // Constants
 import { ASSETS, SERVICES_FLOW } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { ASSET_CATEGORY } from 'constants/assetsConstants';
 
 // Selectors
-import { useFiatCurrency, useActiveAccount } from 'selectors';
+import { useFiatCurrency, useActiveAccount, useNftFlag } from 'selectors';
 import { useSupportedChains } from 'selectors/chains';
 
 // Hooks
@@ -64,10 +67,11 @@ type Props = {|
 type FlagPerCategory = { [AssetCategory]: ?boolean };
 
 function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visibleBalance }: Props) {
-  const { t } = useTranslationWithPrefix('home.assets');
+  const { t, tRoot } = useTranslationWithPrefix('home.assets');
   const navigation = useNavigation();
+  const visibleNFTs = useNftFlag();
 
-  const [showChainsPerCategory, setShowChainsPerCategory] = React.useState<FlagPerCategory>({});
+  const [showChainsPerCategory, setShowChainsPerCategory] = React.useState<FlagPerCategory>({ wallet: true });
 
   const chains = useSupportedChains();
   const fiatCurrency = useFiatCurrency();
@@ -118,7 +122,10 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visible
           visibleBalance={visibleBalance}
           onPress={() => handlePressAssetCategory(category)}
         />
-        {showChains && chains.map((chain) => renderChainWithBalance(category, chain))}
+        {showChains && title === tRoot('assetCategories.wallet') && <WalletSelection />}
+        {showChains &&
+          title !== tRoot('assetCategories.wallet') &&
+          chains.map((chain) => renderChainWithBalance(category, chain))}
       </React.Fragment>
     );
   };
@@ -181,7 +188,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visible
     <Container>
       {categoriesToRender.map((category) => renderCategoryWithBalance(category))}
 
-      {renderCollectiblesCategory()}
+      {visibleNFTs && renderCollectiblesCategory()}
 
       {/* Temporary entry until other UI provided */}
       {isArchanovaAccount(activeAccount) && (

@@ -47,7 +47,7 @@ import { isCaseInsensitiveMatch, logBreadcrumb } from 'utils/common';
 import { parseEtherspotTransactionStatus } from 'utils/etherspot';
 
 // Selectors
-import { activeAccountSelector } from 'selectors';
+import { activeAccountSelector, useNftFlag } from 'selectors';
 
 // Types
 import type { Collectible, CollectibleTransaction } from 'models/Collectible';
@@ -117,6 +117,13 @@ const collectibleTransactionUpdate = (hash: string) => {
 
 export const fetchCollectiblesAction = (defaultAccount?: Account) => {
   return async (dispatch: Dispatch, getState: GetState) => {
+    const nftsEnabled = useNftFlag();
+
+    /**
+     * Is the NFT flag falsy? Return.
+     */
+    if (!nftsEnabled) { return; }
+
     const account = defaultAccount ?? activeAccountSelector(getState());
     if (!account) {
       logBreadcrumb('fetchCollectiblesAction', 'failed: no account', { defaultAccount });
@@ -210,6 +217,10 @@ const isOpenSeaCollectibleTransaction = (event: Object): boolean => {
 
 export const fetchCollectiblesHistoryAction = (account?: Account) => {
   return async (dispatch: Dispatch, getState: GetState) => {
+    const nftsEnabled = useNftFlag();
+
+    if (!nftsEnabled) { return; }
+
     const {
       accounts: { data: accounts },
       collectibles: { transactionHistory: collectiblesHistory },
@@ -232,7 +243,7 @@ export const fetchCollectiblesHistoryAction = (account?: Account) => {
       return;
     }
 
-    const openSeaHistory = await fetchCollectiblesTransactionHistory(walletAddress);
+    const openSeaHistory = await fetchCollectiblesTransactionHistory();
     if (!openSeaHistory) {
       logBreadcrumb('fetchCollectiblesHistoryAction', 'failed: response not valid', {
         openSeaHistory,
