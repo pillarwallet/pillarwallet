@@ -65,6 +65,9 @@ import type { AssetData, KeyBasedAssetTransfer } from 'models/Asset';
 import type { Account } from 'models/Account';
 import { ethereumSupportedAssetsSelector } from 'selectors/assets';
 
+// Selectors
+import { useNftFlag } from 'selectors';
+
 
 const buildAssetTransferTransaction = (asset: AssetData, transactionExtra: any) => {
   if (asset.tokenType === ASSET_TYPES.COLLECTIBLE) {
@@ -192,6 +195,13 @@ export const fetchAvailableBalancesToTransferAction = () => {
 
 export const fetchAvailableCollectiblesToTransferAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
+    const nftsEnabled = useNftFlag();
+
+    /**
+     * Is the NFT flag falsy? Return.
+     */
+    if (!nftsEnabled) { return; }
+
     const keyBasedWalletAddress = getState().wallet.data?.address;
     if (!keyBasedWalletAddress) {
       logBreadcrumb('fetchAvailableCollectiblesToTransferAction', 'failed: no keyBasedWalletAddress');

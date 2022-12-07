@@ -20,7 +20,7 @@
 /* eslint-disable i18next/no-literal-string */
 
 import React, { useRef, useEffect, useCallback } from 'react';
-import { View } from 'react-native';
+import { View, Platform } from 'react-native';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 import { useDispatch } from 'react-redux';
@@ -37,6 +37,7 @@ import { spacing, appFont } from 'utils/variables';
 
 // Actions
 import { beginOnboardingAction } from 'actions/onboardingActions';
+import { logEventAction } from 'actions/analyticsActions';
 
 // Selectors
 import { useRootSelector } from 'selectors';
@@ -56,6 +57,10 @@ const BiometricModal = ({ onModalHide, biometricType, hasNoBiometrics = false }:
   const proceedToBeginOnboarding = async (setBiometrics?: boolean) => {
     setIsLoading(true);
     await dispatch(beginOnboardingAction(setBiometrics));
+
+    if (setBiometrics) dispatch(logEventAction(Platform.OS === 'ios' ? 'enable_face_id' : 'enable_biometric_id'));
+    else dispatch(logEventAction(Platform.OS === 'ios' ? 'cancel_face_id' : 'cancel_biometric_id'));
+
     close();
   };
 
