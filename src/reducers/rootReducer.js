@@ -64,6 +64,7 @@ import transactionEstimateReducer from './transactionEstimateReducer';
 import liquidityPoolsReducer from './liquidityPoolsReducer';
 import totalBalancesReducer from './totalBalancesReducer';
 import stableTokensReducer from './stableTokensReducer';
+import transactionNotificationReducer from './transactionNotificationReducer';
 import nftFlagReducer from './nftFlagReducer';
 
 // local types
@@ -109,7 +110,9 @@ import type { TransactionEstimateReducerAction, TransactionEstimateReducerState 
 import type { LiquidityPoolsReducerState, LiquidityPoolsReducerAction } from './liquidityPoolsReducer';
 import type { TotalBalancesReducerState, TotalBalancesReducerAction } from './totalBalancesReducer';
 import type { StableTokensReducerState, TokensAction } from './stableTokensReducer';
+import type { TransactionNotificationState, TransactionNotificationAction } from './transactionNotificationReducer.tsx';
 import type { NFTFlagReducerAction, NFTFlagReducerState } from './nftFlagReducer';
+
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -148,6 +151,7 @@ export type RootReducerState = {|
   gasThreshold: IReduxGasThresholdState,
   nativeIntegration: IReduxNativeIntegrationState,
   stableTokens: StableTokensReducerState,
+  transactionNotification: TransactionNotificationState,
   nftFlag: NFTFlagReducerState,
 |};
 
@@ -179,7 +183,9 @@ type RootReducerAction =
   | TotalBalancesReducerAction
   | RatesReducerAction
   | TokensAction
+  | TransactionNotificationAction
   | NFTFlagReducerAction;
+
 
 export type GetState = () => RootReducerState;
 export type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
@@ -227,6 +233,7 @@ const appReducer = combineReducers({
   firestore: firestoreReducer,
   gasThreshold: gasThresholdReducer,
   nativeIntegration: nativeIntegrationReducer,
+  transactionNotification: transactionNotificationReducer,
 });
 
 export const initialState = appReducer(undefined, {});

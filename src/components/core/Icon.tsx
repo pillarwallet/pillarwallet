@@ -123,6 +123,8 @@ import DeployIcon from 'assets/icons/svg/24-circle-filled-alert.svg';
 import ExclamationLight from 'assets/icons/svg/exclamationLight.svg';
 import DownArrow from 'assets/icons/svg/down-arrow.svg';
 import UpArrow from 'assets/icons/svg/up-arrow.svg';
+import PendingIcon from 'assets/icons/svg/24-circle-pending.svg';
+import CheckmarkCircle from 'assets/icons/svg/24-circle-checkmark.svg';
 
 // Assets: services icons
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
@@ -229,6 +231,8 @@ const components = {
   'exclamation-round-light': ExclamationLight,
   'down-arrow': DownArrow,
   'up-arrow': UpArrow,
+  'pending-process': PendingIcon,
+  'checkmark-circle': CheckmarkCircle,
 
   // Service icons
   binance: IconBinance,

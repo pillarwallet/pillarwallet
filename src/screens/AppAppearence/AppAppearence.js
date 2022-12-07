@@ -42,6 +42,7 @@ import { getThemeColors } from 'utils/themes';
 // Actions
 import { setAppThemeAction } from 'actions/appSettingsActions';
 import { saveDbAction } from 'actions/dbActions';
+import { logEventAction } from 'actions/analyticsActions';
 
 // Assets
 const lightTheme = require('assets/images/appAppearence/lightTheme.png');
@@ -82,6 +83,7 @@ const AppAppearence = () => {
         routeName: PIN_CODE_UNLOCK,
         params: { omitPin },
       });
+      dispatch(logEventAction('confirm_app_appearance'));
     } else navigation.goBack(null);
   };
 

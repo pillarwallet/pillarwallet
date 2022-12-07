@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
@@ -38,21 +38,21 @@ import { maxPinCodeLengthSelector } from 'selectors/appSettings';
 import { validatePin } from 'utils/validators';
 import { fontStyles, spacing } from 'utils/variables';
 
+// Actions
+import { logEventAction } from 'actions/analyticsActions';
+
 // Types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
-
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   wallet: ?Object,
 };
 
-const SetWalletPinCode = ({
-  navigation,
-  wallet,
-}: Props) => {
+const SetWalletPinCode = ({ navigation, wallet }: Props) => {
   const [pinCode, setPinCode] = useState(null);
+  const dispatch = useDispatch();
   const [errorMessage, setErrorMessage] = useState(null);
   const maxPinCodeLength = useRootSelector(maxPinCodeLengthSelector);
 
@@ -67,6 +67,7 @@ const SetWalletPinCode = ({
       setErrorMessage(validationError);
       return;
     }
+    dispatch(logEventAction('create_pin', { pinCode: submittedPinCode }));
     navigation.navigate(PIN_CODE_CONFIRMATION, { pinCode: submittedPinCode });
   };
 
@@ -99,9 +100,7 @@ const SetWalletPinCode = ({
   );
 };
 
-const mapStateToProps = ({
-  onboarding: { wallet },
-}: RootReducerState): $Shape<Props> => ({
+const mapStateToProps = ({ onboarding: { wallet } }: RootReducerState): $Shape<Props> => ({
   wallet,
 });
 

@@ -1467,5 +1467,18 @@
    "getNotifications":{
     "title": "得到通知",
     "description": "Pillar 将通知您的交易状态和来自 dapp 的请求。从不垃圾邮件，永远在点。"
+  },
+
+  "transactionNotification":{
+    "selling":"销售",
+    "you_received":"您已收到",
+    "sending":"发送",
+    "you_sent":"你已经发送",
+    "to":"至",
+    "sold":"卖",
+    "on":"上",
+    "for":"为了",
+    "gas":"气体",
+    "time":"时间"
   }
 }
