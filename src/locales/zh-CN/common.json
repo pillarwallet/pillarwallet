@@ -67,7 +67,12 @@
     "xdai": "Gnosis",
     "polygon": "Polygon",
     "optimism": "Optimism",
-    "optimism_kovan": "Optimism Kovan"
+    "optimism_kovan": "Optimism Kovan",
+    "gorli":"Ethereum Görli",
+    "sokol":"Gnosis Sokol",
+    "binance_test":"Binance Testnet",
+    "mumbai":"Polygon Mumbai",
+    "optimism_gorli":"Optimistic Görli"
   },
   "chainsShort": {
     "ethereum": "Ethereum",

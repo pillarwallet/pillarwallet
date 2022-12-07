@@ -58,7 +58,7 @@ import {
   getChainTokenListName,
 } from 'utils/etherspot';
 import { addressesEqual, findAssetByAddress } from 'utils/assets';
-import { nativeAssetPerChain, mapChainToChainId } from 'utils/chains';
+import { nativeAssetPerChain, mapChainToChainId, mapProdChainId } from 'utils/chains';
 import { mapToEthereumTransactions } from 'utils/transactions';
 import { getCaptureFee } from 'utils/exchange';
 
@@ -106,15 +106,15 @@ export class EtherspotService {
      * function which is called from envConfig.js
      */
     this.supportedNetworks = [
-      isMainnet ? NetworkNames.Mainnet : NetworkNames.Kovan,
-      NetworkNames.Bsc,
+      isMainnet ? NetworkNames.Mainnet : NetworkNames.Goerli,
+      isMainnet ? NetworkNames.Bsc : NetworkNames.BscTest,
       isMainnet ? NetworkNames.Matic : NetworkNames.Mumbai,
-      NetworkNames.Xdai,
+      isMainnet ? NetworkNames.Xdai : NetworkNames.Sokol,
       isMainnet ? NetworkNames.Avalanche : NetworkNames.Fuji,
-      isMainnet ? NetworkNames.Optimism : NetworkNames.OptimismKovan,
+      isMainnet ? NetworkNames.Optimism : NetworkNames.OptimismGoerli,
     ];
 
-    const primaryNetworkName = isMainnet ? NetworkNames.Mainnet : NetworkNames.Kovan;
+    const primaryNetworkName = isMainnet ? NetworkNames.Mainnet : NetworkNames.Goerli;
 
     /**
      * Cycle through the supported networks and build an
@@ -123,10 +123,12 @@ export class EtherspotService {
     await Promise.all(
       this.supportedNetworks.map(async (networkName) => {
         const env =
-          networkName !== NetworkNames.Kovan &&
+          networkName !== NetworkNames.Goerli &&
           networkName !== NetworkNames.Fuji &&
           networkName !== NetworkNames.Mumbai &&
-          networkName !== NetworkNames.OptimismKovan
+          networkName !== NetworkNames.Sokol &&
+          networkName !== NetworkNames.BscTest &&
+          networkName !== NetworkNames.OptimismGoerli
             ? EnvNames.MainNets
             : EnvNames.TestNets;
         this.instances[networkName] = new EtherspotSdk(privateKey, {
@@ -206,7 +208,7 @@ export class EtherspotService {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) return null;
 
-    const chainId = mapChainToChainId(chain);
+    const chainId = mapProdChainId(chain);
 
     const rateData = await sdk.fetchExchangeRates({ chainId, tokens: assetsAddresses });
 
@@ -1032,17 +1034,17 @@ export default etherspot;
 function networkNameFromChain(chain: Chain): ?string {
   switch (chain) {
     case CHAIN.ETHEREUM:
-      return isProdEnv() ? NetworkNames.Mainnet : NetworkNames.Kovan;
+      return isProdEnv() ? NetworkNames.Mainnet : NetworkNames.Goerli;
     case CHAIN.BINANCE:
-      return NetworkNames.Bsc;
+      return isProdEnv() ? NetworkNames.Bsc : NetworkNames.BscTest;
     case CHAIN.POLYGON:
       return isProdEnv() ? NetworkNames.Matic : NetworkNames.Mumbai;
     case CHAIN.XDAI:
-      return NetworkNames.Xdai;
+      return isProdEnv() ? NetworkNames.Xdai : NetworkNames.Sokol;
     case CHAIN.AVALANCHE:
       return isProdEnv() ? NetworkNames.Avalanche : NetworkNames.Fuji;
     case CHAIN.OPTIMISM:
-      return isProdEnv() ? NetworkNames.Optimism : NetworkNames.OptimismKovan;
+      return isProdEnv() ? NetworkNames.Optimism : NetworkNames.OptimismGoerli;
     default:
       return null;
   }
@@ -1051,20 +1053,22 @@ function networkNameFromChain(chain: Chain): ?string {
 function chainFromNetworkName(networkName: string): ?Chain {
   switch (networkName) {
     case NetworkNames.Mainnet:
-    case NetworkNames.Kovan:
+    case NetworkNames.Goerli:
       return CHAIN.ETHEREUM;
     case NetworkNames.Bsc:
+    case NetworkNames.BscTest:
       return CHAIN.BINANCE;
     case NetworkNames.Matic:
     case NetworkNames.Mumbai:
       return CHAIN.POLYGON;
     case NetworkNames.Xdai:
+    case NetworkNames.Sokol:
       return CHAIN.XDAI;
     case NetworkNames.Avalanche:
     case NetworkNames.Fuji:
       return CHAIN.AVALANCHE;
     case NetworkNames.Optimism:
-    case NetworkNames.OptimismKovan:
+    case NetworkNames.OptimismGoerli:
       return CHAIN.OPTIMISM;
     default:
       return null;
