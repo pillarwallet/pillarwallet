@@ -44,7 +44,11 @@ import WalletTab from './wallet/WalletTab';
 import InvestmentsTab from './investments/InvestmentsTab';
 import CollectiblesTab from './collectibles/CollectiblesTab';
 
-function Assets() {
+type Props = {
+  onBackPress?: () => void,
+};
+
+function Assets({ onBackPress }: Props) {
   const navigation = useNavigation();
   const { t } = useTranslation();
   const config = useAssetCategoriesConfig();
@@ -70,8 +74,13 @@ function Assets() {
 
   return (
     <Container>
-      <HeaderBlock centerItems={[{ title: t('title.assets') }]} navigation={navigation} noPaddingTop />
-      <TabView items={items} tabIndex={tabIndex} onTabIndexChange={setTabIndex} />
+      <HeaderBlock
+        centerItems={[{ title: t('title.assets') }]}
+        noPaddingTop
+        navigation={navigation}
+        customOnBack={() => (onBackPress ? onBackPress() : navigation.pop())}
+      />
+      <TabView items={items} tabIndex={tabIndex} onTabIndexChange={setTabIndex} isNavigateToHome={!!onBackPress} />
     </Container>
   );
 }

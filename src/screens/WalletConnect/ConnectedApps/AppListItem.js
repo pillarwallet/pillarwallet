@@ -20,11 +20,11 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import Text from 'components/core/Text';
 import Image from 'components/Image';
+import Icon from 'components/core/Icon';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
@@ -42,7 +42,6 @@ type Props = {|
 |};
 
 function AppListItem({ title, chain, iconUrl, onPress }: Props) {
-  const { t } = useTranslationWithPrefix('walletConnect.connectedApps');
   const colors = useThemeColors();
 
   const config = useChainConfig(chain);
@@ -52,13 +51,16 @@ function AppListItem({ title, chain, iconUrl, onPress }: Props) {
       <IconContainer>{!!iconUrl && <IconImage source={{ uri: iconUrl }} />}</IconContainer>
 
       <TitleContainer>
-        <Text variant="medium" numberOfLines={1}>{title}</Text>
+        <Text variant="medium" numberOfLines={1}>
+          {title}
+        </Text>
         <Text color={colors.secondaryText}>{config?.title}</Text>
       </TitleContainer>
 
       <RightAddOn>
-        <Text variant="medium" color={colors.secondaryText}>
-          {t('connected')}
+        <Icon name={chain} />
+        <Text variant="medium" color={colors.secondaryText} style={{ marginLeft: 5 }}>
+          {config?.title}
         </Text>
       </RightAddOn>
     </TouchableContainer>
@@ -94,4 +96,6 @@ const TitleContainer = styled.View`
 const RightAddOn = styled.View`
   justify-content: center;
   margin-left: ${spacing.medium}px;
+  flex-direction: row;
+  align-items: center;
 `;
