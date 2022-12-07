@@ -30,6 +30,9 @@ import TabView from 'components/layout/TabView';
 // Constants
 import { ASSET_CATEGORY as CATEGORY } from 'constants/assetsConstants';
 
+// Selector
+import { useNftFlag } from 'selectors';
+
 // Utils
 import { useAssetCategoriesConfig } from 'utils/uiConfig';
 
@@ -45,6 +48,7 @@ function Assets() {
   const navigation = useNavigation();
   const { t } = useTranslation();
   const config = useAssetCategoriesConfig();
+  const visibleNFTs = useNftFlag();
 
   const items = [
     { key: CATEGORY.WALLET, title: config[CATEGORY.WALLET].title, component: WalletTab },
@@ -53,8 +57,11 @@ function Assets() {
     { key: CATEGORY.APPS, title: config[CATEGORY.APPS].title, component: InvestmentsTab },
     // Temporarily hide rewards tab until rewards fetching is implemented
     // { key: CATEGORY.REWARDS, title: config[CATEGORY.REWARDS].title, component: RewardsTab },
-    { key: CATEGORY.COLLECTIBLES, title: config[CATEGORY.COLLECTIBLES].title, component: CollectiblesTab },
   ];
+
+  if (visibleNFTs) {
+    items.push({ key: CATEGORY.COLLECTIBLES, title: config[CATEGORY.COLLECTIBLES].title, component: CollectiblesTab });
+  }
 
   const initialCategory: ?AssetCategory = navigation.getParam('category');
 

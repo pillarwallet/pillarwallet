@@ -42,6 +42,7 @@ import {
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { CHAIN } from 'constants/chainConstants';
+import { NFT_FLAG } from 'constants/assetsConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -403,6 +404,10 @@ export const setupAppServicesAction = (privateKey: ?string) => {
       );
       dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
     }
+
+    const visibleNFTs = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_NFTS);
+    logBreadcrumb('onboarding', 'finishOnboardingAction: dispatching app nfts flag');
+    dispatch({ type: NFT_FLAG, payload: visibleNFTs });
 
     // check if wallet backup warning toast needed, balance can only be retrieved online
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching checkForWalletBackupToastAction');
