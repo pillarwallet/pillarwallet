@@ -28,7 +28,7 @@ import {
 } from 'constants/archanovaConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
-import { SET_CHAIN_SUPPORTED_ASSETS, NFT_FLAG } from 'constants/assetsConstants';
+import { SET_CHAIN_SUPPORTED_ASSETS, SET_STABLE_TOKEN, NFT_FLAG } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { SET_FETCHING_ASSETS_BALANCES } from 'constants/assetsBalancesConstants';
 
@@ -48,6 +48,7 @@ import {
   mockEtherspotAccountExtra,
   mockSupportedAssets,
   mockDeviceUniqueId,
+  mockStableAssets,
 } from 'testUtils/jestSetup';
 
 jest.spyOn(etherspotService, 'getAccounts').mockImplementation(() => [mockEtherspotApiAccount]);
@@ -103,6 +104,7 @@ describe('Auth actions', () => {
       assetsBalances: { data: {} },
       user: { data: { username: 'test-username' } },
       walletEvents: { data: {} },
+      stableTokens: { data: mockStableAssets },
       nftFlag: { visible: false },
     });
   });
@@ -136,12 +138,14 @@ describe('Auth actions', () => {
       { type: SET_FETCHING_ASSETS_BALANCES, payload: true },
 
       { type: SET_CHAIN_SUPPORTED_ASSETS, payload: { chain: CHAIN.ETHEREUM, assets: mockSupportedAssets } },
+
+      { type: SET_STABLE_TOKEN, payload: mockStableAssets },
     ];
 
     const pin = '123456';
     return store.dispatch(loginAction(pin)).then(() => {
       const actualActions = store.getActions();
-      expect(actualActions).toEqual(expectedActions);
+      expect(actualActions).toEqual(expect.arrayContaining(expectedActions));
     });
   });
 });
