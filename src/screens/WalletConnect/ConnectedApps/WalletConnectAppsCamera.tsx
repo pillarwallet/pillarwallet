@@ -51,8 +51,6 @@ const ContentWrapper = styled.View`
   align-items: center;
 `;
 
-const InfoView = styled.View`
-  align-items: center;
-  justify-content: space-between;
+const InfoView = styled.ScrollView`
   width: 100%;
 `;

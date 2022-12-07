@@ -47,32 +47,45 @@ function AppListItem({ title, chain, iconUrl, onPress }: Props) {
   const config = useChainConfig(chain);
 
   return (
-    <TouchableContainer onPress={onPress}>
-      <IconContainer>{!!iconUrl && <IconImage source={{ uri: iconUrl }} />}</IconContainer>
+    <Container>
+      <Line />
+      <TouchableContainer onPress={onPress}>
+        <IconContainer>{!!iconUrl && <IconImage source={{ uri: iconUrl }} />}</IconContainer>
 
-      <TitleContainer>
-        <Text variant="medium" numberOfLines={1}>
-          {title}
-        </Text>
-        <Text color={colors.secondaryText}>{config?.title}</Text>
-      </TitleContainer>
+        <TitleContainer>
+          <Text variant="medium" numberOfLines={1}>
+            {title}
+          </Text>
+          <Text color={colors.secondaryText}>{config?.title}</Text>
+        </TitleContainer>
 
-      <RightAddOn>
-        <Icon name={chain} />
-        <Text variant="medium" color={colors.secondaryText} style={{ marginLeft: 5 }}>
-          {config?.title}
-        </Text>
-      </RightAddOn>
-    </TouchableContainer>
+        <RightAddOn>
+          <Icon name={chain} width={16} />
+          <Text variant="medium" color={colors.secondaryText} style={{ marginLeft: 5 }}>
+            {config?.title}
+          </Text>
+        </RightAddOn>
+      </TouchableContainer>
+    </Container>
   );
 }
 
 export default AppListItem;
 
+const Container = styled.View`
+  width: 100%;
+`;
+
 const TouchableContainer = styled.TouchableOpacity`
   flex-direction: row;
   padding: 14px ${spacing.large}px;
   min-height: 64px;
+`;
+
+const Line = styled.View`
+  width: 100%;
+  border-top-width: 1px;
+  border-color: ${({ theme }) => theme.colors.basic080};
 `;
 
 const IconContainer = styled.View`
@@ -98,4 +111,8 @@ const RightAddOn = styled.View`
   margin-left: ${spacing.medium}px;
   flex-direction: row;
   align-items: center;
+  padding: 0px 8px 0px 8px;
+  height: 30px;
+  border-radius: 10px;
+  background-color: ${({ theme }) => theme.colors.basic005};
 `;
