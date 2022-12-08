@@ -75,7 +75,7 @@ import {
   resetAndStartImportWalletAction,
 } from 'actions/authActions';
 import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedAssetTransferActions';
-import { importEtherspotAccountsAction, initEtherspotServiceAction } from 'actions/etherspotActions';
+import { importEtherspotAccountsAction, initEtherspotServiceAction, setStableTokens } from 'actions/etherspotActions';
 import {
   fetchSupportedAssetsAction,
   fetchOfflineLocalAssets,
@@ -415,6 +415,9 @@ export const setupAppServicesAction = (privateKey: ?string) => {
 
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching loadRemoteConfigWithUserPropertiesAction');
     dispatch(loadRemoteConfigWithUserPropertiesAction());
+
+    logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching setStableTokens');
+    dispatch(setStableTokens());
   };
 };
 

@@ -18,24 +18,21 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const TRANSACTION_TYPE = {
-  EXCHANGE: ('EXCHANGE': 'EXCHANGE'),
-  SENDTOKEN: ('SENDTOKEN': 'SENDTOKEN'),
-  SENDNFT: ('SENDNFT': 'SENDNFT'),
-};
+// Constants
+import { TRANSACTION_NOTIFICATION_DATA } from 'constants/exchangeConstants';
 
-export const ERC721_TRANSFER_METHODS = {
-  TRANSFER: ('transfer': 'transfer'),
-  TRANSFER_FROM: ('transferFrom': 'transferFrom'),
-  SAFE_TRANSFER_FROM: ('safeTransferFrom': 'safeTransferFrom'),
-};
+// Actions
+import { logEventAction } from 'actions/analyticsActions';
 
-export const AAVE_LENDING_DEPOSIT_TRANSACTION = 'AAVE_LENDING_DEPOSIT_TRANSACTION';
-export const AAVE_LENDING_WITHDRAW_TRANSACTION = 'AAVE_LENDING_WITHDRAW_TRANSACTION';
+// Types
+import type { Dispatch } from 'reducers/rootReducer';
 
-export const ERROR_TYPE = {
-  CANT_BE_TRANSFERRED: 'can not be transferred',
-  NOT_OWNED: 'is not owned',
-  TRANSACTION_UNDERPRISED: 'transaction underpriced',
-  REPLACEMENT_TRANSACTION_UNDERPRISED: 'replacement transaction underpriced',
+export const transactionNotificationActions = (transactionPayload: any) => {
+  return (dispatch: Dispatch) => {
+    if (!transactionPayload) return;
+
+    dispatch(logEventAction('transaction_notification_payload', transactionPayload));
+
+    dispatch({ type: TRANSACTION_NOTIFICATION_DATA, payload: [transactionPayload] });
+  };
 };

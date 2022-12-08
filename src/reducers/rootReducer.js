@@ -63,6 +63,8 @@ import cacheReducer from './cacheReducer';
 import transactionEstimateReducer from './transactionEstimateReducer';
 import liquidityPoolsReducer from './liquidityPoolsReducer';
 import totalBalancesReducer from './totalBalancesReducer';
+import stableTokensReducer from './stableTokensReducer';
+import transactionNotificationReducer from './transactionNotificationReducer';
 import nftFlagReducer from './nftFlagReducer';
 
 // local types
@@ -107,6 +109,8 @@ import type { OnboardingReducerAction, OnboardingReducerState } from './onboardi
 import type { TransactionEstimateReducerAction, TransactionEstimateReducerState } from './transactionEstimateReducer';
 import type { LiquidityPoolsReducerState, LiquidityPoolsReducerAction } from './liquidityPoolsReducer';
 import type { TotalBalancesReducerState, TotalBalancesReducerAction } from './totalBalancesReducer';
+import type { StableTokensReducerState, TokensAction } from './stableTokensReducer';
+import type { TransactionNotificationState, TransactionNotificationAction } from './transactionNotificationReducer.tsx';
 import type { NFTFlagReducerAction, NFTFlagReducerState } from './nftFlagReducer';
 
 export type RootReducerState = {|
@@ -145,6 +149,8 @@ export type RootReducerState = {|
   firestore: IReduxFirestoreState,
   gasThreshold: IReduxGasThresholdState,
   nativeIntegration: IReduxNativeIntegrationState,
+  stableTokens: StableTokensReducerState,
+  transactionNotification: TransactionNotificationState,
   nftFlag: NFTFlagReducerState,
 |};
 
@@ -175,6 +181,8 @@ type RootReducerAction =
   | LiquidityPoolsReducerAction
   | TotalBalancesReducerAction
   | RatesReducerAction
+  | TokensAction
+  | TransactionNotificationAction
   | NFTFlagReducerAction;
 
 export type GetState = () => RootReducerState;
@@ -218,10 +226,12 @@ const appReducer = combineReducers({
   transactionEstimate: transactionEstimateReducer,
   liquidityPools: liquidityPoolsReducer,
   totalBalances: totalBalancesReducer,
+  stableTokens: stableTokensReducer,
   nftFlag: nftFlagReducer,
   firestore: firestoreReducer,
   gasThreshold: gasThresholdReducer,
   nativeIntegration: nativeIntegrationReducer,
+  transactionNotification: transactionNotificationReducer,
 });
 
 export const initialState = appReducer(undefined, {});
