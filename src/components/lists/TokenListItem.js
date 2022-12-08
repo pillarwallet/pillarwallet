@@ -99,7 +99,7 @@ function TokenListItem({
       <TokenIcon url={iconUrl} chain={chain} setMarginRight />
 
       <TitleContainer>
-        <Title numberOfLines={1}>{name + tokenPriceInFiat}</Title>
+        <Title numberOfLines={1}>{name + (tokenPriceInFiat ?? '')}</Title>
         {!!chain && <Subtitle numberOfLines={1}>{t('label.on_network', { network: networkName })}</Subtitle>}
       </TitleContainer>
 
