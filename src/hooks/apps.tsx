@@ -27,9 +27,10 @@ import { USD } from 'constants/assetsConstants';
 
 // Services
 import { getNativeTokenPrice } from 'services/rates';
+import etherspotService from 'services/etherspot';
 
 // Selectors
-import { useFiatCurrency } from 'selectors';
+import { useFiatCurrency, useActiveAccount } from 'selectors';
 
 // Type
 import { AppHoldings } from '../models/Investment';
@@ -42,10 +43,12 @@ type Props = {
 export function useAppHoldings(): Props {
   const [assetRate, setAssetRate] = React.useState(null);
   const currency = useFiatCurrency();
+  const activeAccount = useActiveAccount();
 
   React.useEffect(() => {
     const call = async () => {
       const nativeAssetPrice = await getNativeTokenPrice(CHAIN.POLYGON);
+      await etherspotService.getAccountInvestments(CHAIN.POLYGON, activeAccount.address);
       setAssetRate(nativeAssetPrice);
     };
     if (!assetRate) call();

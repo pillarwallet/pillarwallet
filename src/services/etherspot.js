@@ -614,6 +614,19 @@ export class EtherspotService {
     });
   }
 
+  async getAccountInvestments(chain: Chain, address: string): any {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      logBreadcrumb('getSubmittedBatchByHash', 'failed: no SDK for chain set', { chain });
+      return null;
+    }
+
+    const ress = await sdk.getAccountInvestments({
+      account: address,
+    });
+    return ress;
+  }
+
   async getTransactionExplorerLinkByBatch(chain: Chain, batchHash: string): Promise<?string> {
     const submittedBatch = await this.getSubmittedBatchByHash(chain, batchHash);
 
