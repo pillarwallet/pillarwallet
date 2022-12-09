@@ -29,7 +29,6 @@ import { useDispatch } from 'react-redux';
 import Button from 'components/core/Button';
 import ModalBox from 'components/ModalBox';
 import Text from 'components/core/Text';
-import Spinner from 'components/Spinner';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
@@ -56,7 +55,7 @@ const BiometricModal = ({ onModalHide, biometricType, hasNoBiometrics = false }:
 
   const proceedToBeginOnboarding = async (setBiometrics?: boolean) => {
     setIsLoading(true);
-    await dispatch(beginOnboardingAction(setBiometrics));
+    dispatch(beginOnboardingAction(setBiometrics));
 
     if (setBiometrics) dispatch(logEventAction(Platform.OS === 'ios' ? 'enable_face_id' : 'enable_biometric_id'));
     else dispatch(logEventAction(Platform.OS === 'ios' ? 'cancel_face_id' : 'cancel_biometric_id'));
@@ -86,13 +85,7 @@ const BiometricModal = ({ onModalHide, biometricType, hasNoBiometrics = false }:
       backdropDismissable
       isSwipeClose
     >
-      {isLoading && (
-        <SpinnerWrapper>
-          <Spinner size={20} />
-        </SpinnerWrapper>
-      )}
-
-      {!isLoading && !hasNoBiometrics && biometricType && (
+      {!isLoading && !hasNoBiometrics && biometricType ? (
         <View>
           <Title variant="big">{t('biometricLogin.title', { biometryType: biometricType })}</Title>
           <Description color={colors.secondaryText}>{t('biometricLogin.description')}</Description>
@@ -114,7 +107,7 @@ const BiometricModal = ({ onModalHide, biometricType, hasNoBiometrics = false }:
             />
           </ButtonWrapper>
         </View>
-      )}
+      ) : null}
     </ModalBox>
   );
 };
@@ -129,10 +122,6 @@ const styles = {
     marginLeft: spacing.extraSmall,
   },
 };
-
-const SpinnerWrapper = styled.View`
-  flex: 1;
-`;
 
 const Title = styled(Text)`
   text-align: center;
