@@ -227,76 +227,78 @@ function Home() {
       />
 
       {/* Center Home Content */}
-      <Container>
-        <HeaderBlock
-          leftItems={[{ svgIcon: 'menu', color: colors.basic020, onPress: () => navigation.navigate(MENU) }]}
-          centerItems={[
-            {
-              custom: <UserNameAndImage user={user?.username} address={accountAddress} />,
-            },
-          ]}
-          rightItems={[
-            { svgIcon: 'history', color: colors.basic020, onPress: () => navigation.navigate(HOME_HISTORY) },
-          ]}
-          navigation={navigation}
-          noPaddingTop
-        />
+      <>
+        <Container>
+          <HeaderBlock
+            leftItems={[{ svgIcon: 'menu', color: colors.basic020, onPress: () => navigation.navigate(MENU) }]}
+            centerItems={[
+              {
+                custom: <UserNameAndImage user={user?.username} address={accountAddress} />,
+              },
+            ]}
+            rightItems={[
+              { svgIcon: 'history', color: colors.basic020, onPress: () => navigation.navigate(HOME_HISTORY) },
+            ]}
+            navigation={navigation}
+            noPaddingTop
+          />
 
-        {/* this should stay first element, avoid putting it inside UserNameAndImage */}
-        {canSwitchAccount && (
+          {/* this should stay first element, avoid putting it inside UserNameAndImage */}
+          {canSwitchAccount && (
+            <Tooltip
+              isVisible={!accountSwitchTooltipDismissed && showAccountSwitchTooltip}
+              body={t('tooltip.switchAccountsByTappingHere')}
+              wrapperStyle={{ zIndex: 9999, top: -10, position: 'relative' }}
+            />
+          )}
+
           <Tooltip
-            isVisible={!accountSwitchTooltipDismissed && showAccountSwitchTooltip}
-            body={t('tooltip.switchAccountsByTappingHere')}
+            isVisible={!switchAccountTooltipDismissed && isKeyBasedAccount && !showAccountSwitchTooltip}
+            body={t('tooltip.switch_account')}
             wrapperStyle={{ zIndex: 9999, top: -10, position: 'relative' }}
           />
-        )}
 
-        <Tooltip
-          isVisible={!switchAccountTooltipDismissed && isKeyBasedAccount && !showAccountSwitchTooltip}
-          body={t('tooltip.switch_account')}
-          wrapperStyle={{ zIndex: 9999, top: -10, position: 'relative' }}
-        />
+          {showEnsTooltip && (
+            <Tooltip
+              isVisible={!user?.username && showENSTooltip}
+              body={t('tooltip.registerENS')}
+              wrapperStyle={{ zIndex: 9999, top: -10, position: 'relative' }}
+              onPress={() => navigation.navigate(REGISTER_ENS)}
+            />
+          )}
+          <Content
+            contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
+            paddingHorizontal={0}
+            refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
+          >
+            <Stories />
 
-        {showEnsTooltip && (
-          <Tooltip
-            isVisible={!user?.username && showENSTooltip}
-            body={t('tooltip.registerENS')}
-            wrapperStyle={{ zIndex: 9999, top: -10, position: 'relative' }}
-            onPress={() => navigation.navigate(REGISTER_ENS)}
-          />
-        )}
-        <Content
-          contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
-          paddingHorizontal={0}
-          refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
-        >
-          <Stories />
+            <BalanceSection balanceInFiat={totalBalance} showBalance={balanceVisible} onBalanceClick={onBalanceClick} />
 
-          <BalanceSection balanceInFiat={totalBalance} showBalance={balanceVisible} onBalanceClick={onBalanceClick} />
+            <WalletConnectRequests />
 
-          <WalletConnectRequests />
+            <Spacing h={13} />
 
-          <Spacing h={13} />
+            <GovernanceCallBanner />
 
-          <GovernanceCallBanner />
+            <Banner screenName={screenName} bottomPosition={false} />
 
-          <Banner screenName={screenName} bottomPosition={false} />
+            {/* <ChartsSection balancePerCategory={balancePerCategory} balancePerChain={balancePerChain} /> */}
 
-          {/* <ChartsSection balancePerCategory={balancePerCategory} balancePerChain={balancePerChain} /> */}
+            <AssetsSection
+              visibleBalance={balanceVisible}
+              accountTotalBalances={accountTotalBalances}
+              accountCollectibleCounts={accountCollectibleCounts}
+            />
 
-          <AssetsSection
-            visibleBalance={balanceVisible}
-            accountTotalBalances={accountTotalBalances}
-            accountCollectibleCounts={accountCollectibleCounts}
-          />
+            <Banner screenName={screenName} bottomPosition />
 
-          <Banner screenName={screenName} bottomPosition />
+            <AppsButton response={nativeIntegrationResponse} navigation={navigation} isShowLabel />
+          </Content>
 
-          <AppsButton response={nativeIntegrationResponse} navigation={navigation} isShowLabel />
-        </Content>
-
-        <FloatingActions />
-      </Container>
+          <FloatingActions />
+        </Container>
+      </>
 
       {/* Right Side Assets content */}
       <Assets onBackPress={() => swiperRef.current?.scrollBy(-1)} />

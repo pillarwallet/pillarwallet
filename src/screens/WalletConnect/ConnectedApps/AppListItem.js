@@ -19,17 +19,24 @@
 */
 
 import * as React from 'react';
+import { DeviceEventEmitter } from 'react-native';
 import styled from 'styled-components/native';
 
 // Components
 import Text from 'components/core/Text';
 import Image from 'components/Image';
 import Icon from 'components/core/Icon';
+import ConnectedAppsMenu, { type itemProps } from 'components/Modals/ConnectedAppsModal/ConnectedAppsMenu';
+import SwitchWalletModal from 'components/Modals/ConnectedAppsModal/SwitchWallet';
+import SwitchNetworkModal from 'components/Modals/ConnectedAppsModal/SwitchNetwork';
 
 // Utils
-import { useThemeColors } from 'utils/themes';
+import { useThemeColors, getColorByTheme } from 'utils/themes';
 import { spacing } from 'utils/variables';
 import { useChainConfig } from 'utils/uiConfig';
+
+// Constants
+import { WALLET_DROPDOWN_REF } from 'constants/walletConstants';
 
 // Types
 import type { Chain } from 'models/Chain';
@@ -43,13 +50,37 @@ type Props = {|
 
 function AppListItem({ title, chain, iconUrl, onPress }: Props) {
   const colors = useThemeColors();
+  const Dropdownref: any = React.useRef();
+  const NetworkRef: any = React.useRef();
+
+  const [visibleModal, setVisibleModal] = React.useState(false);
+  const [visibleNetworkSwitchModal, setVisibleNetworkSwitchModal] = React.useState(false);
+  const [visibleWalletSwitchModal, setVisibleWalletSwitchModal] = React.useState(false);
+
+  const onPressButton = () => {
+    onPress && onPress();
+    setVisibleModal(!visibleModal);
+  };
+
+  const onChangeNetwork = () => {
+    onPress && onPress();
+    setVisibleNetworkSwitchModal(!visibleNetworkSwitchModal);
+  };
 
   const config = useChainConfig(chain);
+
+  React.useEffect(() => {
+    DeviceEventEmitter.emit(WALLET_DROPDOWN_REF, Dropdownref);
+  }, [Dropdownref, visibleModal, visibleWalletSwitchModal]);
+
+  React.useEffect(() => {
+    DeviceEventEmitter.emit(WALLET_DROPDOWN_REF, NetworkRef);
+  }, [NetworkRef, visibleNetworkSwitchModal]);
 
   return (
     <Container>
       <Line />
-      <TouchableContainer onPress={onPress}>
+      <TouchableContainer ref={Dropdownref} onPress={onPressButton}>
         <IconContainer>{!!iconUrl && <IconImage source={{ uri: iconUrl }} />}</IconContainer>
 
         <TitleContainer>
@@ -59,13 +90,27 @@ function AppListItem({ title, chain, iconUrl, onPress }: Props) {
           <Text color={colors.secondaryText}>{config?.title}</Text>
         </TitleContainer>
 
-        <RightAddOn>
+        <RightAddOn ref={NetworkRef} onPress={onChangeNetwork}>
           <Icon name={chain} width={16} />
-          <Text variant="medium" color={colors.secondaryText} style={{ marginLeft: 5 }}>
+          <Text variant="medium" color={colors.basic010} style={{ marginLeft: 5 }}>
             {config?.title}
           </Text>
         </RightAddOn>
       </TouchableContainer>
+      <ConnectedAppsMenu
+        visible={visibleModal}
+        onHide={setVisibleModal}
+        onSelect={(item: itemProps) => {
+          if (item.value === 'Switch wallet') setVisibleWalletSwitchModal(true);
+          if (item.value === 'Switch network') setVisibleNetworkSwitchModal(true);
+        }}
+      />
+      <SwitchWalletModal visible={visibleWalletSwitchModal} onHide={setVisibleWalletSwitchModal} />
+      <SwitchNetworkModal
+        visible={visibleNetworkSwitchModal}
+        onHide={setVisibleNetworkSwitchModal}
+        dropDownStyle={{ right: 20 }}
+      />
     </Container>
   );
 }
@@ -106,7 +151,7 @@ const TitleContainer = styled.View`
   justify-content: center;
 `;
 
-const RightAddOn = styled.View`
+const RightAddOn = styled.TouchableOpacity`
   justify-content: center;
   margin-left: ${spacing.medium}px;
   flex-direction: row;
@@ -114,5 +159,5 @@ const RightAddOn = styled.View`
   padding: 0px 8px 0px 8px;
   height: 30px;
   border-radius: 10px;
-  background-color: ${({ theme }) => theme.colors.basic005};
+  background-color: ${getColorByTheme({ lightKey: 'basic080', darkKey: 'basic040' })};
 `;

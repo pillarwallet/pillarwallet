@@ -731,7 +731,13 @@
     },
     "connectedApps": {
       "title": "Connected dapps",
-      "connected": "Connected"
+      "connected": "Connected",
+      "switchWallet":"Switch wallet",
+      "switchNetwork":"Switch network",
+      "disconnect":"Disconnect",
+      "etherspot":"Etherspot",
+      "plr_v1":"Pillar v1",
+      "key_based":"Keybased"
     },
     "disconnectModal": {
       "title": "Disconnect",
