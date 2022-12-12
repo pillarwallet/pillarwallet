@@ -47,7 +47,7 @@ import { isCaseInsensitiveMatch, logBreadcrumb } from 'utils/common';
 import { parseEtherspotTransactionStatus } from 'utils/etherspot';
 
 // Selectors
-import { activeAccountSelector, useNftFlag } from 'selectors';
+import { activeAccountSelector } from 'selectors';
 
 // Types
 import type { Collectible, CollectibleTransaction } from 'models/Collectible';
@@ -117,7 +117,7 @@ const collectibleTransactionUpdate = (hash: string) => {
 
 export const fetchCollectiblesAction = (defaultAccount?: Account) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const nftsEnabled = useNftFlag();
+    const nftsEnabled = getState().nftFlag.visible;
 
     /**
      * Is the NFT flag falsy? Return.
@@ -217,7 +217,7 @@ const isOpenSeaCollectibleTransaction = (event: Object): boolean => {
 
 export const fetchCollectiblesHistoryAction = (account?: Account) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const nftsEnabled = useNftFlag();
+    const nftsEnabled = getState().nftFlag.visible;
 
     if (!nftsEnabled) { return; }
 
