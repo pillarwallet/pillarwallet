@@ -65,10 +65,6 @@ import type { AssetData, KeyBasedAssetTransfer } from 'models/Asset';
 import type { Account } from 'models/Account';
 import { ethereumSupportedAssetsSelector } from 'selectors/assets';
 
-// Selectors
-import { useNftFlag } from 'selectors';
-
-
 const buildAssetTransferTransaction = (asset: AssetData, transactionExtra: any) => {
   if (asset.tokenType === ASSET_TYPES.COLLECTIBLE) {
     const { contractAddress, id: tokenId } = asset;
@@ -195,7 +191,7 @@ export const fetchAvailableBalancesToTransferAction = () => {
 
 export const fetchAvailableCollectiblesToTransferAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const nftsEnabled = useNftFlag();
+    const nftsEnabled = getState().nftFlag.visible;
 
     /**
      * Is the NFT flag falsy? Return.
