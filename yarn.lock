@@ -9898,10 +9898,10 @@ ethers@^5.7.2:
     "@ethersproject/web" "5.7.1"
     "@ethersproject/wordlists" "5.7.0"
 
-etherspot@1.42.0:
-  version "1.42.0"
-  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.42.0.tgz#ab1ab4530c37e1d04221bfd9155ec4a23bbd4a2c"
-  integrity sha512-SaFR50X3UqFRoq0Z+M5IsTn16hQJwLCfRmA17oXCa5WzaNZcAjBn2vbRFevPpC9nX94XItvdDuLB13rU2MYlUA==
+etherspot@1.42.1:
+  version "1.42.1"
+  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.42.1.tgz#622c6edbd80f274c7e52321079bff94eee4bf4d8"
+  integrity sha512-BorzXAow9i5m3KwZeRCkgLynANzcJBVvNdEybNZ4/lZXVJWNEtBVEtbYiEigWspafRAoUVLydMqzL+oBdI0mAg==
   dependencies:
     "@apollo/client" "3.4.0"
     "@etherspot/contracts" "1.9.51"

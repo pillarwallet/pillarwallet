@@ -30,7 +30,11 @@ import { getNativeTokenPrice } from 'services/rates';
 import etherspotService from 'services/etherspot';
 
 // Selectors
-import { useFiatCurrency, useActiveAccount } from 'selectors';
+import { useFiatCurrency, useActiveAccount, useChainRates } from 'selectors';
+
+// Utils
+import { nativeAssetPerChain } from 'utils/chains';
+import { getAssetValueInFiat } from 'utils/rates';
 
 // Type
 import { AppHoldings } from '../models/Investment';
@@ -44,19 +48,21 @@ export function useAppHoldings(): Props {
   const [assetRate, setAssetRate] = React.useState(null);
   const currency = useFiatCurrency();
   const activeAccount = useActiveAccount();
+  const [arrOfHoldings, setArrOfHoldings] = React.useState([]);
+  const ethereumRates = useChainRates(CHAIN.ETHEREUM);
 
   React.useEffect(() => {
     const call = async () => {
-      const nativeAssetPrice = await getNativeTokenPrice(CHAIN.POLYGON);
-      await etherspotService.getAccountInvestments(CHAIN.POLYGON, activeAccount.address);
-      setAssetRate(nativeAssetPrice);
+      setAssetRate(ethereumRates[nativeAssetPerChain[CHAIN.ETHEREUM].address]);
+      const res = await etherspotService.getAccountInvestments(CHAIN.POLYGON, activeAccount.address);
+      setArrOfHoldings(res.items);
     };
-    if (!assetRate) call();
+    if (!arrOfHoldings?.[0]) call();
   });
 
-  if (!assetRate) return { appHoldings: null, totalBalanceOfHoldings: 0 };
+  if (!assetRate || !arrOfHoldings?.[0]) return { appHoldings: null, totalBalanceOfHoldings: 0 };
 
-  const appsHoldingsWithBalance: AppHoldings[] = APP_HOLDINGS.map((asset) => {
+  const appsHoldingsWithBalance: AppHoldings[] = arrOfHoldings?.map((asset) => {
     const assetBalance: string = utils.formatEther(asset.balance);
 
     const fiatAmount = (parseFloat(assetBalance) * assetRate?.[currency]) / assetRate?.[USD];
@@ -74,41 +80,3 @@ export function useAppHoldings(): Props {
 
   return { totalBalanceOfHoldings: sumOfBalance, appHoldings: appsHoldingsWithBalance.slice(0, 5) };
 }
-
-const APP_HOLDINGS = [
-  {
-    name: 'Loopring',
-    balance: '0x066df7138b262000',
-    network: 'ethereum',
-    position: 1,
-    logoURI: 'https://storage.googleapis.com/zapper-fi-assets/apps/loopring.png',
-  },
-  {
-    name: 'Reflexer',
-    balance: '0x0178f9c9b7c621789c5900',
-    network: 'ethereum',
-    position: 1,
-    logoURI: 'https://storage.googleapis.com/zapper-fi-assets/apps/reflexer.png',
-  },
-  {
-    name: 'Sablier',
-    balance: '0x2b85a46a9b2cb4bcc0',
-    network: 'ethereum',
-    position: 25,
-    logoURI: 'https://storage.googleapis.com/zapper-fi-assets/apps/sablier.png',
-  },
-  {
-    name: 'Uniswap V2',
-    balance: '0xff0c27ad1a1b487040',
-    network: 'ethereum',
-    position: 4,
-    logoURI: 'https://storage.googleapis.com/zapper-fi-assets/apps/uniswap-v2.png',
-  },
-  {
-    name: 'Aave V2',
-    balance: '0x0344afff2e80a32fa0',
-    network: 'ethereum',
-    position: 3,
-    logoURI: 'https://storage.googleapis.com/zapper-fi-assets/apps/aave-v2.png',
-  },
-];
