@@ -47,6 +47,7 @@ import { spacing } from 'utils/variables';
 import { isArchanovaAccount, isKeyBasedAccount } from 'utils/accounts';
 
 // Components
+import WalletSelection from 'components/Wallet/WalletSelection';
 import InvestmentListItem from 'components/lists/InvestmentListItem';
 
 // Types
@@ -126,8 +127,10 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visible
           visibleBalance={visibleBalance}
           onPress={() => handlePressAssetCategory(category)}
         />
+        {showChains && category === ASSET_CATEGORY.WALLET && <WalletSelection />}
         {showChains &&
           category !== ASSET_CATEGORY.APPS &&
+          category !== ASSET_CATEGORY.WALLET &&
           chains.map((chain) => renderChainWithBalance(category, chain))}
         {showChains &&
           category === ASSET_CATEGORY.APPS &&
