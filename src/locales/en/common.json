@@ -71,7 +71,12 @@
     "polygon": "Polygon",
     "avalanche": "Avalanche",
     "optimism": "Optimism",
-    "optimism_kovan": "Optimism Kovan"
+    "optimism_kovan": "Optimism Kovan",
+    "gorli":"Ethereum Görli",
+    "sokol":"Gnosis Sokol",
+    "binance_test":"Binance Testnet",
+    "mumbai":"Polygon Mumbai",
+    "optimism_gorli":"Optimistic Görli"
   },
 
   "chainsShort": {
@@ -1603,5 +1608,18 @@
   "getNotifications":{
     "title": "Get notifications",
     "description": "Pillar will notify on your transactions status and requests from dapps. Never spam, always on point."
+  },
+
+  "transactionNotification":{
+    "selling":"Selling",
+    "you_received":"You have received",
+    "sending":"Sending",
+    "you_sent":"You have sent",
+    "to":"to",
+    "sold":"Sold",
+    "on":"on",
+    "for":"for",
+    "gas":"Gas",
+    "time":"Time"
   }
 }

@@ -74,7 +74,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visible
   const visibleNFTs = useNftFlag();
   const { totalBalanceOfHoldings, appHoldings } = useAppHoldings();
 
-  const [showChainsPerCategory, setShowChainsPerCategory] = React.useState<FlagPerCategory>({});
+  const [showChainsPerCategory, setShowChainsPerCategory] = React.useState<FlagPerCategory>({ wallet: true });
 
   const chains = useSupportedChains();
   const fiatCurrency = useFiatCurrency();
