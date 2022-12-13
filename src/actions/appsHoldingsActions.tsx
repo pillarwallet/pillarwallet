@@ -28,7 +28,6 @@ import etherspotService from 'services/etherspot';
 // utils
 import { findFirstEtherspotAccount } from 'utils/accounts';
 import { getSupportedChains } from 'utils/chains';
-import { reportErrorLog } from 'utils/common';
 
 // models, types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -48,7 +47,7 @@ export const updateAppsHoldingsAction = (appsHoldingsData) => {
     dispatch({ type: UPDATE_APP_HOLDINGS, payload: appsHoldingsData });
 
     const updatedAppsHoldings = getState().appsHoldings.data;
-    await dispatch(saveDbAction('appsHoldings', updatedAppsHoldings, true));
+    dispatch(saveDbAction('appsHoldings', updatedAppsHoldings, true));
   };
 };
 
@@ -74,21 +73,17 @@ export const fetchAppsHoldingsAction = () => {
       etherspotService.getAccountInvestments(chain, etherspotAccount.id),
     );
 
-    try {
-      const accountsInvestments = await Promise.all(getChainInvestments);
+    const accountsInvestments = await Promise.all(getChainInvestments);
 
-      if (!accountsInvestments?.[0]) return;
+    if (!accountsInvestments?.[0]) return;
 
-      const totalAppHoldings = [];
-      accountsInvestments.forEach((investments) => {
-        const items = investments.items;
-        totalAppHoldings.push(...items);
-      });
+    const totalAppHoldings = [];
+    accountsInvestments.forEach((investments) => {
+      const items = investments.items;
+      totalAppHoldings.push(...items);
+    });
 
-      await dispatch(updateAppsHoldingsAction(totalAppHoldings));
-    } catch (e) {
-      reportErrorLog('fetchAppsHoldingsAction failed', { e });
-    }
+    dispatch(updateAppsHoldingsAction(totalAppHoldings));
 
     dispatch(setIsFetchingHoldingsAction(false));
   };
