@@ -34,13 +34,21 @@ export const useStableAssets = () => {
     listOfStableToken.some((stableToken) => isSame(assetToken, stableToken)),
   );
 
-  if (!tokens?.[0] || !assets?.[0])
+  if (!tokens?.[0])
     return {
       tokens: StableTokens,
-      percentage: 50,
+      percentage: !assets?.[0] ? 50 : 0,
     };
 
-  const percentage: any = ((tokens.length * 100) / assets.length).toFixed(0);
+  const sumOfAssetsBalance: number = assets.reduce((balance, token) => {
+    return balance + (parseFloat(token.balance.balanceInFiat) || 0);
+  }, 0);
+
+  const sumOfStableTokensBalance: number = tokens.reduce((balance, token) => {
+    return balance + (parseFloat(token.balance.balanceInFiat) || 0);
+  }, 0);
+
+  const percentage: any = ((sumOfStableTokensBalance * 100) / sumOfAssetsBalance).toFixed(0);
 
   tokens.sort((a, b) => b?.balance?.balanceInFiat - a?.balance?.balanceInFiat);
 
@@ -56,14 +64,14 @@ export const useNonStableAssets = () => {
     (assetToken) => !listOfStableToken.some((stableToken) => isSame(assetToken, stableToken)),
   );
 
+  const percentage: number = 100 - stablePercentage;
+
   if (!tokens?.[0])
     return {
       tokens: NonStableTokens,
-      percentage: 100 - stablePercentage,
+      percentage,
       totalPercentage: 100,
     };
-
-  const percentage: any = ((tokens.length * 100) / assets.length).toFixed(0);
 
   tokens.sort((a, b) => b?.balance?.balanceInFiat - a?.balance?.balanceInFiat);
 
