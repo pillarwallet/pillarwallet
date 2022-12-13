@@ -48,7 +48,7 @@ export const useStableAssets = () => {
     return balance + (parseFloat(token.balance.balanceInFiat) || 0);
   }, 0);
 
-  const percentage: any = ((sumOfStableTokensBalance * 100) / sumOfAssetsBalance).toFixed(0);
+  const percentage: any = ((sumOfStableTokensBalance * 100) / sumOfAssetsBalance).toFixed(2);
 
   tokens.sort((a, b) => b?.balance?.balanceInFiat - a?.balance?.balanceInFiat);
 
