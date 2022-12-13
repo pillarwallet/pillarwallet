@@ -31,7 +31,7 @@ import TokenIcon from 'components/display/TokenIcon';
 // Utils
 import { fontStyles, spacing } from 'utils/variables';
 import { useChainConfig } from 'utils/uiConfig';
-import { getCurrencySymbol } from 'utils/common';
+import { formatFiatValue } from 'utils/format';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
@@ -61,9 +61,9 @@ export default function ({ network, name, balance, onPress, style, logoURI, posi
 
   const config = useChainConfig(network || CHAIN.ETHEREUM);
   const currency = useFiatCurrency();
-  const currencySymbol = getCurrencySymbol(currency);
 
   const networkName = network ? config.title : undefined;
+  const balanceInFiat = formatFiatValue(balance, currency);
 
   return (
     <Container
@@ -80,7 +80,7 @@ export default function ({ network, name, balance, onPress, style, logoURI, posi
       </TitleContainer>
 
       <BalanceWrapper>
-        <BalanceFiatValue numberOfLines={1}>{currencySymbol + balance ?? ''}</BalanceFiatValue>
+        <BalanceFiatValue numberOfLines={1}>{balanceInFiat}</BalanceFiatValue>
         <PositionValue numberOfLines={1}>{t('label.on_position', { position })}</PositionValue>
       </BalanceWrapper>
     </Container>

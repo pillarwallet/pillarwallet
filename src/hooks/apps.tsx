@@ -52,7 +52,7 @@ export function useAppHoldings(): Props {
   if (!nativeAssetRate || !appsHoldingsData?.[0] || !isEtherspotAcc)
     return { appHoldings: null, totalBalanceOfHoldings: new BigNumber(0) };
 
-  const appsHoldingsWithBalance: AppHoldings[] = appsHoldingsData?.map((asset) => {
+  const appsHoldingsWithBalance: AppHoldings[] = appsHoldingsData.map((asset) => {
     const assetBalance: string = utils.formatEther(asset.balance);
 
     const fiatAmount = (parseFloat(assetBalance) * nativeAssetRate?.[currency]) / nativeAssetRate?.[USD];
@@ -60,7 +60,7 @@ export function useAppHoldings(): Props {
     return { ...asset, balance: fiatAmount.toFixed(2) };
   });
 
-  appsHoldingsWithBalance?.sort((a: AppHoldings, b: AppHoldings) => b?.balance - a?.balance);
+  appsHoldingsWithBalance.sort((a: AppHoldings, b: AppHoldings) => b?.balance - a?.balance);
 
   const sumOfBalance: number = appsHoldingsWithBalance.reduce((asset, value) => {
     return asset + (parseFloat(value.balance) || 0);
