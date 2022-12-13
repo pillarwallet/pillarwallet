@@ -53,6 +53,7 @@ import InvestmentListItem from 'components/lists/InvestmentListItem';
 import type { AssetCategory, AssetCategoryRecordKeys } from 'models/AssetCategory';
 import type { Chain, ChainRecord } from 'models/Chain';
 import type { TotalBalances } from 'models/TotalBalances';
+import type { AppHoldings } from 'models/Investment';
 
 // Local
 import CategoryListItem from './components/CategoryListItem';
@@ -128,7 +129,9 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visible
         {showChains &&
           category !== ASSET_CATEGORY.APPS &&
           chains.map((chain) => renderChainWithBalance(category, chain))}
-        {showChains && category === ASSET_CATEGORY.APPS && appHoldings?.map((item) => renderInvestments(item))}
+        {showChains &&
+          category === ASSET_CATEGORY.APPS &&
+          appHoldings?.slice(0, 5).map((item) => renderInvestments(category, item))}
       </React.Fragment>
     );
   };
@@ -152,10 +155,18 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visible
     );
   };
 
-  const renderInvestments = (item: any) => {
+  const renderInvestments = (category: AssetCategoryRecordKeys, item: AppHoldings) => {
     const { name, network } = item;
 
-    return <InvestmentListItem key={`${name}-${network}`} {...item} onPress={() => {}} />;
+    return (
+      <InvestmentListItem
+        key={`${name}-${network}`}
+        {...item}
+        onPress={() => {
+          navigateToAssetDetails(category, network);
+        }}
+      />
+    );
   };
 
   const renderCollectiblesCategory = () => {

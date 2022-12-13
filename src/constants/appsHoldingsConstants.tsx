@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2021 Stiftung Pillar Project
+    Copyright (C) 2019 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,14 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-// Types
-import type { CHAIN } from 'constants/chainConstants';
-import type { BigNumber } from 'utils/common';
-
-export type AppHoldings = {
-  name: string;
-  balance: BigNumber;
-  network: CHAIN;
-  position: number;
-  logoURI: string;
-};
+export const SET_APP_HOLDINGS = 'SET_APP_HOLDINGS';
+export const UPDATE_APP_HOLDINGS = 'UPDATE_APP_HOLDINGS';
+export const SET_FETCHING_HOLDINGS = 'SET_FETCHING_HOLDINGS';

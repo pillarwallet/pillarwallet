@@ -64,6 +64,7 @@ import { SET_CACHED_URLS } from 'constants/cacheConstants';
 import { SET_HISTORY_LAST_SYNC_IDS } from 'constants/historyConstants';
 import { SET_TOTAL_BALANCES } from 'constants/totalsBalancesConstants';
 import { SET_USER } from 'constants/userConstants';
+import { SET_APP_HOLDINGS } from 'constants/appsHoldingsConstants';
 
 // utils
 import { getWalletFromStorage } from 'utils/wallet';
@@ -103,6 +104,7 @@ export const initAppAndRedirectAction = () => {
       storageData = await migrate('history', storageData, dispatch, getState);
       storageData = await migrate('supportedAssets', storageData, dispatch, getState);
       storageData = await migrate('rates', storageData, dispatch, getState);
+      storageData = await migrate('appsHoldings', storageData, dispatch, getState);
 
       const { accounts = [] } = get(storageData, 'accounts', {});
       dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });
@@ -115,6 +117,9 @@ export const initAppAndRedirectAction = () => {
 
       const rates = storageData?.rates?.rates ?? {};
       dispatch({ type: SET_RATES, payload: rates });
+
+      const appsHoldings = storageData?.appsHoldings?.data ?? {};
+      dispatch({ type: SET_APP_HOLDINGS, payload: appsHoldings });
 
       const { txCount = {} } = get(storageData, 'txCount', {});
       dispatch({ type: UPDATE_TX_COUNT, payload: txCount });

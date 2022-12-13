@@ -621,10 +621,15 @@ export class EtherspotService {
       return null;
     }
 
-    const ress = await sdk.getAccountInvestments({
-      account: address,
-    });
-    return ress;
+    try {
+      const listsOfHoldings = await sdk.getAccountInvestments({
+        account: address,
+      });
+      return listsOfHoldings;
+    } catch (error) {
+      reportErrorLog('getAccountInvestments -> Apps holdings failed', { address, chain, error });
+      return null;
+    }
   }
 
   async getTransactionExplorerLinkByBatch(chain: Chain, batchHash: string): Promise<?string> {

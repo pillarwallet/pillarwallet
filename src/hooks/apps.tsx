@@ -18,26 +18,22 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
 import { utils } from 'ethers';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
 import { USD } from 'constants/assetsConstants';
 
-// Services
-import { getNativeTokenPrice } from 'services/rates';
-import etherspotService from 'services/etherspot';
-
 // Selectors
-import { useFiatCurrency, useActiveAccount, useChainRates } from 'selectors';
+import { useFiatCurrency, useChainRates, useActiveAccount, useRootSelector, appsHoldingsSelector } from 'selectors';
 
 // Utils
 import { nativeAssetPerChain } from 'utils/chains';
-import { getAssetValueInFiat } from 'utils/rates';
+import { isEtherspotAccount } from 'utils/accounts';
 
 // Type
 import { AppHoldings } from '../models/Investment';
+import BigNumber from 'bignumber.js';
 
 type Props = {
   appHoldings: AppHoldings[] | null;
@@ -45,38 +41,30 @@ type Props = {
 };
 
 export function useAppHoldings(): Props {
-  const [assetRate, setAssetRate] = React.useState(null);
   const currency = useFiatCurrency();
   const activeAccount = useActiveAccount();
-  const [arrOfHoldings, setArrOfHoldings] = React.useState([]);
+  const isEtherspotAcc = isEtherspotAccount(activeAccount);
+  const { data: appsHoldingsData } = useRootSelector(appsHoldingsSelector);
+
   const ethereumRates = useChainRates(CHAIN.ETHEREUM);
+  const nativeAssetRate = ethereumRates[nativeAssetPerChain[CHAIN.ETHEREUM].address];
 
-  React.useEffect(() => {
-    const call = async () => {
-      setAssetRate(ethereumRates[nativeAssetPerChain[CHAIN.ETHEREUM].address]);
-      const res = await etherspotService.getAccountInvestments(CHAIN.POLYGON, activeAccount.address);
-      setArrOfHoldings(res.items);
-    };
-    if (!arrOfHoldings?.[0]) call();
-  });
+  if (!nativeAssetRate || !appsHoldingsData?.[0] || !isEtherspotAcc)
+    return { appHoldings: null, totalBalanceOfHoldings: new BigNumber(0) };
 
-  if (!assetRate || !arrOfHoldings?.[0]) return { appHoldings: null, totalBalanceOfHoldings: 0 };
-
-  const appsHoldingsWithBalance: AppHoldings[] = arrOfHoldings?.map((asset) => {
+  const appsHoldingsWithBalance: AppHoldings[] = appsHoldingsData?.map((asset) => {
     const assetBalance: string = utils.formatEther(asset.balance);
 
-    const fiatAmount = (parseFloat(assetBalance) * assetRate?.[currency]) / assetRate?.[USD];
+    const fiatAmount = (parseFloat(assetBalance) * nativeAssetRate?.[currency]) / nativeAssetRate?.[USD];
 
     return { ...asset, balance: fiatAmount.toFixed(2) };
   });
 
   appsHoldingsWithBalance?.sort((a: AppHoldings, b: AppHoldings) => b?.balance - a?.balance);
 
-  const topFiveHoldings = appsHoldingsWithBalance.slice(0, 5);
-
-  const sumOfBalance: number = topFiveHoldings.reduce((asset, value) => {
+  const sumOfBalance: number = appsHoldingsWithBalance.reduce((asset, value) => {
     return asset + (parseFloat(value.balance) || 0);
   }, 0);
 
-  return { totalBalanceOfHoldings: sumOfBalance, appHoldings: appsHoldingsWithBalance.slice(0, 5) };
+  return { totalBalanceOfHoldings: sumOfBalance, appHoldings: appsHoldingsWithBalance };
 }
