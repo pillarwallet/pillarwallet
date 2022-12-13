@@ -75,6 +75,10 @@ export const fiatCurrencySelector = (root: RootReducerState) =>
 
 export const historySelector = ({ history }: RootReducerState) => history.data;
 
+export const appsHoldingsSelector = ({ appsHoldings }: RootReducerState) => appsHoldings;
+
+export const useAppHoldings = () => useRootSelector((root) => root.appsHoldings);
+
 export const stableTokensSelector = ({ stableTokens }: RootReducerState) => stableTokens.data;
 
 export const bannerDataSelector = ({ onboarding }: RootReducerState) => onboarding.bannerData;

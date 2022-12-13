@@ -2055,10 +2055,10 @@
     bech32 "1.1.4"
     ws "7.2.3"
 
-"@ethersproject/providers@5.7.1":
-  version "5.7.1"
-  resolved "https://registry.yarnpkg.com/@ethersproject/providers/-/providers-5.7.1.tgz#b0799b616d5579cd1067a8ebf1fc1ec74c1e122c"
-  integrity sha512-vZveG/DLyo+wk4Ga1yx6jSEHrLPgmTt+dFv0dv8URpVCRf0jVhalps1jq/emN/oXnMRsC7cQgAF32DcXLL7BPQ==
+"@ethersproject/providers@5.7.2":
+  version "5.7.2"
+  resolved "https://registry.yarnpkg.com/@ethersproject/providers/-/providers-5.7.2.tgz#f8b1a4f275d7ce58cf0a2eec222269a08beb18cb"
+  integrity sha512-g34EWZ1WWAVgr4aptGlVBF8mhl3VWjv+8hoAnzStu8Ah22VHBsuGzP17eb6xDVRzw895G4W7vvx60lFFur/1Rg==
   dependencies:
     "@ethersproject/abstract-provider" "^5.7.0"
     "@ethersproject/abstract-signer" "^5.7.0"
@@ -3152,25 +3152,25 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@lifi/sdk@1.6.0":
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/@lifi/sdk/-/sdk-1.6.0.tgz#abb849c10def311708e0ae241ca307bbfa64a2f3"
-  integrity sha512-C6TjVLnIcb2DJI4FAyVWuTTIsgIJE3eXaQCwJwNWz54TXyCAgIdr4DM6lPmE8RwYWAL5xpwPkNTBnzccy3sowg==
+"@lifi/sdk@1.6.4":
+  version "1.6.4"
+  resolved "https://registry.yarnpkg.com/@lifi/sdk/-/sdk-1.6.4.tgz#325b3058aa76f6538f3a21d63db5db0589b40b18"
+  integrity sha512-g2wjHoXjM9QmTNAezMeHuFcUrfzn/6MSTSTRiWVgFOXcQt7e8guzn9tqLj+4Q24xwPlLB6nj0Coz2JX8dh1spA==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/contracts" "^5.7.0"
-    "@lifi/types" "^1.7.0"
-    axios "^0.27.2"
+    "@lifi/types" "^1.16.0"
+    axios "^1.1.3"
     bignumber.js "^9.1.0"
     eth-rpc-errors "^4.0.3"
-    ethers "^5.7.1"
+    ethers "^5.7.2"
 
-"@lifi/types@^1.7.0":
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/@lifi/types/-/types-1.8.0.tgz#509430b070a6cbc9d97ea9fc4e9e678c248f6bdd"
-  integrity sha512-2WSfk7sFPnOS3+XuSOIPFjxcIUqza9qwsypQRdV+U5sURMx++BYh9bW0Tb13gj3Aq7Z/qRF140Xkx6GfFTSgKg==
+"@lifi/types@^1.16.0":
+  version "1.18.0"
+  resolved "https://registry.yarnpkg.com/@lifi/types/-/types-1.18.0.tgz#b1cd827b4a2d1bb0b8afbc50728c388e8efc1786"
+  integrity sha512-z74HP2Xl0UBzOBSG5FulrHl9l4O8VOjMY0vMIK94HaYl/HwJc1qTXzAw2ZnM6yTEiBMvWIeZdZR7nkkVvEVL4w==
   dependencies:
-    ethers "^5.6.9"
+    ethers "^5.7.2"
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
@@ -6005,13 +6005,14 @@ axios@^0.19.0:
   dependencies:
     follow-redirects "1.5.10"
 
-axios@^0.27.2:
-  version "0.27.2"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-0.27.2.tgz#207658cc8621606e586c85db4b41a750e756d972"
-  integrity sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==
+axios@^1.1.3:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-1.2.1.tgz#44cf04a3c9f0c2252ebd85975361c026cb9f864a"
+  integrity sha512-I88cFiGu9ryt/tfVEi4kX2SITsvDddTajXTOFmt2uK1ZVA8LytjtdeyefdQWEf5PU8w+4SSJDoYnggflB5tW4A==
   dependencies:
-    follow-redirects "^1.14.9"
+    follow-redirects "^1.15.0"
     form-data "^4.0.0"
+    proxy-from-env "^1.1.0"
 
 axobject-query@^2.2.0:
   version "2.2.0"
@@ -9870,10 +9871,10 @@ ethers@5.0.19:
     "@ethersproject/web" "5.0.9"
     "@ethersproject/wordlists" "5.0.5"
 
-ethers@^5.6.9, ethers@^5.7.1:
-  version "5.7.1"
-  resolved "https://registry.yarnpkg.com/ethers/-/ethers-5.7.1.tgz#48c83a44900b5f006eb2f65d3ba6277047fd4f33"
-  integrity sha512-5krze4dRLITX7FpU8J4WscXqADiKmyeNlylmmDLbS95DaZpBhDe2YSwRQwKXWNyXcox7a3gBgm/MkGXV1O1S/Q==
+ethers@^5.7.2:
+  version "5.7.2"
+  resolved "https://registry.yarnpkg.com/ethers/-/ethers-5.7.2.tgz#3a7deeabbb8c030d4126b24f84e525466145872e"
+  integrity sha512-wswUsmWo1aOK8rR7DIKiWSw9DbLWe6x98Jrn8wcTflTVvaXhAMaB5zGAXy0GYQEQp9iO1iSHWVyARQm11zUtyg==
   dependencies:
     "@ethersproject/abi" "5.7.0"
     "@ethersproject/abstract-provider" "5.7.0"
@@ -9893,7 +9894,7 @@ ethers@^5.6.9, ethers@^5.7.1:
     "@ethersproject/networks" "5.7.1"
     "@ethersproject/pbkdf2" "5.7.0"
     "@ethersproject/properties" "5.7.0"
-    "@ethersproject/providers" "5.7.1"
+    "@ethersproject/providers" "5.7.2"
     "@ethersproject/random" "5.7.0"
     "@ethersproject/rlp" "5.7.0"
     "@ethersproject/sha2" "5.7.0"
@@ -9906,14 +9907,14 @@ ethers@^5.6.9, ethers@^5.7.1:
     "@ethersproject/web" "5.7.1"
     "@ethersproject/wordlists" "5.7.0"
 
-etherspot@1.41.1:
-  version "1.41.1"
-  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.41.1.tgz#d0a809295d93d7bd631feabcbefbe8b4bbe204e4"
-  integrity sha512-zX7jZ3CzWwQIVR8ekE3YneNjIhjCcrQCQLVSAuZ0GIXSvi1IZ9Pt80TsCd0aHcNk7iEety7TvLTKLQWRvfQtAg==
+etherspot@1.42.1:
+  version "1.42.1"
+  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.42.1.tgz#622c6edbd80f274c7e52321079bff94eee4bf4d8"
+  integrity sha512-BorzXAow9i5m3KwZeRCkgLynANzcJBVvNdEybNZ4/lZXVJWNEtBVEtbYiEigWspafRAoUVLydMqzL+oBdI0mAg==
   dependencies:
     "@apollo/client" "3.4.0"
     "@etherspot/contracts" "1.9.51"
-    "@lifi/sdk" "1.6.0"
+    "@lifi/sdk" "1.6.4"
     "@nerdwallet/apollo-cache-policies" "1.2.1"
     class-transformer "0.4.0"
     class-validator "0.13.1"
@@ -10683,7 +10684,7 @@ follow-redirects@1.5.10:
   dependencies:
     debug "=3.1.0"
 
-follow-redirects@^1.14.9:
+follow-redirects@^1.15.0:
   version "1.15.2"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.2.tgz#b460864144ba63f2681096f274c4e57026da2c13"
   integrity sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==
