@@ -39,7 +39,7 @@ export default function ({ forgroundColor, backgroundColor, progress, selectedIn
 
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-      <Text color={colors.text}>{progress}%</Text>
+      <Text color={colors.text}>{progress.toFixed(2)}%</Text>
       <View style={{ flex: 1, marginHorizontal: 5, flexDirection: 'row', alignItems: 'center' }}>
         <View
           style={[
@@ -66,7 +66,7 @@ export default function ({ forgroundColor, backgroundColor, progress, selectedIn
           ]}
         />
       </View>
-      <Text color={colors.text}>{100 - progress}%</Text>
+      <Text color={colors.text}>{(100 - progress).toFixed(2)}%</Text>
     </View>
   );
 }
