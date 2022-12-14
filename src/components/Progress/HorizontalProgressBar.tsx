@@ -37,9 +37,12 @@ type Props = {
 export default function ({ forgroundColor, backgroundColor, progress, selectedIndex }: Props) {
   const colors = useThemeColors();
 
+  const stableTokensProgress = 100 - progress;
+  const decimalNm = progress > 99 || progress < 1 ? 2 : 0;
+
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-      <Text color={colors.text}>{progress.toFixed(2)}%</Text>
+      <Text color={colors.text}>{progress.toFixed(decimalNm)}%</Text>
       <View style={{ flex: 1, marginHorizontal: 5, flexDirection: 'row', alignItems: 'center' }}>
         <View
           style={[
@@ -66,7 +69,7 @@ export default function ({ forgroundColor, backgroundColor, progress, selectedIn
           ]}
         />
       </View>
-      <Text color={colors.text}>{(100 - progress).toFixed(2)}%</Text>
+      <Text color={colors.text}>{stableTokensProgress.toFixed(decimalNm)}%</Text>
     </View>
   );
 }
