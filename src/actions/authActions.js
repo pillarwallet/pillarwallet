@@ -89,6 +89,7 @@ import { fetchAllAccountsAssetsBalancesAction, fetchAllAccountsTotalBalancesActi
 import { finishOnboardingAction } from './onboardingActions';
 import { addMissingWalletEventsIfNeededAction } from './walletEventsActions';
 import { fetchAllCollectiblesDataAction } from './collectiblesActions';
+import { fetchAppsHoldingsAction } from './appsHoldingsActions';
 
 const storage = Storage.getInstance('db');
 
@@ -234,6 +235,7 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
     dispatch(fetchAllAccountsTotalBalancesAction());
     dispatch(fetchAllAccountsAssetsBalancesAction());
     dispatch(fetchAllCollectiblesDataAction());
+    dispatch(fetchAppsHoldingsAction());
   };
 };
 

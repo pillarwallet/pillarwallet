@@ -296,7 +296,8 @@
     "assetMigrate": "Migrate assets to Etherspot",
     "ensMigrate": "Migrate ENS to Etherspot",
     "transaction_submitted":"Transaction submitted",
-    "on_network": "on {{network}}"
+    "on_network": "on {{network}}",
+    "on_position": "{{position}} position"
   },
 
   "button": {
