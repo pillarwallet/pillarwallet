@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
-import { BigNumber } from 'bignumber.js';
+
 import styled from 'styled-components/native';
 import { useTranslation } from 'react-i18next';
 
@@ -28,64 +28,42 @@ import { useTranslation } from 'react-i18next';
 import Text from 'components/core/Text';
 import TokenIcon from 'components/display/TokenIcon';
 
-// Selectors
-import { useChainRates, useFiatCurrency } from 'selectors';
-
 // Utils
-import { formatTokenValue, formatFiatValue } from 'utils/format';
-import { getAssetValueInFiat, getAssetPriceInFiat } from 'utils/rates';
 import { fontStyles, spacing } from 'utils/variables';
 import { useChainConfig } from 'utils/uiConfig';
+import { formatFiatValue } from 'utils/format';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
+
+// Selector
+import { useFiatCurrency } from 'selectors';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
 import type { Chain } from 'models/Chain';
 
-type Props = {|
-  chain: Chain,
-  name: ?string,
-  iconUrl: ?string,
-  address?: string,
-  symbol?: string,
-  balance?: ?BigNumber,
-  onPress?: () => mixed,
-  onPressBalance?: () => mixed,
-  subtitle?: string,
-  leftAddOn?: React.Node,
-  style?: ViewStyleProp,
-|};
+type Props = {
+  network: Chain;
+  name: string;
+  position: number;
+  logoURI: string;
+  balance?: number;
+  onPress?: () => void;
+  style?: ViewStyleProp;
+};
 
 /**
- * Standard token list item displaying icon, name, and optionally balance, subtitle and left add-on (e.g. checkbox).
+ * Standard investment list item displaying network, name, balance, logoURI, and position.
  */
-function TokenListItem({
-  chain,
-  name,
-  symbol,
-  address,
-  iconUrl,
-  balance,
-  onPress,
-  onPressBalance,
-  leftAddOn,
-  style,
-}: Props) {
-  const rates = useChainRates(chain);
-  const currency = useFiatCurrency();
+export default function ({ network, name, balance, onPress, style, logoURI, position }: Props) {
   const { t } = useTranslation();
 
-  const balanceInFiat = getAssetValueInFiat(balance, address, rates, currency);
-  const tokenPriceInFiat: any = getAssetPriceInFiat(address, rates, currency);
+  const config = useChainConfig(network || CHAIN.ETHEREUM);
+  const currency = useFiatCurrency();
 
-  const formattedBalance = formatTokenValue(balance, symbol);
-  const formattedBalanceInFiat = formatFiatValue(balanceInFiat ?? 0, currency);
-
-  const config = useChainConfig(chain || CHAIN.ETHEREUM);
-
-  const networkName = chain ? config.title : undefined;
+  const networkName = network ? config.title : undefined;
+  const balanceInFiat = formatFiatValue(balance, currency);
 
   return (
     <Container
@@ -94,37 +72,25 @@ function TokenListItem({
       style={style}
       hitSlop={{ top: spacing.medium, bottom: spacing.medium }}
     >
-      {!!leftAddOn && <LeftAddOn>{leftAddOn}</LeftAddOn>}
-
-      <TokenIcon url={iconUrl} chain={chain} setMarginRight />
+      <TokenIcon url={logoURI} chain={network} setMarginRight />
 
       <TitleContainer>
-        <Title numberOfLines={1}>{name + (tokenPriceInFiat ?? '')}</Title>
-        {!!chain && <Subtitle numberOfLines={1}>{t('label.on_network', { network: networkName })}</Subtitle>}
+        <Title numberOfLines={1}>{name}</Title>
+        {!!network && <Subtitle numberOfLines={1}>{t('label.on_network', { network: networkName })}</Subtitle>}
       </TitleContainer>
 
-      <BalanceWrapper onPress={onPressBalance} disabled={!onPressBalance}>
-        <BalanceFiatValue numberOfLines={1}>{formattedBalanceInFiat ?? ' '}</BalanceFiatValue>
-        <BalanceTokenValue numberOfLines={1}>{balanceInFiat ? formattedBalance : symbol}</BalanceTokenValue>
+      <BalanceWrapper>
+        <BalanceFiatValue numberOfLines={1}>{balanceInFiat}</BalanceFiatValue>
+        <PositionValue numberOfLines={1}>{t('label.on_position', { position })}</PositionValue>
       </BalanceWrapper>
     </Container>
   );
 }
 
-export default TokenListItem;
-
 const Container = styled(TouchableOpacity)`
   flex-direction: row;
   align-items: center;
-  padding: ${spacing.medium}px ${spacing.large}px;
   min-height: 76px;
-`;
-
-const LeftAddOn = styled.View`
-  align-self: stretch;
-  justify-content: center;
-  align-items: center;
-  margin-right: ${spacing.large}px;
 `;
 
 const TitleContainer = styled.View`
@@ -141,7 +107,7 @@ const Subtitle = styled(Text)`
   color: ${({ theme }) => theme.colors.secondaryText};
 `;
 
-const BalanceWrapper = styled(TouchableOpacity)`
+const BalanceWrapper = styled.View`
   margin-left: ${spacing.medium}px;
   justify-content: flex-end;
   align-items: flex-end;
@@ -152,7 +118,7 @@ const BalanceFiatValue = styled(Text)`
   font-variant: tabular-nums;
 `;
 
-const BalanceTokenValue = styled(Text)`
+const PositionValue = styled(Text)`
   color: ${({ theme }) => theme.colors.secondaryText};
   font-variant: tabular-nums;
 `;

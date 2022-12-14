@@ -34,17 +34,27 @@ export const useStableAssets = () => {
     listOfStableToken.some((stableToken) => isSame(assetToken, stableToken)),
   );
 
-  if (!tokens?.[0] || !assets?.[0])
+  if (!tokens?.[0])
     return {
       tokens: StableTokens,
-      percentage: 50,
+      percentage: !assets?.[0] ? 50 : 0,
     };
 
-  const percentage: any = ((tokens.length * 100) / assets.length).toFixed(0);
+  const sumOfAssetsBalance: number = assets.reduce((balance, token) => {
+    return balance + (parseFloat(token.balance.balanceInFiat) || 0);
+  }, 0);
+
+  const sumOfStableTokensBalance: number = tokens.reduce((balance, token) => {
+    return balance + (parseFloat(token.balance.balanceInFiat) || 0);
+  }, 0);
+
+  const percentage: any = (sumOfStableTokensBalance * 100) / sumOfAssetsBalance;
+
+  const decimalNm: number = percentage > 99 || percentage < 1 ? 2 : 0;
 
   tokens.sort((a, b) => b?.balance?.balanceInFiat - a?.balance?.balanceInFiat);
 
-  return { tokens, percentage: isNaN(percentage) ? 0 : percentage };
+  return { tokens, percentage: isNaN(percentage.toFixed(decimalNm)) ? 0 : percentage.toFixed(decimalNm) };
 };
 
 export const useNonStableAssets = () => {
@@ -56,14 +66,14 @@ export const useNonStableAssets = () => {
     (assetToken) => !listOfStableToken.some((stableToken) => isSame(assetToken, stableToken)),
   );
 
+  const percentage: number = 100 - stablePercentage;
+
   if (!tokens?.[0])
     return {
       tokens: NonStableTokens,
-      percentage: 100 - stablePercentage,
+      percentage,
       totalPercentage: 100,
     };
-
-  const percentage: any = ((tokens.length * 100) / assets.length).toFixed(0);
 
   tokens.sort((a, b) => b?.balance?.balanceInFiat - a?.balance?.balanceInFiat);
 

@@ -76,6 +76,13 @@ export const getActiveAccountAddress = (accounts: Account[]): ?string => {
   return getAccountAddress(activeAccount);
 };
 
+export const getEtherspotAccountAddress = (accounts: Account[]): ?string => {
+  const etherspotAccount = findFirstEtherspotAccount(accounts);
+  if (!etherspotAccount) return null;
+
+  return getAccountAddress(etherspotAccount);
+};
+
 export const findAccountByType = (accounts: Account[], accountType: AccountTypes): ?Account =>
   accounts.find(({ type }) => type === accountType);
 
