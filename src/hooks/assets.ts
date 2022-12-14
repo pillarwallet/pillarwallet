@@ -48,11 +48,13 @@ export const useStableAssets = () => {
     return balance + (parseFloat(token.balance.balanceInFiat) || 0);
   }, 0);
 
-  const percentage: any = ((sumOfStableTokensBalance * 100) / sumOfAssetsBalance).toFixed(2);
+  const percentage: any = (sumOfStableTokensBalance * 100) / sumOfAssetsBalance;
+
+  const decimalNm: number = percentage > 99 || percentage < 1 ? 2 : 0;
 
   tokens.sort((a, b) => b?.balance?.balanceInFiat - a?.balance?.balanceInFiat);
 
-  return { tokens, percentage: isNaN(percentage) ? 0 : percentage };
+  return { tokens, percentage: isNaN(percentage.toFixed(decimalNm)) ? 0 : percentage.toFixed(decimalNm) };
 };
 
 export const useNonStableAssets = () => {
