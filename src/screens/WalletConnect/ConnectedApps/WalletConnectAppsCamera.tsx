@@ -33,8 +33,8 @@ export default function () {
 
   const items = useConnectedAppItems();
 
-  const renderItem = ({ title, iconUrl, chain }: AppItem) => {
-    return <AppListItem title={title} iconUrl={iconUrl} chain={chain} onPress={() => {}} />;
+  const renderItem = (item: AppItem) => {
+    return <AppListItem {...item} />;
   };
 
   return (

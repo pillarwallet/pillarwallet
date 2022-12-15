@@ -36,6 +36,9 @@ import { useThemeColors } from 'utils/themes';
 // Selectors
 import { useAccounts } from 'selectors';
 
+// Models
+import type { Account } from 'models/Account';
+
 // Local
 import DropDown from './DropDown';
 
@@ -43,33 +46,39 @@ interface Props {
   dropDownStyle?: StyleProp<ViewStyle>;
   visible: boolean;
   onHide: (val: boolean) => void;
+  onChangeAccount: (accountId: string) => void;
 }
 
-type itemProps = { label: string; value: string; icon: string };
+type itemProps = { label: string; value: string; icon: string; id: string };
 
-const SwitchWallet: FC<Props> = ({ dropDownStyle, visible, onHide }) => {
+const SwitchWallet: FC<Props> = ({ dropDownStyle, visible, onHide, onChangeAccount }) => {
   const colors = useThemeColors();
   const { t } = useTranslationWithPrefix('walletConnect.connectedApps');
   const accounts = useAccounts();
 
   const wallets = useMemo(() => {
     const avlAccounts: itemProps[] | any = [];
-    accounts.forEach((account) => {
+    accounts.forEach((account: Account) => {
       if (account.type === ACCOUNT_TYPES.KEY_BASED) {
-        avlAccounts.push({ value: 'Key wallet', label: t('key_based'), icon: 'key-wallet' });
+        avlAccounts.push({ value: 'Key wallet', label: t('key_based'), icon: 'key-wallet', id: account.id });
       }
       if (account.type === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET) {
-        avlAccounts.push({ value: 'Archanova wallet', label: t('plr_v1'), icon: 'plr-token' });
+        avlAccounts.push({ value: 'Archanova wallet', label: t('plr_v1'), icon: 'plr-token', id: account.id });
       }
       if (account.type === ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET) {
-        avlAccounts.push({ value: 'Smart wallet', label: t('etherspot'), icon: 'etherspot' });
+        avlAccounts.push({ value: 'Smart wallet', label: t('etherspot'), icon: 'etherspot', id: account.id });
       }
     });
     return avlAccounts;
   }, [accounts]);
 
+  const onChangeWallet = (account: itemProps) => {
+    onChangeAccount && onChangeAccount(account.id);
+    onHide(false);
+  };
+
   const renderItem = ({ item }): ReactElement<any, any> => (
-    <TouchableOpacity style={styles.btnContainer} onPress={() => onHide(false)}>
+    <TouchableOpacity style={styles.btnContainer} onPress={() => onChangeWallet(item)}>
       <Icon name={item.icon} />
       <Spacing w={5} />
       <Text variant="regular" color={item.color}>

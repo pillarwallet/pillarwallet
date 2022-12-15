@@ -34,6 +34,9 @@ import { useChainsConfig } from 'utils/uiConfig';
 // Selectors
 import { useSupportedChains } from 'selectors/chains';
 
+// Modals
+import type { Chain } from 'models/Chain';
+
 // Local
 import DropDown from './DropDown';
 
@@ -41,16 +44,23 @@ interface Props {
   dropDownStyle?: StyleProp<ViewStyle>;
   visible: boolean;
   onHide: (val: boolean) => void;
+  onChangeChain: (chain: Chain) => void;
 }
 
-const SwitchNetwork: FC<Props> = ({ dropDownStyle, visible, onHide }) => {
+const SwitchNetwork: FC<Props> = ({ dropDownStyle, visible, onHide, onChangeChain }) => {
   const colors = useThemeColors();
   const chains = useChains();
 
   const { t } = useTranslationWithPrefix('walletConnect.connectedApps');
 
   const renderItem = ({ item }): ReactElement<any, any> => (
-    <TouchableOpacity style={styles.btnContainer} onPress={() => onHide(false)}>
+    <TouchableOpacity
+      style={styles.btnContainer}
+      onPress={() => {
+        onChangeChain(item.chain);
+        onHide(false);
+      }}
+    >
       <Icon name={item.icon} />
       <Spacing w={5} />
       <Text variant="regular" color={item.color}>
@@ -84,6 +94,7 @@ const useChains = (): any[] => {
 
   const chainTabs = chains.map((chain) => ({
     key: chain,
+    chain,
     value: config[chain].title,
     label: config[chain].titleShort,
     icon: config[chain].iconName,

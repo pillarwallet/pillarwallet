@@ -30,6 +30,7 @@ import {
   approveWalletConnectConnectorRequestAction,
   connectToWalletConnectConnectorAction,
   estimateWalletConnectCallRequestTransactionAction,
+  updateWalletConnectConnectorSessionAction,
   rejectWalletConnectCallRequestAction,
   rejectWalletConnectConnectorRequestAction,
 } from 'actions/walletConnectActions';
@@ -37,8 +38,7 @@ import {
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { WalletConnectReducerState } from 'reducers/walletConnectReducer';
-import type { WalletConnectCallRequest, WalletConnectConnector } from 'models/WalletConnect';
-
+import type { WalletConnectCallRequest, WalletConnectConnector, sessionDataProps } from 'models/WalletConnect';
 
 type UseWalletConnectResult = {|
   activeConnectors: WalletConnectConnector[],
@@ -50,13 +50,13 @@ type UseWalletConnectResult = {|
   disconnectSessionByUrl: (url: string) => void,
   connectToConnector: (url: string) => void,
   estimateCallRequestTransaction: (callRequest: WalletConnectCallRequest) => void,
+  updateConnectorSession: (connector: any, session: any) => void,
 |};
 
 const useWalletConnect = (): UseWalletConnectResult => {
-  const {
-    activeConnectors,
-    callRequests,
-  }: WalletConnectReducerState = useRootSelector(({ walletConnect }: RootReducerState) => walletConnect);
+  const { activeConnectors, callRequests }: WalletConnectReducerState = useRootSelector(
+    ({ walletConnect }: RootReducerState) => walletConnect,
+  );
 
   const dispatch = useDispatch();
 
@@ -75,55 +75,60 @@ const useWalletConnect = (): UseWalletConnectResult => {
     [dispatch],
   );
 
+  const updateConnectorSession = useCallback(
+    (connector: Object, sessionData: sessionDataProps) =>
+      dispatch(updateWalletConnectConnectorSessionAction(connector, sessionData)),
+    [dispatch],
+  );
+
   const rejectConnectorRequest = useCallback(
     (peerId: string) => dispatch(rejectWalletConnectConnectorRequestAction(peerId)),
     [dispatch],
   );
 
   const approveCallRequest = useCallback(
-    (
-      callRequest: WalletConnectCallRequest,
-      result: string,
-    ) => dispatch(approveWalletConnectCallRequestAction(callRequest.callId, result)),
+    (callRequest: WalletConnectCallRequest, result: string) =>
+      dispatch(approveWalletConnectCallRequestAction(callRequest.callId, result)),
     [dispatch],
   );
 
   const rejectCallRequest = useCallback(
-    (
-      callRequest: WalletConnectCallRequest,
-      rejectReasonMessage?: string,
-    ) => dispatch(rejectWalletConnectCallRequestAction(callRequest.callId, rejectReasonMessage)),
+    (callRequest: WalletConnectCallRequest, rejectReasonMessage?: string) =>
+      dispatch(rejectWalletConnectCallRequestAction(callRequest.callId, rejectReasonMessage)),
     [dispatch],
   );
 
   const estimateCallRequestTransaction = useCallback(
-    (
-      callRequest: WalletConnectCallRequest,
-    ) => dispatch(estimateWalletConnectCallRequestTransactionAction(callRequest)),
+    (callRequest: WalletConnectCallRequest) => dispatch(estimateWalletConnectCallRequestTransactionAction(callRequest)),
     [dispatch],
   );
 
-  return useMemo(() => ({
-    activeConnectors,
-    callRequests,
-    approveConnectorRequest,
-    rejectConnectorRequest,
-    approveCallRequest,
-    rejectCallRequest,
-    disconnectSessionByUrl,
-    connectToConnector,
-    estimateCallRequestTransaction,
-  }), [
-    activeConnectors,
-    callRequests,
-    approveConnectorRequest,
-    rejectConnectorRequest,
-    approveCallRequest,
-    rejectCallRequest,
-    disconnectSessionByUrl,
-    connectToConnector,
-    estimateCallRequestTransaction,
-  ]);
+  return useMemo(
+    () => ({
+      activeConnectors,
+      callRequests,
+      approveConnectorRequest,
+      rejectConnectorRequest,
+      approveCallRequest,
+      rejectCallRequest,
+      disconnectSessionByUrl,
+      connectToConnector,
+      updateConnectorSession,
+      estimateCallRequestTransaction,
+    }),
+    [
+      activeConnectors,
+      callRequests,
+      approveConnectorRequest,
+      rejectConnectorRequest,
+      approveCallRequest,
+      rejectCallRequest,
+      disconnectSessionByUrl,
+      connectToConnector,
+      updateConnectorSession,
+      estimateCallRequestTransaction,
+    ],
+  );
 };
 
 export default useWalletConnect;

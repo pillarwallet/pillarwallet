@@ -21,37 +21,54 @@
 import * as React from 'react';
 import { DeviceEventEmitter } from 'react-native';
 import styled from 'styled-components/native';
+import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import Text from 'components/core/Text';
 import Image from 'components/Image';
 import Icon from 'components/core/Icon';
+import Toast from 'components/Toast';
 import ConnectedAppsMenu, { type itemProps } from 'components/Modals/ConnectedAppsModal/ConnectedAppsMenu';
 import SwitchWalletModal from 'components/Modals/ConnectedAppsModal/SwitchWallet';
 import SwitchNetworkModal from 'components/Modals/ConnectedAppsModal/SwitchNetwork';
+
+// Hooks
+import useWalletConnect from 'hooks/useWalletConnect';
 
 // Utils
 import { useThemeColors, getColorByTheme } from 'utils/themes';
 import { spacing } from 'utils/variables';
 import { useChainConfig } from 'utils/uiConfig';
+import { mapChainToChainId, chainFromChainId } from 'utils/chains';
 
 // Constants
 import { WALLET_DROPDOWN_REF } from 'constants/walletConstants';
 
 // Types
 import type { Chain } from 'models/Chain';
+import type { WalletConnectConnector } from 'models/WalletConnect';
 
 type Props = {|
   title: string,
-  chain: Chain,
+  chain?: Chain,
+  onPress?: () => void,
   iconUrl: ?string,
-  onPress?: () => mixed,
+  connector: WalletConnectConnector,
+  rest?: any,
 |};
 
-function AppListItem({ title, chain, iconUrl, onPress }: Props) {
+function AppListItem({ title, iconUrl, onPress, ...rest }: Props) {
   const colors = useThemeColors();
   const Dropdownref: any = React.useRef();
   const NetworkRef: any = React.useRef();
+  const { t } = useTranslationWithPrefix('walletConnect.disconnectModal');
+  const { connector } = rest;
+
+  const chain = chainFromChainId[connector.chainId];
+
+  const config = useChainConfig(chain);
+
+  const { updateConnectorSession, disconnectSessionByUrl } = useWalletConnect();
 
   const [visibleModal, setVisibleModal] = React.useState(false);
   const [visibleNetworkSwitchModal, setVisibleNetworkSwitchModal] = React.useState(false);
@@ -63,11 +80,8 @@ function AppListItem({ title, chain, iconUrl, onPress }: Props) {
   };
 
   const onChangeNetwork = () => {
-    onPress && onPress();
     setVisibleNetworkSwitchModal(!visibleNetworkSwitchModal);
   };
-
-  const config = useChainConfig(chain);
 
   React.useEffect(() => {
     DeviceEventEmitter.emit(WALLET_DROPDOWN_REF, Dropdownref);
@@ -76,6 +90,34 @@ function AppListItem({ title, chain, iconUrl, onPress }: Props) {
   React.useEffect(() => {
     DeviceEventEmitter.emit(WALLET_DROPDOWN_REF, NetworkRef);
   }, [NetworkRef, visibleNetworkSwitchModal]);
+
+  const onChangeChainSession = (updatedChain: Chain) => {
+    const chainId = mapChainToChainId(updatedChain);
+    if (chainId === connector.chainId) return;
+    updateConnectorSession(connector, { chainId, accounts: connector.accounts });
+  };
+
+  const onChangeSessionAccount = (accountId: string) => {
+    if (accountId === connector.accounts?.[0]) return;
+    updateConnectorSession(connector, { accounts: [accountId], chainId: 1 });
+  };
+
+  const disconnect = () => {
+    const sessionUrl = connector.peerMeta?.url;
+    if (!sessionUrl) {
+      Toast.show({
+        message: t('toast.missingSessionUrl'),
+        emoji: 'hushed',
+        supportLink: true,
+        autoClose: false,
+      });
+      setVisibleWalletSwitchModal(false);
+      return;
+    }
+
+    disconnectSessionByUrl(sessionUrl);
+    setVisibleWalletSwitchModal(false);
+  };
 
   return (
     <Container>
@@ -103,13 +145,19 @@ function AppListItem({ title, chain, iconUrl, onPress }: Props) {
         onSelect={(item: itemProps) => {
           if (item.value === 'Switch wallet') setVisibleWalletSwitchModal(true);
           if (item.value === 'Switch network') setVisibleNetworkSwitchModal(true);
+          if (item.value === 'Disconnect') disconnect();
         }}
       />
-      <SwitchWalletModal visible={visibleWalletSwitchModal} onHide={setVisibleWalletSwitchModal} />
+      <SwitchWalletModal
+        visible={visibleWalletSwitchModal}
+        onHide={setVisibleWalletSwitchModal}
+        onChangeAccount={onChangeSessionAccount}
+      />
       <SwitchNetworkModal
         visible={visibleNetworkSwitchModal}
         onHide={setVisibleNetworkSwitchModal}
         dropDownStyle={{ right: 20 }}
+        onChangeChain={onChangeChainSession}
       />
     </Container>
   );
