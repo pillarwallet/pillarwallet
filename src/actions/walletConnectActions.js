@@ -35,7 +35,7 @@ import {
   WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
   WALLETCONNECT_CALL_REQUEST_SCREEN,
 } from 'constants/navigationConstants';
-import { ADD_WALLETCONNECT_SESSION } from 'constants/walletConnectSessionsConstants';
+import { ADD_WALLETCONNECT_SESSION, UPDATE_WALLETCONNECT_SESSION } from 'constants/walletConnectSessionsConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -206,7 +206,8 @@ export const updateWalletConnectConnectorSessionAction = (connector: Object, ses
     try {
       connector.updateSession(sessionData);
 
-      dispatch({ type: ADD_WALLETCONNECT_SESSION, payload: { session: connector.session } });
+      dispatch({ type: UPDATE_WALLETCONNECT_SESSION, payload: { session: connector.session } });
+      // dispatch(subscribeToWalletConnectConnectorEventsAction(connector));
 
       dispatch(hideWalletConnectPromoCardAction());
     } catch (error) {

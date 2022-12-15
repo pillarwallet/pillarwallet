@@ -19,9 +19,10 @@
 */
 import { useMemo, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
+import { useTranslationWithPrefix } from 'translations/translate';
 
 // selectors
-import { useRootSelector } from 'selectors';
+import { useRootSelector, useAccounts } from 'selectors';
 
 // actions
 import { disconnectWalletConnectSessionByUrlAction } from 'actions/walletConnectSessionsActions';
@@ -35,10 +36,14 @@ import {
   rejectWalletConnectConnectorRequestAction,
 } from 'actions/walletConnectActions';
 
+// Constants
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { WalletConnectReducerState } from 'reducers/walletConnectReducer';
 import type { WalletConnectCallRequest, WalletConnectConnector, sessionDataProps } from 'models/WalletConnect';
+import type { Account } from 'models/Account';
 
 type UseWalletConnectResult = {|
   activeConnectors: WalletConnectConnector[],
@@ -129,6 +134,36 @@ const useWalletConnect = (): UseWalletConnectResult => {
       estimateCallRequestTransaction,
     ],
   );
+};
+
+export const useWalletConnectAccounts = (id?: string) => {
+  const accounts = useAccounts();
+  const { t } = useTranslationWithPrefix('walletConnect.connectedApps');
+
+  const wallets = useMemo(() => {
+    const avlAccounts: any = [];
+    accounts.forEach((account: Account) => {
+      if (account.type === ACCOUNT_TYPES.KEY_BASED) {
+        // eslint-disable-next-line i18next/no-literal-string
+        avlAccounts.push({ value: 'Key wallet', label: t('key_based'), icon: 'key-wallet', ...account });
+      }
+      if (account.type === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET) {
+        // eslint-disable-next-line i18next/no-literal-string
+        avlAccounts.push({ value: 'Archanova wallet', label: t('plr_v1'), icon: 'plr-token', ...account });
+      }
+      if (account.type === ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET) {
+        // eslint-disable-next-line i18next/no-literal-string
+        avlAccounts.push({ value: 'Smart wallet', label: t('etherspot'), icon: 'etherspot', ...account });
+      }
+    });
+    return avlAccounts;
+  }, [accounts, t]);
+
+  if (id) {
+    return wallets.filter(({ id: accountId }) => accountId === id);
+  }
+
+  return wallets;
 };
 
 export default useWalletConnect;

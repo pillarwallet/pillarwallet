@@ -27,6 +27,9 @@ import Text from 'components/core/Text';
 import { Spacing } from 'components/legacy/Layout';
 import Icon from 'components/core/Icon';
 
+// Hooks
+import { useWalletConnectAccounts } from 'hooks/useWalletConnect';
+
 // Constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
@@ -55,22 +58,7 @@ const SwitchWallet: FC<Props> = ({ dropDownStyle, visible, onHide, onChangeAccou
   const colors = useThemeColors();
   const { t } = useTranslationWithPrefix('walletConnect.connectedApps');
   const accounts = useAccounts();
-
-  const wallets = useMemo(() => {
-    const avlAccounts: itemProps[] | any = [];
-    accounts.forEach((account: Account) => {
-      if (account.type === ACCOUNT_TYPES.KEY_BASED) {
-        avlAccounts.push({ value: 'Key wallet', label: t('key_based'), icon: 'key-wallet', id: account.id });
-      }
-      if (account.type === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET) {
-        avlAccounts.push({ value: 'Archanova wallet', label: t('plr_v1'), icon: 'plr-token', id: account.id });
-      }
-      if (account.type === ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET) {
-        avlAccounts.push({ value: 'Smart wallet', label: t('etherspot'), icon: 'etherspot', id: account.id });
-      }
-    });
-    return avlAccounts;
-  }, [accounts]);
+  const wallets = useWalletConnectAccounts();
 
   const onChangeWallet = (account: itemProps) => {
     onChangeAccount && onChangeAccount(account.id);

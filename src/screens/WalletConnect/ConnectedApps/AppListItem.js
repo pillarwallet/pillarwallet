@@ -33,7 +33,10 @@ import SwitchWalletModal from 'components/Modals/ConnectedAppsModal/SwitchWallet
 import SwitchNetworkModal from 'components/Modals/ConnectedAppsModal/SwitchNetwork';
 
 // Hooks
-import useWalletConnect from 'hooks/useWalletConnect';
+import useWalletConnect, { useWalletConnectAccounts } from 'hooks/useWalletConnect';
+
+// Actions
+import { switchAccountAction } from 'actions/accountsActions';
 
 // Utils
 import { useThemeColors, getColorByTheme } from 'utils/themes';
@@ -47,6 +50,7 @@ import { WALLET_DROPDOWN_REF } from 'constants/walletConstants';
 // Types
 import type { Chain } from 'models/Chain';
 import type { WalletConnectConnector } from 'models/WalletConnect';
+import { useDispatch } from 'react-redux';
 
 type Props = {|
   title: string,
@@ -61,10 +65,12 @@ function AppListItem({ title, iconUrl, onPress, ...rest }: Props) {
   const colors = useThemeColors();
   const Dropdownref: any = React.useRef();
   const NetworkRef: any = React.useRef();
+  const dispatch = useDispatch();
   const { t } = useTranslationWithPrefix('walletConnect.disconnectModal');
   const { connector } = rest;
 
   const chain = chainFromChainId[connector.chainId];
+  const walletData = useWalletConnectAccounts(connector.accounts[0]);
 
   const config = useChainConfig(chain);
 
@@ -99,7 +105,7 @@ function AppListItem({ title, iconUrl, onPress, ...rest }: Props) {
 
   const onChangeSessionAccount = (accountId: string) => {
     if (accountId === connector.accounts?.[0]) return;
-    updateConnectorSession(connector, { accounts: [accountId], chainId: 1 });
+    dispatch(switchAccountAction(accountId));
   };
 
   const disconnect = () => {
@@ -129,7 +135,7 @@ function AppListItem({ title, iconUrl, onPress, ...rest }: Props) {
           <Text variant="medium" numberOfLines={1}>
             {title}
           </Text>
-          <Text color={colors.secondaryText}>{config?.title}</Text>
+          <Text color={colors.secondaryText}>{walletData[0]?.label}</Text>
         </TitleContainer>
 
         <RightAddOn ref={NetworkRef} onPress={onChangeNetwork}>
@@ -154,6 +160,7 @@ function AppListItem({ title, iconUrl, onPress, ...rest }: Props) {
         onChangeAccount={onChangeSessionAccount}
       />
       <SwitchNetworkModal
+        account={walletData[0]}
         visible={visibleNetworkSwitchModal}
         onHide={setVisibleNetworkSwitchModal}
         dropDownStyle={{ right: 20 }}
