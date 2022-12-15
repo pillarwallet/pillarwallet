@@ -55,10 +55,10 @@ const BiometricModal = ({ onModalHide, biometricType, hasNoBiometrics = false }:
   const proceedToBeginOnboarding = async (setBiometrics?: boolean) => {
     close();
 
-    dispatch(beginOnboardingAction(setBiometrics));
-
     if (setBiometrics) dispatch(logEventAction(Platform.OS === 'ios' ? 'enable_face_id' : 'enable_biometric_id'));
     else dispatch(logEventAction(Platform.OS === 'ios' ? 'cancel_face_id' : 'cancel_biometric_id'));
+
+    dispatch(beginOnboardingAction(setBiometrics));
   };
 
   useEffect(() => {
