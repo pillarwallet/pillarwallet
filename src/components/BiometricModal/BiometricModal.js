@@ -51,16 +51,14 @@ const BiometricModal = ({ onModalHide, biometricType, hasNoBiometrics = false }:
   const modalRef = useRef();
   const colors = useThemeColors();
   const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = React.useState(false);
 
   const proceedToBeginOnboarding = async (setBiometrics?: boolean) => {
-    setIsLoading(true);
+    close();
+
     dispatch(beginOnboardingAction(setBiometrics));
 
     if (setBiometrics) dispatch(logEventAction(Platform.OS === 'ios' ? 'enable_face_id' : 'enable_biometric_id'));
     else dispatch(logEventAction(Platform.OS === 'ios' ? 'cancel_face_id' : 'cancel_biometric_id'));
-
-    close();
   };
 
   useEffect(() => {
@@ -74,7 +72,7 @@ const BiometricModal = ({ onModalHide, biometricType, hasNoBiometrics = false }:
     if (modalRef.current) modalRef.current.close();
   }, []);
 
-  if (useBiometrics) return null;
+  if (useBiometrics || hasNoBiometrics) return null;
 
   return (
     <ModalBox
@@ -85,29 +83,27 @@ const BiometricModal = ({ onModalHide, biometricType, hasNoBiometrics = false }:
       backdropDismissable
       isSwipeClose
     >
-      {!isLoading && !hasNoBiometrics && biometricType ? (
-        <View>
-          <Title variant="big">{t('biometricLogin.title', { biometryType: biometricType })}</Title>
-          <Description color={colors.secondaryText}>{t('biometricLogin.description')}</Description>
-          <HorizontalDivider />
-          <ButtonWrapper>
-            <ButtonText
-              title={t('biometricLogin.button.cancel')}
-              titleColor={colors.buttonTextTitle}
-              variant="text"
-              onPress={() => proceedToBeginOnboarding()}
-            />
-            <VerticalDivider />
-            <ButtonText
-              title={t('biometricLogin.button.enable')}
-              variant="text"
-              style={styles.button}
-              titleColor={colors.buttonTextTitle}
-              onPress={() => proceedToBeginOnboarding(true)}
-            />
-          </ButtonWrapper>
-        </View>
-      ) : null}
+      <View>
+        <Title variant="big">{t('biometricLogin.title', { biometryType: biometricType })}</Title>
+        <Description color={colors.secondaryText}>{t('biometricLogin.description')}</Description>
+        <HorizontalDivider />
+        <ButtonWrapper>
+          <ButtonText
+            title={t('biometricLogin.button.cancel')}
+            titleColor={colors.buttonTextTitle}
+            variant="text"
+            onPress={() => proceedToBeginOnboarding()}
+          />
+          <VerticalDivider />
+          <ButtonText
+            title={t('biometricLogin.button.enable')}
+            variant="text"
+            style={styles.button}
+            titleColor={colors.buttonTextTitle}
+            onPress={() => proceedToBeginOnboarding(true)}
+          />
+        </ButtonWrapper>
+      </View>
     </ModalBox>
   );
 };
