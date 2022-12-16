@@ -40,7 +40,6 @@ import {
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { connectEtherspotAccountAction } from 'actions/etherspotActions';
 import { updateWalletConnectSessionsByActiveAccount } from 'actions/walletConnectSessionsActions';
-import { dismissSwitchAccountTooltipAction } from 'actions/appSettingsActions';
 
 // utils
 import {
@@ -191,8 +190,6 @@ export const switchAccountAction = (accountId: string) => {
       accounts: { data: accounts },
       smartWallet: { sdkInitialized },
     } = getState();
-
-    dispatch(dismissSwitchAccountTooltipAction(false));
 
     const activeAccount = accounts.find((account) => getAccountId(account) === accountId);
 

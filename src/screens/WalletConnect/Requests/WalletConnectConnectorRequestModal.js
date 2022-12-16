@@ -54,6 +54,7 @@ import { useAccounts } from 'selectors';
 
 // Actions
 import { switchAccountAction } from 'actions/accountsActions';
+import { dismissSwitchAccountTooltipAction } from 'actions/appSettingsActions';
 
 type Props = {|
   connector: WalletConnectConnector,
@@ -80,7 +81,10 @@ function WalletConnectConnectorRequestModal({ connector, chainId }: Props) {
 
   useEffect(() => {
     if (activeAccount !== keyBasedAccount && appName === ETHERSPOT) {
-      keyBasedAccount?.id && dispatch(switchAccountAction(keyBasedAccount.id));
+      if (keyBasedAccount?.id) {
+        dispatch(switchAccountAction(keyBasedAccount.id));
+        dispatch(dismissSwitchAccountTooltipAction(false));
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeAccount, appName, keyBasedAccount]);

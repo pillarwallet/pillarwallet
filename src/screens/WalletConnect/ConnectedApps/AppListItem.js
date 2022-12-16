@@ -104,8 +104,8 @@ function AppListItem({ title, iconUrl, onPress, ...rest }: Props) {
   };
 
   const onChangeSessionAccount = (accountId: string) => {
-    if (accountId === connector.accounts?.[0]) return;
     dispatch(switchAccountAction(accountId));
+    updateConnectorSession(connector, { chainId: 1, accounts: [accountId] });
   };
 
   const disconnect = () => {
