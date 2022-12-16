@@ -42,6 +42,9 @@ import { isKeyBasedAccount } from 'utils/accounts';
 // Constants
 import { ADD_CASH } from 'constants/navigationConstants';
 
+// Hooks
+import { useAppHoldings } from 'hooks/apps';
+
 // Actions
 import { dismissAddCashTooltipAction } from 'actions/appSettingsActions';
 
@@ -63,9 +66,12 @@ function BalanceSection({ balanceInFiat, changeInFiat, showBalance, onBalanceCli
 
   const fiatCurrency = useFiatCurrency();
   const activeAccount = useActiveAccount();
+  const { totalBalanceOfHoldings } = useAppHoldings();
 
   const initialBalance = changeInFiat ? balanceInFiat.minus(changeInFiat) : null;
   const formattedChange = formatFiatChangeExtended(changeInFiat, initialBalance, fiatCurrency);
+
+  balanceInFiat = balanceInFiat.plus(totalBalanceOfHoldings);
 
   const { addCashTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
 

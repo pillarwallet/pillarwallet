@@ -29,6 +29,7 @@ import Swiper from 'react-native-swiper';
 // Actions
 import { fetchAllAccountsAssetsBalancesAction } from 'actions/assetsActions';
 import { refreshEtherspotAccountsAction } from 'actions/etherspotActions';
+import { fetchAppsHoldingsAction } from 'actions/appsHoldingsActions';
 
 // Components
 import { Container, Content } from 'components/layout/Layout';
@@ -196,6 +197,7 @@ function Home() {
   const onRefresh = () => {
     dispatch(fetchAllAccountsAssetsBalancesAction());
     dispatch(refreshEtherspotAccountsAction());
+    dispatch(fetchAppsHoldingsAction());
   };
 
   const onBalanceClick = async () => {

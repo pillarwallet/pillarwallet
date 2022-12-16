@@ -39,3 +39,5 @@ export const BRIDGE_CATEGORY = {
   EXCHANGE: ('Exchange': 'Exchange'),
   CROSS_CHAIN: ('Cross-chain': 'Cross-chain'),
 };
+
+export const TRANSACTION_NOTIFICATION_DATA = 'TRANSACTION_NOTIFICATION_DATA';

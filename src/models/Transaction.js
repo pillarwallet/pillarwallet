@@ -197,6 +197,8 @@ export type TransactionPayload = {
   useLegacyTransferMethod?: boolean,
   sequentialTransactions?: TransactionPayload[],
   chain?: Chain,
+  type?: string,
+  assetData?: Object,
 };
 
 export type Erc721TransferMethod = $Values<typeof ERC721_TRANSFER_METHODS>;
@@ -209,6 +211,7 @@ export type CollectibleTransactionPayload = {
   gasLimit?: number,
   gasPrice?: number,
   signOnly?: ?boolean,
+  type?: string,
 };
 
 export type TransactionEthers = {

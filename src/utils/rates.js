@@ -21,12 +21,11 @@ import { BigNumber } from 'bignumber.js';
 
 // Utils
 import { wrapBigNumber } from 'utils/bigNumber';
-import { valueForAddress } from 'utils/common';
+import { valueForAddress, getCurrencySymbol } from 'utils/common';
 
 // Types
 import type { Value } from 'models/Value';
 import type { Currency, RatesByAssetAddress } from 'models/Rates';
-
 
 export const getFiatValueFromUsd = (valueInUsd: ?BigNumber | string, usdToFiatRate: ?number): ?BigNumber => {
   if (!valueInUsd || usdToFiatRate == null) return null;
@@ -34,11 +33,8 @@ export const getFiatValueFromUsd = (valueInUsd: ?BigNumber | string, usdToFiatRa
   return wrapBigNumber(valueInUsd)?.times(usdToFiatRate);
 };
 
-export const getAssetRateInFiat = (
-  rates: RatesByAssetAddress,
-  assetAddress: ?string,
-  fiatCurrency: Currency,
-): number => valueForAddress(rates, assetAddress)?.[fiatCurrency] ?? 0;
+export const getAssetRateInFiat = (rates: RatesByAssetAddress, assetAddress: ?string, fiatCurrency: Currency): number =>
+  valueForAddress(rates, assetAddress)?.[fiatCurrency] ?? 0;
 
 export const getAssetValueInFiat = (
   assetValue: ?Value,
@@ -52,6 +48,18 @@ export const getAssetValueInFiat = (
   if (!rate) return null;
 
   return wrapBigNumber(assetValue)?.times(rate).toNumber();
+};
+
+export const getAssetPriceInFiat = (assetAddress: ?string, rates: RatesByAssetAddress, currency: Currency): ?string => {
+  if (!assetAddress) return null;
+
+  const rate = getAssetRateInFiat(rates, assetAddress, currency);
+  if (!rate) return null;
+
+  const currencySymbol = getCurrencySymbol(currency);
+
+  // eslint-disable-next-line i18next/no-literal-string
+  return ` • ${currencySymbol}${rate?.toFixed(2)}`;
 };
 
 export const getAssetValueFromFiat = (

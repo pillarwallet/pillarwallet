@@ -82,13 +82,14 @@ import {
   checkKeyBasedAssetTransferTransactionsAction,
 } from './keyBasedAssetTransferActions';
 import { setSessionTranslationBundleInitialisedAction } from './sessionActions';
-import { importEtherspotAccountsAction, initEtherspotServiceAction } from './etherspotActions';
+import { importEtherspotAccountsAction, initEtherspotServiceAction, setStableTokens } from './etherspotActions';
 import { setEnsNameIfNeededAction } from './ensRegistryActions';
 import { fetchTutorialDataIfNeededAction, bannerDataAction } from './cmsActions';
 import { fetchAllAccountsAssetsBalancesAction, fetchAllAccountsTotalBalancesAction } from './assetsActions';
 import { finishOnboardingAction } from './onboardingActions';
 import { addMissingWalletEventsIfNeededAction } from './walletEventsActions';
 import { fetchAllCollectiblesDataAction } from './collectiblesActions';
+import { fetchAppsHoldingsAction } from './appsHoldingsActions';
 
 const storage = Storage.getInstance('db');
 
@@ -225,6 +226,8 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
     const keyBasedAccount = findKeyBasedAccount(accounts);
     if (!keyBasedAccount) dispatch(addAccountAction(address, ACCOUNT_TYPES.KEY_BASED));
 
+    dispatch(setStableTokens());
+
     dispatch(fetchTransactionsHistoryAction());
     dispatch(setEnsNameIfNeededAction());
     dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
@@ -232,6 +235,7 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
     dispatch(fetchAllAccountsTotalBalancesAction());
     dispatch(fetchAllAccountsAssetsBalancesAction());
     dispatch(fetchAllCollectiblesDataAction());
+    dispatch(fetchAppsHoldingsAction());
   };
 };
 

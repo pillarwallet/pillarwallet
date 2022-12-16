@@ -51,7 +51,7 @@ export function useChainsConfig(): { [key: Chain]: ChainConfig } {
 
   return {
     [CHAIN.POLYGON]: {
-      title: t('chains.polygon'),
+      title: isProdEnv() ? t('chains.polygon') : t('chains.mumbai'),
       titleShort: t('chainsShort.polygon'),
       iconName: 'polygon',
       color: colors.polygon,
@@ -59,7 +59,7 @@ export function useChainsConfig(): { [key: Chain]: ChainConfig } {
       iconUrl: 'https://tokens.1inch.exchange/0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0.png',
     },
     [CHAIN.BINANCE]: {
-      title: t('chains.binance'),
+      title: isProdEnv() ? t('chains.binance') : t('chains.binance_test'),
       titleShort: t('chainsShort.binance'),
       iconName: 'binance',
       color: colors.binance,
@@ -68,7 +68,7 @@ export function useChainsConfig(): { [key: Chain]: ChainConfig } {
         'https://images.prismic.io/pillar-app/d8e73973-82f1-4b20-a068-fe20e21816b0_0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c_1.png?auto=compress,format',
     },
     [CHAIN.XDAI]: {
-      title: t('chains.xdai'),
+      title: isProdEnv() ? t('chains.xdai') : t('chains.sokol'),
       titleShort: t('chainsShort.xdai'),
       iconName: 'xdai',
       color: colors.xdai,
@@ -76,7 +76,7 @@ export function useChainsConfig(): { [key: Chain]: ChainConfig } {
       iconUrl: 'https://tokens.1inch.exchange/0x6810e776880c02933d47db1b9fc05908e5386b96.png',
     },
     [CHAIN.ETHEREUM]: {
-      title: t('chains.ethereum'),
+      title: isProdEnv() ? t('chains.ethereum') : t('chains.gorli'),
       titleShort: t('chainsShort.ethereum'),
       iconName: 'ethereum',
       color: colors.ethereum,
@@ -93,8 +93,8 @@ export function useChainsConfig(): { [key: Chain]: ChainConfig } {
         'https://images.prismic.io/pillar-app/4c8def2b-a244-4134-b871-3d5784c4b130_Avalanche_AVAX_RedWhite.png?auto=compress,format',
     },
     [CHAIN.OPTIMISM]: {
-      title: isProdEnv() ? t('chains.optimism') : t('chains.optimism_kovan'),
-      titleShort: isProdEnv() ? t('chainsShort.optimism') : t('chains.optimism_kovan'),
+      title: isProdEnv() ? t('chains.optimism') : t('chains.optimism_gorli'),
+      titleShort: t('chainsShort.optimism'),
       iconName: 'optimism',
       color: colors.optimism,
       gasSymbol: ETH,

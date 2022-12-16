@@ -60,6 +60,8 @@ export const useChainSupportedAssets = (chain: ?Chain): Asset[] => {
   return supportedAssetPerChain[chain] ?? EMPTY_ARRAY;
 };
 
+export const useTransactionNotification = () => useRootSelector((root) => root.transactionNotification.data);
+
 export const useGasInfoPerChain = () => useRootSelector((root) => root.history.gasInfo);
 export const useChainGasInfo = (chain: Chain) => useGasInfoPerChain()[chain];
 export const useNftFlag = () => useRootSelector((root) => root.nftFlag.visible);
@@ -72,6 +74,12 @@ export const fiatCurrencySelector = (root: RootReducerState) =>
   root.appSettings.data.baseFiatCurrency ?? defaultFiatCurrency;
 
 export const historySelector = ({ history }: RootReducerState) => history.data;
+
+export const appsHoldingsSelector = ({ appsHoldings }: RootReducerState) => appsHoldings;
+
+export const useAppHoldings = () => useRootSelector((root) => root.appsHoldings);
+
+export const stableTokensSelector = ({ stableTokens }: RootReducerState) => stableTokens.data;
 
 export const bannerDataSelector = ({ onboarding }: RootReducerState) => onboarding.bannerData;
 
