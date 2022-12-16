@@ -9907,10 +9907,10 @@ ethers@^5.7.2:
     "@ethersproject/web" "5.7.1"
     "@ethersproject/wordlists" "5.7.0"
 
-etherspot@1.42.1:
-  version "1.42.1"
-  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.42.1.tgz#622c6edbd80f274c7e52321079bff94eee4bf4d8"
-  integrity sha512-BorzXAow9i5m3KwZeRCkgLynANzcJBVvNdEybNZ4/lZXVJWNEtBVEtbYiEigWspafRAoUVLydMqzL+oBdI0mAg==
+etherspot@1.42.2:
+  version "1.42.2"
+  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.42.2.tgz#3cdcd30627d4cc67fe8132d5625416f0cf262be9"
+  integrity sha512-UvwR2Fv7NOHNd6/6YNbbs9BpaeiLCKQJ4wWhT9AjUmFwadkzyZVD+8eO9R8kF67Yvt9zgsjgtBQrlmL+h2FTJQ==
   dependencies:
     "@apollo/client" "3.4.0"
     "@etherspot/contracts" "1.9.51"
