@@ -207,7 +207,6 @@ export const updateWalletConnectConnectorSessionAction = (connector: Object, ses
       connector.updateSession(sessionData);
 
       dispatch({ type: UPDATE_WALLETCONNECT_SESSION, payload: { session: connector.session } });
-      // dispatch(subscribeToWalletConnectConnectorEventsAction(connector));
 
       dispatch(hideWalletConnectPromoCardAction());
     } catch (error) {
