@@ -24,16 +24,25 @@ import ImagePicker from 'react-native-image-crop-picker';
 import jsQR from 'jsqr';
 import Jimp from 'jimp/es';
 import t from 'translations/translate';
+import styled from 'styled-components/native';
+
+// Components
 import Header from 'components/Header';
 import Toast from 'components/Toast';
-import styled from 'styled-components/native';
 import IconButton from 'components/IconButton';
-import { fontSizes } from 'utils/variables';
-import { getDeviceHeight, getDeviceWidth } from 'utils/common';
 import { Container } from 'components/legacy/Layout';
 import Loader from 'components/Loader';
+import Icon from 'components/core/Icon';
 
+// Utils
+import { fontSizes } from 'utils/variables';
+import { getDeviceHeight, getDeviceWidth } from 'utils/common';
+
+// Type
 import type { Barcode } from 'react-native-camera';
+
+// Local
+import ConnectedAppsFloatingButton from '../../screens/WalletConnect/Home/components/ConnectedAppsFloatingButton';
 
 const screenWidth = getDeviceWidth();
 const screenHeight = getDeviceHeight();
@@ -42,10 +51,10 @@ const SquareContainer = styled.View`
   position: absolute;
   justify-content: center;
   display: flex;
-  height: ${props => props.size}px;
-  width: ${props => props.size}px;
+  height: ${(props) => props.size}px;
+  width: ${(props) => props.size}px;
   border-width: 4px;
-  border-color: ${props => props.color};
+  border-color: ${(props) => props.color};
   background-color: transparent;
 `;
 
@@ -55,11 +64,17 @@ const HeaderWrapper = styled.SafeAreaView`
 `;
 
 const ButtonWrapper = styled.View`
-  width: 100%;
+  width: 33%;
   position: absolute;
   bottom: 60px;
   justify-content: center;
   align-items: center;
+`;
+
+const WalletButton = styled.TouchableOpacity`
+  padding: 12px;
+  border-radius: 50px;
+  background-color: ${({ theme }) => theme.colors.basic050};
 `;
 
 type Props = {
@@ -67,18 +82,19 @@ type Props = {
   onCancel: () => void,
   rectangleColor: string,
   rectangleSize: number,
+  onNavigateWallet?: () => void,
 };
 
 type State = {
   isLoading: boolean,
-}
+};
 
 const ERROR_TIMEOUT = 10000;
 
 export default class CameraView extends React.Component<Props, State> {
   state = {
     isLoading: false,
-  }
+  };
 
   timeout: TimeoutID;
 
@@ -120,23 +136,25 @@ export default class CameraView extends React.Component<Props, State> {
       } else {
         throw new Error();
       }
-    } catch (e) { this.handleError(e.toString()); }
+    } catch (e) {
+      this.handleError(e.toString());
+    }
     clearTimeout(this.timeout);
   };
 
+  onPressWallet = () => {
+    const { onNavigateWallet } = this.props;
+    onNavigateWallet && onNavigateWallet();
+  };
+
   render() {
-    const {
-      onQRRead,
-      onCancel,
-      rectangleSize,
-      rectangleColor,
-    } = this.props;
+    const { onQRRead, onCancel, rectangleSize, rectangleColor, onNavigateWallet } = this.props;
 
     const { isLoading } = this.state;
 
     if (isLoading) {
       return (
-        <Container center >
+        <Container center>
           <Loader noMessages />
         </Container>
       );
@@ -158,6 +176,15 @@ export default class CameraView extends React.Component<Props, State> {
           <Header light flexStart onClose={onCancel} />
         </HeaderWrapper>
         <SquareContainer color={rectangleColor} size={rectangleSize} />
+
+        {!!onNavigateWallet && (
+          <ButtonWrapper style={{ alignSelf: 'flex-start' }}>
+            <WalletButton onPress={this.onPressWallet}>
+              <Icon name="wallet-connect" size={fontSizes.giant} />
+            </WalletButton>
+          </ButtonWrapper>
+        )}
+
         <ButtonWrapper>
           <IconButton
             icon="gallery"
@@ -166,6 +193,12 @@ export default class CameraView extends React.Component<Props, State> {
             color={rectangleColor}
           />
         </ButtonWrapper>
+
+        {!!onNavigateWallet && (
+          <ButtonWrapper style={{ alignSelf: 'flex-end', bottom: 30 }}>
+            <ConnectedAppsFloatingButton />
+          </ButtonWrapper>
+        )}
       </RNCamera>
     );
   }

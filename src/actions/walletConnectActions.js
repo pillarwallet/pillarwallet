@@ -35,7 +35,7 @@ import {
   WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
   WALLETCONNECT_CALL_REQUEST_SCREEN,
 } from 'constants/navigationConstants';
-import { ADD_WALLETCONNECT_SESSION } from 'constants/walletConnectSessionsConstants';
+import { ADD_WALLETCONNECT_SESSION, UPDATE_WALLETCONNECT_SESSION } from 'constants/walletConnectSessionsConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -63,7 +63,7 @@ import { reportErrorLog, logBreadcrumb } from 'utils/common';
 import { isLogV2AppEvents } from 'utils/environment';
 
 // models, types
-import type { WalletConnectCallRequest, WalletConnectConnector } from 'models/WalletConnect';
+import type { WalletConnectCallRequest, WalletConnectConnector, sessionDataProps } from 'models/WalletConnect';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 const setWalletConnectErrorAction = (message: string) => {
@@ -81,7 +81,9 @@ const setWalletConnectErrorAction = (message: string) => {
 
 export const resetWalletConnectConnectorRequestAction = (rejectedRequest: boolean = false) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { walletConnect: { connectorRequest } } = getState();
+    const {
+      walletConnect: { connectorRequest },
+    } = getState();
 
     if (!connectorRequest) return;
 
@@ -139,17 +141,22 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
         payload: { connectorRequest: connector },
       });
 
-      navigate(NavigationActions.navigate({
-        routeName: WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
-        params: { connector, chainId },
-      }));
+      navigate(
+        NavigationActions.navigate({
+          routeName: WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
+          params: { connector, chainId },
+        }),
+      );
     });
   };
 };
 
 export const approveWalletConnectConnectorRequestAction = (peerId: string, chainId: number) => {
   return (dispatch: Dispatch, getState: GetState) => {
-    const { walletConnect: { connectorRequest } } = getState();
+    const {
+      walletConnect: { connectorRequest },
+    } = getState();
+
     if (!connectorRequest) {
       dispatch(setWalletConnectErrorAction(t('error.walletConnect.noMatchingConnector')));
       return;
@@ -194,9 +201,27 @@ export const approveWalletConnectConnectorRequestAction = (peerId: string, chain
   };
 };
 
+export const updateWalletConnectConnectorSessionAction = (connector: Object, sessionData: sessionDataProps) => {
+  return (dispatch: Dispatch) => {
+    try {
+      connector.updateSession(sessionData);
+
+      dispatch({ type: UPDATE_WALLETCONNECT_SESSION, payload: { session: connector.session } });
+
+      dispatch(hideWalletConnectPromoCardAction());
+    } catch (error) {
+      dispatch(setWalletConnectErrorAction(error?.message));
+    }
+
+    dispatch(resetWalletConnectConnectorRequestAction());
+  };
+};
+
 export const rejectWalletConnectConnectorRequestAction = (peerId: string) => {
   return (dispatch: Dispatch, getState: GetState) => {
-    const { walletConnect: { connectorRequest } } = getState();
+    const {
+      walletConnect: { connectorRequest },
+    } = getState();
     if (!connectorRequest) {
       dispatch(setWalletConnectErrorAction(t('error.walletConnect.noMatchingConnector')));
       return;
@@ -219,7 +244,9 @@ export const rejectWalletConnectConnectorRequestAction = (peerId: string) => {
 
 export const rejectWalletConnectCallRequestAction = (callId: number, rejectReasonMessage?: string) => {
   return (dispatch: Dispatch, getState: GetState) => {
-    const { walletConnect: { activeConnectors, callRequests } } = getState();
+    const {
+      walletConnect: { activeConnectors, callRequests },
+    } = getState();
 
     const callRequest = callRequests.find(({ callId: existingCallId }) => existingCallId === callId);
     if (!callRequest) {
@@ -248,7 +275,9 @@ export const rejectWalletConnectCallRequestAction = (callId: number, rejectReaso
 
 export const approveWalletConnectCallRequestAction = (callId: number, result: any) => {
   return (dispatch: Dispatch, getState: GetState) => {
-    const { walletConnect: { activeConnectors, callRequests } } = getState();
+    const {
+      walletConnect: { activeConnectors, callRequests },
+    } = getState();
 
     const callRequest = callRequests.find(({ callId: existingCallId }) => existingCallId === callId);
     if (!callRequest) {
@@ -341,14 +370,18 @@ export const subscribeToWalletConnectConnectorEventsAction = (connector: WalletC
       dispatch(setWalletConnectErrorAction(error?.message));
     });
 
+    const peerId = connector?.peerId;
+
     connector.on(WALLETCONNECT_EVENT.DISCONNECT, (error: Error | null) => {
       if (error) {
         dispatch(setWalletConnectErrorAction(error?.message));
         return;
       }
 
-      if (!connector?.peerId) {
-        logBreadcrumb('subscribeToWalletConnectConnectorEventsAction', 'disconnect failed: no peerId', { connector });
+      if (!peerId) {
+        logBreadcrumb('subscribeToWalletConnectConnectorEventsAction', 'disconnect failed: no peerId', {
+          connector,
+        });
         return;
       }
 

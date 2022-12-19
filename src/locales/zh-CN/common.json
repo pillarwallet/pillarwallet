@@ -690,7 +690,13 @@
     },
     "connectedApps": {
       "title": "连接的 dapp",
-      "connected": "连接的"
+      "connected": "连接的",
+      "switchWallet":"切换钱包",
+      "switchNetwork":"切换网络",
+      "disconnect":"断开",
+      "etherspot":"Etherspot",
+      "plr_v1":"Pillar v1",
+      "key_based":"Keybased"
     },
     "disconnectModal": {
       "title": "断开",

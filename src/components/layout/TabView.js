@@ -53,6 +53,7 @@ type Props = {|
   scrollEnabled?: boolean,
   swipeEnabled?: boolean,
   rest?: any,
+  isNavigateToHome?: boolean,
 |};
 
 function TabView({ items, tabIndex, onTabIndexChange, scrollEnabled, swipeEnabled, ...rest }: Props) {

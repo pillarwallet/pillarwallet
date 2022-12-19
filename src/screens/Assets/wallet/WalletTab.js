@@ -64,8 +64,11 @@ import PillarPaySummary from '../components/PillarPaySummary';
 import { buildAssetDataNavigationParam } from '../utils';
 import { useWalletTotalBalance } from './selectors';
 
+type Props = {
+  isNavigateToHome?: boolean,
+};
 
-function WalletTab() {
+function WalletTab({ isNavigateToHome }: Props) {
   const { tRoot } = useTranslationWithPrefix('assets.wallet');
   const navigation = useNavigation();
   const safeArea = useSafeAreaInsets();
@@ -90,7 +93,7 @@ function WalletTab() {
 
   const navigateToAssetDetails = (category: any, chain: Chain) => {
     const assetData = buildAssetDataNavigationParam(category, chain);
-    navigation.navigate(ASSET, { assetData });
+    navigation.navigate(ASSET, { assetData, isNavigateToHome });
   };
 
   const renderListHeader = () => {
