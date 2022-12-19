@@ -108,6 +108,7 @@
     "pooltogetherjs": "0.2.0",
     "pouchdb-react-native": "^6.4.1",
     "process": "^0.11.0",
+    "promise.allsettled": "^1.0.6",
     "proxy-polyfill": "^0.3.1",
     "punycode": "^1.2.4",
     "querystring-es3": "~0.2.0",
