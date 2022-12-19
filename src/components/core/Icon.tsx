@@ -119,6 +119,9 @@ import RadioButton from 'assets/icons/svg/form-radio-button-normal-light.svg';
 import DeployLightIcon from 'assets/icons/svg/24-circle-filled-alert-light.svg';
 import DeployIcon from 'assets/icons/svg/24-circle-filled-alert.svg';
 import ExclamationLight from 'assets/icons/svg/exclamationLight.svg';
+import EtherspotDark from 'assets/icons/svg/etherspot.svg';
+import KeyWalletDark from 'assets/icons/svg/key-wallet.svg';
+import PlrDark from 'assets/icons/svg/tokens-48-plr.svg';
 import DownArrow from 'assets/icons/svg/down-arrow.svg';
 import UpArrow from 'assets/icons/svg/up-arrow.svg';
 import PendingIcon from 'assets/icons/svg/24-circle-pending.svg';
@@ -227,6 +230,9 @@ const components = {
   'deploy-light': DeployLightIcon,
   deploy: DeployIcon,
   'exclamation-round-light': ExclamationLight,
+  etherspot: EtherspotDark,
+  'key-wallet': KeyWalletDark,
+  'plr-token': PlrDark,
   'down-arrow': DownArrow,
   'up-arrow': UpArrow,
   'pending-process': PendingIcon,

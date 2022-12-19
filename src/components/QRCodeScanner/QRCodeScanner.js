@@ -22,12 +22,18 @@ import { Vibration, Dimensions, Platform } from 'react-native';
 import throttle from 'lodash.throttle';
 import { PERMISSIONS, RESULTS, request as requestPermission } from 'react-native-permissions';
 import t from 'translations/translate';
+
+// Utils
 import { noop, logBreadcrumb } from 'utils/common';
+
+// Components
 import CameraView from 'components/QRCodeScanner/CameraView';
 import NoPermissions from 'components/QRCodeScanner/NoPermissions';
-import type { Barcode, Point, Size } from 'react-native-camera';
 import Toast from 'components/Toast';
 import Modal from 'components/Modal';
+
+// Type
+import type { Barcode, Point, Size } from 'react-native-camera';
 
 type BarcodeBounds = {
   size: Size,
@@ -40,6 +46,8 @@ type Props = {|
   validator: (code: string) => boolean,
   dataFormatter: (code: string) => string,
   rectangleColor: string,
+  onClose?: () => void,
+  onNavigateWallet?: () => void,
 |};
 
 type State = {|
@@ -86,10 +94,12 @@ export default class QRCodeScanner extends React.Component<Props, State> {
   }
 
   askPermissions = () => {
-    requestPermission(Platform.select({
-      android: PERMISSIONS.ANDROID.CAMERA,
-      ios: PERMISSIONS.IOS.CAMERA,
-    }))
+    requestPermission(
+      Platform.select({
+        android: PERMISSIONS.ANDROID.CAMERA,
+        ios: PERMISSIONS.IOS.CAMERA,
+      }),
+    )
       .then((status) => this.setState({ isAuthorized: status === RESULTS.GRANTED }))
       .catch(() => this.setState({ isAuthorized: false }));
   };
@@ -110,10 +120,16 @@ export default class QRCodeScanner extends React.Component<Props, State> {
   };
 
   close = () => {
+    const { onClose } = this.props;
+    if (onClose) {
+      this.handleResult();
+      onClose();
+    }
+
     if (this.modalRef.current) {
       this.modalRef.current.close();
     }
-  }
+  };
 
   handleQRRead = (barcode: Barcode): void => {
     if (this.state.isFinished) {
@@ -151,18 +167,17 @@ export default class QRCodeScanner extends React.Component<Props, State> {
 
   handleResult = () => {
     const { code } = this.state;
-    const {
-      onRead,
-      onCancel,
-      dataFormatter,
-    } = this.props;
+    const { onRead, onCancel, dataFormatter } = this.props;
 
-    if (code && onRead) onRead(dataFormatter(code));
+    if (code && onRead) {
+      onRead(dataFormatter(code));
+      this.setState({ code: null, isFinished: false });
+    }
     if (!code && onCancel) onCancel();
   };
 
   render() {
-    const { rectangleColor } = this.props;
+    const { rectangleColor, onNavigateWallet } = this.props;
     const { isAuthorized, isFinished } = this.state;
 
     if (isAuthorized === null) return null; // permission request pending
@@ -191,6 +206,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
           <CameraView
             onQRRead={this.handleQRRead}
             onCancel={this.close}
+            onNavigateWallet={onNavigateWallet}
             rectangleSize={rectangleSize}
             rectangleColor={rectangleColor}
           />

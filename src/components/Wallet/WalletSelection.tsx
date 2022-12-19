@@ -80,7 +80,7 @@ export default function () {
   const onNavigate = (category, chain) => {
     const assetData = buildAssetDataNavigationParam(category, chain);
     assetData.backDashboad = true;
-    navigation.navigate(ASSET, { assetData });
+    navigation.navigate(ASSET, { assetData, isNavigateToHome: true });
   };
 
   return (
