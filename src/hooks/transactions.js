@@ -55,6 +55,8 @@ import type { Chain } from 'models/Chain';
 import type { EthereumTransaction, GasToken, TransactionFeeInfo } from 'models/Transaction';
 import type { Value } from 'models/Value';
 
+const allSettled = require('promise.allsettled');
+
 type UseTransactionEstimateResult = {|
   feeInfo: ?TransactionFeeInfo,
   errorMessage?: string,
@@ -171,7 +173,17 @@ export function useAssetRates(chain: ?Chain, asset: any) {
   React.useEffect(() => {
     async function call() {
       if (chain && asset) {
-        setAssetRates(await getExchangeRates(chain, [asset]));
+        const promiseRequest = () => {
+          return new Promise(() => {
+            (async () => {
+              setAssetRates(await getExchangeRates(chain, [asset]));
+            })();
+          });
+        };
+
+        allSettled([promiseRequest()]);
+
+        allSettled.shim();
       }
     }
     call();

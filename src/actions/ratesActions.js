@@ -20,21 +20,14 @@
 import { isEmpty } from 'lodash';
 
 // constants
-import {
-  UPDATE_CHAIN_RATES,
-  SET_FETCHING_RATES,
-} from 'constants/ratesConstants';
+import { UPDATE_CHAIN_RATES, SET_FETCHING_RATES } from 'constants/ratesConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // services
 import { getExchangeRates } from 'services/assets';
 
 // utils
-import {
-  findAssetByAddress,
-  getAssetsAsList,
-  mapWalletAssetsBalancesIntoAssetsByAddress,
-} from 'utils/assets';
+import { findAssetByAddress, getAssetsAsList, mapWalletAssetsBalancesIntoAssetsByAddress } from 'utils/assets';
 import { reportErrorLog, logBreadcrumb } from 'utils/common';
 
 // selectors
@@ -49,16 +42,14 @@ import type { RatesByAssetAddress } from 'models/Rates';
 // actions
 import { saveDbAction } from './dbActions';
 
+const allSettled = require('promise.allsettled');
 
 export const setIsFetchingRatesAction = (isFetching: boolean) => ({
   type: SET_FETCHING_RATES,
   payload: isFetching,
 });
 
-export const updateRatesAction = (
-  chain: string,
-  rates: RatesByAssetAddress,
-) => {
+export const updateRatesAction = (chain: string, rates: RatesByAssetAddress) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (isEmpty(rates)) return;
 
@@ -73,7 +64,9 @@ export const fetchAssetsRatesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       rates: { isFetching },
-      session: { data: { isOnline } },
+      session: {
+        data: { isOnline },
+      },
     } = getState();
 
     if (isFetching || !isOnline) return;
@@ -84,57 +77,62 @@ export const fetchAssetsRatesAction = () => {
     const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
 
     // combine assets balances from all accounts
-    const assetsByAddressPerChain = Object.keys(CHAIN).reduce((
-      combinedAssetsByAddressPerChain,
-      chainKey,
-    ) => {
+    const assetsByAddressPerChain = Object.keys(CHAIN).reduce((combinedAssetsByAddressPerChain, chainKey) => {
       const chain = CHAIN[chainKey];
 
       const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
 
-      const chainAccountsAssetsByAddress = Object.keys(assetsBalancesPerAccount).reduce((
-        combinedAssetsByAddress,
-        accountId,
-      ) => {
-        const accountAssetsBalances = assetsBalancesPerAccount[accountId] ?? {};
-        const accountWalletAssetsBalances = accountAssetsBalances[chain]?.wallet ?? {};
+      const chainAccountsAssetsByAddress = Object.keys(assetsBalancesPerAccount).reduce(
+        (combinedAssetsByAddress, accountId) => {
+          const accountAssetsBalances = assetsBalancesPerAccount[accountId] ?? {};
+          const accountWalletAssetsBalances = accountAssetsBalances[chain]?.wallet ?? {};
 
-        const assetsByAddress = mapWalletAssetsBalancesIntoAssetsByAddress(
-          accountWalletAssetsBalances,
-          chainSupportedAssets,
-        );
+          const assetsByAddress = mapWalletAssetsBalancesIntoAssetsByAddress(
+            accountWalletAssetsBalances,
+            chainSupportedAssets,
+          );
 
-        // $FlowFixMe
-        return { ...combinedAssetsByAddress, ...assetsByAddress };
-      }, {});
+          // $FlowFixMe
+          return { ...combinedAssetsByAddress, ...assetsByAddress };
+        },
+        {},
+      );
 
       // $FlowFixMe
       return { ...combinedAssetsByAddressPerChain, [chain]: chainAccountsAssetsByAddress };
     }, {});
 
-    await Promise.all(Object.keys(assetsByAddressPerChain).map(async (chain) => {
-      const chainAssetsByAddress = assetsByAddressPerChain[chain] ?? {};
+    const promiseRequest = (chain) => {
+      return new Promise(() => {
+        (async () => {
+          const chainAssetsByAddress = assetsByAddressPerChain[chain] ?? {};
+          try {
+            const rates = await getExchangeRates(chain, getAssetsAsList(chainAssetsByAddress));
+            await dispatch(updateRatesAction(chain, rates));
+          } catch (error) {
+            reportErrorLog('fetchAssetsRatesAction failed', { error, chain, chainAssetsByAddress });
+          }
+        })();
+      });
+    };
 
-      try {
-        const rates = await getExchangeRates(chain, getAssetsAsList(chainAssetsByAddress));
-        await dispatch(updateRatesAction(chain, rates));
-      } catch (error) {
-        reportErrorLog('fetchAssetsRatesAction failed', { error, chain, chainAssetsByAddress });
-      }
-    }));
+    const promises = Object.keys(assetsByAddressPerChain).map(async (chain) => promiseRequest(chain));
+
+    allSettled(promises);
+
+    allSettled.shim();
 
     dispatch(setIsFetchingRatesAction(false));
   };
 };
 
-export const fetchSingleChainAssetRatesAction = (
-  chain: Chain,
-  assetAddress: string,
-) => {
+export const fetchSingleChainAssetRatesAction = (chain: Chain, assetAddress: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       rates: { isFetching },
-      session: { data: { isOnline } },
+      session: {
+        data: { isOnline },
+      },
     } = getState();
 
     if (isFetching || !isOnline) return;
@@ -151,14 +149,26 @@ export const fetchSingleChainAssetRatesAction = (
       return;
     }
 
-    const rates = await getExchangeRates(chain, [asset]);
+    const promiseRequest = () => {
+      return new Promise(() => {
+        (async () => {
+          try {
+            const rates = await getExchangeRates(chain, [asset]);
+            if (isEmpty(rates)) {
+              dispatch(setIsFetchingRatesAction(false));
+              return;
+            }
+            await dispatch(updateRatesAction(chain, rates));
+          } catch (error) {
+            reportErrorLog('fetchAssetsRatesAction failed', { error, chain, asset });
+          }
+        })();
+      });
+    };
 
-    if (isEmpty(rates)) {
-      dispatch(setIsFetchingRatesAction(false));
-      return;
-    }
+    allSettled([promiseRequest()]);
 
-    await dispatch(updateRatesAction(chain, rates));
+    allSettled.shim();
 
     dispatch(setIsFetchingRatesAction(false));
   };

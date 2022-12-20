@@ -35,11 +35,7 @@ import { SET_FETCHING_RATES } from 'constants/ratesConstants';
 import etherspotService from 'services/etherspot';
 
 // test utils
-import {
-  mockEthAddress,
-  mockPlrAddress,
-  mockSupportedAssets,
-} from 'testUtils/jestSetup';
+import { mockEthAddress, mockPlrAddress, mockSupportedAssets } from 'testUtils/jestSetup';
 
 const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
 
@@ -119,6 +115,7 @@ describe('Assets actions', () => {
     const expectedActions = [
       { type: SET_FETCHING_ASSETS_BALANCES, payload: true },
       { type: SET_FETCHING_RATES, payload: true },
+      { type: SET_FETCHING_RATES, payload: false },
       { type: SET_FETCHING_ASSETS_BALANCES, payload: false },
       { type: SET_CHAIN_SUPPORTED_ASSETS, payload: supportedAssetsPayload },
       { type: SET_ACCOUNT_ASSETS_BALANCES, payload: updateBalancesPayload },
