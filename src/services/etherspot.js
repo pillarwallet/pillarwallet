@@ -448,6 +448,23 @@ export class EtherspotService {
     return Promise.all(transactions.map((transaction) => sdk.batchExecuteAccountTransaction(transaction)));
   }
 
+  async getDeployAccountState(chain: Chain) {
+    const sdk = this.getSdkForChain(chain);
+
+    if (!sdk) {
+      logBreadcrumb('getDeployAccountState', 'failed: no SDK for chain set', { chain });
+      return null;
+    }
+
+    const { account: etherspotAccount } = sdk.state;
+
+    if (etherspotAccount.state === AccountStates.UnDeployed) {
+      await sdk.batchDeployAccount();
+    }
+
+    return etherspotAccount.state;
+  }
+
   estimateTransactionsBatch(chain: Chain, useGasTokenAddress?: string): Promise<?GatewayEstimatedBatch> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {
