@@ -18,41 +18,59 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React from 'react';
-import { Platform, Alert } from 'react-native';
+import { Platform, Alert, Linking } from 'react-native';
 import { useDispatch } from 'react-redux';
 import t from 'translations/translate';
-
-import { utils } from 'ethers';
-
-// Constants
-import { CHAIN } from 'constants/chainConstants';
-import { USD } from 'constants/assetsConstants';
+import * as Keychain from 'react-native-keychain';
+import { PERMISSIONS, RESULTS, request as requestPermission } from 'react-native-permissions';
 
 // Selectors
-import { useFiatCurrency, useChainRates, useActiveAccount, useRootSelector, appsHoldingsSelector } from 'selectors';
+import { useRootSelector } from 'selectors';
 
 // Utils
-import { nativeAssetPerChain } from 'utils/chains';
-import { isEtherspotAccount } from 'utils/accounts';
 import { getSupportedBiometryType } from 'utils/keychain';
 
 // Actions
-import { walletSetupAction } from 'actions/onboardingActions';
+import { beginOnboardingAction } from 'actions/onboardingActions';
 import { logEventAction } from 'actions/analyticsActions';
 
-// Type
-import { AppHoldings } from '../models/Investment';
-import BigNumber from 'bignumber.js';
+// Components
+import Toast from 'components/Toast';
+
+const isiOS = Platform.OS === 'ios';
+
+const showFaceIDFailed = () => {
+  Toast.show({
+    message: t('toast.failedToGetFaceIDPermission'),
+    emoji: 'pensive',
+    supportLink: true,
+    link: t('label.faceIDSettings'),
+    onLinkPress: () => {
+      Linking.openURL('app-settings:');
+    },
+    autoClose: true,
+  });
+};
 
 export function useBioMetricsPopup() {
   const dispatch = useDispatch();
   const wallet = useRootSelector((root) => root.wallet.data);
 
   const proceedToBeginOnboarding = async (setBiometrics?: boolean) => {
-    if (setBiometrics) dispatch(logEventAction(Platform.OS === 'ios' ? 'enable_face_id' : 'enable_biometric_id'));
-    else dispatch(logEventAction(Platform.OS === 'ios' ? 'cancel_face_id' : 'cancel_biometric_id'));
+    if (setBiometrics) dispatch(logEventAction(isiOS ? 'enable_face_id' : 'enable_biometric_id'));
+    else dispatch(logEventAction(isiOS ? 'cancel_face_id' : 'cancel_biometric_id'));
 
-    dispatch(walletSetupAction(setBiometrics));
+    dispatch(beginOnboardingAction(setBiometrics));
+  };
+
+  const iosFaceIDPermission = (biometryType) => {
+    if (biometryType === Keychain.BIOMETRY_TYPE.FACE_ID) {
+      requestPermission(PERMISSIONS.IOS.FACE_ID)
+        .then((status) => proceedToBeginOnboarding(status === RESULTS.GRANTED))
+        .catch(showFaceIDFailed);
+      return;
+    }
+    proceedToBeginOnboarding(true);
   };
 
   React.useEffect(() => {
@@ -64,7 +82,7 @@ export function useBioMetricsPopup() {
               { text: t('biometricLogin.button.cancel'), onPress: () => proceedToBeginOnboarding() },
               {
                 text: t('biometricLogin.button.enable'),
-                onPress: () => proceedToBeginOnboarding(true),
+                onPress: () => (isiOS ? iosFaceIDPermission(biometryType) : proceedToBeginOnboarding(true)),
               },
             ]);
           } else {
