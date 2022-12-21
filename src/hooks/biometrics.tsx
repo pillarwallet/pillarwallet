@@ -31,13 +31,13 @@ import { useRootSelector } from 'selectors';
 import { getSupportedBiometryType } from 'utils/keychain';
 
 // Actions
-import { beginOnboardingAction } from 'actions/onboardingActions';
+import { walletSetupAction } from 'actions/onboardingActions';
 import { logEventAction } from 'actions/analyticsActions';
 
 // Components
 import Toast from 'components/Toast';
 
-const isiOS = Platform.OS === 'ios';
+const isiOS = Platform.OS === 'ios' ? true : false;
 
 const showFaceIDFailed = () => {
   Toast.show({
@@ -60,11 +60,11 @@ export function useBioMetricsPopup() {
     if (setBiometrics) dispatch(logEventAction(isiOS ? 'enable_face_id' : 'enable_biometric_id'));
     else dispatch(logEventAction(isiOS ? 'cancel_face_id' : 'cancel_biometric_id'));
 
-    dispatch(beginOnboardingAction(setBiometrics));
+    dispatch(walletSetupAction(setBiometrics));
   };
 
-  const iosFaceIDPermission = (biometryType) => {
-    if (biometryType === Keychain.BIOMETRY_TYPE.FACE_ID) {
+  const faceIDPermission = (biometryType) => {
+    if (isiOS && biometryType === Keychain.BIOMETRY_TYPE.FACE_ID) {
       requestPermission(PERMISSIONS.IOS.FACE_ID)
         .then((status) => proceedToBeginOnboarding(status === RESULTS.GRANTED))
         .catch(showFaceIDFailed);
@@ -82,7 +82,7 @@ export function useBioMetricsPopup() {
               { text: t('biometricLogin.button.cancel'), onPress: () => proceedToBeginOnboarding() },
               {
                 text: t('biometricLogin.button.enable'),
-                onPress: () => (isiOS ? iosFaceIDPermission(biometryType) : proceedToBeginOnboarding(true)),
+                onPress: () => faceIDPermission(biometryType),
               },
             ]);
           } else {
