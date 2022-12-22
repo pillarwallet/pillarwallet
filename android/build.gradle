@@ -71,6 +71,7 @@ allprojects {
 buildscript {
     configurations.all {
         resolutionStrategy {
+            force 'com.android.support:support-annotations:24.2.1'
             eachDependency {
                 // https://issuetracker.google.com/issues/109894262#comment9
                 if (requested.group == "org.jetbrains.trove4j" && requested.name == "trove4j" && requested.version == "20160824") {
