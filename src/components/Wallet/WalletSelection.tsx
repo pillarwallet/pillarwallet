@@ -107,10 +107,10 @@ export default function () {
       <Spacing h={10} />
 
       <FlatList
-        key={tabIndex}
+        key={items[tabIndex].key}
         data={listOfAssets.slice(0, 5)}
         renderItem={({ item, index }) => renderItem(item, index)}
-        keyExtractor={(item) => item.symbol}
+        keyExtractor={(item) => item.toString()}
         contentContainerStyle={{ flexGrow: 1 }}
       />
 
