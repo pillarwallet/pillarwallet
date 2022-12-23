@@ -452,13 +452,13 @@ export class EtherspotService {
     const sdk = this.getSdkForChain(chain);
 
     if (!sdk) {
-      logBreadcrumb('getDeployAccountState', 'failed: no SDK for chain set', { chain });
+      logBreadcrumb('setbatchDeployAccount', 'failed: no SDK for chain set', { chain });
       return null;
     }
 
-    const { account: etherspotAccount } = sdk.state;
+    const etherspotAccount = await this.getAccount(chain);
 
-    if (etherspotAccount.state !== AccountStates.UnDeployed) {
+    if (!etherspotAccount || etherspotAccount?.state !== AccountStates.UnDeployed) {
       return AccountStates.Deployed;
     }
 
