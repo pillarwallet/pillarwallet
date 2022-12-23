@@ -473,7 +473,7 @@ export class EtherspotService {
 
     // Estimate for deploy account transaction
     try {
-      await this.estimateTransactionsBatch(chain, null);
+      await this.estimateTransactionsBatch(chain);
     } catch (e) {
       return AccountStates.UnDeployed;
     }
