@@ -448,7 +448,7 @@ export class EtherspotService {
     return Promise.all(transactions.map((transaction) => sdk.batchExecuteAccountTransaction(transaction)));
   }
 
-  async getDeployAccountState(chain: Chain) {
+  async setbatchDeployAccount(chain: Chain) {
     const sdk = this.getSdkForChain(chain);
 
     if (!sdk) {
@@ -458,11 +458,36 @@ export class EtherspotService {
 
     const { account: etherspotAccount } = sdk.state;
 
-    if (etherspotAccount.state === AccountStates.UnDeployed) {
-      await sdk.batchDeployAccount();
+    if (etherspotAccount.state !== AccountStates.UnDeployed) {
+      return AccountStates.Deployed;
     }
 
-    return etherspotAccount.state;
+    // Remove all previous executed transactions
+    this.clearTransactionsBatch(chain);
+
+    /*
+     ! This method is usefull in only mainnets (Polygon or Gnosis). testnets in need gas token.
+     */
+    // Deploy perticular network (Polygon or Gnosis)
+    await sdk.batchDeployAccount();
+
+    // Estimate for deploy account transaction
+    try {
+      await this.estimateTransactionsBatch(chain, null);
+    } catch (e) {
+      return AccountStates.UnDeployed;
+    }
+
+    const { hash } = await sdk.submitGatewayBatch({ guarded: false });
+
+    await this.waitForTransactionHashFromSubmittedBatch(chain, hash);
+
+    /*
+     * Taken little bit more time for transaction response
+     * Account Deployed after submittedBatch response
+     */
+
+    return AccountStates.Deployed;
   }
 
   estimateTransactionsBatch(chain: Chain, useGasTokenAddress?: string): Promise<?GatewayEstimatedBatch> {
