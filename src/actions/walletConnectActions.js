@@ -19,6 +19,7 @@
 */
 import { NavigationActions } from 'react-navigation';
 import t from 'translations/translate';
+import { BigNumber } from 'bignumber.js';
 
 // constants
 import {
@@ -301,6 +302,39 @@ export const approveWalletConnectCallRequestAction = (callId: number, result: an
   };
 };
 
+export const switchEthereumChainConnectorAction = (request: any) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      walletConnect: { activeConnectors },
+    } = getState();
+
+    const { method, callId, params } = request;
+
+    const activeConnector = activeConnectors.find(({ peerId }) => peerId === request.peerId);
+    if (!activeConnector) {
+      dispatch(setWalletConnectErrorAction(t('error.walletConnect.noMatchingConnector')));
+      return;
+    }
+
+    const customRequest = {
+      id: callId,
+      jsonrpc: '2.0',
+      method,
+      params,
+    };
+
+    activeConnector
+      .sendCustomRequest(customRequest)
+      ?.then((result) => {
+        dispatch(approveWalletConnectCallRequestAction(callId, result));
+      })
+      .catch((error) => {
+        reportErrorLog('approveWalletConnectCallRequestAction -> sendCustomRequest failed', { error });
+        dispatch(setWalletConnectErrorAction(t('error.walletConnect.callRequestApproveFailed')));
+      });
+  };
+};
+
 export const subscribeToWalletConnectConnectorEventsAction = (connector: WalletConnectConnector) => {
   return (dispatch: Dispatch) => {
     dispatch({ type: ADD_WALLETCONNECT_ACTIVE_CONNECTOR, payload: { connector } });
@@ -325,11 +359,13 @@ export const subscribeToWalletConnectConnectorEventsAction = (connector: WalletC
         return;
       }
 
+      const chainID = BigNumber(params[0].chainId)?.toNumber() ?? chainId;
+
       const callRequest: WalletConnectCallRequest = {
         name,
         url,
         peerId,
-        chainId,
+        chainId: chainID,
         callId,
         method,
         params,

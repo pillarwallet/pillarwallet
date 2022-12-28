@@ -137,6 +137,18 @@ export function signPersonalMessage(
   return wallet.signMessage(ethers.utils.arrayify(data));
 }
 
+// handle wallet_switchEthereumChain
+export function switchEthereumChain(wallet: Object, request: Object): Promise<string> {
+  const { callId, method, params } = request;
+
+  return wallet.sendCustomRequest({
+    id: +callId,
+    jsonrpc: '2.0',
+    method,
+    params,
+  });
+}
+
 export function encodeTypedDataMessage(message: string): string {
   const useV4 = true;
 

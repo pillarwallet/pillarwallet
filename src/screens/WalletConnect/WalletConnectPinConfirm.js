@@ -33,7 +33,7 @@ import { sendAssetAction } from 'actions/assetsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 
 // utils
-import { signMessage, signPersonalMessage, signTransaction, signTypedData } from 'utils/wallet';
+import { signMessage, signPersonalMessage, switchEthereumChain, signTransaction, signTypedData } from 'utils/wallet';
 import { isArchanovaAccount } from 'utils/accounts';
 import { reportErrorLog } from 'utils/common';
 import { parseMessageSignParamsFromCallRequest } from 'utils/walletConnect';
@@ -48,6 +48,7 @@ import {
   ETH_SIGN_TYPED_DATA,
   ETH_SIGN_TYPED_DATA_V4,
   PERSONAL_SIGN,
+  WALLET_SWITCH_CHAIN,
 } from 'constants/walletConnectConstants';
 import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
 
@@ -58,7 +59,6 @@ import { activeAccountSelector } from 'selectors';
 import type { TransactionPayload, TransactionStatus } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
-
 
 type Props = {
   sendAsset: (
@@ -72,15 +72,10 @@ type Props = {
   activeAccount: ?Account,
 };
 
-const WalletConnectPinConfirmScreeen = ({
-  resetIncorrectPassword,
-  useBiometrics,
-  sendAsset,
-  activeAccount,
-}: Props) => {
+const WalletConnectPinConfirmScreeen = ({ resetIncorrectPassword, useBiometrics, sendAsset, activeAccount }: Props) => {
   const [isChecking, setIsChecking] = useState(false);
   const navigation = useNavigation();
-  const { approveCallRequest, rejectCallRequest } = useWalletConnect();
+  const { approveCallRequest, switchEthereumChainConnectorRequest, rejectCallRequest } = useWalletConnect();
   const { t } = useTranslation();
 
   const callRequest = navigation.getParam('callRequest');
@@ -114,7 +109,9 @@ const WalletConnectPinConfirmScreeen = ({
   };
 
   const handleSignTransaction = async (wallet: Wallet): Promise<?string> => {
-    const { params: [transaction] } = callRequest;
+    const {
+      params: [transaction],
+    } = callRequest;
 
     return signTransaction(transaction, wallet).catch(() => {
       rejectCallRequest(callRequest);
@@ -148,6 +145,17 @@ const WalletConnectPinConfirmScreeen = ({
     return result;
   };
 
+  const handleSwitchChain = async (wallet: Wallet): Promise<?string> => {
+    let result;
+    try {
+      result = await switchEthereumChain(wallet, callRequest);
+    } catch (error) {
+      reportErrorLog('WalletConnectPinConfirmScreeen -> handleSwitchChain failed', { callRequest, error });
+    }
+
+    return result;
+  };
+
   const onPinValid = async (pin: string, wallet: Wallet) => {
     setIsChecking(true);
     const { method } = callRequest;
@@ -166,9 +174,15 @@ const WalletConnectPinConfirmScreeen = ({
       return;
     }
 
-    const signedResult = method === ETH_SIGN_TX
-      ? await handleSignTransaction(wallet)
-      : await handleSignMessage(wallet);
+    if (method === WALLET_SWITCH_CHAIN) {
+      switchEthereumChainConnectorRequest(callRequest);
+      return;
+    }
+
+    const isWalletChain =
+      method === WALLET_SWITCH_CHAIN ? await handleSwitchChain(wallet) : await handleSignMessage(wallet);
+
+    const signedResult = method === ETH_SIGN_TX ? await handleSignTransaction(wallet) : isWalletChain;
 
     if (signedResult) {
       approveCallRequest(callRequest, signedResult);
@@ -183,8 +197,6 @@ const WalletConnectPinConfirmScreeen = ({
         emoji: 'eyes',
       });
     }
-
-    dismissScreen();
   };
 
   const onNavigationBack = () => {
@@ -203,7 +215,9 @@ const WalletConnectPinConfirmScreeen = ({
 };
 
 const mapStateToProps = ({
-  appSettings: { data: { useBiometrics } },
+  appSettings: {
+    data: { useBiometrics },
+  },
 }: RootReducerState): $Shape<Props> => ({
   useBiometrics,
 });
