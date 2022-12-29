@@ -32,20 +32,12 @@ import Toast from 'components/Toast';
 import IconButton from 'components/IconButton';
 import { Container } from 'components/legacy/Layout';
 import Loader from 'components/Loader';
-import Icon from 'components/core/Icon';
 
 // Utils
 import { fontSizes } from 'utils/variables';
-import { getDeviceHeight, getDeviceWidth } from 'utils/common';
 
 // Type
 import type { Barcode } from 'react-native-camera';
-
-// Local
-import ConnectedAppsFloatingButton from '../../screens/WalletConnect/Home/components/ConnectedAppsFloatingButton';
-
-const screenWidth = getDeviceWidth();
-const screenHeight = getDeviceHeight();
 
 const SquareContainer = styled.View`
   position: absolute;
@@ -71,18 +63,11 @@ const ButtonWrapper = styled.View`
   align-items: center;
 `;
 
-const WalletButton = styled.TouchableOpacity`
-  padding: 12px;
-  border-radius: 50px;
-  background-color: ${({ theme }) => theme.colors.basic050};
-`;
-
 type Props = {
   onQRRead: (barcode: Barcode) => void,
   onCancel: () => void,
   rectangleColor: string,
   rectangleSize: number,
-  onNavigateWallet?: () => void,
 };
 
 type State = {
@@ -142,13 +127,8 @@ export default class CameraView extends React.Component<Props, State> {
     clearTimeout(this.timeout);
   };
 
-  onPressWallet = () => {
-    const { onNavigateWallet } = this.props;
-    onNavigateWallet && onNavigateWallet();
-  };
-
   render() {
-    const { onQRRead, onCancel, rectangleSize, rectangleColor, onNavigateWallet } = this.props;
+    const { onQRRead, onCancel, rectangleSize, rectangleColor } = this.props;
 
     const { isLoading } = this.state;
 
@@ -164,8 +144,7 @@ export default class CameraView extends React.Component<Props, State> {
       <RNCamera
         captureAudio={false}
         style={{
-          width: screenWidth,
-          height: screenHeight,
+          flex: 1,
           alignItems: 'center',
           justifyContent: 'center',
         }}
@@ -177,14 +156,6 @@ export default class CameraView extends React.Component<Props, State> {
         </HeaderWrapper>
         <SquareContainer color={rectangleColor} size={rectangleSize} />
 
-        {!!onNavigateWallet && (
-          <ButtonWrapper style={{ alignSelf: 'flex-start' }}>
-            <WalletButton onPress={this.onPressWallet}>
-              <Icon name="wallet-connect" size={fontSizes.giant} />
-            </WalletButton>
-          </ButtonWrapper>
-        )}
-
         <ButtonWrapper>
           <IconButton
             icon="gallery"
@@ -193,12 +164,6 @@ export default class CameraView extends React.Component<Props, State> {
             color={rectangleColor}
           />
         </ButtonWrapper>
-
-        {!!onNavigateWallet && (
-          <ButtonWrapper style={{ alignSelf: 'flex-end', bottom: 30 }}>
-            <ConnectedAppsFloatingButton />
-          </ButtonWrapper>
-        )}
       </RNCamera>
     );
   }

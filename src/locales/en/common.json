@@ -425,6 +425,8 @@
     "doNotSendRealEthOrTokens": "Do not send real ETH or ERC20 tokens.",
     "ensNameCopiedToClipboard": "ENS name copied to clipboard.",
     "cameraPermissionMissing": "Camera permissions not granted - cannot open camera preview.",
+    "cameraPermission": "Camera Permission",
+    "needCameraPermission":"The camera permission is needed to open the WalletConnect QR code scanner",
     "didNotReceiveVerificationCodeQuestion": "Didn't receive the code?",
     "instructionsOnBackingUpBackupPhase": "Write down your 12 word backup phrase in the correct order.",
     "backupPhraseVerificationInstructions": "Please select the correct words.",
