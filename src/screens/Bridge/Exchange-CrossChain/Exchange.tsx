@@ -51,6 +51,7 @@ import { getActiveScreenName } from 'utils/navigation';
 
 // Actions
 import { appsFlyerlogEventAction } from 'actions/analyticsActions';
+import { fetchSingleChainAssetRatesAction } from 'actions/ratesActions';
 
 // Types
 import type { AssetOption } from 'models/Asset';
@@ -147,6 +148,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
 
   const handleSelectToAsset = (asset: AssetOption) => {
     setToAddress(asset.address);
+    dispatch(fetchSingleChainAssetRatesAction(asset.chain, asset.address));
   };
 
   const handleOfferPress = async (selectedOffer: ExchangeOffer) => {

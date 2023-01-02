@@ -46,7 +46,7 @@ import { useRootSelector, useFiatCurrency, useChainRates, useActiveAccount } fro
 import { gasThresholdsSelector } from 'redux/selectors/gas-threshold-selector';
 
 // Hooks
-import { useTransactionsEstimate, useAssetRates } from 'hooks/transactions';
+import { useTransactionsEstimate } from 'hooks/transactions';
 
 type Props = {
   offer: ExchangeOffer,
@@ -76,7 +76,7 @@ function OfferCard({ offer, onPress, disabled, crossChainTxs, onEstimateFail, ga
 
   const { chain, toChain, toAsset, toAmount } = offer;
 
-  const rates = useAssetRates(toChain || chain, toAsset);
+  const rates = useChainRates(toChain || chain);
   const currency = useFiatCurrency();
 
   const fiatValue = getAssetValueInFiat(toAmount, toAsset?.address, rates, currency) ?? null;

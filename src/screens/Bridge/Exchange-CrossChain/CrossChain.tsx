@@ -53,6 +53,7 @@ import GasFeeAssetSelection from './GasFeeAssetSelection';
 
 // Actions
 import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
+import { fetchSingleChainAssetRatesAction } from 'actions/ratesActions';
 
 interface Props {
   fetchCrossChainTitle: (val: string) => void;
@@ -123,7 +124,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
     if (!buildTransactionData) return null;
     const {
       provider,
-      estimate: { data, toAmount, fromAmount },
+      estimate: { data, toAmount },
     } = buildTransactionData.quote;
     const { fromToken, toToken } = data;
 
@@ -157,6 +158,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const handleSelectToAsset = (asset: AssetOption) => {
     setToAddress(asset.address);
     setToAddressChain(asset.chain);
+    dispatch(fetchSingleChainAssetRatesAction(asset.chain, asset.address));
   };
 
   const showLoading = buildTractionQuery.isLoading;
