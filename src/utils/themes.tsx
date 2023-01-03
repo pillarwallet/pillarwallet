@@ -42,6 +42,7 @@ const commonColors = {
   white: '#FFFFFF',
   black: '#000000',
   optimism: '#ff0024',
+  arbitrum: '#0097e9',
 };
 
 export const semanticLightThemeColors = {

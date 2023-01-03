@@ -39,6 +39,7 @@ export default function (storageData: Object) {
   addChainFieldIfNeeded(supportedAssets, CHAIN.BINANCE);
   addChainFieldIfNeeded(supportedAssets, CHAIN.XDAI);
   addChainFieldIfNeeded(supportedAssets, CHAIN.OPTIMISM);
+  addChainFieldIfNeeded(supportedAssets, CHAIN.ARBITRUM);
 
   return supportedAssets;
 }

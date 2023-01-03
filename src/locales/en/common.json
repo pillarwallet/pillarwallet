@@ -76,7 +76,9 @@
     "sokol":"Gnosis Sokol",
     "binance_test":"Binance Testnet",
     "mumbai":"Polygon Mumbai",
-    "optimism_gorli":"Optimistic Görli"
+    "optimism_gorli":"Optimistic Görli",
+    "arbitrum": "Arbitrum",
+    "arbitrum_nitro": "Arbitrum Nitro"
   },
 
   "chainsShort": {
@@ -86,7 +88,8 @@
     "polygon": "Polygon",
     "avalanche": "Avalanche",
     "optimism":"Optimism",
-    "optimism_kovan": "Optimism Kovan"
+    "optimism_kovan": "Optimism Kovan",
+    "arbitrum": "Arbitrum"
   },
 
   "assetCategories": {

@@ -187,6 +187,10 @@ export const getCaptureFeeDestinationAddress = (chain: Chain): ?string => {
     return firebaseRemoteConfig.getString(REMOTE_CONFIG.EXCHANGE_FEE_OPTIMISM_CAPTURE_ADDRESS);
   }
 
+  if (chain === CHAIN.ARBITRUM) {
+    return firebaseRemoteConfig.getString(REMOTE_CONFIG.EXCHANGE_FEE_ARBITRUM_CAPTURE_ADDRESS);
+  }
+
   return null;
 };
 

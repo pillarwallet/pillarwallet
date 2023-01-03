@@ -1,0 +1,434 @@
+[
+  {
+    "address": "0x7cb16cb78ea464aD35c8a50ABF95dff3c9e09d5d",
+    "chain": "arbitrum",
+    "decimals": 8,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/2837.png",
+    "name": "0xBitcoin Token",
+    "symbol": "0xBTC"
+  },
+  {
+    "address": "0x03b95f1C84Af0607afd5dD87ca1FDE7572aa827F",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": null,
+    "name": "Agave",
+    "symbol": "AGVE"
+  },
+  {
+    "address": "0x0e15258734300290a651FdBAe8dEb039a8E7a2FA",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://assets.coingecko.com/coins/images/14719/thumb/sbEW5W8.png?1617939648",
+    "name": "Alchemy",
+    "symbol": "ALCH"
+  },
+  {
+    "address": "0x9b3fa2A7C3EB36d048A5d38d81E7fAFC6bc47B25",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/5544.png",
+    "name": "Aluna",
+    "symbol": "ALN"
+  },
+  {
+    "address": "0xea986d33eF8a20A96120ecc44dBdD49830192043",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/2653.png",
+    "name": "Auctus Token",
+    "symbol": "AUC"
+  },
+  {
+    "address": "0x6F67043201C903bbCBC129750CB3b328Dd56a0a5",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/7813.png",
+    "name": "BAC",
+    "symbol": "BAC"
+  },
+  {
+    "address": "0xBfa641051Ba0a0Ad1b0AcF549a89536A0D76472E",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/7859.png",
+    "name": "Badger",
+    "symbol": "BADGER"
+  },
+  {
+    "address": "0x040d1EdC9569d4Bab2D15287Dc5A4F10F56a56B8",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/5728.png",
+    "name": "Balancer",
+    "symbol": "BAL"
+  },
+  {
+    "address": "0xBbFbde08Bf1BE235a3Fa97d6A27fFfA19Ac4a8a8",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": null,
+    "name": "BarkCoin",
+    "symbol": "BARK"
+  },
+  {
+    "address": "0xA5eC9d64b64b8B9E94FEaA7538c084b38117E7Ba",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/8695.png",
+    "name": "GoBlank Token",
+    "symbol": "BLANK"
+  },
+  {
+    "address": "0x0D81E50bC677fa67341c44D7eaA9228DEE64A4e1",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/7440.png",
+    "name": "BarnBridge Governance Token",
+    "symbol": "BOND"
+  },
+  {
+    "address": "0xd44e8F8768D4ed25119921a53802D8758A5b20dD",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/11216.png",
+    "name": "Boost",
+    "symbol": "BOOST"
+  },
+  {
+    "address": "0xBA9a5Dd807c9F072850bE15a52dF3408BA25Fd18",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/3737.png",
+    "name": "BTU Protocol",
+    "symbol": "BTU"
+  },
+  {
+    "address": "0x031d35296154279DC1984dCD93E392b1f946737b",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/5809.png",
+    "name": "Cap",
+    "symbol": "CAP"
+  },
+  {
+    "address": "0x3a8B787f78D775AECFEEa15706D4221B40F345AB",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/3814.png",
+    "name": "CelerToken",
+    "symbol": "CELR"
+  },
+  {
+    "address": "0x989D099d29F62b839C8CbD41c82c6554a5515752",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/9747.png",
+    "name": "Cryption Network Token",
+    "symbol": "CNT"
+  },
+  {
+    "address": "0x354A6dA3fcde098F8389cad84b0182725c6C91dE",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/5692.png",
+    "name": "Compound",
+    "symbol": "COMP"
+  },
+  {
+    "address": "0xFcc0351f3a1ff72409Df66a7589c1F9efBf53386",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://etherscan.io/token/images/farmland_32.png",
+    "name": "Corn",
+    "symbol": "CORN"
+  },
+  {
+    "address": "0x6FE14d3CC2f7bDdffBa5CdB3BBE7467dd81ea101",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/3992.png",
+    "name": "COTI Token",
+    "symbol": "COTI"
+  },
+  {
+    "address": "0xf4D48Ce3ee1Ac3651998971541bAdbb9A14D7234",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/6193.png",
+    "name": "Cream",
+    "symbol": "CREAM"
+  },
+  {
+    "address": "0x11cDb42B0EB46D95f990BeDD4695A6e3fA034978",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/6538.png",
+    "name": "Curve DAO Token",
+    "symbol": "CRV"
+  },
+  {
+    "address": "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/4943.png",
+    "name": "Dai Stablecoin",
+    "symbol": "DAI"
+  },
+  {
+    "address": "0xdeBa25AF35e4097146d7629055E0EC3C71706324",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/8430.png",
+    "name": "DEFI Top 5 Tokens Index",
+    "symbol": "DEFI5"
+  },
+  {
+    "address": "0xAE6e3540E97b0b9EA8797B157B510e133afb6282",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://assets.coingecko.com/coins/images/14143/thumb/alpha_logo.png?1614651244",
+    "name": "DEGEN Index",
+    "symbol": "DEGEN"
+  },
+  {
+    "address": "0xaE6aab43C4f3E0cea4Ab83752C278f8dEbabA689",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/4758.png",
+    "name": "dForce",
+    "symbol": "DF"
+  },
+  {
+    "address": "0x1D54Aa7E322e02A0453c0F2fA21505cE7F2E9E93",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/9511.png",
+    "name": "DFYN Token",
+    "symbol": "DFYN"
+  },
+  {
+    "address": "0x8038F3C971414FD1FC220bA727F2D4A0fC98cb65",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/7094.png",
+    "name": "dHedge DAO Token",
+    "symbol": "DHT"
+  },
+  {
+    "address": "0x69Eb4FA4a2fbd498C257C57Ea8b7655a2559A581",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/7224.png",
+    "name": "DODO bird",
+    "symbol": "DODO"
+  },
+  {
+    "address": "0x4425742F1EC8D98779690b5A3A6276Db85Ddc01A",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/11557.png",
+    "name": "The Doge NFT",
+    "symbol": "DOG"
+  },
+  {
+    "address": "0x6C2C06790b3E3E3c38e12Ee22F8183b37a13EE55",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/11188.png",
+    "name": "Dopex Governance Token",
+    "symbol": "DPX"
+  },
+  {
+    "address": "0xE212f5E733257ed5628a2FeBcEdBc9222e535F51",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://assets.coingecko.com/coins/images/17482/thumb/photo_2021-08-03_09-24-16.png?1627953917",
+    "name": "Digital Standard Unit",
+    "symbol": "DSU"
+  },
+  {
+    "address": "0xA7Aa2921618e3D63dA433829d448b58C9445A4c3",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/10759.png",
+    "name": "DeversiFi Token",
+    "symbol": "DVF"
+  },
+  {
+    "address": "0xC3Ae0333F0F34aa734D5493276223d95B8F9Cb37",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/5589.png",
+    "name": "DXdao",
+    "symbol": "DXD"
+  },
+  {
+    "address": "0xCE32aA8d60807182c0003Ef9cc1976Fa10E5d312",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://assets.coingecko.com/coins/images/17481/thumb/photo_2021-08-03_03-26-29.png?1627953584",
+    "name": "Empty Set Share",
+    "symbol": "ESS"
+  },
+  {
+    "address": "0x969131D8ddC06C2Be11a13e6E7fACF22CF57d95e",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://etherscan.io/token/images/dforceeur_32.png",
+    "name": "dForce EUR",
+    "symbol": "EUX"
+  },
+  {
+    "address": "0xF80D589b3Dbe130c270a69F1a69D050f268786Df",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/5876.png",
+    "name": "Flux",
+    "symbol": "FLUX"
+  },
+  {
+    "address": "0x2338a5d62E9A766289934e8d2e83a443e8065b83",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/9837.png",
+    "name": "Flux Protocol",
+    "symbol": "FLUX"
+  },
+  {
+    "address": "0x3816e40c1eB106c8fb7c05f901cfD58C7292D051",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/4118.png",
+    "name": "The Force Token",
+    "symbol": "FOR"
+  },
+  {
+    "address": "0x488cc08935458403a0458e45E20c0159c8AB2c92",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/8961.png",
+    "name": "Futureswap Token",
+    "symbol": "FST"
+  },
+  {
+    "address": "0xBDeF0E9ef12E689F366fe494A7A7D0dad25D9286",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/5634.png",
+    "name": "Fuse Token",
+    "symbol": "FUSE"
+  },
+  {
+    "address": "0x590020B1005b8b25f1a2C82c5f743c540dcfa24d",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": null,
+    "name": "GMX",
+    "symbol": "GMX"
+  },
+  {
+    "address": "0xa0b862F60edEf4452F25B4160F177db44DeB6Cf1",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/1659.png",
+    "name": "Gnosis Token",
+    "symbol": "GNO"
+  },
+  {
+    "address": "0x07E49d5dE43DDA6162Fa28D24d5935C151875283",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/8408.png",
+    "name": "GOVI",
+    "symbol": "GOVI"
+  },
+  {
+    "address": "0x9623063377AD1B27544C965cCd7342f7EA7e88C7",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/6719.png",
+    "name": "Graph Token",
+    "symbol": "GRT"
+  },
+  {
+    "address": "0x9c67eE39e3C4954396b9142010653F17257dd39C",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/9532.png",
+    "name": "Impermax",
+    "symbol": "IMX"
+  },
+  {
+    "address": "0x04cb2d263a7489f02d813eaaB9Ba1bb8466347F2",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/7721.png",
+    "name": "QIAN governance token",
+    "symbol": "KUN"
+  },
+  {
+    "address": "0x3CD1833Ce959E087D0eF0Cb45ed06BffE60F23Ba",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://etherscan.io/token/images/farmland_32.png",
+    "name": "Land",
+    "symbol": "LAND"
+  },
+  {
+    "address": "0xf97f4df75117a78c1A5a0DBb814Af92458539FB4",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/1975.png",
+    "name": "ChainLink Token",
+    "symbol": "LINK"
+  },
+  {
+    "address": "0x46d0cE7de6247b0A95f67b43B589b4041BaE7fbE",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/1934.png",
+    "name": "LoopringCoin V2",
+    "symbol": "LRC"
+  },
+  {
+    "address": "0x539bdE0d7Dbd336b79148AA742883198BBF60342",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://assets.coingecko.com/coins/images/18623/thumb/Magic.png?1635755672",
+    "name": "MAGIC",
+    "symbol": "MAGIC"
+  },
+  {
+    "address": "0xAA086809EFA469631DD90D8C6cB267bAb107E958",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": null,
+    "name": "My Alpha Leaderboard",
+    "symbol": "MAL"
+  },
+  {
+    "address": "0x99F40b01BA9C469193B360f72740E416B17Ac332",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/5616.png",
+    "name": "MATH Token",
+    "symbol": "MATH"
+  },
+  {
+    "address": "0xaaA62D9584Cbe8e4D68A43ec91BfF4fF1fAdB202",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/8603.png",
+    "name": "Antimatter.Finance Governance Token",
+    "symbol": "MATTER"
+  },
+  {
+    "address": "0x4e352cF164E64ADCBad318C3a1e222E9EBa4Ce42",
+    "chain": "arbitrum",
+    "decimals": 18,
+    "iconUrl": "https://s2.coinmarketcap.com/static/img/coins/64x64/5956.png",
+    "name": "MCDEX Token",
+    "symbol": "MCB"
+  }
+]

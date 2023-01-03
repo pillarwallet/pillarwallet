@@ -100,6 +100,14 @@ export function useChainsConfig(): { [key: Chain]: ChainConfig } {
       gasSymbol: ETH,
       iconUrl: 'https://tokens.1inch.io/0x4200000000000000000000000000000000000042.png',
     },
+    [CHAIN.ARBITRUM]: {
+      title: isProdEnv() ? t('chains.arbitrum') : t('chains.arbitrum_nitro'),
+      titleShort: t('chainsShort.arbitrum'),
+      iconName: 'arbitrum',
+      color: colors.arbitrum,
+      gasSymbol: ETH,
+      iconUrl: 'https://arbitrum.io/wp-content/uploads/2022/12/One-Logo-280x280-1-150x150.png',
+    },
   };
 }
 
