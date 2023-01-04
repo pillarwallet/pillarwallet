@@ -42,7 +42,7 @@ import WalletConnectRequests from 'screens/WalletConnect/Requests';
 import Tooltip from 'components/Tooltip';
 import Banner from 'components/Banner/Banner';
 import { Spacing } from 'components/legacy/Layout';
-import QRCodeScanner from 'components/QRCodeScanner';
+import WalletConnectCamera from 'components/QRCodeScanner/WalletConnectCamera';
 
 // Constants
 import { MENU, HOME_HISTORY, REGISTER_ENS, CONNECT_FLOW } from 'constants/navigationConstants';
@@ -209,7 +209,8 @@ function Home() {
   return (
     <Swiper ref={swiperRef} loop={false} showsPagination={false} index={1} onIndexChanged={setCurrentSwiperIndex}>
       {/* Left Scanner Content */}
-      <QRCodeScanner
+      <WalletConnectCamera
+        visibleCamera={currentSwiperIndex === 0}
         validator={validateUri}
         onRead={handleUri}
         onClose={() => swiperRef.current?.scrollBy(1)}
