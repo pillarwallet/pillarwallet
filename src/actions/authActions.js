@@ -70,7 +70,7 @@ import type { OnValidPinCallback } from 'models/Wallet';
 // actions
 import { saveDbAction } from './dbActions';
 import { setupLoggingServicesAction } from './appActions';
-import { addAccountAction, initOnLoginArchanovaAccountAction } from './accountsActions';
+import { addAccountAction, initOnLoginArchanovaAccountAction, deployAccounts } from './accountsActions';
 import { encryptAndSaveWalletAction, checkForWalletBackupToastAction, updatePinAttemptsAction } from './walletActions';
 import { fetchTransactionsHistoryAction } from './historyActions';
 import { setAppThemeAction, setAppLanguageAction, setDeviceUniqueIdIfNeededAction } from './appSettingsActions';
@@ -236,6 +236,7 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
     dispatch(fetchAllAccountsAssetsBalancesAction());
     dispatch(fetchAllCollectiblesDataAction());
     dispatch(fetchAppsHoldingsAction());
+    dispatch(deployAccounts());
   };
 };
 

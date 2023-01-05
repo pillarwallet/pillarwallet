@@ -21,10 +21,17 @@ import { sdkConstants } from '@smartwallet/sdk';
 import { isEqual } from 'lodash';
 
 // constants
-import { UPDATE_ACCOUNTS, ACCOUNT_TYPES, CHANGING_ACCOUNT } from 'constants/accountsConstants';
+import {
+  UPDATE_ACCOUNTS,
+  ACCOUNT_TYPES,
+  CHANGING_ACCOUNT,
+  DEPLOY_ACCOUNTS,
+  DEPLOY_ACCOUNTS_FETCHING,
+} from 'constants/accountsConstants';
 import { ARCHANOVA_WALLET_UPGRADE_STATUSES } from 'constants/archanovaConstants';
 import { PIN_CODE } from 'constants/navigationConstants';
 import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
@@ -58,6 +65,7 @@ import { patchArchanovaAccountExtra } from 'utils/archanova';
 
 // services
 import { navigate } from 'services/navigation';
+import etherspotServices from 'services/etherspot';
 
 // selectors
 import { accountsSelector } from 'selectors';
@@ -283,5 +291,36 @@ export const switchToEtherspotAccountIfNeededAction = () => {
     }
 
     dispatch(switchAccountAction(getAccountId(etherspotAccount)));
+  };
+};
+
+/**
+ * Free Deploy Polygon / Gnosis accounts.
+ */
+export const deployAccounts = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      deployAccounts: { isFetching },
+    } = getState();
+
+    const networkChains = [CHAIN.POLYGON, CHAIN.XDAI];
+
+    if (isFetching) return;
+
+    dispatch({ type: DEPLOY_ACCOUNTS_FETCHING, payload: true });
+
+    const networkPromises = networkChains.map((chain) => etherspotServices.setbatchDeployAccount(chain));
+    const statusReponses = await Promise.all(networkPromises);
+
+    const finalResponse = networkChains.map((chain, index) => {
+      return {
+        chain,
+        status: statusReponses[index],
+      };
+    });
+
+    dispatch({ type: DEPLOY_ACCOUNTS, payload: finalResponse });
+
+    dispatch({ type: DEPLOY_ACCOUNTS_FETCHING, payload: false });
   };
 };
