@@ -458,6 +458,7 @@ export class EtherspotService {
 
     const etherspotAccount = await this.getAccount(chain);
 
+    // Return if account is already deployed.
     if (!etherspotAccount || etherspotAccount?.state !== AccountStates.UnDeployed) {
       return AccountStates.Deployed;
     }
