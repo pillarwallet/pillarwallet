@@ -308,30 +308,21 @@ export const switchEthereumChainConnectorAction = (request: any) => {
       walletConnect: { activeConnectors },
     } = getState();
 
-    const { method, callId, params } = request;
+    const { callId, chainId, peerId: requestPeerId } = request;
 
-    const activeConnector = activeConnectors.find(({ peerId }) => peerId === request.peerId);
-    if (!activeConnector) {
+    const connector = activeConnectors.find(({ peerId }) => peerId === requestPeerId);
+    if (!connector) {
       dispatch(setWalletConnectErrorAction(t('error.walletConnect.noMatchingConnector')));
       return;
     }
 
-    const customRequest = {
-      id: callId,
-      jsonrpc: '2.0',
-      method,
-      params,
+    const sessionData = {
+      accounts: connector.accounts,
+      chainId,
     };
 
-    activeConnector
-      .sendCustomRequest(customRequest)
-      ?.then((result) => {
-        dispatch(approveWalletConnectCallRequestAction(callId, result));
-      })
-      .catch((error) => {
-        reportErrorLog('approveWalletConnectCallRequestAction -> sendCustomRequest failed', { error });
-        dispatch(setWalletConnectErrorAction(t('error.walletConnect.callRequestApproveFailed')));
-      });
+    await dispatch(updateWalletConnectConnectorSessionAction(connector, sessionData));
+    dispatch(approveWalletConnectCallRequestAction(callId, null));
   };
 };
 

@@ -33,7 +33,7 @@ import { sendAssetAction } from 'actions/assetsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 
 // utils
-import { signMessage, signPersonalMessage, switchEthereumChain, signTransaction, signTypedData } from 'utils/wallet';
+import { signMessage, signPersonalMessage, signTransaction, signTypedData } from 'utils/wallet';
 import { isArchanovaAccount } from 'utils/accounts';
 import { reportErrorLog } from 'utils/common';
 import { parseMessageSignParamsFromCallRequest } from 'utils/walletConnect';
@@ -145,17 +145,6 @@ const WalletConnectPinConfirmScreeen = ({ resetIncorrectPassword, useBiometrics,
     return result;
   };
 
-  const handleSwitchChain = async (wallet: Wallet): Promise<?string> => {
-    let result;
-    try {
-      result = await switchEthereumChain(wallet, callRequest);
-    } catch (error) {
-      reportErrorLog('WalletConnectPinConfirmScreeen -> handleSwitchChain failed', { callRequest, error });
-    }
-
-    return result;
-  };
-
   const onPinValid = async (pin: string, wallet: Wallet) => {
     setIsChecking(true);
     const { method } = callRequest;
@@ -175,14 +164,17 @@ const WalletConnectPinConfirmScreeen = ({ resetIncorrectPassword, useBiometrics,
     }
 
     if (method === WALLET_SWITCH_CHAIN) {
-      switchEthereumChainConnectorRequest(callRequest);
+      await switchEthereumChainConnectorRequest(callRequest);
+      Toast.show({
+        message: t('toast.walletConnectRequestApproved'),
+        emoji: 'ok_hand',
+      });
+      dismissScreen();
+
       return;
     }
 
-    const isWalletChain =
-      method === WALLET_SWITCH_CHAIN ? await handleSwitchChain(wallet) : await handleSignMessage(wallet);
-
-    const signedResult = method === ETH_SIGN_TX ? await handleSignTransaction(wallet) : isWalletChain;
+    const signedResult = method === ETH_SIGN_TX ? await handleSignTransaction(wallet) : await handleSignMessage(wallet);
 
     if (signedResult) {
       approveCallRequest(callRequest, signedResult);
