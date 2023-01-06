@@ -605,7 +605,6 @@ export const fetchAssetsBalancesAction = () => {
     dispatch(fetchSupportedAssetsAction());
 
     dispatch(fetchAccountWalletBalancesAction(activeAccount));
-    dispatch(fetchAssetsRatesAction());
 
     if (isArchanovaAccount(activeAccount)) {
       dispatch(fetchVirtualAccountBalanceAction());

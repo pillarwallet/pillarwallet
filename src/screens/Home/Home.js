@@ -40,10 +40,9 @@ import Stories from 'components/Stories';
 import UserNameAndImage from 'components/UserNameAndImage';
 import WalletConnectRequests from 'screens/WalletConnect/Requests';
 import Tooltip from 'components/Tooltip';
-import Modal from 'components/Modal';
 import Banner from 'components/Banner/Banner';
 import { Spacing } from 'components/legacy/Layout';
-import QRCodeScanner from 'components/QRCodeScanner';
+import WalletConnectCamera from 'components/QRCodeScanner/WalletConnectCamera';
 
 // Constants
 import { MENU, HOME_HISTORY, REGISTER_ENS, CONNECT_FLOW } from 'constants/navigationConstants';
@@ -66,19 +65,18 @@ import GovernanceCallBanner from 'screens/GovernanceCall/GovernanceCallBanner';
 import { sumRecord } from 'utils/bigNumber';
 import { calculateTotalBalancePerCategory } from 'utils/totalBalances';
 import { useThemeColors } from 'utils/themes';
-import { getSupportedBiometryType } from 'utils/keychain';
 import { getEnsNodeState, getActiveAccount, findKeyBasedAccount } from 'utils/accounts';
 import { getActiveScreenName } from 'utils/navigation';
 
 // Hooks
 import useWalletConnect from 'hooks/useWalletConnect';
+import { useBioMetricsPopup } from 'hooks/biometrics';
 
 // Local
 import BalanceSection from './BalanceSection';
 import AssetsSection from './AssetsSection';
 import FloatingActions from './FloatingActions';
 import { useAccountCollectibleCounts } from './utils';
-import BiometricModal from '../../components/BiometricModal/BiometricModal';
 import AppsButton from './AppsButton';
 
 // Redux
@@ -97,12 +95,13 @@ function Home() {
   const { t } = useTranslation();
   const swiperRef = React.useRef(null);
 
+  useBioMetricsPopup();
+
   const accountTotalBalances = useRootSelector(accountTotalBalancesSelector);
   const accountCollectibleCounts = useAccountCollectibleCounts();
   const user = useUser();
   const dispatch = useDispatch();
   const etherspotAccount = useRootSelector(etherspotAccountSelector);
-  const wallet = useRootSelector((root) => root.wallet.data);
   const accountAddress = useRootSelector(activeAccountAddressSelector);
   const { switchAccountTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
 
@@ -136,17 +135,6 @@ function Home() {
   React.useEffect(() => {
     dispatch(fetchNativeIntegration());
     callVisibleBalanceFunction();
-    setTimeout(() => {
-      if (!wallet) {
-        getSupportedBiometryType((biometryType) => {
-          if (biometryType) {
-            Modal.open(() => <BiometricModal biometricType={biometryType} />);
-          } else {
-            Modal.open(() => <BiometricModal hasNoBiometrics />);
-          }
-        });
-      }
-    }, 1000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -221,7 +209,8 @@ function Home() {
   return (
     <Swiper ref={swiperRef} loop={false} showsPagination={false} index={1} onIndexChanged={setCurrentSwiperIndex}>
       {/* Left Scanner Content */}
-      <QRCodeScanner
+      <WalletConnectCamera
+        visibleCamera={currentSwiperIndex === 0}
         validator={validateUri}
         onRead={handleUri}
         onClose={() => swiperRef.current?.scrollBy(1)}

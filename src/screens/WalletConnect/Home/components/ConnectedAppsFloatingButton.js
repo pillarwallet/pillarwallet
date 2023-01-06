@@ -37,7 +37,12 @@ import { spacing } from 'utils/variables';
 // Local
 import WalletConnectAppsCamera from '../../ConnectedApps/WalletConnectAppsCamera';
 
-const ConnectedAppsFloatingButton = () => {
+type Props = {|
+  style?: any,
+  isInCameraFloating?: boolean,
+|};
+
+const ConnectedAppsFloatingButton = ({ style, isInCameraFloating }: Props) => {
   const { activeConnectors } = useWalletConnect();
 
   if (activeConnectors.length === 0) {
@@ -50,20 +55,39 @@ const ConnectedAppsFloatingButton = () => {
     });
   };
 
+  const ButtonContent = () => (
+    <TouchableOpacity onPress={openConnectedApps}>
+      <ItemContainer>
+        <Text>
+          <Emoji name="zap" /> {activeConnectors.length}
+        </Text>
+      </ItemContainer>
+    </TouchableOpacity>
+  );
+
+  if (isInCameraFloating) {
+    return (
+      <Container forceInset={{ bottom: 'always' }} style={style}>
+        <ButtonContent />
+      </Container>
+    );
+  }
+
   return (
     <FloatingContainer forceInset={{ bottom: 'always' }}>
-      <TouchableOpacity onPress={openConnectedApps}>
-        <ItemContainer>
-          <Text>
-            <Emoji name="zap" /> {activeConnectors.length}
-          </Text>
-        </ItemContainer>
-      </TouchableOpacity>
+      <ButtonContent />
     </FloatingContainer>
   );
 };
 
 export default ConnectedAppsFloatingButton;
+
+const Container = styled.View`
+  position: absolute;
+  right: ${spacing.extraLarge}px;
+  bottom: ${spacing.large}px;
+  align-self: flex-end;
+`;
 
 const FloatingContainer = styled(SafeAreaView)`
   position: absolute;
@@ -73,7 +97,7 @@ const FloatingContainer = styled(SafeAreaView)`
 `;
 
 const ItemContainer = styled.View`
-  padding: ${spacing.mediumLarge}px ${spacing.medium}px ${spacing.mediumLarge}px;
+  padding: ${spacing.medium}px ${spacing.medium}px ${spacing.mediumLarge}px;
   border-radius: 100px;
   background-color: ${({ theme }) => theme.colors.basic050};
   shadow-opacity: 0.05;

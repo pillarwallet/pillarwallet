@@ -39,9 +39,6 @@ import { formatFiatValue } from 'utils/format';
 import { chainFromChainId } from 'utils/chains';
 import { getTxFeeInFiat } from 'utils/transactions';
 
-// Hooks
-import { useAssetRates } from 'hooks/transactions';
-
 // Selectors
 import { useFiatCurrency, useChainRates } from 'selectors';
 
@@ -194,9 +191,9 @@ export function useExchangeAmountsNotification(offer: any) {
     toAsset.chain = chainFromChainId[toAsset.chainId];
   }
 
-  const fromRates = useAssetRates(fromAsset.chain, fromAsset);
-  const toRates = useAssetRates(toAsset.chain, toAsset);
-  const gasFeeRates = useAssetRates(gasFeeAsset.chain, gasFeeAsset);
+  const fromRates = useChainRates(fromAsset.chain);
+  const toRates = useChainRates(toAsset.chain);
+  const gasFeeRates = useChainRates(gasFeeAsset.chain);
   const currency = useFiatCurrency();
 
   // eslint-disable-next-line i18next/no-literal-string
