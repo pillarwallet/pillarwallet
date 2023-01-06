@@ -316,13 +316,36 @@ export const switchEthereumChainConnectorAction = (request: any) => {
       return;
     }
 
+    const activeAccount = activeAccountSelector(getState());
+    if (!activeAccount) {
+      Toast.show({
+        message: t('toast.noActiveAccountFound'),
+        emoji: 'hushed',
+        supportLink: true,
+        autoClose: false,
+      });
+      return;
+    }
+
+    const accountAddress = getAccountAddress(activeAccount);
     const sessionData = {
-      accounts: connector.accounts,
+      accounts: [accountAddress],
       chainId,
     };
 
-    await dispatch(updateWalletConnectConnectorSessionAction(connector, sessionData));
-    dispatch(approveWalletConnectCallRequestAction(callId, null));
+    try {
+      /*
+       * Whenever get switch chain request then follows this steps
+       * First update session in perticular chain.
+       * After approve perticular switch chain request.
+       */
+      await dispatch(updateWalletConnectConnectorSessionAction(connector, sessionData));
+
+      // For refrence https://github.com/WalletConnect/walletconnect-monorepo/issues/930#issuecomment-1106072395
+      dispatch(approveWalletConnectCallRequestAction(callId, null));
+    } catch (error) {
+      dispatch(setWalletConnectErrorAction(error?.message));
+    }
   };
 };
 
@@ -350,7 +373,7 @@ export const subscribeToWalletConnectConnectorEventsAction = (connector: WalletC
         return;
       }
 
-      const chainID = BigNumber(params[0].chainId)?.toNumber() ?? chainId;
+      const chainID = params[0]?.chainId ? BigNumber(params[0].chainId)?.toNumber() : chainId;
 
       const callRequest: WalletConnectCallRequest = {
         name,
