@@ -83,7 +83,7 @@ import {
 } from 'actions/assetsActions';
 import { fetchTutorialDataIfNeededAction, bannerDataAction } from 'actions/cmsActions';
 import { initialDeepLinkExecutedAction } from 'actions/appSettingsActions';
-import { addAccountAction } from 'actions/accountsActions';
+import { addAccountAction, deployAccounts } from 'actions/accountsActions';
 import {
   setEstimatingTransactionAction,
   setTransactionsEstimateErrorAction,
@@ -325,6 +325,9 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
     dispatch(initialDeepLinkExecutedAction());
 
     dispatch(bannerDataAction());
+
+    logBreadcrumb('onboarding', 'walletSetupAction: dispatching deployAccounts');
+    dispatch(deployAccounts());
 
     logBreadcrumb('onboarding', 'walletSetupAction: completed, dispatching SET_FINISHING_ONBOARDING');
     isLogV2AppEvents() && dispatch(logEventAction('v2_account_sign_up_completed'));

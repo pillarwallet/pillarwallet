@@ -405,6 +405,8 @@
     "doNotSendRealEthOrTokens": "不要发送真实的 ETH 或 ERC20 代币。",
     "ensNameCopiedToClipboard": "ENS 名称已复制到剪贴板。",
     "cameraPermissionMissing": "未授予相机权限 - 无法打开相机预览。",
+    "cameraPermission": "相机权限",
+    "needCameraPermission":"需要相机权限才能打开 WalletConnect 二维码扫描器",
     "didNotReceiveVerificationCodeQuestion": "没有收到验证码？",
     "instructionsOnBackingUpBackupPhase": "以正确的顺序写下您的 12 字备用短语。",
     "backupPhraseVerificationInstructions": "请选择正确的词。",

@@ -451,6 +451,49 @@ export class EtherspotService {
     return Promise.all(transactions.map((transaction) => sdk.batchExecuteAccountTransaction(transaction)));
   }
 
+  async setbatchDeployAccount(chain: Chain) {
+    const sdk = this.getSdkForChain(chain);
+
+    if (!sdk) {
+      logBreadcrumb('setbatchDeployAccount', 'failed: no SDK for chain set', { chain });
+      return null;
+    }
+
+    const etherspotAccount = await this.getAccount(chain);
+
+    // Return if account is already deployed.
+    if (!etherspotAccount || etherspotAccount?.state !== AccountStates.UnDeployed) {
+      return AccountStates.Deployed;
+    }
+
+    // Remove all previous executed transactions
+    this.clearTransactionsBatch(chain);
+
+    /*
+     ! This method is usefull in only mainnets (Polygon or Gnosis). testnets in need gas token.
+     */
+    // Deploy perticular network (Polygon or Gnosis)
+    await sdk.batchDeployAccount();
+
+    // Estimate for deploy account transaction
+    try {
+      await this.estimateTransactionsBatch(chain);
+    } catch (e) {
+      return AccountStates.UnDeployed;
+    }
+
+    const { hash } = await sdk.submitGatewayBatch({ guarded: false });
+
+    await this.waitForTransactionHashFromSubmittedBatch(chain, hash);
+
+    /*
+     * Taken little bit more time for transaction response
+     * Account Deployed after submittedBatch response
+     */
+
+    return AccountStates.Deployed;
+  }
+
   estimateTransactionsBatch(chain: Chain, useGasTokenAddress?: string): Promise<?GatewayEstimatedBatch> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {

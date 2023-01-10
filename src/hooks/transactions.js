@@ -31,7 +31,6 @@ import Toast from 'components/Toast';
 
 // Services
 import etherspotService from 'services/etherspot';
-import { getExchangeRates } from 'services/assets';
 
 // Selectors
 import { useActiveAccount, useRootSelector } from 'selectors';
@@ -43,7 +42,6 @@ import { useChainConfig } from 'utils/uiConfig';
 import { nativeAssetPerChain } from 'utils/chains';
 import { isEtherspotAccount } from 'utils/accounts';
 import { wrapBigNumber } from 'utils/bigNumber';
-import { EMPTY_OBJECT } from 'utils/common';
 
 // Hooks
 import { useDeploymentStatus } from 'hooks/deploymentStatus';
@@ -54,8 +52,6 @@ import type { AssetCore } from 'models/Asset';
 import type { Chain } from 'models/Chain';
 import type { EthereumTransaction, GasToken, TransactionFeeInfo } from 'models/Transaction';
 import type { Value } from 'models/Value';
-
-const allSettled = require('promise.allsettled');
 
 type UseTransactionEstimateResult = {|
   feeInfo: ?TransactionFeeInfo,
@@ -165,29 +161,4 @@ export function useEtherspotDeploymentFee(
   const feeWithoutDeployment = wrapBigNumber(transactionFee).minus(deploymentFee);
 
   return { deploymentFee, feeWithoutDeployment };
-}
-
-export function useAssetRates(chain: ?Chain, asset: any) {
-  const [assetRates, setAssetRates] = React.useState(null);
-
-  React.useEffect(() => {
-    async function call() {
-      if (chain && asset) {
-        const promiseRequest = () => {
-          return new Promise(() => {
-            (async () => {
-              setAssetRates(await getExchangeRates(chain, [asset]));
-            })();
-          });
-        };
-
-        allSettled([promiseRequest()]);
-
-        allSettled.shim();
-      }
-    }
-    call();
-  }, [asset, chain]);
-
-  return assetRates ?? EMPTY_OBJECT;
 }

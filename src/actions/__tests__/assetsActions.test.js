@@ -29,7 +29,6 @@ import { ASSET_CATEGORY, SET_CHAIN_SUPPORTED_ASSETS } from 'constants/assetsCons
 import { SET_ACCOUNT_ASSETS_BALANCES, SET_FETCHING_ASSETS_BALANCES } from 'constants/assetsBalancesConstants';
 import { INITIAL_REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { CHAIN } from 'constants/chainConstants';
-import { SET_FETCHING_RATES } from 'constants/ratesConstants';
 
 // services
 import etherspotService from 'services/etherspot';
@@ -87,7 +86,6 @@ const initialState = {
   accounts: { data: mockAccounts },
   assetsBalances: { data: mockAccountsBalances },
   featureFlags: { data: INITIAL_REMOTE_CONFIG },
-  rates: { data: {} },
   appSettings: { data: {} },
   totalBalances: { data: {} },
   session: { data: { isOnline: true } },
@@ -114,8 +112,6 @@ describe('Assets actions', () => {
 
     const expectedActions = [
       { type: SET_FETCHING_ASSETS_BALANCES, payload: true },
-      { type: SET_FETCHING_RATES, payload: true },
-      { type: SET_FETCHING_RATES, payload: false },
       { type: SET_FETCHING_ASSETS_BALANCES, payload: false },
       { type: SET_CHAIN_SUPPORTED_ASSETS, payload: supportedAssetsPayload },
       { type: SET_ACCOUNT_ASSETS_BALANCES, payload: updateBalancesPayload },

@@ -18,13 +18,40 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const UPDATE_ACCOUNTS = 'UPDATE_ACCOUNTS';
-export const ADD_ACCOUNT = 'ADD_ACCOUNT';
-export const ACCOUNT_TYPES = {
-  KEY_BASED: ('KEY_BASED': 'KEY_BASED'),
-  ARCHANOVA_SMART_WALLET: ('SMART_WALLET': 'SMART_WALLET'), // actual value is different for safe deprecate reason
-  ETHERSPOT_SMART_WALLET: ('ETHERSPOT_SMART_WALLET': 'ETHERSPOT_SMART_WALLET'),
+import type { Chain } from 'models/Chain';
+
+import { DEPLOY_ACCOUNTS, DEPLOY_ACCOUNTS_FETCHING } from 'constants/accountsConstants';
+
+type DeployData = {
+  chain: Chain;
+  status: string;
 };
-export const CHANGING_ACCOUNT = 'CHANGING_ACCOUNT';
-export const DEPLOY_ACCOUNTS_FETCHING = 'DEPLOY_ACCOUNTS_FETCHING';
-export const DEPLOY_ACCOUNTS = 'DEPLOY_ACCOUNTS';
+
+export type DeployAccountsReducerState = {
+  data: DeployData[];
+  isFetching: boolean;
+};
+
+export type DeployAccountsAction = {
+  type: string;
+  payload: any;
+};
+
+export const initialState = {
+  data: [],
+  isFetching: false,
+};
+
+export default function deployAccountsReducer(
+  state: DeployAccountsReducerState = initialState,
+  action: DeployAccountsAction,
+): DeployAccountsReducerState {
+  switch (action.type) {
+    case DEPLOY_ACCOUNTS_FETCHING:
+      return { ...state, isFetching: action.payload };
+    case DEPLOY_ACCOUNTS:
+      return { ...state, data: action.payload };
+    default:
+      return state;
+  }
+}

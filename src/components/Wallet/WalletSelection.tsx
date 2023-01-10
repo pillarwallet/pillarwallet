@@ -110,7 +110,7 @@ export default function () {
         key={items[tabIndex].key}
         data={listOfAssets.slice(0, 5)}
         renderItem={({ item, index }) => renderItem(item, index)}
-        keyExtractor={(item) => item.toString()}
+        keyExtractor={(item) => item.address + '__' + item.chain}
         contentContainerStyle={{ flexGrow: 1 }}
       />
 

@@ -28,10 +28,7 @@ import { useTranslation } from 'translations/translate';
 import Text from 'components/core/Text';
 
 // Selectors
-import { useFiatCurrency } from 'selectors';
-
-// Hooks
-import { useAssetRates } from 'hooks/transactions';
+import { useFiatCurrency, useChainRates } from 'selectors';
 
 // Utils
 import { hitSlop10 } from 'utils/common';
@@ -70,7 +67,7 @@ const TokenFiatValueAccessory = ({
 }: Props) => {
   const { t } = useTranslation();
 
-  const rates = useAssetRates(chain, asset);
+  const rates = useChainRates(chain);
   const currency = useFiatCurrency();
 
   const handleUseMaxValue = () => {
