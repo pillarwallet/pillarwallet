@@ -203,17 +203,13 @@ export const approveWalletConnectConnectorRequestAction = (peerId: string, chain
 };
 
 export const updateWalletConnectConnectorSessionAction = (connector: Object, sessionData: sessionDataProps) => {
-  return (dispatch: Dispatch, getState: GetState) => {
-    const {
-      walletConnect: { activeConnectors },
-    } = getState();
-
+  return (dispatch: Dispatch) => {
     try {
-      activeConnectors.forEach((connect) => connect?._transport?.close?.());
-
       connector.updateSession(sessionData);
 
       dispatch({ type: UPDATE_WALLETCONNECT_SESSION, payload: { session: connector.session } });
+
+      connector?._transport?.close?.();
 
       dispatch(hideWalletConnectPromoCardAction());
     } catch (error) {
