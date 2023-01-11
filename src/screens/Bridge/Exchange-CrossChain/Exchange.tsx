@@ -189,6 +189,11 @@ function Exchange({ fetchExchangeTitle }: Props) {
     fetchExchangeTitle && fetchExchangeTitle(customTitle);
   }, [chain, customTitle, fetchExchangeTitle, fromAddress, toAddress]);
 
+  React.useEffect(() => {
+    if (!fromInputRef || fromValue) return;
+    fromInputRef.current?.focus();
+  }, [fromAsset, toAsset]);
+
   const showLoading = offersQuery.isFetching;
   const showEmptyState = !offers?.length && !offersQuery.isIdle && !offersQuery.isFetching;
 
