@@ -19,6 +19,7 @@
 */
 import { NavigationActions } from 'react-navigation';
 import t from 'translations/translate';
+import { BigNumber } from 'bignumber.js';
 
 // constants
 import {
@@ -208,6 +209,8 @@ export const updateWalletConnectConnectorSessionAction = (connector: Object, ses
 
       dispatch({ type: UPDATE_WALLETCONNECT_SESSION, payload: { session: connector.session } });
 
+      connector?._transport?.close?.();
+
       dispatch(hideWalletConnectPromoCardAction());
     } catch (error) {
       dispatch(setWalletConnectErrorAction(error?.message));
@@ -301,6 +304,53 @@ export const approveWalletConnectCallRequestAction = (callId: number, result: an
   };
 };
 
+export const switchEthereumChainConnectorAction = (request: any) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      walletConnect: { activeConnectors },
+    } = getState();
+
+    const { callId, chainId, peerId: requestPeerId } = request;
+
+    const connector = activeConnectors.find(({ peerId }) => peerId === requestPeerId);
+    if (!connector) {
+      dispatch(setWalletConnectErrorAction(t('error.walletConnect.noMatchingConnector')));
+      return;
+    }
+
+    const activeAccount = activeAccountSelector(getState());
+    if (!activeAccount) {
+      Toast.show({
+        message: t('toast.noActiveAccountFound'),
+        emoji: 'hushed',
+        supportLink: true,
+        autoClose: false,
+      });
+      return;
+    }
+
+    const accountAddress = getAccountAddress(activeAccount);
+    const sessionData = {
+      accounts: [accountAddress],
+      chainId,
+    };
+
+    try {
+      /*
+       * Whenever get switch chain request then follows this steps
+       * First update session in perticular chain.
+       * After approve perticular switch chain request.
+       */
+      await dispatch(updateWalletConnectConnectorSessionAction(connector, sessionData));
+
+      // For refrence https://github.com/WalletConnect/walletconnect-monorepo/issues/930#issuecomment-1106072395
+      dispatch(approveWalletConnectCallRequestAction(callId, null));
+    } catch (error) {
+      dispatch(setWalletConnectErrorAction(error?.message));
+    }
+  };
+};
+
 export const subscribeToWalletConnectConnectorEventsAction = (connector: WalletConnectConnector) => {
   return (dispatch: Dispatch) => {
     dispatch({ type: ADD_WALLETCONNECT_ACTIVE_CONNECTOR, payload: { connector } });
@@ -325,11 +375,13 @@ export const subscribeToWalletConnectConnectorEventsAction = (connector: WalletC
         return;
       }
 
+      const chainID = params[0]?.chainId ? BigNumber(params[0].chainId)?.toNumber() : chainId;
+
       const callRequest: WalletConnectCallRequest = {
         name,
         url,
         peerId,
-        chainId,
+        chainId: chainID,
         callId,
         method,
         params,

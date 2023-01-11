@@ -34,6 +34,7 @@ import {
   updateWalletConnectConnectorSessionAction,
   rejectWalletConnectCallRequestAction,
   rejectWalletConnectConnectorRequestAction,
+  switchEthereumChainConnectorAction,
 } from 'actions/walletConnectActions';
 
 // Constants
@@ -56,6 +57,7 @@ type UseWalletConnectResult = {|
   connectToConnector: (url: string) => void,
   estimateCallRequestTransaction: (callRequest: WalletConnectCallRequest) => void,
   updateConnectorSession: (connector: any, session: any) => void,
+  switchEthereumChainConnectorRequest: (request: Object) => void,
 |};
 
 const useWalletConnect = (): UseWalletConnectResult => {
@@ -83,6 +85,11 @@ const useWalletConnect = (): UseWalletConnectResult => {
   const updateConnectorSession = useCallback(
     (connector: Object, sessionData: sessionDataProps) =>
       dispatch(updateWalletConnectConnectorSessionAction(connector, sessionData)),
+    [dispatch],
+  );
+
+  const switchEthereumChainConnectorRequest = useCallback(
+    (request: Object) => dispatch(switchEthereumChainConnectorAction(request)),
     [dispatch],
   );
 
@@ -120,6 +127,7 @@ const useWalletConnect = (): UseWalletConnectResult => {
       connectToConnector,
       updateConnectorSession,
       estimateCallRequestTransaction,
+      switchEthereumChainConnectorRequest,
     }),
     [
       activeConnectors,
@@ -132,6 +140,7 @@ const useWalletConnect = (): UseWalletConnectResult => {
       connectToConnector,
       updateConnectorSession,
       estimateCallRequestTransaction,
+      switchEthereumChainConnectorRequest,
     ],
   );
 };
