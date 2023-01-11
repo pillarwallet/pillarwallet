@@ -55,10 +55,6 @@ const TextInput = React.forwardRef<Props, Instance>(({ style, ...rest }, ref: an
       {...rest}
       multiline={false}
       style={styleList}
-      onLayout={() => {
-        if (!ref) return;
-        ref.current?.focus();
-      }}
     />
   );
 });
