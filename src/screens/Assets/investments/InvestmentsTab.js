@@ -60,7 +60,10 @@ function InvestmentsTab() {
     return (
       <ListHeader>
         <BalanceView balance={totalBalanceOfHoldings} style={styles.balanceView} />
-        <Banner screenName={screenName} bottomPosition={false} />
+
+        <BannerContent>
+          <Banner screenName={screenName} bottomPosition={false} />
+        </BannerContent>
       </ListHeader>
     );
   };
@@ -103,4 +106,8 @@ const ListHeader = styled.View`
   align-items: center;
   margin-top: ${spacing.largePlus}px;
   margin-bottom: 32px;
+`;
+
+const BannerContent = styled.View`
+  width: 100%;
 `;
