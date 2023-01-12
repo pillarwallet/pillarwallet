@@ -56,11 +56,7 @@ import type { ServiceAssetBalance } from 'models/Balances';
 // Local
 import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
 import ServiceListHeader from '../components/ServiceListHeader';
-import {
-  useLiquidityPoolsTotalBalance,
-  useLiquidityPoolsBalancePerChain,
-  useLiquidityPoolAssets,
-} from './selectors';
+import { useLiquidityPoolsTotalBalance, useLiquidityPoolsBalancePerChain, useLiquidityPoolAssets } from './selectors';
 import LiquidityPoolListItem from './LiquidityPoolListItem';
 
 function LiquidityPoolsTab() {
@@ -87,7 +83,9 @@ function LiquidityPoolsTab() {
       <ListHeader>
         <BalanceView balance={totalBalance.value} style={styles.balanceView} />
         {!!change && <FiatChangeView value={value} change={totalBalance.change} currency={currency} />}
-        <Banner screenName={screenName} bottomPosition={false} />
+        <BannerContent>
+          <Banner screenName={screenName} bottomPosition={false} />
+        </BannerContent>
       </ListHeader>
     );
   };
@@ -175,4 +173,8 @@ const ListHeader = styled.View`
   align-items: center;
   margin-top: ${spacing.largePlus}px;
   margin-bottom: 32px;
+`;
+
+const BannerContent = styled.View`
+  width: 100%;
 `;

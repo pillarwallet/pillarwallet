@@ -106,7 +106,10 @@ function WalletTab({ isNavigateToHome }: Props) {
         )}
 
         {isPillarPaySupported && <PillarPaySummary style={styles.pillarPay} />}
-        <Banner screenName={screenName} bottomPosition={false} />
+
+        <BannerContent>
+          <Banner screenName={screenName} bottomPosition={false} />
+        </BannerContent>
       </ListHeader>
     );
   };
@@ -187,4 +190,8 @@ const ListHeader = styled.View`
   align-items: center;
   margin-top: ${spacing.largePlus}px;
   margin-bottom: 40px;
+`;
+
+const BannerContent = styled.View`
+  width: 100%;
 `;
