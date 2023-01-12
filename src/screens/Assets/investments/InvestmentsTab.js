@@ -99,7 +99,6 @@ const styles = {
 
 const Container = styled.View`
   flex: 1;
-  padding: 0px ${spacing.medium}px 0px ${spacing.large}px;
 `;
 
 const ListHeader = styled.View`
