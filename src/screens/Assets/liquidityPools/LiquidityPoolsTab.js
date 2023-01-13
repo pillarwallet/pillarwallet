@@ -46,7 +46,6 @@ import { formatLiquidityPoolShare } from 'utils/format';
 import { type HeaderListItem, prepareHeaderListItems } from 'utils/headerList';
 import { getFiatValueFromUsd } from 'utils/rates';
 import { spacing } from 'utils/variables';
-import { getActiveScreenName } from 'utils/navigation';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
@@ -71,7 +70,6 @@ function LiquidityPoolsTab() {
   const sections = useSectionData(expandItemsPerChain);
   const currency = useFiatCurrency();
   const usdToFiatRate = useUsdToFiatRate();
-  const screenName = getActiveScreenName(navigation);
 
   const navigateToWalletConnect = () => navigation.navigate(WALLETCONNECT);
 
@@ -84,7 +82,7 @@ function LiquidityPoolsTab() {
         <BalanceView balance={totalBalance.value} style={styles.balanceView} />
         {!!change && <FiatChangeView value={value} change={totalBalance.change} currency={currency} />}
         <BannerContent>
-          <Banner screenName={screenName} bottomPosition={false} />
+          <Banner screenName="LIQUIDITY_POOLS" bottomPosition={false} />
         </BannerContent>
       </ListHeader>
     );
@@ -143,7 +141,7 @@ export default LiquidityPoolsTab;
 type Section = {
   ...SectionBase<HeaderListItem<ServiceAssetBalance>>,
   chain: Chain,
-  balance: BigNumber,
+    balance: BigNumber,
 };
 
 const useSectionData = (expandItemsPerChain: FlagPerChain): Section[] => {

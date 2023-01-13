@@ -43,7 +43,6 @@ import { useSupportedChains } from 'selectors/chains';
 
 // Utils
 import { spacing } from 'utils/variables';
-import { getActiveScreenName } from 'utils/navigation';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
@@ -55,12 +54,10 @@ import { type CollectibleItem, useCollectibleAssets } from './selectors';
 import { buildCollectibleFromCollectibleItem, calculateTotalCollectibleCount } from './utils';
 import CollectibleListItem from './CollectibleListItem';
 
-
 function CollectiblesTab() {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const safeArea = useSafeAreaInsets();
-  const screenName = getActiveScreenName(navigation);
 
   const initialChain: ?Chain = navigation.getParam('chain');
   const { expandItemsPerChain, toggleExpandItems } = useExpandItemsPerChain(initialChain);
@@ -75,7 +72,6 @@ function CollectiblesTab() {
   // React.useEffect(() => {
   //   setTotalCollectibleCount(sections[0]?.totalCollectibleCount ?? 0);
   // }, [sections]);
-
 
   const accountAddress = useRootSelector(activeAccountAddressSelector);
 
@@ -135,7 +131,7 @@ function CollectiblesTab() {
       <ImageContainer>
         {(totalCollectibleCount === 0) && <ContentIcon source={collectibleBanner} />}
       </ImageContainer> */}
-      <Banner screenName={screenName} bottomPosition={false} />
+      <Banner screenName="COLLECTIBLES" bottomPosition={false} />
       <SectionList
         sections={sections}
         renderSectionHeader={({ section }) => renderSectionHeader(section)}
@@ -144,7 +140,7 @@ function CollectiblesTab() {
         keyExtractor={(items) => items[0]?.key}
         contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
       />
-      <Banner screenName={screenName} bottomPosition />
+      <Banner screenName="COLLECTIBLES" bottomPosition />
 
       <FloatingButtons items={buttons} />
     </Container>
@@ -156,7 +152,7 @@ export default CollectiblesTab;
 type Section = {
   ...SectionBase<CollectibleItem[]>,
   chain: Chain,
-  totalCollectibleCount: number
+    totalCollectibleCount: number,
 };
 
 const useSectionData = (numberOfColumns: number, expandItemsPerChain: FlagPerChain): Section[] => {

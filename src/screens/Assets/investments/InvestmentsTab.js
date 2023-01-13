@@ -36,7 +36,6 @@ import { WALLETCONNECT } from 'constants/navigationConstants';
 
 // Utils
 import { spacing } from 'utils/variables';
-import { getActiveScreenName } from 'utils/navigation';
 
 // Types
 import type { AppHoldings } from 'models/Investment';
@@ -50,8 +49,6 @@ function InvestmentsTab() {
   const safeArea = useSafeAreaInsets();
   const { totalBalanceOfHoldings, appHoldings } = useAppHoldings();
 
-  const screenName = getActiveScreenName(navigation);
-
   const navigateToWalletConnect = () => navigation.navigate(WALLETCONNECT);
 
   const buttons = [{ title: t('invest'), iconName: 'plus', onPress: navigateToWalletConnect }];
@@ -62,7 +59,7 @@ function InvestmentsTab() {
         <BalanceView balance={totalBalanceOfHoldings} style={styles.balanceView} />
 
         <BannerContent>
-          <Banner screenName={screenName} bottomPosition={false} />
+          <Banner screenName="HOME_APPS" bottomPosition={false} />
         </BannerContent>
       </ListHeader>
     );
@@ -70,7 +67,7 @@ function InvestmentsTab() {
 
   const renderItem = (appsHolding: AppHoldings) => {
     const { name, network } = appsHolding;
-    return <InvestmentListItem key={`${name}-${network}`} {...appsHolding} onPress={() => {}} />;
+    return <InvestmentListItem key={`${name}-${network}`} {...appsHolding} onPress={() => { }} />;
   };
 
   return (
