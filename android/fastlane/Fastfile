@@ -117,6 +117,7 @@ platform :android do
       api_token: options[:hockeyAppToken],
       owner_name: ENV["APPCENTER_USER"],
       owner_type: "user",
+      app_os: "Android",
       app_name: "Pillar-Wallet-Staging",
       file: "app/build/outputs/apk/staging/#{options[:apkName]}",
       notify_testers: true,

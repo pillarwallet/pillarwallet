@@ -121,6 +121,7 @@ platform :ios do
       api_token: ENV["APPCENTER_TOKEN"],
       owner_name: ENV["APPCENTER_USER"],
       owner_type: "user",
+      app_os: "iOS",
       app_name: "Pillar-Wallet-Staging",
       file: "./output/gym/pillarwallet-staging.ipa",
       notify_testers: true,
