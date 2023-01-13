@@ -43,6 +43,8 @@ import { CHAIN } from 'constants/chainConstants';
 import AssetSelectorContent from './AssetSelectorContent';
 
 type Props = {|
+  visible?: boolean,
+  onCloseModal?: (val: boolean) => void,
   tokens: AssetOption[],
   onSelectToken: (asset: AssetOption) => mixed,
   collectibles?: Collectible[],
@@ -54,6 +56,8 @@ type Props = {|
 |};
 
 const AssetSelectorModal = ({
+  visible = true,
+  onCloseModal,
   tokens,
   collectibles,
   onSelectToken,
@@ -68,6 +72,7 @@ const AssetSelectorModal = ({
   const [selectedAssetChain, setSelectedAssetChain] = React.useState(chain);
 
   const close = () => {
+    onCloseModal && onCloseModal(false);
     Modal.closeAll();
     Keyboard.dismiss();
   };
@@ -88,7 +93,7 @@ const AssetSelectorModal = ({
 
   return (
     // eslint-disable-next-line i18next/no-literal-string
-    <RNModal animationType="slide" visible style={{ backgroundColor: colors.basic050 }}>
+    <RNModal animationType="slide" visible={visible} style={{ backgroundColor: colors.basic050 }}>
       <Container>
         <HeaderBlock leftItems={[{ close: true }]} centerItems={[{ title }]} onClose={close} noPaddingTop />
 
