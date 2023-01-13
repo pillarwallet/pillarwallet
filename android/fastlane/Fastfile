@@ -74,7 +74,7 @@ platform :android do
   desc "Deploy staging development build to hockeyapp"
   lane :deploy_android_appcenter do
     buildApp(
-      hockeyAppToken: ENV["APPCENTER_ANDROID_TOKEN"],
+      hockeyAppToken: ENV["APPCENTER_TOKEN"],
       apkName: 'app-staging.apk'
     )
   end
