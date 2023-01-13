@@ -44,15 +44,15 @@ import AssetSelectorContent from './AssetSelectorContent';
 
 type Props = {|
   visible?: boolean,
-  onCloseModal?: (val: boolean) => void,
-  tokens: AssetOption[],
-  onSelectToken: (asset: AssetOption) => mixed,
-  collectibles?: Collectible[],
-  onSelectCollectible?: (collectible: Collectible) => mixed,
-  title?: string,
-  autoFocus?: boolean,
-  isFromSelect?: boolean,
-  chain?: Chain | null,
+    onCloseModal ?: (val: boolean) => void,
+    tokens: AssetOption[],
+      onSelectToken: (asset: AssetOption) => mixed,
+        collectibles ?: Collectible[],
+        onSelectCollectible ?: (collectible: Collectible) => mixed,
+        title ?: string,
+        autoFocus ?: boolean,
+        isFromSelect ?: boolean,
+        chain ?: Chain | null,
 |};
 
 const AssetSelectorModal = ({
@@ -72,8 +72,11 @@ const AssetSelectorModal = ({
   const [selectedAssetChain, setSelectedAssetChain] = React.useState(chain);
 
   const close = () => {
-    onCloseModal && onCloseModal(false);
-    Modal.closeAll();
+    if (onCloseModal) {
+      onCloseModal(false);
+    } else {
+      Modal.closeAll();
+    }
     Keyboard.dismiss();
   };
 
