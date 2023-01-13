@@ -91,6 +91,11 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
     dispatch(resetEstimateTransactionAction());
   }, []);
 
+  React.useEffect(() => {
+    if (!fromInputRef || fromValue) return;
+    fromInputRef.current?.focus();
+  }, [fromAddress, toAddress]);
+
   const fromAsset = React.useMemo(
     () => fromOptions.find((a) => a.chain === chain && addressesEqual(a.address, fromAddress)),
     [fromOptions, fromAddress, chain],
