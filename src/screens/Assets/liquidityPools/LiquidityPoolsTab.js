@@ -82,7 +82,7 @@ function LiquidityPoolsTab() {
         <BalanceView balance={totalBalance.value} style={styles.balanceView} />
         {!!change && <FiatChangeView value={value} change={totalBalance.change} currency={currency} />}
         <BannerContent>
-          <Banner screenName="ASSETS" bottomPosition={false} />
+          <Banner screenName="LIQUIDITY_POOLS" bottomPosition={false} />
         </BannerContent>
       </ListHeader>
     );
@@ -141,7 +141,7 @@ export default LiquidityPoolsTab;
 type Section = {
   ...SectionBase<HeaderListItem<ServiceAssetBalance>>,
   chain: Chain,
-  balance: BigNumber,
+    balance: BigNumber,
 };
 
 const useSectionData = (expandItemsPerChain: FlagPerChain): Section[] => {

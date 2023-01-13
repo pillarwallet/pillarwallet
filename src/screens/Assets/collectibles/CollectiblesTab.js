@@ -131,7 +131,7 @@ function CollectiblesTab() {
       <ImageContainer>
         {(totalCollectibleCount === 0) && <ContentIcon source={collectibleBanner} />}
       </ImageContainer> */}
-      <Banner screenName="ASSETS" bottomPosition={false} />
+      <Banner screenName="COLLECTIBLES" bottomPosition={false} />
       <SectionList
         sections={sections}
         renderSectionHeader={({ section }) => renderSectionHeader(section)}
@@ -140,7 +140,7 @@ function CollectiblesTab() {
         keyExtractor={(items) => items[0]?.key}
         contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
       />
-      <Banner screenName="ASSETS" bottomPosition />
+      <Banner screenName="COLLECTIBLES" bottomPosition />
 
       <FloatingButtons items={buttons} />
     </Container>
@@ -152,7 +152,7 @@ export default CollectiblesTab;
 type Section = {
   ...SectionBase<CollectibleItem[]>,
   chain: Chain,
-  totalCollectibleCount: number,
+    totalCollectibleCount: number,
 };
 
 const useSectionData = (numberOfColumns: number, expandItemsPerChain: FlagPerChain): Section[] => {

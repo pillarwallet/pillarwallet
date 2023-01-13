@@ -106,7 +106,7 @@ function WalletTab({ isNavigateToHome }: Props) {
         {isPillarPaySupported && <PillarPaySummary style={styles.pillarPay} />}
 
         <BannerContent>
-          <Banner screenName="ASSETS" bottomPosition={false} />
+          <Banner screenName="HOME_WALLET" bottomPosition={false} />
         </BannerContent>
       </ListHeader>
     );

@@ -59,7 +59,7 @@ function InvestmentsTab() {
         <BalanceView balance={totalBalanceOfHoldings} style={styles.balanceView} />
 
         <BannerContent>
-          <Banner screenName="ASSETS" bottomPosition={false} />
+          <Banner screenName="HOME_APPS" bottomPosition={false} />
         </BannerContent>
       </ListHeader>
     );
@@ -67,7 +67,7 @@ function InvestmentsTab() {
 
   const renderItem = (appsHolding: AppHoldings) => {
     const { name, network } = appsHolding;
-    return <InvestmentListItem key={`${name}-${network}`} {...appsHolding} onPress={() => {}} />;
+    return <InvestmentListItem key={`${name}-${network}`} {...appsHolding} onPress={() => { }} />;
   };
 
   return (
