@@ -111,8 +111,10 @@ export function useGasFeeAssets(chain: Chain) {
 }
 
 export function useToAssetsCrossChain(removeChainNm: Chain): AssetOption[] {
+  // eslint-disable-next-line no-console
+  console.log(removeChainNm);
   const supportedChains = useSupportedChains();
-  const filteredSupportedList = supportedChains.filter((chainNm: Chain) => chainNm !== removeChainNm);
+  const filteredSupportedList = supportedChains.filter((chainNm: Chain) => chainNm === 'optimism');
   const supportedAssetsPerChain = useSupportedAssetsPerChain();
   const walletBalancesPerChain = useRootSelector(accountWalletAssetsBalancesSelector);
   const ratesPerChain = useRatesPerChain();
