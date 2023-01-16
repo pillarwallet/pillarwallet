@@ -46,7 +46,6 @@ import { formatLiquidityPoolShare } from 'utils/format';
 import { type HeaderListItem, prepareHeaderListItems } from 'utils/headerList';
 import { getFiatValueFromUsd } from 'utils/rates';
 import { spacing } from 'utils/variables';
-import { getActiveScreenName } from 'utils/navigation';
 
 // Types
 import type { SectionBase } from 'utils/types/react-native';
@@ -56,11 +55,7 @@ import type { ServiceAssetBalance } from 'models/Balances';
 // Local
 import { type FlagPerChain, useExpandItemsPerChain } from '../utils';
 import ServiceListHeader from '../components/ServiceListHeader';
-import {
-  useLiquidityPoolsTotalBalance,
-  useLiquidityPoolsBalancePerChain,
-  useLiquidityPoolAssets,
-} from './selectors';
+import { useLiquidityPoolsTotalBalance, useLiquidityPoolsBalancePerChain, useLiquidityPoolAssets } from './selectors';
 import LiquidityPoolListItem from './LiquidityPoolListItem';
 
 function LiquidityPoolsTab() {
@@ -75,7 +70,6 @@ function LiquidityPoolsTab() {
   const sections = useSectionData(expandItemsPerChain);
   const currency = useFiatCurrency();
   const usdToFiatRate = useUsdToFiatRate();
-  const screenName = getActiveScreenName(navigation);
 
   const navigateToWalletConnect = () => navigation.navigate(WALLETCONNECT);
 
@@ -87,7 +81,9 @@ function LiquidityPoolsTab() {
       <ListHeader>
         <BalanceView balance={totalBalance.value} style={styles.balanceView} />
         {!!change && <FiatChangeView value={value} change={totalBalance.change} currency={currency} />}
-        <Banner screenName={screenName} bottomPosition={false} />
+        <BannerContent>
+          <Banner screenName="LIQUIDITY_POOLS" bottomPosition={false} />
+        </BannerContent>
       </ListHeader>
     );
   };
@@ -145,7 +141,7 @@ export default LiquidityPoolsTab;
 type Section = {
   ...SectionBase<HeaderListItem<ServiceAssetBalance>>,
   chain: Chain,
-  balance: BigNumber,
+    balance: BigNumber,
 };
 
 const useSectionData = (expandItemsPerChain: FlagPerChain): Section[] => {
@@ -175,4 +171,8 @@ const ListHeader = styled.View`
   align-items: center;
   margin-top: ${spacing.largePlus}px;
   margin-bottom: 32px;
+`;
+
+const BannerContent = styled.View`
+  width: 100%;
 `;
