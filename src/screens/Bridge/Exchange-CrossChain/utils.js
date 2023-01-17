@@ -167,6 +167,21 @@ export function useToAssets(chain: ?Chain) {
   }, [chain, supportedAssetsPerChain, walletBalancesPerChain, ratesPerChain, currency]);
 }
 
+export function useToOwnAssets(chain: ?Chain, address: string, fromAssets: any[], isCrossChain?: boolean) {
+  return React.useMemo(() => {
+    if (!chain || !address || !fromAssets) return null;
+    const arr: any = [...fromAssets];
+    if (isCrossChain) {
+      return arr?.filter((asset) => asset.chain !== chain);
+    }
+    const index = arr?.map((asset) => asset.chain + asset.address)?.indexOf(chain + address);
+    if (index > -1) {
+      arr.splice(index, 1);
+    }
+    return arr?.filter((asset) => asset.chain === chain);
+  }, [chain, address, fromAssets, isCrossChain]);
+}
+
 function getExchangeToAssetOptions(
   chain: ?Chain,
   supportedAssetsPerChain: AssetsPerChain,

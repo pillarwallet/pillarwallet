@@ -51,8 +51,8 @@ type Props = {|
   onSelectCollectible?: (collectible: Collectible) => mixed,
   title?: string,
   autoFocus?: boolean,
-  isFromSelect?: boolean,
   chain?: Chain | null,
+  searchTokenList?: any,
 |};
 
 const AssetSelectorModal = ({
@@ -64,8 +64,8 @@ const AssetSelectorModal = ({
   onSelectCollectible,
   title,
   autoFocus = false,
-  isFromSelect,
   chain,
+  searchTokenList,
 }: Props) => {
   const { t } = useTranslationWithPrefix('assetSelector');
   const colors = useThemeColors();
@@ -101,7 +101,6 @@ const AssetSelectorModal = ({
         <HeaderBlock leftItems={[{ close: true }]} centerItems={[{ title }]} onClose={close} noPaddingTop />
 
         <AssetSelectorContent
-          isFromSelect={isFromSelect}
           tokens={tokens}
           selectedAssetChain={selectedAssetChain}
           onSelectAssetChain={setSelectedAssetChain}
@@ -109,6 +108,7 @@ const AssetSelectorModal = ({
           collectibles={collectibles}
           onSelectCollectible={selectCollectible}
           autoFocus={autoFocus}
+          searchTokenList={searchTokenList}
         />
       </Container>
     </RNModal>
