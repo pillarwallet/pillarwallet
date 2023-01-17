@@ -44,9 +44,20 @@ type Props = {|
   title?: string,
   chain?: Chain | null,
   isFetching: boolean,
+  searchTokenList?: any,
 |};
 
-const ToAssetSelector = ({ assets, selectedAsset, onSelectAsset, value, style, title, chain, isFetching }: Props) => {
+const ToAssetSelector = ({
+  searchTokenList,
+  assets,
+  selectedAsset,
+  onSelectAsset,
+  value,
+  style,
+  title,
+  chain,
+  isFetching,
+}: Props) => {
   const balance = useWalletAssetBalance(selectedAsset?.chain, selectedAsset?.address);
   const [visibleModal, setVisibleModal] = React.useState(false);
 
@@ -81,6 +92,7 @@ const ToAssetSelector = ({ assets, selectedAsset, onSelectAsset, value, style, t
         chain={chain}
         title={title}
         tokens={assets}
+        searchTokenList={searchTokenList}
         onSelectToken={onSelectAsset}
       />
     </Container>

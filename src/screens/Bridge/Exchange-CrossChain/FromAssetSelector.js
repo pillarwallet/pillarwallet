@@ -115,7 +115,6 @@ const FromAssetSelector = ({
       <AssetSelectorModal
         visible={visibleModal}
         onCloseModal={setVisibleModal}
-        isFromSelect
         title={title}
         tokens={assets}
         onSelectToken={handleSelectToken}

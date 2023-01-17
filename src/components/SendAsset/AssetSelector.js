@@ -107,7 +107,6 @@ const AssetSelector = ({
       Modal.open(() => (
         <AssetSelectorModal
           tokens={tokens}
-          isFromSelect
           title={t('assetSelector.choose_token_send')}
           onSelectToken={handleSelectToken}
           collectibles={collectibles}

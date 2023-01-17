@@ -65,7 +65,7 @@ import { useActiveAccount } from 'selectors';
 import FromAssetSelector from './FromAssetSelector';
 import ToAssetSelector from './ToAssetSelector';
 import OfferCard from './OfferCard';
-import { useFromAssets, useToAssets, useOffersQuery, sortOffers, useGasFeeAssets } from './utils';
+import { useFromAssets, useToAssets, useOffersQuery, sortOffers, useGasFeeAssets, useToOwnAssets } from './utils';
 import GasFeeAssetSelection from './GasFeeAssetSelection';
 
 interface Props {
@@ -98,6 +98,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
 
   const fromOptions = useFromAssets();
   const toOptions = useToAssets(chain);
+  const toAssets = useToOwnAssets(chain, fromAddress, fromOptions);
 
   const gasFeeAssets = useGasFeeAssets(chain);
 
@@ -110,7 +111,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
 
   const toAsset = React.useMemo(
     () => toOptions.find((a) => a.chain === chain && addressesEqual(a.address, toAddress)),
-    [toOptions, toAddress, chain],
+    [toAssets, toAddress, chain],
   );
 
   const offersQuery = useOffersQuery(chain, fromAsset, toAsset, debouncedFromValue);
@@ -227,11 +228,12 @@ function Exchange({ fetchExchangeTitle }: Props) {
         <ToAssetSelector
           chain={chain}
           title={t('assetSelector.choose_token_swap')}
-          assets={toOptions}
+          assets={toAssets}
           selectedAsset={toAsset}
           onSelectAsset={handleSelectToAsset}
           value={toValue}
           isFetching={showLoading}
+          searchTokenList={toOptions}
         />
 
         <Spacing h={20} />
