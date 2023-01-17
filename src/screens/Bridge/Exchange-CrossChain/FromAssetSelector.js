@@ -26,7 +26,6 @@ import { useTranslation } from 'translations/translate';
 
 // Components
 import AssetSelectorModal from 'components/Modals/AssetSelectorModal';
-import Modal from 'components/Modal';
 import TokenValueInput from 'components/inputs/TokenValueInput';
 import TokenFiatValueAccessory from 'components/inputs/TokenValueInput/TokenFiatValueAccessory';
 
@@ -65,6 +64,7 @@ const FromAssetSelector = ({
   title,
 }: Props) => {
   const { t } = useTranslation();
+  const [visibleModal, setVisibleModal] = React.useState(false);
 
   const balance = useWalletAssetBalance(selectedAsset?.chain, selectedAsset?.address);
 
@@ -74,9 +74,7 @@ const FromAssetSelector = ({
   };
 
   const openSelectAsset = () => {
-    Modal.open(() => (
-      <AssetSelectorModal isFromSelect title={title} tokens={assets} onSelectToken={handleSelectToken} />
-    ));
+    setVisibleModal(true);
   };
 
   const handleTokenValueChange = (newTokenValue: ?BigNumber) => {
@@ -113,6 +111,13 @@ const FromAssetSelector = ({
         onUseMax={handleUseMax}
         useMaxTitle={t('button.spendMax')}
         disableUseMax={disableUseMax}
+      />
+      <AssetSelectorModal
+        visible={visibleModal}
+        onCloseModal={setVisibleModal}
+        title={title}
+        tokens={assets}
+        onSelectToken={handleSelectToken}
       />
     </Container>
   );

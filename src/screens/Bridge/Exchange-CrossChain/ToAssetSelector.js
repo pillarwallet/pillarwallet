@@ -24,7 +24,6 @@ import styled from 'styled-components/native';
 
 // Components
 import AssetSelectorModal from 'components/Modals/AssetSelectorModal';
-import Modal from 'components/Modal';
 import TokenValueInput from 'components/inputs/TokenValueInput';
 import TokenFiatValueAccessory from 'components/inputs/TokenValueInput/TokenFiatValueAccessory';
 
@@ -45,13 +44,25 @@ type Props = {|
   title?: string,
   chain?: Chain | null,
   isFetching: boolean,
+  searchTokenList?: any,
 |};
 
-const ToAssetSelector = ({ assets, selectedAsset, onSelectAsset, value, style, title, chain, isFetching }: Props) => {
+const ToAssetSelector = ({
+  searchTokenList,
+  assets,
+  selectedAsset,
+  onSelectAsset,
+  value,
+  style,
+  title,
+  chain,
+  isFetching,
+}: Props) => {
   const balance = useWalletAssetBalance(selectedAsset?.chain, selectedAsset?.address);
+  const [visibleModal, setVisibleModal] = React.useState(false);
 
   const openSelectAsset = () => {
-    Modal.open(() => <AssetSelectorModal chain={chain} title={title} tokens={assets} onSelectToken={onSelectAsset} />);
+    setVisibleModal(true);
   };
 
   return (
@@ -74,6 +85,15 @@ const ToAssetSelector = ({ assets, selectedAsset, onSelectAsset, value, style, t
         isFetching={isFetching}
         isToSelector
         disableUseMax
+      />
+      <AssetSelectorModal
+        visible={visibleModal}
+        onCloseModal={setVisibleModal}
+        chain={chain}
+        title={title}
+        tokens={assets}
+        searchTokenList={searchTokenList}
+        onSelectToken={onSelectAsset}
       />
     </Container>
   );

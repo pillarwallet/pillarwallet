@@ -47,7 +47,13 @@ import type { Chain } from 'models/Chain';
 // Local
 import FromAssetSelector from './FromAssetSelector';
 import ToAssetSelector from './ToAssetSelector';
-import { useFromAssets, useToAssetsCrossChain, useCrossChainBuildTransactionQuery, useGasFeeAssets } from './utils';
+import {
+  useFromAssets,
+  useToAssetsCrossChain,
+  useCrossChainBuildTransactionQuery,
+  useGasFeeAssets,
+  useToOwnAssets,
+} from './utils';
 import OfferCard from './OfferCard';
 import GasFeeAssetSelection from './GasFeeAssetSelection';
 
@@ -82,6 +88,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
 
   const fromOptions = useFromAssets();
   const toOptions = useToAssetsCrossChain(chain);
+  const toAssets = useToOwnAssets(chain, fromAddress, fromOptions, true);
   const chainConfig = useChainConfig(chain);
   const toChainConfig = useChainConfig(toAddressChain || CHAIN.ETHEREUM);
 
@@ -193,11 +200,12 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
 
         <ToAssetSelector
           title={t('assetSelector.choose_token_crosschain')}
-          assets={toOptions}
+          assets={toAssets}
           selectedAsset={toAsset}
           onSelectAsset={handleSelectToAsset}
           value={offer?.exchangeRate}
           isFetching={showLoading}
+          searchTokenList={toOptions}
         />
 
         <Spacing h={20} />

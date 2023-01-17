@@ -43,32 +43,40 @@ import { CHAIN } from 'constants/chainConstants';
 import AssetSelectorContent from './AssetSelectorContent';
 
 type Props = {|
+  visible?: boolean,
+  onCloseModal?: (val: boolean) => void,
   tokens: AssetOption[],
   onSelectToken: (asset: AssetOption) => mixed,
   collectibles?: Collectible[],
   onSelectCollectible?: (collectible: Collectible) => mixed,
   title?: string,
   autoFocus?: boolean,
-  isFromSelect?: boolean,
   chain?: Chain | null,
+  searchTokenList?: any,
 |};
 
 const AssetSelectorModal = ({
+  visible = true,
+  onCloseModal,
   tokens,
   collectibles,
   onSelectToken,
   onSelectCollectible,
   title,
   autoFocus = false,
-  isFromSelect,
   chain,
+  searchTokenList,
 }: Props) => {
   const { t } = useTranslationWithPrefix('assetSelector');
   const colors = useThemeColors();
   const [selectedAssetChain, setSelectedAssetChain] = React.useState(chain);
 
   const close = () => {
-    Modal.closeAll();
+    if (onCloseModal) {
+      onCloseModal(false);
+    } else {
+      Modal.closeAll();
+    }
     Keyboard.dismiss();
   };
 
@@ -88,12 +96,11 @@ const AssetSelectorModal = ({
 
   return (
     // eslint-disable-next-line i18next/no-literal-string
-    <RNModal animationType="slide" visible style={{ backgroundColor: colors.basic050 }}>
+    <RNModal animationType="slide" visible={visible} style={{ backgroundColor: colors.basic050 }}>
       <Container>
         <HeaderBlock leftItems={[{ close: true }]} centerItems={[{ title }]} onClose={close} noPaddingTop />
 
         <AssetSelectorContent
-          isFromSelect={isFromSelect}
           tokens={tokens}
           selectedAssetChain={selectedAssetChain}
           onSelectAssetChain={setSelectedAssetChain}
@@ -101,6 +108,7 @@ const AssetSelectorModal = ({
           collectibles={collectibles}
           onSelectCollectible={selectCollectible}
           autoFocus={autoFocus}
+          searchTokenList={searchTokenList}
         />
       </Container>
     </RNModal>

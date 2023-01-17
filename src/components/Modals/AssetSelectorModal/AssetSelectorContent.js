@@ -50,7 +50,7 @@ type Props = {|
   autoFocus?: boolean,
   selectedAssetChain: ?Chain,
   onSelectAssetChain: (val: ?Chain) => void,
-  isFromSelect?: boolean,
+  searchTokenList?: any,
 |};
 
 const AssetSelectorContent = ({
@@ -61,11 +61,17 @@ const AssetSelectorContent = ({
   autoFocus = false,
   selectedAssetChain,
   onSelectAssetChain,
-  isFromSelect,
+  searchTokenList,
 }: Props) => {
   const [query, setQuery] = React.useState('');
 
   const tokenFiltered = selectedAssetChain ? tokens?.filter((res) => res.chain === selectedAssetChain) : tokens;
+  const searchSelectedChain = selectedAssetChain
+    ? searchTokenList?.filter((res) => res.chain === selectedAssetChain)
+    : searchTokenList;
+
+  const searchFiltered = searchSelectedChain ?? tokenFiltered;
+
   const collectibleFiltered = selectedAssetChain
     ? collectibles?.filter((res) => res.chain === selectedAssetChain)
     : collectibles;
@@ -112,7 +118,6 @@ const AssetSelectorContent = ({
 
       {!showSearchResults && (
         <DefaultAssetList
-          isFromSelect={isFromSelect}
           tokens={tokenFiltered}
           onSelectToken={onSelectToken}
           collectibles={collectibleFiltered}
@@ -122,7 +127,7 @@ const AssetSelectorContent = ({
 
       {showSearchResults && (
         <SearchResultAssetList
-          tokens={tokenFiltered}
+          tokens={searchFiltered}
           onSelectToken={onSelectToken}
           collectibles={collectibleFiltered}
           onSelectCollectible={onSelectCollectible}
