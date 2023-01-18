@@ -1122,7 +1122,7 @@
       "unsupportedRequestCallRequestType": "Unsupported Call Request type."
     },
     "paragraph":{
-      "undeploy_warning_1": "You are connecting to a wallet that&apos;s undeployed, you will not be able to execute any transaction, go to ",
+      "undeploy_warning_1": "You are connecting to a wallet that's undeployed, you will not be able to execute any transaction, go to ",
       "deploy_manager": "Wallet Manager",
       "undeploy_warning_2": " to deploy.",
       "archanova_warning": "Using Pillar v1 (Archanova) account you can only connect on Ethereum Mainnet network."

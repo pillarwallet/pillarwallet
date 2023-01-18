@@ -1050,7 +1050,7 @@
       "unsupportedRequestCallRequestType": "不支持的呼叫请求类型。"
     },
     "paragraph":{
-      "undeploy_warning_1": "您正在连接到一个未部署的钱包，您将无法执行任何交易，请转到钱包管理器进行部署。",
+      "undeploy_warning_1": "您正在连接到一个未部署的钱包，您将无法执行任何交易，请转到",
       "deploy_manager": "钱包管理器",
       "undeploy_warning_2": "部署。",
       "archanova_warning": "使用 Pillar v1 (Archanova) 帐户，您只能连接到以太坊主网网络。"

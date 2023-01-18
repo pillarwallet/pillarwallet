@@ -54,6 +54,28 @@ interface Props {
   onChangeChain: (chain: Chain) => void;
 }
 
+const useChains = (): any[] => {
+  const chains = useSupportedChains();
+  const config = useChainsConfig();
+  const accounts = useWalletConnectAccounts();
+  const activeAccount: Account | any = getActiveAccount(accounts);
+  const isActiveEtherspotAccount = isEtherspotAccount(activeAccount);
+  const etherspotAccount = findFirstEtherspotAccount(accounts);
+
+  const chainTabs = chains.map((chain) => {
+    const { state } = etherspotAccount.extra[chain];
+    return {
+      key: chain,
+      chain,
+      value: config[chain].title,
+      label: config[chain].titleShort,
+      icon: config[chain].iconName,
+      isDeployed: isActiveEtherspotAccount ? (state === 'Deployed' ? true : false) : true,
+    };
+  });
+  return chainTabs;
+};
+
 const WalletConnectSwitchNetwork: FC<Props> = ({ chain, onChangeChain }) => {
   const colors = useThemeColors();
   const chains = useChains();
@@ -205,28 +227,6 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ chain, onChangeChain }) => {
 };
 
 export default WalletConnectSwitchNetwork;
-
-const useChains = (): any[] => {
-  const chains = useSupportedChains();
-  const config = useChainsConfig();
-  const accounts = useWalletConnectAccounts();
-  const activeAccount: Account | any = getActiveAccount(accounts);
-  const isActiveEtherspotAccount = isEtherspotAccount(activeAccount);
-  const etherspotAccount = findFirstEtherspotAccount(accounts);
-
-  const chainTabs = chains.map((chain) => {
-    const { state } = etherspotAccount.extra[chain];
-    return {
-      key: chain,
-      chain,
-      value: config[chain].title,
-      label: config[chain].titleShort,
-      icon: config[chain].iconName,
-      isDeployed: isActiveEtherspotAccount ? (state === 'Deployed' ? true : false) : true,
-    };
-  });
-  return chainTabs;
-};
 
 const styles = StyleSheet.create({
   container: {
