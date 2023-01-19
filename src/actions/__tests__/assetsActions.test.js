@@ -25,7 +25,7 @@ import ReduxAsyncQueue from 'redux-async-queue';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 
 // constants
-import { ASSET_CATEGORY, SET_CHAIN_SUPPORTED_ASSETS } from 'constants/assetsConstants';
+import { ASSET_CATEGORY, SET_CHAIN_SUPPORTED_ASSETS, SET_CHAIN_POPULAR_ASSETS } from 'constants/assetsConstants';
 import { SET_ACCOUNT_ASSETS_BALANCES, SET_FETCHING_ASSETS_BALANCES } from 'constants/assetsBalancesConstants';
 import { INITIAL_REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { CHAIN } from 'constants/chainConstants';
@@ -114,6 +114,7 @@ describe('Assets actions', () => {
       { type: SET_FETCHING_ASSETS_BALANCES, payload: true },
       { type: SET_FETCHING_ASSETS_BALANCES, payload: false },
       { type: SET_CHAIN_SUPPORTED_ASSETS, payload: supportedAssetsPayload },
+      { type: SET_CHAIN_POPULAR_ASSETS, payload: supportedAssetsPayload },
       { type: SET_ACCOUNT_ASSETS_BALANCES, payload: updateBalancesPayload },
     ];
 

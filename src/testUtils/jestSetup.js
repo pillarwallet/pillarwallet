@@ -481,6 +481,7 @@ jest.setMock('services/etherspot', {
   getAccounts: jest.fn(),
   getAccountPerChains: () => ({ ethereum: mockEtherspotApiAccount, xdai: null, binance: null, polygon: null }),
   getSupportedAssets: (chain) => Promise.resolve(chain === CHAIN.ETHEREUM ? mockSupportedAssets : []),
+  getEtherspotPopularTokens: (chain) => Promise.resolve(chain === CHAIN.ETHEREUM ? mockSupportedAssets : []),
   getStableAssets: (chain) => Promise.resolve(chain === CHAIN.ETHEREUM ? mockStableAssets : []),
   getBalances: mockEtherspotGetBalances,
   getAccountTotalBalances: () => Promise.resolve(),

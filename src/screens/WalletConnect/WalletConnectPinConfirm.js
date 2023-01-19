@@ -189,6 +189,8 @@ const WalletConnectPinConfirmScreeen = ({ resetIncorrectPassword, useBiometrics,
         emoji: 'eyes',
       });
     }
+
+    dismissScreen();
   };
 
   const onNavigationBack = () => {

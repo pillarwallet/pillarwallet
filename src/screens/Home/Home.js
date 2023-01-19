@@ -78,6 +78,7 @@ import AssetsSection from './AssetsSection';
 import FloatingActions from './FloatingActions';
 import { useAccountCollectibleCounts } from './utils';
 import AppsButton from './AppsButton';
+import TransactionNotification from './components/TransactionNotification';
 
 // Redux
 import { fetchNativeIntegration } from '../../redux/actions/native-integration-actions';
@@ -271,6 +272,8 @@ function Home() {
             <Spacing h={13} />
 
             <GovernanceCallBanner />
+
+            <TransactionNotification />
 
             <Banner screenName={screenName} bottomPosition={false} />
 
