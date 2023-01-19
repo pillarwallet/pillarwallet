@@ -65,7 +65,7 @@ import { useActiveAccount } from 'selectors';
 import FromAssetSelector from './FromAssetSelector';
 import ToAssetSelector from './ToAssetSelector';
 import OfferCard from './OfferCard';
-import { useFromAssets, useToAssets, useOffersQuery, sortOffers, useGasFeeAssets, useToOwnAssets } from './utils';
+import { useFromAssets, useToAssets, useOffersQuery, sortOffers, useGasFeeAssets, useToPopularAssets } from './utils';
 import GasFeeAssetSelection from './GasFeeAssetSelection';
 
 interface Props {
@@ -98,7 +98,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
 
   const fromOptions = useFromAssets();
   const toOptions = useToAssets(chain);
-  const toAssets = useToOwnAssets(chain, fromAddress, fromOptions);
+  const toAssets = useToPopularAssets(chain);
 
   const gasFeeAssets = useGasFeeAssets(chain);
 
@@ -109,10 +109,13 @@ function Exchange({ fetchExchangeTitle }: Props) {
     [fromOptions, fromAddress, chain],
   );
 
-  const toAsset = React.useMemo(
-    () => toOptions.find((a) => a.chain === chain && addressesEqual(a.address, toAddress)),
-    [toAssets, toAddress, chain],
-  );
+  const toAsset = React.useMemo(() => {
+    const asset = toAssets.find((a) => a.chain === chain && addressesEqual(a.address, toAddress));
+    if (!asset) {
+      return toOptions.find((a) => a.chain === chain && addressesEqual(a.address, toAddress));
+    }
+    return asset;
+  }, [toAssets, toAddress, chain]);
 
   const offersQuery = useOffersQuery(chain, fromAsset, toAsset, debouncedFromValue);
   const offers = sortOffers(offersQuery.data);
