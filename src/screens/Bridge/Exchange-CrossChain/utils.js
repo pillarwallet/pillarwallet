@@ -24,7 +24,13 @@ import { BigNumber } from 'bignumber.js';
 import { orderBy } from 'lodash';
 
 // Selectors
-import { useRootSelector, useSupportedAssetsPerChain, useRatesPerChain, useFiatCurrency } from 'selectors';
+import {
+  useRootSelector,
+  useSupportedAssetsPerChain,
+  usePopularAssetsPerChain,
+  useRatesPerChain,
+  useFiatCurrency,
+} from 'selectors';
 import { useSupportedChains } from 'selectors/chains';
 import { accountAssetsPerChainSelector } from 'selectors/assets';
 import { accountWalletAssetsBalancesSelector } from 'selectors/balances';
@@ -167,19 +173,31 @@ export function useToAssets(chain: ?Chain) {
   }, [chain, supportedAssetsPerChain, walletBalancesPerChain, ratesPerChain, currency]);
 }
 
-export function useToOwnAssets(chain: ?Chain, address: string, fromAssets: any[], isCrossChain?: boolean) {
+export function useToPopularAssets(chain: ?Chain, isCrossChain?: boolean): AssetOption[] {
+  const supportedChains = useSupportedChains();
+  const filteredSupportedList = supportedChains.filter((chainNm: Chain) => chainNm !== chain);
+
+  const popularAssetsPerChain = usePopularAssetsPerChain();
+  const walletBalancesPerChain = useRootSelector(accountWalletAssetsBalancesSelector);
+  const ratesPerChain = useRatesPerChain();
+  const currency = useFiatCurrency();
+
   return React.useMemo(() => {
-    if (!chain || !address || !fromAssets) return null;
-    const arr: any = [...fromAssets];
     if (isCrossChain) {
-      return arr?.filter((asset) => asset.chain !== chain);
+      return filteredSupportedList.flatMap((chainNm) =>
+        getExchangeToAssetOptions(chainNm, popularAssetsPerChain, walletBalancesPerChain, ratesPerChain, currency),
+      );
     }
-    const index = arr?.map((asset) => asset.chain + asset.address)?.indexOf(chain + address);
-    if (index > -1) {
-      arr.splice(index, 1);
-    }
-    return arr?.filter((asset) => asset.chain === chain);
-  }, [chain, address, fromAssets, isCrossChain]);
+    return getExchangeToAssetOptions(chain, popularAssetsPerChain, walletBalancesPerChain, ratesPerChain, currency);
+  }, [
+    isCrossChain,
+    chain,
+    popularAssetsPerChain,
+    walletBalancesPerChain,
+    ratesPerChain,
+    currency,
+    filteredSupportedList,
+  ]);
 }
 
 function getExchangeToAssetOptions(
