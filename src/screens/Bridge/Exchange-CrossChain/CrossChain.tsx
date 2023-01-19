@@ -52,7 +52,7 @@ import {
   useToAssetsCrossChain,
   useCrossChainBuildTransactionQuery,
   useGasFeeAssets,
-  useToOwnAssets,
+  useToPopularAssets,
 } from './utils';
 import OfferCard from './OfferCard';
 import GasFeeAssetSelection from './GasFeeAssetSelection';
@@ -88,7 +88,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
 
   const fromOptions = useFromAssets();
   const toOptions = useToAssetsCrossChain(chain);
-  const toAssets = useToOwnAssets(chain, fromAddress, fromOptions, true);
+  const toAssets = useToPopularAssets(chain, true);
   const chainConfig = useChainConfig(chain);
   const toChainConfig = useChainConfig(toAddressChain || CHAIN.ETHEREUM);
 
@@ -98,20 +98,23 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
     dispatch(resetEstimateTransactionAction());
   }, []);
 
-  React.useEffect(() => {
-    if (!fromInputRef || fromValue) return;
-    fromInputRef.current?.focus();
-  }, [fromAddress, toAddress]);
-
   const fromAsset = React.useMemo(
     () => fromOptions.find((a) => a.chain === chain && addressesEqual(a.address, fromAddress)),
     [fromOptions, fromAddress, chain],
   );
 
-  const toAsset = React.useMemo(
-    () => toOptions?.find((a) => a.chain === toAddressChain && addressesEqual(a.address, toAddress)),
-    [toOptions, toAddress, chain],
-  );
+  const toAsset = React.useMemo(() => {
+    const asset = toAssets?.find((a) => a.chain === toAddressChain && addressesEqual(a.address, toAddress));
+    if (!asset) {
+      return toOptions?.find((a) => a.chain === toAddressChain && addressesEqual(a.address, toAddress));
+    }
+    return asset;
+  }, [toOptions, toAddress, chain]);
+
+  React.useEffect(() => {
+    if (!fromInputRef || fromValue) return;
+    fromInputRef.current?.focus();
+  }, [fromAsset, toAsset]);
 
   const customCrosschainTitle = !fromAsset
     ? t('exchangeContent.title.crossChain')

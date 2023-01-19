@@ -78,9 +78,7 @@ const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollect
           name={token.name}
           iconUrl={token.iconUrl}
           balance={wrapBigNumberOrNil(token.balance?.balance)}
-          onPress={async () => {
-            await onSelectToken(token);
-          }}
+          onPress={() => onSelectToken(token)}
         />
       );
     }
@@ -117,6 +115,8 @@ const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollect
       keyboardShouldPersistTaps="always"
       ListEmptyComponent={renderEmptyState()}
       contentInsetAdjustmentBehavior="scrollableAxes"
+      removeClippedSubviews
+      scrollEventThrottle={1}
       contentContainerStyle={styles.contentContainer}
     />
   );
