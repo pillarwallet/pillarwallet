@@ -82,7 +82,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const [fromAddress, setFromAddress] = React.useState(initialFromAddress);
   const [toAddress, setToAddress] = React.useState(null);
   const [fromValue, setFromValue] = React.useState(null);
-  const [debouncedFromValue] = useDebounce(fromValue, 800);
+  const [debouncedFromValue] = useDebounce(fromValue, 500);
 
   const [failEstimateOffer, setFailEstimateOffer] = React.useState(false);
 
