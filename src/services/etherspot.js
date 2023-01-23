@@ -978,12 +978,11 @@ export class EtherspotService {
 
     try {
       const quotes = await sdk.getCrossChainQuotes({
-        fromTokenAddress: fromAsset.address === ADDRESS_ZERO ? ROOT_TOKEN_ADDRESS : fromAsset.address,
+        fromTokenAddress: fromAsset.address,
         fromChainId: mapChainToChainId(fromAsset.chain),
-        toTokenAddress: toAsset.address === ADDRESS_ZERO ? ROOT_TOKEN_ADDRESS : toAsset.address,
+        toTokenAddress: toAsset.address,
         toChainId: mapChainToChainId(toAsset.chain),
         fromAmount: value,
-        serviceProvider: CrossChainServiceProvider.LiFi,
       });
 
       const quote: any = quotes.items[0];
