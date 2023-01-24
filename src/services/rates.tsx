@@ -61,12 +61,15 @@ export const getExchangeTokenPrices = async (
 ): Promise<RatesByAssetAddress | any> => {
   const assetsContractAddresses = assets.map(({ address }) => address);
 
+  if (isEmpty(assetsContractAddresses)) {
+    return;
+  }
+
   const promiseRequest = () => {
     return new Promise(() => {
       (async () => {
         try {
           const result = await etherspotService.fetchExchangeRates(chain, assetsContractAddresses);
-
           await callBack(mapWalletAndExchangePrices(result.items));
         } catch (error) {
           reportErrorLog('Fetch Rates failed: request error', {

@@ -175,7 +175,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const handleSelectToAsset = (asset: AssetOption) => {
     setToAddress(asset.address);
     setToAddressChain(asset.chain);
-    dispatch(fetchSingleChainAssetRatesAction(asset.chain, asset.address));
+    dispatch(fetchSingleChainAssetRatesAction(asset.chain, asset));
   };
 
   const showLoading = buildTractionQuery.isLoading;

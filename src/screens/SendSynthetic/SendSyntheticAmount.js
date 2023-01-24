@@ -65,7 +65,7 @@ import SendContainer from './SendContainer';
 type Props = {
   navigation: NavigationScreenProp<any>,
   isOnline: boolean,
-  fetchSingleEthereumAssetRates: (assetAddress: string) => void,
+  fetchSingleEthereumAssetRates: (asset: Object) => void,
   isFetchingSyntheticAssets: boolean,
   fetchAvailableSyntheticAssets: () => void,
   contacts: Contact[],
@@ -81,7 +81,6 @@ type State = {
   selectedContact: ?Contact,
   assetData: ?AssetOption,
 };
-
 
 class SendSyntheticAmount extends React.Component<Props, State> {
   source: string;
@@ -131,7 +130,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     const { navigation } = this.props;
     const { ethAddress } = value ?? {};
 
-    const userInfo = !!ethAddress && await archanovaService.searchAccount(ethAddress).catch(null);
+    const userInfo = !!ethAddress && (await archanovaService.searchAccount(ethAddress).catch(null));
 
     if (userInfo) {
       this.setReceiver(value);
@@ -173,7 +172,12 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     const { fetchSingleEthereumAssetRates } = this.props;
     let updatedState = { value, assetData };
     const assetAddress = assetData?.address ?? assetData?.contractAddress;
-    if (value && assetAddress) fetchSingleEthereumAssetRates(assetAddress);
+    if (value && assetAddress) {
+      fetchSingleEthereumAssetRates({
+        ...assetData,
+        address: assetAddress,
+      });
+    }
 
     if (intentError) updatedState = { ...updatedState, intentError: null };
     this.setState(updatedState);
@@ -185,12 +189,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
 
   handleFormSubmit = () => {
     const defaultAssetData = this.props.syntheticAssets.find(({ symbol }) => symbol === PLR);
-    const {
-      submitPressed,
-      value,
-      receiver,
-      receiverEnsName,
-    } = this.state;
+    const { submitPressed, value, receiver, receiverEnsName } = this.state;
     let { assetData } = this.state;
     assetData = assetData || defaultAssetData;
     if (submitPressed || !assetData || !value || !receiver) return;
@@ -239,14 +238,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
 
   render() {
     const { isOnline, contacts, syntheticAssets, isFetchingSyntheticAssets } = this.props;
-    const {
-      value,
-      submitPressed,
-      intentError,
-      selectedContact,
-      receiver,
-      assetData,
-    } = this.state;
+    const { value, submitPressed, intentError, selectedContact, receiver, assetData } = this.state;
 
     const defaultAssetData: AssetOption = syntheticAssets.find(({ symbol }) => symbol === PLR) || syntheticAssets[0];
 
@@ -254,7 +246,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     const showNextButton = showFeesLabel;
 
     const customBalances = syntheticAssets
-      .map(asset => ({ address: asset.address, balance: asset.balance?.syntheticBalance || '0' }))
+      .map((asset) => ({ address: asset.address, balance: asset.balance?.syntheticBalance || '0' }))
       .reduce((balances, assetBalance) => {
         balances[addressAsKey(assetBalance.address)] = assetBalance;
         return balances;
@@ -293,7 +285,9 @@ class SendSyntheticAmount extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  session: { data: { isOnline } },
+  session: {
+    data: { isOnline },
+  },
   synthetics: { isFetching: isFetchingSyntheticAssets },
 }: RootReducerState): $Shape<Props> => ({
   isOnline,
@@ -311,9 +305,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  fetchSingleEthereumAssetRates: (
-    assetAddress: string,
-  ) => dispatch(fetchSingleChainAssetRatesAction(CHAIN.ETHEREUM, assetAddress)),
+  fetchSingleEthereumAssetRates: (asset: Object) => dispatch(fetchSingleChainAssetRatesAction(CHAIN.ETHEREUM, asset)),
   fetchAvailableSyntheticAssets: () => dispatch(fetchAvailableSyntheticAssetsAction()),
 });
 

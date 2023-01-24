@@ -27,8 +27,8 @@ import { CHAIN } from 'constants/chainConstants';
 import { getExchangeRates } from 'services/assets';
 
 // utils
-import { findAssetByAddress, getAssetsAsList, mapWalletAssetsBalancesIntoAssetsByAddress } from 'utils/assets';
-import { reportErrorLog, logBreadcrumb } from 'utils/common';
+import { getAssetsAsList, mapWalletAssetsBalancesIntoAssetsByAddress } from 'utils/assets';
+import { reportErrorLog } from 'utils/common';
 
 // selectors
 import { supportedAssetsPerChainSelector, popularAssetsPerChainSelector } from 'selectors';
@@ -112,6 +112,7 @@ export const fetchAssetsRatesAction = () => {
       try {
         await getExchangeRates(chain, getAssetsAsList(chainAssetsByAddress), async (rates) => {
           if (rates) await dispatch(updateRatesAction(chain, rates));
+          dispatch(setIsFetchingRatesAction(false));
         });
       } catch (error) {
         reportErrorLog('fetchAssetsRatesAction failed', { error, chain, chainAssetsByAddress });
@@ -122,7 +123,7 @@ export const fetchAssetsRatesAction = () => {
   };
 };
 
-export const fetchSingleChainAssetRatesAction = (chain: Chain, assetAddress: string) => {
+export const fetchSingleChainAssetRatesAction = (chain: Chain, asset: Object) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       rates: { isFetching },
@@ -135,25 +136,12 @@ export const fetchSingleChainAssetRatesAction = (chain: Chain, assetAddress: str
 
     dispatch(setIsFetchingRatesAction(true));
 
-    const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
-    const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
-    const popularAssetsPerChain = popularAssetsPerChainSelector(getState());
-    const chainPopularAssets = popularAssetsPerChain[chain] ?? [];
-
-    const asset =
-      findAssetByAddress(chainSupportedAssets, assetAddress) || findAssetByAddress(chainPopularAssets, assetAddress);
-
-    if (!asset) {
-      dispatch(setIsFetchingRatesAction(false));
-      logBreadcrumb('fetchSingleChainAssetRatesAction', 'failed: cannot find asset', { assetAddress });
-      return;
-    }
-
     try {
       await getExchangeRates(chain, [asset], async (rates) => {
         if (isEmpty(rates)) {
           dispatch(setIsFetchingRatesAction(false));
         } else {
+          dispatch(setIsFetchingRatesAction(false));
           await dispatch(updateRatesAction(chain, rates));
         }
       });
