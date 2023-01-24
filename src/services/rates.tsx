@@ -73,7 +73,6 @@ export const getExchangeTokenPrices = async (
             error,
             assetsContractAddresses,
           });
-          callBack(null);
         }
       })();
     });
@@ -81,6 +80,7 @@ export const getExchangeTokenPrices = async (
 
   allSettled([promiseRequest()]);
   allSettled.shim();
+  return;
 };
 
 const mapPricesToRates = (prices: ExchangePriceEntry | any): Rates | any => {

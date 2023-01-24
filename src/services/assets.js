@@ -296,7 +296,6 @@ export async function getExchangeRates(chain: string, assets: Asset[], callBack:
     await getExchangeTokenPrices(chain, assets, async (rates) => {
       if (!rates) {
         logBreadcrumb('getExchangeRates', 'failed: no rates data', { rates, assets });
-        callBack(null);
         return null;
       }
 
@@ -314,7 +313,7 @@ export async function getExchangeRates(chain: string, assets: Asset[], callBack:
     });
   }
 
-  callBack(null);
+  return null;
 }
 
 export function transferSigned(signed: ?string) {
