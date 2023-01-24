@@ -149,8 +149,6 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
 
     const amount: any = parseInt(toAmount) / (decimalValue ?? 1);
 
-    dispatch(fetchSingleChainAssetRatesAction(toAddressChain, toAddress));
-
     return {
       provider: provider === 'lifi' ? 'Lifi' : provider,
       chain,
@@ -177,6 +175,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const handleSelectToAsset = (asset: AssetOption) => {
     setToAddress(asset.address);
     setToAddressChain(asset.chain);
+    dispatch(fetchSingleChainAssetRatesAction(asset.chain, asset.address));
   };
 
   const showLoading = buildTractionQuery.isLoading;
