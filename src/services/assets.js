@@ -37,7 +37,7 @@ import ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM from 'abi/erc721_safeTransferFrom.
 import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
 
 // services
-import { getExchangeTokenPrices, getNativeTokenPrice } from 'services/rates';
+import { getExchangeTokenPrices } from 'services/rates';
 
 // types
 import type { Asset } from 'models/Asset';
@@ -279,38 +279,41 @@ export function fetchRinkebyETHBalance(walletAddress: Address): Promise<string> 
   return provider.getBalance(walletAddress).then(utils.formatEther);
 }
 
-export async function getExchangeRates(chain: string, assets: Asset[]): Promise<?RatesByAssetAddress> {
+export async function getExchangeRates(chain: string, assets: Asset[], callBack: any): Promise<?RatesByAssetAddress> {
   if (isEmpty(assets)) {
     logBreadcrumb('getExchangeRates', 'received empty assets', { assets });
   }
 
-  // $FlowFixMe
-  let rates = !isEmpty(assets) ? await getExchangeTokenPrices(chain, assets) : {};
-
   const nativeAssetAddress = nativeAssetPerChain[chain].address;
   const listHasNativeAsset = assets.some(({ address }) => addressesEqual(address, nativeAssetAddress));
 
-  // if empty assets still proceed to fetch native token rate for deployment calculations
-  if (listHasNativeAsset || isEmpty(assets)) {
-    const nativeAssetPrice = await getNativeTokenPrice(chain);
-    if (!isEmpty(nativeAssetPrice)) {
-      // $FlowFixMe
-      rates = { ...rates, [addressAsKey(nativeAssetAddress)]: nativeAssetPrice };
-    }
+  if (!listHasNativeAsset && isEmpty(assets)) {
+    assets.push(nativeAssetPerChain[chain]);
   }
 
-  if (!rates) {
-    logBreadcrumb('getExchangeRates', 'failed: no rates data', { rates, assets });
-    return null;
+  // $FlowFixMe
+  if (!isEmpty(assets)) {
+    await getExchangeTokenPrices(chain, assets, async (rates) => {
+      if (!rates) {
+        logBreadcrumb('getExchangeRates', 'failed: no rates data', { rates, assets });
+        return null;
+      }
+
+      const reduceRatesObj = Object.keys(rates).reduce(
+        (mappedData: RatesByAssetAddress, returnedAssetAddress: string) => ({
+          ...mappedData,
+          [addressAsKey(returnedAssetAddress)]: rates[returnedAssetAddress],
+        }),
+        {},
+      );
+
+      await callBack(reduceRatesObj);
+
+      return reduceRatesObj;
+    });
   }
 
-  return Object.keys(rates).reduce(
-    (mappedData: RatesByAssetAddress, returnedAssetAddress: string) => ({
-      ...mappedData,
-      [addressAsKey(returnedAssetAddress)]: rates[returnedAssetAddress],
-    }),
-    {},
-  );
+  return null;
 }
 
 export function transferSigned(signed: ?string) {

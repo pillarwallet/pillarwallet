@@ -34,7 +34,7 @@ import { CHAIN } from 'constants/chainConstants';
 import etherspotService from 'services/etherspot';
 
 // test utils
-import { mockEthAddress, mockPlrAddress, mockSupportedAssets } from 'testUtils/jestSetup';
+import { mockEthAddress, mockPlrAddress, mockSupportedAssets, mockPopularAssets } from 'testUtils/jestSetup';
 
 const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
 
@@ -79,7 +79,7 @@ Object.defineProperty(mockWallet, 'sendTransaction', {
 });
 
 const initialState = {
-  assets: { supportedAssets: { ethereum: mockSupportedAssets } },
+  assets: { supportedAssets: { ethereum: mockSupportedAssets }, popularAssets: { ethereum: mockPopularAssets } },
   txCount: { data: { lastCount: 0, lastNonce: 0 } },
   history: { data: {} },
   wallet: { data: { address: mockWallet.address } },
@@ -110,11 +110,16 @@ describe('Assets actions', () => {
       assets: mockSupportedAssets,
     };
 
+    const popularAssetsPayload = {
+      chain: CHAIN.ETHEREUM,
+      assets: mockPopularAssets,
+    };
+
     const expectedActions = [
       { type: SET_FETCHING_ASSETS_BALANCES, payload: true },
       { type: SET_FETCHING_ASSETS_BALANCES, payload: false },
       { type: SET_CHAIN_SUPPORTED_ASSETS, payload: supportedAssetsPayload },
-      { type: SET_CHAIN_POPULAR_ASSETS, payload: supportedAssetsPayload },
+      { type: SET_CHAIN_POPULAR_ASSETS, payload: popularAssetsPayload },
       { type: SET_ACCOUNT_ASSETS_BALANCES, payload: updateBalancesPayload },
     ];
 
