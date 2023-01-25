@@ -35,7 +35,6 @@ import {
   Transaction as EtherspotTransaction,
   Currencies as EtherspotCurrencies,
   AccountStates,
-  CrossChainServiceProvider,
   RateData,
 } from 'etherspot';
 import { map } from 'rxjs/operators';
@@ -63,13 +62,7 @@ import { mapToEthereumTransactions } from 'utils/transactions';
 import { getCaptureFee } from 'utils/exchange';
 
 // constants
-import {
-  ETH,
-  ADDRESS_ZERO,
-  ROOT_TOKEN_ADDRESS,
-  ETHERSPOT_STABLE_COIN,
-  ETHERSPOT_POPULAR_COIN,
-} from 'constants/assetsConstants';
+import { ETH, ADDRESS_ZERO, ETHERSPOT_STABLE_COIN, ETHERSPOT_POPULAR_COIN } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 import { PROJECT_KEY } from 'constants/etherspotConstants';
@@ -978,12 +971,11 @@ export class EtherspotService {
 
     try {
       const quotes = await sdk.getCrossChainQuotes({
-        fromTokenAddress: fromAsset.address === ADDRESS_ZERO ? ROOT_TOKEN_ADDRESS : fromAsset.address,
+        fromTokenAddress: fromAsset.address,
         fromChainId: mapChainToChainId(fromAsset.chain),
-        toTokenAddress: toAsset.address === ADDRESS_ZERO ? ROOT_TOKEN_ADDRESS : toAsset.address,
+        toTokenAddress: toAsset.address,
         toChainId: mapChainToChainId(toAsset.chain),
         fromAmount: value,
-        serviceProvider: CrossChainServiceProvider.LiFi,
       });
 
       const quote: any = quotes.items[0];

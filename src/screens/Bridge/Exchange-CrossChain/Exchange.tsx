@@ -152,7 +152,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
 
   const handleSelectToAsset = (asset: AssetOption) => {
     setToAddress(asset.address);
-    dispatch(fetchSingleChainAssetRatesAction(asset.chain, asset.address));
+    dispatch(fetchSingleChainAssetRatesAction(asset.chain, asset));
   };
 
   const handleOfferPress = async (selectedOffer: ExchangeOffer) => {

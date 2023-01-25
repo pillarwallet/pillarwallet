@@ -607,6 +607,7 @@ export const fetchAssetsBalancesAction = () => {
       session: {
         data: { isOnline },
       },
+      assets: { popularAssets },
     } = getState();
 
     const activeAccount = getActiveAccount(accounts);
@@ -615,7 +616,15 @@ export const fetchAssetsBalancesAction = () => {
     dispatch({ type: SET_FETCHING_ASSETS_BALANCES, payload: true });
 
     dispatch(fetchSupportedAssetsAction());
-    dispatch(fetchPopularAssetsAction());
+    if (
+      !popularAssets?.[CHAIN.POLYGON] ||
+      !popularAssets?.[CHAIN.ETHEREUM] ||
+      !popularAssets?.[CHAIN.XDAI] ||
+      !popularAssets?.[CHAIN.BINANCE] ||
+      !popularAssets?.[CHAIN.OPTIMISM]
+    ) {
+      dispatch(fetchPopularAssetsAction());
+    }
 
     dispatch(fetchAccountWalletBalancesAction(activeAccount));
 

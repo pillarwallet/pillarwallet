@@ -22,6 +22,7 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 import { BigNumber } from 'bignumber.js';
+import { useDebounce } from 'use-debounce';
 
 // Components
 import { Container, Content, Spacing } from 'components/layout/Layout';
@@ -81,6 +82,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const [fromAddress, setFromAddress] = React.useState(initialFromAddress);
   const [toAddress, setToAddress] = React.useState(null);
   const [fromValue, setFromValue] = React.useState(null);
+  const [debouncedFromValue] = useDebounce(fromValue, 500);
 
   const [failEstimateOffer, setFailEstimateOffer] = React.useState(false);
 
@@ -124,7 +126,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
     fetchCrossChainTitle && fetchCrossChainTitle(customCrosschainTitle);
   }, [chain, customCrosschainTitle, fetchCrossChainTitle, fromAddress, toAddress]);
 
-  const buildTractionQuery = useCrossChainBuildTransactionQuery(fromAsset, toAsset, fromValue);
+  const buildTractionQuery = useCrossChainBuildTransactionQuery(fromAsset, toAsset, debouncedFromValue);
   const buildTransactionData = buildTractionQuery.data;
   const buildTransactionFetched = buildTractionQuery.isFetched;
 
@@ -173,7 +175,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const handleSelectToAsset = (asset: AssetOption) => {
     setToAddress(asset.address);
     setToAddressChain(asset.chain);
-    dispatch(fetchSingleChainAssetRatesAction(asset.chain, asset.address));
+    dispatch(fetchSingleChainAssetRatesAction(asset.chain, asset));
   };
 
   const showLoading = buildTractionQuery.isLoading;
