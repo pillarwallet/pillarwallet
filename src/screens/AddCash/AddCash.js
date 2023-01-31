@@ -69,10 +69,8 @@ const AddCash = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [value, setValue] = React.useState('0');
-  const [inUS, setinUS] = React.useState(false);
+  const [inUS, setinUS] = React.useState(null);
   const [ref, setRef] = React.useState(null);
-
-  // console.log('ref@@@@', ref?.focus());
 
   const fiatCurrency = useFiatCurrency();
   const colors = useThemeColors();
@@ -86,6 +84,9 @@ const AddCash = () => {
     if (isUsResident) {
       setinUS(true);
       setCurrencySymbol('$');
+    } else {
+      setinUS(false);
+      setCurrencySymbol(getCurrencySymbol(fiatCurrency));
     }
   };
 
@@ -112,11 +113,15 @@ const AddCash = () => {
         }}
       />
     ));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (ref && visibleModal && Platform.OS === 'android') {
-    ref.focus();
-  }
+  React.useEffect(() => {
+    if (ref && visibleModal && Platform.OS === 'android') {
+      ref.focus();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ref, visibleModal, inUS]);
 
   const handleChangeText = (text: string) => {
     const amount = text.replace(currencySymbol, '');
