@@ -181,6 +181,7 @@ const ContactSelectorModalContent = ({ chain, contacts = [], onSelectContact, qu
         onQueryChange={onQueryChange}
         placeholder={tRoot('label.addressSupportedNames')}
         error={!!errorMessage}
+        inputStyle={{ height: 78 }}
         autoFocus
       />
 
