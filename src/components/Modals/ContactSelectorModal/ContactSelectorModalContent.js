@@ -162,13 +162,7 @@ const ContactSelectorModalContent = ({ chain, contacts = [], onSelectContact, qu
 
   const renderSendWarning = () => {
     if (!errorMessage && customContact) {
-      return (
-        <SendWarning
-          warningAccepted={warningAccepted}
-          setWarningAccepted={setWarningAccepted}
-          style={styles.sendWarning}
-        />
-      );
+      return <SendWarning warningAccepted={warningAccepted} setWarningAccepted={setWarningAccepted} />;
     }
 
     return null;
@@ -181,7 +175,8 @@ const ContactSelectorModalContent = ({ chain, contacts = [], onSelectContact, qu
         onQueryChange={onQueryChange}
         placeholder={tRoot('label.addressSupportedNames')}
         error={!!errorMessage}
-        inputStyle={{ height: 78 }}
+        textInputStyle={{ height: 110 }}
+        style={{ paddingBottom: 10 }}
         autoFocus
       />
 
@@ -214,7 +209,7 @@ const styles = {
     paddingVertical: spacing.small,
   },
   sendWarning: {
-    marginTop: spacing.large,
+    marginTop: spacing.small,
   },
 };
 

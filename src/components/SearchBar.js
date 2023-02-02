@@ -42,6 +42,7 @@ type Props = {
   showSearchIcon?: boolean,
   style?: ViewStyleProp,
   inputStyle?: TextStyleProp,
+  textInputStyle?: TextStyleProp,
   inputRef?: React.Ref<typeof RNTextInput>,
   autoFocus?: boolean,
 };
@@ -56,6 +57,7 @@ function SearchInput({
   inputStyle,
   inputRef,
   autoFocus = false,
+  textInputStyle,
 }: Props) {
   const colors = useThemeColors();
 
@@ -64,7 +66,7 @@ function SearchInput({
     onQueryChange(input);
   };
 
-  const inputStyles = [styles.input, { color: error ? colors.negative : colors.text }, inputStyle];
+  const inputStyles = [styles.input, { color: error ? colors.negative : colors.text }, textInputStyle, inputStyle];
 
   return (
     <Container style={style}>
