@@ -31,6 +31,8 @@ import {
   SET_WALLETCONNECT_CONNECTOR_REQUEST,
   ADD_WALLETCONNECT_ACTIVE_CONNECTOR,
   REMOVE_WALLETCONNECT_ACTIVE_CONNECTOR,
+  ETH_SIGN_TYPED_DATA,
+  ETH_SIGN_TYPED_DATA_V4,
 } from 'constants/walletConnectConstants';
 import {
   WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
@@ -373,6 +375,23 @@ export const subscribeToWalletConnectConnectorEventsAction = (connector: WalletC
       if (!callId) {
         dispatch(setWalletConnectErrorAction(t('error.walletConnect.invalidRequest')));
         return;
+      }
+
+      if (method === ETH_SIGN_TYPED_DATA || method === ETH_SIGN_TYPED_DATA_V4) {
+        const { domain } = JSON.parse(params[1]);
+        if (!domain?.chainId) {
+          dispatch(setWalletConnectErrorAction(t('error.walletConnect.cannotDetermineChain', { dAppName: name })));
+          return;
+        }
+
+        if (domain?.chainId !== chainId) {
+          dispatch(setWalletConnectErrorAction(t('error.walletConnect.invalidRequest')));
+          connector.rejectRequest({
+            id: +callId,
+            error: new Error(t('error.walletConnect.requestRejected')),
+          });
+          return;
+        }
       }
 
       const chainID = params[0]?.chainId ? BigNumber(params[0].chainId)?.toNumber() : chainId;
