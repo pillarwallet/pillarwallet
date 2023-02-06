@@ -20,6 +20,7 @@
 import { NavigationActions } from 'react-navigation';
 import t from 'translations/translate';
 import { BigNumber } from 'bignumber.js';
+import { isEmpty } from 'lodash';
 
 // constants
 import {
@@ -68,7 +69,6 @@ import { isLogV2AppEvents } from 'utils/environment';
 // models, types
 import type { WalletConnectCallRequest, WalletConnectConnector, sessionDataProps } from 'models/WalletConnect';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import { isEmpty } from 'lodash';
 
 const setWalletConnectErrorAction = (message: string) => {
   return (dispatch: Dispatch) => {
