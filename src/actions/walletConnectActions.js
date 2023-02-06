@@ -68,6 +68,7 @@ import { isLogV2AppEvents } from 'utils/environment';
 // models, types
 import type { WalletConnectCallRequest, WalletConnectConnector, sessionDataProps } from 'models/WalletConnect';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+import { isEmpty } from 'lodash';
 
 const setWalletConnectErrorAction = (message: string) => {
   return (dispatch: Dispatch) => {
@@ -378,6 +379,10 @@ export const subscribeToWalletConnectConnectorEventsAction = (connector: WalletC
       }
 
       if (method === ETH_SIGN_TYPED_DATA || method === ETH_SIGN_TYPED_DATA_V4) {
+        if (isEmpty(params)) {
+          dispatch(setWalletConnectErrorAction(t('error.walletConnect.cannotDetermineChain', { dAppName: name })));
+          return;
+        }
         const { domain } = JSON.parse(params[1]);
         if (!domain?.chainId) {
           dispatch(setWalletConnectErrorAction(t('error.walletConnect.cannotDetermineChain', { dAppName: name })));
