@@ -380,6 +380,7 @@ export const subscribeToWalletConnectConnectorEventsAction = (connector: WalletC
 
       if (method === ETH_SIGN_TYPED_DATA || method === ETH_SIGN_TYPED_DATA_V4) {
         if (isEmpty(params)) {
+          reportErrorLog('eth_signTypedData failed. params not found in connector.', { payload, peerMeta });
           dispatch(setWalletConnectErrorAction(t('error.walletConnect.cannotDetermineChain', { dAppName: name })));
           return;
         }
