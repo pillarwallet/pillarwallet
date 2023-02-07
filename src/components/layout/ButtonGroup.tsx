@@ -30,23 +30,24 @@ import { spacing } from 'utils/variables';
 
 type Props = {
   items: any[];
-  tabIndex: number;
-  onTabIndexChange: (index: number) => void;
+  tabName: string;
+  onSelectedTabName: (name: string) => void;
 };
 
-export default function ({ items, tabIndex, onTabIndexChange }: Props) {
+export default function ({ items, tabName, onSelectedTabName }: Props) {
   const colors = useThemeColors();
 
   const renderItem = (item, index) => {
     const width = (Dimensions.get('screen').width - spacing.large * 2) / items?.length;
+    const isSelected = item.title === tabName;
 
     return (
       <TouchableOpacity
         key={'tabs__' + index}
-        style={[{ width }, styles.btn, index === tabIndex && { backgroundColor: item.color }]}
-        onPress={() => onTabIndexChange(index)}
+        style={[{ width }, styles.btn, isSelected && { backgroundColor: item.color }]}
+        onPress={() => onSelectedTabName(item.title)}
       >
-        <Text color={index === tabIndex ? colors.control : colors.text}>{item.title}</Text>
+        <Text color={isSelected ? colors.control : colors.text}>{item.title}</Text>
       </TouchableOpacity>
     );
   };

@@ -19,49 +19,28 @@
 */
 
 import * as React from 'react';
-import { FlatList } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import BalanceView from 'components/BalanceView';
-import TokenListItem from 'components/lists/TokenListItem';
-import FiatChangeView from 'components/display/FiatChangeView';
 import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
-import Banner from 'components/Banner/Banner';
 
 // Screens
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 
 // Constants
-import { ASSET, BRIDGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW, ADD_CASH } from 'constants/navigationConstants';
+import { BRIDGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW, ADD_CASH } from 'constants/navigationConstants';
 
 // Selectors
-import {
-  useRootSelector,
-  useFiatCurrency,
-  useIsExchangeAvailable,
-  useActiveAccount,
-  activeAccountAddressSelector,
-} from 'selectors';
-import { useIsPillarPaySupported } from 'selectors/archanova';
+import { useRootSelector, useIsExchangeAvailable, useActiveAccount, activeAccountAddressSelector } from 'selectors';
 
 // Utils
-import { spacing } from 'utils/variables';
 import { isKeyBasedAccount } from 'utils/accounts';
-import { useFromAssets } from 'screens/Bridge/Exchange-CrossChain/utils';
-import { wrapBigNumberOrNil } from 'utils/bigNumber';
-
-// Modals
-import type { Chain } from 'models/Chain';
 
 // Local
-import PillarPaySummary from '../components/PillarPaySummary';
-import { buildAssetDataNavigationParam } from '../utils';
-import { useWalletTotalBalance } from './selectors';
+import WalletTabScrollContent from './WalletTabScrollContent';
 
 type Props = {
   isNavigateToHome?: boolean,
@@ -70,65 +49,17 @@ type Props = {
 function WalletTab({ isNavigateToHome }: Props) {
   const { tRoot } = useTranslationWithPrefix('assets.wallet');
   const navigation = useNavigation();
-  const safeArea = useSafeAreaInsets();
-
-  const totalBalance = useWalletTotalBalance();
-  const currency = useFiatCurrency();
-
-  const assets: any = useFromAssets();
-
-  assets?.sort((a, b) => b?.balance?.balanceInFiat - a?.balance?.balanceInFiat);
 
   const activeAccount = useActiveAccount();
   const accountAddress = useRootSelector(activeAccountAddressSelector);
 
   const isExchangeAvailable = useIsExchangeAvailable();
-  const isPillarPaySupported = useIsPillarPaySupported();
+
+  const [hasPositiveBalance, setHasPositiveBalance] = React.useState(true);
 
   const showReceiveModal = () => {
     Modal.open(() => <ReceiveModal address={accountAddress} />);
   };
-
-  const navigateToAssetDetails = (category: any, chain: Chain) => {
-    const assetData = buildAssetDataNavigationParam(category, chain);
-    navigation.navigate(ASSET, { assetData, isNavigateToHome });
-  };
-
-  const renderListHeader = () => {
-    const { value, change } = totalBalance;
-    return (
-      <ListHeader>
-        <BalanceView balance={totalBalance.value} />
-        {!!change && (
-          <FiatChangeView value={value} change={totalBalance.change} currency={currency} style={styles.balanceChange} />
-        )}
-
-        {isPillarPaySupported && <PillarPaySummary style={styles.pillarPay} />}
-
-        <BannerContent>
-          <Banner screenName="HOME_WALLET" bottomPosition={false} />
-        </BannerContent>
-      </ListHeader>
-    );
-  };
-
-  const renderItem = (token: any) => {
-    return (
-      <TokenListItem
-        chain={token.chain}
-        address={token.address}
-        symbol={token.symbol}
-        name={token.name}
-        iconUrl={token.iconUrl}
-        balance={wrapBigNumberOrNil(token.balance?.balance)}
-        onPress={async () => {
-          navigateToAssetDetails(token, token.chain);
-        }}
-      />
-    );
-  };
-
-  const hasPositiveBalance = totalBalance.value.gt(0);
 
   const buttons = [
     hasPositiveBalance && {
@@ -157,13 +88,7 @@ function WalletTab({ isNavigateToHome }: Props) {
 
   return (
     <Container>
-      <FlatList
-        data={assets}
-        renderItem={({ item }) => renderItem(item)}
-        ListHeaderComponent={renderListHeader()}
-        contentContainerStyle={{ paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
-      />
-
+      <WalletTabScrollContent isNavigateToHome={isNavigateToHome} hasPositiveBalance={setHasPositiveBalance} />
       <FloatingButtons items={buttons} />
     </Container>
   );
@@ -171,25 +96,6 @@ function WalletTab({ isNavigateToHome }: Props) {
 
 export default WalletTab;
 
-const styles = {
-  balanceChange: {
-    marginTop: spacing.extraSmall,
-  },
-  pillarPay: {
-    marginTop: spacing.largePlus,
-  },
-};
-
 const Container = styled.View`
   flex: 1;
-`;
-
-const ListHeader = styled.View`
-  align-items: center;
-  margin-top: ${spacing.largePlus}px;
-  margin-bottom: 40px;
-`;
-
-const BannerContent = styled.View`
-  width: 100%;
 `;

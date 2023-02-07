@@ -36,3 +36,4 @@ export const ETHERSPOT = 'Etherspot';
 export const WALLET_DROPDOWN_REF = 'wallet_dropdown_ref';
 export const TOKENS = 'Tokens';
 export const STABLES = 'Stables';
+export const ALL = 'All';
