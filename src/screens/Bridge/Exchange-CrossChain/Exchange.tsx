@@ -48,6 +48,7 @@ import { getAccountAddress, getAccountType } from 'utils/accounts';
 import { hitSlop50w20h } from 'utils/common';
 import { currentDate, currentTime } from 'utils/date';
 import { getActiveScreenName } from 'utils/navigation';
+import { getAssetRateInFiat } from 'utils/rates';
 
 // Actions
 import { appsFlyerlogEventAction } from 'actions/analyticsActions';
@@ -59,7 +60,7 @@ import type { ExchangeOffer } from 'models/Exchange';
 import type { Chain } from 'models/Chain';
 
 // Selectors
-import { useActiveAccount } from 'selectors';
+import { useActiveAccount, useChainRates, useFiatCurrency } from 'selectors';
 
 // Local
 import FromAssetSelector from './FromAssetSelector';
@@ -116,6 +117,10 @@ function Exchange({ fetchExchangeTitle }: Props) {
     }
     return asset;
   }, [toAssets, toAddress, chain]);
+
+  const rates = useChainRates(chain);
+  const currency = useFiatCurrency();
+  const rate = getAssetRateInFiat(rates, toAsset?.address, currency);
 
   const offersQuery = useOffersQuery(chain, fromAsset, toAsset, debouncedFromValue);
   const offers = sortOffers(offersQuery.data);
@@ -208,6 +213,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
   }, [showLoading]);
 
   const showOfferEstimateFailState = faileEstimateOffers === offers?.length;
+  const ratesNotFound = toAsset && fromValue ? rate === 0 : false;
 
   return (
     <Container>
@@ -263,6 +269,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
         )}
 
         {!showLoading &&
+          !ratesNotFound &&
           offers?.map((offer) => (
             <OfferCard
               key={offer.provider}
@@ -277,7 +284,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
             />
           ))}
 
-        {(showEmptyState || showOfferEstimateFailState) && (
+        {(showEmptyState || showOfferEstimateFailState || (ratesNotFound && !showLoading)) && (
           <EmptyStateWrapper>
             <EmptyStateParagraph
               title={t('exchangeContent.emptyState.offers.title')}

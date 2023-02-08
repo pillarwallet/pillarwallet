@@ -40,6 +40,10 @@ import { useChainConfig } from 'utils/uiConfig';
 import { nativeAssetPerChain } from 'utils/chains';
 import { addressesEqual } from 'utils/assets';
 import { getActiveScreenName } from 'utils/navigation';
+import { getAssetRateInFiat } from 'utils/rates';
+
+// Selectors
+import { useChainRates, useFiatCurrency } from 'selectors';
 
 // Types
 import type { AssetOption } from 'models/Asset';
@@ -113,6 +117,10 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
     return asset;
   }, [toOptions, toAddress, chain]);
 
+  const rates = useChainRates(toAddressChain);
+  const currency = useFiatCurrency();
+  const rate = getAssetRateInFiat(rates, toAsset?.address, currency);
+
   React.useEffect(() => {
     if (!fromInputRef || fromValue) return;
     fromInputRef.current?.focus();
@@ -179,6 +187,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   };
 
   const showLoading = buildTractionQuery.isLoading;
+  const ratesNotFound = toAsset && fromValue ? rate === 0 : false;
 
   React.useEffect(() => {
     if (showLoading) {
@@ -232,7 +241,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
           </EmptyStateWrapper>
         )}
 
-        {offer && (
+        {offer && !ratesNotFound && (
           <OfferCard
             key={offer.provider}
             crossChainTxs={txData}
@@ -249,7 +258,9 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
           />
         )}
 
-        {((!buildTransactionData && buildTransactionFetched) || failEstimateOffer) && (
+        {((!buildTransactionData && buildTransactionFetched) ||
+          failEstimateOffer ||
+          (ratesNotFound && !showLoading)) && (
           <EmptyStateWrapper>
             <EmptyStateParagraph
               title={t('exchangeContent.emptyState.routes.title')}
