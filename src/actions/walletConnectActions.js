@@ -390,7 +390,7 @@ export const subscribeToWalletConnectConnectorEventsAction = (connector: WalletC
           return;
         }
 
-        if (domain?.chainId !== chainId) {
+        if (JSON.parse(domain?.chainId) !== chainId) {
           dispatch(setWalletConnectErrorAction(t('error.walletConnect.invalidRequest')));
           connector.rejectRequest({
             id: +callId,
