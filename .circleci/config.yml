@@ -833,7 +833,6 @@ workflows:
                 - /.*(u|U)(i|I)(-|_).*/
                 - /.*(-|_)(u|U)(i|I).*/
                 - /.*(u|U)(i|I)\/.*/
-                - feature/oidc_pipeline
                 
   build_and_deploy_appcenter:
     jobs:
@@ -846,7 +845,6 @@ workflows:
                 - /.*(u|U)(i|I)(-|_).*/
                 - /.*(-|_)(u|U)(i|I).*/
                 - /.*(u|U)(i|I)\/.*/
-                - feature/oidc_pipeline
 
       - appcenter_ios:
           context: oidc-wallet-nonprod
@@ -859,7 +857,6 @@ workflows:
                 - /.*(u|U)(i|I)(-|_).*/
                 - /.*(-|_)(u|U)(i|I).*/
                 - /.*(u|U)(i|I)\/.*/
-                - feature/oidc_pipeline
 
       - appcenter_android:
           context:
@@ -874,7 +871,6 @@ workflows:
                 - /.*(u|U)(i|I)(-|_).*/
                 - /.*(-|_)(u|U)(i|I).*/
                 - /.*(u|U)(i|I)\/.*/
-                - feature/oidc_pipeline
 
   build_and_deploy_production:
     jobs:
