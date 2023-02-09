@@ -384,18 +384,25 @@ export const subscribeToWalletConnectConnectorEventsAction = (connector: WalletC
           dispatch(setWalletConnectErrorAction(t('error.walletConnect.cannotDetermineChain', { dAppName: name })));
           return;
         }
-        const { domain } = JSON.parse(params[1]);
-        if (!domain?.chainId) {
-          dispatch(setWalletConnectErrorAction(t('error.walletConnect.cannotDetermineChain', { dAppName: name })));
-          return;
-        }
 
-        if (domain?.chainId !== chainId) {
+        try {
+          const { domain } = JSON.parse(params[1]);
+          if (!domain?.chainId) {
+            dispatch(setWalletConnectErrorAction(t('error.walletConnect.cannotDetermineChain', { dAppName: name })));
+            return;
+          }
+
+          if (Number(domain.chainId) !== chainId) {
+            dispatch(setWalletConnectErrorAction(t('error.walletConnect.invalidRequest')));
+            connector.rejectRequest({
+              id: +callId,
+              error: new Error(t('error.walletConnect.requestRejected')),
+            });
+            return;
+          }
+        } catch (e) {
+          reportErrorLog('eth_signTypedData request failed.', { payload, error: e?.message });
           dispatch(setWalletConnectErrorAction(t('error.walletConnect.invalidRequest')));
-          connector.rejectRequest({
-            id: +callId,
-            error: new Error(t('error.walletConnect.requestRejected')),
-          });
           return;
         }
       }
