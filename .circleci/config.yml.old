@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  aws-cli: circleci/aws-cli@3.1.4
+  aws-cli: circleci/aws-cli@2.0
   go: circleci/go@0.2.0
   slack: circleci/slack@3.4.2
 
@@ -255,9 +255,8 @@ jobs:
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
       - aws-cli/setup:
-          profile-name: WEB IDENTITY PROFILE
-          role-arn: '$OIDC_CIRCLE_CI_ROLE_ARN'
-          role-session-name: CircleCI
+          aws-access-key-id: NONPROD_APP_STORE_ACCESS_KEY
+          aws-secret-access-key: NONPROD_APP_STORE_SECRET_KEY_ID
           aws-region: AWS_DEFAULT_REGION
       - run:
           name: Set slack message
@@ -364,9 +363,8 @@ jobs:
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
       - aws-cli/setup:
-          profile-name: WEB IDENTITY PROFILE
-          role-arn: '$OIDC_CIRCLE_CI_ROLE_ARN'
-          role-session-name: CircleCI
+          aws-access-key-id: NONPROD_APP_STORE_ACCESS_KEY
+          aws-secret-access-key: NONPROD_APP_STORE_SECRET_KEY_ID
           aws-region: AWS_DEFAULT_REGION
       - run:
           name: Set slack message
@@ -524,9 +522,8 @@ jobs:
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
       - aws-cli/setup:
-          profile-name: WEB IDENTITY PROFILE
-          role-arn: '$OIDC_CIRCLE_CI_ROLE_ARN'
-          role-session-name: CircleCI
+          aws-access-key-id: PRODUCTION_AWS_ACCESS_KEY_ID
+          aws-secret-access-key: PRODUCTION_AWS_SECRET_ACCESS_KEY
           aws-region: AWS_DEFAULT_REGION
       - run:
           name: Set slack message
@@ -645,9 +642,8 @@ jobs:
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
       - aws-cli/setup:
-          profile-name: WEB IDENTITY PROFILE
-          role-arn: '$OIDC_CIRCLE_CI_ROLE_ARN'
-          role-session-name: CircleCI
+          aws-access-key-id: PRODUCTION_AWS_ACCESS_KEY_ID
+          aws-secret-access-key: PRODUCTION_AWS_SECRET_ACCESS_KEY
           aws-region: AWS_DEFAULT_REGION
       - run:
           name: Set slack message
@@ -847,7 +843,6 @@ workflows:
                 - /.*(u|U)(i|I)\/.*/
 
       - appcenter_ios:
-          context: oidc-wallet-nonprod
           requires:
             - build-and-test
           filters:
@@ -859,9 +854,7 @@ workflows:
                 - /.*(u|U)(i|I)\/.*/
 
       - appcenter_android:
-          context:
-            - oidc-wallet-nonprod
-            - docker-hub-creds
+          context: docker-hub-creds
           requires:
             - build-and-test
           filters:
@@ -897,7 +890,6 @@ workflows:
               only:
                 - master
       - prod_ios:
-          context: oidc-wallet-prod
           requires:
             - build-and-test
             - get-latest-tag
@@ -906,9 +898,7 @@ workflows:
               only:
                 - master
       - prod_android:
-          context:
-            - oidc-wallet-prod
-            - docker-hub-creds
+          context: docker-hub-creds
           requires:
             - build-and-test
             - get-latest-tag
