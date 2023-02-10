@@ -48,6 +48,9 @@ import { gasThresholdsSelector } from 'redux/selectors/gas-threshold-selector';
 // Hooks
 import { useTransactionsEstimate } from 'hooks/transactions';
 
+// Local
+import { getSortingValue } from './utils';
+
 type Props = {
   offer: ExchangeOffer,
   onPress: () => Promise<void>,
@@ -55,9 +58,18 @@ type Props = {
   crossChainTxs?: any[],
   onEstimateFail?: () => void,
   gasFeeAsset: Asset | AssetOption,
+  onFetchSortingOfferInfo?: (offerInfo: ExchangeOffer) => void,
 };
 
-function OfferCard({ offer, onPress, disabled, crossChainTxs, onEstimateFail, gasFeeAsset }: Props) {
+function OfferCard({
+  offer,
+  onPress,
+  disabled,
+  crossChainTxs,
+  onEstimateFail,
+  gasFeeAsset,
+  onFetchSortingOfferInfo,
+}: Props) {
   const { t } = useTranslation();
   const config = useProviderConfig(offer.provider);
   const activeAccount: any = useActiveAccount();
@@ -103,6 +115,15 @@ function OfferCard({ offer, onPress, disabled, crossChainTxs, onEstimateFail, ga
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [estimationErrorMessage]);
+
+  React.useEffect(() => {
+    onFetchSortingOfferInfo &&
+      onFetchSortingOfferInfo({
+        ...offer,
+        sortingValue: getSortingValue(toChain || chain, feeInfo, chainRates, fiatCurrency, fiatValue),
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [feeInfo, estimationErrorMessage, isEstimating]);
 
   if (estimationErrorMessage) {
     return null;
