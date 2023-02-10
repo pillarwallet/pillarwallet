@@ -569,6 +569,7 @@
       "callRequestRejectFailed": "呼叫请求拒绝失败",
       "callRequestApproveFailed": "呼叫请求批准失败",
       "invalidRequest": "此 WalletConnect 请求看起来不太正确 - 请重试",
+      "cannotDetermineChain": "抱歉，在此请求中未找到链信息。请联系 {{ dAppName }}",
       "cannotDetermineEthereumChain": "我们无法看到此请求属于哪个以太坊链 - 请重试",
       "activeAccountDoesNotSupportSelectedChain": "活跃账户不支持所选以太坊链"
     },

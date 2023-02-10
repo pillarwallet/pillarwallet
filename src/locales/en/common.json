@@ -595,7 +595,8 @@
       "alreadyPending": "A connection is already waiting",
       "callRequestRejectFailed": "Call Request reject failed",
       "callRequestApproveFailed": "Call Request approve failed",
-      "invalidRequest": "This WalletConnect request didn't look quite right - please try again",
+      "invalidRequest": "This WalletConnect request didn't look quite right - please try again ",
+      "cannotDetermineChain": "Sorry, but no chain information was found in this request. Please contact {{ dAppName }} ",
       "cannotDetermineEthereumChain": "We couldn't see what Ethereum chain this requests belongs to - please try again",
       "activeAccountDoesNotSupportSelectedChain": "Active account does not support selected Ethereum chain"
     },
