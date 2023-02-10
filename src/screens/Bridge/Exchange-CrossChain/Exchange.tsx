@@ -20,7 +20,7 @@ import { Keyboard, Platform } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
 import { useDebounce } from 'use-debounce';
-import { maxBy } from 'lodash';
+import { isEmpty, maxBy } from 'lodash';
 import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 
@@ -66,7 +66,15 @@ import { useActiveAccount, useChainRates, useFiatCurrency } from 'selectors';
 import FromAssetSelector from './FromAssetSelector';
 import ToAssetSelector from './ToAssetSelector';
 import OfferCard from './OfferCard';
-import { useFromAssets, useToAssets, useOffersQuery, sortOffers, useGasFeeAssets, useToPopularAssets } from './utils';
+import {
+  useFromAssets,
+  useToAssets,
+  useOffersQuery,
+  sortingOffersToGasFee,
+  sortOffers,
+  useGasFeeAssets,
+  useToPopularAssets,
+} from './utils';
 import GasFeeAssetSelection from './GasFeeAssetSelection';
 
 interface Props {
@@ -89,6 +97,8 @@ function Exchange({ fetchExchangeTitle }: Props) {
   const [chain, setChain] = React.useState(initialChain);
   const [fromAddress, setFromAddress] = React.useState(initialFromAddress);
   const [toAddress, setToAddress] = React.useState(initialToAddress);
+  const [sortOffersList, setSortOfferList] = React.useState([]);
+  const [, setRenderItem] = React.useState(null);
 
   const [faileEstimateOffers, setFailEstimateOffers] = React.useState(0);
 
@@ -177,6 +187,13 @@ function Exchange({ fetchExchangeTitle }: Props) {
     navigation.navigate(EXCHANGE_CONFIRM, { offer });
   };
 
+  const onChangeSortingOffers = (sortOffer) => {
+    setRenderItem(sortOffer);
+    const index = sortOffersList?.findIndex((res) => res?.provider === sortOffer.provider);
+    if (index !== -1) sortOffersList.splice(index, 1);
+    sortOffersList.push(sortOffer);
+  };
+
   const allowSwap = !!toAsset && fromOptions.some((o) => o.chain === chain && addressesEqual(o.address, toAddress));
 
   const handleSwapAssets = () => {
@@ -212,8 +229,14 @@ function Exchange({ fetchExchangeTitle }: Props) {
     }
   }, [showLoading]);
 
+  React.useEffect(() => {
+    setSortOfferList([]);
+  }, [fromValue, toAddress, fromAddress, chain]);
+
   const showOfferEstimateFailState = faileEstimateOffers === offers?.length;
   const ratesNotFound = toAsset && fromValue ? rate === 0 : false;
+
+  const sortedOffers = isEmpty(sortOffersList) ? offers : sortingOffersToGasFee(sortOffersList);
 
   return (
     <Container>
@@ -270,7 +293,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
 
         {!showLoading &&
           !ratesNotFound &&
-          offers?.map((offer) => (
+          sortedOffers?.map((offer) => (
             <OfferCard
               key={offer.provider}
               offer={offer}
@@ -278,6 +301,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
               isLoading={false}
               gasFeeAsset={gasFeeAsset}
               onPress={() => handleOfferPress(offer)}
+              onFetchSortingOfferInfo={onChangeSortingOffers}
               onEstimateFail={() => {
                 setFailEstimateOffers(faileEstimateOffers + 1);
               }}
