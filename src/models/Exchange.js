@@ -38,4 +38,5 @@ export type ExchangeOffer = {
   captureFee: BigNumber,
   toChain?: Chain,
   gasFeeAsset?: AssetOption | Asset,
+  sortingValue?: number,
 };
