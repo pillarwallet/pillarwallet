@@ -50,7 +50,6 @@ import { TOKENS, STABLES, ALL, WALLET_DROPDOWN_REF } from 'constants/walletConst
 import { useIsPillarPaySupported } from 'selectors/archanova';
 
 // Utils
-import { useFromAssets } from 'screens/Bridge/Exchange-CrossChain/utils';
 import { spacing } from 'utils/variables';
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
 import { useThemeColors } from 'utils/themes';

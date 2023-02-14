@@ -76,6 +76,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visible
   const { totalBalanceOfHoldings, appHoldings } = useAppHoldings();
 
   const [showChainsPerCategory, setShowChainsPerCategory] = React.useState<FlagPerCategory>({ wallet: true });
+  const [visibleHoldingsIndex, setVisibleHoldingsIndex] = React.useState(null);
 
   const chains = useSupportedChains();
   const fiatCurrency = useFiatCurrency();
@@ -119,22 +120,28 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visible
 
     return (
       <React.Fragment key={`${category}-fragment`}>
-        <CategoryListItem
-          key={category}
-          iconName={iconName}
-          title={title}
-          value={formattedBalance}
-          visibleBalance={visibleBalance}
-          onPress={() => handlePressAssetCategory(category)}
-        />
-        {showChains && category === ASSET_CATEGORY.WALLET && <WalletSelection />}
+        <SubContainer>
+          <CategoryListItem
+            key={category}
+            iconName={iconName}
+            title={title}
+            value={formattedBalance}
+            visibleBalance={visibleBalance}
+            onPress={() => handlePressAssetCategory(category)}
+          />
+        </SubContainer>
+        {showChains && category === ASSET_CATEGORY.WALLET && (
+          <SubContainer>
+            <WalletSelection />
+          </SubContainer>
+        )}
         {showChains &&
           category !== ASSET_CATEGORY.APPS &&
           category !== ASSET_CATEGORY.WALLET &&
           chains.map((chain) => renderChainWithBalance(category, chain))}
         {showChains &&
           category === ASSET_CATEGORY.APPS &&
-          appHoldings?.slice(0, 5).map((item) => renderInvestments(category, item))}
+          appHoldings?.slice(0, 5).map((item, index) => renderInvestments(category, item, index))}
       </React.Fragment>
     );
   };
@@ -146,27 +153,32 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visible
     const { title } = chainsConfig[chain];
 
     return (
-      <ChainListItem
-        key={`${category}-${chain}`}
-        title={title}
-        value={formattedBalance}
-        visibleBalance={visibleBalance}
-        isDeployed={isKeyBasedAccount(activeAccount) || isDeployedOnChain[chain]}
-        onPress={() => navigateToAssetDetails(category, chain)}
-        onPressDeploy={() => showDeploymentInterjection(chain)}
-      />
+      <SubContainer>
+        <ChainListItem
+          key={`${category}-${chain}`}
+          title={title}
+          value={formattedBalance}
+          visibleBalance={visibleBalance}
+          isDeployed={isKeyBasedAccount(activeAccount) || isDeployedOnChain[chain]}
+          onPress={() => navigateToAssetDetails(category, chain)}
+          onPressDeploy={() => showDeploymentInterjection(chain)}
+        />
+      </SubContainer>
     );
   };
 
-  const renderInvestments = (category: AssetCategoryRecordKeys, item: AppHoldings) => {
+  const renderInvestments = (category: AssetCategoryRecordKeys, item: AppHoldings, index: number) => {
     const { name, network } = item;
+
+    const isSelected = visibleHoldingsIndex === index;
 
     return (
       <InvestmentListItem
         key={`${name}-${network}`}
         {...item}
+        isSelected={isSelected}
         onPress={() => {
-          navigateToAssetDetails(category, network);
+          setVisibleHoldingsIndex(isSelected ? -1 : index);
         }}
       />
     );
@@ -211,8 +223,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visible
     <Container>
       {categoriesToRender.map((category) => renderCategoryWithBalance(category))}
 
-      {visibleNFTs && renderCollectiblesCategory()}
-
+      <SubContainer>{visibleNFTs && renderCollectiblesCategory()}</SubContainer>
       {/* Temporary entry until other UI provided */}
       {isArchanovaAccount(activeAccount) && (
         <CategoryListItem
@@ -229,6 +240,8 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visible
 
 export default AssetsSection;
 
-const Container = styled.View`
+const Container = styled.View``;
+
+const SubContainer = styled.View`
   padding: 0 ${spacing.large}px;
 `;
