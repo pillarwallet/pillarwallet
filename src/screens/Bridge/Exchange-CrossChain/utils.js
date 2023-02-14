@@ -39,7 +39,10 @@ import { accountWalletAssetsBalancesSelector } from 'selectors/balances';
 import { addressesEqual, getAssetOption, sortAssets } from 'utils/assets';
 import { getWalletBalanceForAsset } from 'utils/balances';
 import { nativeAssetPerChain } from 'utils/chains';
-import { logBreadcrumb } from 'utils/common';
+import { logBreadcrumb, formatUnits } from 'utils/common';
+import { getGasAddress, getGasDecimals } from 'utils/transactions';
+import { wrapBigNumber } from 'utils/bigNumber';
+import { getAssetRateInFiat } from 'utils/rates';
 
 // Services
 import etherspotService from 'services/etherspot';
@@ -53,8 +56,9 @@ import type { QueryResult } from 'utils/types/react-query';
 import type { Asset, AssetByAddress, AssetOption, AssetsPerChain } from 'models/Asset';
 import type { WalletAssetsBalances, AssetBalance } from 'models/Balances';
 import type { ExchangeOffer } from 'models/Exchange';
-import type { Currency, RatesPerChain } from 'models/Rates';
+import type { Currency, RatesPerChain, RatesByAssetAddress } from 'models/Rates';
 import type { Chain, ChainRecord } from 'models/Chain';
+import type { TransactionFeeInfo } from 'models/Transaction';
 
 export function useFromAssets(): AssetOption[] {
   const supportedChains = useSupportedChains();
@@ -291,6 +295,11 @@ export function sortOffers(offers: ?(ExchangeOffer[])): ?(ExchangeOffer[]) {
   return orderBy(offers, [(offer) => offer.toAmount.toNumber()], ['desc']);
 }
 
+export function sortingOffersToGasFee(offers: any[]): ?(any[]) {
+  if (!offers) return null;
+  return offers?.sort?.((a, b) => b?.sortingValue - a?.sortingValue);
+}
+
 export const shouldTriggerSearch = (
   fromAsset: ?AssetOption,
   toAsset: ?AssetOption,
@@ -319,6 +328,25 @@ export const assetTitle = (item: any) => {
   // eslint-disable-next-line i18next/no-literal-string
   return `${fiatBalance?.toFixed(1)} ${symbol}  •  ${formattedBalanceInFiat}`;
 };
+
+// Sort offers by USD value minus gas fees
+export function getSortingValue(
+  chain: Chain,
+  feeInfo: ?TransactionFeeInfo,
+  chainRates: RatesByAssetAddress,
+  currency: Currency,
+  fiatValue: ?number,
+) {
+  const decimals = getGasDecimals(chain, feeInfo?.gasToken);
+  const formattedFee = feeInfo?.fee ? formatUnits(feeInfo?.fee.toString(), decimals) : '0';
+
+  const amountBN = wrapBigNumber(formattedFee);
+  const gasAddress = getGasAddress(chain, feeInfo?.gasToken);
+
+  const assetRate = getAssetRateInFiat(chainRates, gasAddress ?? '', currency);
+
+  return Number(fiatValue) - amountBN.times(assetRate).toNumber();
+}
 
 const isEnoughAssetBalance = (assetBalance: ?string, amount: string): boolean => {
   try {
