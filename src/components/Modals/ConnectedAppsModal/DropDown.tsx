@@ -62,7 +62,7 @@ const DropDown: FC<Props> = ({ dropDownStyle, visible, onHide, modalContent, sho
 
   useEffect(() => {
     if (!visible && !ref && contentHeight === 0) return;
-    ref.current?.measure((_fx, _fy, _w, h, _px, py) => {
+    ref?.current?.measure((_fx, _fy, _w, h, _px, py) => {
       // eslint-disable-next-line no-mixed-operators
       if (!py || !h) return;
       if (height > py + contentHeight + h + 30 || showOnlyBottomSide) {

@@ -69,7 +69,7 @@ function InvestmentsTab() {
           <Banner screenName="HOME_APPS" bottomPosition={false} />
         </BannerContent>
 
-        <Spacing h={24} />
+        <Spacing h={10} />
 
         <ChainSelectorContent selectedAssetChain={selectedChain} onSelectChain={setSelectedChain} />
       </ListHeader>
@@ -140,7 +140,7 @@ const Container = styled.View`
 
 const ListHeader = styled.View`
   align-items: center;
-  margin-top: ${spacing.largePlus}px;
+  margin-top: ${spacing.medium}px;
 `;
 
 const BannerContent = styled.View`

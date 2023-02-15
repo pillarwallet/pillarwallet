@@ -91,7 +91,7 @@ const PortfolioRiskinessModal: FC<Props> = ({ visible, onHide, chain }) => {
             <IconButton
               icon="close"
               color={colors.basic030}
-              onPress={onHide}
+              onPress={() => onHide(false)}
               fontSize={fontSizes.small}
               hitSlop={hitSlop20}
             />

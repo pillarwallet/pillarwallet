@@ -126,7 +126,7 @@ function WalletTabScrollContent({ isNavigateToHome, hasPositiveBalance }: Props)
           <Banner screenName="HOME_WALLET" bottomPosition={false} />
         </BannerContent>
 
-        <Spacing h={24} />
+        <Spacing h={10} />
 
         <ChainSelectorContent selectedAssetChain={selectedChain} onSelectChain={setSelectedChain} />
 
@@ -148,11 +148,9 @@ function WalletTabScrollContent({ isNavigateToHome, hasPositiveBalance }: Props)
           </Button>
         </ProgressContent>
 
-        <PortfolioRiskinessModal
-          chain={selectedChain}
-          visible={visibleRiskinessModal}
-          onHide={() => setVisibleRiskinessModal(false)}
-        />
+        {visibleRiskinessModal && (
+          <PortfolioRiskinessModal chain={selectedChain} visible onHide={setVisibleRiskinessModal} />
+        )}
       </ListHeader>
     );
   };
@@ -221,8 +219,8 @@ const styles = {
 
 const ListHeader = styled.View`
   align-items: center;
-  height: 250px;
-  margin-top: ${spacing.largePlus}px;
+  height: 230px;
+  margin-top: ${spacing.medium}px;
 `;
 
 const BannerContent = styled.View`

@@ -10,7 +10,7 @@ import { log } from 'util';
 // Utils
 import { useThemeColors } from 'utils/themes';
 
-const HEADER_MAX_HEIGHT = 280;
+const HEADER_MAX_HEIGHT = 240;
 const HEADER_MIN_HEIGHT = 80;
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
