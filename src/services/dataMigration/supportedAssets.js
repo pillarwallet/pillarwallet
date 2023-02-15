@@ -44,7 +44,7 @@ export default function (storageData: Object) {
   return supportedAssets;
 }
 
-function addChainFieldIfNeeded(supportedAssets: ChainRecord<Asset[]>, chain: Chain) {
+export function addChainFieldIfNeeded(supportedAssets: ChainRecord<Asset[]>, chain: Chain) {
   const chainAssets = supportedAssets[chain];
 
   // Empty array - do nothing

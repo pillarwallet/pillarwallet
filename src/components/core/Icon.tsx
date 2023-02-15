@@ -126,6 +126,8 @@ import DownArrow from 'assets/icons/svg/down-arrow.svg';
 import UpArrow from 'assets/icons/svg/up-arrow.svg';
 import PendingIcon from 'assets/icons/svg/24-circle-pending.svg';
 import CheckmarkCircle from 'assets/icons/svg/24-circle-checkmark.svg';
+import CheckmarkGreen from 'assets/icons/svg/24-checkmark.svg';
+import CrossRed from 'assets/icons/svg/24-x.svg';
 
 // Assets: services icons
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
@@ -238,6 +240,8 @@ const components = {
   'up-arrow': UpArrow,
   'pending-process': PendingIcon,
   'checkmark-circle': CheckmarkCircle,
+  'checkmark-green': CheckmarkGreen,
+  'cross-red': CrossRed,
 
   // Service icons
   binance: IconBinance,

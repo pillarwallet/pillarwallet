@@ -74,7 +74,7 @@ platform :android do
   desc "Deploy staging development build to hockeyapp"
   lane :deploy_android_appcenter do
     buildApp(
-      hockeyAppToken: ENV["APPCENTER_ANDROID_TOKEN"],
+      hockeyAppToken: ENV["APPCENTER_TOKEN"],
       apkName: 'app-staging.apk'
     )
   end
@@ -115,9 +115,10 @@ platform :android do
 
     appcenter_upload(
       api_token: options[:hockeyAppToken],
-      owner_name: "antonioned",
+      owner_name: ENV["APPCENTER_USER"],
       owner_type: "user",
-      app_name: "Pillar-Wallet-Staging",
+      app_os: "Android",
+      app_name: "Pillar-Wallet-Staging-1",
       file: "app/build/outputs/apk/staging/#{options[:apkName]}",
       notify_testers: true,
       release_notes: changelog

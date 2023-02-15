@@ -36,7 +36,7 @@ import { useChainsConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
 import { parsePeerName } from 'utils/walletConnect';
 import { isEtherspotAccountDeployed } from 'utils/etherspot';
-import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
+import { isArchanovaAccount, isEtherspotAccount, isKeyBasedAccount } from 'utils/accounts';
 
 // Selectors
 import { useActiveAccount, useRootSelector } from 'selectors';
@@ -66,7 +66,8 @@ function SignatureRequestContent({ request, onConfirm, onReject }: Props) {
    */
   const requiresDeployedAccount =
     (isArchanovaAccount(activeAccount) && !isArchanovaAccountDeployed) ||
-    (isEtherspotAccount(activeAccount) && !isEtherspotAccountDeployed(activeAccount, chain));
+    (isEtherspotAccount(activeAccount) && !isEtherspotAccountDeployed(activeAccount, chain)) ||
+    (isKeyBasedAccount(activeAccount) && chain !== CHAIN.ETHEREUM);
 
   return (
     <>

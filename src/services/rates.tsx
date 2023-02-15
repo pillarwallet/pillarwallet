@@ -22,8 +22,7 @@ import { isEmpty } from 'lodash';
 
 // Utils
 import { reportErrorLog, addressAsKey } from 'utils/common';
-import { nativeAssetPerChain } from 'utils/chains';
-import { addressesEqual } from 'utils/assets';
+
 // Types
 import type { Asset } from 'models/Asset';
 import type { Rates, RatesByAssetAddress } from 'models/Rates';
@@ -31,6 +30,8 @@ import type { Chain } from 'models/Chain';
 
 //  Local
 import etherspotService from './etherspot';
+
+const allSettled = require('promise.allsettled');
 
 type ExchangeAssetsPrices = {
   [coinGeckoAssetId: string]: ExchangeAssetsPrices;
@@ -53,39 +54,36 @@ const mapWalletAndExchangePrices = (responseData: ExchangeAssetsPrices): RatesBy
     {},
   );
 
-export const getExchangeTokenPrices = async (chain: Chain, assets: Asset[]): Promise<RatesByAssetAddress | any> => {
-  // native asset not always fit into token price endpoint, it is fetched with other API call
-  const assetsWithoutNativeAsset = assets.filter(
-    ({ address }) => !addressesEqual(address, nativeAssetPerChain[chain].address),
-  );
+export const getExchangeTokenPrices = async (
+  chain: Chain,
+  assets: Asset[],
+  callBack: (rates: any) => void,
+): Promise<RatesByAssetAddress | any> => {
+  const assetsContractAddresses = assets.map(({ address }) => address);
 
-  const assetsContractAddresses = assetsWithoutNativeAsset.map(({ address }) => address);
-
-  try {
-    const result = await etherspotService.fetchExchangeRates(chain, assetsContractAddresses);
-
-    return mapWalletAndExchangePrices(result.items);
-  } catch (error) {
-    reportErrorLog('Fetch Rates failed: request error', {
-      error,
-      assetsContractAddresses,
-    });
-    return null;
+  if (isEmpty(assetsContractAddresses)) {
+    return;
   }
-};
 
-export const getNativeTokenPrice = async (chain: Chain): Promise<Rates | any> => {
-  try {
-    const result = await etherspotService.fetchExchangeRates(chain, [nativeAssetPerChain[chain]?.address]);
-
-    return mapPricesToRates(result.items[0]);
-  } catch (error) {
-    reportErrorLog('Fetch Rates failed: request error', {
-      error,
-      chain,
+  const promiseRequest = () => {
+    return new Promise(() => {
+      (async () => {
+        try {
+          const result = await etherspotService.fetchExchangeRates(chain, assetsContractAddresses);
+          await callBack(mapWalletAndExchangePrices(result.items));
+        } catch (error) {
+          reportErrorLog('Fetch Rates failed: request error', {
+            error,
+            assetsContractAddresses,
+          });
+        }
+      })();
     });
-    return null;
-  }
+  };
+
+  allSettled([promiseRequest()]);
+  allSettled.shim();
+  return;
 };
 
 const mapPricesToRates = (prices: ExchangePriceEntry | any): Rates | any => {

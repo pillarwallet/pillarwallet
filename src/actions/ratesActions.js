@@ -27,11 +27,11 @@ import { CHAIN } from 'constants/chainConstants';
 import { getExchangeRates } from 'services/assets';
 
 // utils
-import { findAssetByAddress, getAssetsAsList, mapWalletAssetsBalancesIntoAssetsByAddress } from 'utils/assets';
-import { reportErrorLog, logBreadcrumb } from 'utils/common';
+import { getAssetsAsList, mapWalletAssetsBalancesIntoAssetsByAddress } from 'utils/assets';
+import { reportErrorLog } from 'utils/common';
 
 // selectors
-import { supportedAssetsPerChainSelector } from 'selectors';
+import { supportedAssetsPerChainSelector, popularAssetsPerChainSelector } from 'selectors';
 import { assetsBalancesPerAccountSelector } from 'selectors/balances';
 
 // models, types
@@ -41,8 +41,6 @@ import type { RatesByAssetAddress } from 'models/Rates';
 
 // actions
 import { saveDbAction } from './dbActions';
-
-const allSettled = require('promise.allsettled');
 
 export const setIsFetchingRatesAction = (isFetching: boolean) => ({
   type: SET_FETCHING_RATES,
@@ -75,12 +73,14 @@ export const fetchAssetsRatesAction = () => {
 
     const assetsBalancesPerAccount = assetsBalancesPerAccountSelector(getState());
     const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
+    const popularAssetsPerChain = popularAssetsPerChainSelector(getState());
 
     // combine assets balances from all accounts
     const assetsByAddressPerChain = Object.keys(CHAIN).reduce((combinedAssetsByAddressPerChain, chainKey) => {
       const chain = CHAIN[chainKey];
 
       const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
+      const chainPopularAssets = popularAssetsPerChain[chain] ?? [];
 
       const chainAccountsAssetsByAddress = Object.keys(assetsBalancesPerAccount).reduce(
         (combinedAssetsByAddress, accountId) => {
@@ -92,8 +92,13 @@ export const fetchAssetsRatesAction = () => {
             chainSupportedAssets,
           );
 
+          const popularAssetsByAddress = mapWalletAssetsBalancesIntoAssetsByAddress(
+            accountWalletAssetsBalances,
+            chainPopularAssets,
+          );
+
           // $FlowFixMe
-          return { ...combinedAssetsByAddress, ...assetsByAddress };
+          return { ...combinedAssetsByAddress, ...assetsByAddress, ...popularAssetsByAddress };
         },
         {},
       );
@@ -102,31 +107,23 @@ export const fetchAssetsRatesAction = () => {
       return { ...combinedAssetsByAddressPerChain, [chain]: chainAccountsAssetsByAddress };
     }, {});
 
-    const promiseRequest = (chain) => {
-      return new Promise(() => {
-        (async () => {
-          const chainAssetsByAddress = assetsByAddressPerChain[chain] ?? {};
-          try {
-            const rates = await getExchangeRates(chain, getAssetsAsList(chainAssetsByAddress));
-            await dispatch(updateRatesAction(chain, rates));
-          } catch (error) {
-            reportErrorLog('fetchAssetsRatesAction failed', { error, chain, chainAssetsByAddress });
-          }
-        })();
-      });
-    };
-
-    const promises = Object.keys(assetsByAddressPerChain).map(async (chain) => promiseRequest(chain));
-
-    allSettled(promises);
-
-    allSettled.shim();
+    Object.keys(assetsByAddressPerChain).map(async (chain) => {
+      const chainAssetsByAddress = assetsByAddressPerChain[chain] ?? {};
+      try {
+        await getExchangeRates(chain, getAssetsAsList(chainAssetsByAddress), async (rates) => {
+          if (rates) await dispatch(updateRatesAction(chain, rates));
+          dispatch(setIsFetchingRatesAction(false));
+        });
+      } catch (error) {
+        reportErrorLog('fetchAssetsRatesAction failed', { error, chain, chainAssetsByAddress });
+      }
+    });
 
     dispatch(setIsFetchingRatesAction(false));
   };
 };
 
-export const fetchSingleChainAssetRatesAction = (chain: Chain, assetAddress: string) => {
+export const fetchSingleChainAssetRatesAction = (chain: Chain, asset: Object) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       rates: { isFetching },
@@ -139,36 +136,18 @@ export const fetchSingleChainAssetRatesAction = (chain: Chain, assetAddress: str
 
     dispatch(setIsFetchingRatesAction(true));
 
-    const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
-    const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
-
-    const asset = findAssetByAddress(chainSupportedAssets, assetAddress);
-    if (!asset) {
-      dispatch(setIsFetchingRatesAction(false));
-      logBreadcrumb('fetchSingleChainAssetRatesAction', 'failed: cannot find asset', { assetAddress });
-      return;
-    }
-
-    const promiseRequest = () => {
-      return new Promise(() => {
-        (async () => {
-          try {
-            const rates = await getExchangeRates(chain, [asset]);
-            if (isEmpty(rates)) {
-              dispatch(setIsFetchingRatesAction(false));
-              return;
-            }
-            await dispatch(updateRatesAction(chain, rates));
-          } catch (error) {
-            reportErrorLog('fetchAssetsRatesAction failed', { error, chain, asset });
-          }
-        })();
+    try {
+      await getExchangeRates(chain, [asset], async (rates) => {
+        if (isEmpty(rates)) {
+          dispatch(setIsFetchingRatesAction(false));
+        } else {
+          dispatch(setIsFetchingRatesAction(false));
+          await dispatch(updateRatesAction(chain, rates));
+        }
       });
-    };
-
-    allSettled([promiseRequest()]);
-
-    allSettled.shim();
+    } catch (error) {
+      reportErrorLog('fetchAssetsRatesAction failed', { error, chain, asset });
+    }
 
     dispatch(setIsFetchingRatesAction(false));
   };

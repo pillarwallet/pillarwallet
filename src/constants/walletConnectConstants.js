@@ -44,6 +44,7 @@ export const ETH_SEND_TX = 'eth_sendTransaction';
 export const ETH_SIGN_TX = 'eth_signTransaction';
 export const ETH_SIGN_TYPED_DATA = 'eth_signTypedData';
 export const ETH_SIGN_TYPED_DATA_V4 = 'eth_signTypedData_v4';
+export const WALLET_SWITCH_CHAIN = 'wallet_switchEthereumChain';
 
 export const REQUEST_TYPE = {
   MESSAGE: ('message': 'message'),

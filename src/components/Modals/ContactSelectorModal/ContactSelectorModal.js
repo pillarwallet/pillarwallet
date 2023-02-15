@@ -27,14 +27,12 @@ import { Container } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import AddressScanner from 'components/QRCodeScanner/AddressScanner';
 import Modal from 'components/Modal';
-import SlideModal from 'components/Modals/SlideModal';
 
 // Selectors
 import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 
 // Utils
 import { addressesEqual } from 'utils/assets';
-import { useThemeColors } from 'utils/themes';
 
 // Types
 import type { Contact } from 'models/Contact';
@@ -51,8 +49,6 @@ type Props = {|
 |};
 
 const ContactSelectorModal = ({ chain, contacts = [], onSelectContact, title = t('label.sendTo') }: Props) => {
-  const colors = useThemeColors();
-
   const modalRef = React.useRef(null);
 
   const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
@@ -78,15 +74,7 @@ const ContactSelectorModal = ({ chain, contacts = [], onSelectContact, title = t
   };
 
   return (
-    <SlideModal
-      ref={modalRef}
-      fullScreen
-      noSwipeToDismiss
-      noClose
-      backgroundColor={colors.basic050}
-      noTopPadding
-      avoidKeyboard={false}
-    >
+    <Modal ref={modalRef} avoidKeyboard={false} swipeDirection={[]}>
       <Container>
         <HeaderBlock
           noPaddingTop
@@ -113,7 +101,7 @@ const ContactSelectorModal = ({ chain, contacts = [], onSelectContact, title = t
           onQueryChange={setQuery}
         />
       </Container>
-    </SlideModal>
+    </Modal>
   );
 };
 

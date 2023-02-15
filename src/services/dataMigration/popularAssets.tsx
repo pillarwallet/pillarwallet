@@ -17,26 +17,28 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { BigNumber } from 'bignumber.js';
 
-// Types
-import type { ExchangeProviders, TransactionData } from 'utils/types/etherspot';
-import type { AssetCore, AssetOption, Asset } from 'models/Asset';
-import type { Chain } from 'models/Chain';
+// Constants
+import { CHAIN } from 'constants/chainConstants';
 
-export type ExchangeProvider = ExchangeProviders;
+// Local
+import { addChainFieldIfNeeded } from './supportedAssets';
 
-export type ExchangeOffer = {
-  provider: ?ExchangeProvider,
-  fromAsset: AssetCore,
-  toAsset: AssetCore,
-  fromAmount: BigNumber,
-  toAmount: BigNumber,
-  exchangeRate: number,
-  transactions: TransactionData[],
-  chain: Chain,
-  captureFee: BigNumber,
-  toChain?: Chain,
-  gasFeeAsset?: AssetOption | Asset,
-  sortingValue?: number,
-};
+export default function (storageData: Object | any) {
+  let popularAssets = storageData?.popularAssets?.popularAssets || {};
+
+  // Version 1: migrate to multi-chain assets
+  if (Array.isArray(popularAssets)) {
+    popularAssets = { ethereum: popularAssets };
+  }
+
+  // Version 2: add chain field
+  addChainFieldIfNeeded(popularAssets, CHAIN.ETHEREUM);
+  addChainFieldIfNeeded(popularAssets, CHAIN.POLYGON);
+  addChainFieldIfNeeded(popularAssets, CHAIN.BINANCE);
+  addChainFieldIfNeeded(popularAssets, CHAIN.XDAI);
+  addChainFieldIfNeeded(popularAssets, CHAIN.OPTIMISM);
+  addChainFieldIfNeeded(popularAssets, CHAIN.AVALANCHE);
+
+  return popularAssets;
+}

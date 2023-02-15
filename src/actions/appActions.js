@@ -34,7 +34,7 @@ import { firebaseCrashlytics } from 'services/firebase';
 import { IS_APP_VERSION_V3 } from 'constants/appConstants';
 import { AUTH_FLOW, ONBOARDING_FLOW, PIN_CODE_UNLOCK, MENU_SELECT_APPEARANCE } from 'constants/navigationConstants';
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import { SET_SUPPORTED_ASSETS } from 'constants/assetsConstants';
+import { SET_SUPPORTED_ASSETS, SET_POPULAR_ASSETS } from 'constants/assetsConstants';
 import { SET_ASSETS_BALANCES } from 'constants/assetsBalancesConstants';
 import { UPDATE_PIN_ATTEMPTS, UPDATE_WALLET_BACKUP_STATUS } from 'constants/walletConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
@@ -105,12 +105,16 @@ export const initAppAndRedirectAction = () => {
       storageData = await migrate('supportedAssets', storageData, dispatch, getState);
       storageData = await migrate('rates', storageData, dispatch, getState);
       storageData = await migrate('appsHoldings', storageData, dispatch, getState);
+      storageData = await migrate('popularAssets', storageData, dispatch, getState);
 
       const { accounts = [] } = get(storageData, 'accounts', {});
       dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });
 
       const supportedAssets = storageData?.supportedAssets?.supportedAssets ?? {};
       dispatch({ type: SET_SUPPORTED_ASSETS, payload: supportedAssets });
+
+      const popularAssets = storageData?.popularAssets?.popularAssets ?? {};
+      dispatch({ type: SET_POPULAR_ASSETS, payload: popularAssets });
 
       const assetsBalances = storageData?.assetsBalances?.data ?? {};
       dispatch({ type: SET_ASSETS_BALANCES, payload: assetsBalances });

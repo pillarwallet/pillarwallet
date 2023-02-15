@@ -52,7 +52,6 @@ import { useIsPillarPaySupported } from 'selectors/archanova';
 // Utils
 import { spacing } from 'utils/variables';
 import { isKeyBasedAccount } from 'utils/accounts';
-import { getActiveScreenName } from 'utils/navigation';
 import { useFromAssets } from 'screens/Bridge/Exchange-CrossChain/utils';
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
 
@@ -75,7 +74,6 @@ function WalletTab({ isNavigateToHome }: Props) {
 
   const totalBalance = useWalletTotalBalance();
   const currency = useFiatCurrency();
-  const screenName = getActiveScreenName(navigation);
 
   const assets: any = useFromAssets();
 
@@ -106,7 +104,10 @@ function WalletTab({ isNavigateToHome }: Props) {
         )}
 
         {isPillarPaySupported && <PillarPaySummary style={styles.pillarPay} />}
-        <Banner screenName={screenName} bottomPosition={false} />
+
+        <BannerContent>
+          <Banner screenName="HOME_WALLET" bottomPosition={false} />
+        </BannerContent>
       </ListHeader>
     );
   };
@@ -187,4 +188,8 @@ const ListHeader = styled.View`
   align-items: center;
   margin-top: ${spacing.largePlus}px;
   margin-bottom: 40px;
+`;
+
+const BannerContent = styled.View`
+  width: 100%;
 `;

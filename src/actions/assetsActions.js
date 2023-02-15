@@ -23,7 +23,14 @@ import t from 'translations/translate';
 
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { ETH, ASSET_TYPES, ASSET_CATEGORY, SET_CHAIN_SUPPORTED_ASSETS, USD } from 'constants/assetsConstants';
+import {
+  ETH,
+  ASSET_TYPES,
+  ASSET_CATEGORY,
+  SET_CHAIN_SUPPORTED_ASSETS,
+  USD,
+  SET_CHAIN_POPULAR_ASSETS,
+} from 'constants/assetsConstants';
 import {
   RESET_ACCOUNT_ASSETS_BALANCES,
   SET_ACCOUNT_ASSETS_BALANCES,
@@ -76,7 +83,12 @@ import ArbitrumTokens from 'utils/tokens/arbitrum-tokens';
 import XdaiTokens from 'utils/tokens/xdai-tokens';
 
 // selectors
-import { accountsSelector, activeAccountSelector, supportedAssetsPerChainSelector } from 'selectors';
+import {
+  accountsSelector,
+  activeAccountSelector,
+  supportedAssetsPerChainSelector,
+  popularAssetsPerChainSelector,
+} from 'selectors';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
 
 // types
@@ -596,6 +608,7 @@ export const fetchAssetsBalancesAction = () => {
       session: {
         data: { isOnline },
       },
+      assets: { popularAssets },
     } = getState();
 
     const activeAccount = getActiveAccount(accounts);
@@ -604,6 +617,15 @@ export const fetchAssetsBalancesAction = () => {
     dispatch({ type: SET_FETCHING_ASSETS_BALANCES, payload: true });
 
     dispatch(fetchSupportedAssetsAction());
+    if (
+      !popularAssets?.[CHAIN.POLYGON] ||
+      !popularAssets?.[CHAIN.ETHEREUM] ||
+      !popularAssets?.[CHAIN.XDAI] ||
+      !popularAssets?.[CHAIN.BINANCE] ||
+      !popularAssets?.[CHAIN.OPTIMISM]
+    ) {
+      dispatch(fetchPopularAssetsAction());
+    }
 
     dispatch(fetchAccountWalletBalancesAction(activeAccount));
 
@@ -644,6 +666,7 @@ export const fetchAllAccountsAssetsBalancesAction = () => {
     dispatch({ type: SET_FETCHING_ASSETS_BALANCES, payload: true });
 
     await dispatch(fetchSupportedAssetsAction());
+    dispatch(fetchPopularAssetsAction());
 
     const promises = accounts.map((account) => dispatch(fetchAccountWalletBalancesAction(account)));
 
@@ -689,6 +712,37 @@ export const fetchSupportedAssetsAction = () => {
 
     const updatedSupportedAssets = supportedAssetsPerChainSelector(getState());
     dispatch(saveDbAction('supportedAssets', { supportedAssets: updatedSupportedAssets }, true));
+  };
+};
+
+export const fetchPopularAssetsAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      session: {
+        data: { isOnline },
+      },
+    } = getState();
+
+    // nothing to do if offline
+    if (!isOnline) return;
+
+    await Promise.all(
+      Object.keys(CHAIN).map(async (chainKey) => {
+        const chain = CHAIN[chainKey];
+        const chainPopularAssets = await etherspotService.getEtherspotPopularTokens(chain);
+
+        // nothing to do if returned empty
+        if (isEmpty(chainPopularAssets)) return;
+
+        dispatch({
+          type: SET_CHAIN_POPULAR_ASSETS,
+          payload: { chain, assets: chainPopularAssets },
+        });
+      }),
+    );
+
+    const updatedPopularAssets = popularAssetsPerChainSelector(getState());
+    dispatch(saveDbAction('popularAssets', { popularAssets: updatedPopularAssets }, true));
   };
 };
 

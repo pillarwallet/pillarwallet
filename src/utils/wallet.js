@@ -137,6 +137,7 @@ export function signPersonalMessage(
   return wallet.signMessage(ethers.utils.arrayify(data));
 }
 
+
 export function encodeTypedDataMessage(message: string): string {
   const useV4 = true;
 

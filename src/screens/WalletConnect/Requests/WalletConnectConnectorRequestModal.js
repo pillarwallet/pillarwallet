@@ -32,7 +32,8 @@ import Image from 'components/Image';
 import Text from 'components/core/Text';
 
 // Hooks
-import useWalletConnect from 'hooks/useWalletConnect';
+import useWalletConnect, { useWalletConnectAccounts } from 'hooks/useWalletConnect';
+import { useDeploymentStatus } from 'hooks/deploymentStatus';
 
 // Types
 import type { WalletConnectConnector } from 'models/WalletConnect';
@@ -43,18 +44,18 @@ import { spacing, fontStyles } from 'utils/variables';
 import { useThemedImages } from 'utils/images';
 import { parsePeerName, pickPeerIcon } from 'utils/walletConnect';
 import { useChainsConfig } from 'utils/uiConfig';
-import { getActiveAccount, findKeyBasedAccount } from 'utils/accounts';
+import { getActiveAccount, findKeyBasedAccount, isEtherspotAccount } from 'utils/accounts';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
 import { ETHERSPOT } from 'constants/walletConstants';
 
-// Selectors
-import { useAccounts } from 'selectors';
-
 // Actions
 import { switchAccountAction } from 'actions/accountsActions';
 import { dismissSwitchAccountTooltipAction } from 'actions/appSettingsActions';
+
+// Local
+import WalletConnectSwitchNetwork from './WalletConnectSwitchNetwork';
 
 type Props = {|
   connector: WalletConnectConnector,
@@ -67,14 +68,19 @@ function WalletConnectConnectorRequestModal({ connector, chainId }: Props) {
   const chainsConfig = useChainsConfig();
   const dispatch = useDispatch();
   const chain = chainFromChainId[chainId] ?? CHAIN.ETHEREUM;
-  const { title: chainName } = chainsConfig[chain];
-  const accounts = useAccounts();
+
+  const accounts = useWalletConnectAccounts();
+  const { isDeployedOnChain } = useDeploymentStatus();
 
   const keyBasedAccount: ?Account = findKeyBasedAccount(accounts);
   const activeAccount: ?Account = getActiveAccount(accounts);
+  const isActiveEtherspotAccount = isEtherspotAccount(activeAccount);
+
+  const [selectedChain, setSelectedChain] = React.useState(chain);
+  const { title: chainName } = chainsConfig[selectedChain];
 
   // Note: this will map chain id to testnet in test env.
-  const mappedChainId = mapChainToChainId(chain);
+  const mappedChainId = mapChainToChainId(selectedChain);
 
   const { approveConnectorRequest, rejectConnectorRequest } = useWalletConnect();
   const { app: appName, description, peerID, iconUrl } = getViewData(connector);
@@ -119,7 +125,14 @@ function WalletConnectConnectorRequestModal({ connector, chainId }: Props) {
 
       {!!description && <Description>{description}</Description>}
 
-      <Button title={t('button.approve')} size="large" onPress={onApprovePress} />
+      <WalletConnectSwitchNetwork chain={chain} onChangeChain={setSelectedChain} />
+
+      <Button
+        disabled={isActiveEtherspotAccount ? !isDeployedOnChain[selectedChain] : false}
+        title={t('button.approve')}
+        size="large"
+        onPress={onApprovePress}
+      />
       <Button title={t('button.reject')} size="large" onPress={onRejectPress} variant="text" />
     </BottomModal>
   );

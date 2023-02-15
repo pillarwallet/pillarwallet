@@ -35,7 +35,6 @@ import {
   Transaction as EtherspotTransaction,
   Currencies as EtherspotCurrencies,
   AccountStates,
-  CrossChainServiceProvider,
   RateData,
 } from 'etherspot';
 import { map } from 'rxjs/operators';
@@ -63,7 +62,7 @@ import { mapToEthereumTransactions } from 'utils/transactions';
 import { getCaptureFee } from 'utils/exchange';
 
 // constants
-import { ETH, ADDRESS_ZERO, ROOT_TOKEN_ADDRESS, ETHERSPOT_STABLE_COIN } from 'constants/assetsConstants';
+import { ETH, ADDRESS_ZERO, ETHERSPOT_STABLE_COIN, ETHERSPOT_POPULAR_COIN } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 import { PROJECT_KEY } from 'constants/etherspotConstants';
@@ -482,7 +481,7 @@ export class EtherspotService {
       return AccountStates.UnDeployed;
     }
 
-    const { hash } = await sdk.submitGatewayBatch({ guarded: false });
+    const { hash } = await sdk.submitGatewayBatch();
 
     await this.waitForTransactionHashFromSubmittedBatch(chain, hash);
 
@@ -594,7 +593,7 @@ export class EtherspotService {
     }
 
     // submit current batch
-    const { hash: batchHash } = await sdk.submitGatewayBatch({ guarded: false });
+    const { hash: batchHash } = await sdk.submitGatewayBatch();
 
     return { batchHash };
   }
@@ -644,7 +643,7 @@ export class EtherspotService {
     }
 
     // submit current batch
-    const { hash: batchHash } = await sdk.submitGatewayBatch({ guarded: false });
+    const { hash: batchHash } = await sdk.submitGatewayBatch();
 
     return { batchHash };
   }
@@ -866,6 +865,38 @@ export class EtherspotService {
     }
   }
 
+  async getEtherspotPopularTokens(chain: Chain): Promise<?(Asset[])> {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      logBreadcrumb('getEtherspotPopularTokens', 'failed: no sdk instance for chain', { chain });
+      return null;
+    }
+
+    try {
+      let tokens: TokenListToken[] = await sdk.getTokenListTokens({ name: ETHERSPOT_POPULAR_COIN });
+
+      if (!tokens) {
+        logBreadcrumb(
+          'getEtherspotPopularTokens',
+          'EtherspotService getEtherspotPopularTokens failed: no tokens returned',
+          {
+            name: ETHERSPOT_POPULAR_COIN,
+          },
+        );
+        tokens = []; // let append native assets
+      }
+
+      let popularAssets = tokens.map((token) => parseTokenListToken(token));
+
+      popularAssets = appendNativeAssetIfNeeded(chain, popularAssets);
+
+      return popularAssets;
+    } catch (error) {
+      reportErrorLog('EtherspotService getEtherspotPopularTokens failed', { error });
+      return null;
+    }
+  }
+
   async logout(): Promise<void> {
     if (!this.sdk) return; // not initialized, nothing to do
 
@@ -946,12 +977,11 @@ export class EtherspotService {
 
     try {
       const quotes = await sdk.getCrossChainQuotes({
-        fromTokenAddress: fromAsset.address === ADDRESS_ZERO ? ROOT_TOKEN_ADDRESS : fromAsset.address,
+        fromTokenAddress: fromAsset.address,
         fromChainId: mapChainToChainId(fromAsset.chain),
-        toTokenAddress: toAsset.address === ADDRESS_ZERO ? ROOT_TOKEN_ADDRESS : toAsset.address,
+        toTokenAddress: toAsset.address,
         toChainId: mapChainToChainId(toAsset.chain),
         fromAmount: value,
-        serviceProvider: CrossChainServiceProvider.LiFi,
       });
 
       const quote: any = quotes.items[0];

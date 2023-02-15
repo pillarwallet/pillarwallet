@@ -80,6 +80,7 @@ import {
   fetchSupportedAssetsAction,
   fetchOfflineLocalAssets,
   fetchAllAccountsTotalBalancesAction,
+  fetchPopularAssetsAction,
 } from 'actions/assetsActions';
 import { fetchTutorialDataIfNeededAction, bannerDataAction } from 'actions/cmsActions';
 import { initialDeepLinkExecutedAction } from 'actions/appSettingsActions';
@@ -366,6 +367,7 @@ export const setupAppServicesAction = (privateKey: ?string) => {
 
     // user might not be registered at this point
     await dispatch(fetchSupportedAssetsAction());
+    await dispatch(fetchPopularAssetsAction());
 
     // create Archanova accounts if needed
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching importArchanovaAccountsIfNeededAction');

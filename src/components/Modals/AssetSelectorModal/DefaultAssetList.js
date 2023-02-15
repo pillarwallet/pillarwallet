@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { SectionList, LayoutAnimation, FlatList } from 'react-native';
+import { LayoutAnimation, FlatList } from 'react-native';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
@@ -51,10 +51,9 @@ type Props = {|
   onSelectToken: (token: AssetOption) => mixed,
   collectibles?: Collectible[],
   onSelectCollectible?: (collectible: Collectible) => mixed,
-  isFromSelect?: boolean,
 |};
 
-const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollectible, isFromSelect }: Props) => {
+const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollectible }: Props) => {
   const { isChainCollapsed } = useCollapseChain();
   const sections = useSectionData(tokens, collectibles ?? [], isChainCollapsed);
   const visibleNFTs = useNftFlag();
@@ -79,9 +78,7 @@ const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollect
           name={token.name}
           iconUrl={token.iconUrl}
           balance={wrapBigNumberOrNil(token.balance?.balance)}
-          onPress={async () => {
-            await onSelectToken(token);
-          }}
+          onPress={() => onSelectToken(token)}
         />
       );
     }
@@ -110,7 +107,7 @@ const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollect
     );
   };
 
-  return isFromSelect ? (
+  return (
     <FlatList
       data={sortTokensList}
       renderItem={({ item }) => renderItem(item)}
@@ -118,16 +115,8 @@ const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollect
       keyboardShouldPersistTaps="always"
       ListEmptyComponent={renderEmptyState()}
       contentInsetAdjustmentBehavior="scrollableAxes"
-      contentContainerStyle={styles.contentContainer}
-    />
-  ) : (
-    <SectionList
-      sections={sections}
-      renderItem={({ item }) => renderItem(item)}
-      keyExtractor={getItemKey}
-      keyboardShouldPersistTaps="always"
-      ListEmptyComponent={renderEmptyState()}
-      contentInsetAdjustmentBehavior="scrollableAxes"
+      removeClippedSubviews
+      scrollEventThrottle={1}
       contentContainerStyle={styles.contentContainer}
     />
   );

@@ -53,6 +53,7 @@ export type WalletConnectConnector = {|
   updateChain(chainParams: WalletConnectUpdateChain): Promise<any>,
   approveRequest(response: WalletConnectRequestApprove): void,
   rejectRequest(response: WalletConnectRequestReject): void,
+  sendCustomRequest(customRequest: any): void,
 |};
 
 export type sessionDataProps = {|

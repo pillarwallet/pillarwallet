@@ -274,6 +274,7 @@
     "archanovaToEtherspot": "Pillar V1 到 Etherspot (Pillar V2)",
     "archanovaToEtherspotShort": "Pillar V1 到 Etherspot",
     "deployed": "已部署",
+    "notDeployed": "未部署",
     "walletDeployment": "钱包部署",
     "pleaseSelect": "请选择",
     "balanceFiatTokenFormat": "余额 {{balanceInFiat}} ({{balance}})",
@@ -560,6 +561,7 @@
       "callRequestRejectFailed": "呼叫请求拒绝失败",
       "callRequestApproveFailed": "呼叫请求批准失败",
       "invalidRequest": "此 WalletConnect 请求看起来不太正确 - 请重试",
+      "cannotDetermineChain": "抱歉，在此请求中未找到链信息。请联系 {{ dAppName }}",
       "cannotDetermineEthereumChain": "我们无法看到此请求属于哪个以太坊链 - 请重试",
       "activeAccountDoesNotSupportSelectedChain": "活跃账户不支持所选以太坊链"
     },
@@ -1050,6 +1052,12 @@
     "error": {
       "smartWalletNeedToBeActivated": "需要激活智能钱包才能继续。",
       "unsupportedRequestCallRequestType": "不支持的呼叫请求类型。"
+    },
+    "paragraph":{
+      "undeploy_warning_1": "您正在连接到一个未部署的钱包，您将无法执行任何交易，请转到",
+      "deploy_manager": "钱包管理器",
+      "undeploy_warning_2": "部署。",
+      "archanova_warning": "使用 Pillar v1 (Archanova) 帐户，您只能连接到以太坊主网网络。"
     }
   },
   "servicesContent": {
