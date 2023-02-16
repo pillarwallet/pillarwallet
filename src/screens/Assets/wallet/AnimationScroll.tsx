@@ -4,8 +4,7 @@
  */
 
 import React, { useRef } from 'react';
-import { StyleSheet, Animated, View, DeviceEventEmitter, Dimensions, Platform } from 'react-native';
-import { log } from 'util';
+import { StyleSheet, Animated, View, Dimensions } from 'react-native';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
@@ -56,12 +55,7 @@ function AnimationScroll({ headerContent, searchContent, maincontent, query }: P
         contentContainerStyle={{
           backgroundColor: colors.background,
         }}
-        onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
-          useNativeDriver: true,
-          listener: (event) => {
-            DeviceEventEmitter.emit('ABC', event?.nativeEvent);
-          },
-        })}
+        onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
       >
         <Animated.View style={styles.mainContent}>
           {headerContent}

@@ -60,6 +60,7 @@ function SearchInput({
   textInputStyle,
 }: Props) {
   const colors = useThemeColors();
+  const [visiblePlaceholder, setVisiblePlaceholder] = React.useState(true);
 
   const handleChangeText = (text: string) => {
     const input = text.trimLeft().replace(/\s\s/g, ' ');
@@ -81,11 +82,17 @@ function SearchInput({
         blurOnSubmit
         autoFocus={autoFocus}
         contextMenuHidden
+        onBlur={() => {
+          setVisiblePlaceholder(true);
+        }}
+        onFocus={() => {
+          setVisiblePlaceholder(false);
+        }}
         // eslint-disable-next-line i18next/no-literal-string
         returnKeyType="done"
       />
 
-      {!query && (
+      {!query && visiblePlaceholder && (
         <PlacerholderContainer>
           {showSearchIcon && <Icon name="search" color={colors.tertiaryText} style={{ marginTop: 7 }} />}
           <PlaceholderText color={colors.tertiaryText} style={inputStyle}>
