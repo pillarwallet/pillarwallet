@@ -150,7 +150,7 @@ export const nativeAssetPerChain = {
   arbitrum: {
     chain: CHAIN.ARBITRUM,
     address: ADDRESS_ZERO,
-    name: 'Arbitrum',
+    name: 'Ether',
     symbol: ETH,
     decimals: 18,
     iconUrl: 'https://arbitrum.io/wp-content/uploads/2022/12/One-Logo-280x280-1-150x150.png',
