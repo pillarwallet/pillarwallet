@@ -53,7 +53,7 @@ export default function ({ forgroundColor, backgroundColor, progress, selectedIn
             styles.shadow,
             styles.leftBorder,
             progress > 99.5 && styles.rightBorder,
-            selectedIndex === 0 && { shadowColor: colors.primaryAccent200 },
+            selectedIndex === 0 && { shadowColor: colors.darkViolet },
           ]}
         />
         <View
@@ -65,7 +65,7 @@ export default function ({ forgroundColor, backgroundColor, progress, selectedIn
             styles.shadow,
             styles.rightBorder,
             progress < 0.5 && styles.leftBorder,
-            selectedIndex === 1 && { shadowColor: colors.primaryAccent100 },
+            selectedIndex === 1 && { shadowColor: colors.dogerBlue },
           ]}
         />
       </View>

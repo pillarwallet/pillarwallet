@@ -29,6 +29,7 @@ import Text from 'components/core/Text';
 
 // Utils
 import { spacing } from 'utils/variables';
+import { getColorByTheme } from 'utils/themes';
 
 // Types
 import type { ImageSource } from 'utils/types/react-native';
@@ -60,12 +61,7 @@ const FloatingButtons = ({ items: falsyItems, applyBottomInset = true }: Props) 
     <FloatingContainer forceInset={forceInset}>
       <Container>
         {items.map((item) => (
-          <ItemTouchable
-            key={item.title}
-            onPress={item.onPress}
-            disabled={item.disabled}
-            testID="FloatingButtonItem"
-          >
+          <ItemTouchable key={item.title} onPress={item.onPress} disabled={item.disabled} testID="FloatingButtonItem">
             <ItemIconWrapper>
               {!!item.iconName && <Icon name={item.iconName} />}
               {!!item.iconSource && <ItemIconImage source={item.iconSource} />}
@@ -94,7 +90,7 @@ const Container = styled.View`
   flex-direction: row;
   align-items: center;
   padding-horizontal: ${spacing.large / 2}px;
-  background-color: ${({ theme }) => theme.colors.basic050};
+  background-color: ${getColorByTheme({ lightKey: 'basic050', darkKey: 'basic080' })}
   border-radius: 20px;
   shadow-opacity: 0.05;
   shadow-color: #000;

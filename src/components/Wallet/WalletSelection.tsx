@@ -55,8 +55,8 @@ export default function () {
   let listOfAssets = tabIndex === 0 ? nonStableTokens : tokens;
 
   const items = [
-    { key: TOKENS, title: TOKENS, component: null, color: colors.primaryAccent250 },
-    { key: STABLES, title: STABLES, component: null, color: colors.synthetic180 },
+    { key: TOKENS, title: TOKENS, component: null, color: colors.darkViolet },
+    { key: STABLES, title: STABLES, component: null, color: colors.dogerBlue },
   ];
 
   const renderItem = (item: AssetOption, index: number) => {

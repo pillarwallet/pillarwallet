@@ -42,6 +42,8 @@ const commonColors = {
   white: '#FFFFFF',
   black: '#000000',
   optimism: '#ff0024',
+  darkViolet: '#9D2BFF',
+  dogerBlue: '#198DFF',
 };
 
 export const semanticLightThemeColors = {
