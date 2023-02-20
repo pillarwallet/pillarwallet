@@ -18,14 +18,20 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { BigNumber } from 'bignumber.js';
+import { utils } from 'ethers';
 
 // Utils
+import { nativeAssetPerChain } from 'utils/chains';
 import { wrapBigNumber } from 'utils/bigNumber';
 import { valueForAddress, getCurrencySymbol } from 'utils/common';
 
+// Constans
+import { CHAIN } from 'constants/chainConstants';
+import { USD } from 'constants/assetsConstants';
+
 // Types
 import type { Value } from 'models/Value';
-import type { Currency, RatesByAssetAddress } from 'models/Rates';
+import type { Currency, RatesByAssetAddress, RatesPerChain } from 'models/Rates';
 
 export const getFiatValueFromUsd = (valueInUsd: ?BigNumber | string, usdToFiatRate: ?number): ?BigNumber => {
   if (!valueInUsd || usdToFiatRate == null) return null;
@@ -74,4 +80,14 @@ export const getAssetValueFromFiat = (
   if (!rate) return null;
 
   return wrapBigNumber(fiatValue)?.dividedBy(rate);
+};
+
+export const fiatInvestmentBalance = (balance: BigNumber, rates: RatesPerChain, currency: Currency) => {
+  const nativeAssetRate = rates[nativeAssetPerChain[CHAIN.ETHEREUM].address];
+
+  const assetBalance: string = utils.formatEther(balance);
+
+  const fiatAmount = (parseFloat(assetBalance) * nativeAssetRate?.[currency]) / nativeAssetRate?.[USD];
+
+  return fiatAmount?.toFixed(2);
 };

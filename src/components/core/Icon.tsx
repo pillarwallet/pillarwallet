@@ -128,6 +128,7 @@ import PendingIcon from 'assets/icons/svg/24-circle-pending.svg';
 import CheckmarkCircle from 'assets/icons/svg/24-circle-checkmark.svg';
 import CheckmarkGreen from 'assets/icons/svg/24-checkmark.svg';
 import CrossRed from 'assets/icons/svg/24-x.svg';
+import IconHelp from 'assets/icons/svg/24-circle-help.svg';
 
 // Assets: services icons
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
@@ -241,6 +242,7 @@ const components = {
   'checkmark-circle': CheckmarkCircle,
   'checkmark-green': CheckmarkGreen,
   'cross-red': CrossRed,
+  help: IconHelp,
 
   // Service icons
   binance: IconBinance,
