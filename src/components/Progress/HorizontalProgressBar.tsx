@@ -81,9 +81,10 @@ const styles = StyleSheet.create({
       width: 0,
       height: 0,
     },
-    shadowOpacity: 1,
+    shadowOpacity: 0.5,
     shadowRadius: 3.35,
-    elevation: 4,
+    elevation: 3,
+    shadowColor: 'transparent',
   },
   leftBorder: {
     borderTopLeftRadius: 8,
