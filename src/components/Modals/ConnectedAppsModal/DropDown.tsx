@@ -41,11 +41,12 @@ interface Props {
   visible: boolean;
   onHide: (val: boolean) => void;
   modalContent: any;
+  showOnlyBottomSide?: boolean;
 }
 
 const { height } = Dimensions.get('window');
 
-const DropDown: FC<Props> = ({ dropDownStyle, visible, onHide, modalContent }) => {
+const DropDown: FC<Props> = ({ dropDownStyle, visible, onHide, modalContent, showOnlyBottomSide }) => {
   const colors = useThemeColors();
 
   const [ref, setRef] = useState(null);
@@ -61,9 +62,10 @@ const DropDown: FC<Props> = ({ dropDownStyle, visible, onHide, modalContent }) =
 
   useEffect(() => {
     if (!visible && !ref && contentHeight === 0) return;
-    ref.current?.measure((_fx, _fy, _w, h, _px, py) => {
+    ref?.current?.measure((_fx, _fy, _w, h, _px, py) => {
       // eslint-disable-next-line no-mixed-operators
-      if (height > py + contentHeight + h + 30) {
+      if (!py || !h) return;
+      if (height > py + contentHeight + h + 30 || showOnlyBottomSide) {
         setDropDownFromTop(py + h);
       } else {
         // eslint-disable-next-line no-mixed-operators
@@ -74,17 +76,16 @@ const DropDown: FC<Props> = ({ dropDownStyle, visible, onHide, modalContent }) =
 
   return (
     <Modal visible={visible} transparent animationType="fade">
-      <TouchableOpacity style={styles.overlay} onPress={() => onHide(false)}>
-        <View
-          onLayout={(event) => {
-            const { height } = event.nativeEvent.layout;
-            if (contentHeight !== height) setContentHeight(height);
-          }}
-          style={[styles.dropdown, { top: dropDownFromTop, backgroundColor: colors.basic080 }, dropDownStyle]}
-        >
-          {modalContent}
-        </View>
-      </TouchableOpacity>
+      <TouchableOpacity style={[styles.overlay]} onPress={() => onHide(false)} />
+      <View
+        onLayout={(event) => {
+          const { height } = event.nativeEvent.layout;
+          if (contentHeight !== height) setContentHeight(height);
+        }}
+        style={[styles.dropdown, { top: dropDownFromTop, backgroundColor: colors.basic080 }, dropDownStyle]}
+      >
+        {modalContent}
+      </View>
     </Modal>
   );
 };

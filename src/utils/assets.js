@@ -19,7 +19,7 @@
 */
 import { BigNumber as EthersBigNumber, utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
-import { get, mapValues, orderBy } from 'lodash';
+import { get, isEmpty, mapValues, orderBy } from 'lodash';
 
 // constants
 import { defaultFiatCurrency, ETH, PLR, ASSET_TYPES } from 'constants/assetsConstants';
@@ -55,7 +55,7 @@ import type { Chain } from 'models/Chain';
 import type { Currency, RatesByAssetAddress } from 'models/Rates';
 import type { Value } from 'models/Value';
 import { omitNilProps } from 'utils/object';
-
+import type { AccountInvestmentPositionsInfo } from 'etherspot';
 
 const sortAssetsFn = (a: Asset, b: Asset): number => {
   return a.symbol.localeCompare(b.symbol);
@@ -65,15 +65,17 @@ export const sortAssetsArray = (assets: Asset[]): Asset[] => {
   return assets.sort(sortAssetsFn);
 };
 
-export const transformBalancesToObject = (
-  balancesArray: WalletAssetBalance[] = [],
-): WalletAssetsBalances => balancesArray.reduce((memo, balance) => ({
-  ...memo,
-  [addressAsKey(balance.address)]: balance,
-}), {});
+export const transformBalancesToObject = (balancesArray: WalletAssetBalance[] = []): WalletAssetsBalances =>
+  balancesArray.reduce(
+    (memo, balance) => ({
+      ...memo,
+      [addressAsKey(balance.address)]: balance,
+    }),
+    {},
+  );
 
 export const getAssetsAsList = (assetsObject: AssetByAddress): Asset[] => {
-  return Object.keys(assetsObject).map(id => assetsObject[id]);
+  return Object.keys(assetsObject).map((id) => assetsObject[id]);
 };
 
 export const sortAssets = (assets: AssetByAddress): Asset[] => {
@@ -184,7 +186,7 @@ export const addressesEqual = (address1: ?string, address2: ?string): boolean =>
 
 /** Checks if address list contains given address. Similar to `Array.includes`.  */
 export const addressesInclude = (addresses: string[], addressToFind: ?string): boolean => {
-  return addresses.some(item => isCaseInsensitiveMatch(item, addressToFind));
+  return addresses.some((item) => isCaseInsensitiveMatch(item, addressToFind));
 };
 
 export const isSupportedAssetAddress = (supportedAssets: Asset[], addressToCheck: ?string): boolean => {
@@ -216,8 +218,9 @@ export const getBalanceInFiat = (
   assetAddress: string,
 ): number => {
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  const assetBalanceInFiat = assetBalance ?
-    parseFloat(assetBalance.toString()) * getAssetRateInFiat(rates, assetAddress, fiatCurrency) : 0;
+  const assetBalanceInFiat = assetBalance
+    ? parseFloat(assetBalance.toString()) * getAssetRateInFiat(rates, assetAddress, fiatCurrency)
+    : 0;
   return assetBalanceInFiat;
 };
 
@@ -343,34 +346,66 @@ export const getAssetOptionSortPriority = ({ symbol, balance, imageUrl }: AssetO
 
 type CollectibleMatch = { contractAddress: string, id: string };
 
-export const isMatchingCollectible = (
-  a: CollectibleMatch,
-  b: CollectibleMatch,
-) => a.contractAddress
-  && addressesEqual(a.contractAddress, b.contractAddress)
-  && a.id
-  && a.id === b.id;
+export const isMatchingCollectible = (a: CollectibleMatch, b: CollectibleMatch) =>
+  a.contractAddress && addressesEqual(a.contractAddress, b.contractAddress) && a.id && a.id === b.id;
 
 export const mapWalletAssetsBalancesIntoAssetsByAddress = (
   walletAssetsBalances: WalletAssetsBalances,
   chainSupportedAssets: Asset[],
 ): AssetByAddress => {
-  const assetsByAddress = mapValues(
-    walletAssetsBalances,
-    ({ address }: WalletAssetBalance) => findAssetByAddress(chainSupportedAssets, address),
+  const assetsByAddress = mapValues(walletAssetsBalances, ({ address }: WalletAssetBalance) =>
+    findAssetByAddress(chainSupportedAssets, address),
   );
 
   // removes assets that were not found / no longer supported
   return omitNilProps(assetsByAddress);
 };
 
-export const sortSupportedAssets = (
-  supportedChainAssets: AssetsPerChain,
-) => mapValues(supportedChainAssets, sortAssetsArray);
+export const sortSupportedAssets = (supportedChainAssets: AssetsPerChain) =>
+  mapValues(supportedChainAssets, sortAssetsArray);
 
 export const isNativeAsset = (chain: ?Chain, assetAddress: ?string) => {
   if (!chain || !assetAddress) return false;
 
   const nativeAsset = nativeAssetPerChain[chain];
   return addressesEqual(assetAddress, nativeAsset?.address);
+};
+
+export const sortInvestmentPositions = (positionsInfo: AccountInvestmentPositionsInfo[]) => {
+  const positionsInfoList = [];
+  positionsInfo.forEach((newArr) => {
+    newArr.forEach((item) => {
+      positionsInfoList.push(item);
+    });
+  });
+
+  if (isEmpty(positionsInfoList)) return null;
+
+  const newArr = [];
+  positionsInfoList.forEach((x) => {
+    // Checking if there is any object in arr2
+    // which contains the key value
+    // eslint-disable-next-line i18next/no-literal-string
+    const key = 'metaType';
+    if (
+      newArr.some((val) => {
+        return val[key] === x[key];
+      })
+    ) {
+      // If yes! then push the arr by metaType value
+      newArr.forEach((k) => {
+        if (k[key] === x[key]) {
+          k.data.push(x);
+        }
+      });
+    } else {
+      // If not! Then create a new object initialize
+      // it with the present iteration key's value and
+      const a = {};
+      a[key] = x[key];
+      a.data = [x];
+      newArr.push(a);
+    }
+  });
+  return newArr;
 };

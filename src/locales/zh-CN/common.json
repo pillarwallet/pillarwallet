@@ -132,7 +132,8 @@
     "exchange": "交换",
     "unlockWithBiometrics": "使用生物识别传感器解锁",
     "welcome": "欢迎来到 Pillar 钱包！",
-    "seedPhrase": "12字种子词组"
+    "seedPhrase": "12字种子词组",
+    "portfolio_riskiness": "投资组合风险"
   },
   "label": {
     "activate": "启用",
@@ -282,7 +283,15 @@
     "filterByName": "按名称过滤",
     "transaction_submitted": "交易提交",
     "on_network": "上 {{network}}",
-    "on_position": "{{position}} 位置"
+    "on_position": "{{position}} 位置",
+    "of_stable": "{{percentage}} 的马厩 - {{type}}",
+    "high_risk": "高风险",
+    "risky": "有风险",
+    "moderate_risk": "中等风险",
+    "low_risk": "低风险",
+    "no_risk": "没有风险",
+    "risk_assets": "{{percentage}}% 的风险资产",
+    "risk_stable": "{{percentage}}% 的低风险马厩"
   },
   "button": {
     "activate": "启用",
@@ -420,7 +429,9 @@
     "sessionExpiredReEnterPin": "登录会话已过期，请输入您的 PIN 码以继续。",
     "addContacts": "将联系人添加到地址簿以轻松访问收藏地址以发送资产。",
     "nativeIntegrationWarning": "以下工具可让您直接访问智能合约。这被认为是一种专业工具，如果您不知道自己在做什么，请不要尝试使用此工具，因为它可能会导致资金损失。",
-    "ownRisk":"继续自担风险。"
+    "ownRisk":"继续自担风险。",
+    "riskWithType": "您的投资组合现在是{{type}}。",
+    "portfolio_riskiness": "你搬到马厩的次数越多，\n你承担的风险就越小。"
   },
   "insight": {
     "pillarNetworkActivate": {
