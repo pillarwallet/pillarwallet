@@ -140,6 +140,7 @@ import IconAllNetworks from 'assets/icons/svg/services-48-circle-pillar-exchange
 import IconAllNetworksLight from 'assets/icons/svg/services-48-circle-pillar-exchange-light.svg';
 import IconOptimism from 'assets/icons/svg/icon-24-optimism.svg';
 import IconGnosis from 'assets/icons/svg/icon-24-gnosis.svg';
+import IconArbitrum from 'assets/icons/svg/icon-24-arbitrum.svg';
 
 const components = {
   // Generic icons
@@ -251,6 +252,7 @@ const components = {
   xdai: IconGnosis,
   avalanche: IconAvalanche,
   optimism: IconOptimism,
+  arbitrum: IconArbitrum,
   'wallet-connect': IconWalletConnect,
   'all-networks': IconAllNetworks,
   'all-networks-light': IconAllNetworksLight,

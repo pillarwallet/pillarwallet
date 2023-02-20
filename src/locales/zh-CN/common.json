@@ -72,7 +72,9 @@
     "sokol":"Gnosis Sokol",
     "binance_test":"Binance Testnet",
     "mumbai":"Polygon Mumbai",
-    "optimism_gorli":"Optimistic Görli"
+    "optimism_gorli":"Optimistic Görli",
+    "arbitrum": "Arbitrum",
+    "arbitrum_nitro": "Arbitrum Nitro"
   },
   "chainsShort": {
     "ethereum": "Ethereum",
@@ -80,7 +82,8 @@
     "xdai": "Gnosis",
     "polygon": "Polygon",
     "optimism": "Optimism",
-    "optimism_kovan": "Optimism Kovan"
+    "optimism_kovan": "Optimism Kovan",
+    "arbitrum": "Arbitrum"
   },
   "assetCategories": {
     "wallet": "钱包",
