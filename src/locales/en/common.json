@@ -76,7 +76,9 @@
     "sokol":"Gnosis Sokol",
     "binance_test":"Binance Testnet",
     "mumbai":"Polygon Mumbai",
-    "optimism_gorli":"Optimistic Görli"
+    "optimism_gorli":"Optimistic Görli",
+    "arbitrum": "Arbitrum",
+    "arbitrum_nitro": "Arbitrum Nitro"
   },
 
   "chainsShort": {
@@ -86,7 +88,8 @@
     "polygon": "Polygon",
     "avalanche": "Avalanche",
     "optimism":"Optimism",
-    "optimism_kovan": "Optimism Kovan"
+    "optimism_kovan": "Optimism Kovan",
+    "arbitrum": "Arbitrum"
   },
 
   "assetCategories": {
@@ -139,7 +142,8 @@
     "unlockWithBiometrics": "Unlock with biometric sensor",
     "welcome": "Welcome to Pillar Wallet!",
     "seedPhrase": "12 words seed phrase",
-    "registerEnsName": "Register ENS name"
+    "registerEnsName": "Register ENS name",
+    "portfolio_riskiness": "Portfolio Riskiness"
   },
 
   "label": {
@@ -298,7 +302,15 @@
     "ensMigrate": "Migrate ENS to Etherspot",
     "transaction_submitted":"Transaction submitted",
     "on_network": "on {{network}}",
-    "on_position": "{{position}} position"
+    "on_position": "{{position}} position",
+    "of_stable": "{{percentage}} of stables - {{type}}",
+    "high_risk": "high risk",
+    "risky": "risky",
+    "moderate_risk": "moderate risk",
+    "low_risk": "low risk",
+    "no_risk": "no risk",
+    "risk_assets": "{{percentage}}% of risky assets",
+    "risk_stable": "{{percentage}}% of low risk stables"
   },
 
   "button": {
@@ -440,7 +452,9 @@
     "sessionExpiredReEnterPin": "Login session expired, please enter your PIN to proceed.",
     "addContacts": "Add contacts to address book to easily access favorite addresses for sending assets.",
     "nativeIntegrationWarning":"The following tool gives you direct access to Smart Contracts. This is considered a professional tool and if you don't know what you're doing, please don't attempt to use this tool as it could result in loss of funds.",
-    "ownRisk": "Continue at your own risk."
+    "ownRisk": "Continue at your own risk.",
+    "riskWithType": "Your portfolio is {{type}} right now.",
+    "portfolio_riskiness": "The more you move to stables,\nthe less risk you take on."
   },
 
   "insight": {

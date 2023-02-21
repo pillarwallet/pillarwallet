@@ -45,19 +45,19 @@ import { buildAssetDataNavigationParam } from 'screens/Assets/utils';
 import type { AssetOption } from 'models/Asset';
 
 export default function () {
-  const [tabIndex, setTabIndex] = React.useState(0);
   const { tokens } = useStableAssets();
   const navigation = useNavigation();
-
+  const colors = useThemeColors();
   const { tokens: nonStableTokens, percentage } = useNonStableAssets();
 
-  const colors = useThemeColors();
-  let listOfAssets = tabIndex === 0 ? nonStableTokens : tokens;
-
   const items = [
-    { key: TOKENS, title: TOKENS, component: null, color: colors.primaryAccent250 },
-    { key: STABLES, title: STABLES, component: null, color: colors.synthetic180 },
+    { key: TOKENS, title: TOKENS, color: colors.darkViolet },
+    { key: STABLES, title: STABLES, color: colors.dodgerBlue },
   ];
+
+  const [selectedTabNm, setSelectedTabNm] = React.useState(items[0].title);
+
+  let listOfAssets = selectedTabNm === TOKENS ? nonStableTokens : tokens;
 
   const renderItem = (item: AssetOption, index: number) => {
     return (
@@ -87,18 +87,12 @@ export default function () {
     <>
       <Spacing h={10} />
 
-      <ButtonGroup
-        items={items}
-        tabIndex={tabIndex}
-        onTabIndexChange={(val: number) => {
-          setTabIndex(val);
-        }}
-      />
+      <ButtonGroup items={items} tabName={selectedTabNm} onSelectedTabName={setSelectedTabNm} />
 
       <Spacing h={20} />
 
       <HorizontalProgressBar
-        selectedIndex={tabIndex}
+        selectedName={selectedTabNm}
         progress={percentage}
         forgroundColor={items[0].color}
         backgroundColor={items[1].color}
@@ -107,7 +101,7 @@ export default function () {
       <Spacing h={10} />
 
       <FlatList
-        key={items[tabIndex].key}
+        key={selectedTabNm + '__'}
         data={listOfAssets.slice(0, 5)}
         renderItem={({ item, index }) => renderItem(item, index)}
         keyExtractor={(item) => item.address + '__' + item.chain}

@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "pillar-logo-pixel.png",
+      "filename" : "pillar-logo-vector-6.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "pillar-logo-pixel@2x.png",
+      "filename" : "pillar-logo-vector-06@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "pillar-logo-pixel@3x.png",
+      "filename" : "pillar-logo-vector-06@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

@@ -30,6 +30,7 @@ import { useFiatCurrency, useChainRates, useActiveAccount, useRootSelector, apps
 // Utils
 import { nativeAssetPerChain } from 'utils/chains';
 import { isEtherspotAccount } from 'utils/accounts';
+import { fiatInvestmentBalance } from 'utils/rates';
 
 // Type
 import { AppHoldings } from '../models/Investment';
@@ -38,26 +39,25 @@ import BigNumber from 'bignumber.js';
 type Props = {
   appHoldings: AppHoldings[] | null;
   totalBalanceOfHoldings: number | any;
+  isFetching: boolean;
 };
 
 export function useAppHoldings(): Props {
   const currency = useFiatCurrency();
   const activeAccount = useActiveAccount();
   const isEtherspotAcc = isEtherspotAccount(activeAccount);
-  const { data: appsHoldingsData } = useRootSelector(appsHoldingsSelector);
+  const { data: appsHoldingsData, isFetching } = useRootSelector(appsHoldingsSelector);
 
   const ethereumRates = useChainRates(CHAIN.ETHEREUM);
   const nativeAssetRate = ethereumRates[nativeAssetPerChain[CHAIN.ETHEREUM].address];
 
   if (!nativeAssetRate || !appsHoldingsData?.[0] || !isEtherspotAcc)
-    return { appHoldings: null, totalBalanceOfHoldings: new BigNumber(0) };
+    return { appHoldings: null, totalBalanceOfHoldings: new BigNumber(0), isFetching };
 
   const appsHoldingsWithBalance: AppHoldings[] = appsHoldingsData.map((asset) => {
-    const assetBalance: string = utils.formatEther(asset.balance);
+    const fiatBalance = fiatInvestmentBalance(asset.balance, ethereumRates, currency);
 
-    const fiatAmount = (parseFloat(assetBalance) * nativeAssetRate?.[currency]) / nativeAssetRate?.[USD];
-
-    return { ...asset, balance: fiatAmount.toFixed(2) };
+    return { ...asset, balance: fiatBalance };
   });
 
   appsHoldingsWithBalance.sort((a: AppHoldings, b: AppHoldings) => b?.balance - a?.balance);
@@ -66,5 +66,5 @@ export function useAppHoldings(): Props {
     return asset + (parseFloat(value.balance) || 0);
   }, 0);
 
-  return { totalBalanceOfHoldings: sumOfBalance, appHoldings: appsHoldingsWithBalance };
+  return { totalBalanceOfHoldings: sumOfBalance, appHoldings: appsHoldingsWithBalance, isFetching };
 }

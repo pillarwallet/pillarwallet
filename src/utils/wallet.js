@@ -31,6 +31,7 @@ import { saveDbAction } from 'actions/dbActions';
 // utils
 import { getRandomInt, printLog, reportLog, reportErrorLog, logBreadcrumb } from 'utils/common';
 import { getKeychainDataObject, setKeychainDataObject } from 'utils/keychain';
+import { defaultSortAssetOptions, isAssetOptionMatchedByQuery } from 'utils/assets';
 
 // services
 import Storage from 'services/storage';
@@ -280,3 +281,9 @@ export function formatToRawPrivateKey(privateKey: string): string {
     ? privateKey.slice(2)
     : privateKey;
 }
+
+export function getMatchingTokens(tokens: any[], query: string) {
+  const matchingTokens = tokens.filter((item) => isAssetOptionMatchedByQuery(item, query));
+  return defaultSortAssetOptions(matchingTokens);
+}
+
