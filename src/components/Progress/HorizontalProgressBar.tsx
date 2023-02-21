@@ -27,22 +27,27 @@ import Text from 'components/core/Text';
 // Utils
 import { useThemeColors } from 'utils/themes';
 
+// Constants
+import { TOKENS, STABLES } from 'constants/walletConstants';
+
 type Props = {
   forgroundColor: string;
   backgroundColor: string;
   progress: any;
-  selectedIndex: number;
+  selectedName: string;
+  style?: any;
+  hidePercentage?: boolean;
 };
 
-export default function ({ forgroundColor, backgroundColor, progress, selectedIndex }: Props) {
+export default function ({ forgroundColor, backgroundColor, progress, selectedName, style, hidePercentage }: Props) {
   const colors = useThemeColors();
 
   const stableTokensProgress = 100 - progress;
   const decimalNm = progress > 99 || progress < 1 ? 2 : 0;
 
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-      <Text color={colors.text}>{progress.toFixed(decimalNm)}%</Text>
+    <View style={[{ flexDirection: 'row', alignItems: 'center' }, style]}>
+      {!hidePercentage && <Text color={colors.text}>{progress.toFixed(decimalNm)}%</Text>}
       <View style={{ flex: 1, marginHorizontal: 5, flexDirection: 'row', alignItems: 'center' }}>
         <View
           style={[
@@ -53,7 +58,7 @@ export default function ({ forgroundColor, backgroundColor, progress, selectedIn
             styles.shadow,
             styles.leftBorder,
             progress > 99.5 && styles.rightBorder,
-            selectedIndex === 0 && { shadowColor: colors.darkViolet },
+            selectedName === TOKENS && { shadowColor: colors.darkViolet },
           ]}
         />
         <View
@@ -65,11 +70,11 @@ export default function ({ forgroundColor, backgroundColor, progress, selectedIn
             styles.shadow,
             styles.rightBorder,
             progress < 0.5 && styles.leftBorder,
-            selectedIndex === 1 && { shadowColor: colors.dogerBlue },
+            selectedName === STABLES && { shadowColor: colors.dodgerBlue },
           ]}
         />
       </View>
-      <Text color={colors.text}>{stableTokensProgress.toFixed(decimalNm)}%</Text>
+      {!hidePercentage && <Text color={colors.text}>{stableTokensProgress.toFixed(decimalNm)}%</Text>}
     </View>
   );
 }
