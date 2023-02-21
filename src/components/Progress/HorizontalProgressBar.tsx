@@ -58,7 +58,7 @@ export default function ({ forgroundColor, backgroundColor, progress, selectedNa
             styles.shadow,
             styles.leftBorder,
             progress > 99.5 && styles.rightBorder,
-            selectedName === TOKENS && { shadowColor: colors.primaryAccent200 },
+            selectedName === TOKENS && { shadowColor: colors.darkViolet },
           ]}
         />
         <View
@@ -70,7 +70,7 @@ export default function ({ forgroundColor, backgroundColor, progress, selectedNa
             styles.shadow,
             styles.rightBorder,
             progress < 0.5 && styles.leftBorder,
-            selectedName === STABLES && { shadowColor: colors.primaryAccent100 },
+            selectedName === STABLES && { shadowColor: colors.dodgerBlue },
           ]}
         />
       </View>
@@ -89,6 +89,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 3.35,
     elevation: 3,
+    shadowColor: 'transparent',
   },
   leftBorder: {
     borderTopLeftRadius: 8,

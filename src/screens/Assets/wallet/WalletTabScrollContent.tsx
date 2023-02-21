@@ -76,9 +76,9 @@ function WalletTabScrollContent({ isNavigateToHome, hasPositiveBalance }: Props)
   const colors = useThemeColors();
 
   const items = [
-    { key: ALL, title: ALL, color: '#FD7344' },
-    { key: TOKENS, title: TOKENS, color: colors.primaryAccent250 },
-    { key: STABLES, title: STABLES, color: colors.synthetic180 },
+    { key: ALL, title: ALL, color: colors.preciousPersimmon },
+    { key: TOKENS, title: TOKENS, color: colors.darkViolet },
+    { key: STABLES, title: STABLES, color: colors.dodgerBlue },
   ];
 
   const [selectedChain, setSelectedChain] = React.useState(null);

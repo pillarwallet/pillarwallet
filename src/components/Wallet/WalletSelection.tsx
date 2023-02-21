@@ -51,8 +51,8 @@ export default function () {
   const { tokens: nonStableTokens, percentage } = useNonStableAssets();
 
   const items = [
-    { key: TOKENS, title: TOKENS, component: null, color: colors.primaryAccent250 },
-    { key: STABLES, title: STABLES, component: null, color: colors.synthetic180 },
+    { key: TOKENS, title: TOKENS, color: colors.darkViolet },
+    { key: STABLES, title: STABLES, color: colors.dodgerBlue },
   ];
 
   const [selectedTabNm, setSelectedTabNm] = React.useState(items[0].title);

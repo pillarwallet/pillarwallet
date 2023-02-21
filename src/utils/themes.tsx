@@ -43,6 +43,9 @@ const commonColors = {
   black: '#000000',
   optimism: '#ff0024',
   arbitrum: '#0097e9',
+  darkViolet: '#9D2BFF',
+  dodgerBlue: '#198DFF',
+  preciousPersimmon: '#FD7344',
 };
 
 export const semanticLightThemeColors = {
