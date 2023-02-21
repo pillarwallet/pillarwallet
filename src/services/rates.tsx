@@ -64,7 +64,7 @@ export const getExchangeTokenPrices = async (
   if (isEmpty(assetsContractAddresses)) {
     return;
   }
-
+  allSettled.shim();
   const promiseRequest = () => {
     return new Promise(() => {
       (async () => {
@@ -82,7 +82,7 @@ export const getExchangeTokenPrices = async (
   };
 
   allSettled([promiseRequest()]);
-  allSettled.shim();
+
   return;
 };
 
