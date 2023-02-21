@@ -32,6 +32,7 @@ import { ARCHANOVA_WALLET_UPGRADE_STATUSES } from 'constants/archanovaConstants'
 import { PIN_CODE } from 'constants/navigationConstants';
 import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
 import { CHAIN } from 'constants/chainConstants';
+import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
@@ -301,7 +302,12 @@ export const deployAccounts = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       deployAccounts: { isFetching },
+      rates: { data: rates },
+      gasThreshold: { gasThresholds },
+      appSettings: { data },
     } = getState();
+
+    const currency = data.baseFiatCurrency ?? defaultFiatCurrency;
 
     const networkChains = [CHAIN.POLYGON, CHAIN.XDAI];
 
@@ -309,7 +315,9 @@ export const deployAccounts = () => {
 
     dispatch({ type: DEPLOY_ACCOUNTS_FETCHING, payload: true });
 
-    const networkPromises = networkChains.map((chain) => etherspotServices.setbatchDeployAccount(chain));
+    const networkPromises = networkChains.map((chain) =>
+      etherspotServices.setbatchDeployAccount(chain, rates, currency, gasThresholds),
+    );
     const statusReponses = await Promise.all(networkPromises);
 
     const finalResponse = networkChains.map((chain, index) => {

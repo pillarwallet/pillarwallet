@@ -58,8 +58,10 @@ import {
 } from 'utils/etherspot';
 import { addressesEqual, findAssetByAddress } from 'utils/assets';
 import { nativeAssetPerChain, mapChainToChainId, mapProdChainId } from 'utils/chains';
-import { mapToEthereumTransactions } from 'utils/transactions';
+import { mapToEthereumTransactions, isHighGasFee } from 'utils/transactions';
 import { getCaptureFee } from 'utils/exchange';
+import type { Currency } from 'models/Rates';
+import { IGasThresholds } from 'redux/reducers/gas-threshold-reducer';
 
 // constants
 import { ETH, ADDRESS_ZERO, ETHERSPOT_STABLE_COIN, ETHERSPOT_POPULAR_COIN } from 'constants/assetsConstants';
@@ -450,7 +452,7 @@ export class EtherspotService {
     return Promise.all(transactions.map((transaction) => sdk.batchExecuteAccountTransaction(transaction)));
   }
 
-  async setbatchDeployAccount(chain: Chain) {
+  async setbatchDeployAccount(chain: Chain, rates: any, currency: Currency, gasThresholds: IGasThresholds) {
     const sdk = this.getSdkForChain(chain);
 
     if (!sdk) {
@@ -476,7 +478,13 @@ export class EtherspotService {
 
     // Estimate for deploy account transaction
     try {
-      await this.estimateTransactionsBatch(chain);
+      const result = await this.estimateTransactionsBatch(chain);
+      const feeInfo = buildTransactionFeeInfo(result);
+      const highFee = isHighGasFee(chain, feeInfo?.fee, feeInfo?.gasToken, rates?.[chain], currency, gasThresholds);
+
+      if (highFee && chain === CHAIN.POLYGON) {
+        return AccountStates.UnDeployed;
+      }
     } catch (e) {
       return AccountStates.UnDeployed;
     }
