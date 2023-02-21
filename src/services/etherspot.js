@@ -111,6 +111,7 @@ export class EtherspotService {
       isMainnet ? NetworkNames.Xdai : NetworkNames.Sokol,
       isMainnet ? NetworkNames.Avalanche : NetworkNames.Fuji,
       isMainnet ? NetworkNames.Optimism : NetworkNames.OptimismGoerli,
+      isMainnet ? NetworkNames.Arbitrum : NetworkNames.ArbitrumNitro,
     ];
 
     const primaryNetworkName = isMainnet ? NetworkNames.Mainnet : NetworkNames.Goerli;
@@ -127,6 +128,7 @@ export class EtherspotService {
           networkName !== NetworkNames.Mumbai &&
           networkName !== NetworkNames.Sokol &&
           networkName !== NetworkNames.BscTest &&
+          networkName !== NetworkNames.ArbitrumNitro &&
           networkName !== NetworkNames.OptimismGoerli
             ? EnvNames.MainNets
             : EnvNames.TestNets;
@@ -238,8 +240,9 @@ export class EtherspotService {
     const polygon = await this.getAccount(CHAIN.POLYGON);
     const xdai = await this.getAccount(CHAIN.XDAI);
     const optimism = await this.getAccount(CHAIN.OPTIMISM);
+    const arbitrum = await this.getAccount(CHAIN.ARBITRUM);
 
-    return { ethereum, binance, polygon, xdai, avalanche, optimism };
+    return { ethereum, binance, polygon, xdai, avalanche, optimism, arbitrum };
   }
 
   getAccounts(): Promise<?(EtherspotAccount[])> {
@@ -704,6 +707,9 @@ export class EtherspotService {
       case CHAIN.OPTIMISM:
         blockchainExplorerUrl = getEnv().TX_DETAILS_URL_OPTIMISM;
         break;
+      case CHAIN.ARBITRUM:
+        blockchainExplorerUrl = getEnv().TX_DETAILS_URL_ARBITRUM;
+        break;
       default:
         blockchainExplorerUrl = getEnv().TX_DETAILS_URL_ETHEREUM;
         break;
@@ -1136,6 +1142,8 @@ function networkNameFromChain(chain: Chain): ?string {
       return isProdEnv() ? NetworkNames.Avalanche : NetworkNames.Fuji;
     case CHAIN.OPTIMISM:
       return isProdEnv() ? NetworkNames.Optimism : NetworkNames.OptimismGoerli;
+    case CHAIN.ARBITRUM:
+      return isProdEnv() ? NetworkNames.Arbitrum : NetworkNames.ArbitrumNitro;
     default:
       return null;
   }
@@ -1161,6 +1169,9 @@ function chainFromNetworkName(networkName: string): ?Chain {
     case NetworkNames.Optimism:
     case NetworkNames.OptimismGoerli:
       return CHAIN.OPTIMISM;
+    case NetworkNames.Arbitrum:
+    case NetworkNames.ArbitrumNitro:
+      return CHAIN.ARBITRUM;
     default:
       return null;
   }

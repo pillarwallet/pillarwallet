@@ -113,7 +113,7 @@ function BalanceSection({ balanceInFiat, changeInFiat, showBalance, onBalanceCli
 
         {!isKeyBasedAccount(activeAccount) && (
           <SecondColumn>
-            <SpecialButton title={tRoot('button.addCash')} iconName="add-cash" onPress={onAddCashPress} />
+            <SpecialButton title={tRoot('button.buyTokens')} iconName="add-cash" onPress={onAddCashPress} />
           </SecondColumn>
         )}
       </Container>

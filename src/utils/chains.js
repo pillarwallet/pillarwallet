@@ -50,6 +50,8 @@ export const chainFromChainId: { [number]: Chain } = {
   [CHAIN_ID.FUJI]: CHAIN.AVALANCHE,
   [CHAIN_ID.OPTIMISM]: CHAIN.OPTIMISM,
   [CHAIN_ID.OPTIMISM_GOERLI]: CHAIN.OPTIMISM,
+  [CHAIN_ID.ARBITRUM]: CHAIN.ARBITRUM,
+  [CHAIN_ID.ARBITRUM_NITRO]: CHAIN.ARBITRUM,
 };
 
 /**
@@ -62,6 +64,7 @@ export function mapChainToChainId(chain: Chain): number {
   if (chain === CHAIN.XDAI) return isProdEnv() ? CHAIN_ID.XDAI : CHAIN_ID.SOKOL;
   if (chain === CHAIN.AVALANCHE) return isProdEnv() ? CHAIN_ID.AVALANCHE : CHAIN_ID.FUJI;
   if (chain === CHAIN.OPTIMISM) return isProdEnv() ? CHAIN_ID.OPTIMISM : CHAIN_ID.OPTIMISM_GOERLI;
+  if (chain === CHAIN.ARBITRUM) return isProdEnv() ? CHAIN_ID.ARBITRUM : CHAIN_ID.ARBITRUM_NITRO;
 
   // Default to Ethereum, should not happen as above check is exhaustive.
   return isProdEnv() ? CHAIN_ID.ETHEREUM_MAINNET : CHAIN_ID.GOERLI;
@@ -74,6 +77,7 @@ export function mapProdChainId(chain: Chain): number {
   if (chain === CHAIN.XDAI) return CHAIN_ID.XDAI;
   if (chain === CHAIN.AVALANCHE) return CHAIN_ID.AVALANCHE;
   if (chain === CHAIN.OPTIMISM) return CHAIN_ID.OPTIMISM;
+  if (chain === CHAIN.ARBITRUM) return CHAIN_ID.ARBITRUM;
 
   // Default to Ethereum, should not happen as above check is exhaustive.
   return CHAIN_ID.ETHEREUM_MAINNET;
@@ -86,10 +90,10 @@ export function getSupportedChains(account: ?Account): Chain[] {
   const visibleAvalanche = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_CHAIN_SWITCH_43114);
 
   if (!visibleAvalanche) {
-    return [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM, CHAIN.OPTIMISM];
+    return [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM, CHAIN.OPTIMISM, CHAIN.ARBITRUM];
   }
 
-  return [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM, CHAIN.AVALANCHE, CHAIN.OPTIMISM];
+  return [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM, CHAIN.AVALANCHE, CHAIN.OPTIMISM, CHAIN.ARBITRUM];
 }
 
 /* eslint-disable i18next/no-literal-string */
@@ -142,6 +146,14 @@ export const nativeAssetPerChain = {
     symbol: ETH,
     decimals: 18,
     iconUrl: 'https://tokens.1inch.exchange/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png',
+  },
+  arbitrum: {
+    chain: CHAIN.ARBITRUM,
+    address: ADDRESS_ZERO,
+    name: 'Ether',
+    symbol: ETH,
+    decimals: 18,
+    iconUrl: 'https://arbitrum.io/wp-content/uploads/2022/12/One-Logo-280x280-1-150x150.png',
   },
 };
 

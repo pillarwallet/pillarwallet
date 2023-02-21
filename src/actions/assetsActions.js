@@ -79,6 +79,7 @@ import AvalancheTokens from 'utils/tokens/avalanche-tokens';
 import BinanceTokens from 'utils/tokens/binance-tokens';
 import OptimismGoerliTokens from 'utils/tokens/optimism-goerli-tokens.json';
 import OptimismTokens from 'utils/tokens/optimism-tokens';
+import ArbitrumTokens from 'utils/tokens/arbitrum-tokens';
 import XdaiTokens from 'utils/tokens/xdai-tokens';
 
 // selectors
@@ -785,5 +786,8 @@ export const localAssets = (chain: Chain) => {
   if (chain === CHAIN.OPTIMISM) {
     return isMainnet ? OptimismTokens : OptimismGoerliTokens;
   }
-  return { ethereum: [] };
+  if (chain === CHAIN.ARBITRUM) {
+    return isMainnet ? ArbitrumTokens : [];
+  }
+  return [];
 };
