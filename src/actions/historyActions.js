@@ -36,11 +36,7 @@ import {
 import { CHAIN } from 'constants/chainConstants';
 
 // utils
-import {
-  parseFeeWithGasToken,
-  updateAccountHistoryForChain,
-  updateHistoryRecord,
-} from 'utils/history';
+import { parseFeeWithGasToken, updateAccountHistoryForChain, updateHistoryRecord } from 'utils/history';
 import {
   getAccountAddress,
   getAccountId,
@@ -74,6 +70,7 @@ import {
   activeAccountSelector,
   historySelector,
   supportedAssetsPerChainSelector,
+  popularAssetsPerChainSelector,
 } from 'selectors';
 
 // models, types
@@ -96,10 +93,12 @@ export const syncAccountHistoryAction = (
   lastSyncId: ?string,
 ) => {
   return (dispatch: Dispatch, getState: GetState) => {
-    const { history: { data: currentHistory, historyLastSyncIds = {} } } = getState();
+    const {
+      history: { data: currentHistory, historyLastSyncIds = {} },
+    } = getState();
 
-    const pendingTransactions = apiHistory.filter(tx => tx.status === TX_PENDING_STATUS);
-    const minedTransactions = apiHistory.filter(tx => tx.status !== TX_PENDING_STATUS);
+    const pendingTransactions = apiHistory.filter((tx) => tx.status === TX_PENDING_STATUS);
+    const minedTransactions = apiHistory.filter((tx) => tx.status !== TX_PENDING_STATUS);
 
     const existingTransactions = currentHistory[accountId]?.[chain] || [];
     const updatedAccountHistory = uniqBy(
@@ -137,36 +136,38 @@ export const fetchEtherspotTransactionsHistoryAction = () => {
     const accountAddress = getAccountAddress(etherspotAccount);
     const accountId = getAccountId(etherspotAccount);
 
-    await Promise.all(getSupportedChains(etherspotAccount).map(async (supportedChain) => {
-      const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
-      const chainSupportedAssets = supportedAssetsPerChain?.[supportedChain] ?? [];
+    await Promise.all(
+      getSupportedChains(etherspotAccount).map(async (supportedChain) => {
+        const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
+        const popularAssetsPerChain = popularAssetsPerChainSelector(getState());
 
-      const etherspotTransactions = await etherspotService.getTransactionsByAddress(supportedChain, accountAddress);
-      if (!etherspotTransactions?.length) return;
+        const chainSupportedAssets = supportedAssetsPerChain?.[supportedChain] ?? [];
+        const chainPopularAssets = popularAssetsPerChain[supportedChain] ?? [];
+        const totalAssets = [...chainSupportedAssets, ...chainPopularAssets];
 
-      let etherspotTransactionsHistory;
-      try {
-        etherspotTransactionsHistory = parseEtherspotTransactions(
-          supportedChain,
-          etherspotTransactions,
-          chainSupportedAssets,
-        );
-      } catch (error) {
-        reportLog('fetchEtherspotTransactionsHistoryAction parseEtherspotTransactions failed', {
-          error,
-          supportedChain,
-          accountAddress,
-        });
-      }
+        const etherspotTransactions = await etherspotService.getTransactionsByAddress(supportedChain, accountAddress);
+        if (!etherspotTransactions?.length) return;
 
-      if (!etherspotTransactionsHistory?.length) return;
+        let etherspotTransactionsHistory;
+        try {
+          etherspotTransactionsHistory = parseEtherspotTransactions(supportedChain, etherspotTransactions, totalAssets);
+        } catch (error) {
+          reportLog('fetchEtherspotTransactionsHistoryAction parseEtherspotTransactions failed', {
+            error,
+            totalAssets,
+            accountAddress,
+          });
+        }
 
-      dispatch(syncAccountHistoryAction(etherspotTransactionsHistory, accountId, supportedChain));
+        if (!etherspotTransactionsHistory?.length) return;
 
-      if (supportedChain !== CHAIN.ETHEREUM) return;
+        dispatch(syncAccountHistoryAction(etherspotTransactionsHistory, accountId, supportedChain));
 
-      dispatch(extractEnsInfoFromTransactionsAction(etherspotTransactionsHistory));
-    }));
+        if (supportedChain !== CHAIN.ETHEREUM) return;
+
+        dispatch(extractEnsInfoFromTransactionsAction(etherspotTransactionsHistory));
+      }),
+    );
 
     await dispatch(fetchCollectiblesHistoryAction(etherspotAccount));
 
@@ -178,12 +179,11 @@ export const fetchTransactionsHistoryAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
-      session: { data: { isOnline } },
-      history: { historyLastSyncIds },
-      smartWallet: {
-        lastSyncedTransactionId: lastSyncedArchanovaTransactionId,
-        connectedAccount,
+      session: {
+        data: { isOnline },
       },
+      history: { historyLastSyncIds },
+      smartWallet: { lastSyncedTransactionId: lastSyncedArchanovaTransactionId, connectedAccount },
     } = getState();
 
     if (!isOnline) return;
@@ -226,12 +226,9 @@ export const fetchTransactionsHistoryAction = () => {
       if (finalArchanovaTransactionsHistory.length) {
         newHistoryTransactions = [...newHistoryTransactions, ...finalArchanovaTransactionsHistory];
         const newLastSyncedId = archanovaTransactions?.[0]?.id?.toString();
-        dispatch(syncAccountHistoryAction(
-          finalArchanovaTransactionsHistory,
-          accountId,
-          CHAIN.ETHEREUM,
-          newLastSyncedId,
-        ));
+        dispatch(
+          syncAccountHistoryAction(finalArchanovaTransactionsHistory, accountId, CHAIN.ETHEREUM, newLastSyncedId),
+        );
       }
     }
 
@@ -266,7 +263,11 @@ const setUpdatingTransactionAction = (hash: ?string) => ({
 
 export const updateTransactionStatusAction = (chain: Chain, hash: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { session: { data: { isOnline } } } = getState();
+    const {
+      session: {
+        data: { isOnline },
+      },
+    } = getState();
 
     if (!isOnline) return;
 
@@ -305,9 +306,7 @@ export const updateTransactionStatusAction = (chain: Chain, hash: string) => {
     }
 
     // NOTE: when trxInfo is null, that means transaction status is still pending or timed out
-    const stillPending = isArchanovaAccountActive
-      ? sdkToAppStatus === TX_PENDING_STATUS
-      : !transactionStatus;
+    const stillPending = isArchanovaAccountActive ? sdkToAppStatus === TX_PENDING_STATUS : !transactionStatus;
 
     if (stillPending) {
       dispatch(setUpdatingTransactionAction(null));
@@ -339,17 +338,16 @@ export const updateTransactionStatusAction = (chain: Chain, hash: string) => {
       ({ gasPrice, gasUsed } = transactionInfo);
     }
 
-    const { history: { data: currentHistory } } = getState();
-    const { updatedHistory } = updateHistoryRecord(
-      currentHistory,
-      hash,
-      (transaction) => ({
-        ...transaction,
-        status,
-        gasPrice: gasPrice ? gasPrice.toNumber() : transaction.gasPrice,
-        gasUsed: gasUsed ?? transaction.gasUsed,
-        feeWithGasToken: feeWithGasToken || transaction.feeWithGasToken,
-      }));
+    const {
+      history: { data: currentHistory },
+    } = getState();
+    const { updatedHistory } = updateHistoryRecord(currentHistory, hash, (transaction) => ({
+      ...transaction,
+      status,
+      gasPrice: gasPrice ? gasPrice.toNumber() : transaction.gasPrice,
+      gasUsed: gasUsed ?? transaction.gasUsed,
+      feeWithGasToken: feeWithGasToken || transaction.feeWithGasToken,
+    }));
 
     dispatch({
       type: SET_HISTORY,
@@ -361,11 +359,7 @@ export const updateTransactionStatusAction = (chain: Chain, hash: string) => {
   };
 };
 
-export const insertTransactionAction = (
-  transaction: Transaction,
-  accountId: string,
-  chain: Chain,
-) => {
+export const insertTransactionAction = (transaction: Transaction, accountId: string, chain: Chain) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch({
       type: ADD_HISTORY_TRANSACTION,
@@ -377,7 +371,9 @@ export const insertTransactionAction = (
     });
 
     // get the updated state and save it into the storage
-    const { history: { data: currentHistory } } = getState();
+    const {
+      history: { data: currentHistory },
+    } = getState();
     await dispatch(saveDbAction('history', { history: currentHistory }, true));
   };
 };
@@ -386,11 +382,10 @@ export const setHistoryTransactionStatusByHashAction = (transactionHash: string,
   return async (dispatch: Dispatch, getState: GetState) => {
     const transactionsHistory = historySelector(getState());
 
-    const { txUpdated, updatedHistory } = updateHistoryRecord(
-      transactionsHistory,
-      transactionHash,
-      (transaction) => ({ ...transaction, status }),
-    );
+    const { txUpdated, updatedHistory } = updateHistoryRecord(transactionsHistory, transactionHash, (transaction) => ({
+      ...transaction,
+      status,
+    }));
 
     // check if updated
     if (!txUpdated) return;
