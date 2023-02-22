@@ -29,7 +29,6 @@ import Text from 'components/core/Text';
 
 // Utils
 import { spacing } from 'utils/variables';
-import { getColorByTheme } from 'utils/themes';
 
 // Types
 import type { ImageSource } from 'utils/types/react-native';
@@ -90,7 +89,7 @@ const Container = styled.View`
   flex-direction: row;
   align-items: center;
   padding-horizontal: ${spacing.large / 2}px;
-  background-color: ${getColorByTheme({ lightKey: 'basic050', darkKey: 'basic080' })}
+  background-color: ${({ theme }) => theme.colors.basic050};
   border-radius: 20px;
   shadow-opacity: 0.05;
   shadow-color: #000;

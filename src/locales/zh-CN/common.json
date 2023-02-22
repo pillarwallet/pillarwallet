@@ -284,7 +284,7 @@
     "transaction_submitted": "交易提交",
     "on_network": "上 {{network}}",
     "on_position": "{{position}} 位置",
-    "of_stable": "{{percentage}} 的马厩 - {{type}}",
+    "of_stable": "{{percentage}}% 的马厩 - {{type}}",
     "high_risk": "高风险",
     "risky": "有风险",
     "moderate_risk": "中等风险",
