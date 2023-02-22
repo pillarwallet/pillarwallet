@@ -24,7 +24,6 @@ import styled from 'styled-components/native';
 // Components
 import Icon from 'components/core/Icon';
 import Text from 'components/core/Text';
-import { getColorByTheme } from 'utils/themes';
 
 // Utils
 import { spacing } from 'utils/variables';
@@ -56,7 +55,7 @@ export default SpecialButton;
 const ButtonContainer = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
-  background-color: ${getColorByTheme({ lightKey: 'basic050', darkKey: 'basic080' })}
+  background-color: ${({ theme }) => theme.colors.basic050};
   border-radius: 20px;
   shadow-opacity: 0.05;
   shadow-color: #000;
