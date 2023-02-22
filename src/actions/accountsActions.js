@@ -303,7 +303,7 @@ export const deployAccounts = () => {
       deployAccounts: { isFetching },
     } = getState();
 
-    const networkChains = [CHAIN.POLYGON, CHAIN.XDAI];
+    const networkChains = [CHAIN.XDAI];
 
     if (isFetching) return;
 
