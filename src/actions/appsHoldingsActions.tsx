@@ -79,8 +79,8 @@ export const fetchAppsHoldingsAction = () => {
 
     const totalAppHoldings = [];
     accountsInvestments.forEach((investments) => {
-      const items = investments.items;
-      totalAppHoldings.push(...items);
+      const items = investments?.items;
+      items && totalAppHoldings.push(...items);
     });
 
     dispatch(updateAppsHoldingsAction(totalAppHoldings));

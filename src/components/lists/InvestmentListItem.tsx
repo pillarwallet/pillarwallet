@@ -118,6 +118,11 @@ export default function ({
     );
   };
 
+  const getItemKey = (item) => {
+    const { name, balance } = item;
+    return name + balance;
+  };
+
   return (
     <MainContainer>
       <Container onPress={onPress} style={style} hitSlop={{ top: spacing.medium, bottom: spacing.medium }}>
@@ -138,10 +143,10 @@ export default function ({
 
       {isSelected && (
         <SectionList
-          key={positionsSection.toString()}
           sections={positionsSection}
           scrollEnabled={false}
           style={{ backgroundColor: colors.basic080 }}
+          keyExtractor={getItemKey}
           renderSectionHeader={({ section }) => renderSectionHeader(section)}
           renderItem={({ item }) => renderItem(item)}
         />
