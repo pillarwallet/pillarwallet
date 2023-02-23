@@ -275,7 +275,7 @@ export const setStableTokens = () => {
     const filteredArr: any[] = [];
 
     await tokens.forEach((item: any) => {
-      filteredArr.push(...item);
+      item && filteredArr.push(...item);
     });
 
     dispatch({ type: SET_STABLE_TOKEN, payload: filteredArr });

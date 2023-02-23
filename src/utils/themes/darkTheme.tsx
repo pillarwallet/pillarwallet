@@ -28,11 +28,11 @@ export default {
   basic020: '#999999',
   basic030: '#7B7B7B',
   basic040: '#4D4D4D',
-  basic050: '#262626',
+  basic050: '#141414',
   basic060: '#1E1E1E',
   // basic070: '#1A1A1A',
   basic070: '#000000',
-  basic080: '#141414',
+  basic080: '#262626',
   basic090: '#1A1A1A',
 
   // primaryAccent1

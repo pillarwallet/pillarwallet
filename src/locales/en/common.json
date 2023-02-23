@@ -303,7 +303,7 @@
     "transaction_submitted":"Transaction submitted",
     "on_network": "on {{network}}",
     "on_position": "{{position}} position",
-    "of_stable": "{{percentage}} of stables - {{type}}",
+    "of_stable": "{{percentage}}% of stables - {{type}}",
     "high_risk": "high risk",
     "risky": "risky",
     "moderate_risk": "moderate risk",
