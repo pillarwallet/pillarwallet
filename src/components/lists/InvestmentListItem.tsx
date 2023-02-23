@@ -145,7 +145,7 @@ export default function ({
         <SectionList
           sections={positionsSection}
           scrollEnabled={false}
-          style={{ backgroundColor: colors.basic080 }}
+          style={{ backgroundColor: colors.basic050 }}
           keyExtractor={getItemKey}
           renderSectionHeader={({ section }) => renderSectionHeader(section)}
           renderItem={({ item }) => renderItem(item)}
