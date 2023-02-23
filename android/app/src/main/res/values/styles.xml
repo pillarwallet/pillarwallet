@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
@@ -7,5 +7,10 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowSoftInputMode">adjustResize</item>
         <item name="colorControlNormal">#007AFF</item>
+        <item name="android:windowBackground">#000000</item>
+        <item name="android:windowSplashScreenBackground" tools:targetApi="s">#000000</item>
+        <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="s">@android:color/transparent</item>
+        <item name="android:windowSplashScreenAnimationDuration" tools:targetApi="s">0</item>
+        <item name="android:windowIsTranslucent">true</item>
     </style>
 </resources>
