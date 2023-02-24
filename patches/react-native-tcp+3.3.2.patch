@@ -155,7 +155,7 @@ index 828951f..0000000
 - * By default, both IPv4 and IPv6 are enabled.
 - * 
 - * For accepting incoming connections, this means GCDAsyncSocket automatically supports both protocols,
-- * and can simultaneously accept incoming connections on either protocol.
+- * and can simulataneously accept incoming connections on either protocol.
 - * 
 - * For outgoing connections, this means GCDAsyncSocket can connect to remote hosts running either protocol.
 - * If a DNS lookup returns only IPv4 results, GCDAsyncSocket will automatically use IPv4.
@@ -442,7 +442,7 @@ index 828951f..0000000
 -// When a write is complete the socket:didWriteDataWithTag: delegate method is dispatched on the delegateQueue.
 -// 
 -// You may optionally set a timeout for any read/write operation. (To not timeout, use a negative time interval.)
--// If a read/write operation times out, the corresponding "socket:shouldTimeout..." delegate method
+-// If a read/write opertion times out, the corresponding "socket:shouldTimeout..." delegate method
 -// is called to optionally allow you to extend the timeout.
 -// Upon a timeout, the "socket:didDisconnectWithError:" method is called
 -// 
@@ -712,7 +712,7 @@ index 828951f..0000000
 - * - GCDAsyncSocketManuallyEvaluateTrust
 - *     The value must be of type NSNumber, encapsulating a BOOL value.
 - *     If you set this to YES, then the underlying SecureTransport system will not evaluate the SecTrustRef of the peer.
-- *     Instead it will pause at the moment evaluation would typically occur,
+- *     Instead it will pause at the moment evaulation would typically occur,
 - *     and allow us to handle the security evaluation however we see fit.
 - *     So GCDAsyncSocket will invoke the delegate method socket:shouldTrustPeer: passing the SecTrustRef.
 - *
@@ -738,7 +738,7 @@ index 828951f..0000000
 - *     
 - *     Thus all the other keys in the given dictionary will be ignored by GCDAsyncSocket,
 - *     and will passed directly CFReadStreamSetProperty / CFWriteStreamSetProperty.
-- *     For more information on these keys, please see the documentation for kCFStreamPropertySSLSettings.
+- *     For more infomation on these keys, please see the documentation for kCFStreamPropertySSLSettings.
 - *
 - *     If unspecified, the default value is NO.
 - *
@@ -836,7 +836,7 @@ index 828951f..0000000
 -
 -/**
 - * Traditionally sockets are not closed until the conversation is over.
-- * However, it is technically possible for the remote endpoint to close its write stream.
+- * However, it is technically possible for the remote enpoint to close its write stream.
 - * Our socket would then be notified that there is no more data to be read,
 - * but our socket would still be writeable and the remote endpoint could continue to receive our data.
 - * 
@@ -1210,7 +1210,7 @@ index 828951f..0000000
 - * 
 - * asyncSocket = nil; // I'm implicitly disconnecting the socket
 - * 
-- * In this case it may preferable to nil the delegate beforehand, like this:
+- * In this case it may preferrable to nil the delegate beforehand, like this:
 - * 
 - * asyncSocket.delegate = nil; // Don't invoke my delegate method
 - * asyncSocket = nil; // I'm implicitly disconnecting the socket
@@ -1728,7 +1728,7 @@ index abf2a8a..0000000
 -		// the shouldPreBuffer decision is based upon whether the returned value would fit
 -		// in the current buffer without requiring a resize of the buffer.
 -		// 
--		// This is because, in all likelihood, the amount read from the socket will be less than the default value.
+-		// This is because, in all likelyhood, the amount read from the socket will be less than the default value.
 -		// Thus we should avoid over-allocating the read buffer when we can simply use the pre-buffer instead.
 -		
 -		if (shouldPreBufferPtr)
@@ -5209,7 +5209,7 @@ index abf2a8a..0000000
 -
 -/**
 - * Finds the address of an interface description.
-- * An interface description may be an interface name (en0, en1, lo0) or corresponding IP (192.168.4.34).
+- * An inteface description may be an interface name (en0, en1, lo0) or corresponding IP (192.168.4.34).
 - * 
 - * The interface description may optionally contain a port number at the end, separated by a colon.
 - * If a non-zero port parameter is provided, any port number in the interface description is ignored.
@@ -6052,13 +6052,13 @@ index abf2a8a..0000000
 -			// There are 2 buffers to be aware of here.
 -			// 
 -			// We are using SecureTransport, a TLS/SSL security layer which sits atop TCP.
--			// We issue a read to the SecureTransport API, which in turn issues a read to our SSLReadFunction.
+-			// We issue a read to the SecureTranport API, which in turn issues a read to our SSLReadFunction.
 -			// Our SSLReadFunction then reads from the BSD socket and returns the encrypted data to SecureTransport.
 -			// SecureTransport then decrypts the data, and finally returns the decrypted data back to us.
 -			// 
 -			// The first buffer is one we create.
 -			// SecureTransport often requests small amounts of data.
--			// This has to do with the encrypted packets that are coming across the TCP stream.
+-			// This has to do with the encypted packets that are coming across the TCP stream.
 -			// But it's non-optimal to do a bunch of small reads from the BSD socket.
 -			// So our SSLReadFunction reads all available data from the socket (optimizing the sys call)
 -			// and may store excess in the sslPreBuffer.
@@ -6309,7 +6309,7 @@ index abf2a8a..0000000
 -				// - how many decypted bytes are sitting in the sslContext
 -				//
 -				// But we do NOT know:
--				// - how many encrypted bytes are sitting in the sslContext
+-				// - how many encypted bytes are sitting in the sslContext
 -				//
 -				// So we play the regular game of using an upper bound instead.
 -				
@@ -7439,7 +7439,7 @@ index abf2a8a..0000000
 -	}
 -	
 -	// We're done with our writing.
--	// If we explicitly ran into a situation where the socket told us there was no room in the buffer,
+-	// If we explictly ran into a situation where the socket told us there was no room in the buffer,
 -	// then we immediately resume listening for notifications.
 -	// 
 -	// We must do this before we dequeue another write,
@@ -8471,7 +8471,7 @@ index abf2a8a..0000000
 -		
 -		__weak GCDAsyncSocket *weakSelf = self;
 -		
--		void (^completionHandler)(BOOL) = ^(BOOL shouldTrust){ @autoreleasepool {
+-		void (^comletionHandler)(BOOL) = ^(BOOL shouldTrust){ @autoreleasepool {
 -		#pragma clang diagnostic push
 -		#pragma clang diagnostic warning "-Wimplicit-retain-self"
 -			
@@ -8498,7 +8498,7 @@ index abf2a8a..0000000
 -		{
 -			dispatch_async(delegateQueue, ^{ @autoreleasepool {
 -			
--				[theDelegate socket:self didReceiveTrust:trust completionHandler:completionHandler];
+-				[theDelegate socket:self didReceiveTrust:trust completionHandler:comletionHandler];
 -			}});
 -		}
 -		else
@@ -9626,7 +9626,7 @@ index 92a2b8b..1d4aa81 100644
 --- a/node_modules/react-native-tcp/ios/TcpSockets.xcodeproj/project.pbxproj
 +++ b/node_modules/react-native-tcp/ios/TcpSockets.xcodeproj/project.pbxproj
 @@ -10,7 +10,6 @@
- 		13BE3DEE1AC21097009241FE /* TcpSockets.m in Sources */ = {isa = PBXBuildFile; fileRef = 13BE3DEAD1AC21097009241FE /* TcpSockets.m */; };
+ 		13BE3DEE1AC21097009241FE /* TcpSockets.m in Sources */ = {isa = PBXBuildFile; fileRef = 13BE3DED1AC21097009241FE /* TcpSockets.m */; };
  		7350006B1AFF9AB600ED3C82 /* TcpSocketClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 7350006A1AFF9AB600ED3C82 /* TcpSocketClient.m */; };
  		73D9377D1AFF9EBE00450142 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73D9377C1AFF9EBE00450142 /* CFNetwork.framework */; };
 -		96EDB0AC1C10C33B00D41E94 /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 96EDB0AB1C10C33B00D41E94 /* GCDAsyncSocket.m */; };
@@ -9645,7 +9645,7 @@ index 92a2b8b..1d4aa81 100644
 @@ -64,20 +61,10 @@
  				7350006A1AFF9AB600ED3C82 /* TcpSocketClient.m */,
  				13BE3DEC1AC21097009241FE /* TcpSockets.h */,
- 				13BE3DEAD1AC21097009241FE /* TcpSockets.m */,
+ 				13BE3DED1AC21097009241FE /* TcpSockets.m */,
 -				96EDB0A91C10C33B00D41E94 /* CocoaAsyncSocket */,
  				134814211AA4EA7D00B7C361 /* Products */,
  			);

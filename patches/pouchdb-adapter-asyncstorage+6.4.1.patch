@@ -15,7 +15,7 @@ diff --git a/node_modules/pouchdb-adapter-asyncstorage/src/index.js b/node_modul
 index 39bad82..600514d 100644
 --- a/node_modules/pouchdb-adapter-asyncstorage/src/index.js
 +++ b/node_modules/pouchdb-adapter-asyncstorage/src/index.js
-@@ -109,7 +109,7 @@ function AsyncStoragePouch (dbOpts, constructorCallback) {
+@@ -109,7 +109,7 @@ function AsyncStoragePouch (dbOpts, constuctorCallback) {
  
  AsyncStoragePouch.valid = () => {
    try {
