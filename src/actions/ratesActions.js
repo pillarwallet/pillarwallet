@@ -31,7 +31,7 @@ import { getAssetsAsList, mapWalletAssetsBalancesIntoAssetsByAddress } from 'uti
 import { reportErrorLog } from 'utils/common';
 
 // selectors
-import { supportedAssetsPerChainSelector, popularAssetsPerChainSelector } from 'selectors';
+import { supportedAssetsPerChainSelector } from 'selectors';
 import { assetsBalancesPerAccountSelector } from 'selectors/balances';
 
 // models, types
@@ -73,14 +73,12 @@ export const fetchAssetsRatesAction = () => {
 
     const assetsBalancesPerAccount = assetsBalancesPerAccountSelector(getState());
     const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
-    const popularAssetsPerChain = popularAssetsPerChainSelector(getState());
 
     // combine assets balances from all accounts
     const assetsByAddressPerChain = Object.keys(CHAIN).reduce((combinedAssetsByAddressPerChain, chainKey) => {
       const chain = CHAIN[chainKey];
 
       const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
-      const chainPopularAssets = popularAssetsPerChain[chain] ?? [];
 
       const chainAccountsAssetsByAddress = Object.keys(assetsBalancesPerAccount).reduce(
         (combinedAssetsByAddress, accountId) => {
@@ -92,13 +90,8 @@ export const fetchAssetsRatesAction = () => {
             chainSupportedAssets,
           );
 
-          const popularAssetsByAddress = mapWalletAssetsBalancesIntoAssetsByAddress(
-            accountWalletAssetsBalances,
-            chainPopularAssets,
-          );
-
           // $FlowFixMe
-          return { ...combinedAssetsByAddress, ...assetsByAddress, ...popularAssetsByAddress };
+          return { ...combinedAssetsByAddress, ...assetsByAddress };
         },
         {},
       );
