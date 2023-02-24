@@ -25,7 +25,7 @@ import { RESET_APP_STATE } from 'constants/authConstants';
 // types
 import type { DbAction } from 'models/DbAction';
 
-// reducers - absolte imports
+// reducers - absolute imports
 import firestoreReducer, { IReduxFirestoreState } from 'redux/reducers/firestore-reducer';
 import gasThresholdReducer, { IReduxGasThresholdState } from 'redux/reducers/gas-threshold-reducer';
 import nativeIntegrationReducer, { IReduxNativeIntegrationState } from 'redux/reducers/native-integration-reducer';

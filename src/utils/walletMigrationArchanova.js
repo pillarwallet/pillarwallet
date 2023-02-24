@@ -168,7 +168,7 @@ export function getTokensToMigrateAfterFee(
   // User has too little ETH even for fee
   if (feeInEth.gt(ethWalletBalance)) return tokensToMigrate;
 
-  // Add a little bit of buffor
+  // Add a little bit of buffer
   const maxEthToMigrate = ethWalletBalance.minus(feeInEth).minus(0.000001);
   if (maxEthToMigrate.gte(ethToMigrate)) return tokensToMigrate;
 

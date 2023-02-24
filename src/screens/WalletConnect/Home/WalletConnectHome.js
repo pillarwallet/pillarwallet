@@ -287,7 +287,7 @@ const filterAppsByChain = (
     return apps.filter((app) => app.chains.includes(chain));
   }
 
-  return apps.filter((app) => supportedChains.some((supporedChain) => app.chains.includes(supporedChain)));
+  return apps.filter((app) => supportedChains.some((supportedChain) => app.chains.includes(supportedChain)));
 };
 
 const styles = {

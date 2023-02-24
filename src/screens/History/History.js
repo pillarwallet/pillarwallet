@@ -51,7 +51,7 @@ function HistoryScreen() {
         noPaddingTop
       />
 
-      {/* Extracted as separete HistoryList components because you cannot conditionally call hooks. */}
+      {/* Extracted as separate HistoryList components because you cannot conditionally call hooks. */}
       {isEtherspotAccount(activeAccount) && <MultiChainHistoryEtherspot />}
       {isArchanovaAccount(activeAccount) && <HistoryListArchanova />}
     </Container>

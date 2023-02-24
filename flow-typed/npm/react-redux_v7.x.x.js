@@ -1,4 +1,4 @@
-// Partial definitons of types for react-redux from flow-typed repository
+// Partial definitions of types for react-redux from flow-typed repository
 
 declare module "react-redux" {
   declare export function useDispatch<D>(): D;

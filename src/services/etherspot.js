@@ -992,13 +992,13 @@ export class EtherspotService {
 
       if (!quote?.approvalData) return { transactionData: quote.transaction, quote };
 
-      const tokenAddres = quote.estimate.data.fromToken.address;
+      const tokenAddress = quote.estimate.data.fromToken.address;
       const { approvalAddress, amount } = quote.approvalData;
 
       const erc20Contract: any = this.getContract<?EtherspotErc20Interface>(
         fromAsset.chain,
         ERC20_CONTRACT_ABI,
-        tokenAddres,
+        tokenAddress,
       );
 
       if (!erc20Contract) return { transactionData: quote.transaction, quote };
@@ -1013,12 +1013,12 @@ export class EtherspotService {
     }
   }
 
-  async getCrossChainBridgeTokenList(fromChain: Chain, supprotedChains: Chain[]) {
+  async getCrossChainBridgeTokenList(fromChain: Chain, supportedChains: Chain[]) {
     const sdk = this.getSdkForChain(fromChain);
     if (!sdk) return null;
 
     try {
-      const supprotedChainsList = supprotedChains.flatMap((chain) =>
+      const supportedChainsList = supportedChains.flatMap((chain) =>
         sdk.getCrossChainBridgeTokenList({
           // eslint-disable-next-line i18next/no-literal-string
           direction: 'To',
@@ -1027,15 +1027,15 @@ export class EtherspotService {
         }),
       );
 
-      const list = await Promise.all(supprotedChainsList);
+      const list = await Promise.all(supportedChainsList);
 
       logBreadcrumb('getCrossChainBridgeTokenList', 'Get cross chain bridge supported list', {
         list,
-        supprotedChainsList,
+        supportedChainsList,
       });
       return list;
     } catch (e) {
-      logBreadcrumb('getCrossChainBridgeTokenList Failed!', 'get error in supproted list cross chain', { e });
+      logBreadcrumb('getCrossChainBridgeTokenList Failed!', 'get error in supported list cross chain', { e });
       return null;
     }
   }

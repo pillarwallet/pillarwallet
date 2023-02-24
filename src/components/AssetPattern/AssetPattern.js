@@ -72,7 +72,7 @@ class AssetPattern extends React.Component<Props, State> {
       innerIconsLeftDiff,
       theme,
     } = this.props;
-    const paternDetails = [];
+    const patternDetails = [];
     const uniqueCode = [];
     const tokenSymbols = token.split('');
     const currentTheme = getThemeType(theme);
@@ -88,7 +88,7 @@ class AssetPattern extends React.Component<Props, State> {
       uniqueCode.push(letter.charCodeAt(0));
     });
 
-    const compositionSymetrySideYAxis = uniqueCode[0] % 2 === 0 || !uniqueCode[2];
+    const compositionSymmetrySideYAxis = uniqueCode[0] % 2 === 0 || !uniqueCode[2];
     const sideIconsTop = uniqueCode[0];
     const innerIconsTop = uniqueCode[2] || uniqueCode[1];
     const sidePositionPositivity = uniqueCode[0] > uniqueCode[1];
@@ -117,10 +117,10 @@ class AssetPattern extends React.Component<Props, State> {
 
       const biggestDistance = sideIconsTop > innerIconsTop ? sideIconsTop : innerIconsTop;
 
-      if (sidePositionPositivity && innerPositionPositivity && compositionSymetrySideYAxis) {
+      if (sidePositionPositivity && innerPositionPositivity && compositionSymmetrySideYAxis) {
         verticalCenter = 125 - (topSideChange(true, false, biggestDistance) / 2);
       }
-      if (!sidePositionPositivity && !innerPositionPositivity && compositionSymetrySideYAxis) {
+      if (!sidePositionPositivity && !innerPositionPositivity && compositionSymmetrySideYAxis) {
         verticalCenter = 125 - (topSideChange(false, false, biggestDistance) / 2);
       }
 
@@ -128,7 +128,7 @@ class AssetPattern extends React.Component<Props, State> {
       let left = windowWidth / 2;
 
       if (i === 0) {
-        top = compositionSymetrySideYAxis && sidePositionPositivity ? top - 20 : top;
+        top = compositionSymmetrySideYAxis && sidePositionPositivity ? top - 20 : top;
       }
 
       if (i === 1 || i === 4) {
@@ -143,7 +143,7 @@ class AssetPattern extends React.Component<Props, State> {
           }
         } else {
           top = verticalCenter + topSideChange(sidePositionPositivity, false, sideIconsTop);
-          if (!compositionSymetrySideYAxis && i === 4) {
+          if (!compositionSymmetrySideYAxis && i === 4) {
             top = verticalCenter + topSideChange(!sidePositionPositivity, false, sideIconsTop);
           }
         }
@@ -161,7 +161,7 @@ class AssetPattern extends React.Component<Props, State> {
           }
         } else {
           top = verticalCenter + topSideChange(innerPositionPositivity, true, innerIconsTop);
-          if (!compositionSymetrySideYAxis && i === 3) {
+          if (!compositionSymmetrySideYAxis && i === 3) {
             top = verticalCenter + topSideChange(!innerPositionPositivity, true, innerIconsTop);
           }
         }
@@ -189,7 +189,7 @@ class AssetPattern extends React.Component<Props, State> {
         left = horizontalCenter + sideIconsLeft;
       }
 
-      paternDetails.push(
+      patternDetails.push(
         <IconWrapper
           key={i}
           diameter={diameter}
@@ -228,7 +228,7 @@ class AssetPattern extends React.Component<Props, State> {
       );
     }
 
-    return paternDetails;
+    return patternDetails;
   };
 
   render() {

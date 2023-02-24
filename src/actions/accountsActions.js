@@ -310,12 +310,12 @@ export const deployAccounts = () => {
     dispatch({ type: DEPLOY_ACCOUNTS_FETCHING, payload: true });
 
     const networkPromises = networkChains.map((chain) => etherspotServices.setbatchDeployAccount(chain));
-    const statusReponses = await Promise.all(networkPromises);
+    const statusResponses = await Promise.all(networkPromises);
 
     const finalResponse = networkChains.map((chain, index) => {
       return {
         chain,
-        status: statusReponses[index],
+        status: statusResponses[index],
       };
     });
 

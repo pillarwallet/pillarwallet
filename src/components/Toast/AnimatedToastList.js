@@ -128,7 +128,7 @@ const ItemWrapper = Animated.createAnimatedComponent(styled.View`
   width: 100%;
 `);
 
-// Component state & auxillary data
+// Component state & auxiliary data
 //
 // `items` prop is the array that drives all changes from the parent component
 //
@@ -144,7 +144,7 @@ const ItemWrapper = Animated.createAnimatedComponent(styled.View`
 //
 // `rendered.order` array holds the IDs of toasts visible on the screen at the
 // moment. This includes the ones that were recently removed from `items` and
-// are in the process of disapearing with animation. This is the array that is
+// are in the process of disappearing with animation. This is the array that is
 // used in the rendering part of the component.
 //
 // These two objects are grouped together to ensure that the data of a toast

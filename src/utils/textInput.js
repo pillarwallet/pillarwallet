@@ -30,7 +30,7 @@ export const resolveAssetSource = (uri: ?(string | number)) => {
   return { uri };
 };
 
-// filter by search query and sort exact matches (case insensitve) first (-1) or keep existing order (0)
+// filter by search query and sort exact matches (case insensitive) first (-1) or keep existing order (0)
 export const getMatchingSortedData: (data: Object[], query: ?string) => Object[] = (data, query) => data
   .filter(({ value: val, name }) => isMatchingSearch(query, val) || isMatchingSearch(query, name))
   .sort(

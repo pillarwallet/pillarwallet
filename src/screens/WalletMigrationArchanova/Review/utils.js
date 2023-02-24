@@ -73,7 +73,7 @@ export function useAssetItemsAfterFee(fee: ?BigNumber): AssetItem[] {
 /**
  * Returns token items for migration with balance.
  *
- * Reduces max amount of ETH send if needed to accomdate fee.
+ * Reduces max amount of ETH send if needed to accommodate fee.
  */
 function useTokenItemsAfterFee(fee: ?BigNumber): TokenItem[] {
   const tokensToMigrate = useRootSelector((root) => root.walletMigrationArchanova.tokensToMigrate);

@@ -65,7 +65,7 @@ type State = {
 const SHADOW_LENGTH = 3;
 
 class ShadowedCard extends React.Component<Props, State> {
-  cardOutterRef: React.ElementRef<typeof View>;
+  cardOuterRef: React.ElementRef<typeof View>;
 
   state = {
     cardHeight: null,
@@ -95,7 +95,7 @@ class ShadowedCard extends React.Component<Props, State> {
   animate = () => {
     const { cardHeight } = this.state;
     const { spacingAfterAnimation = 0 } = this.props;
-    this.cardOutterRef.setNativeProps({ height: cardHeight + spacingAfterAnimation });
+    this.cardOuterRef.setNativeProps({ height: cardHeight + spacingAfterAnimation });
 
     this.setState({ isAnimating: true });
     Animated.spring(this.state.scaleValue, { toValue: 1, useNativeDriver: true }).start(() => {
@@ -141,9 +141,9 @@ class ShadowedCard extends React.Component<Props, State> {
     const isDarkTheme = currentTheme === DARK_THEME;
 
     return (
-      <AnimatedCardOutter
+      <AnimatedCardOuter
         style={{ ...wrapperStyle, transform: [{ scaleY: isAnimated ? scaleValue : 1 }] }}
-        ref={ref => { this.cardOutterRef = ref; }}
+        ref={ref => { this.cardOuterRef = ref; }}
         disabled={disabled}
       >
         {!noShadow && !!(cardHeight && cardWidth) && readyToRenderShadow && (forceShadow || !isDarkTheme) &&
@@ -176,14 +176,14 @@ class ShadowedCard extends React.Component<Props, State> {
             </View>
           </ContentWrapper>
         </TouchableWithoutFeedback>
-      </AnimatedCardOutter>
+      </AnimatedCardOuter>
     );
   }
 }
 
 export default withTheme(ShadowedCard);
 
-const CardOutter = styled.View`
+const CardOuter = styled.View`
   position: relative;
   opacity: ${({ disabled }) => disabled ? 0.6 : 1};
 `;
@@ -202,4 +202,4 @@ const ContentWrapper = styled.View`
   `}
 `;
 
-const AnimatedCardOutter = Animated.createAnimatedComponent(CardOutter);
+const AnimatedCardOuter = Animated.createAnimatedComponent(CardOuter);

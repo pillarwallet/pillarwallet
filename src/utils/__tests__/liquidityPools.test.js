@@ -63,7 +63,7 @@ const liquidityPoolsReducerMock = {
         volumeToken1: '200',
         volumeUSD: '500',
       },
-      pairDayDatas: [
+      pairDayData: [
         {
           date: 1609367442,
           reserveUSD: '3200',
@@ -77,7 +77,7 @@ const liquidityPoolsReducerMock = {
           dailyVolumeUSD: '10',
         },
       ],
-      pairHourDatas: [
+      pairHourData: [
         {
           hourlyVolumeUSD: '5',
         },

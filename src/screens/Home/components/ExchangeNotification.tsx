@@ -60,11 +60,11 @@ export default function ({ data, index }) {
   React.useEffect(() => {
     (async () => {
       if (!hash && data?.batchHash) {
-        const submitedBatchHash = await etherspotService.waitForTransactionHashFromSubmittedBatch(
+        const submittedBatchHash = await etherspotService.waitForTransactionHashFromSubmittedBatch(
           fromAsset.chain,
           data?.batchHash,
         );
-        setHash(submitedBatchHash);
+        setHash(submittedBatchHash);
         setTimerStatus(STATUS.STOPPED);
         dispatch(fetchAllAccountsAssetsBalancesAction());
       }

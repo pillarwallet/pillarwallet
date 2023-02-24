@@ -342,7 +342,7 @@ const ListWrapper = styled.View`
 `;
 
 /**
- * @deprecated This compontent is considered legacy and should not be used in new code
+ * @deprecated This component is considered legacy and should not be used in new code
  *
  * Use: components/HistoryEventDetails instead
  */
@@ -707,7 +707,7 @@ export class EventDetail extends React.Component<Props> {
 
     let eventData: ?EventData = null;
 
-    // services are left for archanova only and will be decomissioned later
+    // services are left for archanova only and will be decommissioned later
     const isArchanovaAccountActive = isArchanovaAccount(getActiveAccount(accounts));
 
     switch (event.tag) {

@@ -114,7 +114,7 @@ const PortfolioRiskinessModal: FC<Props> = ({ visible, onHide, chain }) => {
             hidePercentage
             selectedName=""
             progress={percentage}
-            forgroundColor={colors.primaryAccent250}
+            foregroundColor={colors.primaryAccent250}
             backgroundColor={riskColor ?? colors.synthetic180}
           />
 

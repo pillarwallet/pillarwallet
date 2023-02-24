@@ -548,7 +548,7 @@
       "transactionsAvailableToSettle": "Transakcije spremne za podmirit"
     },
     "paragraph": {
-      "introFirstParagraph": "Uložite PLR tokene u svoj tanker kako biste omogućili besplatne i trenutne transakcije između vas i vaših kontakata. PLR djeluje kao meta token koji vam omogućava slanje i primanje bilo kojeg sredstva koje podržava Pillar Payment Network.",
+      "introFirstParagraph": "Uložite PLR tokene u svoj tanker kako biste omogućili besplatne i trenutne transakcije između was i vaših kontakata. PLR djeluje kao meta token koji vam omogućava slanje i primanje bilo kojeg sredstva koje podržava Pillar Payment Network.",
       "introSecondParagraph": "Izvucite iz svog PLR spremnika da biste poslali sve što želite."
     },
     "ppnFeatures": {
@@ -603,7 +603,7 @@
     "paragraph": {
       "introFirstParagraph": "Vaš novi pametni novčanik Pillar pokreće lični Smart Contract. Ovo pruža bolje upravljanje imovinom, sigurnost i funkcionalnost oporavka.",
       "introSecondParagraph": "Stup također preporučuje da većinu svoje imovine prenesete na svoj Smart Wallet zbog navedenih pogodnosti.",
-      "walletIsActivated": "Sada možete pristupiti svom novom Smart Wallet-u i novoj Pillar Payment Network s gornje desne i bočne strane zaslona Sredstava"
+      "walletIsActivated": "Sada možete pristupiti svom novom Smart Wallet-u i novoj Pillar Payment Network s gornje dense i bočne strane zaslona Sredstava"
     },
     "button": {
       "goToSmartWallet": "Odi u Smart Wallet"
@@ -715,7 +715,7 @@
         "title": "Analitika uporabe",
         "paragraph": {
           "agreeSharingInfo": "Želim anonimo podijeliti statistike korištenja",
-          "legal": "Dijeljenjem statistike korištenja pomažete Pillar-u napraviti bolji novčanik.\nStatistika korištenja ne posjeduje nikakve privatne podatke od vas ili vaših kontakata."
+          "legal": "Dijeljenjem statistike korištenja pomažete Pillar-u napraviti bolji novčanik.\nStatistika korištenja ne posjeduje nikakve privatne podatke od was ili vaših kontakata."
         }
       },
       "appSettings": {
@@ -1194,7 +1194,7 @@
     "linkedDeviceRemoved": "Nije moguće dodati uređaj, pokušajte ponovo.",
     "linkedDeviceNotFound": "Povezani uređaj nije pronađen.",
     "exchangeEnabled": "{{fromAssetName}} ({{fromAssetSymbol}}) u {{toAssetName}} ({{toAssetSymbol}}) izmjena omogućena.",
-    "keyWalletAssetsTransfered": "Imovina prenesena. Uživajte u korištenju svog pametnog novčanika!",
+    "keyWalletAssetsTransferred": "Imovina prenesena. Uživajte u korištenju svog pametnog novčanika!",
     "walletRecovered": "Novčanik je sada oporavljen. Uživajte u korištenju Pillara!",
     "rewardsOnTheirWay": "Nagrada za preporuku je na putu. Uskoro ćete ju dobiti.",
     "somethingWentWrong": "Nešto je pošlo po zlu, mi to već istražujemo. Ne brinite, vaša sredstva su sigurna. Pokušajte ponovo ili kontaktirajte podršku.",

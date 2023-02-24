@@ -48,7 +48,7 @@ import { logEventAction } from 'actions/analyticsActions';
 const lightTheme = require('assets/images/appAppearence/lightTheme.png');
 const darkTheme = require('assets/images/appAppearence/darkTheme.png');
 
-const AppAppearence = () => {
+const AppAppearance = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const theme = useTheme();
@@ -97,9 +97,9 @@ const AppAppearence = () => {
     <Container>
       <HeaderBlock leftItems={[{ close: true }]} onClose={onBackPress} noPaddingTop />
       <Center flex={1} padding={spacing.rhythm}>
-        <Title>{t('auth:title.appAppearence')}</Title>
-        <Text color={colors.tertiaryText} variant="medium" style={appearenceStyles.textStyle}>
-          {t('auth:paragraph.appAppearenceDescription')}
+        <Title>{t('auth:title.appAppearance')}</Title>
+        <Text color={colors.tertiaryText} variant="medium" style={appearanceStyles.textStyle}>
+          {t('auth:paragraph.appAppearanceDescription')}
         </Text>
         <ThemeView>
           <Themes
@@ -107,7 +107,7 @@ const AppAppearence = () => {
             style={isLightThemePressed && [selectedThemeStyle, { borderColor: colors.buttonPrimaryBackground }]}
           >
             <ThemeImage source={lightTheme} />
-            <Text variant="small" style={appearenceStyles.textStyle}>
+            <Text variant="small" style={appearanceStyles.textStyle}>
               {t('auth:label.light')}
             </Text>
           </Themes>
@@ -116,7 +116,7 @@ const AppAppearence = () => {
             style={isDarkThemePressed && [selectedThemeStyle, { borderColor: colors.buttonPrimaryBackground }]}
           >
             <ThemeImage source={darkTheme} />
-            <Text variant="small" style={appearenceStyles.textStyle}>
+            <Text variant="small" style={appearanceStyles.textStyle}>
               {t('auth:label.dark')}
             </Text>
           </Themes>
@@ -124,7 +124,7 @@ const AppAppearence = () => {
         <Button
           title={t('auth:button.confirm')}
           size="large"
-          style={appearenceStyles.confirmButton}
+          style={appearanceStyles.confirmButton}
           onPress={onConfirm}
         />
       </Center>
@@ -137,7 +137,7 @@ const selectedThemeStyle = {
   borderRadius: 10,
 };
 
-const appearenceStyles = {
+const appearanceStyles = {
   confirmButton: {
     marginTop: 91,
   },
@@ -175,4 +175,4 @@ const ThemeImage = styled(Image)`
   height: 125px;
 `;
 
-export default AppAppearence;
+export default AppAppearance;

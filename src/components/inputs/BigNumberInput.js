@@ -115,7 +115,7 @@ const baseStyle = {
 const numberInProgressRegex = /^\d*\.?\d*$/;
 
 /**
- * This function can be invoke after user inputing consecutive charaters OR user pasting whole string.
+ * This function can be invoke after user inputing consecutive characters OR user pasting whole string.
  */
 function normalizeRawValue(input: string, decimals: ?number): string {
   let result = input.replace(/,/g, '.').replace(/\s/g, '');

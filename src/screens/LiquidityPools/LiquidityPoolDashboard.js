@@ -86,7 +86,7 @@ type Props = {
   setShownStakingEnabledModal: (string) => void,
 };
 
-const MainContainter = styled.View`
+const MainContainer = styled.View`
   padding: 0 0 40px;
 `;
 
@@ -290,7 +290,7 @@ const LiquidityPoolDashboard = ({
         }
         scrollEnabled={scrollEnabled}
       >
-        <MainContainter>
+        <MainContainer>
           <AssetIcon
             source={{ uri: pool.iconUrl }}
             fallbackSource={genericToken}
@@ -482,7 +482,7 @@ const LiquidityPoolDashboard = ({
               );
           })}
           </HorizontalPadding>
-        </MainContainter>
+        </MainContainer>
       </ScrollWrapper>
       <RetryGraphQueryBox
         message={t('error.theGraphQueryFailed.liquidityPools')}

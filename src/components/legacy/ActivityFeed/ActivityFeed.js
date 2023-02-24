@@ -144,7 +144,7 @@ const ITEM_TYPE = {
 };
 
 /**
- * @deprecated This compontent is considered legacy and should not be used in new code
+ * @deprecated This component is considered legacy and should not be used in new code
  */
 class ActivityFeed extends React.Component<Props> {
   static defaultProps = {

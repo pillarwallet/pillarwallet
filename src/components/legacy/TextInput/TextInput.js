@@ -80,7 +80,7 @@ type State = {
 };
 
 /**
- * @deprecated This compontent is considered legacy and should not be used in new code
+ * @deprecated This component is considered legacy and should not be used in new code
  *
  * Use: components/inputs/TextInput instead
  */

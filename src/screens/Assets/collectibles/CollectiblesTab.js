@@ -177,7 +177,7 @@ const ListRow = styled.View`
   padding: 0 ${spacing.mediumLarge}px;
 `;
 
-// Temporarily Removed NFT banner componenets
+// Temporarily Removed NFT banner components
 // const ContentIcon = styled.Image`
 //   margin-right: ${spacing.mediumLarge}px;
 // `;

@@ -25,7 +25,7 @@ import { nativeAssetPerChain } from 'utils/chains';
 import { wrapBigNumber } from 'utils/bigNumber';
 import { valueForAddress, getCurrencySymbol } from 'utils/common';
 
-// Constans
+// Constants
 import { CHAIN } from 'constants/chainConstants';
 import { USD } from 'constants/assetsConstants';
 

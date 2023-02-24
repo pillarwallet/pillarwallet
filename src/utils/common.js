@@ -302,16 +302,16 @@ export const getCurrencySymbol = (currency: string): string => {
 export const commify = (src: Value, options?: { skipCents?: boolean }): string => {
   const REGEX = '\\d(?=(\\d{3})+\\D)';
   const num = wrapBigNumber(src).toFixed(2);
-  let formatedValue = num.replace(new RegExp(REGEX, 'g'), '$&,');
+  let formattedValue = num.replace(new RegExp(REGEX, 'g'), '$&,');
   if (options?.skipCents) {
-    formatedValue = formatedValue.substring(0, formatedValue.length - 3);
+    formattedValue = formattedValue.substring(0, formattedValue.length - 3);
   }
-  return formatedValue;
+  return formattedValue;
 };
 
 export const formatFiatValue = (value: Value, options?: { skipCents?: boolean }): string => {
-  const formatedValue = commify(value, options);
-  return `${parseFloat(formatedValue) > 0 ? formatedValue : 0}`;
+  const formattedValue = commify(value, options);
+  return `${parseFloat(formattedValue) > 0 ? formattedValue : 0}`;
 };
 
 export const formatFiat = (value: Value, baseFiatCurrency?: ?string, options?: { skipCents?: boolean }): string => {
@@ -415,7 +415,7 @@ export const formatUnits = (val: Value = '0', decimals: number): string => {
   try {
     // check if val is exact number or other format (might be hex, exponential, etc.)
     preparedValue = isValidNumber(val) ? Math.floor(+val) : val;
-    // parse number as BigNumber and get as string expresion without decimals
+    // parse number as BigNumber and get as string expression without decimals
     valueWithoutDecimals = new BigNumber(preparedValue.toString()).toFixed();
     if (decimals === 0) {
       // check additionally if string contains decimal pointer

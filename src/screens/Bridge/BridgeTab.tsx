@@ -40,7 +40,7 @@ function BridgeTab() {
 
   const [tabIndex, setTabIndex] = React.useState(0);
   const [exchangeTitle, setExchangeTitle] = React.useState(t('exchangeContent.title.initialExchange'));
-  const [crossChainTitle, setCrossChainTitile] = React.useState(t('exchangeContent.title.crossChain'));
+  const [crossChainTitle, setCrossChainTitle] = React.useState(t('exchangeContent.title.crossChain'));
 
   const items = [
     { key: CATEGORY.EXCHANGE, title: CATEGORY.EXCHANGE, component: Exchange },
@@ -60,7 +60,7 @@ function BridgeTab() {
         tabIndex={tabIndex}
         onTabIndexChange={setTabIndex}
         fetchExchangeTitle={setExchangeTitle}
-        fetchCrossChainTitle={setCrossChainTitile}
+        fetchCrossChainTitle={setCrossChainTitle}
         isCrosschain={tabIndex === 1}
         swipeEnabled={false}
       />

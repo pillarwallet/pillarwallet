@@ -39,7 +39,7 @@ type FormatValueOptions = {|
 |};
 
 /**
- * Generic formattting function.
+ * Generic formatting function.
  *
  * Does not make assumption about formatted output.
  */

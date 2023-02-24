@@ -32,9 +32,9 @@ function AppearanceSetting() {
   const { t } = useTranslationWithPrefix('menu.settings');
   const navigation = useNavigation();
 
-  const onNaviagte = () => navigation.navigate(MENU_SELECT_APPEARANCE);
+  const onNavigate = () => navigation.navigate(MENU_SELECT_APPEARANCE);
 
-  return <SettingsItem icon="darkMode16" title={t('appearance')} onPress={onNaviagte} />;
+  return <SettingsItem icon="darkMode16" title={t('appearance')} onPress={onNavigate} />;
 }
 
 export default AppearanceSetting;

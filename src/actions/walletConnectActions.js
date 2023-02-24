@@ -346,7 +346,7 @@ export const switchEthereumChainConnectorAction = (request: any) => {
        */
       await dispatch(updateWalletConnectConnectorSessionAction(connector, sessionData));
 
-      // For refrence https://github.com/WalletConnect/walletconnect-monorepo/issues/930#issuecomment-1106072395
+      // For reference https://github.com/WalletConnect/walletconnect-monorepo/issues/930#issuecomment-1106072395
       dispatch(approveWalletConnectCallRequestAction(callId, null));
     } catch (error) {
       dispatch(setWalletConnectErrorAction(error?.message));

@@ -326,7 +326,7 @@ export const subscribeToEtherspotNotificationsAction = () => {
             break;
         }
       } catch (error) {
-        reportErrorLog('Etherspot notificaiton handler failed', {
+        reportErrorLog('Etherspot notification handler failed', {
           error,
           chain,
           notificationType: notification.type,

@@ -55,10 +55,10 @@ function WalletMigrationArchanovaPinConfirm() {
   const collectiblesToMigrate = useRootSelector((root) => root.walletMigrationArchanova.collectiblesToMigrate);
   const useBiometrics = useRootSelector((root) => root.appSettings.data.useBiometrics);
 
-  const [isSubmiting, setIsSubmiting] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const handlePinValid = async (pin: string, wallet: any) => {
-    setIsSubmiting(true);
+    setIsSubmitting(true);
 
     try {
       const hash = await submitMigrationTransactions(
@@ -87,7 +87,7 @@ function WalletMigrationArchanovaPinConfirm() {
       enforcePin={!useBiometrics}
       onPinValid={handlePinValid}
       headerProps={{ onBack: () => navigation.goBack() }}
-      isChecking={isSubmiting}
+      isChecking={isSubmitting}
       customCheckingMessage={t('submittingTransactions')}
     />
   );

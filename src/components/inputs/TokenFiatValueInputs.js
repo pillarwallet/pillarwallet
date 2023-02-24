@@ -49,7 +49,7 @@ type Props = {|
   chain: ?Chain,
   asset: ?Asset,
   balance?: ?BigNumber, // Used as reference value for use max & percent values
-  balanceAfterFee?: ?BigNumber, // Used for max value valiation
+  balanceAfterFee?: ?BigNumber, // Used for max value validation
   disableMaxValue?: boolean, // Disable use max and use 100% (normally used for native assets)
   onTokenPress?: () => mixed,
   showChainIcon?: boolean,
@@ -78,7 +78,7 @@ const TokenFiatValueInputs = ({
   const rates = useChainRates(chain);
   const currency = useFiatCurrency();
 
-  // When set to non-nulll value, token value is driven from fiat value.
+  // When set to non-null value, token value is driven from fiat value.
   const [fiatValue, setFiatValue] = React.useState(null);
 
   React.useEffect(() => {

@@ -106,7 +106,7 @@ function SendTokenTransaction() {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const fromAddress = useRootSelector(activeAccountAddressSelector);
-  const [isResolvingHash, setisResolvingHash] = useState(false);
+  const [isResolvingHash, setteesResolvingHash] = useState(false);
 
   const isSuccess: boolean = useNavigationParam('isSuccess');
   const error: ?string = useNavigationParam('error');
@@ -128,9 +128,9 @@ function SendTokenTransaction() {
   useEffect(() => {
     const handleHashChange = async () => {
       if (!hash && batchHash) {
-        setisResolvingHash(true);
+        setteesResolvingHash(true);
         setHash(await etherspotService.waitForTransactionHashFromSubmittedBatch(chain, batchHash));
-        setisResolvingHash(false);
+        setteesResolvingHash(false);
         dispatch(fetchAllAccountsAssetsBalancesAction());
       }
     };

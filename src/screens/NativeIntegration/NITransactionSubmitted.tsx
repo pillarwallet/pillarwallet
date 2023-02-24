@@ -55,16 +55,16 @@ function NITransactionSubmitted() {
 
   const illustrationIcon = require('assets/images/illustration.png');
 
-  const [isResolvingHash, setisResolvingHash] = useState(false);
+  const [isResolvingHash, setteesResolvingHash] = useState(false);
   const [hash, setHash] = useState();
 
   useEffect(() => {
     const handleHashChange = async () => {
       if (!hash && batchHash) {
-        setisResolvingHash(true);
+        setteesResolvingHash(true);
         const hash = await etherspotService.waitForTransactionHashFromSubmittedBatch(chain, batchHash).catch(() => catchError('Transaction hash failed!'))
         if (hash) setHash(hash);
-        setisResolvingHash(false);
+        setteesResolvingHash(false);
       }
     };
     handleHashChange();

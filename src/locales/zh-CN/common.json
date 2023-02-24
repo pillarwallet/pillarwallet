@@ -1161,7 +1161,7 @@
     "userIsOffline": "你好像离线了。请检查您的互联网连接。",
     "biometricLoginEnabled": "启用生物识别登录。",
     "biometricLoginDisabled": "生物识别登录已禁用。",
-    "keyWalletAssetsTransfered": "资产转移。享受使用您的智能钱包的乐趣！",
+    "keyWalletAssetsTransferred": "资产转移。享受使用您的智能钱包的乐趣！",
     "somethingWentWrong": "出了点问题，我们已经在调查了。别担心，您的资金是安全的。请重试或联系支持人员。",
     "failedToLogIn": "登录时出现问题，请重试。",
     "PPNTopUpSuccess": "{{paymentInfo}} 添加到 Pillar Tank。",

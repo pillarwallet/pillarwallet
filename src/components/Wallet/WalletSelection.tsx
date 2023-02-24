@@ -79,7 +79,7 @@ export default function () {
 
   const onNavigate = (category, chain) => {
     const assetData = buildAssetDataNavigationParam(category, chain);
-    assetData.backDashboad = true;
+    assetData.backDashboard = true;
     navigation.navigate(ASSET, { assetData, isNavigateToHome: true });
   };
 
@@ -94,7 +94,7 @@ export default function () {
       <HorizontalProgressBar
         selectedName={selectedTabNm}
         progress={percentage}
-        forgroundColor={items[0].color}
+        foregroundColor={items[0].color}
         backgroundColor={items[1].color}
       />
 

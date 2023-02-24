@@ -107,7 +107,7 @@ describe('Toast list change utility functions', () => {
   });
 
   describe('applyAdditions', () => {
-    it('inserts elements at the beginnig', () => {
+    it('inserts elements at the beginning', () => {
       const prev = ['a', 'b'];
       const add = [{ id: 'x', after: null }];
       expect(applyAdditions(prev, add)).toStrictEqual(['x', 'a', 'b']);

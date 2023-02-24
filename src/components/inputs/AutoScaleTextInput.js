@@ -75,11 +75,11 @@ const AutoScaleTextInput = React.forwardRef<Props, Instance>((props, ref) => {
 
     // Scale down
     const minScale = minFontSize / maxFontSize;
-    const caculatedScale = maxWidth / textLayout.width;
-    const scale = Math.max(caculatedScale, minScale);
+    const calculatedScale = maxWidth / textLayout.width;
+    const scale = Math.max(calculatedScale, minScale);
     const newFontSize = Math.floor(scale * maxFontSize);
     setTargetFontSize(newFontSize);
-    setIsTooLongTooFit(caculatedScale < minScale);
+    setIsTooLongTooFit(calculatedScale < minScale);
 
     const extraSpace = textLayout.height * (1 - scale);
     setTargetHeight(textLayout.height);

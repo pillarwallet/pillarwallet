@@ -111,7 +111,7 @@ platform :ios do
 
     # Gym command xcargs will have to be reviewed and changed at the point when the current Distribution cert. and prov. profile expire.
     # Especially the PROVISIONING_PROFILE_SPECIFIER set in there since it is hardcoded to a prov. profile that is specific, we need to change it to a standard match AdHoc com.pillarproject.wallet.staging
-    # withouth the numbers created at the end, which have been added by match command back when the profile was created.
+    # without the numbers created at the end, which have been added by match command back when the profile was created.
 
     #sh "fastlane sigh resign ../pillarwallet-staging.ipa --signing_identity 'iPhone Distribution: PILLAR PROJECT WORLDWIDE LIMITED (J9DEY3FGPD)' --provisioning_profile '" + ENV["sigh_com.pillarproject.wallet.staging_adhoc_profile-path"] + "'"
     changelog = build_custom_changelog

@@ -55,7 +55,7 @@ type ResolveContactOptions = {|
  * If `ethAddress` is a valid hex address this will return the input.
  *
  * @returns {Contact} with `ethAddress` being correct hex address`.
- * @returns {null} if ENS name resultion fails or `ethAddress` is neither valid address nor valid ENS name.
+ * @returns {null} if ENS name resolution fails or `ethAddress` is neither valid address nor valid ENS name.
  */
 export const resolveContact = async (
   contact: ?Contact,
@@ -92,9 +92,9 @@ export const getReceiverWithEnsName = async (
 ): Promise<?{ receiverEnsName?: string, receiver: ?string }> => {
   if (!ethAddressOrEnsName) return null;
 
-  const recivedENSInfo = await etherspotService.resolveName(CHAIN.ETHEREUM, ethAddressOrEnsName);
+  const receivedENSInfo = await etherspotService.resolveName(CHAIN.ETHEREUM, ethAddressOrEnsName);
 
-  if (recivedENSInfo?.[0]) {
+  if (receivedENSInfo?.[0]) {
     const resolvedAddress = await resolveEnsName(ethAddressOrEnsName);
 
     if (!resolvedAddress && showNotification) {

@@ -385,7 +385,7 @@ export const checkKeyBasedAssetTransferTransactionsAction = () => {
         // transfer done, reset
         keyBasedAssetsToTransferUpdated = [];
         Toast.show({
-          message: t('toast.keyWalletAssetsTransfered'),
+          message: t('toast.keyWalletAssetsTransferred'),
           emoji: 'ok_hand',
         });
       }

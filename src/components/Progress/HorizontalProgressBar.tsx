@@ -31,7 +31,7 @@ import { useThemeColors } from 'utils/themes';
 import { TOKENS, STABLES } from 'constants/walletConstants';
 
 type Props = {
-  forgroundColor: string;
+  foregroundColor: string;
   backgroundColor: string;
   progress: any;
   selectedName: string;
@@ -39,7 +39,7 @@ type Props = {
   hidePercentage?: boolean;
 };
 
-export default function ({ forgroundColor, backgroundColor, progress, selectedName, style, hidePercentage }: Props) {
+export default function ({ foregroundColor, backgroundColor, progress, selectedName, style, hidePercentage }: Props) {
   const colors = useThemeColors();
 
   const stableTokensProgress = 100 - progress;
@@ -53,7 +53,7 @@ export default function ({ forgroundColor, backgroundColor, progress, selectedNa
           style={[
             {
               width: progress + '%',
-              backgroundColor: forgroundColor,
+              backgroundColor: foregroundColor,
             },
             styles.shadow,
             styles.leftBorder,

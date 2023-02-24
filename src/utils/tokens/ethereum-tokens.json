@@ -627,7 +627,7 @@
     "chain": "ethereum",
     "address": "0x7b123f53421b1bF8533339BFBdc7C98aA94163db",
     "name": "dfohub",
-    "symbol": "buidl_1",
+    "symbol": "build_1",
     "decimals": 18,
     "iconUrl": "https://tokens.1inch.io/0x7b123f53421b1bf8533339bfbdc7c98aa94163db.png"
   },
@@ -1139,7 +1139,7 @@
     "chain": "ethereum",
     "address": "0xD6F0Bb2A45110f819e908a915237D652Ac7c5AA8",
     "name": "DFOHub",
-    "symbol": "BUIDL_2",
+    "symbol": "BUILD_2",
     "decimals": 18,
     "iconUrl": "https://tokens.1inch.io/0xd6f0bb2a45110f819e908a915237d652ac7c5aa8.png"
   },
@@ -2954,8 +2954,8 @@
   {
     "chain": "ethereum",
     "address": "0x4b4D2e899658FB59b1D518b68fe836B100ee8958",
-    "name": "MIS",
-    "symbol": "MIS",
+    "name": "MISS",
+    "symbol": "MISS",
     "decimals": 18,
     "iconUrl": "https://tokens.1inch.io/0x4b4d2e899658fb59b1d518b68fe836b100ee8958.png"
   },
@@ -4923,7 +4923,7 @@
     "chain": "ethereum",
     "address": "0x661Ab0Ed68000491d98C796146bcF28c20d7c559",
     "name": "Shadows Network",
-    "symbol": "DOWS",
+    "symbol": "DOES",
     "decimals": 18,
     "iconUrl": "https://tokens.1inch.io/0x661ab0ed68000491d98c796146bcf28c20d7c559.png"
   },
@@ -6563,7 +6563,7 @@
     "chain": "ethereum",
     "address": "0x6595b8fD9C920C81500dCa94e53Cdc712513Fb1f",
     "name": "Olyseum",
-    "symbol": "OLY",
+    "symbol": "ONLY",
     "decimals": 18,
     "iconUrl": "https://tokens.1inch.io/0x6595b8fd9c920c81500dca94e53cdc712513fb1f.png"
   },

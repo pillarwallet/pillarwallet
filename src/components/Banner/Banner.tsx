@@ -80,7 +80,7 @@ const MultiBannerContainer = ({ bannerData, index, theme }) => {
   const bannerSubtitle = bannerDataResponse?.subtitle[0]?.text || '';
   const bannerIcon = bannerDataResponse?.icon?.url || '';
   const bannerBackgroundColor = bannerDataResponse?.background_color;
-  const bannerForgroundColor = bannerDataResponse?.foreground_color;
+  const bannerForegroundColor = bannerDataResponse?.foreground_color;
   const bannerLinkUrl = bannerDataResponse?.link?.url;
   const background_image = bannerDataResponse?.background_image?.url;
 
@@ -107,12 +107,12 @@ const MultiBannerContainer = ({ bannerData, index, theme }) => {
         imageStyle={{ borderRadius: 20 }}
       >
         <Summary>
-          <Title color={bannerForgroundColor || colors.bannerTextColor}>{bannerTitle}</Title>
-          <SubTitle color={bannerForgroundColor || colors.bannerTextColor}>{bannerSubtitle}</SubTitle>
+          <Title color={bannerForegroundColor || colors.bannerTextColor}>{bannerTitle}</Title>
+          <SubTitle color={bannerForegroundColor || colors.bannerTextColor}>{bannerSubtitle}</SubTitle>
         </Summary>
         <BannerImage source={{ uri: bannerIcon }} />
         <CloseContainer onPress={onClose}>
-          <Icon name={'close'} width={24} height={24} color={bannerForgroundColor} />
+          <Icon name={'close'} width={24} height={24} color={bannerForegroundColor} />
         </CloseContainer>
       </ImageContainer>
     </TouchableContainer>

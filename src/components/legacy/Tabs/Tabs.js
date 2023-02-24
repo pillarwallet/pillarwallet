@@ -75,7 +75,7 @@ const TabComponent = ({ name, onPress, active }: TabProps) => {
 };
 
 /**
- * @deprecated This compontent is considered legacy and should not be used in new code
+ * @deprecated This component is considered legacy and should not be used in new code
  *
  * Use: components/other/Tabs or components/layout/TabBar instead
  */

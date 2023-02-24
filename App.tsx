@@ -225,7 +225,7 @@ class App extends React.Component<Props, any> {
 
     /**
      * Next, lets set up AppsFlyer which allows us to monitor user
-     * aquisition and attribution.
+     * acquisition and attribution.
      */
     logBreadcrumb('App.js', 'AppsFlyer: Running initSdk...');
     appsFlyer.initSdk(

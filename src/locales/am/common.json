@@ -1189,7 +1189,7 @@
     "linkedDeviceRemoved": "የተያያዘው መሳርያ ተወግዷል።",
     "linkedDeviceNotFound": "የተያያዘው መሳርያ አልተገኘም።",
     "exchangeEnabled": "{{fromAssetName}} ({{fromAssetSymbol}}) ወደ {{toAssetName}} ({{toAssetSymbol}}) መቀየርያ ስራ ላይ ውሏል።",
-    "keyWalletAssetsTransfered": "ንብረቱ ተላልፏል። መልካም የብልህ ቦርስ አጠቃቀም ይሁንልዎት።",
+    "keyWalletAssetsTransferred": "ንብረቱ ተላልፏል። መልካም የብልህ ቦርስ አጠቃቀም ይሁንልዎት።",
     "walletRecovered": "አሁን ቦርሳዎ ተመልሷል። መልካም የፒላር አጠቃቀም ይሁንልዎ።",
     "rewardsOnTheirWay": "የግብዣው ሽልማት እየመጣ ነው። በቅርብ ግዜ ይደርሶታል።",
     "somethingWentWrong": "የተሳሳተ ነገር አለ፡ ስህተቱን በማጣራት ላይ ነን። ሃሳብ አይግባዎት፡ ገንዘቦ በአስተማማኝ ሁኔታ ላይ ነው ያለው። ትንሽ ቆይተው ይሞክሩ ወይም ከድጋፍ ሰጪ ጋር ይገናኙ።",

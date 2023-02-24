@@ -139,7 +139,7 @@ function WalletTabScrollContent({ isNavigateToHome, hasPositiveBalance }: Props)
             style={{ width: Dimensions.get('screen').width - 70, marginRight: 15 }}
             selectedName={selectedTabNm}
             progress={percentage}
-            forgroundColor={items[1].color}
+            foregroundColor={items[1].color}
             backgroundColor={items[2].color}
           />
 

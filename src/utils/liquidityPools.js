@@ -97,7 +97,7 @@ export const fetchPoolData = async (poolAddress: string, userAddress: string): P
         volumeToken1
         volumeUSD
       }
-      pairDayDatas(
+      pairDayData(
         where: { pairAddress: "${poolAddress.toLowerCase()}" },
         orderBy: date,
         orderDirection: desc,
@@ -107,7 +107,7 @@ export const fetchPoolData = async (poolAddress: string, userAddress: string): P
         totalSupply
         dailyVolumeUSD
       }
-      pairHourDatas(
+      pairHourData(
         where: {
           hourStartUnix_gt: ${Math.floor(Date.now() / 1000) - (24 * 60 * 60)}, 
           pair: "${poolAddress.toLowerCase()}",
@@ -415,8 +415,8 @@ export const getPoolStats = (
   const poolData = liquidityPoolsReducer.poolsData[poolAddress];
   if (!poolData) return null;
   const pairData = poolData.pair;
-  const historyData = poolData.pairDayDatas;
-  const hourlyData = poolData.pairHourDatas;
+  const historyData = poolData.pairDayData;
+  const hourlyData = poolData.pairHourData;
   if (!pairData || !historyData || !hourlyData) return null;
   const currentPrice = pairData.reserveUSD / pairData.totalSupply;
   const dayAgoPrice = historyData[1] && historyData[1].reserveUSD / historyData[1].totalSupply;

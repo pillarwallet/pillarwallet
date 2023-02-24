@@ -1520,7 +1520,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "_baseLTVasCollateral",
+        "name": "_baseLTWasCollateral",
         "type": "uint256"
       },
       {
@@ -1659,7 +1659,7 @@
         "type": "uint256"
       }
     ],
-    "name": "setReserveBaseLTVasCollateral",
+    "name": "setReserveBaseLTWasCollateral",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",

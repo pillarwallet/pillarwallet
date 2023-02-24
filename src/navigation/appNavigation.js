@@ -767,7 +767,7 @@ class AppFlow extends React.Component<Props, State> {
   }
 }
 
-// Workaround for React Navigation 4 obscure crash occuring if `screenProps` object is re-created on each render.
+// Workaround for React Navigation 4 obscure crash occurring if `screenProps` object is re-created on each render.
 // Functional component created just to use useMemo hook, can be inlined when AppFlow is migrated to FC.
 const MemoizedAppFlowNavigation = ({ showHomeUpdateIndicator, isWalletBackedUp, theme, language, navigation }) => {
   const screenProps = React.useMemo(

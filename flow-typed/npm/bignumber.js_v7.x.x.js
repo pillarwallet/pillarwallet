@@ -84,7 +84,7 @@ declare module "bignumber.js" {
      *
      * The exponent value(s) beyond which overflow to Infinity and underflow to zero occurs.
      *
-     * If a single number is assigned, it is the maximum exponent magnitude: values wth a positive
+     * If a single number is assigned, it is the maximum exponent magnitude: values with a positive
      * exponent of greater magnitude become Infinity and those with a negative exponent of greater
      * magnitude become zero.
      *
@@ -158,7 +158,7 @@ declare module "bignumber.js" {
      *                    |       | This matches Python's `%` operator.
      *  `ROUND_HALF_EVEN` |   6   | The IEEE 754 remainder function.
      *  `EUCLID`          |   9   | The remainder is always positive.
-     *                    |       | Euclidian division: `q = sign(n) * floor(a / abs(n))`
+     *                    |       | Euclidean division: `q = sign(n) * floor(a / abs(n))`
      *
      * The rounding/modulo modes are available as enumerated properties of the BigNumber constructor.
      *

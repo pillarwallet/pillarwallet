@@ -144,7 +144,7 @@ export const ToastProvider = () => {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const [isAnimationDisabled, setAnimationDisabled] = useState(false);
 
-  // Because sometimes the compoment unmounts with a closing modal before the
+  // Because sometimes the component unmounts with a closing modal before the
   // render function is re-run, we keep a synced copy of the array in order not
   // to miss any toast. This also ensures the isAnimationDisabled flag is always reset.
   const toastCopy = useRef<ToastItem[]>(toasts);

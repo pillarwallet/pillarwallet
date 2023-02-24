@@ -3233,7 +3233,7 @@ declare module "lodash/fp" {
     noop(...args: $ReadOnlyArray<mixed>): void;
     nthArg(n: number): Function;
     over(iteratees: $ReadOnlyArray<Function>): Function;
-    juxt(iteratees: $ReadOnlyArray<Function>): Function;
+    just(iteratees: $ReadOnlyArray<Function>): Function;
     overEvery(predicates: $ReadOnlyArray<Function>): Function;
     allPass(predicates: $ReadOnlyArray<Function>): Function;
     overSome(predicates: $ReadOnlyArray<Function>): Function;
@@ -6026,7 +6026,7 @@ declare module "lodash/fp/over" {
 }
 
 declare module "lodash/fp/juxt" {
-  declare module.exports: $PropertyType<$Exports<"lodash/fp">, "juxt">;
+  declare module.exports: $PropertyType<$Exports<"lodash/fp">, "just">;
 }
 
 declare module "lodash/fp/overEvery" {
