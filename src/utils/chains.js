@@ -153,7 +153,7 @@ export const nativeAssetPerChain = {
     name: 'Ether',
     symbol: ETH,
     decimals: 18,
-    iconUrl: 'https://arbitrum.io/wp-content/uploads/2022/12/One-Logo-280x280-1-150x150.png',
+    iconUrl: 'https://tokens.1inch.exchange/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png',
   },
 };
 
