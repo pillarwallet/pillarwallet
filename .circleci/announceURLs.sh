@@ -25,4 +25,5 @@ cat <<EOM
 EOM
 )
 
-curl -X POST --data-urlencode payload="$payload" "$S3_URL_SLACK_WEBHOOK"
+# curl -X POST --data-urlencode payload="$payload" "$S3_URL_SLACK_WEBHOOK"
+curl -X POST --data-urlencode payload="$payload" "$S3_TEST_WEBHOOK"
