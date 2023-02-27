@@ -107,7 +107,7 @@ describe('Assets actions', () => {
 
     const supportedAssetsPayload = {
       chain: CHAIN.ETHEREUM,
-      assets: mockSupportedAssets,
+      assets: [...mockSupportedAssets, ...mockPopularAssets],
     };
 
     const popularAssetsPayload = {

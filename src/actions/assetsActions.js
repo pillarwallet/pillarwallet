@@ -665,8 +665,8 @@ export const fetchAllAccountsAssetsBalancesAction = () => {
 
     dispatch({ type: SET_FETCHING_ASSETS_BALANCES, payload: true });
 
+    await dispatch(fetchPopularAssetsAction());
     await dispatch(fetchSupportedAssetsAction());
-    dispatch(fetchPopularAssetsAction());
 
     const promises = accounts.map((account) => dispatch(fetchAccountWalletBalancesAction(account)));
 
@@ -703,9 +703,22 @@ export const fetchSupportedAssetsAction = () => {
         // nothing to do if returned empty
         if (isEmpty(chainSupportedAssets)) return;
 
+        const updatedPopularAssets = popularAssetsPerChainSelector(getState());
+
+        const popularAssets = isEmpty(updatedPopularAssets?.[chain]) ? [] : updatedPopularAssets?.[chain];
+
+        const removedDuplicateSupportedAssets = chainSupportedAssets.filter(
+          (item) =>
+            !popularAssets?.some(
+              (popularAsset) => item.symbol === popularAsset?.symbol && item.address === popularAsset?.address,
+            ),
+        );
+
+        const totalSupportedAssets = [...removedDuplicateSupportedAssets, ...popularAssets];
+
         dispatch({
           type: SET_CHAIN_SUPPORTED_ASSETS,
-          payload: { chain, assets: chainSupportedAssets },
+          payload: { chain, assets: totalSupportedAssets },
         });
       }),
     );
