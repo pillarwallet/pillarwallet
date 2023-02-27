@@ -327,7 +327,6 @@ export class EtherspotService {
     if (assetAddresses.length) {
       balancesRequestPayload = {
         ...balancesRequestPayload,
-        tokens: assetAddresses,
       };
     }
 
