@@ -612,12 +612,6 @@ jobs:
             chmod +x .circleci/announceDeployment.sh
             .circleci/announceDeployment.sh "Pillar Wallet" "*Prod* iOS internal track - Тests pending" "$(cat /tmp/workspace/build-num/app_version.txt)"
       - run:
-          name: Announce production iOS URL
-          command: |
-            cd ~/pillarwallet
-            chmod +x .circleci/announceURLs.sh
-            .circleci/announceURLs.sh "pillarwallet" "production" "ios" "$(cat ~/pillarwallet/ios/output/gym/ios-s3-URL-prod.txt)" "$(cat /tmp/workspace/build-num/app_version.txt)"
-      - run:
           name: prepare to archive ipa file
           command: |
             APP_VERSION="$(cat /tmp/workspace/build-num/app_version.txt)"
@@ -758,12 +752,6 @@ jobs:
             chmod +x .circleci/announceDeployment.sh
             .circleci/announceDeployment.sh "Pillar Wallet" "*Prod* Android internal track - Tests pending" "$(cat /tmp/workspace/build-num/app_version.txt)"
       - run:
-          name: Announce Prod Android URL
-          command: |
-            cd ~/pillarwallet
-            chmod +x .circleci/announceURLs.sh
-            .circleci/announceURLs.sh "pillarwallet" "production" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/release/android-s3-URL-prod.txt)" "$(cat /tmp/workspace/build-num/app_version.txt)"
-      - run:
           name: prepare to archive apk file
           command: |
             APP_VERSION="$(cat /tmp/workspace/build-num/app_version.txt)"
@@ -811,6 +799,15 @@ jobs:
             sleep 10
             github-release upload -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION -n "pillarwallet-prod-android-$APP_VERSION.apk" -f /tmp/workspace/android-release/*.apk
             github-release upload -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION -n "pillarwallet-prod-ios-$APP_VERSION.ipa" -f /tmp/workspace/ios-release/*.ipa
+      - run:
+          name: Announce production iOS and Android URL's
+          command: |
+            APP_VERSION="$(cat /tmp/workspace/build-num/app_version.txt)"
+            chmod +x .circleci/announceURLs.sh
+            IOS_URL="https://github.com/pillarwallet/pillarwallet/releases/download/v$APP_VERSION/pillarwallet-prod-ios-$APP_VERSION.ipa"
+            ANDROID_URL="https://github.com/pillarwallet/pillarwallet/releases/download/v$APP_VERSION/pillarwallet-prod-android-$APP_VERSION.apk"
+            .circleci/announceURLs.sh "pillarwallet" "production" "ios" "$IOS_URL" "$APP_VERSION"
+            .circleci/announceURLs.sh "pillarwallet" "production" "android" "$ANDROID_URL" "$APP_VERSION"
       - run:
           name: Announce new RC to support channel
           command: |

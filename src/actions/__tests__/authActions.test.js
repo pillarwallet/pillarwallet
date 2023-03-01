@@ -28,8 +28,7 @@ import {
 } from 'constants/archanovaConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
-import { SET_CHAIN_SUPPORTED_ASSETS, NFT_FLAG } from 'constants/assetsConstants';
-import { CHAIN } from 'constants/chainConstants';
+import { NFT_FLAG } from 'constants/assetsConstants';
 import { SET_FETCHING_ASSETS_BALANCES } from 'constants/assetsBalancesConstants';
 
 // actions
@@ -46,7 +45,6 @@ import {
   mockArchanovaAccount,
   mockArchanovaConnectedAccount,
   mockEtherspotAccountExtra,
-  mockSupportedAssets,
   mockDeviceUniqueId,
   mockStableAssets,
 } from 'testUtils/jestSetup';
@@ -136,8 +134,6 @@ describe('Auth actions', () => {
       { type: UPDATE_ACCOUNTS, payload: [mockActiveSmartWalletAccount, mockNewKeyBasedAccount] },
 
       { type: SET_FETCHING_ASSETS_BALANCES, payload: true },
-
-      { type: SET_CHAIN_SUPPORTED_ASSETS, payload: { chain: CHAIN.ETHEREUM, assets: mockSupportedAssets } },
     ];
 
     const pin = '123456';

@@ -235,7 +235,10 @@ describe('Onboarding actions', () => {
 
     const expectedActions = [
       { type: UPDATE_SESSION, payload: { fcmToken: mockFcmToken } },
-      { type: SET_CHAIN_SUPPORTED_ASSETS, payload: { chain: CHAIN.ETHEREUM, assets: mockSupportedAssets } },
+      {
+        type: SET_CHAIN_SUPPORTED_ASSETS,
+        payload: { chain: CHAIN.ETHEREUM, assets: [...mockSupportedAssets, ...mockPopularAssets] },
+      },
       { type: SET_CHAIN_POPULAR_ASSETS, payload: { chain: CHAIN.ETHEREUM, assets: mockPopularAssets } },
       { type: SET_ARCHANOVA_SDK_INIT, payload: true }, // archanova init for account check
 
@@ -282,7 +285,10 @@ describe('Onboarding actions', () => {
 
     const expectedActions = [
       { type: UPDATE_SESSION, payload: { fcmToken: mockFcmToken } },
-      { type: SET_CHAIN_SUPPORTED_ASSETS, payload: { chain: CHAIN.ETHEREUM, assets: mockSupportedAssets } },
+      {
+        type: SET_CHAIN_SUPPORTED_ASSETS,
+        payload: { chain: CHAIN.ETHEREUM, assets: [...mockSupportedAssets, ...mockPopularAssets] },
+      },
       { type: SET_CHAIN_POPULAR_ASSETS, payload: { chain: CHAIN.ETHEREUM, assets: mockPopularAssets } },
       { type: SET_ARCHANOVA_SDK_INIT, payload: true }, // archanova init for account check
 
