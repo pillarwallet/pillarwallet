@@ -1,0 +1,10 @@
+[
+  {
+    "chain": "avalanche",
+    "address": "0x0000000000000000000000000000000000000000",
+    "name": "Avalanche",
+    "symbol": "AVAX",
+    "decimals": 18,
+    "iconUrl": "https://image.pngaaa.com/19/5554019-middle.png"
+  }
+]

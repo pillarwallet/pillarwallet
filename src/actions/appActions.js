@@ -34,7 +34,7 @@ import { firebaseCrashlytics } from 'services/firebase';
 import { IS_APP_VERSION_V3 } from 'constants/appConstants';
 import { AUTH_FLOW, ONBOARDING_FLOW, PIN_CODE_UNLOCK, MENU_SELECT_APPEARANCE } from 'constants/navigationConstants';
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import { SET_SUPPORTED_ASSETS } from 'constants/assetsConstants';
+import { SET_SUPPORTED_ASSETS, SET_POPULAR_ASSETS } from 'constants/assetsConstants';
 import { SET_ASSETS_BALANCES } from 'constants/assetsBalancesConstants';
 import { UPDATE_PIN_ATTEMPTS, UPDATE_WALLET_BACKUP_STATUS } from 'constants/walletConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
@@ -64,6 +64,7 @@ import { SET_CACHED_URLS } from 'constants/cacheConstants';
 import { SET_HISTORY_LAST_SYNC_IDS } from 'constants/historyConstants';
 import { SET_TOTAL_BALANCES } from 'constants/totalsBalancesConstants';
 import { SET_USER } from 'constants/userConstants';
+import { SET_APP_HOLDINGS } from 'constants/appsHoldingsConstants';
 
 // utils
 import { getWalletFromStorage } from 'utils/wallet';
@@ -74,6 +75,7 @@ import { accountsSelector, activeAccountAddressSelector } from 'selectors';
 
 // actions
 import { getTranslationsResourcesAndSetLanguageOnAppOpenAction } from 'actions/localisationActions';
+import { fetchOfflineLocalAssets } from 'actions/assetsActions';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -86,6 +88,8 @@ export const initAppAndRedirectAction = () => {
 
     let storageData = await storage.getAll();
     await storage.migrateFromPouchDB(storageData);
+
+    await dispatch(fetchOfflineLocalAssets());
 
     storageData = await migrate('app_settings', storageData, dispatch, getState, 'appSettings');
     const { appSettings = {} } = get(storageData, 'app_settings', {});
@@ -100,6 +104,8 @@ export const initAppAndRedirectAction = () => {
       storageData = await migrate('history', storageData, dispatch, getState);
       storageData = await migrate('supportedAssets', storageData, dispatch, getState);
       storageData = await migrate('rates', storageData, dispatch, getState);
+      storageData = await migrate('appsHoldings', storageData, dispatch, getState);
+      storageData = await migrate('popularAssets', storageData, dispatch, getState);
 
       const { accounts = [] } = get(storageData, 'accounts', {});
       dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });
@@ -107,11 +113,17 @@ export const initAppAndRedirectAction = () => {
       const supportedAssets = storageData?.supportedAssets?.supportedAssets ?? {};
       dispatch({ type: SET_SUPPORTED_ASSETS, payload: supportedAssets });
 
+      const popularAssets = storageData?.popularAssets?.popularAssets ?? {};
+      dispatch({ type: SET_POPULAR_ASSETS, payload: popularAssets });
+
       const assetsBalances = storageData?.assetsBalances?.data ?? {};
       dispatch({ type: SET_ASSETS_BALANCES, payload: assetsBalances });
 
       const rates = storageData?.rates?.rates ?? {};
       dispatch({ type: SET_RATES, payload: rates });
+
+      const appsHoldings = storageData?.appsHoldings?.data ?? {};
+      dispatch({ type: SET_APP_HOLDINGS, payload: appsHoldings });
 
       const { txCount = {} } = get(storageData, 'txCount', {});
       dispatch({ type: UPDATE_TX_COUNT, payload: txCount });

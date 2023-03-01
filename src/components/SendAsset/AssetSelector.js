@@ -79,6 +79,7 @@ const AssetSelector = ({
 }: Props) => {
   const { t } = useTranslation();
   const inputRef = React.useRef();
+  const [selectToken, setSelectToken] = React.useState(null);
 
   const tokens = useRootSelector(accountAssetsWithBalanceSelector);
   const collectibles = flattenCollectibles(useRootSelector(accountCollectiblesSelector));
@@ -94,6 +95,7 @@ const AssetSelector = ({
     onSelectCollectible?.(null);
     onValueChange(null);
     onSelectToken(token);
+    setSelectToken(token);
   };
 
   const handleSelectCollectible = (collectible: Collectible) => {
@@ -102,12 +104,15 @@ const AssetSelector = ({
     onSelectCollectible?.(collectible);
   };
 
+  React.useEffect(() => {
+    inputRef.current?.focus();
+  }, [selectToken]);
+
   const handleSelectAsset = () => {
     !disableAssetSelectorModal &&
       Modal.open(() => (
         <AssetSelectorModal
           tokens={tokens}
-          isFromSelect
           title={t('assetSelector.choose_token_send')}
           onSelectToken={handleSelectToken}
           collectibles={collectibles}

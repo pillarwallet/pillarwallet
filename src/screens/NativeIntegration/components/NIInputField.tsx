@@ -41,7 +41,7 @@ import { accountAssetsWithBalanceSelector } from 'selectors/assets';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
-import { isValidAddressOrEnsName } from 'utils/validators';
+import { useNameValid, isValidAddress } from 'utils/validators';
 import { addressesEqual } from 'utils/assets';
 
 // Types
@@ -97,12 +97,14 @@ function NIInputField({ itemInfo, chain, value, onChangeValue, txFeeInfo, disabl
     if (collectible) setAssetData?.(collectible);
   };
 
+  const { data } = useNameValid(value);
+
   const getValidationError = () => {
     if (value?.c || typeof value == 'boolean') return null;
     if (addressesEqual(value, activeAccountAddress)) {
       return t('error.cannotSendToYourself');
     }
-    if (value && !isValidAddressOrEnsName(value)) {
+    if (value && !isValidAddress(value) && !data?.[0]) {
       return t('error.incorrectAddress');
     }
     return null;

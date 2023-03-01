@@ -24,10 +24,17 @@ import Toast from 'components/Toast';
 
 // types
 import type { Contact } from 'models/Contact';
+import type { Chain } from 'models/Chain';
+
+// Services
+import etherspotService from 'services/etherspot';
+
+// Constants
+import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { resolveEnsName } from './common';
-import { isValidAddress, isEnsName } from './validators';
+import { isValidAddress } from './validators';
 
 export function getContactTitle(contact: Contact) {
   return contact.name || contact.ensName || contact.ethAddress;
@@ -38,7 +45,7 @@ export function getContactKey(contact: Contact) {
 }
 
 type ResolveContactOptions = {|
-  showNotification: boolean;
+  showNotification: boolean,
 |};
 
 /**
@@ -50,7 +57,11 @@ type ResolveContactOptions = {|
  * @returns {Contact} with `ethAddress` being correct hex address`.
  * @returns {null} if ENS name resultion fails or `ethAddress` is neither valid address nor valid ENS name.
  */
-export const resolveContact = async (contact: ?Contact, options?: ResolveContactOptions): Promise<?Contact> => {
+export const resolveContact = async (
+  contact: ?Contact,
+  chain: ?Chain,
+  options?: ResolveContactOptions,
+): Promise<?Contact> => {
   if (!contact) return null;
 
   const showNotificationOption = options?.showNotification ?? true;
@@ -59,7 +70,7 @@ export const resolveContact = async (contact: ?Contact, options?: ResolveContact
     return contact;
   }
 
-  if (isEnsName(contact.ethAddress)) {
+  if (contact.zone) {
     const resolvedAddress = await resolveEnsName(contact.ethAddress);
 
     if (!resolvedAddress && showNotificationOption) {
@@ -78,10 +89,12 @@ export const resolveContact = async (contact: ?Contact, options?: ResolveContact
 export const getReceiverWithEnsName = async (
   ethAddressOrEnsName: ?string,
   showNotification: boolean = true,
-): Promise<?{ receiverEnsName?: string, receiver: ?string}> => {
+): Promise<?{ receiverEnsName?: string, receiver: ?string }> => {
   if (!ethAddressOrEnsName) return null;
 
-  if (isEnsName(ethAddressOrEnsName)) {
+  const recivedENSInfo = await etherspotService.resolveName(CHAIN.ETHEREUM, ethAddressOrEnsName);
+
+  if (recivedENSInfo?.[0]) {
     const resolvedAddress = await resolveEnsName(ethAddressOrEnsName);
 
     if (!resolvedAddress && showNotification) {
@@ -104,9 +117,11 @@ export const getReceiverWithEnsName = async (
 const isMatchingContact = (contact: Contact, query: ?string) => {
   if (!query) return true;
 
-  return contact.name.toUpperCase().includes(query.toUpperCase())
-    || contact.ethAddress.toUpperCase().includes(query.toUpperCase())
-    || contact.ensName?.toUpperCase().includes(query.toUpperCase());
+  return (
+    contact.name.toUpperCase().includes(query.toUpperCase()) ||
+    contact.ethAddress.toUpperCase().includes(query.toUpperCase()) ||
+    contact.ensName?.toUpperCase().includes(query.toUpperCase())
+  );
 };
 
 const isExactMatch = (contact: Contact, query: ?string) => {
@@ -125,5 +140,5 @@ export const filterContacts = (contacts: Contact[], query: ?string): Contact[] =
 
   return contacts
     .filter((contact) => isMatchingContact(contact, query))
-    .sort((contact) => isExactMatch(contact, query) ? 0 : 1);
+    .sort((contact) => (isExactMatch(contact, query) ? 0 : 1));
 };

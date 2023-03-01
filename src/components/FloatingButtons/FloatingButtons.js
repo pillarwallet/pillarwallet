@@ -60,12 +60,7 @@ const FloatingButtons = ({ items: falsyItems, applyBottomInset = true }: Props) 
     <FloatingContainer forceInset={forceInset}>
       <Container>
         {items.map((item) => (
-          <ItemTouchable
-            key={item.title}
-            onPress={item.onPress}
-            disabled={item.disabled}
-            testID="FloatingButtonItem"
-          >
+          <ItemTouchable key={item.title} onPress={item.onPress} disabled={item.disabled} testID="FloatingButtonItem">
             <ItemIconWrapper>
               {!!item.iconName && <Icon name={item.iconName} />}
               {!!item.iconSource && <ItemIconImage source={item.iconSource} />}

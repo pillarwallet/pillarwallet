@@ -1,0 +1,18 @@
+[
+  {
+    "chain": "optimism",
+    "address": "0x0000000000000000000000000000000000000000",
+    "name": "Ethereum",
+    "symbol": "ETH",
+    "decimals": 18,
+    "iconUrl": "https://tokens.1inch.exchange/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png"
+  },
+  {
+    "chain": "optimism",
+    "address": "0x940578F6D9f9ffD9621F69dbB5B24Fd380799772",
+    "name": "USDC",
+    "symbol": "USDC",
+    "decimals": 6,
+    "iconUrl": ""
+  }
+]

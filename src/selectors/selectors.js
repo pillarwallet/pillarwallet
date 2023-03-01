@@ -35,7 +35,6 @@ import type { Asset, AssetsPerChain } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Chain } from 'models/Chain';
 
-
 export type Selector<Result, Props = void> = (state: RootReducerState, props?: Props) => Result;
 
 export const useRootSelector = <T>(selector: (state: RootReducerState) => T): T =>
@@ -53,6 +52,7 @@ export const useChainRates = (chain: ?Chain) => {
 };
 
 export const useSupportedAssetsPerChain = () => useRootSelector(supportedAssetsPerChainSelector);
+export const usePopularAssetsPerChain = () => useRootSelector(popularAssetsPerChainSelector);
 
 export const useChainSupportedAssets = (chain: ?Chain): Asset[] => {
   const supportedAssetPerChain = useSupportedAssetsPerChain();
@@ -61,8 +61,11 @@ export const useChainSupportedAssets = (chain: ?Chain): Asset[] => {
   return supportedAssetPerChain[chain] ?? EMPTY_ARRAY;
 };
 
+export const useTransactionNotification = () => useRootSelector((root) => root.transactionNotification.data);
+
 export const useGasInfoPerChain = () => useRootSelector((root) => root.history.gasInfo);
 export const useChainGasInfo = (chain: Chain) => useGasInfoPerChain()[chain];
+export const useNftFlag = () => useRootSelector((root) => root.nftFlag.visible);
 
 //
 // Global selectors here
@@ -73,30 +76,35 @@ export const fiatCurrencySelector = (root: RootReducerState) =>
 
 export const historySelector = ({ history }: RootReducerState) => history.data;
 
+export const appsHoldingsSelector = ({ appsHoldings }: RootReducerState) => appsHoldings;
+
+export const useAppHoldings = () => useRootSelector((root) => root.appsHoldings);
+
+export const stableTokensSelector = ({ stableTokens }: RootReducerState) => stableTokens.data;
+
 export const bannerDataSelector = ({ onboarding }: RootReducerState) => onboarding.bannerData;
 
-export const paymentNetworkBalancesSelector =
-  ({ paymentNetwork }: RootReducerState) => paymentNetwork.balances;
+export const paymentNetworkBalancesSelector = ({ paymentNetwork }: RootReducerState) => paymentNetwork.balances;
 
 export const accountsSelector = ({ accounts }: RootReducerState) => accounts.data;
 
-export const activeAccountSelector =
-  ({ accounts }: RootReducerState) => accounts.data.find(({ isActive }) => isActive);
+export const activeAccountSelector = ({ accounts }: RootReducerState) => accounts.data.find(({ isActive }) => isActive);
 
-export const activeAccountIdSelector: Selector<string> = createSelector(
-  activeAccountSelector,
-  activeAccount => activeAccount ? activeAccount.id : null,
+export const activeAccountIdSelector: Selector<string> = createSelector(activeAccountSelector, (activeAccount) =>
+  activeAccount ? activeAccount.id : null,
 );
 
-export const activeAccountAddressSelector = createSelector(
-  activeAccountSelector,
-  activeAccount => activeAccount ? getAccountAddress(activeAccount) : '',
+export const activeAccountAddressSelector = createSelector(activeAccountSelector, (activeAccount) =>
+  activeAccount ? getAccountAddress(activeAccount) : '',
 );
 
 export const syntheticAssetsSelector = ({ synthetics }: RootReducerState) => synthetics.data;
 
 export const supportedAssetsPerChainSelector = (root: RootReducerState): AssetsPerChain =>
-  root.assets.supportedAssets ?? EMPTY_OBJECT;
+  root.assets?.supportedAssets ?? EMPTY_OBJECT;
+
+export const popularAssetsPerChainSelector = (root: RootReducerState): AssetsPerChain =>
+  root.assets?.popularAssets ?? EMPTY_OBJECT;
 
 export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>
   get(appSettings, 'data.blockchainNetwork', 'Ethereum');

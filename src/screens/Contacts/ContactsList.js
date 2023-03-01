@@ -46,7 +46,7 @@ import { SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
 // Utils
 import { filterContacts } from 'utils/contacts';
 import { useThemeColors } from 'utils/themes';
-import { isValidAddressOrEnsName } from 'utils/validators';
+import { isValidAddress, useNameValid } from 'utils/validators';
 import { spacing } from 'utils/variables';
 
 // Types
@@ -55,7 +55,6 @@ import type { RootReducerState } from 'reducers/rootReducer';
 
 // Partials
 import DeleteContactModal from './DeleteContactModal';
-
 
 const ContactsList = () => {
   const [query, setQuery] = React.useState('');
@@ -68,48 +67,51 @@ const ContactsList = () => {
 
   const colors = useThemeColors();
 
-  const openContactDetails = (contact: ?Contact) => Modal.open(() => {
-    const isEdit = !!contact?.name;
+  const openContactDetails = (contact: ?Contact) =>
+    Modal.open(() => {
+      const isEdit = !!contact?.name;
 
-    return (
-      <ContactDetailsModal
-        title={isEdit ? t('title.editContact') : t('title.addNewContact')}
-        contact={contact}
-        contacts={contacts}
-        onSave={(newContact: Contact) => {
-          dispatch(
-            isEdit && contact ? updateContactAction(contact.ethAddress, newContact) : addContactAction(newContact),
-          );
-        }}
-        showQRScanner
-      />
-    );
-  });
+      return (
+        <ContactDetailsModal
+          title={isEdit ? t('title.editContact') : t('title.addNewContact')}
+          contact={contact}
+          contacts={contacts}
+          onSave={(newContact: Contact) => {
+            dispatch(
+              isEdit && contact ? updateContactAction(contact.ethAddress, newContact) : addContactAction(newContact),
+            );
+          }}
+          showQRScanner
+        />
+      );
+    });
 
-  const openDeleteContactModal = (contact: Contact) => Modal.open(() => (
-    <DeleteContactModal contact={contact} />
-  ));
+  const openDeleteContactModal = (contact: Contact) => Modal.open(() => <DeleteContactModal contact={contact} />);
+
+  const { data } = useNameValid(query);
 
   const handleQueryChange = (value: string) => {
     setQuery(value);
-    const isValid = isValidAddressOrEnsName(value) && !filterContacts(contacts, value).length;
+    const isValid = !isValidAddress(value) && !data?.[0] && !filterContacts(contacts, value).length;
     setCustomAddressContact(isValid ? { ethAddress: value, name: '' } : null);
   };
 
   const renderItem = ({ item }: { item: Contact }) => {
     return (
       <Swipeout
-        right={[{
-          component: (
-            <SwipeoutButton
-              onPress={() => openDeleteContactModal(item)}
-              iconName="remove"
-              label={t('button.delete')}
-              color={colors.negative}
-              disabled
-            />
-          ),
-        }]}
+        right={[
+          {
+            component: (
+              <SwipeoutButton
+                onPress={() => openDeleteContactModal(item)}
+                iconName="remove"
+                label={t('button.delete')}
+                color={colors.negative}
+                disabled
+              />
+            ),
+          },
+        ]}
         backgroundColor="transparent"
         sensitivity={10}
         buttonWidth={80}
@@ -169,7 +171,7 @@ const ContactsList = () => {
       <SearchBar
         query={query}
         onQueryChange={handleQueryChange}
-        placeholder={t('label.addressEnsUsername')}
+        placeholder={t('label.addressSupportedNames')}
         autoFocus
       />
 

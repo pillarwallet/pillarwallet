@@ -24,7 +24,6 @@ import isEmpty from 'lodash.isempty';
 // constants
 import { ETH } from 'constants/assetsConstants';
 import { ERC721_TRANSFER_METHODS, ERROR_TYPE } from 'constants/transactionsConstants';
-import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { getEthereumProvider, parseTokenBigNumberAmount, logBreadcrumb, addressAsKey } from 'utils/common';
@@ -38,7 +37,7 @@ import ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM from 'abi/erc721_safeTransferFrom.
 import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
 
 // services
-import { getCoinGeckoTokenPrices, getCoinGeckoPricesByCoinId, chainToCoinGeckoCoinId } from 'services/coinGecko';
+import { getExchangeTokenPrices } from 'services/rates';
 
 // types
 import type { Asset } from 'models/Asset';
@@ -280,49 +279,41 @@ export function fetchRinkebyETHBalance(walletAddress: Address): Promise<string> 
   return provider.getBalance(walletAddress).then(utils.formatEther);
 }
 
-export async function getExchangeRates(chain: string, assets: Asset[]): Promise<?RatesByAssetAddress> {
+export async function getExchangeRates(chain: string, assets: Asset[], callBack: any): Promise<?RatesByAssetAddress> {
   if (isEmpty(assets)) {
     logBreadcrumb('getExchangeRates', 'received empty assets', { assets });
   }
 
-  // $FlowFixMe
-  let rates = !isEmpty(assets) ? await getCoinGeckoTokenPrices(chain, assets) : {};
-
   const nativeAssetAddress = nativeAssetPerChain[chain].address;
   const listHasNativeAsset = assets.some(({ address }) => addressesEqual(address, nativeAssetAddress));
 
-  // if empty assets still proceed to fetch native token rate for deployment calculations
-  if (listHasNativeAsset || isEmpty(assets)) {
-    const coinId = chainToCoinGeckoCoinId[chain];
-    const nativeAssetPrice = await getCoinGeckoPricesByCoinId(coinId);
-    if (!isEmpty(nativeAssetPrice)) {
-      // $FlowFixMe
-      rates = { ...rates, [addressAsKey(nativeAssetAddress)]: nativeAssetPrice };
-    }
+  if (!listHasNativeAsset && isEmpty(assets)) {
+    assets.push(nativeAssetPerChain[chain]);
   }
 
-  const isEthOptimism = assets?.find((item) => item.chain === CHAIN.OPTIMISM && item.symbol === ETH);
+  // $FlowFixMe
+  if (!isEmpty(assets)) {
+    await getExchangeTokenPrices(chain, assets, async (rates) => {
+      if (!rates) {
+        logBreadcrumb('getExchangeRates', 'failed: no rates data', { rates, assets });
+        return null;
+      }
 
-  if (isEthOptimism) {
-    const coinId = chainToCoinGeckoCoinId[CHAIN.ETHEREUM];
-    const nativeAssetPrice = await getCoinGeckoPricesByCoinId(coinId);
-    if (!isEmpty(nativeAssetPrice)) {
-      rates = { ...rates, [addressAsKey(isEthOptimism.address)]: nativeAssetPrice };
-    }
+      const reduceRatesObj = Object.keys(rates).reduce(
+        (mappedData: RatesByAssetAddress, returnedAssetAddress: string) => ({
+          ...mappedData,
+          [addressAsKey(returnedAssetAddress)]: rates[returnedAssetAddress],
+        }),
+        {},
+      );
+
+      await callBack(reduceRatesObj);
+
+      return reduceRatesObj;
+    });
   }
 
-  if (!rates) {
-    logBreadcrumb('getExchangeRates', 'failed: no rates data', { rates, assets });
-    return null;
-  }
-
-  return Object.keys(rates).reduce(
-    (mappedData: RatesByAssetAddress, returnedAssetAddress: string) => ({
-      ...mappedData,
-      [addressAsKey(returnedAssetAddress)]: rates[returnedAssetAddress],
-    }),
-    {},
-  );
+  return null;
 }
 
 export function transferSigned(signed: ?string) {

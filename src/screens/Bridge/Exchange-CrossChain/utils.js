@@ -24,7 +24,13 @@ import { BigNumber } from 'bignumber.js';
 import { orderBy } from 'lodash';
 
 // Selectors
-import { useRootSelector, useSupportedAssetsPerChain, useRatesPerChain, useFiatCurrency } from 'selectors';
+import {
+  useRootSelector,
+  useSupportedAssetsPerChain,
+  usePopularAssetsPerChain,
+  useRatesPerChain,
+  useFiatCurrency,
+} from 'selectors';
 import { useSupportedChains } from 'selectors/chains';
 import { accountAssetsPerChainSelector } from 'selectors/assets';
 import { accountWalletAssetsBalancesSelector } from 'selectors/balances';
@@ -33,18 +39,26 @@ import { accountWalletAssetsBalancesSelector } from 'selectors/balances';
 import { addressesEqual, getAssetOption, sortAssets } from 'utils/assets';
 import { getWalletBalanceForAsset } from 'utils/balances';
 import { nativeAssetPerChain } from 'utils/chains';
-import { logBreadcrumb } from 'utils/common';
+import { logBreadcrumb, formatUnits } from 'utils/common';
+import { getGasAddress, getGasDecimals } from 'utils/transactions';
+import { wrapBigNumber } from 'utils/bigNumber';
+import { getAssetRateInFiat } from 'utils/rates';
 
 // Services
 import etherspotService from 'services/etherspot';
 
+// Constants
+import { CHAIN } from 'constants/chainConstants';
+import { DAI, USDT, USDC, BUSD } from 'constants/assetsConstants';
+
 // Types
 import type { QueryResult } from 'utils/types/react-query';
 import type { Asset, AssetByAddress, AssetOption, AssetsPerChain } from 'models/Asset';
-import type { WalletAssetsBalances } from 'models/Balances';
+import type { WalletAssetsBalances, AssetBalance } from 'models/Balances';
 import type { ExchangeOffer } from 'models/Exchange';
-import type { Currency, RatesPerChain } from 'models/Rates';
+import type { Currency, RatesPerChain, RatesByAssetAddress } from 'models/Rates';
 import type { Chain, ChainRecord } from 'models/Chain';
+import type { TransactionFeeInfo } from 'models/Transaction';
 
 export function useFromAssets(): AssetOption[] {
   const supportedChains = useSupportedChains();
@@ -73,6 +87,37 @@ export function useFromAssets(): AssetOption[] {
     ratesPerChain,
     currency,
   ]);
+}
+
+export function useGasFeeAssets(chain: Chain) {
+  const listOfBalanceAssets = useFromAssets();
+
+  const chainAssets = React.useMemo(() => {
+    if (!listOfBalanceAssets?.[0] || !chain) return null;
+    const currentChainAssets = listOfBalanceAssets.filter((item) => item.chain === chain);
+    return currentChainAssets;
+  }, [chain, listOfBalanceAssets]);
+
+  if (!chainAssets?.[0]) return null;
+
+  const nativeAsset = nativeAssetPerChain[chain];
+
+  const stableCoin = [DAI, USDC, USDT];
+  const xDaiStableCoin = [USDC];
+  const binanceStableCoin = [...stableCoin, BUSD];
+
+  // eslint-disable-next-line no-nested-ternary
+  const stableCoins = chain === CHAIN.BINANCE ? binanceStableCoin : chain === CHAIN.XDAI ? xDaiStableCoin : stableCoin;
+
+  const stableAssets: any = chainAssets?.filter(
+    (item) => item.symbol === nativeAsset.symbol || stableCoins.includes(item.symbol),
+  );
+
+  if (!stableAssets?.[0]) return [nativeAsset];
+
+  stableAssets?.sort((a, b) => b?.balance?.balanceInFiat - a?.balance?.balanceInFiat);
+
+  return stableAssets;
 }
 
 export function useToAssetsCrossChain(removeChainNm: Chain): AssetOption[] {
@@ -132,6 +177,78 @@ export function useToAssets(chain: ?Chain) {
   }, [chain, supportedAssetsPerChain, walletBalancesPerChain, ratesPerChain, currency]);
 }
 
+export function useToPopularAssets(chain: ?Chain, isCrossChain?: boolean): AssetOption[] {
+  const supportedChains = useSupportedChains();
+  const filteredSupportedList = supportedChains.filter((chainNm: Chain) => chainNm !== chain);
+
+  const popularAssetsPerChain = usePopularAssetsPerChain();
+  const supportedAssetsPerChain = useSupportedAssetsPerChain();
+  const walletBalancesPerChain = useRootSelector(accountWalletAssetsBalancesSelector);
+  const ratesPerChain = useRatesPerChain();
+  const currency = useFiatCurrency();
+
+  return React.useMemo(() => {
+    if (isCrossChain) {
+      return filteredSupportedList.flatMap((chainNm) =>
+        getPopularToAssetOptions(
+          chainNm,
+          popularAssetsPerChain,
+          supportedAssetsPerChain,
+          walletBalancesPerChain,
+          ratesPerChain,
+          currency,
+        ),
+      );
+    }
+    return getPopularToAssetOptions(
+      chain,
+      popularAssetsPerChain,
+      supportedAssetsPerChain,
+      walletBalancesPerChain,
+      ratesPerChain,
+      currency,
+    );
+  }, [
+    isCrossChain,
+    chain,
+    popularAssetsPerChain,
+    supportedAssetsPerChain,
+    walletBalancesPerChain,
+    ratesPerChain,
+    currency,
+    filteredSupportedList,
+  ]);
+}
+
+function getPopularToAssetOptions(
+  chain: ?Chain,
+  popularAssetsPerChain: AssetsPerChain,
+  supportedAssetsPerChain: AssetsPerChain,
+  walletBalancesPerChain: ChainRecord<WalletAssetsBalances>,
+  ratesPerChain: RatesPerChain,
+  currency: Currency,
+): AssetOption[] {
+  if (!chain) return [];
+
+  const popularAssets: any = popularAssetsPerChain?.[chain] ?? [];
+  const supportedAssets: any = supportedAssetsPerChain?.[chain] ?? [];
+  const walletBalances = walletBalancesPerChain?.[chain] ?? {};
+  const rates = ratesPerChain?.[chain] ?? {};
+
+  Object.values(walletBalances)?.forEach((balanceInfo: AssetBalance | any) => {
+    const findAsset = popularAssets?.find((asset) => asset.address === balanceInfo.address);
+
+    if (!findAsset) {
+      const supportedAsset: AssetsPerChain | any = supportedAssets?.find(
+        (asset) => asset.address === balanceInfo.address,
+      );
+      popularAssets.push(supportedAsset);
+    }
+  });
+
+  return popularAssets.map((asset) => getAssetOption(asset, walletBalances, rates, currency, chain));
+}
+
 function getExchangeToAssetOptions(
   chain: ?Chain,
   supportedAssetsPerChain: AssetsPerChain,
@@ -178,6 +295,11 @@ export function sortOffers(offers: ?(ExchangeOffer[])): ?(ExchangeOffer[]) {
   return orderBy(offers, [(offer) => offer.toAmount.toNumber()], ['desc']);
 }
 
+export function sortingOffersToGasFee(offers: any[]): ?(any[]) {
+  if (!offers) return null;
+  return offers?.sort?.((a, b) => b?.sortingValue - a?.sortingValue);
+}
+
 export const shouldTriggerSearch = (
   fromAsset: ?AssetOption,
   toAsset: ?AssetOption,
@@ -193,6 +315,38 @@ export const shouldTriggerSearch = (
     isEnoughAssetBalance(fromAsset.assetBalance, fromAmount)
   );
 };
+
+export const assetTitle = (item: any) => {
+  if (!item?.balance) return item.symbol;
+
+  const {
+    balance: { balance: fiatBalance },
+    formattedBalanceInFiat,
+    symbol,
+  } = item;
+
+  // eslint-disable-next-line i18next/no-literal-string
+  return `${fiatBalance?.toFixed(1)} ${symbol}  •  ${formattedBalanceInFiat}`;
+};
+
+// Sort offers by USD value minus gas fees
+export function getSortingValue(
+  chain: Chain,
+  feeInfo: ?TransactionFeeInfo,
+  chainRates: RatesByAssetAddress,
+  currency: Currency,
+  fiatValue: ?number,
+) {
+  const decimals = getGasDecimals(chain, feeInfo?.gasToken);
+  const formattedFee = feeInfo?.fee ? formatUnits(feeInfo?.fee.toString(), decimals) : '0';
+
+  const amountBN = wrapBigNumber(formattedFee);
+  const gasAddress = getGasAddress(chain, feeInfo?.gasToken);
+
+  const assetRate = getAssetRateInFiat(chainRates, gasAddress ?? '', currency);
+
+  return Number(fiatValue) - amountBN.times(assetRate).toNumber();
+}
 
 const isEnoughAssetBalance = (assetBalance: ?string, amount: string): boolean => {
   try {

@@ -34,13 +34,15 @@
         android:theme="@style/AppTheme">
 
         <activity
+                android:exported="true"
                 android:name=".MainActivity"
                 android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
                 android:label="@string/app_name"
                 android:launchMode="singleInstance"
                 android:screenOrientation="portrait"
                 android:theme="@style/AppTheme"
-                android:windowSoftInputMode="adjustResize">
+                android:windowSoftInputMode="adjustResize"
+                >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -61,7 +63,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+        <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" android:exported="true"/>
 
         <!-- react-native-notifications override push notification subscription -->
         <service
@@ -72,6 +74,11 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <service
+            android:name="com.wix.reactnativenotifications.fcm.FcmInstanceIdListenerService"
+            android:exported="true"
+            />
 
         <!--        &lt;!&ndash; react-native-firebase trigger FCM instance ID event &ndash;&gt;-->
         <!--        <service android:name="io.invertase.firebase.messaging.RNFirebaseInstanceIdService">-->

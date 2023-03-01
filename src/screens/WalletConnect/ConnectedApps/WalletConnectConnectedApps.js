@@ -49,7 +49,15 @@ function WalletConnectConnectedApps() {
   };
 
   const renderItem = ({ title, iconUrl, chain, connector }: AppItem) => {
-    return <AppListItem title={title} iconUrl={iconUrl} chain={chain} onPress={() => openDisconnectModal(connector)} />;
+    return (
+      <AppListItem
+        title={title}
+        iconUrl={iconUrl}
+        chain={chain}
+        connector={connector}
+        onPress={() => openDisconnectModal(connector)}
+      />
+    );
   };
 
   return (
@@ -66,4 +74,3 @@ function WalletConnectConnectedApps() {
 }
 
 export default WalletConnectConnectedApps;
-

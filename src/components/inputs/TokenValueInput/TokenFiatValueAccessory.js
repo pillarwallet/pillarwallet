@@ -28,7 +28,7 @@ import { useTranslation } from 'translations/translate';
 import Text from 'components/core/Text';
 
 // Selectors
-import { useChainRates, useFiatCurrency } from 'selectors';
+import { useFiatCurrency, useChainRates } from 'selectors';
 
 // Utils
 import { hitSlop10 } from 'utils/common';

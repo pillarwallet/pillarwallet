@@ -33,7 +33,7 @@ import { useChainRates, useFiatCurrency } from 'selectors';
 
 // Utils
 import { formatTokenValue, formatFiatValue } from 'utils/format';
-import { getAssetValueInFiat } from 'utils/rates';
+import { getAssetValueInFiat, getAssetPriceInFiat } from 'utils/rates';
 import { fontStyles, spacing } from 'utils/variables';
 import { useChainConfig } from 'utils/uiConfig';
 
@@ -78,6 +78,7 @@ function TokenListItem({
   const { t } = useTranslation();
 
   const balanceInFiat = getAssetValueInFiat(balance, address, rates, currency);
+  const tokenPriceInFiat: any = getAssetPriceInFiat(address, rates, currency);
 
   const formattedBalance = formatTokenValue(balance, symbol);
   const formattedBalanceInFiat = formatFiatValue(balanceInFiat ?? 0, currency);
@@ -87,13 +88,18 @@ function TokenListItem({
   const networkName = chain ? config.title : undefined;
 
   return (
-    <Container onPress={onPress} disabled={!onPress} style={style}>
+    <Container
+      onPress={onPress}
+      disabled={!onPress}
+      style={style}
+      hitSlop={{ top: spacing.medium, bottom: spacing.medium }}
+    >
       {!!leftAddOn && <LeftAddOn>{leftAddOn}</LeftAddOn>}
 
       <TokenIcon url={iconUrl} chain={chain} setMarginRight />
 
       <TitleContainer>
-        <Title numberOfLines={1}>{name}</Title>
+        <Title numberOfLines={1}>{name + (tokenPriceInFiat ?? '')}</Title>
         {!!chain && <Subtitle numberOfLines={1}>{t('label.on_network', { network: networkName })}</Subtitle>}
       </TitleContainer>
 

@@ -31,11 +31,12 @@ import { CHAIN } from 'constants/chainConstants';
 import { ASSET_CATEGORY } from 'constants/assetsConstants';
 
 // Selectors
-import { useFiatCurrency, useActiveAccount } from 'selectors';
+import { useFiatCurrency, useActiveAccount, useNftFlag } from 'selectors';
 import { useSupportedChains } from 'selectors/chains';
 
 // Hooks
 import { useDeploymentStatus } from 'hooks/deploymentStatus';
+import { useAppHoldings } from 'hooks/apps';
 
 // Utils
 import { formatValue, formatFiatValue } from 'utils/format';
@@ -45,10 +46,15 @@ import { useChainsConfig, useAssetCategoriesConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
 import { isArchanovaAccount, isKeyBasedAccount } from 'utils/accounts';
 
+// Components
+import WalletSelection from 'components/Wallet/WalletSelection';
+import InvestmentListItem from 'components/lists/InvestmentListItem';
+
 // Types
 import type { AssetCategory, AssetCategoryRecordKeys } from 'models/AssetCategory';
 import type { Chain, ChainRecord } from 'models/Chain';
 import type { TotalBalances } from 'models/TotalBalances';
+import type { AppHoldings } from 'models/Investment';
 
 // Local
 import CategoryListItem from './components/CategoryListItem';
@@ -66,8 +72,11 @@ type FlagPerCategory = { [AssetCategory]: ?boolean };
 function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visibleBalance }: Props) {
   const { t } = useTranslationWithPrefix('home.assets');
   const navigation = useNavigation();
+  const visibleNFTs = useNftFlag();
+  const { totalBalanceOfHoldings, appHoldings } = useAppHoldings();
 
-  const [showChainsPerCategory, setShowChainsPerCategory] = React.useState<FlagPerCategory>({});
+  const [showChainsPerCategory, setShowChainsPerCategory] = React.useState<FlagPerCategory>({ wallet: true });
+  const [visibleHoldingsIndex, setVisibleHoldingsIndex] = React.useState(null);
 
   const chains = useSupportedChains();
   const fiatCurrency = useFiatCurrency();
@@ -102,7 +111,8 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visible
   };
 
   const renderCategoryWithBalance = (category: AssetCategoryRecordKeys) => {
-    const balance = balancePerCategory[category] ?? BigNumber(0);
+    const balance =
+      category === ASSET_CATEGORY.APPS ? totalBalanceOfHoldings : balancePerCategory[category] ?? BigNumber(0);
     const formattedBalance = formatFiatValue(balance, fiatCurrency);
 
     const { title, iconName } = categoriesConfig[category];
@@ -110,15 +120,28 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visible
 
     return (
       <React.Fragment key={`${category}-fragment`}>
-        <CategoryListItem
-          key={category}
-          iconName={iconName}
-          title={title}
-          value={formattedBalance}
-          visibleBalance={visibleBalance}
-          onPress={() => handlePressAssetCategory(category)}
-        />
-        {showChains && chains.map((chain) => renderChainWithBalance(category, chain))}
+        <SubContainer>
+          <CategoryListItem
+            key={category}
+            iconName={iconName}
+            title={title}
+            value={formattedBalance}
+            visibleBalance={visibleBalance}
+            onPress={() => handlePressAssetCategory(category)}
+          />
+        </SubContainer>
+        {showChains && category === ASSET_CATEGORY.WALLET && (
+          <SubContainer>
+            <WalletSelection />
+          </SubContainer>
+        )}
+        {showChains &&
+          category !== ASSET_CATEGORY.APPS &&
+          category !== ASSET_CATEGORY.WALLET &&
+          chains.map((chain) => renderChainWithBalance(category, chain))}
+        {showChains &&
+          category === ASSET_CATEGORY.APPS &&
+          appHoldings?.slice(0, 5).map((item, index) => renderInvestments(category, item, index))}
       </React.Fragment>
     );
   };
@@ -130,14 +153,33 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visible
     const { title } = chainsConfig[chain];
 
     return (
-      <ChainListItem
-        key={`${category}-${chain}`}
-        title={title}
-        value={formattedBalance}
-        visibleBalance={visibleBalance}
-        isDeployed={isKeyBasedAccount(activeAccount) || isDeployedOnChain[chain]}
-        onPress={() => navigateToAssetDetails(category, chain)}
-        onPressDeploy={() => showDeploymentInterjection(chain)}
+      <SubContainer>
+        <ChainListItem
+          key={`${category}-${chain}`}
+          title={title}
+          value={formattedBalance}
+          visibleBalance={visibleBalance}
+          isDeployed={isKeyBasedAccount(activeAccount) || isDeployedOnChain[chain]}
+          onPress={() => navigateToAssetDetails(category, chain)}
+          onPressDeploy={() => showDeploymentInterjection(chain)}
+        />
+      </SubContainer>
+    );
+  };
+
+  const renderInvestments = (category: AssetCategoryRecordKeys, item: AppHoldings, index: number) => {
+    const { name, network } = item;
+
+    const isSelected = visibleHoldingsIndex === index;
+
+    return (
+      <InvestmentListItem
+        key={`${name}-${network}`}
+        {...item}
+        isSelected={isSelected}
+        onPress={() => {
+          setVisibleHoldingsIndex(isSelected ? -1 : index);
+        }}
       />
     );
   };
@@ -181,8 +223,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visible
     <Container>
       {categoriesToRender.map((category) => renderCategoryWithBalance(category))}
 
-      {renderCollectiblesCategory()}
-
+      <SubContainer>{visibleNFTs && renderCollectiblesCategory()}</SubContainer>
       {/* Temporary entry until other UI provided */}
       {isArchanovaAccount(activeAccount) && (
         <CategoryListItem
@@ -199,6 +240,8 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visible
 
 export default AssetsSection;
 
-const Container = styled.View`
+const Container = styled.View``;
+
+const SubContainer = styled.View`
   padding: 0 ${spacing.large}px;
 `;

@@ -19,6 +19,8 @@
 */
 import { NavigationActions } from 'react-navigation';
 import t from 'translations/translate';
+import { BigNumber } from 'bignumber.js';
+import { isEmpty } from 'lodash';
 
 // constants
 import {
@@ -30,12 +32,14 @@ import {
   SET_WALLETCONNECT_CONNECTOR_REQUEST,
   ADD_WALLETCONNECT_ACTIVE_CONNECTOR,
   REMOVE_WALLETCONNECT_ACTIVE_CONNECTOR,
+  ETH_SIGN_TYPED_DATA,
+  ETH_SIGN_TYPED_DATA_V4,
 } from 'constants/walletConnectConstants';
 import {
   WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
   WALLETCONNECT_CALL_REQUEST_SCREEN,
 } from 'constants/navigationConstants';
-import { ADD_WALLETCONNECT_SESSION } from 'constants/walletConnectSessionsConstants';
+import { ADD_WALLETCONNECT_SESSION, UPDATE_WALLETCONNECT_SESSION } from 'constants/walletConnectSessionsConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -63,7 +67,7 @@ import { reportErrorLog, logBreadcrumb } from 'utils/common';
 import { isLogV2AppEvents } from 'utils/environment';
 
 // models, types
-import type { WalletConnectCallRequest, WalletConnectConnector } from 'models/WalletConnect';
+import type { WalletConnectCallRequest, WalletConnectConnector, sessionDataProps } from 'models/WalletConnect';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 const setWalletConnectErrorAction = (message: string) => {
@@ -81,7 +85,9 @@ const setWalletConnectErrorAction = (message: string) => {
 
 export const resetWalletConnectConnectorRequestAction = (rejectedRequest: boolean = false) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { walletConnect: { connectorRequest } } = getState();
+    const {
+      walletConnect: { connectorRequest },
+    } = getState();
 
     if (!connectorRequest) return;
 
@@ -139,17 +145,22 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
         payload: { connectorRequest: connector },
       });
 
-      navigate(NavigationActions.navigate({
-        routeName: WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
-        params: { connector, chainId },
-      }));
+      navigate(
+        NavigationActions.navigate({
+          routeName: WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
+          params: { connector, chainId },
+        }),
+      );
     });
   };
 };
 
 export const approveWalletConnectConnectorRequestAction = (peerId: string, chainId: number) => {
   return (dispatch: Dispatch, getState: GetState) => {
-    const { walletConnect: { connectorRequest } } = getState();
+    const {
+      walletConnect: { connectorRequest },
+    } = getState();
+
     if (!connectorRequest) {
       dispatch(setWalletConnectErrorAction(t('error.walletConnect.noMatchingConnector')));
       return;
@@ -194,9 +205,29 @@ export const approveWalletConnectConnectorRequestAction = (peerId: string, chain
   };
 };
 
+export const updateWalletConnectConnectorSessionAction = (connector: Object, sessionData: sessionDataProps) => {
+  return (dispatch: Dispatch) => {
+    try {
+      connector.updateSession(sessionData);
+
+      dispatch({ type: UPDATE_WALLETCONNECT_SESSION, payload: { session: connector.session } });
+
+      connector?._transport?.close?.();
+
+      dispatch(hideWalletConnectPromoCardAction());
+    } catch (error) {
+      dispatch(setWalletConnectErrorAction(error?.message));
+    }
+
+    dispatch(resetWalletConnectConnectorRequestAction());
+  };
+};
+
 export const rejectWalletConnectConnectorRequestAction = (peerId: string) => {
   return (dispatch: Dispatch, getState: GetState) => {
-    const { walletConnect: { connectorRequest } } = getState();
+    const {
+      walletConnect: { connectorRequest },
+    } = getState();
     if (!connectorRequest) {
       dispatch(setWalletConnectErrorAction(t('error.walletConnect.noMatchingConnector')));
       return;
@@ -219,7 +250,9 @@ export const rejectWalletConnectConnectorRequestAction = (peerId: string) => {
 
 export const rejectWalletConnectCallRequestAction = (callId: number, rejectReasonMessage?: string) => {
   return (dispatch: Dispatch, getState: GetState) => {
-    const { walletConnect: { activeConnectors, callRequests } } = getState();
+    const {
+      walletConnect: { activeConnectors, callRequests },
+    } = getState();
 
     const callRequest = callRequests.find(({ callId: existingCallId }) => existingCallId === callId);
     if (!callRequest) {
@@ -248,7 +281,9 @@ export const rejectWalletConnectCallRequestAction = (callId: number, rejectReaso
 
 export const approveWalletConnectCallRequestAction = (callId: number, result: any) => {
   return (dispatch: Dispatch, getState: GetState) => {
-    const { walletConnect: { activeConnectors, callRequests } } = getState();
+    const {
+      walletConnect: { activeConnectors, callRequests },
+    } = getState();
 
     const callRequest = callRequests.find(({ callId: existingCallId }) => existingCallId === callId);
     if (!callRequest) {
@@ -268,6 +303,53 @@ export const approveWalletConnectCallRequestAction = (callId: number, result: an
     } catch (error) {
       reportErrorLog('approveWalletConnectCallRequestAction -> approveRequest failed', { error });
       dispatch(setWalletConnectErrorAction(t('error.walletConnect.callRequestApproveFailed')));
+    }
+  };
+};
+
+export const switchEthereumChainConnectorAction = (request: any) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      walletConnect: { activeConnectors },
+    } = getState();
+
+    const { callId, chainId, peerId: requestPeerId } = request;
+
+    const connector = activeConnectors.find(({ peerId }) => peerId === requestPeerId);
+    if (!connector) {
+      dispatch(setWalletConnectErrorAction(t('error.walletConnect.noMatchingConnector')));
+      return;
+    }
+
+    const activeAccount = activeAccountSelector(getState());
+    if (!activeAccount) {
+      Toast.show({
+        message: t('toast.noActiveAccountFound'),
+        emoji: 'hushed',
+        supportLink: true,
+        autoClose: false,
+      });
+      return;
+    }
+
+    const accountAddress = getAccountAddress(activeAccount);
+    const sessionData = {
+      accounts: [accountAddress],
+      chainId,
+    };
+
+    try {
+      /*
+       * Whenever get switch chain request then follows this steps
+       * First update session in perticular chain.
+       * After approve perticular switch chain request.
+       */
+      await dispatch(updateWalletConnectConnectorSessionAction(connector, sessionData));
+
+      // For refrence https://github.com/WalletConnect/walletconnect-monorepo/issues/930#issuecomment-1106072395
+      dispatch(approveWalletConnectCallRequestAction(callId, null));
+    } catch (error) {
+      dispatch(setWalletConnectErrorAction(error?.message));
     }
   };
 };
@@ -296,11 +378,42 @@ export const subscribeToWalletConnectConnectorEventsAction = (connector: WalletC
         return;
       }
 
+      if (method === ETH_SIGN_TYPED_DATA || method === ETH_SIGN_TYPED_DATA_V4) {
+        if (isEmpty(params)) {
+          reportErrorLog('eth_signTypedData failed. params not found in connector.', { payload, peerMeta });
+          dispatch(setWalletConnectErrorAction(t('error.walletConnect.cannotDetermineChain', { dAppName: name })));
+          return;
+        }
+
+        try {
+          const { domain } = JSON.parse(params[1]);
+          if (!domain?.chainId) {
+            dispatch(setWalletConnectErrorAction(t('error.walletConnect.cannotDetermineChain', { dAppName: name })));
+            return;
+          }
+
+          if (Number(domain.chainId) !== chainId) {
+            dispatch(setWalletConnectErrorAction(t('error.walletConnect.invalidRequest')));
+            connector.rejectRequest({
+              id: +callId,
+              error: new Error(t('error.walletConnect.requestRejected')),
+            });
+            return;
+          }
+        } catch (e) {
+          reportErrorLog('eth_signTypedData request failed.', { payload, error: e?.message });
+          dispatch(setWalletConnectErrorAction(t('error.walletConnect.invalidRequest')));
+          return;
+        }
+      }
+
+      const chainID = params[0]?.chainId ? BigNumber(params[0].chainId)?.toNumber() : chainId;
+
       const callRequest: WalletConnectCallRequest = {
         name,
         url,
         peerId,
-        chainId,
+        chainId: chainID,
         callId,
         method,
         params,
@@ -341,14 +454,18 @@ export const subscribeToWalletConnectConnectorEventsAction = (connector: WalletC
       dispatch(setWalletConnectErrorAction(error?.message));
     });
 
+    const peerId = connector?.peerId;
+
     connector.on(WALLETCONNECT_EVENT.DISCONNECT, (error: Error | null) => {
       if (error) {
         dispatch(setWalletConnectErrorAction(error?.message));
         return;
       }
 
-      if (!connector?.peerId) {
-        logBreadcrumb('subscribeToWalletConnectConnectorEventsAction', 'disconnect failed: no peerId', { connector });
+      if (!peerId) {
+        logBreadcrumb('subscribeToWalletConnectConnectorEventsAction', 'disconnect failed: no peerId', {
+          connector,
+        });
         return;
       }
 

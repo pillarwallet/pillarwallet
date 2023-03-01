@@ -64,12 +64,13 @@ export function useTransactionsEstimate(
   chain: Chain,
   transactions: ?(EthereumTransaction[]),
   hideErrorNotification?: boolean,
+  gasAsset?: AssetCore,
 ): UseTransactionEstimateResult {
   const enabled = !!transactions?.length && !!chain;
 
   const query: QueryResult<TransactionFeeInfo> = useQuery(
-    ['TransactionsEstimate', transactions],
-    () => etherspotService.setTransactionsBatchAndEstimate(chain, transactions ?? []),
+    ['TransactionsEstimate', transactions, gasAsset],
+    () => etherspotService.setTransactionsBatchAndEstimate(chain, transactions ?? [], gasAsset?.address),
     { enabled, cacheTime: 0 },
   );
 
@@ -85,6 +86,11 @@ export function useTransactionsEstimate(
     });
   }, [errorMessage, hideErrorNotification]);
 
+  if (query.data) {
+    if (!query.data.gasToken) {
+      query.data.gasToken = gasAsset;
+    }
+  }
   return {
     feeInfo: query.data,
     errorMessage,

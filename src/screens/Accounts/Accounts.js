@@ -19,7 +19,7 @@
 */
 import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components/native';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { sortBy } from 'lodash';
 import t from 'translations/translate';
@@ -47,6 +47,7 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 // actions
 import { switchAccountAction } from 'actions/accountsActions';
 import { fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
+import { logEventAction } from 'actions/analyticsActions';
 
 // selectors
 import { useFiatCurrency, useRootSelector } from 'selectors';
@@ -105,6 +106,7 @@ const AccountsModal = ({
   name,
 }: Props) => {
   const theme = useTheme();
+  const dispatch = useDispatch();
   const colors = getThemeColors(theme);
   const isDarkTheme = useIsDarkTheme();
   const fiatCurrency = useFiatCurrency();
@@ -120,6 +122,9 @@ const AccountsModal = ({
   const isEthereumActive = activeBlockchainNetwork?.id === BLOCKCHAIN_NETWORK_TYPES.ETHEREUM;
 
   const setAccountActive = async (account: Account) => {
+    if (account.type === ACCOUNT_TYPES.KEY_BASED) dispatch(logEventAction('switch_to_key'));
+    if (account.type === ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET) dispatch(logEventAction('switch_to_smart'));
+
     await switchAccount(account.id);
     navigation.goBack(null);
   };

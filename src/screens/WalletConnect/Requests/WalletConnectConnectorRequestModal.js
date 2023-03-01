@@ -19,6 +19,8 @@
 */
 
 import * as React from 'react';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 import { Keyboard } from 'react-native';
@@ -30,20 +32,30 @@ import Image from 'components/Image';
 import Text from 'components/core/Text';
 
 // Hooks
-import useWalletConnect from 'hooks/useWalletConnect';
+import useWalletConnect, { useWalletConnectAccounts } from 'hooks/useWalletConnect';
+import { useDeploymentStatus } from 'hooks/deploymentStatus';
 
 // Types
 import type { WalletConnectConnector } from 'models/WalletConnect';
-
+import type { Account } from 'models/Account';
 // Utils
 import { chainFromChainId, mapChainToChainId } from 'utils/chains';
 import { spacing, fontStyles } from 'utils/variables';
 import { useThemedImages } from 'utils/images';
 import { parsePeerName, pickPeerIcon } from 'utils/walletConnect';
 import { useChainsConfig } from 'utils/uiConfig';
+import { getActiveAccount, findKeyBasedAccount, isEtherspotAccount } from 'utils/accounts';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
+import { ETHERSPOT } from 'constants/walletConstants';
+
+// Actions
+import { switchAccountAction } from 'actions/accountsActions';
+import { dismissSwitchAccountTooltipAction } from 'actions/appSettingsActions';
+
+// Local
+import WalletConnectSwitchNetwork from './WalletConnectSwitchNetwork';
 
 type Props = {|
   connector: WalletConnectConnector,
@@ -54,14 +66,34 @@ function WalletConnectConnectorRequestModal({ connector, chainId }: Props) {
   const ref = React.useRef();
   const { genericToken } = useThemedImages();
   const chainsConfig = useChainsConfig();
+  const dispatch = useDispatch();
   const chain = chainFromChainId[chainId] ?? CHAIN.ETHEREUM;
-  const { title: chainName } = chainsConfig[chain];
+
+  const accounts = useWalletConnectAccounts();
+  const { isDeployedOnChain } = useDeploymentStatus();
+
+  const keyBasedAccount: ?Account = findKeyBasedAccount(accounts);
+  const activeAccount: ?Account = getActiveAccount(accounts);
+  const isActiveEtherspotAccount = isEtherspotAccount(activeAccount);
+
+  const [selectedChain, setSelectedChain] = React.useState(chain);
+  const { title: chainName } = chainsConfig[selectedChain];
 
   // Note: this will map chain id to testnet in test env.
-  const mappedChainId = mapChainToChainId(chain);
+  const mappedChainId = mapChainToChainId(selectedChain);
 
   const { approveConnectorRequest, rejectConnectorRequest } = useWalletConnect();
   const { app: appName, description, peerID, iconUrl } = getViewData(connector);
+
+  useEffect(() => {
+    if (activeAccount !== keyBasedAccount && appName === ETHERSPOT) {
+      if (keyBasedAccount?.id) {
+        dispatch(switchAccountAction(keyBasedAccount.id));
+        dispatch(dismissSwitchAccountTooltipAction(false));
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeAccount, appName, keyBasedAccount]);
 
   const onApprovePress = () => {
     Keyboard.dismiss();
@@ -93,7 +125,14 @@ function WalletConnectConnectorRequestModal({ connector, chainId }: Props) {
 
       {!!description && <Description>{description}</Description>}
 
-      <Button title={t('button.approve')} size="large" onPress={onApprovePress} />
+      <WalletConnectSwitchNetwork chain={chain} onChangeChain={setSelectedChain} />
+
+      <Button
+        disabled={isActiveEtherspotAccount ? !isDeployedOnChain[selectedChain] : false}
+        title={t('button.approve')}
+        size="large"
+        onPress={onApprovePress}
+      />
       <Button title={t('button.reject')} size="large" onPress={onRejectPress} variant="text" />
     </BottomModal>
   );
@@ -123,8 +162,8 @@ const styles = {
 };
 
 const Description = styled(Text)`
- text-align: center;
- margin-bottom: ${spacing.largePlus}px;
- color: ${({ theme }) => theme.colors.tertiaryText};
- ${fontStyles.medium};
+  text-align: center;
+  margin-bottom: ${spacing.largePlus}px;
+  color: ${({ theme }) => theme.colors.tertiaryText};
+  ${fontStyles.medium};
 `;

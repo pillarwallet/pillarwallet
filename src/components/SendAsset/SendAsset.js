@@ -32,6 +32,7 @@ import { fetchGasThresholds } from 'redux/actions/gas-threshold-actions';
 // Constants
 import { SEND_COLLECTIBLE_CONFIRM, SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
 import { ASSET_TYPES } from 'constants/assetsConstants';
+import { TRANSACTION_TYPE } from 'constants/transactionsConstants';
 
 // Components
 import Button from 'components/legacy/Button';
@@ -185,6 +186,8 @@ const SendAsset = ({
         source,
         receiverEnsName: selectedContact.ensName,
         chain,
+        gasToken: feeInfo.gasToken,
+        type: TRANSACTION_TYPE.SENDNFT,
       });
       return;
     }
@@ -199,6 +202,9 @@ const SendAsset = ({
       contractAddress: assetData.contractAddress,
       decimals: assetData.decimals,
       chain,
+      assetData,
+      gasToken: feeInfo.gasToken,
+      type: TRANSACTION_TYPE.SENDTOKEN,
     };
 
     if (feeInfo?.gasToken) transactionPayload.gasToken = feeInfo.gasToken;
@@ -355,7 +361,8 @@ const renderFeeToggle = (
 const mapToAssetDataType = ({
   contractAddress,
   address,
-  symbol: token,
+  symbol,
+  token,
   decimals,
   tokenType,
   tokenId,
@@ -363,7 +370,7 @@ const mapToAssetDataType = ({
   isLegacy,
 }: Object): AssetData => ({
   contractAddress: address || contractAddress,
-  token,
+  token: symbol || token,
   decimals,
   tokenType,
   id: tokenId,

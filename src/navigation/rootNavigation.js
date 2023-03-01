@@ -89,9 +89,9 @@ const onBoardingFlow = createStackNavigator(
 
 const authFlow = createStackNavigator(
   {
+    [MENU_SELECT_APPEARANCE]: MenuSelectAppearanceScreen,
     [PIN_CODE_UNLOCK]: PinCodeUnlockScreen,
     [FORGOT_PIN]: ForgotPinScreen,
-    [MENU_SELECT_APPEARANCE]: MenuSelectAppearanceScreen,
   },
   modalTransition,
 );

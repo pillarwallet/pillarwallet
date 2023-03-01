@@ -45,6 +45,7 @@ import { SET_CACHED_URLS } from 'constants/cacheConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { NFT_FLAG } from 'constants/assetsConstants';
 
 // utils
 import { logBreadcrumb, reportLog } from 'utils/common';
@@ -52,11 +53,7 @@ import { decryptWalletFromStorage, getDecryptedWallet } from 'utils/wallet';
 import { clearWebViewCookies } from 'utils/webview';
 import { resetKeychainDataObject } from 'utils/keychain';
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
-import {
-  findFirstArchanovaAccount,
-  findFirstEtherspotAccount,
-  findKeyBasedAccount,
-} from 'utils/accounts';
+import { findFirstArchanovaAccount, findFirstEtherspotAccount, findKeyBasedAccount } from 'utils/accounts';
 import { getDeviceUniqueId } from 'utils/device';
 
 // services
@@ -73,10 +70,7 @@ import type { OnValidPinCallback } from 'models/Wallet';
 // actions
 import { saveDbAction } from './dbActions';
 import { setupLoggingServicesAction } from './appActions';
-import {
-  addAccountAction,
-  initOnLoginArchanovaAccountAction,
-} from './accountsActions';
+import { addAccountAction, initOnLoginArchanovaAccountAction, deployAccounts } from './accountsActions';
 import { encryptAndSaveWalletAction, checkForWalletBackupToastAction, updatePinAttemptsAction } from './walletActions';
 import { fetchTransactionsHistoryAction } from './historyActions';
 import { setAppThemeAction, setAppLanguageAction, setDeviceUniqueIdIfNeededAction } from './appSettingsActions';
@@ -88,13 +82,14 @@ import {
   checkKeyBasedAssetTransferTransactionsAction,
 } from './keyBasedAssetTransferActions';
 import { setSessionTranslationBundleInitialisedAction } from './sessionActions';
-import { importEtherspotAccountsAction, initEtherspotServiceAction } from './etherspotActions';
+import { importEtherspotAccountsAction, initEtherspotServiceAction, setStableTokens } from './etherspotActions';
 import { setEnsNameIfNeededAction } from './ensRegistryActions';
 import { fetchTutorialDataIfNeededAction, bannerDataAction } from './cmsActions';
 import { fetchAllAccountsAssetsBalancesAction, fetchAllAccountsTotalBalancesAction } from './assetsActions';
 import { finishOnboardingAction } from './onboardingActions';
 import { addMissingWalletEventsIfNeededAction } from './walletEventsActions';
 import { fetchAllCollectiblesDataAction } from './collectiblesActions';
+import { fetchAppsHoldingsAction } from './appsHoldingsActions';
 
 const storage = Storage.getInstance('db');
 
@@ -153,6 +148,10 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
     } else {
       dispatch({ type: SET_WALLET, payload: unlockedWallet });
     }
+
+    const visibleNFTs = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_NFTS);
+    logBreadcrumb('onboarding', 'finishOnboardingAction: dispatching app nfts flag');
+    dispatch({ type: NFT_FLAG, payload: visibleNFTs });
 
     dispatch(setupLoggingServicesAction());
     dispatch(updatePinAttemptsAction(false));
@@ -227,6 +226,8 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
     const keyBasedAccount = findKeyBasedAccount(accounts);
     if (!keyBasedAccount) dispatch(addAccountAction(address, ACCOUNT_TYPES.KEY_BASED));
 
+    dispatch(setStableTokens());
+
     dispatch(fetchTransactionsHistoryAction());
     dispatch(setEnsNameIfNeededAction());
     dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
@@ -234,6 +235,8 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
     dispatch(fetchAllAccountsTotalBalancesAction());
     dispatch(fetchAllAccountsAssetsBalancesAction());
     dispatch(fetchAllCollectiblesDataAction());
+    dispatch(fetchAppsHoldingsAction());
+    dispatch(deployAccounts());
   };
 };
 
@@ -397,13 +400,8 @@ export const logoutAction = () => {
     await dispatch(resetAppServicesAction());
 
     // reset reducer state
-    const {
-      isOnline,
-      translationsInitialised,
-      fallbackLanguageVersion,
-      sessionLanguageCode,
-      sessionLanguageVersion,
-    } = getState().session.data; // keep these session values state after reset
+    const { isOnline, translationsInitialised, fallbackLanguageVersion, sessionLanguageCode, sessionLanguageVersion } =
+      getState().session.data; // keep these session values state after reset
 
     dispatch(
       resetAppStateAction({
@@ -433,13 +431,8 @@ export const resetAndStartImportWalletAction = () => {
     await dispatch(resetAppServicesAction());
 
     // reset reducer state
-    const {
-      isOnline,
-      translationsInitialised,
-      fallbackLanguageVersion,
-      sessionLanguageCode,
-      sessionLanguageVersion,
-    } = getState().session.data; // keep these session values state after reset
+    const { isOnline, translationsInitialised, fallbackLanguageVersion, sessionLanguageCode, sessionLanguageVersion } =
+      getState().session.data; // keep these session values state after reset
 
     dispatch(
       resetAppStateAction({

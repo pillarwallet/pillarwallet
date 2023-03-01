@@ -18,15 +18,20 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { BigNumber } from 'bignumber.js';
+import { utils } from 'ethers';
 
 // Utils
+import { nativeAssetPerChain } from 'utils/chains';
 import { wrapBigNumber } from 'utils/bigNumber';
-import { valueForAddress } from 'utils/common';
+import { valueForAddress, getCurrencySymbol } from 'utils/common';
+
+// Constans
+import { CHAIN } from 'constants/chainConstants';
+import { USD } from 'constants/assetsConstants';
 
 // Types
 import type { Value } from 'models/Value';
-import type { Currency, RatesByAssetAddress } from 'models/Rates';
-
+import type { Currency, RatesByAssetAddress, RatesPerChain } from 'models/Rates';
 
 export const getFiatValueFromUsd = (valueInUsd: ?BigNumber | string, usdToFiatRate: ?number): ?BigNumber => {
   if (!valueInUsd || usdToFiatRate == null) return null;
@@ -34,11 +39,8 @@ export const getFiatValueFromUsd = (valueInUsd: ?BigNumber | string, usdToFiatRa
   return wrapBigNumber(valueInUsd)?.times(usdToFiatRate);
 };
 
-export const getAssetRateInFiat = (
-  rates: RatesByAssetAddress,
-  assetAddress: ?string,
-  fiatCurrency: Currency,
-): number => valueForAddress(rates, assetAddress)?.[fiatCurrency] ?? 0;
+export const getAssetRateInFiat = (rates: RatesByAssetAddress, assetAddress: ?string, fiatCurrency: Currency): number =>
+  valueForAddress(rates, assetAddress)?.[fiatCurrency] ?? 0;
 
 export const getAssetValueInFiat = (
   assetValue: ?Value,
@@ -54,6 +56,18 @@ export const getAssetValueInFiat = (
   return wrapBigNumber(assetValue)?.times(rate).toNumber();
 };
 
+export const getAssetPriceInFiat = (assetAddress: ?string, rates: RatesByAssetAddress, currency: Currency): ?string => {
+  if (!assetAddress) return null;
+
+  const rate = getAssetRateInFiat(rates, assetAddress, currency);
+  if (!rate) return null;
+
+  const currencySymbol = getCurrencySymbol(currency);
+
+  // eslint-disable-next-line i18next/no-literal-string
+  return ` • ${currencySymbol}${rate?.toFixed(2)}`;
+};
+
 export const getAssetValueFromFiat = (
   fiatValue: ?Value,
   assetAddress: ?string,
@@ -66,4 +80,14 @@ export const getAssetValueFromFiat = (
   if (!rate) return null;
 
   return wrapBigNumber(fiatValue)?.dividedBy(rate);
+};
+
+export const fiatInvestmentBalance = (balance: BigNumber, rates: RatesPerChain, currency: Currency) => {
+  const nativeAssetRate = rates[nativeAssetPerChain[CHAIN.ETHEREUM].address];
+
+  const assetBalance: string = utils.formatEther(balance);
+
+  const fiatAmount = (parseFloat(assetBalance) * nativeAssetRate?.[currency]) / nativeAssetRate?.[USD];
+
+  return fiatAmount?.toFixed(2);
 };

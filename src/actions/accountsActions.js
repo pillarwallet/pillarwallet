@@ -21,10 +21,17 @@ import { sdkConstants } from '@smartwallet/sdk';
 import { isEqual } from 'lodash';
 
 // constants
-import { UPDATE_ACCOUNTS, ACCOUNT_TYPES, CHANGING_ACCOUNT } from 'constants/accountsConstants';
+import {
+  UPDATE_ACCOUNTS,
+  ACCOUNT_TYPES,
+  CHANGING_ACCOUNT,
+  DEPLOY_ACCOUNTS,
+  DEPLOY_ACCOUNTS_FETCHING,
+} from 'constants/accountsConstants';
 import { ARCHANOVA_WALLET_UPGRADE_STATUSES } from 'constants/archanovaConstants';
 import { PIN_CODE } from 'constants/navigationConstants';
 import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
@@ -58,6 +65,7 @@ import { patchArchanovaAccountExtra } from 'utils/archanova';
 
 // services
 import { navigate } from 'services/navigation';
+import etherspotServices from 'services/etherspot';
 
 // selectors
 import { accountsSelector } from 'selectors';
@@ -66,18 +74,14 @@ import { accountsSelector } from 'selectors';
 import type { AccountTypes } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
-
-export const addAccountAction = (
-  accountAddress: string,
-  type: AccountTypes,
-  accountExtra?: any,
-) => {
+export const addAccountAction = (accountAddress: string, type: AccountTypes, accountExtra?: any) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { accounts: { data: accounts } } = getState();
+    const {
+      accounts: { data: accounts },
+    } = getState();
 
-    const patchedAccountExtra = type === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET
-      ? patchArchanovaAccountExtra(accountExtra, accounts)
-      : accountExtra;
+    const patchedAccountExtra =
+      type === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET ? patchArchanovaAccountExtra(accountExtra, accounts) : accountExtra;
 
     const newAccount = {
       id: accountAddress,
@@ -106,10 +110,7 @@ export const addAccountAction = (
   };
 };
 
-export const updateAccountExtraIfNeededAction = (
-  accountId: string,
-  accountExtra: any,
-) => {
+export const updateAccountExtraIfNeededAction = (accountId: string, accountExtra: any) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const accounts = accountsSelector(getState());
     const accountToUpdate = findAccountById(accountId, accounts);
@@ -137,9 +138,11 @@ export const updateAccountExtraIfNeededAction = (
 
 export const removeAccountAction = (accountAddress: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { accounts: { data: accounts } } = getState();
+    const {
+      accounts: { data: accounts },
+    } = getState();
 
-    const updatedAccounts = accounts.filter(account => account.id.toLowerCase() !== accountAddress.toLowerCase());
+    const updatedAccounts = accounts.filter((account) => account.id.toLowerCase() !== accountAddress.toLowerCase());
     if (accounts.length === updatedAccounts.length) {
       return;
     }
@@ -157,16 +160,14 @@ export const setActiveAccountAction = (accountId: string) => {
       accounts: { data: accounts },
       smartWallet: {
         connectedAccount = {},
-        upgrade: {
-          status: upgradeStatus,
-        },
+        upgrade: { status: upgradeStatus },
       },
     } = getState();
 
-    const account = accounts.find(acc => acc.id === accountId);
+    const account = accounts.find((acc) => acc.id === accountId);
     if (!account) return;
 
-    const updatedAccounts = accounts.map(acc => ({ ...acc, isActive: acc.id === accountId }));
+    const updatedAccounts = accounts.map((acc) => ({ ...acc, isActive: acc.id === accountId }));
     dispatch({
       type: UPDATE_ACCOUNTS,
       payload: updatedAccounts,
@@ -180,10 +181,11 @@ export const setActiveAccountAction = (accountId: string) => {
       dispatch(setSmartWalletUpgradeStatusAction(ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
       return;
     }
-    if ([
-      ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYING,
-      ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE,
-    ].includes(upgradeStatus)) {
+    if (
+      [ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYING, ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE].includes(
+        upgradeStatus,
+      )
+    ) {
       return;
     }
     dispatch(setSmartWalletUpgradeStatusAction(ARCHANOVA_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED));
@@ -225,7 +227,9 @@ export const switchAccountAction = (accountId: string) => {
 export const initOnLoginArchanovaAccountAction = (privateKey: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
-      appSettings: { data: { blockchainNetwork } },
+      appSettings: {
+        data: { blockchainNetwork },
+      },
       accounts: { data: accounts },
     } = getState();
 
@@ -287,5 +291,36 @@ export const switchToEtherspotAccountIfNeededAction = () => {
     }
 
     dispatch(switchAccountAction(getAccountId(etherspotAccount)));
+  };
+};
+
+/**
+ * Free Deploy Polygon / Gnosis accounts.
+ */
+export const deployAccounts = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      deployAccounts: { isFetching },
+    } = getState();
+
+    const networkChains = [CHAIN.XDAI];
+
+    if (isFetching) return;
+
+    dispatch({ type: DEPLOY_ACCOUNTS_FETCHING, payload: true });
+
+    const networkPromises = networkChains.map((chain) => etherspotServices.setbatchDeployAccount(chain));
+    const statusReponses = await Promise.all(networkPromises);
+
+    const finalResponse = networkChains.map((chain, index) => {
+      return {
+        chain,
+        status: statusReponses[index],
+      };
+    });
+
+    dispatch({ type: DEPLOY_ACCOUNTS, payload: finalResponse });
+
+    dispatch({ type: DEPLOY_ACCOUNTS_FETCHING, payload: false });
   };
 };

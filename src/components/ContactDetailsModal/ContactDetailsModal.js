@@ -45,11 +45,12 @@ import { addressesEqual } from 'utils/assets';
 import { isCaseInsensitiveMatch, resolveEnsName, lookupAddress } from 'utils/common';
 import { images } from 'utils/images';
 import { getThemeColors } from 'utils/themes';
-import { isEnsName, isValidAddress, isValidAddressOrEnsName } from 'utils/validators';
+import { useNameValid, isValidAddress } from 'utils/validators';
 import { fontStyles, spacing } from 'utils/variables';
 
 // Types
 import type { Contact } from 'models/Contact';
+import type { Chain } from 'models/Chain';
 
 type Props = {|
   onSave: (contact: Contact) => void,
@@ -58,6 +59,7 @@ type Props = {|
   contacts: Contact[],
   showQRScanner?: boolean,
   onModalHide?: () => void,
+  chain?: ?Chain,
 |};
 
 type FormData = {|
@@ -65,21 +67,21 @@ type FormData = {|
   name: string,
 |};
 
-const ContactDetailsModal = ({
-  contact,
-  onSave,
-  title,
-  contacts,
-  showQRScanner,
-  onModalHide,
-}: Props) => {
+const ContactDetailsModal = ({ chain, contact, onSave, title, contacts, showQRScanner, onModalHide }: Props) => {
   const modalRef = useRef();
+  const [query, setQuery] = useState('');
+
+  const validInputQuery = useNameValid(query, chain);
+  const { data } = validInputQuery;
 
   const formSchema = yup.object().shape({
     address: yup
       .string()
       .required(t('error.emptyAddress'))
-      .test('isValid', t('error.invalid.address'), (value) => isValidAddressOrEnsName(value))
+      .test('isValid', t('error.invalid.address'), (value) => {
+        setQuery(value);
+        return isValidAddress(value) && !data?.[0];
+      })
       .test(
         'alreadyExists',
         t('error.contactWithAddressExists'),
@@ -99,9 +101,7 @@ const ContactDetailsModal = ({
       ),
   });
 
-  const {
-    control, handleSubmit, errors, watch, getValues, setValue,
-  } = useForm({
+  const { control, handleSubmit, errors, watch, getValues, setValue } = useForm({
     defaultValues: { address: contact?.ethAddress || '', name: contact?.name || '' },
     resolver: yupResolver(formSchema),
     mode: 'onTouched',
@@ -114,7 +114,7 @@ const ContactDetailsModal = ({
 
   useEffect(() => {
     const handleAddressChange = async () => {
-      if (isEnsName(debouncedAddress)) {
+      if (data) {
         setIsResolvingEns(true);
         const resolvedAddress = await resolveEnsName(debouncedAddress);
         setIsResolvingEns(false);

@@ -27,8 +27,6 @@ import { useThemeColors } from 'utils/themes';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
-import type { SvgImage } from 'utils/types/svg-stub';
-import type { Record } from 'utils/object';
 
 // Assets: generic icons
 import IconAddCash from 'assets/icons/svg/icon-24-add-cash.svg';
@@ -121,6 +119,16 @@ import RadioButton from 'assets/icons/svg/form-radio-button-normal-light.svg';
 import DeployLightIcon from 'assets/icons/svg/24-circle-filled-alert-light.svg';
 import DeployIcon from 'assets/icons/svg/24-circle-filled-alert.svg';
 import ExclamationLight from 'assets/icons/svg/exclamationLight.svg';
+import EtherspotDark from 'assets/icons/svg/etherspot.svg';
+import KeyWalletDark from 'assets/icons/svg/key-wallet.svg';
+import PlrDark from 'assets/icons/svg/tokens-48-plr.svg';
+import DownArrow from 'assets/icons/svg/down-arrow.svg';
+import UpArrow from 'assets/icons/svg/up-arrow.svg';
+import PendingIcon from 'assets/icons/svg/24-circle-pending.svg';
+import CheckmarkCircle from 'assets/icons/svg/24-circle-checkmark.svg';
+import CheckmarkGreen from 'assets/icons/svg/24-checkmark.svg';
+import CrossRed from 'assets/icons/svg/24-x.svg';
+import IconHelp from 'assets/icons/svg/24-circle-help.svg';
 
 // Assets: services icons
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
@@ -132,6 +140,7 @@ import IconAllNetworks from 'assets/icons/svg/services-48-circle-pillar-exchange
 import IconAllNetworksLight from 'assets/icons/svg/services-48-circle-pillar-exchange-light.svg';
 import IconOptimism from 'assets/icons/svg/icon-24-optimism.svg';
 import IconGnosis from 'assets/icons/svg/icon-24-gnosis.svg';
+import IconArbitrum from 'assets/icons/svg/icon-24-arbitrum.svg';
 
 const components = {
   // Generic icons
@@ -225,6 +234,16 @@ const components = {
   'deploy-light': DeployLightIcon,
   deploy: DeployIcon,
   'exclamation-round-light': ExclamationLight,
+  etherspot: EtherspotDark,
+  'key-wallet': KeyWalletDark,
+  'plr-token': PlrDark,
+  'down-arrow': DownArrow,
+  'up-arrow': UpArrow,
+  'pending-process': PendingIcon,
+  'checkmark-circle': CheckmarkCircle,
+  'checkmark-green': CheckmarkGreen,
+  'cross-red': CrossRed,
+  help: IconHelp,
 
   // Service icons
   binance: IconBinance,
@@ -233,6 +252,7 @@ const components = {
   xdai: IconGnosis,
   avalanche: IconAvalanche,
   optimism: IconOptimism,
+  arbitrum: IconArbitrum,
   'wallet-connect': IconWalletConnect,
   'all-networks': IconAllNetworks,
   'all-networks-light': IconAllNetworksLight,

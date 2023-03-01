@@ -29,6 +29,7 @@
   "totalValue": "总计 {{value}}",
   "estimatedValue": "≈ {{value}}",
   "fetching": "正在获取价格…",
+  "fetchingAddress": "获取地址...",
   "fetch_failed": "无法获取费率",
   "availableValue": "可用：{{value}}",
   "ofValue": "{{value}} 个",
@@ -51,6 +52,9 @@
   "minute_plural": "{{count}} 分钟",
   "tutorialTitle": "欢迎来到柱子！",
   "tutorialSubtitle": "痛苦本身就是爱的痛苦，主要的生态问题，但我给这种时间倒下，让一些巨大的痛苦和痛苦。",
+  "smart_wallet":"智能钱包",
+  "key_wallet":"钥匙钱包",
+
   "units": {
     "1e3": "{{value}} 千",
     "1e6": "{{value}}米",
@@ -63,7 +67,14 @@
     "xdai": "Gnosis",
     "polygon": "Polygon",
     "optimism": "Optimism",
-    "optimism_kovan": "Optimism Kovan"
+    "optimism_kovan": "Optimism Kovan",
+    "gorli":"Ethereum Görli",
+    "sokol":"Gnosis Sokol",
+    "binance_test":"Binance Testnet",
+    "mumbai":"Polygon Mumbai",
+    "optimism_gorli":"Optimistic Görli",
+    "arbitrum": "Arbitrum",
+    "arbitrum_nitro": "Arbitrum Nitro"
   },
   "chainsShort": {
     "ethereum": "Ethereum",
@@ -71,7 +82,8 @@
     "xdai": "Gnosis",
     "polygon": "Polygon",
     "optimism": "Optimism",
-    "optimism_kovan": "Optimism Kovan"
+    "optimism_kovan": "Optimism Kovan",
+    "arbitrum": "Arbitrum"
   },
   "assetCategories": {
     "wallet": "钱包",
@@ -80,6 +92,7 @@
     "liquidityPools": "流动资金池",
     "rewards": "奖励",
     "datasets": "数据集",
+    "apps":"应用",
     "collectibles": "NFT"
   },
   "assetCategoriesShort": {
@@ -119,7 +132,8 @@
     "exchange": "交换",
     "unlockWithBiometrics": "使用生物识别传感器解锁",
     "welcome": "欢迎来到 Pillar 钱包！",
-    "seedPhrase": "12字种子词组"
+    "seedPhrase": "12字种子词组",
+    "portfolio_riskiness": "投资组合风险"
   },
   "label": {
     "activate": "启用",
@@ -204,7 +218,8 @@
     "whereToSend": "寄到哪里",
     "sendTo": "发给",
     "walletAddress": "钱包地址",
-    "addressEnsUsername": "地址、ENS、不可阻挡的域",
+    "addressEnsUsername": "地址、ENS、不可阻挡的域、FIO",
+    "addressSupportedNames": "地址、ENS、不可阻挡的域、FIO",
     "walletNotDeployed": "钱包未部署",
     "tokens": "代币",
     "collectibles": "NFT",
@@ -260,13 +275,23 @@
     "archanovaToEtherspot": "Pillar V1 到 Etherspot (Pillar V2)",
     "archanovaToEtherspotShort": "Pillar V1 到 Etherspot",
     "deployed": "已部署",
+    "notDeployed": "未部署",
     "walletDeployment": "钱包部署",
     "pleaseSelect": "请选择",
     "balanceFiatTokenFormat": "余额 {{balanceInFiat}} ({{balance}})",
     "balanceTokenFormat": "余额:{{balance}}",
     "filterByName": "按名称过滤",
     "transaction_submitted": "交易提交",
-    "on_network": "上 {{network}}"
+    "on_network": "上 {{network}}",
+    "on_position": "{{position}} 位置",
+    "of_stable": "{{percentage}}% 的马厩 - {{type}}",
+    "high_risk": "高风险",
+    "risky": "有风险",
+    "moderate_risk": "中等风险",
+    "low_risk": "低风险",
+    "no_risk": "没有风险",
+    "risk_assets": "{{percentage}}% 的风险资产",
+    "risk_stable": "{{percentage}}% 的低风险马厩"
   },
   "button": {
     "activate": "启用",
@@ -390,6 +415,8 @@
     "doNotSendRealEthOrTokens": "不要发送真实的 ETH 或 ERC20 代币。",
     "ensNameCopiedToClipboard": "ENS 名称已复制到剪贴板。",
     "cameraPermissionMissing": "未授予相机权限 - 无法打开相机预览。",
+    "cameraPermission": "相机权限",
+    "needCameraPermission":"需要相机权限才能打开 WalletConnect 二维码扫描器",
     "didNotReceiveVerificationCodeQuestion": "没有收到验证码？",
     "instructionsOnBackingUpBackupPhase": "以正确的顺序写下您的 12 字备用短语。",
     "backupPhraseVerificationInstructions": "请选择正确的词。",
@@ -402,7 +429,9 @@
     "sessionExpiredReEnterPin": "登录会话已过期，请输入您的 PIN 码以继续。",
     "addContacts": "将联系人添加到地址簿以轻松访问收藏地址以发送资产。",
     "nativeIntegrationWarning": "以下工具可让您直接访问智能合约。这被认为是一种专业工具，如果您不知道自己在做什么，请不要尝试使用此工具，因为它可能会导致资金损失。",
-    "ownRisk":"继续自担风险。"
+    "ownRisk":"继续自担风险。",
+    "riskWithType": "您的投资组合现在是{{type}}。",
+    "portfolio_riskiness": "你搬到马厩的次数越多，\n你承担的风险就越小。"
   },
   "insight": {
     "pillarNetworkActivate": {
@@ -543,6 +572,7 @@
       "callRequestRejectFailed": "呼叫请求拒绝失败",
       "callRequestApproveFailed": "呼叫请求批准失败",
       "invalidRequest": "此 WalletConnect 请求看起来不太正确 - 请重试",
+      "cannotDetermineChain": "抱歉，在此请求中未找到链信息。请联系 {{ dAppName }}",
       "cannotDetermineEthereumChain": "我们无法看到此请求属于哪个以太坊链 - 请重试",
       "activeAccountDoesNotSupportSelectedChain": "活跃账户不支持所选以太坊链"
     },
@@ -678,7 +708,13 @@
     },
     "connectedApps": {
       "title": "连接的 dapp",
-      "connected": "连接的"
+      "connected": "连接的",
+      "switchWallet":"切换钱包",
+      "switchNetwork":"切换网络",
+      "disconnect":"断开",
+      "etherspot":"Etherspot",
+      "plr_v1":"Pillar v1",
+      "key_based":"Keybased"
     },
     "disconnectModal": {
       "title": "断开",
@@ -1027,6 +1063,12 @@
     "error": {
       "smartWalletNeedToBeActivated": "需要激活智能钱包才能继续。",
       "unsupportedRequestCallRequestType": "不支持的呼叫请求类型。"
+    },
+    "paragraph":{
+      "undeploy_warning_1": "您正在连接到一个未部署的钱包，您将无法执行任何交易，请转到",
+      "deploy_manager": "钱包管理器",
+      "undeploy_warning_2": "部署。",
+      "archanova_warning": "使用 Pillar v1 (Archanova) 帐户，您只能连接到以太坊主网网络。"
     }
   },
   "servicesContent": {
@@ -1250,6 +1292,10 @@
         "title": "没有可用的路线",
         "paragraph": "目前没有提供来自跨链服务的匹配路由。"
       }
+    },
+    "gas_fee_asset":{
+      "title":"支付费用",
+      "left":"剩下"
     }
   },
   "alert": {
@@ -1436,6 +1482,7 @@
   "tooltip": {
     "switchAccountsByTappingHere": "您可以点按此处切换帐户",
     "start_by_cash":"从添加现金开始",
+    "switch_account": "切换到 Etherspot 仪表板的密钥钱包",
     "signInDeFi":"登录 DeFi",
     "includesDeploymentFee": "一次性智能钱包部署费"
   },
@@ -1456,5 +1503,18 @@
    "getNotifications":{
     "title": "得到通知",
     "description": "Pillar 将通知您的交易状态和来自 dapp 的请求。从不垃圾邮件，永远在点。"
+  },
+
+  "transactionNotification":{
+    "selling":"销售",
+    "you_received":"您已收到",
+    "sending":"发送",
+    "you_sent":"你已经发送",
+    "to":"至",
+    "sold":"卖",
+    "on":"上",
+    "for":"为了",
+    "gas":"气体",
+    "time":"时间"
   }
 }

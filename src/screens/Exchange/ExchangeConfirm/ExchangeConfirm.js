@@ -72,7 +72,7 @@ const ExchangeConfirmScreen = () => {
   const activeAccount = useActiveAccount();
 
   const offer: ExchangeOffer = navigation.getParam('offer');
-  const { fromAsset, toAsset, fromAmount, toAmount, provider, chain: chainName } = offer;
+  const { fromAsset, toAsset, fromAmount, toAmount, provider, chain: chainName, gasFeeAsset } = offer;
   const toAssetSymbol = toAsset.symbol;
 
   const isOnline = useRootSelector((root) => root.session.data.isOnline);
@@ -85,7 +85,7 @@ const ExchangeConfirmScreen = () => {
     feeInfo,
     errorMessage: estimationErrorMessage,
     isEstimating,
-  } = useTransactionsEstimate(chainName, offer.transactions);
+  } = useTransactionsEstimate(chainName, offer.transactions, false, gasFeeAsset);
   const { errorMessage: notEnoughForFeeErrorMessage } = useTransactionFeeCheck(
     chainName,
     feeInfo,
@@ -101,7 +101,16 @@ const ExchangeConfirmScreen = () => {
       return;
     }
 
-    const transactionPayload = mapTransactionsToTransactionPayload(chainName, offer.transactions);
+    let transactionPayload: any = mapTransactionsToTransactionPayload(chainName, offer.transactions);
+    transactionPayload = {
+      ...transactionPayload,
+      offer: {
+        ...offer,
+        feeInfo,
+      },
+      type: TRANSACTION_TYPE.EXCHANGE,
+      gasToken: gasFeeAsset,
+    };
 
     if (activeAccount && isLogV2AppEvents) {
       dispatch(

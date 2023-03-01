@@ -35,7 +35,7 @@ import {
   Transaction as EtherspotTransaction,
   Currencies as EtherspotCurrencies,
   AccountStates,
-  CrossChainServiceProvider,
+  RateData,
 } from 'etherspot';
 import { map } from 'rxjs/operators';
 import type { Subscription } from 'rxjs';
@@ -57,12 +57,12 @@ import {
   getChainTokenListName,
 } from 'utils/etherspot';
 import { addressesEqual, findAssetByAddress } from 'utils/assets';
-import { nativeAssetPerChain, mapChainToChainId } from 'utils/chains';
+import { nativeAssetPerChain, mapChainToChainId, mapProdChainId } from 'utils/chains';
 import { mapToEthereumTransactions } from 'utils/transactions';
 import { getCaptureFee } from 'utils/exchange';
 
 // constants
-import { ETH, ADDRESS_ZERO, ROOT_TOKEN_ADDRESS } from 'constants/assetsConstants';
+import { ETH, ADDRESS_ZERO, ETHERSPOT_STABLE_COIN, ETHERSPOT_POPULAR_COIN } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 import { PROJECT_KEY } from 'constants/etherspotConstants';
@@ -105,15 +105,16 @@ export class EtherspotService {
      * function which is called from envConfig.js
      */
     this.supportedNetworks = [
-      isMainnet ? NetworkNames.Mainnet : NetworkNames.Kovan,
-      NetworkNames.Bsc,
+      isMainnet ? NetworkNames.Mainnet : NetworkNames.Goerli,
+      isMainnet ? NetworkNames.Bsc : NetworkNames.BscTest,
       isMainnet ? NetworkNames.Matic : NetworkNames.Mumbai,
-      NetworkNames.Xdai,
+      isMainnet ? NetworkNames.Xdai : NetworkNames.Sokol,
       isMainnet ? NetworkNames.Avalanche : NetworkNames.Fuji,
-      isMainnet ? NetworkNames.Optimism : NetworkNames.OptimismKovan,
+      isMainnet ? NetworkNames.Optimism : NetworkNames.OptimismGoerli,
+      isMainnet ? NetworkNames.Arbitrum : NetworkNames.ArbitrumNitro,
     ];
 
-    const primaryNetworkName = isMainnet ? NetworkNames.Mainnet : NetworkNames.Kovan;
+    const primaryNetworkName = isMainnet ? NetworkNames.Mainnet : NetworkNames.Goerli;
 
     /**
      * Cycle through the supported networks and build an
@@ -122,10 +123,13 @@ export class EtherspotService {
     await Promise.all(
       this.supportedNetworks.map(async (networkName) => {
         const env =
-          networkName !== NetworkNames.Kovan &&
+          networkName !== NetworkNames.Goerli &&
           networkName !== NetworkNames.Fuji &&
           networkName !== NetworkNames.Mumbai &&
-          networkName !== NetworkNames.OptimismKovan
+          networkName !== NetworkNames.Sokol &&
+          networkName !== NetworkNames.BscTest &&
+          networkName !== NetworkNames.ArbitrumNitro &&
+          networkName !== NetworkNames.OptimismGoerli
             ? EnvNames.MainNets
             : EnvNames.TestNets;
         this.instances[networkName] = new EtherspotSdk(privateKey, {
@@ -201,6 +205,17 @@ export class EtherspotService {
     return sdk;
   }
 
+  async fetchExchangeRates(chain: Chain, assetsAddresses: string[]): Promise<RateData> {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) return null;
+
+    const chainId = mapProdChainId(chain);
+
+    const rateData = await sdk.fetchExchangeRates({ chainId, tokens: assetsAddresses });
+
+    return rateData;
+  }
+
   getAccountAddress(chain: Chain): ?string {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) return null;
@@ -225,8 +240,9 @@ export class EtherspotService {
     const polygon = await this.getAccount(CHAIN.POLYGON);
     const xdai = await this.getAccount(CHAIN.XDAI);
     const optimism = await this.getAccount(CHAIN.OPTIMISM);
+    const arbitrum = await this.getAccount(CHAIN.ARBITRUM);
 
-    return { ethereum, binance, polygon, xdai, avalanche, optimism };
+    return { ethereum, binance, polygon, xdai, avalanche, optimism, arbitrum };
   }
 
   getAccounts(): Promise<?(EtherspotAccount[])> {
@@ -311,7 +327,6 @@ export class EtherspotService {
     if (assetAddresses.length) {
       balancesRequestPayload = {
         ...balancesRequestPayload,
-        tokens: assetAddresses,
       };
     }
 
@@ -434,6 +449,49 @@ export class EtherspotService {
     return Promise.all(transactions.map((transaction) => sdk.batchExecuteAccountTransaction(transaction)));
   }
 
+  async setbatchDeployAccount(chain: Chain) {
+    const sdk = this.getSdkForChain(chain);
+
+    if (!sdk) {
+      logBreadcrumb('setbatchDeployAccount', 'failed: no SDK for chain set', { chain });
+      return null;
+    }
+
+    const etherspotAccount = await this.getAccount(chain);
+
+    // Return if account is already deployed.
+    if (!etherspotAccount || etherspotAccount?.state !== AccountStates.UnDeployed) {
+      return AccountStates.Deployed;
+    }
+
+    // Remove all previous executed transactions
+    this.clearTransactionsBatch(chain);
+
+    /*
+     ! This method is usefull in only mainnets (Polygon or Gnosis). testnets in need gas token.
+     */
+    // Deploy perticular network (Polygon or Gnosis)
+    await sdk.batchDeployAccount();
+
+    // Estimate for deploy account transaction
+    try {
+      await this.estimateTransactionsBatch(chain);
+    } catch (e) {
+      return AccountStates.UnDeployed;
+    }
+
+    const { hash } = await sdk.submitGatewayBatch();
+
+    await this.waitForTransactionHashFromSubmittedBatch(chain, hash);
+
+    /*
+     * Taken little bit more time for transaction response
+     * Account Deployed after submittedBatch response
+     */
+
+    return AccountStates.Deployed;
+  }
+
   estimateTransactionsBatch(chain: Chain, useGasTokenAddress?: string): Promise<?GatewayEstimatedBatch> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {
@@ -441,8 +499,10 @@ export class EtherspotService {
       throw new Error(t('error.unableToEstimateTransaction'));
     }
 
+    const isNativeAddress = useGasTokenAddress === ADDRESS_ZERO;
+
     return sdk
-      .estimateGatewayBatch({ refundToken: useGasTokenAddress })
+      .estimateGatewayBatch({ feeToken: isNativeAddress ? null : useGasTokenAddress })
       .then((result) => result?.estimation)
       .catch((error) => {
         let etherspotErrorMessage;
@@ -564,6 +624,13 @@ export class EtherspotService {
 
     const etherspotTransactions = await mapToEthereumTransactions(transaction, fromAccountAddress);
 
+    if (transaction?.gasToken) {
+      const {
+        gasToken: { address: gasFeeAddress },
+      } = transaction;
+      return this.setTransactionsBatchAndSend(etherspotTransactions, chain, gasFeeAddress);
+    }
+
     return this.setTransactionsBatchAndSend(etherspotTransactions, chain);
   }
 
@@ -593,6 +660,24 @@ export class EtherspotService {
     });
   }
 
+  async getAccountInvestments(chain: Chain, address: string): any {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      logBreadcrumb('getSubmittedBatchByHash', 'failed: no SDK for chain set', { chain });
+      return null;
+    }
+
+    try {
+      const listsOfHoldings = await sdk.getAccountInvestments({
+        account: address,
+      });
+      return listsOfHoldings;
+    } catch (error) {
+      reportErrorLog('getAccountInvestments -> Apps holdings failed', { address, chain, error });
+      return null;
+    }
+  }
+
   async getTransactionExplorerLinkByBatch(chain: Chain, batchHash: string): Promise<?string> {
     const submittedBatch = await this.getSubmittedBatchByHash(chain, batchHash);
 
@@ -620,6 +705,9 @@ export class EtherspotService {
         break;
       case CHAIN.OPTIMISM:
         blockchainExplorerUrl = getEnv().TX_DETAILS_URL_OPTIMISM;
+        break;
+      case CHAIN.ARBITRUM:
+        blockchainExplorerUrl = getEnv().TX_DETAILS_URL_ARBITRUM;
         break;
       default:
         blockchainExplorerUrl = getEnv().TX_DETAILS_URL_ETHEREUM;
@@ -713,6 +801,20 @@ export class EtherspotService {
     }
   }
 
+  async getStableAssets(chain: Chain) {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      logBreadcrumb('getStableAssets', 'failed: no sdk instance for chain', { chain });
+      return null;
+    }
+    try {
+      return await sdk.getTokenListTokens({ name: ETHERSPOT_STABLE_COIN });
+    } catch (e) {
+      reportErrorLog('EtherspotService getStableAssets failed', { error: e });
+      return null;
+    }
+  }
+
   async getSupportedAssets(chain: Chain): Promise<?(Asset[])> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {
@@ -762,11 +864,79 @@ export class EtherspotService {
     }
   }
 
+  async getEtherspotPopularTokens(chain: Chain): Promise<?(Asset[])> {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      logBreadcrumb('getEtherspotPopularTokens', 'failed: no sdk instance for chain', { chain });
+      return null;
+    }
+
+    try {
+      let tokens: TokenListToken[] = await sdk.getTokenListTokens({ name: ETHERSPOT_POPULAR_COIN });
+
+      if (!tokens) {
+        logBreadcrumb(
+          'getEtherspotPopularTokens',
+          'EtherspotService getEtherspotPopularTokens failed: no tokens returned',
+          {
+            name: ETHERSPOT_POPULAR_COIN,
+          },
+        );
+        tokens = []; // let append native assets
+      }
+
+      let popularAssets = tokens.map((token) => parseTokenListToken(token));
+
+      popularAssets = appendNativeAssetIfNeeded(chain, popularAssets);
+
+      return popularAssets;
+    } catch (error) {
+      reportErrorLog('EtherspotService getEtherspotPopularTokens failed', { error });
+      return null;
+    }
+  }
+
   async logout(): Promise<void> {
     if (!this.sdk) return; // not initialized, nothing to do
 
     await this.sdk.destroy();
     this.sdk = null;
+  }
+
+  async resolveName(chain: Chain, name: ?string): Promise<any | null> {
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) return null;
+
+    const chainId = mapChainToChainId(chain);
+
+    try {
+      const response = await sdk.resolveName({
+        chainId,
+        name,
+      });
+
+      logBreadcrumb('Resolve Name!', 'resolveName response', { response, name });
+
+      if (response.failed) return null;
+
+      if (response.results) {
+        const { ens, fio, unstoppabledomains } = response.results;
+        if (ens?.[0]) {
+          return ens;
+        }
+        if (fio?.[0]) {
+          return fio;
+        }
+        if (unstoppabledomains?.[0]) {
+          return unstoppabledomains;
+        }
+        return null;
+      }
+    } catch (e) {
+      reportErrorLog('EtherspotService resolveName failed', { chain, name });
+      return null;
+    }
+    return null;
   }
 
   async getExchangeOffers(
@@ -806,12 +976,11 @@ export class EtherspotService {
 
     try {
       const quotes = await sdk.getCrossChainQuotes({
-        fromTokenAddress: fromAsset.address === ADDRESS_ZERO ? ROOT_TOKEN_ADDRESS : fromAsset.address,
+        fromTokenAddress: fromAsset.address,
         fromChainId: mapChainToChainId(fromAsset.chain),
-        toTokenAddress: toAsset.address === ADDRESS_ZERO ? ROOT_TOKEN_ADDRESS : toAsset.address,
+        toTokenAddress: toAsset.address,
         toChainId: mapChainToChainId(toAsset.chain),
         fromAmount: value,
-        serviceProvider: CrossChainServiceProvider.LiFi,
       });
 
       const quote: any = quotes.items[0];
@@ -834,6 +1003,7 @@ export class EtherspotService {
       if (!erc20Contract) return { transactionData: quote.transaction, quote };
 
       const approvalTransactionData = erc20Contract.encodeApprove(approvalAddress, amount);
+      approvalTransactionData.value = '0';
 
       return { approvalTransactionData, transactionData: quote.transaction, quote };
     } catch (e) {
@@ -960,17 +1130,19 @@ export default etherspot;
 function networkNameFromChain(chain: Chain): ?string {
   switch (chain) {
     case CHAIN.ETHEREUM:
-      return isProdEnv() ? NetworkNames.Mainnet : NetworkNames.Kovan;
+      return isProdEnv() ? NetworkNames.Mainnet : NetworkNames.Goerli;
     case CHAIN.BINANCE:
-      return NetworkNames.Bsc;
+      return isProdEnv() ? NetworkNames.Bsc : NetworkNames.BscTest;
     case CHAIN.POLYGON:
       return isProdEnv() ? NetworkNames.Matic : NetworkNames.Mumbai;
     case CHAIN.XDAI:
-      return NetworkNames.Xdai;
+      return isProdEnv() ? NetworkNames.Xdai : NetworkNames.Sokol;
     case CHAIN.AVALANCHE:
       return isProdEnv() ? NetworkNames.Avalanche : NetworkNames.Fuji;
     case CHAIN.OPTIMISM:
-      return isProdEnv() ? NetworkNames.Optimism : NetworkNames.OptimismKovan;
+      return isProdEnv() ? NetworkNames.Optimism : NetworkNames.OptimismGoerli;
+    case CHAIN.ARBITRUM:
+      return isProdEnv() ? NetworkNames.Arbitrum : NetworkNames.ArbitrumNitro;
     default:
       return null;
   }
@@ -979,21 +1151,26 @@ function networkNameFromChain(chain: Chain): ?string {
 function chainFromNetworkName(networkName: string): ?Chain {
   switch (networkName) {
     case NetworkNames.Mainnet:
-    case NetworkNames.Kovan:
+    case NetworkNames.Goerli:
       return CHAIN.ETHEREUM;
     case NetworkNames.Bsc:
+    case NetworkNames.BscTest:
       return CHAIN.BINANCE;
     case NetworkNames.Matic:
     case NetworkNames.Mumbai:
       return CHAIN.POLYGON;
     case NetworkNames.Xdai:
+    case NetworkNames.Sokol:
       return CHAIN.XDAI;
     case NetworkNames.Avalanche:
     case NetworkNames.Fuji:
       return CHAIN.AVALANCHE;
     case NetworkNames.Optimism:
-    case NetworkNames.OptimismKovan:
+    case NetworkNames.OptimismGoerli:
       return CHAIN.OPTIMISM;
+    case NetworkNames.Arbitrum:
+    case NetworkNames.ArbitrumNitro:
+      return CHAIN.ARBITRUM;
     default:
       return null;
   }

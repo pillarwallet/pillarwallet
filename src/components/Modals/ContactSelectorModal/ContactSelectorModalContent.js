@@ -25,6 +25,7 @@ import Clipboard from '@react-native-community/clipboard';
 import SafeAreaView from 'react-native-safe-area-view';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
+import { useDebounce } from 'use-debounce';
 
 // Actions
 import { addContactAction } from 'actions/contactsActions';
@@ -34,8 +35,10 @@ import { Spacing } from 'components/layout/Layout';
 import Button from 'components/core/Button';
 import ContactDetailsModal from 'components/ContactDetailsModal';
 import ContactListItem from 'components/lists/ContactListItem';
+import FIOList from 'components/lists/FIOList';
 import Modal from 'components/Modal';
 import SearchBar from 'components/SearchBar';
+import Spinner from 'components/Spinner';
 
 // Selectors
 import { useRootSelector, activeAccountAddressSelector } from 'selectors';
@@ -43,11 +46,12 @@ import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 // Utils
 import { addressesEqual } from 'utils/assets';
 import { filterContacts, getContactKey } from 'utils/contacts';
-import { isValidAddressOrEnsName } from 'utils/validators';
+import { useNameValid, isValidAddress } from 'utils/validators';
 import { spacing } from 'utils/variables';
 
 // Types
 import type { Contact } from 'models/Contact';
+import type { Chain } from 'models/Chain';
 
 // Local
 import SendWarning from './SendWarning';
@@ -57,6 +61,7 @@ type Props = {|
   onSelectContact: (contact: Contact) => mixed,
   query: string,
   onQueryChange: (query: string) => mixed,
+  chain?: ?Chain,
 |};
 
 /**
@@ -64,17 +69,27 @@ type Props = {|
  *
  * Screen using it should implement it's own header.
  */
-const ContactSelectorModalContent = ({ contacts = [], onSelectContact, query, onQueryChange }: Props) => {
+const ContactSelectorModalContent = ({ chain, contacts = [], onSelectContact, query, onQueryChange }: Props) => {
   const { t, tRoot } = useTranslationWithPrefix('contactSelector');
   const dispatch = useDispatch();
 
   const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
 
   const [warningAccepted, setWarningAccepted] = React.useState(false);
+  const [selectedContact, setContact] = React.useState<Contact | null>(null);
+  const [debounceQuery] = useDebounce(query, 1000);
+
+  const validInputQuery = useNameValid(debounceQuery, chain);
+  const { isLoading, data } = validInputQuery;
+
+  React.useEffect(() => {
+    setContact(data?.[0]);
+  }, [data]);
 
   const handleAddToContactsPress = async (contact: Contact) => {
     Modal.open(() => (
       <ContactDetailsModal
+        chain={chain}
         title={tRoot('title.addNewContact')}
         contact={contact}
         contacts={contacts}
@@ -95,11 +110,11 @@ const ContactSelectorModalContent = ({ contacts = [], onSelectContact, query, on
   const items = filterContacts(contacts, query);
 
   const getValidationError = () => {
-    if (addressesEqual(query, activeAccountAddress)) {
+    if (addressesEqual(selectedContact?.address || query, activeAccountAddress)) {
       return t('error.cannotSendToYourself');
     }
 
-    if (query && !items.length && !isValidAddressOrEnsName(query)) {
+    if (query && !items.length && !isValidAddress(query) && !selectedContact) {
       return t('error.incorrectAddress');
     }
 
@@ -107,8 +122,13 @@ const ContactSelectorModalContent = ({ contacts = [], onSelectContact, query, on
   };
 
   const getCustomContact = (): ?Contact => {
+    if (selectedContact) {
+      const { address, ethAddress, ...rest } = selectedContact;
+      return { ...rest, ethAddress: ethAddress ?? address };
+    }
+
     const hasExistingContact = !!filterContacts(contacts, query).length;
-    if (hasExistingContact || !isValidAddressOrEnsName(query)) return null;
+    if (hasExistingContact || !isValidAddress(query)) return null;
 
     return { ethAddress: query, name: '' };
   };
@@ -121,8 +141,8 @@ const ContactSelectorModalContent = ({ contacts = [], onSelectContact, query, on
   };
 
   const renderActionButtons = () => {
-    if (errorMessage) {
-      return <Button title={errorMessage} disabled size="large" />;
+    if (errorMessage || isLoading) {
+      return <Button title={isLoading ? tRoot('fetchingAddress') : errorMessage} disabled size="large" />;
     }
 
     if (customContact) {
@@ -142,13 +162,7 @@ const ContactSelectorModalContent = ({ contacts = [], onSelectContact, query, on
 
   const renderSendWarning = () => {
     if (!errorMessage && customContact) {
-      return (
-        <SendWarning
-          warningAccepted={warningAccepted}
-          setWarningAccepted={setWarningAccepted}
-          style={styles.sendWarning}
-        />
-      );
+      return <SendWarning warningAccepted={warningAccepted} setWarningAccepted={setWarningAccepted} />;
     }
 
     return null;
@@ -159,10 +173,16 @@ const ContactSelectorModalContent = ({ contacts = [], onSelectContact, query, on
       <SearchBar
         query={query}
         onQueryChange={onQueryChange}
-        placeholder={tRoot('label.addressEnsUsername')}
+        placeholder={tRoot('label.addressSupportedNames')}
         error={!!errorMessage}
+        textInputStyle={{ height: 110 }}
+        style={{ paddingBottom: 10 }}
         autoFocus
       />
+
+      {isLoading && <Spinner size={40} />}
+
+      <FIOList data={data} selectedContact={selectedContact} onSelect={setContact} />
 
       {renderSendWarning()}
 
@@ -189,7 +209,7 @@ const styles = {
     paddingVertical: spacing.small,
   },
   sendWarning: {
-    marginTop: spacing.large,
+    marginTop: spacing.small,
   },
 };
 

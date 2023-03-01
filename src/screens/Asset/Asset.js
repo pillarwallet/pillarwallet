@@ -19,10 +19,11 @@
 */
 import React, { useMemo } from 'react';
 import { connect } from 'react-redux';
+import { BackHandler } from 'react-native';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
-import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
+import { useNavigation, useNavigationParam, useFocusEffect } from 'react-navigation-hooks';
 
 // Components
 import { Container, Content } from 'components/layout/Layout';
@@ -39,7 +40,7 @@ import SWActivationCard from 'components/SWActivationCard';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 
 // Constants
-import { BRIDGE_TAB, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
+import { BRIDGE_TAB, SEND_TOKEN_FROM_ASSET_FLOW, HOME } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL } from 'constants/paymentNetworkConstants';
 
@@ -102,9 +103,21 @@ const AssetScreen = ({
   const navigation = useNavigation();
 
   const assetData: AssetDataNavigationParam = useNavigationParam('assetData');
+  const isNavigateToHome: boolean = useNavigationParam('isNavigateToHome');
   const { token, contractAddress, chain } = assetData;
 
   const chainRates = useChainRates(chain);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        isNavigateToHome ? navigation.navigate(HOME) : navigation.pop();
+        return true;
+      };
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [isNavigateToHome, navigation]),
+  );
 
   const tokenTransactions = useMemo(
     () => getTokenTransactionsFromHistory(accountHistory[chain] ?? [], accounts, contractAddress),
@@ -163,7 +176,11 @@ const AssetScreen = ({
 
   return (
     <Container>
-      <HeaderBlock centerItems={[{ title: assetData.name }]} navigation={navigation} noPaddingTop />
+      <HeaderBlock
+        centerItems={[{ title: assetData.name }]}
+        customOnBack={() => (isNavigateToHome ? navigation.navigate(HOME) : navigation.pop())}
+        noPaddingTop
+      />
       <Content
         contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
         paddingHorizontal={0}

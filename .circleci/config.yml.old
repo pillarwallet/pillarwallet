@@ -1,0 +1,913 @@
+version: 2.1
+
+orbs:
+  aws-cli: circleci/aws-cli@2.0
+  go: circleci/go@0.2.0
+  slack: circleci/slack@3.4.2
+
+executors:
+  ios-executor:
+    working_directory: ~/pillarwallet
+    macos:
+      xcode: "13.2.1"
+    resource_class: macos.x86.medium.gen2
+    environment:
+      NODE_OPTIONS: "--max-old-space-size=4096"
+      FL_OUTPUT_DIR: output
+      _JAVA_OPTIONS: "-Xms128m -Xmx3024m"
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx1248m -XX:+HeapDumpOnOutOfMemoryError"'
+      HOMEBREW_NO_AUTO_UPDATE: 1
+
+    shell: /bin/bash --login -o pipefail
+
+  android-executor:
+    working_directory: ~/pillarwallet
+    docker:
+      - image: cimg/android:2021.10.2-node
+        auth:
+          username: $DOCKERHUB_USER
+          password: $DOCKERHUB_PASSWORD
+    resource_class: large
+    environment:
+      NODE_OPTIONS: "--max-old-space-size=4096"
+      TERM: dumb
+      _JAVA_OPTIONS: "-Xmx4096m -XX:+UnlockExperimentalVMOptions -XX:+UseContainerSupport"
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx4096m -Dfile.encoding=UTF-8"'
+      LC_ALL: en_US.UTF-8
+      LANG: en_US.UTF-8
+
+  node14-executor:
+    working_directory: ~/pillarwallet
+    docker:
+      - image: cimg/node:14.18.1
+        auth:
+          username: $DOCKERHUB_USER
+          password: $DOCKERHUB_PASSWORD
+    resource_class: large
+    environment:
+      NODE_OPTIONS: "--max-old-space-size=4096"
+    shell: /bin/bash --login -o pipefail
+
+  python3-alpine-executor:
+    working_directory: ~/pillarwallet
+    docker:
+    - image: python:3.7-alpine
+      auth:
+        username: $DOCKERHUB_USER
+        password: $DOCKERHUB_PASSWORD
+    resource_class: small
+
+aliases:
+  - &restore_pod_cache
+    restore_cache:
+      name: Restore pods cache
+      keys:
+        - ios-pods-{{ checksum "./ios/Podfile.lock" }}
+  - &save_pod_cache
+    save_cache:
+      name: Save pods cache
+      key: ios-pods-{{ checksum "./ios/Podfile.lock" }}
+      paths:
+        - ./ios/Pods
+  - &install_gems_ios
+    run:
+      name: Create Vendor/bundle for gem dependencies
+      command: |
+        cd ios && bundle check || bundle install --path vendor/bundle
+      environment:
+        BUNDLE_JOBS: 4
+        BUNDLE_RETRY: 3
+  - &install_gems_android
+    run:
+      name: Bundle install
+      command: |
+        cd android && bundle check || bundle install --path vendor/bundle
+      environment:
+        BUNDLE_JOBS: 4
+        BUNDLE_RETRY: 3
+  - &save_gems_cache_ios
+    save_cache:
+      name: Save ios gems cache
+      key: ios-gems-{{ checksum "./ios/Gemfile" }}
+      paths:
+        - vendor/bundle
+  - &restore_gems_cache_ios
+    restore_cache:
+      name: Restore ios gems cache
+      keys:
+        - ios-gems-{{ checksum "./ios/Gemfile" }}
+  - &save_gems_cache_android
+    save_cache:
+      name: Save android gems cache
+      key: android-gems-{{ checksum "./android/Gemfile" }}
+      paths:
+        - vendor/bundle
+  - &restore_gems_cache_android
+    restore_cache:
+      name: Restore android gems cache
+      keys:
+        - android-gems-{{ checksum "./android/Gemfile" }}
+  - &node_restore_cache
+    restore_cache:
+      name: Restore node modules cache
+      keys:
+        - node-{{ checksum "./yarn.lock" }}
+  - &node_save_cache
+    save_cache:
+      name: Save node modules cache
+      key: node-{{ checksum "./yarn.lock" }}
+      paths:
+        - ~/nodes_modules
+  - &android_latest_npm
+    run:
+      name: Install latest npm version
+      command: |
+        sudo npm install -g npm@latest
+  - &ios_latest_npm
+    run:
+      name: Install latest npm version
+      command: |
+        npm install -g npm@latest
+  - &ios_latest_yarn
+    run:
+      name: Install latest yarn version
+      command: |
+        npm install -g yarn
+  - &android_latest_yarn
+    run:
+      name: Install latest yarn version
+      command: |
+        sudo npm install -g yarn
+  - &yarn_install
+    run:
+      name: Install node dependencies
+      command: |
+        yarn install --prefer-offline --cache-folder /home/circleci/.cache/yarn
+  - &yarn_install_ios
+    run:
+      name: Install node dependencies
+      command: |
+        yarn install --prefer-offline
+  - &yarn_restore_cache
+    restore_cache:
+      name: Restore Yarn Package Cache
+      keys:
+        - yarn-packages-{{ checksum "yarn.lock" }}
+  - &yarn_save_cache
+    save_cache:
+      name: Save Yarn Package Cache
+      key: yarn-packages-{{ checksum "yarn.lock" }}
+      paths:
+        - ~/.cache/yarn
+  - &yarn_ios_restore_cache
+    restore_cache:
+      name: Restore Yarn Package Cache
+      keys:
+        - yarn-packages-v1-{{ checksum "yarn.lock" }}
+  - &yarn_ios_save_cache
+    save_cache:
+      name: Save Yarn Package Cache
+      key: yarn-packages-v1-{{ checksum "yarn.lock" }}
+      paths:
+        - /Users/distiller/Library/Caches/Yarn/v6
+  - &gradle_restore_cache
+    restore_cache:
+      name: Restore gradle cache
+      keys:
+        - android-jars-{{ checksum "./android/build.gradle" }}-{{ checksum  "./android/app/build.gradle" }}
+  - &gradle_dependencies
+    run:
+      name: Download Dependencies
+      command: |
+        cd android && ./gradlew app:androidDependencies --no-daemon --stacktrace --max-workers=2
+  - &gradle_save_cache
+    save_cache:
+      name: Save gradle Cache
+      key: android-jars-{{ checksum "./android/build.gradle" }}-{{ checksum  "./android/app/build.gradle" }}
+      paths:
+        - ~/android/.gradle
+        - ~/android/.m2
+  - &homebrew_install
+    run:
+      name: Install coureutils
+      command: |
+        brew install coreutils
+  - &generate_appcenter_instabug_sourcemap_android_and_ios
+    run:
+      name: Generate and upload sourcemap for Android and iOS on AppCenter
+      command: |
+        if [ "$CIRCLE_BRANCH" = "develop" ]; then
+          env
+          echo "Get package version and append CircleCI build number"
+          export buildNumber=$(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
+          echo "Version is: " $buildNumber
+          yarn android:sourcemap & yarn ios:sourcemap
+          curl -X POST 'https://api.instabug.com/api/sdk/v3/symbols_files' -F "app_version={\"code\": ${CIRCLE_BUILD_NUM} ,\"name\": \"${buildNumber}\" }" -F "symbols_file=@/home/circleci/pillarwallet/android-sourcemap.json" -F "application_token=${INSTABUG_APPCENTER_TOKEN}" -F "platform=react_native" -F "os=android" && curl -X POST 'https://api.instabug.com/api/sdk/v3/symbols_files' -F "app_version={\"code\": ${CIRCLE_BUILD_NUM} ,\"name\": \"${buildNumber}\" }" -F "symbols_file=@/home/circleci/pillarwallet/ios-sourcemap.json" -F "application_token=${INSTABUG_APPCENTER_TOKEN}" -F "platform=react_native" -F "os=ios"
+        elif [ "$CIRCLE_BRANCH" = "master" ]; then
+          env
+          echo "Get latest tag and extract version"
+          TAG_VERSION=$(git describe --tags `git rev-list --tags --max-count=1`)
+          APP_VERSION=${TAG_VERSION#?}
+          echo "Version is: " $APP_VERSION
+          yarn android:sourcemap & yarn ios:sourcemap
+          curl -X POST 'https://api.instabug.com/api/sdk/v3/symbols_files' -F "app_version={\"code\": ${CIRCLE_BUILD_NUM} ,\"name\": \"${APP_VERSION}\" }" -F "symbols_file=@/home/circleci/pillarwallet/android-sourcemap.json" -F "application_token=${INSTABUG_PROD_TOKEN}" -F "platform=react_native" -F "os=android" && curl -X POST 'https://api.instabug.com/api/sdk/v3/symbols_files' -F "app_version={\"code\": ${CIRCLE_BUILD_NUM} ,\"name\": \"${APP_VERSION}\" }" -F "symbols_file=@/home/circleci/pillarwallet/ios-sourcemap.json" -F "application_token=${INSTABUG_PROD_TOKEN}" -F "platform=react_native" -F "os=ios"
+        else
+          echo "Skipping... branch is not develop/master"
+        fi
+jobs:
+
+  build-and-test:
+    executor: node14-executor
+    steps:
+      - checkout
+      - run:
+          name: Save build number
+          command: |
+            APP_BUILD_NUMBER=${CIRCLE_BUILD_NUM}
+            mkdir -p /tmp/workspace/build-num
+            mkdir -p /tmp/workspace/releases
+            cd /tmp/workspace/build-num
+            echo ${APP_BUILD_NUMBER} > app_build_number.txt
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - build-num
+            - releases
+      - *node_restore_cache
+      - *android_latest_npm
+      - *yarn_restore_cache
+      - *yarn_install
+      - *yarn_save_cache
+      - *node_save_cache
+      - *generate_appcenter_instabug_sourcemap_android_and_ios
+      - run:
+          name: Run validation
+          command: yarn validate
+      - slack/status:
+          fail_only: true
+          failure_message: "Triggered by: *${CIRCLE_USERNAME}* \n\n Hi *${CIRCLE_USERNAME}*, the *$CIRCLE_JOB* job has failed. :circleci-fail:"
+          webhook: "${SLACK_WEBHOOK_URL}"
+
+  appcenter_ios:
+    executor: ios-executor
+    steps:
+      - checkout
+      - attach_workspace: &attach_workspace
+          at: /tmp/workspace
+      - aws-cli/setup:
+          aws-access-key-id: NONPROD_APP_STORE_ACCESS_KEY
+          aws-secret-access-key: NONPROD_APP_STORE_SECRET_KEY_ID
+          aws-region: AWS_DEFAULT_REGION
+      - run:
+          name: Set slack message
+          command: |
+            aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/ios_appcenter.txt .
+
+      - *homebrew_install
+
+      - *node_restore_cache
+
+      - *yarn_install_ios
+
+      - *node_save_cache
+
+      - *restore_gems_cache_ios
+      - *install_gems_ios
+      - *save_gems_cache_ios
+
+      - *restore_pod_cache
+      - run:
+          name: Install CocoaPods
+          command: |
+            cd ios
+            bundle exec pod install --verbose
+      - *save_pod_cache
+
+      - run:
+          name: Set staging environment
+          command: |
+            cd ~/pillarwallet
+            git config user.email "devops@pillar.io"
+            git config user.name "Issabot"
+            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            npm --no-git-tag-version version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$APP_BUILD_NUMBER
+            if [ "$CIRCLE_BRANCH" = "develop" ]; then
+              export buildNumber=$(node -e "console.log(require('./package.json').version);")
+            else
+              export buildNum=$(node -e "console.log(require('./package.json').version);")
+              echo $buildNum-ui > build_number.txt
+              export buildNumber=$(cat build_number.txt)
+            fi
+            sed -i.bak "s/_build_type_/staging/g" .env
+            sed -i.bak "s/_build_number_/$buildNumber/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_build_number_/$buildNumber/g" .env
+            sed -i.bak "s/_wert_id_/$STAGING_WERT_ID/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_appsflyer_devkey_/$APPSFLYER_DEVKEY/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_infura_project_id_/$STAGING_INFURA_PROJECT_ID/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
+            sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_staging_rampnetwork_api_key_/$STAGING_RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_instabug_token_/$INSTABUG_APPCENTER_TOKEN/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_prismic_token_/$PRISMIC_TOKEN/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_storyly_token_/$STORYLY_TOKEN_IOS/g" ./src/configs/buildConfig.js
+            echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
+      - run:
+          name: Fetch App Store Connect API key
+          command: |
+            aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/AuthKey.p8 ./ios
+      - run:
+          no_output_timeout: 20m
+          name: Upload to App Center
+          command: |
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            cd ios && bundle exec fastlane deploy_ios_appcenter APP_BUILD_NUMBER:$APP_BUILD_NUMBER build_number:$buildNumber APP_NAME:"Pillar Staging"
+      - run:
+          name: prepare to archive ipa file
+          command: |
+            mkdir -p ./toArchive
+            cp ./ios/output/gym/pillarwallet-staging.ipa ./toArchive
+      - store_artifacts:
+          path: ./toArchive
+          destination: app_build
+      - run:
+          name: Copy UI feature branch iOS artifact to S3
+          command: |
+            if [ "$CIRCLE_BRANCH" != "develop" ]; then
+              export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+              cd ./ios/output/gym/
+              touch ios-s3-URL-feature.txt
+              aws --region $AWS_DEFAULT_REGION s3 cp pillarwallet-staging.ipa $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-ios-ui-feature-$buildNumber.ipa
+              aws --region $AWS_DEFAULT_REGION s3 presign $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-ios-ui-feature-$buildNumber.ipa --expires-in 604800 > ios-s3-URL-feature.txt
+            fi
+      - run:
+          name: Announce UI feature branch iOS URL
+          command: |
+            if [ "$CIRCLE_BRANCH" != "develop" ]; then
+              cd ~/pillarwallet
+              chmod +x .circleci/announceURLs.sh
+              .circleci/announceURLs.sh "pillarwallet" "$CIRCLE_BRANCH" "ios" "$(cat ~/pillarwallet/ios/output/gym/ios-s3-URL-feature.txt)" "$(cat ~/pillarwallet/buildNumber.txt)"
+            fi
+      - slack/status:
+          fail_only: true
+          failure_message: "$CIRCLE_BRANCH - $(gshuf -n 1 ios_appcenter.txt) :circleci-fail:"
+          webhook: "${SLACK_WEBHOOK_URL}"
+
+  appcenter_android:
+    executor: android-executor
+    steps:
+      - checkout
+      - attach_workspace: &attach_workspace
+          at: /tmp/workspace
+      - aws-cli/setup:
+          aws-access-key-id: NONPROD_APP_STORE_ACCESS_KEY
+          aws-secret-access-key: NONPROD_APP_STORE_SECRET_KEY_ID
+          aws-region: AWS_DEFAULT_REGION
+      - run:
+          name: Set slack message
+          command: |
+            aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/android_appcenter.txt .
+
+      - *node_restore_cache
+      - *android_latest_npm
+      - *yarn_restore_cache
+      - *yarn_install
+      - *yarn_save_cache
+      - *node_save_cache
+
+      - *restore_gems_cache_android
+      - *install_gems_android
+      - *save_gems_cache_android
+
+      - run:
+          name: Get keystore file
+          command: |
+            cd /home/circleci/pillarwallet/android/keystores/
+            aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/staging-key.keystore .
+      - run:
+          name: Accept Android SDK licenses
+          command: |
+            yes | sdkmanager --licenses || exit 0
+      - run:
+          name: Accept Android SDK licenses 2
+          command: |
+            yes | sdkmanager --update || exit 0
+
+      - *gradle_restore_cache
+      - *gradle_dependencies
+
+      - run:
+          name: Set staging environment
+          command: |
+            cd ~/pillarwallet
+            git config user.email "devops@pillar.io"
+            git config user.name "Issabot"
+            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            npm --no-git-tag-version version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$APP_BUILD_NUMBER
+            if [ "$CIRCLE_BRANCH" = "develop" ]; then
+              export buildNumber=$(node -e "console.log(require('./package.json').version);")
+            else
+              export buildNum=$(node -e "console.log(require('./package.json').version);")
+              echo $buildNum-ui > build_number.txt
+              export buildNumber=$(cat build_number.txt)
+            fi
+            sed -i.bak "s/_build_type_/staging/g" .env
+            sed -i.bak "s/_build_number_/$buildNumber/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_build_number_/$buildNumber/g" .env
+            sed -i.bak "s/_wert_id_/$STAGING_WERT_ID/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_appsflyer_devkey_/$APPSFLYER_DEVKEY/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_infura_project_id_/$STAGING_INFURA_PROJECT_ID/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
+            sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_staging_rampnetwork_api_key_/$STAGING_RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_instabug_token_/$INSTABUG_APPCENTER_TOKEN/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_prismic_token_/$PRISMIC_TOKEN/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_storyly_token_/$STORYLY_TOKEN_ANDROID/g" ./src/configs/buildConfig.js
+            echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
+      - run:
+          name: Initial build
+          command: |
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            export INSTABUG_APP_VERSION_NAME=$(cat ~/pillarwallet/buildNumber.txt)
+            export INSTABUG_APP_VERSION_CODE=$(cat ~/pillarwallet/buildNumber.txt)
+            export INSTABUG_APP_TOKEN=$INSTABUG_APPCENTER_TOKEN
+            cd android && ./gradlew clean app:assembleStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
+
+      - *gradle_save_cache
+
+      - run:
+          name: Upload to App Center
+          command: |
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            export ENVFILE=$(echo ~/pillarwallet/.env)
+            cd android && bundle exec fastlane deploy_android_appcenter
+      - store_artifacts:
+          path: android/app/build/outputs/apk
+          destination: apks
+      - run:
+          name: Copy UI feature branch android artifact to S3
+          command: |
+            if [ "$CIRCLE_BRANCH" != "develop" ]; then
+              export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+              cd ./android/app/build/outputs/apk/staging
+              touch android-s3-URL-feature.txt
+              aws --region $AWS_DEFAULT_REGION s3 cp app-staging.apk $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-android-ui-feature-$buildNumber.apk
+              aws --region $AWS_DEFAULT_REGION s3 presign $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-android-ui-feature-$buildNumber.apk --expires-in 604800 > android-s3-URL-feature.txt
+            fi
+      - run:
+          name: Announce UI feature branch android URL
+          command: |
+            if [ "$CIRCLE_BRANCH" != "develop" ]; then
+              cd ~/pillarwallet
+              chmod +x .circleci/announceURLs.sh
+              .circleci/announceURLs.sh "pillarwallet" "$CIRCLE_BRANCH" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/staging/android-s3-URL-feature.txt)" "$(cat ~/pillarwallet/buildNumber.txt)"
+            fi
+      - slack/status:
+          fail_only: true
+          failure_message: '$CIRCLE_BRANCH - $(shuf -n 1 android_appcenter.txt) :circleci-fail:'
+          webhook: "${SLACK_WEBHOOK_URL}"
+
+  bump-push-git-tag:
+    executor: python3-alpine-executor
+    steps:
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update curl git openssh bash
+      - checkout
+      - run:
+          name: Fetch semtag and bump tag
+          command: |
+            chmod +x .circleci/semtag.sh
+            bash .circleci/semtag.sh
+
+  get-latest-tag:
+    executor: python3-alpine-executor
+    steps:
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update curl git openssh bash
+      - checkout
+      - attach_workspace: &attach_workspace
+          at: /tmp/workspace
+      - run:
+          name: Fetch and set the latest GitHub tag
+          command: |
+            TAG_VERSION=$(git describe --tags `git rev-list --tags --max-count=1`)
+            APP_VERSION=${TAG_VERSION#?}
+            cd /tmp/workspace/build-num
+            echo $TAG_VERSION
+            echo $APP_VERSION
+            echo $TAG_VERSION > gh_tag_version.txt
+            echo $APP_VERSION > app_version.txt
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - build-num
+            - releases
+
+  prod_ios:
+    executor: ios-executor
+    steps:
+      - checkout
+      - attach_workspace: &attach_workspace
+          at: /tmp/workspace
+      - aws-cli/setup:
+          aws-access-key-id: PRODUCTION_AWS_ACCESS_KEY_ID
+          aws-secret-access-key: PRODUCTION_AWS_SECRET_ACCESS_KEY
+          aws-region: AWS_DEFAULT_REGION
+      - run:
+          name: Set slack message
+          command: |
+            aws --region $AWS_DEFAULT_REGION s3 cp $PROD_KEYSTORE_S3_BUCKET/ios_prod.txt .
+
+      - *homebrew_install
+
+      - run:
+          name: Set production environment
+          command: |
+            git config user.email "devops@pillar.io"
+            git config user.name "Issabot"
+            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            export buildNumber="$(cat /tmp/workspace/build-num/app_version.txt)"
+            sed -i.bak "s/_build_type_/production/g" .env
+            sed -i.bak "s/_build_number_/$buildNumber/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_build_number_/$buildNumber/g" .env
+            sed -i.bak "s/_wert_id_/$PROD_WERT_ID/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_appsflyer_devkey_/$APPSFLYER_DEVKEY/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
+            sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_rampnetwork_api_key_/$RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_instabug_token_/$INSTABUG_PROD_TOKEN/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_prismic_token_/$PRISMIC_TOKEN/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_storyly_token_/$STORYLY_TOKEN_IOS/g" ./src/configs/buildConfig.js
+            echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
+
+      - restore_cache:
+          name: Restore node modules cache
+          keys:
+            - ios-node-{{ checksum "./yarn.lock" }}
+
+      - *yarn_install_ios
+
+      - save_cache:
+          name: Save node modules cache
+          key: ios-node-{{ checksum "./yarn.lock" }}
+          paths:
+            - ~/pillarwallet/nodes_modules
+
+      - *restore_gems_cache_ios
+      - *install_gems_ios
+      - *save_gems_cache_ios
+
+      - *restore_pod_cache
+      - run:
+          name: Install CocoaPods
+          command: |
+            cd ios
+            bundle exec pod install --verbose
+      - *save_pod_cache
+
+      - run:
+          name: Fetch App Store Connect API key
+          command: |
+            aws --region $AWS_DEFAULT_REGION s3 cp $PROD_KEYSTORE_S3_BUCKET/AuthKey.p8 ./ios
+      - run:
+          no_output_timeout: 20m
+          name: Upload to TestFlight
+          command: |
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            export ITMSTRANSPORTER_FORCE_ITMS_PACKAGE_UPLOAD=$ITMSTRANSP_FORCE_ITMS_PACKAGE_UPLOAD
+            echo "ITMSTRANSPORTER force value is: " $ITMSTRANSPORTER_FORCE_ITMS_PACKAGE_UPLOAD
+            cd ios && bundle exec fastlane deploy_prod APP_BUILD_NUMBER:$APP_BUILD_NUMBER build_number:$buildNumber APP_NAME:"Pillar Wallet"
+      - run:
+          name: Copy production iOS artifact to S3
+          command: |
+            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+            cd ./ios/output/gym/
+            touch ios-s3-URL-prod.txt
+            aws --region $AWS_DEFAULT_REGION s3 cp pillarwallet.ipa $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-ios-prod-$buildNumber.ipa
+            aws --region $AWS_DEFAULT_REGION s3 presign $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-ios-prod-$buildNumber.ipa --expires-in 604800 > ios-s3-URL-prod.txt
+      - run:
+          name: Announce Deployment
+          command: |
+            chmod +x .circleci/announceDeployment.sh
+            .circleci/announceDeployment.sh "Pillar Wallet" "*Prod* iOS internal track - Тests pending" "$(cat /tmp/workspace/build-num/app_version.txt)"
+      - run:
+          name: Announce production iOS URL
+          command: |
+            cd ~/pillarwallet
+            chmod +x .circleci/announceURLs.sh
+            .circleci/announceURLs.sh "pillarwallet" "production" "ios" "$(cat ~/pillarwallet/ios/output/gym/ios-s3-URL-prod.txt)" "$(cat /tmp/workspace/build-num/app_version.txt)"
+      - run:
+          name: prepare to archive ipa file
+          command: |
+            APP_VERSION="$(cat /tmp/workspace/build-num/app_version.txt)"
+            mkdir -p ./toArchive
+            mkdir -p /tmp/workspace/ios-release
+            cp ./ios/output/gym/pillarwallet.ipa ./toArchive
+            cp ./ios/output/gym/pillarwallet.ipa /tmp/workspace/ios-release/pillarwallet-prod-ios-$APP_VERSION.ipa
+      - store_artifacts:
+          path: ./toArchive
+          destination: app_build
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - ios-release
+      - slack/status:
+          fail_only: true
+          only_for_branches: master
+          failure_message: '$(gshuf -n 1 ios_prod.txt) :circleci-fail:'
+          webhook: "${SLACK_WEBHOOK_URL}"
+
+  prod_android:
+    executor: android-executor
+    steps:
+      - checkout
+      - attach_workspace: &attach_workspace
+          at: /tmp/workspace
+      - aws-cli/setup:
+          aws-access-key-id: PRODUCTION_AWS_ACCESS_KEY_ID
+          aws-secret-access-key: PRODUCTION_AWS_SECRET_ACCESS_KEY
+          aws-region: AWS_DEFAULT_REGION
+      - run:
+          name: Set slack message
+          command: |
+            aws --region eu-west-2 s3 cp $PROD_KEYSTORE_S3_BUCKET/android_prod.txt .
+
+      - *android_latest_npm
+
+      - run:
+          name: Get keystore file
+          command: |
+            cd /home/circleci/pillarwallet/android/keystores/
+            aws s3 cp $PROD_KEYSTORE_S3_BUCKET/release.keystore .
+      - run:
+          name: Set production environment
+          command: |
+            cd ~/pillarwallet
+            git config user.email "devops@pillar.io"
+            git config user.name "Issabot"
+            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            export buildNumber="$(cat /tmp/workspace/build-num/app_version.txt)"
+            sed -i.bak "s/_build_type_/production/g" .env
+            sed -i.bak "s/_build_number_/$buildNumber/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_build_number_/$buildNumber/g" .env
+            sed -i.bak "s/_wert_id_/$PROD_WERT_ID/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_appsflyer_devkey_/$APPSFLYER_DEVKEY/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
+            sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_rampnetwork_api_key_/$RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_instabug_token_/$INSTABUG_PROD_TOKEN/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_prismic_token_/$PRISMIC_TOKEN/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_storyly_token_/$STORYLY_TOKEN_ANDROID/g" ./src/configs/buildConfig.js
+            echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
+
+      - restore_cache:
+          name: Restore node modules cache
+          keys:
+            - android-node-{{ checksum "./yarn.lock" }}
+
+      - *yarn_restore_cache
+      - *yarn_install
+      - *yarn_save_cache
+
+      - save_cache:
+          key: android-node-{{ checksum "./yarn.lock" }}
+          paths:
+            - ~/pillarwallet/nodes_modules
+
+      - *restore_gems_cache_android
+      - *install_gems_android
+      - *save_gems_cache_android
+
+      - *gradle_restore_cache
+
+      - run:
+          name: Chmod permissions
+          command: cd android && sudo chmod +x ./gradlew
+      - run:
+          name: Accept Android SDK licenses
+          command: |
+            cd android
+            yes | sdkmanager --licenses || exit 0
+      - run:
+          name: Accept Android SDK licenses 2
+          command: |
+            cd android
+            yes | sdkmanager --update || exit 0
+      - run:
+          name: Download Dependencies
+          command: cd android && ./gradlew app:androidDependencies --no-daemon --stacktrace --max-workers=2
+
+      - run:
+          name: Initial build
+          command: |
+            cd android
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            ./gradlew clean app:assembleRelease --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
+
+      - *gradle_save_cache
+
+      - run:
+          name: Fastlane deploy to Google Play
+          command: |
+            cd android
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            export GOOGLE_JSON_DATA=$(echo "$GOOGLE_JSON_BASE64_ENCODED" | base64 --decode)
+            bundle exec fastlane deploy_internal --verbose
+          environment:
+            BUNDLE_PATH: vendor/bundle
+      - run:
+          name: Copy prod android artifact to S3
+          command: |
+            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+            cd ./android/app/build/outputs/apk/release/
+            touch android-s3-URL-prod.txt
+            aws --region $AWS_DEFAULT_REGION s3 cp app-release.apk $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-$buildNumber.apk
+            aws --region $AWS_DEFAULT_REGION s3 presign $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-$buildNumber.apk --expires-in 604800 > android-s3-URL-prod.txt
+      - run:
+          name: Announce Deployment
+          command: |
+            chmod +x .circleci/announceDeployment.sh
+            .circleci/announceDeployment.sh "Pillar Wallet" "*Prod* Android internal track - Tests pending" "$(cat /tmp/workspace/build-num/app_version.txt)"
+      - run:
+          name: Announce Prod Android URL
+          command: |
+            cd ~/pillarwallet
+            chmod +x .circleci/announceURLs.sh
+            .circleci/announceURLs.sh "pillarwallet" "production" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/release/android-s3-URL-prod.txt)" "$(cat /tmp/workspace/build-num/app_version.txt)"
+      - run:
+          name: prepare to archive apk file
+          command: |
+            APP_VERSION="$(cat /tmp/workspace/build-num/app_version.txt)"
+            mkdir -p ./toArchive
+            mkdir -p /tmp/workspace/android-release
+            cp ./android/app/build/outputs/apk/release/app-release.apk ./toArchive
+            cp ./android/app/build/outputs/apk/release/app-release.apk /tmp/workspace/android-release/pillarwallet-android-$APP_VERSION.apk
+      - store_artifacts:
+          path: ./toArchive
+          destination: apks
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - android-release
+      - slack/status:
+          fail_only: true
+          only_for_branches: master
+          failure_message: '$(shuf -n 1 android_prod.txt) :circleci-fail:'
+          webhook: "${SLACK_WEBHOOK_URL}"
+
+  publish_releases_to_github:
+    working_directory: ~/pillarwallet
+    docker:
+      - image: cimg/go:1.13
+        auth:
+          username: $DOCKERHUB_USER
+          password: $DOCKERHUB_PASSWORD
+    steps:
+      - checkout
+      - attach_workspace: &attach_workspace
+          at: /tmp/workspace
+      - run:
+          name: Install github-release
+          command: |
+            go get github.com/github-release/github-release
+      - run:
+          name: Set tag and publish releases to GitHub
+          command: |
+            chmod +x setReleaseInfo.sh
+            . ./setReleaseInfo.sh
+            TAG_VERSION="$(cat /tmp/workspace/build-num/gh_tag_version.txt)"
+            APP_VERSION="$(cat /tmp/workspace/build-num/app_version.txt)"
+            echo $SUPPORT_DESCRIPTION > support_description.txt
+            github-release release -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION  -n "$RELEASE_TITLE" --description "$RELEASE_DESCRIPTION"
+            sleep 10
+            github-release upload -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION -n "pillarwallet-prod-android-$APP_VERSION.apk" -f /tmp/workspace/android-release/*.apk
+            github-release upload -s $GITHUB_TOKEN -u "pillarwallet" -r "pillarwallet" -t $TAG_VERSION -n "pillarwallet-prod-ios-$APP_VERSION.ipa" -f /tmp/workspace/ios-release/*.ipa
+      - run:
+          name: Announce new RC to support channel
+          command: |
+            chmod +x .circleci/announceProdBuilds.sh
+            .circleci/announceProdBuilds.sh "Pillar Wallet" "*Prod* Android internal track - Тests pending" "$(cat /tmp/workspace/build-num/app_version.txt)" "$(cat ~/pillarwallet/support_description.txt)"
+            .circleci/announceProdBuilds.sh "Pillar Wallet" "*Prod* iOS internal track - Тests pending" "$(cat /tmp/workspace/build-num/app_version.txt)" "$(cat ~/pillarwallet/support_description.txt)"
+
+workflows:
+  version: 2.1
+
+  build_and_test:
+    jobs:
+      - build-and-test:
+          context: docker-hub-creds
+          filters:
+            branches:
+              ignore:
+                - develop
+                - master
+                - /.*(u|U)(i|I)(-|_).*/
+                - /.*(-|_)(u|U)(i|I).*/
+                - /.*(u|U)(i|I)\/.*/
+                
+  build_and_deploy_appcenter:
+    jobs:
+      - build-and-test:
+          context: docker-hub-creds
+          filters:
+            branches:
+              only:
+                - develop
+                - /.*(u|U)(i|I)(-|_).*/
+                - /.*(-|_)(u|U)(i|I).*/
+                - /.*(u|U)(i|I)\/.*/
+
+      - appcenter_ios:
+          requires:
+            - build-and-test
+          filters:
+            branches:
+              only:
+                - develop
+                - /.*(u|U)(i|I)(-|_).*/
+                - /.*(-|_)(u|U)(i|I).*/
+                - /.*(u|U)(i|I)\/.*/
+
+      - appcenter_android:
+          context: docker-hub-creds
+          requires:
+            - build-and-test
+          filters:
+            branches:
+              only:
+                - develop
+                - /.*(u|U)(i|I)(-|_).*/
+                - /.*(-|_)(u|U)(i|I).*/
+                - /.*(u|U)(i|I)\/.*/
+
+  build_and_deploy_production:
+    jobs:
+      - bump-push-git-tag:
+          context: docker-hub-creds
+          filters:
+            branches:
+              only:
+                - master
+      - build-and-test:
+          requires:
+            - bump-push-git-tag
+          context: docker-hub-creds
+          filters:
+            branches:
+              only:
+                - master
+      - get-latest-tag:
+          context: docker-hub-creds
+          requires:
+            - build-and-test
+          filters:
+            branches:
+              only:
+                - master
+      - prod_ios:
+          requires:
+            - build-and-test
+            - get-latest-tag
+          filters:
+            branches:
+              only:
+                - master
+      - prod_android:
+          context: docker-hub-creds
+          requires:
+            - build-and-test
+            - get-latest-tag
+          filters:
+            branches:
+              only:
+                - master
+      - publish_releases_to_github:
+          context: docker-hub-creds
+          requires:
+            - prod_android
+            - prod_ios

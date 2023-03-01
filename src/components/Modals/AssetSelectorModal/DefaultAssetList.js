@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { SectionList, LayoutAnimation, FlatList } from 'react-native';
+import { LayoutAnimation, FlatList } from 'react-native';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
@@ -31,6 +31,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 // Selectors
 import { useSupportedChains } from 'selectors/chains';
+import { useNftFlag } from 'selectors';
 
 // Utils
 import { mapNotNil } from 'utils/array';
@@ -50,12 +51,12 @@ type Props = {|
   onSelectToken: (token: AssetOption) => mixed,
   collectibles?: Collectible[],
   onSelectCollectible?: (collectible: Collectible) => mixed,
-  isFromSelect?: boolean,
 |};
 
-const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollectible, isFromSelect }: Props) => {
+const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollectible }: Props) => {
   const { isChainCollapsed } = useCollapseChain();
   const sections = useSectionData(tokens, collectibles ?? [], isChainCollapsed);
+  const visibleNFTs = useNftFlag();
 
   const sortTokensList = React.useMemo(() => {
     const arr = [];
@@ -82,7 +83,7 @@ const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollect
       );
     }
 
-    if (collectible) {
+    if (collectible && visibleNFTs) {
       return <CollectibleListItem collectible={collectible} onPress={() => onSelectCollectible?.(collectible)} />;
     }
 
@@ -106,7 +107,7 @@ const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollect
     );
   };
 
-  return isFromSelect ? (
+  return (
     <FlatList
       data={sortTokensList}
       renderItem={({ item }) => renderItem(item)}
@@ -114,16 +115,8 @@ const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollect
       keyboardShouldPersistTaps="always"
       ListEmptyComponent={renderEmptyState()}
       contentInsetAdjustmentBehavior="scrollableAxes"
-      contentContainerStyle={styles.contentContainer}
-    />
-  ) : (
-    <SectionList
-      sections={sections}
-      renderItem={({ item }) => renderItem(item)}
-      keyExtractor={getItemKey}
-      keyboardShouldPersistTaps="always"
-      ListEmptyComponent={renderEmptyState()}
-      contentInsetAdjustmentBehavior="scrollableAxes"
+      removeClippedSubviews
+      scrollEventThrottle={1}
       contentContainerStyle={styles.contentContainer}
     />
   );
@@ -191,11 +184,13 @@ function buildSection(
 }
 
 function getMatchingTokens(tokens: AssetOption[], chain: Chain) {
+  if (!tokens?.[0]) return [];
   const matchingItems = tokens.filter((item) => item.chain === chain);
   return defaultSortAssetOptions(matchingItems);
 }
 
 function getMatchingCollectibles(collectibles: Collectible[], chain: Chain) {
+  if (!collectibles?.[0]) return [];
   const matchingItems = collectibles.filter((item) => item.chain === chain);
   return defaultSortCollectibles(matchingItems);
 }

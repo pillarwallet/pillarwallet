@@ -34,7 +34,7 @@ type Instance = typeof RNTextInput;
 /**
  * TextInput styled to use default font and color. This is intened to use as single line input only!
  */
-const TextInput = React.forwardRef<Props, Instance>(({ style, ...rest }, ref) => {
+const TextInput = React.forwardRef<Props, Instance>(({ style, ...rest }, ref: any) => {
   const colors = useThemeColors();
   const isDarkTheme = useIsDarkTheme();
 
@@ -55,6 +55,10 @@ const TextInput = React.forwardRef<Props, Instance>(({ style, ...rest }, ref) =>
       {...rest}
       multiline={false}
       style={styleList}
+      onLayout={() => {
+        if (!ref) return;
+        ref.current?.focus();
+      }}
     />
   );
 });

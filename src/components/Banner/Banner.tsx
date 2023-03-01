@@ -45,16 +45,16 @@ import * as RoutePath from 'constants/navigationConstants';
 import { useRootSelector, bannerDataSelector } from 'selectors';
 
 interface IBanner {
-  screenName: string,
-  theme: Theme,
-  bottomPosition?: boolean,
-};
+  screenName: string;
+  theme: Theme;
+  bottomPosition?: boolean;
+}
 
 const Banner: FC<IBanner> = (props) => {
   const { screenName, theme, bottomPosition = true } = props;
   const bannerDataResponse = useRootSelector(bannerDataSelector);
 
-  if(!bannerDataResponse && !Array.isArray(bannerDataResponse?.results)) return null;
+  if (!bannerDataResponse && !Array.isArray(bannerDataResponse?.results)) return null;
 
   const response = bannerDataResponse?.results.filter((result) => {
     const bannerPosition = result?.data?.position || 'Bottom';
@@ -77,9 +77,10 @@ const MultiBannerContainer = ({ bannerData, index, theme }) => {
   const [isVisible, setIsVisible] = React.useState(true);
   const bannerDataResponse = bannerData?.data;
   const bannerTitle = bannerDataResponse?.title[0]?.text || '';
-  const bannerSubtitle =bannerDataResponse?.subtitle[0]?.text || '';
+  const bannerSubtitle = bannerDataResponse?.subtitle[0]?.text || '';
   const bannerIcon = bannerDataResponse?.icon?.url || '';
   const bannerBackgroundColor = bannerDataResponse?.background_color;
+  const bannerForgroundColor = bannerDataResponse?.foreground_color;
   const bannerLinkUrl = bannerDataResponse?.link?.url;
   const background_image = bannerDataResponse?.background_image?.url;
 
@@ -106,11 +107,13 @@ const MultiBannerContainer = ({ bannerData, index, theme }) => {
         imageStyle={{ borderRadius: 20 }}
       >
         <Summary>
-          <Title color={colors.bannerTextColor}>{bannerTitle}</Title>
-          <SubTitle color={colors.bannerTextColor}>{bannerSubtitle}</SubTitle>
+          <Title color={bannerForgroundColor || colors.bannerTextColor}>{bannerTitle}</Title>
+          <SubTitle color={bannerForgroundColor || colors.bannerTextColor}>{bannerSubtitle}</SubTitle>
         </Summary>
         <BannerImage source={{ uri: bannerIcon }} />
-        <Close name="close" color={colors.white} onPress={onClose} horizontalAlign="flex-end" />
+        <CloseContainer onPress={onClose}>
+          <Icon name={'close'} width={24} height={24} color={bannerForgroundColor} />
+        </CloseContainer>
       </ImageContainer>
     </TouchableContainer>
   );
@@ -149,10 +152,9 @@ const SubTitle = styled(Text)`
   ${fontStyles.small};
 `;
 
-const Close = styled(Icon)`
-  height: 16px;
-  width: 16px;
+const CloseContainer = styled.TouchableOpacity`
+  padding: 8px 8px 10px 10px;
   position: absolute;
-  top: 8px;
-  right: 14px;
+  top: 0px;
+  right: 0px;
 `;

@@ -39,6 +39,7 @@ import { isHighGasFee } from 'utils/transactions';
 
 // Types
 import type { ExchangeOffer } from 'models/Exchange';
+import type { Asset, AssetOption } from 'models/Asset';
 
 // Selectors
 import { useRootSelector, useFiatCurrency, useChainRates, useActiveAccount } from 'selectors';
@@ -47,15 +48,28 @@ import { gasThresholdsSelector } from 'redux/selectors/gas-threshold-selector';
 // Hooks
 import { useTransactionsEstimate } from 'hooks/transactions';
 
+// Local
+import { getSortingValue } from './utils';
+
 type Props = {
   offer: ExchangeOffer,
   onPress: () => Promise<void>,
   disabled?: boolean,
   crossChainTxs?: any[],
   onEstimateFail?: () => void,
+  gasFeeAsset: Asset | AssetOption,
+  onFetchSortingOfferInfo?: (offerInfo: ExchangeOffer) => void,
 };
 
-function OfferCard({ offer, onPress, disabled, crossChainTxs, onEstimateFail }: Props) {
+function OfferCard({
+  offer,
+  onPress,
+  disabled,
+  crossChainTxs,
+  onEstimateFail,
+  gasFeeAsset,
+  onFetchSortingOfferInfo,
+}: Props) {
   const { t } = useTranslation();
   const config = useProviderConfig(offer.provider);
   const activeAccount: any = useActiveAccount();
@@ -84,7 +98,8 @@ function OfferCard({ offer, onPress, disabled, crossChainTxs, onEstimateFail }: 
     feeInfo,
     errorMessage: estimationErrorMessage,
     isEstimating,
-  } = useTransactionsEstimate(chain, crossChainTxs || offerInfo?.transactions, true);
+  } = useTransactionsEstimate(chain, crossChainTxs || offerInfo?.transactions, true, gasFeeAsset);
+
   const chainRates = useChainRates(chain);
 
   const highFee = isHighGasFee(chain, feeInfo?.fee, feeInfo?.gasToken, chainRates, fiatCurrency, gasThresholds);
@@ -100,6 +115,15 @@ function OfferCard({ offer, onPress, disabled, crossChainTxs, onEstimateFail }: 
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [estimationErrorMessage]);
+
+  React.useEffect(() => {
+    onFetchSortingOfferInfo &&
+      onFetchSortingOfferInfo({
+        ...offer,
+        sortingValue: getSortingValue(toChain || chain, feeInfo, chainRates, fiatCurrency, fiatValue),
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [feeInfo, estimationErrorMessage, isEstimating]);
 
   if (estimationErrorMessage) {
     return null;

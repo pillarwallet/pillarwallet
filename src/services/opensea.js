@@ -77,20 +77,29 @@ export const fetchCollectibles = async (
   });
 };
 
-export const fetchCollectiblesTransactionHistory = async (
-  walletAddress: string,
-): Promise<?OpenSeaHistoryItem[]> => {
-  try {
-    const url = `${getEnv().OPEN_SEA_API}/events/` +
-      `?account_address=${walletAddress}` +
-      '&event_type=transfer';
+export const fetchCollectiblesTransactionHistory = async (): Promise<?OpenSeaHistoryItem[]> => {
+  /**
+   * Deprecated entirely. NFTs should now be read
+   * from Etherspot in future.
+   */
 
-    const { data } = await httpRequest.get(url, requestConfig);
+  return null;
 
-    return data?.asset_events; // eslint-disable-line camelcase
-  } catch (error) {
-    reportErrorLog('fetchCollectiblesTransactionHistory failed', { walletAddress, error });
-    return null;
-  }
+  /**
+   * The below is future reference.
+   */
+
+  // try {
+  //   const url = `${getEnv().OPEN_SEA_API}/events/` +
+  //     `?account_address=${walletAddress}` +
+  //     '&event_type=transfer';
+
+  //   const { data } = await httpRequest.get(url, requestConfig);
+
+  //   return data?.asset_events; // eslint-disable-line camelcase
+  // } catch (error) {
+  //   reportErrorLog('fetchCollectiblesTransactionHistory failed', { walletAddress, error });
+  //   return null;
+  // }
 };
 /* eslint-enable i18next/no-literal-string */

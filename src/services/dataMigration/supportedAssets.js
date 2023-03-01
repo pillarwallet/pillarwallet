@@ -39,11 +39,12 @@ export default function (storageData: Object) {
   addChainFieldIfNeeded(supportedAssets, CHAIN.BINANCE);
   addChainFieldIfNeeded(supportedAssets, CHAIN.XDAI);
   addChainFieldIfNeeded(supportedAssets, CHAIN.OPTIMISM);
+  addChainFieldIfNeeded(supportedAssets, CHAIN.ARBITRUM);
 
   return supportedAssets;
 }
 
-function addChainFieldIfNeeded(supportedAssets: ChainRecord<Asset[]>, chain: Chain) {
+export function addChainFieldIfNeeded(supportedAssets: ChainRecord<Asset[]>, chain: Chain) {
   const chainAssets = supportedAssets[chain];
 
   // Empty array - do nothing

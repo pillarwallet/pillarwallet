@@ -38,9 +38,13 @@ export function calculateTotalBalance(accountBalances: TotalBalances): BigNumber
 export function calculateTotalBalancePerCategory(accountBalances: TotalBalances): AssetCategoryRecord<BigNumber> {
   return {
     wallet: sumRecord(accountBalances.wallet),
-    deposits: sumRecord(accountBalances.deposits),
-    investments: sumRecord(accountBalances.investments),
-    liquidityPools: sumRecord(accountBalances.liquidityPools),
+    // deposits: sumRecord(accountBalances.deposits),
+    // investments: sumRecord(accountBalances.investments),
+    // liquidityPools: sumRecord(accountBalances.liquidityPools),
+    apps:
+      sumRecord(accountBalances.deposits).toNumber() +
+      sumRecord(accountBalances.investments).toNumber() +
+      sumRecord(accountBalances.liquidityPools).toNumber(),
     rewards: sumRecord(accountBalances.rewards),
   };
 }

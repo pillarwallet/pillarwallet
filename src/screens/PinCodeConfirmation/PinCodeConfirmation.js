@@ -18,13 +18,14 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
 // Actions
 import { beginOnboardingAction, setOnboardingPinCodeAction } from 'actions/onboardingActions';
+import { logEventAction } from 'actions/analyticsActions';
 
 // Components
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
@@ -46,7 +47,6 @@ import { fontStyles, spacing } from 'utils/variables';
 // Types
 import type { Dispatch } from 'reducers/rootReducer';
 
-
 type Props = {
   beginOnboarding: () => void,
   setOnboardingPinCode: (pinCode: string) => void,
@@ -54,11 +54,10 @@ type Props = {
   wallet: Object,
 };
 
-const PinCodeConfirmation = ({
-  setOnboardingPinCode,
-  navigation,
-}) => {
+const PinCodeConfirmation = ({ setOnboardingPinCode, navigation }) => {
   const [errorMessage, setErrorMessage] = useState(null);
+  const dispatch = useDispatch();
+
   const maxPinCodeLength = useRootSelector(maxPinCodeLengthSelector);
 
   const previousPinCode = navigation.getParam('pinCode');
@@ -71,23 +70,17 @@ const PinCodeConfirmation = ({
       return;
     }
 
+    dispatch(logEventAction('confirm_pin', { pinCode }));
+
     setOnboardingPinCode(pinCode);
     navigation.navigate(HOME);
   };
 
   return (
-    <ContainerWithHeader
-      headerProps={{ centerItems: [{ title: t('auth:title.confirmPin') }] }}
-    >
-      {!!errorMessage && (
-        <ErrorMessage wrapperStyle={{ marginTop: 0 }}>
-          {errorMessage}
-        </ErrorMessage>
-      )}
+    <ContainerWithHeader headerProps={{ centerItems: [{ title: t('auth:title.confirmPin') }] }}>
+      {!!errorMessage && <ErrorMessage wrapperStyle={{ marginTop: 0 }}>{errorMessage}</ErrorMessage>}
       <ContentWrapper contentContainerStyle={{ padding: spacing.large, flexGrow: 1 }}>
-        <HeaderText>
-          {t('auth:label.reenterToConfirm')}
-        </HeaderText>
+        <HeaderText>{t('auth:label.reenterToConfirm')}</HeaderText>
         <PinCode
           onPinEntered={handlePinSubmit}
           onPinChanged={() => setErrorMessage(null)}

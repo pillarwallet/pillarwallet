@@ -42,6 +42,9 @@ import { isKeyBasedAccount } from 'utils/accounts';
 // Constants
 import { ADD_CASH } from 'constants/navigationConstants';
 
+// Hooks
+import { useAppHoldings } from 'hooks/apps';
+
 // Actions
 import { dismissAddCashTooltipAction } from 'actions/appSettingsActions';
 
@@ -63,9 +66,12 @@ function BalanceSection({ balanceInFiat, changeInFiat, showBalance, onBalanceCli
 
   const fiatCurrency = useFiatCurrency();
   const activeAccount = useActiveAccount();
+  const { totalBalanceOfHoldings } = useAppHoldings();
 
   const initialBalance = changeInFiat ? balanceInFiat.minus(changeInFiat) : null;
   const formattedChange = formatFiatChangeExtended(changeInFiat, initialBalance, fiatCurrency);
+
+  balanceInFiat = balanceInFiat.plus(totalBalanceOfHoldings);
 
   const { addCashTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
 
@@ -107,16 +113,18 @@ function BalanceSection({ balanceInFiat, changeInFiat, showBalance, onBalanceCli
 
         {!isKeyBasedAccount(activeAccount) && (
           <SecondColumn>
-            <SpecialButton title={tRoot('button.addCash')} iconName="add-cash" onPress={onAddCashPress} />
+            <SpecialButton title={tRoot('button.buyTokens')} iconName="add-cash" onPress={onAddCashPress} />
           </SecondColumn>
         )}
       </Container>
-      <Tooltip
-        isVisible={visibleTooltip}
-        body={tRoot('tooltip.start_by_cash')}
-        wrapperStyle={wrapperStyle}
-        onPress={onAddCashPress}
-      />
+      {!isKeyBasedAccount(activeAccount) && (
+        <Tooltip
+          isVisible={visibleTooltip}
+          body={tRoot('tooltip.start_by_cash')}
+          wrapperStyle={wrapperStyle}
+          onPress={onAddCashPress}
+        />
+      )}
     </>
   );
 }

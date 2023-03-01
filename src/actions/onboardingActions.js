@@ -25,12 +25,7 @@ import t from 'translations/translate';
 
 // constants
 import { SET_WALLET, UPDATE_WALLET_BACKUP_STATUS } from 'constants/walletConstants';
-import {
-  APP_FLOW,
-  TUTORIAL_FLOW,
-  HOME,
-  WELCOME_BACK,
-} from 'constants/navigationConstants';
+import { APP_FLOW, TUTORIAL_FLOW, HOME, WELCOME_BACK } from 'constants/navigationConstants';
 import { SET_USER } from 'constants/userConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import {
@@ -47,6 +42,7 @@ import {
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { CHAIN } from 'constants/chainConstants';
+import { NFT_FLAG } from 'constants/assetsConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -66,10 +62,7 @@ import etherspotService from 'services/etherspot';
 // actions
 import { importArchanovaAccountsIfNeededAction, managePPNInitFlagAction } from 'actions/smartWalletActions';
 import { saveDbAction } from 'actions/dbActions';
-import {
-  checkForWalletBackupToastAction,
-  encryptAndSaveWalletAction,
-} from 'actions/walletActions';
+import { checkForWalletBackupToastAction, encryptAndSaveWalletAction } from 'actions/walletActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
 import { addMissingWalletEventsIfNeededAction } from 'actions/walletEventsActions';
@@ -82,14 +75,16 @@ import {
   resetAndStartImportWalletAction,
 } from 'actions/authActions';
 import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedAssetTransferActions';
+import { importEtherspotAccountsAction, initEtherspotServiceAction, setStableTokens } from 'actions/etherspotActions';
 import {
-  importEtherspotAccountsAction,
-  initEtherspotServiceAction,
-} from 'actions/etherspotActions';
-import { fetchSupportedAssetsAction, fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
+  fetchSupportedAssetsAction,
+  fetchOfflineLocalAssets,
+  fetchAllAccountsTotalBalancesAction,
+  fetchPopularAssetsAction,
+} from 'actions/assetsActions';
 import { fetchTutorialDataIfNeededAction, bannerDataAction } from 'actions/cmsActions';
 import { initialDeepLinkExecutedAction } from 'actions/appSettingsActions';
-import { addAccountAction } from 'actions/accountsActions';
+import { addAccountAction, deployAccounts } from 'actions/accountsActions';
 import {
   setEstimatingTransactionAction,
   setTransactionsEstimateErrorAction,
@@ -332,6 +327,9 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
 
     dispatch(bannerDataAction());
 
+    logBreadcrumb('onboarding', 'walletSetupAction: dispatching deployAccounts');
+    dispatch(deployAccounts());
+
     logBreadcrumb('onboarding', 'walletSetupAction: completed, dispatching SET_FINISHING_ONBOARDING');
     isLogV2AppEvents() && dispatch(logEventAction('v2_account_sign_up_completed'));
     dispatch({ type: SET_FINISHING_ONBOARDING, payload: false });
@@ -353,6 +351,8 @@ export const setupAppServicesAction = (privateKey: ?string) => {
       return;
     }
 
+    await dispatch(fetchOfflineLocalAssets());
+
     logBreadcrumb('onboarding', 'onboardingAction.js: checking user is online or not');
 
     // all the calls below require user to be online
@@ -366,6 +366,7 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     await dispatch(initEtherspotServiceAction(privateKey));
 
     // user might not be registered at this point
+    await dispatch(fetchPopularAssetsAction());
     await dispatch(fetchSupportedAssetsAction());
 
     // create Archanova accounts if needed
@@ -409,12 +410,19 @@ export const setupAppServicesAction = (privateKey: ?string) => {
       dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
     }
 
+    const visibleNFTs = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_NFTS);
+    logBreadcrumb('onboarding', 'finishOnboardingAction: dispatching app nfts flag');
+    dispatch({ type: NFT_FLAG, payload: visibleNFTs });
+
     // check if wallet backup warning toast needed, balance can only be retrieved online
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching checkForWalletBackupToastAction');
     dispatch(checkForWalletBackupToastAction());
 
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching loadRemoteConfigWithUserPropertiesAction');
     dispatch(loadRemoteConfigWithUserPropertiesAction());
+
+    logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching setStableTokens');
+    dispatch(setStableTokens());
   };
 };
 
@@ -720,4 +728,3 @@ export const resetWalletImportErrorAction = () => {
     });
   };
 };
-

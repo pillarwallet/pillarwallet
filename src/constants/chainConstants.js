@@ -25,6 +25,7 @@ export const CHAIN = {
   XDAI: ('xdai': 'xdai'),
   AVALANCHE: ('avalanche': 'avalanche'),
   OPTIMISM: ('optimism': 'optimism'),
+  ARBITRUM: ('arbitrum', 'arbitrum'),
 };
 
 export const CHAIN_NAMES = {
@@ -34,6 +35,7 @@ export const CHAIN_NAMES = {
   XDAI: 'xdai',
   AVALANCHE: 'avalanche',
   OPTIMISM: 'optimism',
+  ARBITRUM: 'arbitrum',
 };
 
 export const CHAIN_SHORT = {
@@ -43,18 +45,24 @@ export const CHAIN_SHORT = {
   XDAI: 'xDai',
   AVALANCHE: 'AVAX',
   OPTIMISM: 'optimism',
+  ARBITRUM: 'Arbitrum',
 };
 
 // Based on: https://chainid.network/
 export const CHAIN_ID = {
   ETHEREUM_MAINNET: 1,
-  ETHEREUM_KOVAN: 42,
+  GOERLI: 5,
   POLYGON: 137,
   BINANCE: 56,
+  BINANCE_TESTNET: 97,
   XDAI: 100,
+  SOKOL: 77,
   AVALANCHE: 43114,
   FUJI: 43113,
   MUMBAI: 80001,
   OPTIMISM: 10,
   OPTIMISM_KOVAN: 69,
+  OPTIMISM_GOERLI: 420,
+  ARBITRUM: 42161,
+  ARBITRUM_NITRO: 421613,
 };

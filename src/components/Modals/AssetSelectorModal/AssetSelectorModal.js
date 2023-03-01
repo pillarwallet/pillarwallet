@@ -19,13 +19,13 @@
 */
 
 import * as React from 'react';
-import { Keyboard } from 'react-native';
+import { Keyboard, Modal as RNModal } from 'react-native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
 import { Container } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
-import SlideModal from 'components/Modals/SlideModal';
+import Modal from 'components/Modal';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
@@ -43,35 +43,41 @@ import { CHAIN } from 'constants/chainConstants';
 import AssetSelectorContent from './AssetSelectorContent';
 
 type Props = {|
+  visible?: boolean,
+  onCloseModal?: (val: boolean) => void,
   tokens: AssetOption[],
   onSelectToken: (asset: AssetOption) => mixed,
   collectibles?: Collectible[],
   onSelectCollectible?: (collectible: Collectible) => mixed,
   title?: string,
   autoFocus?: boolean,
-  isFromSelect?: boolean,
   chain?: Chain | null,
+  searchTokenList?: any,
 |};
 
 const AssetSelectorModal = ({
+  visible = true,
+  onCloseModal,
   tokens,
   collectibles,
   onSelectToken,
   onSelectCollectible,
   title,
   autoFocus = false,
-  isFromSelect,
   chain,
+  searchTokenList,
 }: Props) => {
   const { t } = useTranslationWithPrefix('assetSelector');
   const colors = useThemeColors();
   const [selectedAssetChain, setSelectedAssetChain] = React.useState(chain);
 
-  const modalRef = React.useRef(null);
-
   const close = () => {
+    if (onCloseModal) {
+      onCloseModal(false);
+    } else {
+      Modal.closeAll();
+    }
     Keyboard.dismiss();
-    modalRef.current?.close();
   };
 
   const selectToken = (option: AssetOption) => {
@@ -89,12 +95,12 @@ const AssetSelectorModal = ({
   title = (selectedAssetChain ? t('choose_token', { chain: config?.titleShort }) : title) || t('title');
 
   return (
-    <SlideModal ref={modalRef} fullScreen noSwipeToDismiss noClose backgroundColor={colors.basic050} noTopPadding>
+    // eslint-disable-next-line i18next/no-literal-string
+    <RNModal animationType="slide" visible={visible} style={{ backgroundColor: colors.basic050 }}>
       <Container>
         <HeaderBlock leftItems={[{ close: true }]} centerItems={[{ title }]} onClose={close} noPaddingTop />
 
         <AssetSelectorContent
-          isFromSelect={isFromSelect}
           tokens={tokens}
           selectedAssetChain={selectedAssetChain}
           onSelectAssetChain={setSelectedAssetChain}
@@ -102,9 +108,10 @@ const AssetSelectorModal = ({
           collectibles={collectibles}
           onSelectCollectible={selectCollectible}
           autoFocus={autoFocus}
+          searchTokenList={searchTokenList}
         />
       </Container>
-    </SlideModal>
+    </RNModal>
   );
 };
 

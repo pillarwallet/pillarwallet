@@ -28,13 +28,10 @@ import Toast from 'components/Toast';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { SET_HISTORY, TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 import { CHAIN_NAMES, CHAIN_SHORT } from 'constants/chainConstants';
+import { SET_STABLE_TOKEN } from 'constants/assetsConstants';
 
 // actions
-import {
-  addAccountAction,
-  updateAccountExtraIfNeededAction,
-  setActiveAccountAction,
-} from 'actions/accountsActions';
+import { addAccountAction, updateAccountExtraIfNeededAction, setActiveAccountAction } from 'actions/accountsActions';
 import { saveDbAction } from 'actions/dbActions';
 import { setEnsNameIfNeededAction } from 'actions/ensRegistryActions';
 import { setHistoryTransactionStatusByHashAction } from 'actions/historyActions';
@@ -45,37 +42,22 @@ import { logEventAction } from 'actions/analyticsActions';
 import etherspotService from 'services/etherspot';
 
 // selectors
-import {
-  accountsSelector,
-  historySelector,
-  supportedAssetsPerChainSelector,
-  activeAccountSelector,
-} from 'selectors';
+import { accountsSelector, historySelector, supportedAssetsPerChainSelector, activeAccountSelector } from 'selectors';
 import { accountHistorySelector } from 'selectors/history';
 
 // utils
 import { normalizeWalletAddress } from 'utils/wallet';
-import {
-  formatUnits,
-  isCaseInsensitiveMatch,
-  reportErrorLog,
-  logBreadcrumb,
-} from 'utils/common';
-import {
-  findAccountById,
-  findFirstEtherspotAccount,
-  getAccountId,
-  isEtherspotAccount,
-} from 'utils/accounts';
+import { formatUnits, isCaseInsensitiveMatch, reportErrorLog, logBreadcrumb } from 'utils/common';
+import { findAccountById, findFirstEtherspotAccount, getAccountId, isEtherspotAccount } from 'utils/accounts';
 import { findAssetByAddress } from 'utils/assets';
 import { parseEtherspotTransactionState } from 'utils/etherspot';
 import { isLogV2AppEvents } from 'utils/environment';
+import { getSupportedChains } from 'utils/chains';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Chain } from 'models/Chain';
 import type { EtherspotAccountExtra } from 'models/Account';
-
 
 export const connectEtherspotAccountAction = (accountId: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -102,7 +84,9 @@ export const connectEtherspotAccountAction = (accountId: string) => {
 export const initEtherspotServiceAction = (privateKey: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
-      session: { data: { isOnline, fcmToken } },
+      session: {
+        data: { isOnline, fcmToken },
+      },
     } = getState();
 
     if (!isOnline) return; // nothing to do
@@ -150,14 +134,18 @@ export const importEtherspotAccountsAction = () => {
     }
 
     // sync accounts with app
-    await Promise.all(etherspotAccounts.map(async ({ address: etherspotAccountAddress }) => {
-      const extra = await etherspotService.getAccountPerChains();
-      dispatch(addAccountAction(
-        etherspotAccountAddress,
-        ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
-        extra, // full object as extras
-      ));
-    }));
+    await Promise.all(
+      etherspotAccounts.map(async ({ address: etherspotAccountAddress }) => {
+        const extra = await etherspotService.getAccountPerChains();
+        dispatch(
+          addAccountAction(
+            etherspotAccountAddress,
+            ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
+            extra, // full object as extras
+          ),
+        );
+      }),
+    );
 
     const accountId = normalizeWalletAddress(etherspotAccounts[0].address);
 
@@ -225,6 +213,8 @@ const getChain = (chain: Chain) => {
       return CHAIN_SHORT.AVALANCHE.toLowerCase();
     case CHAIN_NAMES.OPTIMISM:
       return CHAIN_SHORT.OPTIMISM.toLowerCase();
+    case CHAIN_NAMES.ARBITRUM:
+      return CHAIN_SHORT.ARBITRUM.toLowerCase();
     default:
       return '';
   }
@@ -250,7 +240,9 @@ export const reserveEtherspotEnsNameAction = (username: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
-      session: { data: { isOnline } },
+      session: {
+        data: { isOnline },
+      },
     } = getState();
 
     if (!isOnline) return; // nothing to do
@@ -268,18 +260,35 @@ export const reserveEtherspotEnsNameAction = (username: string) => {
   };
 };
 
-const updateBatchTransactionHashAction = (
-  chain: Chain,
-  batchHash: string,
-  transactionHash: string,
-) => {
+export const setStableTokens = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const activeAccount = activeAccountSelector(getState());
+
+    if (!activeAccount) {
+      return;
+    }
+
+    const supportedChain = getSupportedChains(activeAccount);
+
+    const tokens = await Promise.all(supportedChain.map((chain) => etherspotService.getStableAssets(chain)));
+
+    const filteredArr: any[] = [];
+
+    await tokens.forEach((item: any) => {
+      item && filteredArr.push(...item);
+    });
+
+    dispatch({ type: SET_STABLE_TOKEN, payload: filteredArr });
+  };
+};
+
+const updateBatchTransactionHashAction = (chain: Chain, batchHash: string, transactionHash: string) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const allAccountsHistory = historySelector(getState());
 
     const updatedHistory = Object.keys(allAccountsHistory).reduce((history, accountId) => {
-      const accountHistory = mapValues(
-        allAccountsHistory[accountId],
-        (transactions = [], accountHistoryChain) => transactions.map((transaction) => {
+      const accountHistory = mapValues(allAccountsHistory[accountId], (transactions = [], accountHistoryChain) =>
+        transactions.map((transaction) => {
           if (isCaseInsensitiveMatch(transaction.batchHash, batchHash) && accountHistoryChain === chain) {
             return { ...transaction, hash: transactionHash };
           }
@@ -334,11 +343,7 @@ export const unsubscribeToEtherspotNotificationsAction = () => {
   };
 };
 
-const handleAccountUpdatedNotification = (
-  notification: any,
-  chain: Chain,
-  dispatch: Dispatch,
-) => {
+const handleAccountUpdatedNotification = (notification: any, chain: Chain, dispatch: Dispatch) => {
   dispatch(refreshEtherspotAccountsAction());
 };
 

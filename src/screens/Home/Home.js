@@ -19,14 +19,17 @@
 */
 
 import * as React from 'react';
-import { useNavigation } from 'react-navigation-hooks';
+import { BackHandler } from 'react-native';
+import { useNavigation, useFocusEffect } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'translations/translate';
 import { ENSNodeStates } from 'etherspot';
+import Swiper from 'react-native-swiper';
 
 // Actions
-import { fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
+import { fetchAllAccountsAssetsBalancesAction } from 'actions/assetsActions';
 import { refreshEtherspotAccountsAction } from 'actions/etherspotActions';
+import { fetchAppsHoldingsAction } from 'actions/appsHoldingsActions';
 
 // Components
 import { Container, Content } from 'components/layout/Layout';
@@ -37,12 +40,12 @@ import Stories from 'components/Stories';
 import UserNameAndImage from 'components/UserNameAndImage';
 import WalletConnectRequests from 'screens/WalletConnect/Requests';
 import Tooltip from 'components/Tooltip';
-import Modal from 'components/Modal';
 import Banner from 'components/Banner/Banner';
 import { Spacing } from 'components/legacy/Layout';
+import WalletConnectCamera from 'components/QRCodeScanner/WalletConnectCamera';
 
 // Constants
-import { MENU, HOME_HISTORY, REGISTER_ENS } from 'constants/navigationConstants';
+import { MENU, HOME_HISTORY, REGISTER_ENS, CONNECT_FLOW } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
@@ -62,17 +65,20 @@ import GovernanceCallBanner from 'screens/GovernanceCall/GovernanceCallBanner';
 import { sumRecord } from 'utils/bigNumber';
 import { calculateTotalBalancePerCategory } from 'utils/totalBalances';
 import { useThemeColors } from 'utils/themes';
-import { getSupportedBiometryType } from 'utils/keychain';
-import { getEnsNodeState } from 'utils/accounts';
+import { getEnsNodeState, getActiveAccount, findKeyBasedAccount } from 'utils/accounts';
 import { getActiveScreenName } from 'utils/navigation';
+
+// Hooks
+import useWalletConnect from 'hooks/useWalletConnect';
+import { useBioMetricsPopup } from 'hooks/biometrics';
 
 // Local
 import BalanceSection from './BalanceSection';
 import AssetsSection from './AssetsSection';
 import FloatingActions from './FloatingActions';
 import { useAccountCollectibleCounts } from './utils';
-import BiometricModal from '../../components/BiometricModal/BiometricModal';
 import AppsButton from './AppsButton';
+import TransactionNotification from './components/TransactionNotification';
 
 // Redux
 import { fetchNativeIntegration } from '../../redux/actions/native-integration-actions';
@@ -82,22 +88,36 @@ import visibleBalanceSession from '../../services/visibleBalance';
 
 // Actions
 import { saveDbAction } from '../../actions/dbActions';
+import Assets from '../Assets/Assets';
 
 function Home() {
   const navigation = useNavigation();
   const colors = useThemeColors();
   const { t } = useTranslation();
+  const swiperRef = React.useRef(null);
+
+  useBioMetricsPopup();
 
   const accountTotalBalances = useRootSelector(accountTotalBalancesSelector);
   const accountCollectibleCounts = useAccountCollectibleCounts();
   const user = useUser();
   const dispatch = useDispatch();
   const etherspotAccount = useRootSelector(etherspotAccountSelector);
-  const wallet = useRootSelector((root) => root.wallet.data);
   const accountAddress = useRootSelector(activeAccountAddressSelector);
+  const { switchAccountTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
+
+  const { connectToConnector } = useWalletConnect();
+
   const [showAccountSwitchTooltip, setShowAccountSwitchTooltip] = React.useState(false);
   const [showENSTooltip, setShowENSSwitchTooltip] = React.useState(false);
   const [balanceVisible, setBalanceVisible] = React.useState(true);
+  const [currentSwiperIndex, setCurrentSwiperIndex] = React.useState(1);
+
+  const accounts = useAccounts();
+  const keyBasedAccount: any = findKeyBasedAccount(accounts);
+  const activeAccount: any = getActiveAccount(accounts);
+
+  const isKeyBasedAccount = activeAccount === keyBasedAccount;
 
   const canSwitchAccount = useAccounts().length > 1;
   const ensNodeState = getEnsNodeState(etherspotAccount);
@@ -111,24 +131,34 @@ function Home() {
   const totalBalance = sumRecord(balancePerCategory);
   const screenName = getActiveScreenName(navigation);
 
-  const isRefreshing = useRootSelector(({ totalBalances }) => !!totalBalances.isFetching);
+  const isRefreshing = useRootSelector(({ assetsBalances }) => !!assetsBalances.isFetching);
 
   React.useEffect(() => {
     dispatch(fetchNativeIntegration());
     callVisibleBalanceFunction();
-    setTimeout(() => {
-      if (!wallet) {
-        getSupportedBiometryType((biometryType) => {
-          if (biometryType) {
-            Modal.open(() => <BiometricModal biometricType={biometryType} />);
-          } else {
-            Modal.open(() => <BiometricModal hasNoBiometrics />);
-          }
-        });
-      }
-    }, 1000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        if (currentSwiperIndex === 0) {
+          swiperRef.current?.scrollBy(1);
+        }
+        if (currentSwiperIndex === 1) {
+          return false;
+        }
+        if (currentSwiperIndex === 2) {
+          swiperRef.current?.scrollBy(-1);
+        }
+        return true;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [currentSwiperIndex]),
+  );
 
   const callVisibleBalanceFunction = async () => {
     const response = await visibleBalanceSession();
@@ -154,8 +184,9 @@ function Home() {
   }, [canSwitchAccount, accountSwitchTooltipDismissed]);
 
   const onRefresh = () => {
+    dispatch(fetchAllAccountsAssetsBalancesAction());
     dispatch(refreshEtherspotAccountsAction());
-    dispatch(fetchAllAccountsTotalBalancesAction());
+    dispatch(fetchAppsHoldingsAction());
   };
 
   const onBalanceClick = async () => {
@@ -163,69 +194,109 @@ function Home() {
     setBalanceVisible(!balanceVisible);
   };
 
+  const validateUri = (uri: string): boolean => {
+    return uri.startsWith('wc:');
+  };
+
+  const handleUri = (uri: string) => {
+    if (!uri.startsWith('wc:')) return;
+    connectToConnector(uri);
+  };
+
+  const onNavigateWallet = () => {
+    navigation.navigate(CONNECT_FLOW);
+  };
+
   return (
-    <Container>
-      <HeaderBlock
-        leftItems={[{ svgIcon: 'menu', color: colors.basic020, onPress: () => navigation.navigate(MENU) }]}
-        centerItems={[
-          {
-            custom: <UserNameAndImage user={user?.username} address={accountAddress} />,
-          },
-        ]}
-        rightItems={[{ svgIcon: 'history', color: colors.basic020, onPress: () => navigation.navigate(HOME_HISTORY) }]}
-        navigation={navigation}
-        noPaddingTop
+    <Swiper ref={swiperRef} loop={false} showsPagination={false} index={1} onIndexChanged={setCurrentSwiperIndex}>
+      {/* Left Scanner Content */}
+      <WalletConnectCamera
+        visibleCamera={currentSwiperIndex === 0}
+        validator={validateUri}
+        onRead={handleUri}
+        onClose={() => swiperRef.current?.scrollBy(1)}
+        onNavigateWallet={onNavigateWallet}
       />
 
-      {/* this should stay first element, avoid putting it inside UserNameAndImage */}
-      {canSwitchAccount && (
-        <Tooltip
-          isVisible={!accountSwitchTooltipDismissed && showAccountSwitchTooltip}
-          body={t('tooltip.switchAccountsByTappingHere')}
-          wrapperStyle={{ zIndex: 9999, top: -10, position: 'relative' }}
-        />
-      )}
+      {/* Center Home Content */}
+      <>
+        <Container>
+          <HeaderBlock
+            leftItems={[{ svgIcon: 'menu', color: colors.basic020, onPress: () => navigation.navigate(MENU) }]}
+            centerItems={[
+              {
+                custom: <UserNameAndImage user={user?.username} address={accountAddress} />,
+              },
+            ]}
+            rightItems={[
+              { svgIcon: 'history', color: colors.basic020, onPress: () => navigation.navigate(HOME_HISTORY) },
+            ]}
+            navigation={navigation}
+            noPaddingTop
+          />
 
-      {showEnsTooltip && (
-        <Tooltip
-          isVisible={!user?.username && showENSTooltip}
-          body={t('tooltip.registerENS')}
-          wrapperStyle={{ zIndex: 9999, top: -10, position: 'relative' }}
-          onPress={() => navigation.navigate(REGISTER_ENS)}
-        />
-      )}
-      <Content
-        contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
-        paddingHorizontal={0}
-        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
-      >
-        <Stories />
+          {/* this should stay first element, avoid putting it inside UserNameAndImage */}
+          {canSwitchAccount && (
+            <Tooltip
+              isVisible={!accountSwitchTooltipDismissed && showAccountSwitchTooltip}
+              body={t('tooltip.switchAccountsByTappingHere')}
+              wrapperStyle={{ zIndex: 9999, top: -10, position: 'relative' }}
+            />
+          )}
 
-        <BalanceSection balanceInFiat={totalBalance} showBalance={balanceVisible} onBalanceClick={onBalanceClick} />
+          <Tooltip
+            isVisible={!switchAccountTooltipDismissed && isKeyBasedAccount && !showAccountSwitchTooltip}
+            body={t('tooltip.switch_account')}
+            wrapperStyle={{ zIndex: 9999, top: -10, position: 'relative' }}
+          />
 
-        <WalletConnectRequests />
+          {showEnsTooltip && (
+            <Tooltip
+              isVisible={!user?.username && showENSTooltip}
+              body={t('tooltip.registerENS')}
+              wrapperStyle={{ zIndex: 9999, top: -10, position: 'relative' }}
+              onPress={() => navigation.navigate(REGISTER_ENS)}
+            />
+          )}
+          <Content
+            contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
+            paddingHorizontal={0}
+            refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
+          >
+            <Stories />
 
-        <Spacing h={13} />
+            <BalanceSection balanceInFiat={totalBalance} showBalance={balanceVisible} onBalanceClick={onBalanceClick} />
 
-        <GovernanceCallBanner />
+            <WalletConnectRequests />
 
-        <Banner screenName={screenName} bottomPosition={false} />
+            <Spacing h={13} />
 
-        {/* <ChartsSection balancePerCategory={balancePerCategory} balancePerChain={balancePerChain} /> */}
+            <GovernanceCallBanner />
 
-        <AssetsSection
-          visibleBalance={balanceVisible}
-          accountTotalBalances={accountTotalBalances}
-          accountCollectibleCounts={accountCollectibleCounts}
-        />
+            <TransactionNotification />
 
-        <Banner screenName={screenName} bottomPosition />
+            <Banner screenName={screenName} bottomPosition={false} />
 
-        <AppsButton response={nativeIntegrationResponse} navigation={navigation} isShowLabel />
-      </Content>
+            {/* <ChartsSection balancePerCategory={balancePerCategory} balancePerChain={balancePerChain} /> */}
 
-      <FloatingActions />
-    </Container>
+            <AssetsSection
+              visibleBalance={balanceVisible}
+              accountTotalBalances={accountTotalBalances}
+              accountCollectibleCounts={accountCollectibleCounts}
+            />
+
+            <Banner screenName={screenName} bottomPosition />
+
+            <AppsButton response={nativeIntegrationResponse} navigation={navigation} isShowLabel />
+          </Content>
+
+          <FloatingActions />
+        </Container>
+      </>
+
+      {/* Right Side Assets content */}
+      <Assets onBackPress={() => swiperRef.current?.scrollBy(-1)} />
+    </Swiper>
   );
 }
 

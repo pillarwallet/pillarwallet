@@ -17,14 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import {
-  validatePin,
-  isValidAddress,
-  isValidAddressOrEnsName,
-  hasAllValues,
-  isValidEmail,
-  isValidPhone,
-} from 'utils/validators';
+import { validatePin, isValidAddress, hasAllValues, isValidEmail, isValidPhone } from 'utils/validators';
 import t from 'translations/translate';
 
 describe('Validators', () => {
@@ -55,40 +48,6 @@ describe('Validators', () => {
 
     it('should return false for the invalid ETH address', () => {
       expect(isValidAddress('Jon Snow')).toBeFalsy();
-    });
-  });
-
-  describe('isValidAddressOrEnsName', () => {
-    it('should return true for the valid ETH address', () => {
-      expect(isValidAddressOrEnsName('0xb0604b2d7FBD6cD53f00fA001504135b7aEC9B4D')).toBeTruthy();
-    });
-
-    it('should return true for the valid ENS .eth name', () => {
-      expect(isValidAddressOrEnsName('test.eth')).toBeTruthy();
-    });
-
-    it('should return true for the valid ENS .crypto name', () => {
-      expect(isValidAddressOrEnsName('test.crypto')).toBeTruthy();
-    });
-
-    it('should return true for the valid ENS .zil name', () => {
-      expect(isValidAddressOrEnsName('test.zil')).toBeTruthy();
-    });
-
-    it('should return true for the valid ENS name with subdomain', () => {
-      expect(isValidAddressOrEnsName('pillar.test.eth')).toBeTruthy();
-    });
-
-    it('should return false for the unsupported ENS name', () => {
-      expect(isValidAddressOrEnsName('test.com')).toBeFalsy();
-    });
-
-    it('should return false for the wrong ENS name', () => {
-      expect(isValidAddressOrEnsName('testeth')).toBeFalsy();
-    });
-
-    it('should return false for the invalid ETH address', () => {
-      expect(isValidAddressOrEnsName('Jon Snow')).toBeFalsy();
     });
   });
 

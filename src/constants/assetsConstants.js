@@ -22,6 +22,8 @@ import { ethers } from 'ethers';
 // reducer
 export const SET_SUPPORTED_ASSETS = 'SET_SUPPORTED_ASSETS';
 export const SET_CHAIN_SUPPORTED_ASSETS = 'SET_CHAIN_SUPPORTED_ASSETS';
+export const SET_POPULAR_ASSETS = 'SET_POPULAR_ASSETS';
+export const SET_CHAIN_POPULAR_ASSETS = 'SET_CHAIN_POPULAR_ASSETS';
 
 // fiat
 export const USD = ('USD': 'USD');
@@ -38,6 +40,8 @@ export const XDAI = 'xDAI';
 export const AVAX = 'AVAX';
 export const OP = 'OP';
 
+export const NFT = 'NFT';
+
 export const SNX = 'SNX';
 export const RSPT = 'RSPT';
 export const WETH = 'WETH';
@@ -49,6 +53,7 @@ export const USDT = 'USDT';
 export const USDC = 'USDC';
 const PPT = 'PPT';
 export const DAI = 'DAI';
+export const BUSD = 'BUSD';
 const KNC = 'KNC';
 const VERI = 'VERI';
 const BNT = 'BNT';
@@ -59,6 +64,7 @@ const ZRX = 'ZRX';
 export const TUSD = 'TUSD';
 export const mUSD = 'mUSD';
 const YFI = 'YFI';
+export const FIO = 'FIO';
 
 // BTC tokens
 export const BTC = 'BTC';
@@ -133,6 +139,7 @@ export const ASSET_CATEGORY = {
   INVESTMENTS: ('investments': 'investments'),
   LIQUIDITY_POOLS: ('liquidityPools': 'liquidityPools'),
   COLLECTIBLES: ('collectibles': 'collectibles'),
+  APPS: ('apps': 'apps'),
   REWARDS: ('rewards': 'rewards'),
 };
 
@@ -146,3 +153,11 @@ export const PLR_ADDRESS_XDAI = ''; // TODO: to be added when available
 export const PLR_ADDRESS_ETHEREUM_MAINNET = '0xe3818504c1b32bf1557b16c238b2e01fd3149c17';
 export const PLR_ADDRESS_ETHEREUM_KOVAN_TESTNET = '0xdd3122831728404a7234e5981677a5fd0a9727fe';
 export const PLR_ADDRESS_AVALANCHE = ''; // TODO: to be added when available
+
+export const CMC_STABLE_COINS = 'CmcStableCoins';
+
+export const SET_STABLE_TOKEN = 'SET_STABLE_TOKEN';
+
+export const ETHERSPOT_STABLE_COIN = 'EtherspotStableCoins';
+export const NFT_FLAG = 'NFT_FLAG';
+export const ETHERSPOT_POPULAR_COIN = 'EtherspotPopularTokens';

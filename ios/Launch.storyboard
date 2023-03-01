@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
     <device id="retina6_5" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -15,36 +16,16 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SplashImageBottom" translatesAutoresizingMaskIntoConstraints="NO" id="zKz-JM-yeO">
-                                <rect key="frame" x="39" y="734" width="375" height="162"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="zKz-JM-yeO" secondAttribute="height" multiplier="375:162" id="9Sb-zy-v4h"/>
-                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="162" id="mUg-dX-83k"/>
-                                </constraints>
-                            </imageView>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SplashImageTop" translatesAutoresizingMaskIntoConstraints="NO" id="4l6-Da-zKA">
-                                <rect key="frame" x="0.0" y="0.0" width="216" height="162"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="162" id="05y-1d-wVe"/>
-                                    <constraint firstAttribute="width" secondItem="4l6-Da-zKA" secondAttribute="height" multiplier="4:3" id="FnF-ch-9QJ"/>
-                                </constraints>
-                            </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SplashLogo" translatesAutoresizingMaskIntoConstraints="NO" id="t5e-05-82b">
-                                <rect key="frame" x="111" y="420" width="192" height="56"/>
+                                <rect key="frame" x="148.66666666666666" y="362" width="116.99999999999997" height="172"/>
                             </imageView>
                         </subviews>
-                        <color key="backgroundColor" red="0.10196078431372549" green="0.10196078431372549" blue="0.10196078431372549" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
+                        <color key="backgroundColor" red="0" green="0" blue="0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="4l6-Da-zKA" firstAttribute="height" relation="lessThanOrEqual" secondItem="Bcu-3y-fUS" secondAttribute="height" multiplier="0.4" id="3qb-PV-vW3"/>
-                            <constraint firstAttribute="bottom" secondItem="zKz-JM-yeO" secondAttribute="bottom" id="Duk-ja-Odp"/>
-                            <constraint firstItem="zKz-JM-yeO" firstAttribute="trailing" secondItem="Bcu-3y-fUS" secondAttribute="trailing" id="FRA-sC-yHI"/>
                             <constraint firstItem="t5e-05-82b" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="Fqk-NX-jrF"/>
                             <constraint firstItem="t5e-05-82b" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="RNv-9j-Exn"/>
-                            <constraint firstItem="4l6-Da-zKA" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="XMN-Rs-xPi"/>
-                            <constraint firstItem="4l6-Da-zKA" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" id="bgx-AE-Cto"/>
-                            <constraint firstItem="zKz-JM-yeO" firstAttribute="height" relation="lessThanOrEqual" secondItem="Bcu-3y-fUS" secondAttribute="height" multiplier="0.4" id="bmZ-T5-BU0"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -53,8 +34,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="SplashImageBottom" width="375" height="162"/>
-        <image name="SplashImageTop" width="216" height="162"/>
-        <image name="SplashLogo" width="192" height="56"/>
+        <image name="SplashLogo" width="117" height="172"/>
     </resources>
 </document>

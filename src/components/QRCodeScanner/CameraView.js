@@ -24,28 +24,29 @@ import ImagePicker from 'react-native-image-crop-picker';
 import jsQR from 'jsqr';
 import Jimp from 'jimp/es';
 import t from 'translations/translate';
+import styled from 'styled-components/native';
+
+// Components
 import Header from 'components/Header';
 import Toast from 'components/Toast';
-import styled from 'styled-components/native';
 import IconButton from 'components/IconButton';
-import { fontSizes } from 'utils/variables';
-import { getDeviceHeight, getDeviceWidth } from 'utils/common';
 import { Container } from 'components/legacy/Layout';
 import Loader from 'components/Loader';
 
-import type { Barcode } from 'react-native-camera';
+// Utils
+import { fontSizes } from 'utils/variables';
 
-const screenWidth = getDeviceWidth();
-const screenHeight = getDeviceHeight();
+// Type
+import type { Barcode } from 'react-native-camera';
 
 const SquareContainer = styled.View`
   position: absolute;
   justify-content: center;
   display: flex;
-  height: ${props => props.size}px;
-  width: ${props => props.size}px;
+  height: ${(props) => props.size}px;
+  width: ${(props) => props.size}px;
   border-width: 4px;
-  border-color: ${props => props.color};
+  border-color: ${(props) => props.color};
   background-color: transparent;
 `;
 
@@ -55,7 +56,7 @@ const HeaderWrapper = styled.SafeAreaView`
 `;
 
 const ButtonWrapper = styled.View`
-  width: 100%;
+  width: 33%;
   position: absolute;
   bottom: 60px;
   justify-content: center;
@@ -71,14 +72,14 @@ type Props = {
 
 type State = {
   isLoading: boolean,
-}
+};
 
 const ERROR_TIMEOUT = 10000;
 
 export default class CameraView extends React.Component<Props, State> {
   state = {
     isLoading: false,
-  }
+  };
 
   timeout: TimeoutID;
 
@@ -120,23 +121,20 @@ export default class CameraView extends React.Component<Props, State> {
       } else {
         throw new Error();
       }
-    } catch (e) { this.handleError(e.toString()); }
+    } catch (e) {
+      this.handleError(e.toString());
+    }
     clearTimeout(this.timeout);
   };
 
   render() {
-    const {
-      onQRRead,
-      onCancel,
-      rectangleSize,
-      rectangleColor,
-    } = this.props;
+    const { onQRRead, onCancel, rectangleSize, rectangleColor } = this.props;
 
     const { isLoading } = this.state;
 
     if (isLoading) {
       return (
-        <Container center >
+        <Container center>
           <Loader noMessages />
         </Container>
       );
@@ -146,8 +144,7 @@ export default class CameraView extends React.Component<Props, State> {
       <RNCamera
         captureAudio={false}
         style={{
-          width: screenWidth,
-          height: screenHeight,
+          flex: 1,
           alignItems: 'center',
           justifyContent: 'center',
         }}
@@ -158,6 +155,7 @@ export default class CameraView extends React.Component<Props, State> {
           <Header light flexStart onClose={onCancel} />
         </HeaderWrapper>
         <SquareContainer color={rectangleColor} size={rectangleSize} />
+
         <ButtonWrapper>
           <IconButton
             icon="gallery"

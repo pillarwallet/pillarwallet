@@ -16,7 +16,7 @@
 */
 
 import * as React from 'react';
-import { SectionList, useWindowDimensions } from 'react-native';
+import { Platform, SectionList, useWindowDimensions } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { useNavigation } from 'react-navigation-hooks';
 import { useInteractionManager } from '@react-native-community/hooks';
@@ -61,6 +61,9 @@ import { isLightTheme } from 'utils/themes';
 import type { SectionBase } from 'utils/types/react-native';
 import { type Chain } from 'models/Chain';
 import type { WalletConnectCmsApp } from 'models/WalletConnectCms';
+
+// Constant
+import { NFT } from 'constants/assetsConstants';
 
 // Local
 import WalletConnectListItem from './components/WalletConnectListItem';
@@ -252,6 +255,14 @@ const useSectionData = (chain: ?Chain, numberOfColumns: number): SectionData => 
 
   const categories = categoriesQuery.data;
   const apps = filterAppsByChain(appsQuery.data, supportedChains, chain);
+
+  if (Platform.OS === 'ios') {
+    const nft = categories.find((item) => item.title === NFT);
+    const index = categories.indexOf(nft);
+    if (index !== -1) {
+      categories?.splice(index, 1);
+    }
+  }
 
   const data = mapNotNil(categories, ({ id, title }) => {
     const matchingApps = apps.filter((app) => app.categoryId === id);

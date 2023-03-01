@@ -40,6 +40,7 @@ export type AppItem = {|
 
 export function useConnectedAppItems(): AppItem[] {
   const { activeConnectors } = useWalletConnect();
+
   return mapNotNil(activeConnectors, mapConnectorToItem);
 }
 

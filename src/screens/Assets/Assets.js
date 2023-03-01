@@ -30,6 +30,9 @@ import TabView from 'components/layout/TabView';
 // Constants
 import { ASSET_CATEGORY as CATEGORY } from 'constants/assetsConstants';
 
+// Selector
+import { useNftFlag } from 'selectors';
+
 // Utils
 import { useAssetCategoriesConfig } from 'utils/uiConfig';
 
@@ -38,26 +41,31 @@ import type { AssetCategory } from 'models/AssetCategory';
 
 // Local
 import WalletTab from './wallet/WalletTab';
-import DepositsTab from './deposits/DepositsTab';
 import InvestmentsTab from './investments/InvestmentsTab';
-import LiquidityPoolsTab from './liquidityPools/LiquidityPoolsTab';
 import CollectiblesTab from './collectibles/CollectiblesTab';
 
+type Props = {
+  onBackPress?: () => void,
+};
 
-function Assets() {
+function Assets({ onBackPress }: Props) {
   const navigation = useNavigation();
   const { t } = useTranslation();
   const config = useAssetCategoriesConfig();
+  const visibleNFTs = useNftFlag();
 
   const items = [
     { key: CATEGORY.WALLET, title: config[CATEGORY.WALLET].title, component: WalletTab },
-    { key: CATEGORY.DEPOSITS, title: config[CATEGORY.DEPOSITS].title, component: DepositsTab },
-    { key: CATEGORY.INVESTMENTS, title: config[CATEGORY.INVESTMENTS].title, component: InvestmentsTab },
-    { key: CATEGORY.LIQUIDITY_POOLS, title: config[CATEGORY.LIQUIDITY_POOLS].title, component: LiquidityPoolsTab },
+    // { key: CATEGORY.DEPOSITS, title: config[CATEGORY.DEPOSITS].title, component: DepositsTab },
+    // { key: CATEGORY.INVESTMENTS, title: config[CATEGORY.INVESTMENTS].title, component: InvestmentsTab },
+    { key: CATEGORY.APPS, title: config[CATEGORY.APPS].title, component: InvestmentsTab },
     // Temporarily hide rewards tab until rewards fetching is implemented
     // { key: CATEGORY.REWARDS, title: config[CATEGORY.REWARDS].title, component: RewardsTab },
-    { key: CATEGORY.COLLECTIBLES, title: config[CATEGORY.COLLECTIBLES].title, component: CollectiblesTab },
   ];
+
+  if (visibleNFTs) {
+    items.push({ key: CATEGORY.COLLECTIBLES, title: config[CATEGORY.COLLECTIBLES].title, component: CollectiblesTab });
+  }
 
   const initialCategory: ?AssetCategory = navigation.getParam('category');
 
@@ -68,10 +76,11 @@ function Assets() {
     <Container>
       <HeaderBlock
         centerItems={[{ title: t('title.assets') }]}
-        navigation={navigation}
         noPaddingTop
+        navigation={navigation}
+        customOnBack={() => (onBackPress ? onBackPress() : navigation.pop())}
       />
-      <TabView items={items} tabIndex={tabIndex} onTabIndexChange={setTabIndex} scrollEnabled />
+      <TabView items={items} tabIndex={tabIndex} onTabIndexChange={setTabIndex} isNavigateToHome={!!onBackPress} />
     </Container>
   );
 }

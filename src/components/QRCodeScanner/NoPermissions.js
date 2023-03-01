@@ -25,7 +25,6 @@ import Header from 'components/Header';
 import { BaseText } from 'components/legacy/Typography';
 import styled from 'styled-components/native';
 
-
 type Props = {
   onClose: () => void,
 };
@@ -33,6 +32,7 @@ type Props = {
 const HeaderWrapper = styled.SafeAreaView`
   margin-bottom: auto;
   width: 100%;
+  background-color: ${({ theme }) => theme.colors.background};
 `;
 
 const Body = styled.View`
@@ -40,10 +40,12 @@ const Body = styled.View`
   align-items: center;
   justify-content: center;
   padding: 10px;
+  background-color: ${({ theme }) => theme.colors.background};
 `;
 
 const PermissionsText = styled(BaseText)`
   color: ${themedColors.control};
+  padding-horizontal: 20px;
 `;
 
 export default class NoPermissions extends PureComponent<Props> {
@@ -56,9 +58,7 @@ export default class NoPermissions extends PureComponent<Props> {
           <Header light flexStart onClose={onClose} />
         </HeaderWrapper>
         <Body>
-          <PermissionsText>
-            {t('error.noCameraPermission')}
-          </PermissionsText>
+          <PermissionsText>{t('error.noCameraPermission')}</PermissionsText>
         </Body>
       </Fragment>
     );

@@ -24,7 +24,7 @@ import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
 
 // Actions
-import { dismissAccountSwitchTooltipAction } from 'actions/appSettingsActions';
+import { dismissAccountSwitchTooltipAction, dismissSwitchAccountTooltipAction } from 'actions/appSettingsActions';
 
 // Components
 import ProfileImage from 'components/ProfileImage';
@@ -38,6 +38,7 @@ import { useAccounts } from 'selectors';
 // Utils
 import { fontStyles, spacing } from 'utils/variables';
 import { useThemeColors } from 'utils/themes';
+import { getUserTitle, getENSUserTitle } from 'utils/accounts';
 
 // Screen
 import AccountsModal from 'src/screens/Accounts';
@@ -53,9 +54,14 @@ const UserNameAndImage = ({ user, address }: Props) => {
   const dispatch = useDispatch();
 
   const canSwitchAccount = useAccounts().length > 1;
+  const accounts = useAccounts();
+
+  const userTitle = getUserTitle(accounts, address);
+  const ensUserTitle = getENSUserTitle(accounts, user);
 
   const onAccountSwitchPress = () => {
     dispatch(dismissAccountSwitchTooltipAction());
+    dispatch(dismissSwitchAccountTooltipAction(true));
     Modal.open(() => <AccountsModal navigation={navigation} name={user} />);
   };
 
@@ -63,11 +69,11 @@ const UserNameAndImage = ({ user, address }: Props) => {
     <Wrapper onPress={canSwitchAccount ? onAccountSwitchPress : null}>
       <ProfileImage userName={!user ? address : user} diameter={24} />
 
-      {user && <UserName>{user}</UserName>}
+      {user && <UserName>{ensUserTitle}</UserName>}
 
       {!user && (
         <Address numberOfLines={1} ellipsizeMode="middle">
-          {address}
+          {userTitle}
         </Address>
       )}
 

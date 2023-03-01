@@ -20,50 +20,74 @@
 
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
 import SafeAreaView from 'react-native-safe-area-view';
 import styled from 'styled-components/native';
 import Emoji from 'react-native-emoji';
 
 // Components
 import Text from 'components/core/Text';
+import Modal from 'components/Modal';
 
 // Hooks
 import useWalletConnect from 'hooks/useWalletConnect';
 
-// Constants
-import { WALLETCONNECT_CONNECTED_APPS } from 'constants/navigationConstants';
-
 // Utils
 import { spacing } from 'utils/variables';
 
-const ConnectedAppsFloatingButton = () => {
-  const navigation = useNavigation();
+// Local
+import WalletConnectAppsCamera from '../../ConnectedApps/WalletConnectAppsCamera';
 
+type Props = {|
+  style?: any,
+  isInCameraFloating?: boolean,
+|};
+
+const ConnectedAppsFloatingButton = ({ style, isInCameraFloating }: Props) => {
   const { activeConnectors } = useWalletConnect();
 
   if (activeConnectors.length === 0) {
     return null;
   }
 
-  const navigateToConnectedApps = () => {
-    navigation.navigate(WALLETCONNECT_CONNECTED_APPS);
+  const openConnectedApps = () => {
+    Modal.open(() => {
+      return <WalletConnectAppsCamera />;
+    });
   };
+
+  const ButtonContent = () => (
+    <TouchableOpacity onPress={openConnectedApps}>
+      <ItemContainer>
+        <Text>
+          <Emoji name="zap" /> {activeConnectors.length}
+        </Text>
+      </ItemContainer>
+    </TouchableOpacity>
+  );
+
+  if (isInCameraFloating) {
+    return (
+      <Container forceInset={{ bottom: 'always' }} style={style}>
+        <ButtonContent />
+      </Container>
+    );
+  }
 
   return (
     <FloatingContainer forceInset={{ bottom: 'always' }}>
-      <TouchableOpacity onPress={navigateToConnectedApps}>
-        <ItemContainer>
-          <Text>
-            <Emoji name="zap" /> {activeConnectors.length}
-          </Text>
-        </ItemContainer>
-      </TouchableOpacity>
+      <ButtonContent />
     </FloatingContainer>
   );
 };
 
 export default ConnectedAppsFloatingButton;
+
+const Container = styled.View`
+  position: absolute;
+  right: ${spacing.extraLarge}px;
+  bottom: ${spacing.large}px;
+  align-self: flex-end;
+`;
 
 const FloatingContainer = styled(SafeAreaView)`
   position: absolute;
@@ -73,7 +97,7 @@ const FloatingContainer = styled(SafeAreaView)`
 `;
 
 const ItemContainer = styled.View`
-  padding: ${spacing.mediumLarge}px ${spacing.medium}px ${spacing.mediumLarge}px;
+  padding: ${spacing.medium}px ${spacing.medium}px ${spacing.mediumLarge}px;
   border-radius: 100px;
   background-color: ${({ theme }) => theme.colors.basic050};
   shadow-opacity: 0.05;

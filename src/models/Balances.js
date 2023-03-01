@@ -46,6 +46,12 @@ export type WalletAssetBalance = {|
   balance: string,
 |};
 
+export type AssetBalance = {|
+  address: string,
+  balance: string,
+  symbol: string,
+|};
+
 export type ServiceAssetBalance = {|
   key: string,
   service: string,

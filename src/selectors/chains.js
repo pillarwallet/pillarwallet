@@ -55,6 +55,7 @@ export const isDeployedOnChainSelector: Selector<ChainRecord<boolean>> = createS
         binance: isEtherspotAccountDeployed(account, CHAIN.BINANCE),
         avalanche: isEtherspotAccountDeployed(account, CHAIN.AVALANCHE),
         optimism: isEtherspotAccountDeployed(account, CHAIN.OPTIMISM),
+        arbitrum: isEtherspotAccountDeployed(account, CHAIN.ARBITRUM),
         // Note: hardcoded due to business requirements
         polygon: true,
         xdai: true,

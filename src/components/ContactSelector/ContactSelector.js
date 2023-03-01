@@ -37,6 +37,7 @@ import { spacing } from 'utils/variables';
 
 // Types
 import type { Contact } from 'models/Contact';
+import type { Chain } from 'models/Chain';
 
 export type ContactSelectorProps = {|
   contacts?: Contact[],
@@ -44,6 +45,7 @@ export type ContactSelectorProps = {|
   onSelectContact?: (contact: ?Contact) => mixed,
   placeholder?: string,
   disabled?: boolean,
+  chain?: ?Chain,
 |};
 
 const SelectorPill = styled.TouchableOpacity`
@@ -65,19 +67,20 @@ const ContactSelector = ({
   onSelectContact,
   placeholder = t('label.whereToSend'),
   disabled,
+  chain,
 }: ContactSelectorProps) => {
   const [isResolvingContact, setIsResolvingContact] = React.useState(false);
 
   const handleSelectContact = async (contact: ?Contact) => {
     setIsResolvingContact(true);
-    const resolvedContact = await resolveContact(contact);
+    const resolvedContact = await resolveContact(contact, chain);
     setIsResolvingContact(false);
 
     onSelectContact?.(resolvedContact);
   };
 
   const openOptions = () => {
-    Modal.open(() => <ContactSelectorModal contacts={contacts} onSelectContact={handleSelectContact} />);
+    Modal.open(() => <ContactSelectorModal chain={chain} contacts={contacts} onSelectContact={handleSelectContact} />);
   };
 
   const renderContact = () => {

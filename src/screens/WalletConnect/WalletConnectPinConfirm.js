@@ -48,6 +48,7 @@ import {
   ETH_SIGN_TYPED_DATA,
   ETH_SIGN_TYPED_DATA_V4,
   PERSONAL_SIGN,
+  WALLET_SWITCH_CHAIN,
 } from 'constants/walletConnectConstants';
 import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
 
@@ -58,7 +59,6 @@ import { activeAccountSelector } from 'selectors';
 import type { TransactionPayload, TransactionStatus } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
-
 
 type Props = {
   sendAsset: (
@@ -72,15 +72,10 @@ type Props = {
   activeAccount: ?Account,
 };
 
-const WalletConnectPinConfirmScreeen = ({
-  resetIncorrectPassword,
-  useBiometrics,
-  sendAsset,
-  activeAccount,
-}: Props) => {
+const WalletConnectPinConfirmScreeen = ({ resetIncorrectPassword, useBiometrics, sendAsset, activeAccount }: Props) => {
   const [isChecking, setIsChecking] = useState(false);
   const navigation = useNavigation();
-  const { approveCallRequest, rejectCallRequest } = useWalletConnect();
+  const { approveCallRequest, switchEthereumChainConnectorRequest, rejectCallRequest } = useWalletConnect();
   const { t } = useTranslation();
 
   const callRequest = navigation.getParam('callRequest');
@@ -114,7 +109,9 @@ const WalletConnectPinConfirmScreeen = ({
   };
 
   const handleSignTransaction = async (wallet: Wallet): Promise<?string> => {
-    const { params: [transaction] } = callRequest;
+    const {
+      params: [transaction],
+    } = callRequest;
 
     return signTransaction(transaction, wallet).catch(() => {
       rejectCallRequest(callRequest);
@@ -166,9 +163,18 @@ const WalletConnectPinConfirmScreeen = ({
       return;
     }
 
-    const signedResult = method === ETH_SIGN_TX
-      ? await handleSignTransaction(wallet)
-      : await handleSignMessage(wallet);
+    if (method === WALLET_SWITCH_CHAIN) {
+      await switchEthereumChainConnectorRequest(callRequest);
+      Toast.show({
+        message: t('toast.walletConnectRequestApproved'),
+        emoji: 'ok_hand',
+      });
+      dismissScreen();
+
+      return;
+    }
+
+    const signedResult = method === ETH_SIGN_TX ? await handleSignTransaction(wallet) : await handleSignMessage(wallet);
 
     if (signedResult) {
       approveCallRequest(callRequest, signedResult);
@@ -203,7 +209,9 @@ const WalletConnectPinConfirmScreeen = ({
 };
 
 const mapStateToProps = ({
-  appSettings: { data: { useBiometrics } },
+  appSettings: {
+    data: { useBiometrics },
+  },
 }: RootReducerState): $Shape<Props> => ({
   useBiometrics,
 });

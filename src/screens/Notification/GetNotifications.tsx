@@ -18,8 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React from 'react';
-import { Image } from 'react-native';
+import React, { useEffect } from 'react';
+import { Image, Keyboard } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
@@ -45,6 +45,10 @@ function GetNotifincations() {
   const { t, tRoot } = useTranslationWithPrefix('getNotifications');
   const dispatch = useDispatch();
   const navigation = useNavigation();
+
+  useEffect(() => {
+    Keyboard.dismiss();
+  }, [navigation]);
 
   const close = async () => {
     await setNotificationsVisibleStatus(dispatch, navigation, false);

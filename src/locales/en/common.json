@@ -31,6 +31,7 @@
   "totalValue": "Total {{value}}",
   "estimatedValue": "≈ {{value}}",
   "fetching": "Fetching rates…",
+  "fetchingAddress": "Fetching address...",
   "fetch_failed": "Could not fetch rates",
   "availableValue": "Available: {{value}}",
   "ofValue": "of {{value}}",
@@ -53,6 +54,8 @@
   "minute_plural": "{{count}} minutes",
   "tutorialTitle": "Welcome to Pillar!",
   "tutorialSubtitle": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+  "smart_wallet":"Smart Wallet",
+  "key_wallet":"Key Wallet",
 
   "units": {
     "1e3": "{{value}}K",
@@ -68,7 +71,14 @@
     "polygon": "Polygon",
     "avalanche": "Avalanche",
     "optimism": "Optimism",
-    "optimism_kovan": "Optimism Kovan"
+    "optimism_kovan": "Optimism Kovan",
+    "gorli":"Ethereum Görli",
+    "sokol":"Gnosis Sokol",
+    "binance_test":"Binance Testnet",
+    "mumbai":"Polygon Mumbai",
+    "optimism_gorli":"Optimistic Görli",
+    "arbitrum": "Arbitrum",
+    "arbitrum_nitro": "Arbitrum Nitro"
   },
 
   "chainsShort": {
@@ -78,7 +88,8 @@
     "polygon": "Polygon",
     "avalanche": "Avalanche",
     "optimism":"Optimism",
-    "optimism_kovan": "Optimism Kovan"
+    "optimism_kovan": "Optimism Kovan",
+    "arbitrum": "Arbitrum"
   },
 
   "assetCategories": {
@@ -88,6 +99,7 @@
     "liquidityPools": "Liquidity Pools",
     "rewards": "Rewards",
     "datasets": "Datasets",
+    "apps":"Apps",
     "collectibles": "NFTs"
   },
 
@@ -130,7 +142,8 @@
     "unlockWithBiometrics": "Unlock with biometric sensor",
     "welcome": "Welcome to Pillar Wallet!",
     "seedPhrase": "12 words seed phrase",
-    "registerEnsName": "Register ENS name"
+    "registerEnsName": "Register ENS name",
+    "portfolio_riskiness": "Portfolio Riskiness"
   },
 
   "label": {
@@ -220,7 +233,8 @@
     "whereToSend": "Where to send",
     "sendTo": "Send to",
     "walletAddress": "Wallet address",
-    "addressEnsUsername": "Address, ENS, Unstoppable Domains",
+    "addressEnsUsername": "Address, ENS, Unstoppable Domains, FIO",
+    "addressSupportedNames": "Address, ENS, Unstoppable Domains, FIO",
     "walletNotDeployed": "Wallet is not deployed",
     "tokens": "Tokens",
     "collectibles": "NFTs",
@@ -277,6 +291,7 @@
     "archanovaToEtherspot": "Pillar V1 to Etherspot (Pillar V2)",
     "archanovaToEtherspotShort": "Pillar V1 to Etherspot",
     "deployed": "Deployed",
+    "notDeployed": "Not deployed",
     "walletDeployment": "Wallet deployment",
     "pleaseSelect": "Please select",
     "balanceFiatTokenFormat": "Balance {{balanceInFiat}} ({{balance}})",
@@ -286,7 +301,16 @@
     "assetMigrate": "Migrate assets to Etherspot",
     "ensMigrate": "Migrate ENS to Etherspot",
     "transaction_submitted":"Transaction submitted",
-    "on_network": "on {{network}}"
+    "on_network": "on {{network}}",
+    "on_position": "{{position}} position",
+    "of_stable": "{{percentage}}% of stables - {{type}}",
+    "high_risk": "high risk",
+    "risky": "risky",
+    "moderate_risk": "moderate risk",
+    "low_risk": "low risk",
+    "no_risk": "no risk",
+    "risk_assets": "{{percentage}}% of risky assets",
+    "risk_stable": "{{percentage}}% of low risk stables"
   },
 
   "button": {
@@ -414,6 +438,8 @@
     "doNotSendRealEthOrTokens": "Do not send real ETH or ERC20 tokens.",
     "ensNameCopiedToClipboard": "ENS name copied to clipboard.",
     "cameraPermissionMissing": "Camera permissions not granted - cannot open camera preview.",
+    "cameraPermission": "Camera Permission",
+    "needCameraPermission":"The camera permission is needed to open the WalletConnect QR code scanner",
     "didNotReceiveVerificationCodeQuestion": "Didn't receive the code?",
     "instructionsOnBackingUpBackupPhase": "Write down your 12 word backup phrase in the correct order.",
     "backupPhraseVerificationInstructions": "Please select the correct words.",
@@ -426,7 +452,9 @@
     "sessionExpiredReEnterPin": "Login session expired, please enter your PIN to proceed.",
     "addContacts": "Add contacts to address book to easily access favorite addresses for sending assets.",
     "nativeIntegrationWarning":"The following tool gives you direct access to Smart Contracts. This is considered a professional tool and if you don't know what you're doing, please don't attempt to use this tool as it could result in loss of funds.",
-    "ownRisk": "Continue at your own risk."
+    "ownRisk": "Continue at your own risk.",
+    "riskWithType": "Your portfolio is {{type}} right now.",
+    "portfolio_riskiness": "The more you move to stables,\nthe less risk you take on."
   },
 
   "insight": {
@@ -570,7 +598,8 @@
       "alreadyPending": "A connection is already waiting",
       "callRequestRejectFailed": "Call Request reject failed",
       "callRequestApproveFailed": "Call Request approve failed",
-      "invalidRequest": "This WalletConnect request didn't look quite right - please try again",
+      "invalidRequest": "This WalletConnect request didn't look quite right - please try again ",
+      "cannotDetermineChain": "Sorry, but no chain information was found in this request. Please contact {{ dAppName }} ",
       "cannotDetermineEthereumChain": "We couldn't see what Ethereum chain this requests belongs to - please try again",
       "activeAccountDoesNotSupportSelectedChain": "Active account does not support selected Ethereum chain"
     },
@@ -726,7 +755,13 @@
     },
     "connectedApps": {
       "title": "Connected dapps",
-      "connected": "Connected"
+      "connected": "Connected",
+      "switchWallet":"Switch wallet",
+      "switchNetwork":"Switch network",
+      "disconnect":"Disconnect",
+      "etherspot":"Etherspot",
+      "plr_v1":"Pillar v1",
+      "key_based":"Keybased"
     },
     "disconnectModal": {
       "title": "Disconnect",
@@ -1100,6 +1135,12 @@
     "error": {
       "smartWalletNeedToBeActivated": "Smart Wallet needs to be activated to proceed.",
       "unsupportedRequestCallRequestType": "Unsupported Call Request type."
+    },
+    "paragraph":{
+      "undeploy_warning_1": "You are connecting to a wallet that's undeployed, you will not be able to execute any transaction, go to ",
+      "deploy_manager": "Wallet Manager",
+      "undeploy_warning_2": " to deploy.",
+      "archanova_warning": "Using Pillar v1 (Archanova) account you can only connect on Ethereum Mainnet network."
     }
   },
 
@@ -1362,6 +1403,10 @@
         "title": "No routes available",
         "paragraph": "Currently no matching routes from cross-chain services are provided."
       }
+    },
+    "gas_fee_asset":{
+      "title":"Paying fees with",
+      "left":"left"
     }
   },
 
@@ -1559,6 +1604,7 @@
   "tooltip": {
     "switchAccountsByTappingHere": "You can switch accounts by tapping here",
     "start_by_cash":"Start by adding cash",
+    "switch_account": "Switched to your Key Wallet for the Etherspot Dashboard",
     "signInDeFi":"Sign in to DeFi",
     "includesDeploymentFee": "One-time Smart Wallet deployment fee",
     "registerENS": "Register your unique ENS name"
@@ -1592,5 +1638,18 @@
   "getNotifications":{
     "title": "Get notifications",
     "description": "Pillar will notify on your transactions status and requests from dapps. Never spam, always on point."
+  },
+
+  "transactionNotification":{
+    "selling":"Selling",
+    "you_received":"You have received",
+    "sending":"Sending",
+    "you_sent":"You have sent",
+    "to":"to",
+    "sold":"Sold",
+    "on":"on",
+    "for":"for",
+    "gas":"Gas",
+    "time":"Time"
   }
 }

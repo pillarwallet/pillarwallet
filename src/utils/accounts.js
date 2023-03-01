@@ -31,7 +31,6 @@ import type { TranslatedString } from 'models/Translations';
 // local
 import { addressesEqual } from './assets';
 
-
 export const getActiveAccount = (accounts: Account[]): ?Account => {
   return accounts.find(({ isActive }) => isActive);
 };
@@ -77,10 +76,15 @@ export const getActiveAccountAddress = (accounts: Account[]): ?string => {
   return getAccountAddress(activeAccount);
 };
 
-export const findAccountByType = (
-  accounts: Account[],
-  accountType: AccountTypes,
-): ?Account => accounts.find(({ type }) => type === accountType);
+export const getEtherspotAccountAddress = (accounts: Account[]): ?string => {
+  const etherspotAccount = findFirstEtherspotAccount(accounts);
+  if (!etherspotAccount) return null;
+
+  return getAccountAddress(etherspotAccount);
+};
+
+export const findAccountByType = (accounts: Account[], accountType: AccountTypes): ?Account =>
+  accounts.find(({ type }) => type === accountType);
 
 export const findKeyBasedAccount = (accounts: Account[]): ?Account =>
   findAccountByType(accounts, ACCOUNT_TYPES.KEY_BASED);
@@ -95,10 +99,8 @@ export const findFirstSmartWalletAccount = (accounts: Account[]): ?Account =>
   findAccountByType(accounts, ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET) ||
   findAccountByType(accounts, ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET);
 
-export const isSmartWalletAccount = (account: ?Account): boolean => [
-  ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET,
-  ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
-].includes(account?.type);
+export const isSmartWalletAccount = (account: ?Account): boolean =>
+  [ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET, ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET].includes(account?.type);
 
 export const isAccountType = (account: ?Account, type: AccountTypes): boolean %checks =>
   // Note: null checks has to be done separately or flow predicate function is not working correctly.
@@ -106,6 +108,28 @@ export const isAccountType = (account: ?Account, type: AccountTypes): boolean %c
 
 export const isKeyBasedAccount = (account: ?Account): boolean %checks =>
   isAccountType(account, ACCOUNT_TYPES.KEY_BASED);
+
+export const getUserTitle = (accounts: Account[], address: ?string): ?string => {
+  const type = getActiveAccountType(accounts);
+  if (type === ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET) {
+    return t('smart_wallet');
+  }
+  if (type === ACCOUNT_TYPES.KEY_BASED) {
+    return t('key_wallet');
+  }
+  return address;
+};
+
+export const getENSUserTitle = (accounts: Account[], user: ?string): ?string => {
+  if (!user) return null;
+
+  const type = getActiveAccountType(accounts);
+
+  if (type === ACCOUNT_TYPES.KEY_BASED) {
+    return t('key_wallet');
+  }
+  return user;
+};
 
 export const isArchanovaAccount = (account: ?Account): boolean %checks =>
   isAccountType(account, ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET);
@@ -120,7 +144,7 @@ export const getAccountName = (accountType: AccountTypes | TranslatedString): st
     case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
       return t('smartWallet');
     case ACCOUNT_TYPES.KEY_BASED:
-      return t('keyWallet');
+      return t('key_wallet');
     default:
       return '';
   }
@@ -141,9 +165,7 @@ export const findAccountById = (accountId: string, accounts: Account[]): ?Accoun
 };
 
 export const normalizeForEns = (value: string): string => {
-  return value
-    .toLowerCase()
-    .replace(/ /g, '-');
+  return value.toLowerCase().replace(/ /g, '-');
 };
 
 export const getAccountEnsName = (account: ?Account): ?string => {
@@ -176,7 +198,7 @@ export const isSupportedAccountType = (accountType: string) => getSupportedAccou
 export const getInitials = (fullName: string = '') => {
   return fullName
     .split(' ')
-    .map(name => name.substring(0, 1))
+    .map((name) => name.substring(0, 1))
     .join('')
     .toUpperCase();
 };

@@ -20,7 +20,7 @@ import { Keyboard, Platform } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
 import { useDebounce } from 'use-debounce';
-import { maxBy } from 'lodash';
+import { isEmpty, maxBy } from 'lodash';
 import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 
@@ -48,9 +48,11 @@ import { getAccountAddress, getAccountType } from 'utils/accounts';
 import { hitSlop50w20h } from 'utils/common';
 import { currentDate, currentTime } from 'utils/date';
 import { getActiveScreenName } from 'utils/navigation';
+import { getAssetRateInFiat } from 'utils/rates';
 
 // Actions
 import { appsFlyerlogEventAction } from 'actions/analyticsActions';
+import { fetchSingleChainAssetRatesAction } from 'actions/ratesActions';
 
 // Types
 import type { AssetOption } from 'models/Asset';
@@ -58,13 +60,22 @@ import type { ExchangeOffer } from 'models/Exchange';
 import type { Chain } from 'models/Chain';
 
 // Selectors
-import { useActiveAccount } from 'selectors';
+import { useActiveAccount, useChainRates, useFiatCurrency } from 'selectors';
 
 // Local
 import FromAssetSelector from './FromAssetSelector';
 import ToAssetSelector from './ToAssetSelector';
 import OfferCard from './OfferCard';
-import { useFromAssets, useToAssets, useOffersQuery, sortOffers } from './utils';
+import {
+  useFromAssets,
+  useToAssets,
+  useOffersQuery,
+  sortingOffersToGasFee,
+  sortOffers,
+  useGasFeeAssets,
+  useToPopularAssets,
+} from './utils';
+import GasFeeAssetSelection from './GasFeeAssetSelection';
 
 interface Props {
   fetchExchangeTitle: (val: string) => void;
@@ -86,14 +97,21 @@ function Exchange({ fetchExchangeTitle }: Props) {
   const [chain, setChain] = React.useState(initialChain);
   const [fromAddress, setFromAddress] = React.useState(initialFromAddress);
   const [toAddress, setToAddress] = React.useState(initialToAddress);
+  const [sortOffersList, setSortOfferList] = React.useState([]);
+  const [, setRenderItem] = React.useState(null);
 
   const [faileEstimateOffers, setFailEstimateOffers] = React.useState(0);
 
   const [fromValue, setFromValue] = React.useState(null);
   const [debouncedFromValue] = useDebounce(fromValue, 500);
 
+  const [gasFeeAsset, setGasFeeAsset] = React.useState<AssetOption | null>(null);
+
   const fromOptions = useFromAssets();
   const toOptions = useToAssets(chain);
+  const toAssets = useToPopularAssets(chain);
+
+  const gasFeeAssets = useGasFeeAssets(chain);
 
   const chainConfig = useChainConfig(chain);
 
@@ -102,10 +120,17 @@ function Exchange({ fetchExchangeTitle }: Props) {
     [fromOptions, fromAddress, chain],
   );
 
-  const toAsset = React.useMemo(
-    () => toOptions.find((a) => a.chain === chain && addressesEqual(a.address, toAddress)),
-    [toOptions, toAddress, chain],
-  );
+  const toAsset = React.useMemo(() => {
+    const asset = toAssets.find((a) => a.chain === chain && addressesEqual(a.address, toAddress));
+    if (!asset) {
+      return toOptions.find((a) => a.chain === chain && addressesEqual(a.address, toAddress));
+    }
+    return asset;
+  }, [toAssets, toAddress, chain]);
+
+  const rates = useChainRates(chain);
+  const currency = useFiatCurrency();
+  const rate = getAssetRateInFiat(rates, toAsset?.address, currency);
 
   const offersQuery = useOffersQuery(chain, fromAsset, toAsset, debouncedFromValue);
   const offers = sortOffers(offersQuery.data);
@@ -142,6 +167,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
 
   const handleSelectToAsset = (asset: AssetOption) => {
     setToAddress(asset.address);
+    dispatch(fetchSingleChainAssetRatesAction(asset.chain, asset));
   };
 
   const handleOfferPress = async (selectedOffer: ExchangeOffer) => {
@@ -157,7 +183,15 @@ function Exchange({ fetchExchangeTitle }: Props) {
     }
 
     const offer = await appendFeeCaptureTransactionIfNeeded(selectedOffer, getAccountAddress(activeAccount));
+    offer.gasFeeAsset = gasFeeAsset;
     navigation.navigate(EXCHANGE_CONFIRM, { offer });
+  };
+
+  const onChangeSortingOffers = (sortOffer) => {
+    setRenderItem(sortOffer);
+    const index = sortOffersList?.findIndex((res) => res?.provider === sortOffer.provider);
+    if (index !== -1) sortOffersList.splice(index, 1);
+    sortOffersList.push(sortOffer);
   };
 
   const allowSwap = !!toAsset && fromOptions.some((o) => o.chain === chain && addressesEqual(o.address, toAddress));
@@ -181,6 +215,11 @@ function Exchange({ fetchExchangeTitle }: Props) {
     fetchExchangeTitle && fetchExchangeTitle(customTitle);
   }, [chain, customTitle, fetchExchangeTitle, fromAddress, toAddress]);
 
+  React.useEffect(() => {
+    if (!fromInputRef || fromValue) return;
+    fromInputRef.current?.focus();
+  }, [fromAsset, toAsset]);
+
   const showLoading = offersQuery.isFetching;
   const showEmptyState = !offers?.length && !offersQuery.isIdle && !offersQuery.isFetching;
 
@@ -190,7 +229,14 @@ function Exchange({ fetchExchangeTitle }: Props) {
     }
   }, [showLoading]);
 
+  React.useEffect(() => {
+    setSortOfferList([]);
+  }, [fromValue, toAddress, fromAddress, chain]);
+
   const showOfferEstimateFailState = faileEstimateOffers === offers?.length;
+  const ratesNotFound = toAsset && fromValue ? rate === 0 : false;
+
+  const sortedOffers = isEmpty(sortOffersList) ? offers : sortingOffersToGasFee(sortOffersList);
 
   return (
     <Container>
@@ -214,16 +260,30 @@ function Exchange({ fetchExchangeTitle }: Props) {
         <ToAssetSelector
           chain={chain}
           title={t('assetSelector.choose_token_swap')}
-          assets={toOptions}
+          assets={toAssets}
           selectedAsset={toAsset}
           onSelectAsset={handleSelectToAsset}
           value={toValue}
           isFetching={showLoading}
+          searchTokenList={toOptions}
         />
 
-        <Spacing h={40} />
+        <Spacing h={20} />
 
         <Banner screenName={screenName} bottomPosition />
+
+        <Spacing h={10} />
+
+        {gasFeeAssets && toAddress && fromValue && (
+          <GasFeeAssetSelection
+            chain={chain}
+            assets={gasFeeAssets}
+            selectAsset={gasFeeAsset}
+            onSelectAsset={setGasFeeAsset}
+          />
+        )}
+
+        <Spacing h={20} />
 
         {showLoading && (
           <EmptyStateWrapper>
@@ -232,20 +292,23 @@ function Exchange({ fetchExchangeTitle }: Props) {
         )}
 
         {!showLoading &&
-          offers?.map((offer) => (
+          !ratesNotFound &&
+          sortedOffers?.map((offer) => (
             <OfferCard
               key={offer.provider}
               offer={offer}
               disabled={false}
               isLoading={false}
+              gasFeeAsset={gasFeeAsset}
               onPress={() => handleOfferPress(offer)}
+              onFetchSortingOfferInfo={onChangeSortingOffers}
               onEstimateFail={() => {
                 setFailEstimateOffers(faileEstimateOffers + 1);
               }}
             />
           ))}
 
-        {(showEmptyState || showOfferEstimateFailState) && (
+        {(showEmptyState || showOfferEstimateFailState || (ratesNotFound && !showLoading)) && (
           <EmptyStateWrapper>
             <EmptyStateParagraph
               title={t('exchangeContent.emptyState.offers.title')}

@@ -53,27 +53,33 @@ export type WalletConnectConnector = {|
   updateChain(chainParams: WalletConnectUpdateChain): Promise<any>,
   approveRequest(response: WalletConnectRequestApprove): void,
   rejectRequest(response: WalletConnectRequestReject): void,
+  sendCustomRequest(customRequest: any): void,
+|};
+
+export type sessionDataProps = {|
+  accounts?: string[],
+  chainId?: number,
 |};
 
 export type WalletConnectClientMeta = {|
-  description: string;
-  url: string;
-  icons: string[];
-  name: string;
+  description: string,
+  url: string,
+  icons: string[],
+  name: string,
 |};
 
 export type WalletConnectSession = {|
-  connected: boolean;
-  accounts: string[];
-  chainId: number;
-  bridge: string;
-  key: string;
-  clientId: string;
-  clientMeta: WalletConnectClientMeta | null;
-  peerId: string;
-  peerMeta: WalletConnectClientMeta | null;
-  handshakeId: number;
-  handshakeTopic: string;
+  connected: boolean,
+  accounts: string[],
+  chainId: number,
+  bridge: string,
+  key: string,
+  clientId: string,
+  clientMeta: WalletConnectClientMeta | null,
+  peerId: string,
+  peerMeta: WalletConnectClientMeta | null,
+  handshakeId: number,
+  handshakeTopic: string,
 |};
 
 type WalletConnectCreateSessionOptions = {|
@@ -94,14 +100,14 @@ type WalletConnectSessionError = {|
 type WalletConnectSessionStorage = {|
   getSession: () => WalletConnectSession | null,
   setSession: (session: WalletConnectSession) => WalletConnectSession,
-  removeSession: () => void;
-|}
+  removeSession: () => void,
+|};
 
 export type WalletConnectOptions = {|
   bridge?: string,
   uri?: string,
   session?: WalletConnectSession,
-  storage?: WalletConnectSessionStorage;
+  storage?: WalletConnectSessionStorage,
   clientMeta?: WalletConnectClientMeta,
   qrcodeModal?: {
     open(uri: string, callback: any, options?: any): void,

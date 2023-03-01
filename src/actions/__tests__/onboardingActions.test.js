@@ -29,18 +29,15 @@ import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { SET_USER } from 'constants/userConstants';
 import { SET_ARCHANOVA_WALLET_ACCOUNTS, SET_ARCHANOVA_SDK_INIT } from 'constants/archanovaConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
-import { ETH, PLR, SET_CHAIN_SUPPORTED_ASSETS } from 'constants/assetsConstants';
+import { ETH, PLR, SET_CHAIN_SUPPORTED_ASSETS, SET_CHAIN_POPULAR_ASSETS } from 'constants/assetsConstants';
 import { SET_FETCHING_HISTORY, SET_HISTORY } from 'constants/historyConstants';
-import { UPDATE_CHAIN_RATES, SET_FETCHING_RATES } from 'constants/ratesConstants';
+import { SET_FETCHING_RATES } from 'constants/ratesConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { SET_FETCHING_TOTAL_BALANCES } from 'constants/totalsBalancesConstants';
 
 // actions
-import {
-  setupAppServicesAction,
-  setupUserAction,
-  setupWalletAction,
-} from 'actions/onboardingActions';
+import { setupAppServicesAction, setupUserAction, setupWalletAction } from 'actions/onboardingActions';
+import { localAssets } from 'actions/assetsActions';
 
 // services
 import etherspotService from 'services/etherspot';
@@ -50,21 +47,19 @@ import archanovaService from 'services/archanova';
 import {
   mockEtherspotAccount,
   mockEtherspotApiAccount,
-  mockExchangeRates,
   mockArchanovaAccount,
   mockArchanovaAccountApiData,
   mockArchanovaConnectedAccount,
   mockSupportedAssets,
+  mockPopularAssets,
   mockEtherspotAccountExtra,
   mockEthAddress,
   mockPlrAddress,
-  mockEtherExchangeRates,
   mockDeviceUniqueId,
 } from 'testUtils/jestSetup';
 
 // types
 import type { EthereumWallet } from 'models/Wallet';
-
 
 global.WebSocket = WebSocket;
 
@@ -102,10 +97,8 @@ const mockBackupStatus: Object = {
 const mockFcmToken = '12x2342x212';
 const randomPrivateKey = '0x09e910621c2e988e9f7f6ffcd7024f54ec1461fa6e86a4b545e9e1fe21c28866';
 
-
 const mockNewArchanovaAccount = { ...mockArchanovaAccount, extra: mockArchanovaAccountApiData };
 const mockNewEtherspotAccount = { ...mockEtherspotAccount, extra: mockEtherspotAccountExtra };
-
 
 const mockAssetsBalancesStore = {
   data: {
@@ -141,11 +134,10 @@ describe('Onboarding actions', () => {
       { type: SET_WALLET_IS_ENCRYPTING, payload: false },
     ];
 
-    return store.dispatch(setupWalletAction())
-      .then(() => {
-        const actualActions = store.getActions();
-        expect(actualActions).toEqual(expectedActions);
-      });
+    return store.dispatch(setupWalletAction()).then(() => {
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expectedActions);
+    });
   });
 
   it(`should expect series of actions with payload to be
@@ -166,11 +158,10 @@ describe('Onboarding actions', () => {
       { type: SET_WALLET_IS_ENCRYPTING, payload: false },
     ];
 
-    return store.dispatch(setupWalletAction())
-      .then(() => {
-        const actualActions = store.getActions();
-        expect(actualActions).toEqual(expectedActions);
-      });
+    return store.dispatch(setupWalletAction()).then(() => {
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expectedActions);
+    });
   });
 
   it(`should expect series of actions with payload to be
@@ -191,11 +182,10 @@ describe('Onboarding actions', () => {
       { type: SET_REGISTERING_USER, payload: false },
     ];
 
-    return store.dispatch(setupUserAction(mockUser.username))
-      .then(() => {
-        const actualActions = store.getActions();
-        expect(actualActions).toEqual(expectedActions);
-      });
+    return store.dispatch(setupUserAction(mockUser.username)).then(() => {
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expectedActions);
+    });
   });
 
   it(`should expect series of actions with payload to be
@@ -215,11 +205,10 @@ describe('Onboarding actions', () => {
       { type: SET_REGISTERING_USER, payload: false },
     ];
 
-    return store.dispatch(setupUserAction(mockUser.username))
-      .then(() => {
-        const actualActions = store.getActions();
-        expect(actualActions).toEqual(expectedActions);
-      });
+    return store.dispatch(setupUserAction(mockUser.username)).then(() => {
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expectedActions);
+    });
   });
 
   it(`should expect series of actions with payload to be
@@ -236,7 +225,7 @@ describe('Onboarding actions', () => {
       user: { data: mockUser },
       accounts: { data: [] },
       smartWallet: {},
-      assets: { supportedAssets: { ethereum: mockSupportedAssets } },
+      assets: { supportedAssets: { ethereum: mockSupportedAssets }, popularAssets: { ethereum: mockPopularAssets } },
       history: { data: {} },
       assetsBalances: mockAssetsBalancesStore,
       rates: { data: {} },
@@ -244,11 +233,13 @@ describe('Onboarding actions', () => {
       totalBalances: {},
     });
 
-    const mockNativeAssetExchangeRates = { [mockEthAddress]: mockEtherExchangeRates };
-
     const expectedActions = [
       { type: UPDATE_SESSION, payload: { fcmToken: mockFcmToken } },
-      { type: SET_CHAIN_SUPPORTED_ASSETS, payload: { chain: CHAIN.ETHEREUM, assets: mockSupportedAssets } },
+      {
+        type: SET_CHAIN_SUPPORTED_ASSETS,
+        payload: { chain: CHAIN.ETHEREUM, assets: [...mockSupportedAssets, ...mockPopularAssets] },
+      },
+      { type: SET_CHAIN_POPULAR_ASSETS, payload: { chain: CHAIN.ETHEREUM, assets: mockPopularAssets } },
       { type: SET_ARCHANOVA_SDK_INIT, payload: true }, // archanova init for account check
 
       // etherspot
@@ -260,21 +251,15 @@ describe('Onboarding actions', () => {
       { type: SET_FETCHING_HISTORY, payload: true },
       { type: SET_FETCHING_RATES, payload: true },
       { type: SET_FETCHING_HISTORY, payload: false },
-
-      { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.POLYGON, rates: mockNativeAssetExchangeRates } },
-      { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.BINANCE, rates: mockNativeAssetExchangeRates } },
-      { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.XDAI, rates: mockNativeAssetExchangeRates } },
-      { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.ETHEREUM, rates: mockExchangeRates } },
       { type: SET_FETCHING_RATES, payload: false },
 
       // TODO: etherspot history update tba with separate PR
     ];
 
-    return store.dispatch(setupAppServicesAction(randomPrivateKey))
-      .then(() => {
-        const actualActions = store.getActions();
-        expect(actualActions).toEqual(expect.arrayContaining(expectedActions));
-      });
+    return store.dispatch(setupAppServicesAction(randomPrivateKey)).then(() => {
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expect.arrayContaining(expectedActions));
+    });
   });
 
   it(`should expect series of actions with payload to be
@@ -289,7 +274,7 @@ describe('Onboarding actions', () => {
       user: { data: mockUser },
       accounts: { data: [mockArchanovaAccount] },
       smartWallet: { connectedAccount: mockArchanovaConnectedAccount },
-      assets: { supportedAssets: { ethereum: mockSupportedAssets } },
+      assets: { supportedAssets: { ethereum: mockSupportedAssets }, popularAssets: { ethereum: mockPopularAssets } },
       history: { data: {} },
       assetsBalances: mockAssetsBalancesStore,
       rates: { data: {} },
@@ -298,11 +283,13 @@ describe('Onboarding actions', () => {
       totalBalances: {},
     });
 
-    const mockNativeAssetExchangeRates = { [mockEthAddress]: mockEtherExchangeRates };
-
     const expectedActions = [
       { type: UPDATE_SESSION, payload: { fcmToken: mockFcmToken } },
-      { type: SET_CHAIN_SUPPORTED_ASSETS, payload: { chain: CHAIN.ETHEREUM, assets: mockSupportedAssets } },
+      {
+        type: SET_CHAIN_SUPPORTED_ASSETS,
+        payload: { chain: CHAIN.ETHEREUM, assets: [...mockSupportedAssets, ...mockPopularAssets] },
+      },
+      { type: SET_CHAIN_POPULAR_ASSETS, payload: { chain: CHAIN.ETHEREUM, assets: mockPopularAssets } },
       { type: SET_ARCHANOVA_SDK_INIT, payload: true }, // archanova init for account check
 
       // archanova
@@ -318,24 +305,17 @@ describe('Onboarding actions', () => {
       { type: SET_FETCHING_HISTORY, payload: true },
       { type: SET_FETCHING_RATES, payload: true },
 
-      { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.POLYGON, rates: mockNativeAssetExchangeRates } },
-      { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.BINANCE, rates: mockNativeAssetExchangeRates } },
-      { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.XDAI, rates: mockNativeAssetExchangeRates } },
-
       { type: SET_HISTORY, payload: { [mockArchanovaAccount.id]: { ethereum: [] } } },
-
-      { type: UPDATE_CHAIN_RATES, payload: { chain: CHAIN.ETHEREUM, rates: mockExchangeRates } },
 
       { type: SET_FETCHING_RATES, payload: false },
 
       // TODO: etherspot history update tba with separate PR
     ];
 
-    return store.dispatch(setupAppServicesAction(randomPrivateKey))
-      .then(() => {
-        const actualActions = store.getActions();
-        expect(actualActions).toEqual(expect.arrayContaining(expectedActions));
-      });
+    return store.dispatch(setupAppServicesAction(randomPrivateKey)).then(() => {
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expect.arrayContaining(expectedActions));
+    });
   });
 
   it(`should expect series of actions with payload to be
@@ -347,14 +327,16 @@ describe('Onboarding actions', () => {
         data: mockImportedWallet,
       },
       user: { data: mockUser },
+      assets: { supportedAssets: { ethereum: localAssets(CHAIN.ETHEREUM) } },
     });
 
-    const expectedActions = [];
+    const expectedActions = [
+      { type: SET_CHAIN_SUPPORTED_ASSETS, payload: { chain: CHAIN.ETHEREUM, assets: localAssets(CHAIN.ETHEREUM) } },
+    ];
 
-    return store.dispatch(setupAppServicesAction(randomPrivateKey))
-      .then(() => {
-        const actualActions = store.getActions();
-        expect(actualActions).toEqual(expectedActions);
-      });
+    return store.dispatch(setupAppServicesAction(randomPrivateKey)).then(() => {
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expect.arrayContaining(expectedActions));
+    });
   });
 });
