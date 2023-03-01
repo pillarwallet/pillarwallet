@@ -45,6 +45,10 @@ export async function migrate(
       await loadAndMigrateHistory(storageData, dispatch, getState);
       return storageData;
 
+    case 'defaultTokens':
+      await loadAndMigrateHistory(storageData, dispatch, getState);
+      return storageData;
+
     case 'collectibles':
       data = loadAndMigrateCollectibles(storageData, dispatch);
       break;

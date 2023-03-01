@@ -20,13 +20,12 @@
 import isEmpty from 'lodash.isempty';
 
 // Selectors
-import { stableTokensSelector, useRootSelector } from 'selectors';
+import { defaultTokensSelector, useRootSelector } from 'selectors';
 
 // Utils
 import { useFromAssets } from 'screens/Bridge/Exchange-CrossChain/utils';
-import NonStableTokens from 'utils/tokens/tokens.json';
-import StableTokens from 'utils/tokens/stable-tokens.json';
 import { sum } from 'utils/number';
+import { filteredChainAssets } from 'utils/etherspot';
 
 // Constants
 import { TOKENS, STABLES, ALL } from 'constants/walletConstants';
@@ -36,19 +35,19 @@ import type { Chain } from 'models/Chain';
 
 export function useStableAssets(chain?: Chain) {
   const fromAssets: any = useFromAssets();
-  const listOfStableToken = useRootSelector(stableTokensSelector);
+  const { stableTokens } = useRootSelector(defaultTokensSelector);
 
   let assets = [...fromAssets];
 
   if (chain) {
-    assets = assets?.filter((token) => token.chain === chain);
+    assets = filteredChainAssets(assets, chain);
   }
 
-  let tokens = assets?.filter((assetToken) => listOfStableToken.some((stableToken) => isSame(assetToken, stableToken)));
+  let tokens = filteredChainAssets(assets, null, stableTokens);
 
   if (!tokens?.[0])
     return {
-      tokens: StableTokens,
+      tokens: stableTokens,
       percentage: !assets?.[0] ? 50 : 0,
     };
 
@@ -66,38 +65,42 @@ export function useStableAssets(chain?: Chain) {
 
   tokens.sort((a, b) => b?.balance?.balanceInFiat - a?.balance?.balanceInFiat);
 
+  const filterStableDefaultTokens = filteredChainAssets(tokens, null, null, stableTokens);
+
+  tokens = [...tokens, ...filterStableDefaultTokens];
+
   return { tokens, percentage: isNaN(percentage.toFixed(decimalNm)) ? 0 : percentage.toFixed(decimalNm) };
 }
 
 export function useNonStableAssets(chain?: Chain) {
   const fromAssets: any = useFromAssets();
-  const listOfStableToken = useRootSelector(stableTokensSelector);
+  const { tokens: defaultTokens, stableTokens } = useRootSelector(defaultTokensSelector);
   const { percentage: stablePercentage } = useStableAssets(chain);
 
   let assets = [...fromAssets];
   if (chain) {
-    assets = assets?.filter((token) => token.chain === chain);
+    assets = filteredChainAssets(assets, chain);
   }
 
-  let tokens = assets?.filter(
-    (assetToken) => !listOfStableToken.some((stableToken) => isSame(assetToken, stableToken)),
-  );
+  let tokens = filteredChainAssets(stableTokens, null, null, assets);
 
   const percentage: number = 100 - stablePercentage;
 
   if (!tokens?.[0])
     return {
-      tokens: NonStableTokens,
+      tokens: defaultTokens,
       percentage,
       totalPercentage: 100,
     };
 
   tokens.sort((a, b) => b?.balance?.balanceInFiat - a?.balance?.balanceInFiat);
 
+  const filterDefaultAssets = filteredChainAssets(tokens, null, null, defaultTokens);
+
+  tokens = [...tokens, ...filterDefaultAssets];
+
   return { tokens, percentage, totalPercentage: isNaN(percentage) ? 0 : percentage };
 }
-
-const isSame = (a, b) => a.symbol === b.symbol && a.address === b.address;
 
 export function useFilteredAssets(chain: Chain | null, tabName: string) {
   const assets: any = useFromAssets();
@@ -116,10 +119,12 @@ export function useFilteredAssets(chain: Chain | null, tabName: string) {
   if (!chain && tabName === ALL) {
     if (isEmpty(assets))
       return {
-        assets: stableAssets.concat(nonStableAssets),
+        assets: nonStableAssets,
         totalBalance: sumOfAssetsBalance(assets),
       };
-    return { assets, totalBalance: sumOfAssetsBalance(assets) };
+    const filterDefaultAssets = filteredChainAssets(assets, null, null, assets.concat(nonStableAssets));
+
+    return { assets: assets.concat(filterDefaultAssets), totalBalance: sumOfAssetsBalance(assets) };
   }
   if (!chain && tabName === TOKENS) {
     return { assets: nonStableAssets, totalBalance: sumOfAssetsBalance(nonStableAssets) };
@@ -129,22 +134,24 @@ export function useFilteredAssets(chain: Chain | null, tabName: string) {
   }
 
   if (tabName === ALL) {
-    const filterAssets = assets?.filter((asset) => asset.chain === chain);
+    const filterAssets = filteredChainAssets(assets, chain);
+
     if (isEmpty(filterAssets)) {
       const filterTokens = nonStableAssets?.filter((asset) => asset.chain === chain);
-      const filterStables = stableAssets?.filter((asset) => asset.chain === chain);
-      return { assets: filterTokens?.concat(filterStables), totalBalance: sumOfAssetsBalance(filterAssets) };
+      return { assets: filterTokens, totalBalance: sumOfAssetsBalance(filterAssets) };
     }
-    return { assets: filterAssets, totalBalance: sumOfAssetsBalance(filterAssets) };
+    const filterDefaultAssets = filteredChainAssets(filterAssets, chain, null, filterAssets.concat(nonStableAssets));
+
+    return { assets: filterAssets.concat(filterDefaultAssets), totalBalance: sumOfAssetsBalance(filterAssets) };
   }
 
   if (tabName === TOKENS) {
-    const filterAssets = nonStableAssets?.filter((asset) => asset.chain === chain);
+    const filterAssets = filteredChainAssets(nonStableAssets, chain);
     return { assets: filterAssets, totalBalance: sumOfAssetsBalance(filterAssets) };
   }
 
   if (tabName === STABLES) {
-    const filterAssets = stableAssets?.filter((asset) => asset.chain === chain);
+    const filterAssets = filteredChainAssets(stableAssets, chain);
     return { assets: filterAssets, totalBalance: sumOfAssetsBalance(filterAssets) };
   }
 
