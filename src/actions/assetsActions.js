@@ -650,7 +650,7 @@ export const resetAccountAssetsBalancesAction = (accountId: string) => {
   };
 };
 
-export const fetchAllAccountsAssetsBalancesAction = () => {
+export const fetchAllAccountsAssetsBalancesAction = (isRefresh?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       assetsBalances: { isFetching },
@@ -665,8 +665,10 @@ export const fetchAllAccountsAssetsBalancesAction = () => {
 
     dispatch({ type: SET_FETCHING_ASSETS_BALANCES, payload: true });
 
-    await dispatch(fetchPopularAssetsAction());
-    await dispatch(fetchSupportedAssetsAction());
+    if (!isRefresh) {
+      await dispatch(fetchPopularAssetsAction());
+      await dispatch(fetchSupportedAssetsAction());
+    }
 
     const promises = accounts.map((account) => dispatch(fetchAccountWalletBalancesAction(account)));
 
