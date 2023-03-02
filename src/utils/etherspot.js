@@ -28,7 +28,6 @@ import {
   GatewayBatchStates,
   AccountDashboardProtocols as EtherspotAccountDashboardProtocols,
 } from 'etherspot';
-import { isEmpty } from 'lodash';
 
 // constants
 import { TX_CONFIRMED_STATUS, TX_FAILED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
@@ -57,7 +56,7 @@ import type {
   GatewayEstimatedBatch,
 } from 'utils/types/etherspot';
 import type { Transaction, TransactionFeeInfo } from 'models/Transaction';
-import type { Asset, AssetCore, AssetsPerChain } from 'models/Asset';
+import type { Asset, AssetCore, AssetOption } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Chain } from 'models/Chain';
 import type { ExchangeProvider, ExchangeOffer } from 'models/Exchange';
@@ -286,36 +285,30 @@ export const getChainTokenListName = (chain: Chain): ?string => {
   return null;
 };
 
-/**
- * How use this function
- * @param {*} assets is mendatory. like own tokens, default tokens
- * @param {*} chain is optional. using chain to find perticular chain assets
- * @param {*} stableTokens is optional. check assets in this tokens availability
- * @param {*} filteringAssets is optional. mostly default token list or default stable list.
- * @returns if assets is null then return blank array. otherwise return filter tokens list
- */
-export const filteredChainAssets = (
-  assets: AssetsPerChain,
+export const filteredWithDefaultAssets = (
+  assets: AssetOption[],
+  defaultAssets: AssetOption[],
   chain?: Chain,
-  stableTokens?: Asset[],
-  filteringAssets?: Asset[],
-) => {
-  if (!assets || isEmpty(assets)) return [];
+): AssetOption[] => {
+  if (!assets || !defaultAssets) return [];
 
   const newAssets = chain ? assets.filter((asset) => asset.chain === chain) : assets;
 
-  if (stableTokens) {
-    return assets.filter((assetToken) => stableTokens?.some((stableToken) => isSame(assetToken, stableToken)));
-  }
-
-  if (filteringAssets) {
-    const filterDefaultAssets: any = filteringAssets.filter(
-      (defaultToken) => !newAssets.some((token) => isSame(defaultToken, token)),
-    );
-    return chain ? filterDefaultAssets?.filter((token) => token.chain === chain) : filterDefaultAssets;
-  }
-
-  return newAssets;
+  const filteredDefaultAssets: AssetOption[] = defaultAssets?.filter(
+    (defaultToken) => !newAssets.some((token) => isSame(defaultToken, token)),
+  );
+  return chain ? filteredDefaultAssets?.filter((token) => token.chain === chain) : filteredDefaultAssets;
 };
 
-const isSame = (a: Asset, b: Asset) => a.symbol === b.symbol && a.address === b.address;
+export const filteredWithStableAssets = (assets: AssetOption[], stableTokens: AssetOption[]): AssetOption[] => {
+  if (!assets || !stableTokens) return [];
+
+  return assets.filter((assetToken) => stableTokens?.some((stableToken) => isSame(assetToken, stableToken)));
+};
+
+export const filteredWithChain = (assets: AssetOption[], chain: Chain): AssetOption[] => {
+  if (!assets || !chain) return [];
+  return assets.filter((asset) => asset.chain === chain);
+};
+
+const isSame = (a: AssetOption, b: AssetOption) => a.symbol === b.symbol && a.address === b.address;

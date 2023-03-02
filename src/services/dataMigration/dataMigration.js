@@ -25,6 +25,7 @@ import loadAndMigrateCollectiblesHistory from './collectiblesHistory';
 import loadAndMigrateSupportedAssets from './supportedAssets';
 import loadAndMigratePopularAssets from './popularAssets';
 import loadAndMigrateRates from './rates';
+import loadAndMigrateDefaultTokens from './defaultTokens';
 
 export async function migrate(
   collection: string,
@@ -46,8 +47,8 @@ export async function migrate(
       return storageData;
 
     case 'defaultTokens':
-      await loadAndMigrateHistory(storageData, dispatch, getState);
-      return storageData;
+      data = loadAndMigrateDefaultTokens(storageData);
+      break;
 
     case 'collectibles':
       data = loadAndMigrateCollectibles(storageData, dispatch);

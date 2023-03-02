@@ -288,26 +288,40 @@ export const fetchDefaultTokens = () => {
     // For Get Default Token List
     const chainTokens = await Promise.all(
       supportedChain?.map((chain) => etherspotService.getTokenListTokens(chain, ETHERSPOT_DEFAULT_LIST)),
-    );
+    ).catch((e) => {
+      reportErrorLog('EtherspotActions fetchDefaultTokens -> getTokenListTokens failed', {
+        error: e,
+        name: ETHERSPOT_DEFAULT_LIST,
+      });
+      return [];
+    });
 
     // For Get Default Stable List
     const chainStableTokens = await Promise.all(
       supportedChain?.map((chain) => etherspotService.getTokenListTokens(chain, ETHERSPOT_DEFAULT_STABLE_LIST)),
-    );
-
-    const tokens: any[] = [];
-    await chainTokens?.forEach(async (item: any) => {
-      if (item) {
-        tokens.push(...item);
-        await getExchangeRates(item[0].chain, item, async (rates) => {
-          if (rates) await dispatch(updateRatesAction(item[0].chain, rates));
-        });
-      }
+    ).catch((e) => {
+      reportErrorLog('EtherspotActions fetchDefaultTokens -> getTokenListTokens failed', {
+        error: e,
+        name: ETHERSPOT_DEFAULT_STABLE_LIST,
+      });
+      return [];
     });
 
+    const tokens: any[] = [];
+    await Promise.all(
+      chainTokens?.map(async (item: any) => {
+        if (!isEmpty(item)) {
+          tokens.push(...item);
+          await getExchangeRates(item[0].chain, item, async (rates) => {
+            if (rates) await dispatch(updateRatesAction(item[0].chain, rates));
+          });
+        }
+      }),
+    );
+
     const stableTokens: any[] = [];
-    await chainStableTokens?.forEach((item: any) => {
-      item && stableTokens.push(...item);
+    chainStableTokens?.forEach((item: any) => {
+      if (!isEmpty(item)) stableTokens.push(...item);
     });
 
     const filterTokensList = tokens?.filter(

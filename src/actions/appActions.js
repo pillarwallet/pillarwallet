@@ -119,8 +119,11 @@ export const initAppAndRedirectAction = () => {
       dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });
 
       const defaultTokens = get(storageData, 'defaultTokens', { tokens: NonStableTokens, stableTokens: StableTokens });
-      dispatch({ type: SET_STABLE_DEFAULT_LIST, payload: defaultTokens.stableTokens });
-      dispatch({ type: SET_DEFAULT_LIST, payload: defaultTokens.tokens });
+      dispatch({
+        type: SET_STABLE_DEFAULT_LIST,
+        payload: defaultTokens?.defaultTokens?.stableTokens,
+      });
+      dispatch({ type: SET_DEFAULT_LIST, payload: defaultTokens?.defaultTokens?.tokens });
 
       const supportedAssets = storageData?.supportedAssets?.supportedAssets ?? {};
       dispatch({ type: SET_SUPPORTED_ASSETS, payload: supportedAssets });
