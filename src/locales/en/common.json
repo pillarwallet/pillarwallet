@@ -1163,8 +1163,8 @@
         "selectResidentModal": {
           "title": "Select a provider",
           "recommendation": "We recommend using sidechains with low-to-no network fees DeFi, NFTs and more.",
-          "fees": "Fees",
           "highDeploymentFees": "Warning: High deployment fees if buying on Ethereum Mainnet",
+          "deploying": "Deploying...",
           "options": {
             "rampTitle": "RAMP Network",
             "rampCountry": "US & Europe",

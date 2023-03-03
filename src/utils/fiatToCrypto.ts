@@ -1,14 +1,45 @@
+/*
+    Pillar Wallet: the personal data locker
+    Copyright (C) 2019 Stiftung Pillar Project
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
 import { Account, AccountStates, GatewayTransactionStates, NotificationTypes, Sdk } from 'etherspot';
+import WertWidget from '@wert-io/widget-initializer';
 import { map } from 'rxjs/operators';
 
-// constants
+// Services
+import { firebaseRemoteConfig } from 'services/firebase';
+
+// Constants
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { CHAIN_ID } from 'constants/chainConstants';
 
-// utils
+// Config
+import { getEnv } from 'configs/envConfig';
+import { ARCHANOVA_RAMP_CURRENCY_TOKENS, ETHERSPOT_RAMP_CURRENCY_TOKENS } from 'configs/rampConfig';
+import { CONTAINER_ID, ORIGIN } from 'configs/wertConfig';
+
+// Services
+import etherspotService from 'services/etherspot';
+
+// Utils
 import { chainFromChainId } from 'utils/chains';
 
-// services
-import etherspotService from 'services/etherspot';
+const PILLAR = 'Pillar';
 
 export const buildUrlOptions = (options: { [key: string]: string }): string => {
   let optionStr = '';
@@ -19,12 +50,49 @@ export const buildUrlOptions = (options: { [key: string]: string }): string => {
   return optionStr;
 };
 
+// RAMP
+export const rampWidgetUrl = (
+  address: string,
+  fiatCurrency: string = '',
+  fiatValue: string = '',
+  isEtherspotAccount: boolean = true,
+) => {
+  const params = {
+    hostAppName: PILLAR,
+    hostApiKey: getEnv().RAMPNETWORK_API_KEY,
+    userAddress: address,
+    fiatCurrency,
+    fiatValue,
+    swapAsset: isEtherspotAccount ? ETHERSPOT_RAMP_CURRENCY_TOKENS.join(',') : ARCHANOVA_RAMP_CURRENCY_TOKENS,
+  };
+
+  const url = `${getEnv().RAMPNETWORK_WIDGET_URL}/${buildUrlOptions(params)}`;
+  return url;
+};
+
+// WERT
+export const wertWidgetUrl = (address: string, fiatValue: string) => {
+  const wertWidget = new WertWidget({
+    partner_id: getEnv().WERT_ID,
+    container_id: CONTAINER_ID,
+    origin: ORIGIN,
+    commodities: firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_WERT_COMMODITIES),
+    currency: firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_WERT_CURRENCY),
+    currency_amount: parseFloat(fiatValue),
+    commodity: firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_WERT_COMMODITY),
+    address,
+  });
+
+  return wertWidget.getEmbedUrl();
+};
+
+// Pelerin
 export const buildMtPelerinOptions = (code: string, address: string) => {
   let onRampOptions = {
     lang: 'en',
     tab: 'buy',
     tabs: 'buy',
-    chain: 'matic_mainnet',
+    chain: 'xdai_mainnet',
     net: 'matic_mainnet',
     nets: 'arbitrum_mainnet,avalanche_mainnet,bsc_mainnet,fantom_mainnet,mainnet,optimism_mainnet,xdai_mainnet',
     crys: 'AVAX,BNB,BTCB,BUSD,DAI,ETH,FRAX,LUSD,MAI,MATIC,RBTC,RDOC,RIF,USDC,USDT,WBTC,WETH,XCHF,XDAI,XTZ',
@@ -40,13 +108,12 @@ export const buildMtPelerinOptions = (code: string, address: string) => {
   return onRampOptions;
 };
 
-export const getPelerinUrl = async (
+export const pelerinWidgetUrl = async (
   deployingAccount = false,
   setDeployingAccount?: (value: boolean) => void,
   showAlert?: (message: string) => void,
 ) => {
-  const chainId: number = CHAIN_ID.POLYGON;
-  const chain = chainFromChainId[chainId];
+  const chain = chainFromChainId[CHAIN_ID.XDAI];
 
   const sdk: Sdk | undefined = etherspotService.getSdkForChain(chain);
   const account: Account | undefined = await etherspotService.getAccount(chain);
@@ -98,7 +165,7 @@ export const getPelerinUrl = async (
 
               onRampOptions.hash = base64Hash;
               const options = buildUrlOptions(onRampOptions);
-              const url = `https://buy.mtpelerin.com/${options}`;
+              const url = `${getEnv().PELERIN_WIDGET_URL}/${options}`;
               return url;
             }
           }
@@ -115,7 +182,7 @@ export const getPelerinUrl = async (
 
     onRampOptions.hash = base64Hash;
     const options = buildUrlOptions(onRampOptions);
-    const url = `https://buy.mtpelerin.com/${options}`;
+    const url = `${getEnv().PELERIN_WIDGET_URL}/${options}`;
     return url;
   }
 };

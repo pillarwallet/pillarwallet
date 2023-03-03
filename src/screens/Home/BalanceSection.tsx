@@ -18,13 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
+import React, { FC } from 'react';
 import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
-import { useNavigation } from 'react-navigation-hooks';
 import { Platform } from 'react-native';
 import { useDispatch } from 'react-redux';
+import { NavigationActions } from 'react-navigation';
 
 // Components
 import Text from 'components/core/Text';
@@ -45,23 +45,29 @@ import { ADD_CASH } from 'constants/navigationConstants';
 // Hooks
 import { useAppHoldings } from 'hooks/apps';
 
+// Services
+import { navigate } from 'services/navigation';
+
 // Actions
 import { dismissAddCashTooltipAction } from 'actions/appSettingsActions';
+
+// Components
+import AddCashModal from 'screens/AddCash/modal/AddCashModal';
+import Modal from 'components/Modal';
 
 // Local
 import SpecialButton from './components/SpecialButton';
 
-type Props = {|
-  balanceInFiat: BigNumber,
-  changeInFiat?: ?BigNumber,
-  showBalance?: boolean,
-  onBalanceClick?: () => mixed,
-|};
+type IBalanceSection = {
+  balanceInFiat: BigNumber;
+  changeInFiat?: BigNumber;
+  showBalance?: boolean;
+  onBalanceClick?: () => void;
+};
 
-function BalanceSection({ balanceInFiat, changeInFiat, showBalance, onBalanceClick }: Props) {
+const BalanceSection: FC<IBalanceSection> = ({ balanceInFiat, changeInFiat, showBalance, onBalanceClick }) => {
   const { t, tRoot } = useTranslationWithPrefix('home.balance');
   const colors = useThemeColors();
-  const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const fiatCurrency = useFiatCurrency();
@@ -72,10 +78,11 @@ function BalanceSection({ balanceInFiat, changeInFiat, showBalance, onBalanceCli
   const formattedChange = formatFiatChangeExtended(changeInFiat, initialBalance, fiatCurrency);
 
   balanceInFiat = balanceInFiat.plus(totalBalanceOfHoldings);
+  const balanceInFiatString = balanceInFiat.toString();
 
   const { addCashTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
 
-  const visibleAddCashTooltip = !addCashTooltipDismissed && parseFloat(balanceInFiat) === 0.0;
+  const visibleAddCashTooltip = !addCashTooltipDismissed && parseFloat(balanceInFiatString) === 0.0;
 
   const [visibleTooltip, setVisibleTooltip] = React.useState(false);
 
@@ -90,7 +97,7 @@ function BalanceSection({ balanceInFiat, changeInFiat, showBalance, onBalanceCli
   }, [addCashTooltipDismissed, balanceInFiat, visibleAddCashTooltip]);
 
   const onAddCashPress = () => {
-    navigation.navigate(ADD_CASH);
+    Modal.open(() => <AddCashModal />);
     dispatch(dismissAddCashTooltipAction());
   };
 
@@ -127,7 +134,7 @@ function BalanceSection({ balanceInFiat, changeInFiat, showBalance, onBalanceCli
       )}
     </>
   );
-}
+};
 
 export default BalanceSection;
 

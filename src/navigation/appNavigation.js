@@ -338,8 +338,8 @@ const servicesFlow = createStackNavigator(
 // ADD CASH FLOW
 const addCashFlow = createStackNavigator(
   {
-    [ADD_CASH]: AddCashScreen,
     [ADD_CASH_BROWSER]: AddCashBrowser,
+    [ADD_CASH]: AddCashScreen,
     [GET_NOTIFICATIONS]: GetNotificationsScreen,
   },
   StackNavigatorConfig,
