@@ -184,7 +184,7 @@ function Home() {
   }, [canSwitchAccount, accountSwitchTooltipDismissed]);
 
   const onRefresh = () => {
-    dispatch(fetchAllAccountsAssetsBalancesAction(true));
+    dispatch(fetchAllAccountsAssetsBalancesAction());
     dispatch(refreshEtherspotAccountsAction());
     dispatch(fetchAppsHoldingsAction());
   };
