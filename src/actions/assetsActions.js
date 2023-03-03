@@ -600,7 +600,7 @@ export const fetchAllAccountsTotalBalancesAction = () => {
   };
 };
 
-export const fetchAssetsBalancesAction = () => {
+export const fetchAssetsBalancesAction = (isRefresh?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
@@ -608,7 +608,6 @@ export const fetchAssetsBalancesAction = () => {
       session: {
         data: { isOnline },
       },
-      assets: { popularAssets },
     } = getState();
 
     const activeAccount = getActiveAccount(accounts);
@@ -616,14 +615,8 @@ export const fetchAssetsBalancesAction = () => {
 
     dispatch({ type: SET_FETCHING_ASSETS_BALANCES, payload: true });
 
-    dispatch(fetchSupportedAssetsAction());
-    if (
-      !popularAssets?.[CHAIN.POLYGON] ||
-      !popularAssets?.[CHAIN.ETHEREUM] ||
-      !popularAssets?.[CHAIN.XDAI] ||
-      !popularAssets?.[CHAIN.BINANCE] ||
-      !popularAssets?.[CHAIN.OPTIMISM]
-    ) {
+    if (!isRefresh) {
+      dispatch(fetchSupportedAssetsAction());
       dispatch(fetchPopularAssetsAction());
     }
 
