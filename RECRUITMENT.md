@@ -21,7 +21,7 @@ We're always on the lookout for great people to join our team. We don't just loo
 
 Show us the code! We've put together a technical test below to help you show the best of who you are to us. This is what you need to do.
 
-We'd like you to build a basic React Native app that utilises the Etherspot platform with one screen minimum (you can add more if you think it works for your app), an input for an Ethereum address and a numberical input for the send amount.
+We'd like you to build a basic React Native app that utilises the Etherspot platform with one screen minimum (you can add more if you think it works for your app), an input for an Ethereum address and a numerical input for the send amount.
 
 **About the Etherspot Platform**
 
