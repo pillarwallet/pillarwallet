@@ -62,7 +62,7 @@ Press *⌘+D* on iOS simulator, *⌘+M* on Android emulator, or shake real devic
 ### Reactotron
 Install [Reactotron](https://github.com/infinitered/reactotron) for your specific platform ([here's the download page](https://github.com/infinitered/reactotron/releases))
 
-Start your application an open Reactotron, that's it!
+Start your application and open Reactotron, that's it!
 
 There's one change, instead of adding `console.log('something to log')` you should use `Reactotron.log('something to log')`
 
@@ -236,7 +236,7 @@ To set an app icon, set the `expo.icon` key in `app.json` to be either a local p
 
 ## Writing and Running Tests
 
-This project is set up to use [jest](https://facebook.github.io/jest/) for tests. You can configure whatever testing strategy you like, but jest works out of the box. Create test files in directories called `__tests__` or with the `.test` extension to have the files loaded by jest. See the [the template project](https://github.com/react-community/create-react-native-app/blob/master/react-native-scripts/template/App.test.js) for an example test. The [jest documentation](https://facebook.github.io/jest/docs/en/getting-started.html) is also a wonderful resource, as is the [React Native testing tutorial](https://facebook.github.io/jest/docs/en/tutorial-react-native.html).
+This project is set up to use [jest](https://facebook.github.io/jest/) for tests. You can configure whatever testing strategy you like, but jest works out of the box. Create test files in directories called `__tests__` or with the `.test` extension to have the files loaded by jest. See [the template project](https://github.com/react-community/create-react-native-app/blob/master/react-native-scripts/template/App.test.js) for an example test. The [jest documentation](https://facebook.github.io/jest/docs/en/getting-started.html) is also a wonderful resource, as is the [React Native testing tutorial](https://facebook.github.io/jest/docs/en/tutorial-react-native.html).
 
 ## Environment Variables
 
