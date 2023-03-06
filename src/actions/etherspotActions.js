@@ -317,7 +317,12 @@ export const fetchDefaultTokens = () => {
           });
         }
       }),
-    );
+    ).catch((error) => {
+      reportErrorLog('EtherspotActions fetchDefaultTokens -> getExchangeRates failed', {
+        error,
+        chainTokens,
+      });
+    });
 
     const stableTokens: any[] = [];
     chainStableTokens?.forEach((item: any) => {
