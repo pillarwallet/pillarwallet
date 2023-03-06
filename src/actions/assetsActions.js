@@ -600,7 +600,7 @@ export const fetchAllAccountsTotalBalancesAction = () => {
   };
 };
 
-export const fetchAssetsBalancesAction = (isRefresh?: boolean) => {
+export const fetchAssetsBalancesAction = (isRefreshingPart?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
@@ -615,7 +615,7 @@ export const fetchAssetsBalancesAction = (isRefresh?: boolean) => {
 
     dispatch({ type: SET_FETCHING_ASSETS_BALANCES, payload: true });
 
-    if (!isRefresh) {
+    if (!isRefreshingPart) {
       dispatch(fetchSupportedAssetsAction());
       dispatch(fetchPopularAssetsAction());
     }
@@ -643,7 +643,7 @@ export const resetAccountAssetsBalancesAction = (accountId: string) => {
   };
 };
 
-export const fetchAllAccountsAssetsBalancesAction = (isRefresh?: boolean) => {
+export const fetchAllAccountsAssetsBalancesAction = (isRefreshingPart?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       assetsBalances: { isFetching },
@@ -658,7 +658,7 @@ export const fetchAllAccountsAssetsBalancesAction = (isRefresh?: boolean) => {
 
     dispatch({ type: SET_FETCHING_ASSETS_BALANCES, payload: true });
 
-    if (!isRefresh) {
+    if (!isRefreshingPart) {
       await dispatch(fetchPopularAssetsAction());
       await dispatch(fetchSupportedAssetsAction());
     }
