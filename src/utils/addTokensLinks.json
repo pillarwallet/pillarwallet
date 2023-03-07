@@ -1,0 +1,36 @@
+[
+    {
+      "chain": "optimism",
+      "link": "https://static.optimism.io/optimism.tokenlist.json"
+    },
+    { "chain": "optimism", "link": "https://tokens.coingecko.com/optimistic-ethereum/all.json" },
+    {
+      "chain": "arbitrum",
+      "link": "https://bridge.arbitrum.io/token-list-42161.json"
+    },
+    { "chain": "arbitrum", "link": "https://tokens.coingecko.com/arbitrum-one/all.json" },
+    { "chain": "xdai", "link": "https://tokens.coingecko.com/xdai/all.json" },
+    { "chain": "xdai", "link": "https://tokens.honeyswap.org/" },
+    { "chain": "ethereum", "link": "https://tokens.coingecko.com/uniswap/all.json" },
+    {
+      "chain": "ethereum",
+      "link": "https://gateway.ipfs.io/ipns/tokens.uniswap.org"
+    },
+    {
+      "chain": "binance",
+      "link": "https://tokens.pancakeswap.finance/pancakeswap-extended.json"
+    },
+    { "chain": "binance", "link": "https://tokens.coingecko.com/binance-smart-chain/all.json" },
+    {
+      "chain": "polygon",
+      "link": "https://raw.githubusercontent.com/dfyn/new-host/main/list-token.tokenlist.json"
+    },
+    {
+      "chain": "polygon",
+      "link": "https://unpkg.com/@cometh-game/default-token-list@latest/build/comethswap-default.tokenlist.json"
+    },
+    {
+      "chain": "polygon",
+      "link": "https://unpkg.com/quickswap-default-token-list@latest/build/quickswap-default.tokenlist.json"
+    }
+  ]

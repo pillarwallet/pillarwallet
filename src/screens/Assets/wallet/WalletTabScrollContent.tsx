@@ -41,9 +41,10 @@ import Icon from 'components/core/Icon';
 import PortfolioRiskinessModal from 'components/Modals/PortfolioRiskiness/PortfolioRiskinessModal';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import SearchBar from 'components/SearchBar';
+import Text from 'components/core/Text';
 
 // Constants
-import { ASSET } from 'constants/navigationConstants';
+import { ASSET, ADD_TOKENS } from 'constants/navigationConstants';
 import { TOKENS, STABLES, ALL, WALLET_DROPDOWN_REF } from 'constants/walletConstants';
 
 // Selectors
@@ -54,6 +55,7 @@ import { spacing } from 'utils/variables';
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
 import { useThemeColors } from 'utils/themes';
 import { getMatchingTokens } from 'utils/wallet';
+import { fontStyles } from 'utils/variables';
 
 // Modals
 import type { Chain } from 'models/Chain';
@@ -185,6 +187,20 @@ function WalletTabScrollContent({ isNavigateToHome, hasPositiveBalance }: Props)
     );
   };
 
+  const renderAddToken = () => {
+    return (
+      <AddTokenButton
+        onPress={() => {
+          navigation.navigate(ADD_TOKENS);
+        }}
+      >
+        <Icon name="add-token" />
+        <Spacing w={7} />
+        <AddTokenText>{tRoot('label.add_tokens')}</AddTokenText>
+      </AddTokenButton>
+    );
+  };
+
   return (
     <AnimationScroll
       maincontent={
@@ -196,6 +212,8 @@ function WalletTabScrollContent({ isNavigateToHome, hasPositiveBalance }: Props)
           contentContainerStyle={{
             paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET,
           }}
+          ListFooterComponent={renderAddToken}
+          ListFooterComponentStyle={{ marginVertical: 30 }}
           scrollEnabled={false}
         />
       }
@@ -225,6 +243,16 @@ const ListHeader = styled.View`
 
 const BannerContent = styled.View`
   width: 100%;
+`;
+
+const AddTokenButton = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+`;
+
+const AddTokenText = styled(Text)`
+  ${fontStyles.medium};
 `;
 
 const ProgressContent = styled.View`

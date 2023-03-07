@@ -30,6 +30,9 @@ import {
   SET_CHAIN_SUPPORTED_ASSETS,
   USD,
   SET_CHAIN_POPULAR_ASSETS,
+  ADD_TOKENS_FETCHING,
+  ADD_TOKENS_LIST,
+  IS_ADD_TOKENS_FETCHED,
 } from 'constants/assetsConstants';
 import {
   RESET_ACCOUNT_ASSETS_BALANCES,
@@ -55,7 +58,7 @@ import KeyBasedWallet from 'services/keyBasedWallet';
 // utils
 import { transformBalancesToObject } from 'utils/assets';
 import { chainFromChainId, getSupportedChains, nativeAssetPerChain } from 'utils/chains';
-import { BigNumber, parseTokenAmount, reportErrorLog, logBreadcrumb } from 'utils/common';
+import { BigNumber, parseTokenAmount, reportErrorLog, logBreadcrumb, fetchJsonFromUrl } from 'utils/common';
 import { buildHistoryTransaction, parseFeeWithGasToken } from 'utils/history';
 import {
   getActiveAccount,
@@ -67,7 +70,7 @@ import {
 } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
-import { assetsCategoryFromEtherspotBalancesCategory } from 'utils/etherspot';
+import { assetsCategoryFromEtherspotBalancesCategory, parseTokenListToken } from 'utils/etherspot';
 import { isProdEnv } from 'utils/environment';
 import PolygonTokens from 'utils/tokens/polygon-tokens';
 import MumbaiTokens from 'utils/tokens/mumbai-tokens';
@@ -81,6 +84,7 @@ import OptimismGoerliTokens from 'utils/tokens/optimism-goerli-tokens.json';
 import OptimismTokens from 'utils/tokens/optimism-tokens';
 import ArbitrumTokens from 'utils/tokens/arbitrum-tokens';
 import XdaiTokens from 'utils/tokens/xdai-tokens';
+import AddTokensLinks from 'utils/addTokensLinks.json';
 
 // selectors
 import {
@@ -803,4 +807,48 @@ export const localAssets = (chain: Chain) => {
     return isMainnet ? ArbitrumTokens : [];
   }
   return [];
+};
+
+export const addTokensListAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      session: {
+        data: { isOnline },
+      },
+      addTokensList: { isFetching, isFetched },
+    } = getState();
+
+    // nothing to do if offline
+    if (!isOnline || isFetching || isFetched) return;
+
+    dispatch({ type: ADD_TOKENS_FETCHING, payload: true });
+
+    const tokensList = await Promise.all(
+      AddTokensLinks.map(async (item) => {
+        const res = await fetchJsonFromUrl(item.link);
+        if (!res) return null;
+        const tokens = res.tokens?.map((token) => parseTokenListToken(token));
+        return { chain: item.chain, ...res, tokens };
+      }),
+    ).catch((error) => {
+      reportErrorLog('AddTokensList failed', { error });
+      return null;
+    });
+
+    if (!tokensList) return;
+
+    const filteredTokensList = tokensList.filter((token) => !!token);
+
+    filteredTokensList?.sort((tokenA, tokenB) => tokenB.tokens?.length - tokenA.tokens?.length);
+
+    dispatch({
+      type: ADD_TOKENS_LIST,
+      payload: filteredTokensList,
+    });
+
+    // const updatedPopularAssets = popularAssetsPerChainSelector(getState());
+    // dispatch(saveDbAction('addTokensList', { addTokensList: updatedPopularAssets }, true));
+    dispatch({ type: ADD_TOKENS_FETCHING, payload: false });
+    dispatch({ type: IS_ADD_TOKENS_FETCHED, payload: true });
+  };
 };

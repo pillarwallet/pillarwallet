@@ -471,6 +471,15 @@ export const groupSectionsByDate = (
   return Object.values(sections);
 };
 
+export const fetchJsonFromUrl = (url: string): Promise<any> =>
+  fetch(url, { cache: 'force-cache' })
+    .then((response) => response.json())
+    .then((json) => json)
+    .catch((error) => {
+      reportErrorLog('fetchJsonFromUrl failed!', { url, error });
+      return null;
+    });
+
 export const isCaseInsensitiveMatch = (a: ?string, b: ?string): boolean => {
   if (a === b) return true;
   if (!a || !b) return false;

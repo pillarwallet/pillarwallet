@@ -22,6 +22,7 @@
 export const APP_FLOW = 'APP_FLOW';
 export const MAIN_FLOW = 'MAIN_FLOW';
 export const ASSETS = 'ASSETS';
+export const ADD_TOKENS = 'ADD_TOKENS';
 export const SERVICES = 'SERVICES';
 export const ADD_CASH = 'ADD_CASH';
 export const GET_NOTIFICATIONS = 'GET_NOTIFICATIONS';

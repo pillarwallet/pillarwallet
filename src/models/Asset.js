@@ -27,7 +27,6 @@ import { ASSET_TYPES } from 'constants/assetsConstants';
 import type { Chain, ChainRecord } from 'models/Chain';
 import type { Collectible } from 'models/Collectible';
 
-
 export type AssetType = $Values<typeof ASSET_TYPES>;
 
 export type AssetCore = {
@@ -59,6 +58,16 @@ export type Asset = {
   name: string,
   iconUrl: string,
   decimals: number,
+};
+
+export type AddTokens = {
+  chain: Chain,
+  keywords: string[],
+  name: string,
+  logoURI: string,
+  version: any,
+  tokens: Asset[],
+  timestamp: Date,
 };
 
 export type AssetByAddress = {
@@ -126,6 +135,6 @@ export type AssetDataNavigationParam = {
   patternIcon: string,
   decimals: number,
   chain: Chain,
-}
+};
 
-export type AssetsPerChain = ChainRecord<Asset[]>
+export type AssetsPerChain = ChainRecord<Asset[]>;

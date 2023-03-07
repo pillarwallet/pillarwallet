@@ -161,3 +161,7 @@ export const SET_STABLE_TOKEN = 'SET_STABLE_TOKEN';
 export const ETHERSPOT_STABLE_COIN = 'EtherspotStableCoins';
 export const NFT_FLAG = 'NFT_FLAG';
 export const ETHERSPOT_POPULAR_COIN = 'EtherspotPopularTokens';
+
+export const ADD_TOKENS_FETCHING = 'ADD_TOKENS_FETCHING';
+export const IS_ADD_TOKENS_FETCHED = 'IS_ADD_TOKENS_FETCHED';
+export const ADD_TOKENS_LIST = 'ADD_TOKENS_LIST';

@@ -82,6 +82,8 @@ export const useAppHoldings = () => useRootSelector((root) => root.appsHoldings)
 
 export const stableTokensSelector = ({ stableTokens }: RootReducerState) => stableTokens.data;
 
+export const addTokensListSelector = ({ addTokensList }: RootReducerState) => addTokensList;
+
 export const bannerDataSelector = ({ onboarding }: RootReducerState) => onboarding.bannerData;
 
 export const paymentNetworkBalancesSelector = ({ paymentNetwork }: RootReducerState) => paymentNetwork.balances;

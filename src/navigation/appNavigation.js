@@ -117,6 +117,7 @@ import NIViewService from 'screens/NativeIntegration/NIViewService';
 import NITransactionSubmitted from 'screens/NativeIntegration/NITransactionSubmitted';
 import NIWarningScreen from 'screens/NativeIntegration/NIWarning';
 import GetNotificationsScreen from 'screens/Notification/GetNotifications';
+import AddTokensScreen from 'screens/Assets/AddTokens';
 
 // components
 import Toast from 'components/Toast';
@@ -252,6 +253,7 @@ import {
   NI_WARNING,
   NATIVE_INTEGRATION_FLOW,
   NI_TRANSACTION_COMPLETED,
+  ADD_TOKENS,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -312,6 +314,7 @@ const assetsFlow = createStackNavigator(
     [ASSETS]: AssetsScreen,
     [ASSET]: AssetScreen,
     [COLLECTIBLE]: CollectibleScreen,
+    [ADD_TOKENS]: AddTokensScreen,
   },
   StackNavigatorConfig,
 );
@@ -377,6 +380,7 @@ const nativeIntegrationFlow = createStackNavigator(
 const homeFlow = createStackNavigator(
   {
     [HOME]: HomeScreen,
+    [ADD_TOKENS]: AddTokensScreen,
     [HOME_HISTORY]: HistoryScreen,
     [COLLECTIBLE]: CollectibleScreen,
     [STORYBOOK]: StorybookScreen,

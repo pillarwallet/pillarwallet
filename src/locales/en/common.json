@@ -310,7 +310,9 @@
     "low_risk": "low risk",
     "no_risk": "no risk",
     "risk_assets": "{{percentage}}% of risky assets",
-    "risk_stable": "{{percentage}}% of low risk stables"
+    "risk_stable": "{{percentage}}% of low risk stables",
+    "add_tokens": "Add Tokens",
+    "number_of_tokens": "{{tokens}} tokens"
   },
 
   "button": {
