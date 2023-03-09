@@ -23,7 +23,7 @@ import { SvgCssUri } from 'react-native-svg';
 
 // Utils
 import { isSvgImage } from 'utils/images';
-import { isChainIcon } from 'utils/collectibles';
+import { isChainIcon } from 'utils/tokens';
 
 // Components
 import Image from 'components/Image';
