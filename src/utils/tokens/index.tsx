@@ -22,7 +22,7 @@
 import { nativeAssetPerChain } from 'utils/chains';
 import { reportErrorLog } from 'utils/common';
 
-export const isChainIcon = (nameOrUrl: any): boolean => {
+export const isChainIcon = (nameOrUrl: string): boolean => {
   if (!nameOrUrl) {
     reportErrorLog('isChainIcon: Icon url or name not found', { nameOrUrl });
     return false;
