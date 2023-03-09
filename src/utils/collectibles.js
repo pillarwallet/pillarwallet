@@ -24,6 +24,7 @@ import { orderBy } from 'lodash';
 import { addressesEqual } from 'utils/assets';
 import { addressAsKey } from 'utils/common';
 import { caseInsensitiveIncludes } from 'utils/strings';
+import { nativeAssetPerChain } from 'utils/chains';
 
 // Types
 import type { Collectible } from 'models/Collectible';
@@ -57,4 +58,13 @@ export function findCollectible(
   return collectibles?.find(
     ({ contractAddress, id }) => addressesEqual(contractAddress, contractAddressToFind) && id === idToFind,
   );
+}
+
+export function isChainIcon(nameOrUrl: ?string): boolean {
+  if (!nameOrUrl) return false;
+
+  const chainInfo = nativeAssetPerChain[nameOrUrl];
+  if (!chainInfo) return false;
+
+  return true;
 }

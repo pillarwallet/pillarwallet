@@ -20,14 +20,28 @@
 
 import * as React from 'react';
 import { SvgCssUri } from 'react-native-svg';
+
+// Utils
 import { isSvgImage } from 'utils/images';
+import { isChainIcon } from 'utils/collectibles';
+
+// Components
 import Image from 'components/Image';
+import { NativeTokenIcon } from 'components/core/Icon';
+
+// Type
 import type { ImageProps } from 'components/Image';
 
 type Props = ImageProps | SvgCssUri | any;
 
 const CollectibleImage = (props: Props) => {
   const { uri }: any = props.source;
+
+  if (isChainIcon(uri)) {
+    const NativeIcon = NativeTokenIcon[uri];
+    return <NativeIcon width={props.width || '100%'} height={props.height || '100%'} {...props} />;
+  }
+
   if (isSvgImage(uri)) {
     return <SvgCssUri uri={uri} width={props.width || '100%'} height={props.height || '100%'} {...props} />;
   }
