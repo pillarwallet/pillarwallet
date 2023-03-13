@@ -18,17 +18,27 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
 
 // Components
 import Text from 'components/core/Text';
 import TokenIcon from 'components/display/TokenIcon';
+import Switcher from 'components/Switcher';
 
 // Utils
 import { fontStyles, spacing } from 'utils/variables';
+import { useChainConfig } from 'utils/uiConfig';
+import { isTokenAvailableInList } from 'utils/assets';
+
+// Selector
+import { customTokensListSelector, useRootSelector } from 'selectors';
+
+// Actions
+import { manageCustomTokens } from 'actions/assetsActions';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
@@ -38,29 +48,66 @@ import type { Asset } from 'models/Asset';
 type Props = {
   chain: Chain;
   name: string;
-  logoURI: string;
-  tokens: Asset[];
+  listType?: list;
+  logoURI?: string;
+  iconUrl?: string;
+  tokens?: Asset[];
   onPress?: () => void;
   style?: ViewStyleProp;
+  rest?: any;
 };
 
-function AddTokenListItem({ chain, name, logoURI, onPress, style, tokens }: Props) {
+type list = 'normal' | 'togglesList' | 'searchList';
+
+function AddTokenListItem({
+  chain,
+  name,
+  logoURI,
+  iconUrl,
+  onPress,
+  style,
+  tokens,
+  listType = 'normal',
+  ...rest
+}: Props) {
   const { t } = useTranslation();
+  const customTokensList = useRootSelector(customTokensListSelector);
+  const dispatch = useDispatch();
+  const config = useChainConfig(chain);
+  const title = config.title;
+
+  const token = { chain, name, iconUrl, ...rest };
+
+  const [enableToken, setEnableToken] = useState(false);
+
+  useEffect(() => {
+    setEnableToken(isTokenAvailableInList(customTokensList, token));
+  }, [customTokensList]);
+
+  const onChangeToggle = () => {
+    dispatch(manageCustomTokens(token));
+  };
 
   return (
     <Container
+      accessibilityHint="add_tokens_list_item"
       onPress={onPress}
-      disabled={!onPress}
+      disabled={!onPress || listType === 'togglesList'}
       style={style}
       hitSlop={{ top: spacing.medium, bottom: spacing.medium }}
     >
-      <TokenIcon url={logoURI} chain={chain} setMarginRight />
+      <TokenIcon url={iconUrl || logoURI} chain={chain} setMarginRight />
 
       <TitleContainer>
         <NormalText numberOfLines={1}>{name}</NormalText>
+        {listType !== 'normal' && <Subtitle numberOfLines={1}>{t('label.on_network', { network: title })}</Subtitle>}
       </TitleContainer>
 
-      <NormalText numberOfLines={1}>{t('label.number_of_tokens', { tokens: tokens?.length || 0 })}</NormalText>
+      {listType === 'togglesList' && <Switcher isOn={enableToken} onToggle={onChangeToggle} />}
+
+      {listType === 'normal' && (
+        <NormalText numberOfLines={1}>{t('label.number_of_tokens', { tokens: tokens?.length || 0 })}</NormalText>
+      )}
     </Container>
   );
 }
@@ -82,4 +129,8 @@ const TitleContainer = styled.View`
 
 const NormalText = styled(Text)`
   ${fontStyles.medium};
+`;
+
+const Subtitle = styled(Text)`
+  color: ${({ theme }) => theme.colors.secondaryText};
 `;

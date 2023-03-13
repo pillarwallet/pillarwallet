@@ -84,6 +84,8 @@ export const stableTokensSelector = ({ stableTokens }: RootReducerState) => stab
 
 export const addTokensListSelector = ({ addTokensList }: RootReducerState) => addTokensList;
 
+export const customTokensListSelector = ({ customTokensList }: RootReducerState) => customTokensList.data;
+
 export const bannerDataSelector = ({ onboarding }: RootReducerState) => onboarding.bannerData;
 
 export const paymentNetworkBalancesSelector = ({ paymentNetwork }: RootReducerState) => paymentNetwork.balances;

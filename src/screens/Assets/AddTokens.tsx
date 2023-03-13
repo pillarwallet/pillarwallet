@@ -23,12 +23,18 @@ import { FlatList } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useTranslation } from 'translations/translate';
 import { useDispatch } from 'react-redux';
+import { isEmpty } from 'lodash';
 
 // Components
 import { Container } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import ChainSelectorContent from 'components/ChainSelector/ChainSelectorContent';
 import AddTokenListItem from 'components/lists/AddTokenListItem';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import Spinner from 'components/Spinner';
+
+// Constants
+import { TOKENS_WITH_TOGGLES } from 'constants/navigationConstants';
 
 // Actions
 import { addTokensListAction } from 'actions/assetsActions';
@@ -36,13 +42,18 @@ import { addTokensListAction } from 'actions/assetsActions';
 // Selector
 import { useRootSelector, addTokensListSelector } from 'selectors';
 
-function AddTokens() {
+export function AddTokens() {
   const navigation = useNavigation();
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { addTokensList: tokenList } = useRootSelector(addTokensListSelector);
+  const { addTokensList: tokenList, isFetching } = useRootSelector(addTokensListSelector);
 
   const [selectedChain, setSelectedChain] = React.useState(null);
+  const tokensInfoAccordingToChain = !isEmpty(tokenList)
+    ? selectedChain
+      ? tokenList.filter((tokenInfo) => tokenInfo.chain === selectedChain)
+      : tokenList
+    : [];
 
   React.useEffect(() => {
     dispatch(addTokensListAction());
@@ -50,14 +61,42 @@ function AddTokens() {
 
   const renderItem = (token: any) => {
     if (!token) return;
-    return <AddTokenListItem {...token} onPress={() => {}} />;
+    return (
+      <AddTokenListItem
+        {...token}
+        onPress={() => {
+          navigation.navigate(TOKENS_WITH_TOGGLES, { tokenInfo: token });
+        }}
+      />
+    );
   };
 
+  function getItemKey(item) {
+    const { tokens, name, chain } = item;
+    return name + '__' + chain + '__' + tokens?.length;
+  }
+
   return (
-    <Container>
-      <HeaderBlock navigation={navigation} centerItems={[{ title: t('label.add_tokens') }]} noPaddingTop />
+    <Container accessibilityHint="add_tokens_main_content">
+      <HeaderBlock
+        accessibilityHint="header_block"
+        navigation={navigation}
+        centerItems={[{ title: t('label.add_tokens') }]}
+        noPaddingTop
+      />
       <ChainSelectorContent selectedAssetChain={selectedChain} onSelectChain={setSelectedChain} />
-      <FlatList key={'add_tokens_list'} data={tokenList} renderItem={({ item }) => renderItem(item)} />
+      {isFetching && isEmpty(tokenList) ? (
+        <Spinner size={40} />
+      ) : (
+        <FlatList
+          key={'add_tokens_list'}
+          accessibilityHint="add_tokens_list"
+          data={tokensInfoAccordingToChain}
+          renderItem={({ item }) => renderItem(item)}
+          keyExtractor={getItemKey}
+          ListEmptyComponent={() => <EmptyStateParagraph wide title={t('label.nothingFound')} />}
+        />
+      )}
     </Container>
   );
 }

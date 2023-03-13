@@ -288,7 +288,11 @@ export const getAssetOptionKey = (option: ?AssetOption) => {
 
 export const isAssetOptionMatchedByQuery = (option: AssetOption, query: ?string) => {
   if (!query) return true;
-  return caseInsensitiveIncludes(option.name, query) || caseInsensitiveIncludes(option.symbol, query);
+  return (
+    caseInsensitiveIncludes(option.name, query) ||
+    caseInsensitiveIncludes(option.symbol, query) ||
+    caseInsensitiveIncludes(option.address, query)
+  );
 };
 
 export const mapAssetDataToAsset = (assetData: TokenData, chain: Chain): Asset => {
@@ -408,4 +412,11 @@ export const sortInvestmentPositions = (positionsInfo: AccountInvestmentPosition
     }
   });
   return newArr;
+};
+
+export const isSame = (a: Asset, b: Asset) => a.symbol === b.symbol && a.address === b.address;
+
+export const isTokenAvailableInList = (tokensList: Asset[], token: Asset): boolean => {
+  if (isEmpty(tokensList) || !token) return false;
+  return tokensList?.some((tokenA) => isSame(token, tokenA));
 };

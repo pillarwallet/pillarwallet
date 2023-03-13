@@ -33,6 +33,7 @@ import {
   ADD_TOKENS_FETCHING,
   ADD_TOKENS_LIST,
   IS_ADD_TOKENS_FETCHED,
+  ADD_CUSTOM_TOKEN,
 } from 'constants/assetsConstants';
 import {
   RESET_ACCOUNT_ASSETS_BALANCES,
@@ -56,9 +57,15 @@ import archanovaService from 'services/archanova';
 import KeyBasedWallet from 'services/keyBasedWallet';
 
 // utils
-import { transformBalancesToObject } from 'utils/assets';
-import { chainFromChainId, getSupportedChains, nativeAssetPerChain } from 'utils/chains';
-import { BigNumber, parseTokenAmount, reportErrorLog, logBreadcrumb, fetchJsonFromUrl } from 'utils/common';
+import { transformBalancesToObject, isTokenAvailableInList, isSame } from 'utils/assets';
+import {
+  chainFromChainId,
+  getSupportedChains,
+  nativeAssetPerChain,
+  isTestNetsChainId,
+  isMainNetsChainId,
+} from 'utils/chains';
+import { BigNumber, parseTokenAmount, reportErrorLog, logBreadcrumb, fetchUrl } from 'utils/common';
 import { buildHistoryTransaction, parseFeeWithGasToken } from 'utils/history';
 import {
   getActiveAccount,
@@ -92,6 +99,8 @@ import {
   activeAccountSelector,
   supportedAssetsPerChainSelector,
   popularAssetsPerChainSelector,
+  addTokensListSelector,
+  customTokensListSelector,
 } from 'selectors';
 import { accountCollectiblesSelector } from 'selectors/collectibles';
 
@@ -101,6 +110,7 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { TransactionPayload, TransactionResult, TransactionStatus } from 'models/Transaction';
 import type { WalletAssetsBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
+import type { Asset } from 'models/Asset';
 
 // actions
 import { saveDbAction } from './dbActions';
@@ -818,6 +828,8 @@ export const addTokensListAction = () => {
       addTokensList: { isFetching, isFetched },
     } = getState();
 
+    const isMainnet = isProdEnv();
+
     // nothing to do if offline
     if (!isOnline || isFetching || isFetched) return;
 
@@ -825,17 +837,28 @@ export const addTokensListAction = () => {
 
     const tokensList = await Promise.all(
       AddTokensLinks.map(async (item) => {
-        const res = await fetchJsonFromUrl(item.link);
-        if (!res) return null;
-        const tokens = res.tokens?.map((token) => parseTokenListToken(token));
-        return { chain: item.chain, ...res, tokens };
+        const res = await fetchUrl(item.link);
+        const jsonResponse = await res.json();
+
+        if (!res || res?.status !== 200 || !jsonResponse) return null;
+
+        const tokens = jsonResponse.tokens
+          ?.filter((token) => (isMainnet ? isMainNetsChainId(token.chainId) : isTestNetsChainId(token.chainId)))
+          ?.map((token) => parseTokenListToken(token));
+
+        if (isEmpty(tokens)) return null;
+
+        return { chain: item.chain, ...jsonResponse, tokens };
       }),
     ).catch((error) => {
       reportErrorLog('AddTokensList failed', { error });
       return null;
     });
 
-    if (!tokensList) return;
+    if (!tokensList) {
+      dispatch({ type: ADD_TOKENS_FETCHING, payload: false });
+      return;
+    }
 
     const filteredTokensList = tokensList.filter((token) => !!token);
 
@@ -846,9 +869,31 @@ export const addTokensListAction = () => {
       payload: filteredTokensList,
     });
 
-    // const updatedPopularAssets = popularAssetsPerChainSelector(getState());
-    // dispatch(saveDbAction('addTokensList', { addTokensList: updatedPopularAssets }, true));
+    const AddTokensListInfo = addTokensListSelector(getState());
+    dispatch(saveDbAction('addTokensList', { addTokensList: AddTokensListInfo.addTokensList }, true));
     dispatch({ type: ADD_TOKENS_FETCHING, payload: false });
     dispatch({ type: IS_ADD_TOKENS_FETCHED, payload: true });
+  };
+};
+
+export const manageCustomTokens = (token: Asset) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      customTokensList: { data },
+    } = getState();
+
+    const isTokenAvailable = isTokenAvailableInList(data, token);
+
+    if (isTokenAvailable) {
+      const filteredTokensList = data.filter((tokenA) => !isSame(token, tokenA));
+      dispatch({ type: ADD_CUSTOM_TOKEN, payload: filteredTokensList });
+    } else {
+      const arr = [...data];
+      const newTokensList = isEmpty(arr) ? [token] : arr.concat([token]);
+      dispatch({ type: ADD_CUSTOM_TOKEN, payload: newTokensList });
+    }
+
+    const customTokensListInfo = customTokensListSelector(getState());
+    dispatch(saveDbAction('customTokensList', { customTokensList: customTokensListInfo }, true));
   };
 };

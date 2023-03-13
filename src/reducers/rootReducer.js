@@ -69,6 +69,7 @@ import nftFlagReducer from './nftFlagReducer';
 import appsHoldingsReducer from './appsHoldingsReducer';
 import deployAccountsReducer from './deployAccountsReducer';
 import addTokensReducer from './addTokensReducer';
+import addCustomTokensReducer from './addCustomTokensReducer';
 
 // local types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
@@ -118,6 +119,7 @@ import type { NFTFlagReducerAction, NFTFlagReducerState } from './nftFlagReducer
 import type { AppsHoldingsReducerState, AppsHoldingsReducerAction } from './appsHoldingsReducer';
 import type { DeployAccountsAction, DeployAccountsReducerState } from './deployAccountsReducer';
 import type { AddTokensReducerAction, AddTokensReducerState } from './addTokensReducer';
+import type { AddCustomTokensReducerState, AddCustomTokensReducerAction } from './addCustomTokensReducer';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -161,6 +163,7 @@ export type RootReducerState = {|
   appsHoldings: AppsHoldingsReducerState,
   deployAccounts: DeployAccountsReducerState,
   addTokensList: AddTokensReducerState,
+  customTokensList: AddCustomTokensReducerState,
 |};
 
 type RootReducerAction =
@@ -195,7 +198,8 @@ type RootReducerAction =
   | TokensAction
   | TransactionNotificationAction
   | DeployAccountsAction
-  | AddTokensReducerAction;
+  | AddTokensReducerAction
+  | AddCustomTokensReducerAction;
 
 export type GetState = () => RootReducerState;
 export type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
@@ -247,6 +251,7 @@ const appReducer = combineReducers({
   transactionNotification: transactionNotificationReducer,
   deployAccounts: deployAccountsReducer,
   addTokensList: addTokensReducer,
+  customTokensList: addCustomTokensReducer,
 });
 
 export const initialState = appReducer(undefined, {});

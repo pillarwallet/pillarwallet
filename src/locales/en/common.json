@@ -312,7 +312,8 @@
     "risk_assets": "{{percentage}}% of risky assets",
     "risk_stable": "{{percentage}}% of low risk stables",
     "add_tokens": "Add Tokens",
-    "number_of_tokens": "{{tokens}} tokens"
+    "number_of_tokens": "{{tokens}} tokens",
+    "find_token":"Find a token or input address"
   },
 
   "button": {

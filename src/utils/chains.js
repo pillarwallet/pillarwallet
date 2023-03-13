@@ -54,6 +54,38 @@ export const chainFromChainId: { [number]: Chain } = {
   [CHAIN_ID.ARBITRUM_NITRO]: CHAIN.ARBITRUM,
 };
 
+const TestNetsChainIds = [
+  CHAIN_ID.GOERLI,
+  CHAIN_ID.BINANCE_TESTNET,
+  CHAIN_ID.SOKOL,
+  CHAIN_ID.MUMBAI,
+  CHAIN_ID.FUJI,
+  CHAIN_ID.OPTIMISM_GOERLI,
+  CHAIN_ID.ARBITRUM_NITRO,
+];
+
+const MainNetsChainIds = [
+  CHAIN_ID.ETHEREUM_MAINNET,
+  CHAIN_ID.BINANCE,
+  CHAIN_ID.XDAI,
+  CHAIN_ID.POLYGON,
+  CHAIN_ID.AVALANCHE,
+  CHAIN_ID.OPTIMISM,
+  CHAIN_ID.ARBITRUM,
+];
+
+export const isTestNetsChainId = (chainId: number) => {
+  const isAvilChainId = TestNetsChainIds.some((id) => chainId === id);
+  if (isAvilChainId) return true;
+  return false;
+};
+
+export const isMainNetsChainId = (chainId: number) => {
+  const isAvilChainId = MainNetsChainIds.some((id) => chainId === id);
+  if (isAvilChainId) return true;
+  return false;
+};
+
 /**
  * Maps chain value to chain id, supporting testnet(s) for test env.
  */

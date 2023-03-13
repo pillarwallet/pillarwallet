@@ -27,6 +27,7 @@ import { useFromAssets } from 'screens/Bridge/Exchange-CrossChain/utils';
 import NonStableTokens from 'utils/tokens/tokens.json';
 import StableTokens from 'utils/tokens/stable-tokens.json';
 import { sum } from 'utils/number';
+import { isSame } from 'utils/assets'
 
 // Constants
 import { TOKENS, STABLES, ALL } from 'constants/walletConstants';
@@ -96,8 +97,6 @@ export function useNonStableAssets(chain?: Chain) {
 
   return { tokens, percentage, totalPercentage: isNaN(percentage) ? 0 : percentage };
 }
-
-const isSame = (a, b) => a.symbol === b.symbol && a.address === b.address;
 
 export function useFilteredAssets(chain: Chain | null, tabName: string) {
   const assets: any = useFromAssets();

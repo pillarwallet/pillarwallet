@@ -293,7 +293,8 @@
     "risk_assets": "{{percentage}}% 的风险资产",
     "risk_stable": "{{percentage}}% 的低风险马厩",
     "add_tokens": "添加代币",
-    "number_of_tokens": "{{tokens}} 代币"
+    "number_of_tokens": "{{tokens}} 代币",
+    "find_token":"查找令牌或输入地址"
   },
   "button": {
     "activate": "启用",

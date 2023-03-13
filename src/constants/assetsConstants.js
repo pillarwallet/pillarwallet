@@ -165,3 +165,5 @@ export const ETHERSPOT_POPULAR_COIN = 'EtherspotPopularTokens';
 export const ADD_TOKENS_FETCHING = 'ADD_TOKENS_FETCHING';
 export const IS_ADD_TOKENS_FETCHED = 'IS_ADD_TOKENS_FETCHED';
 export const ADD_TOKENS_LIST = 'ADD_TOKENS_LIST';
+
+export const ADD_CUSTOM_TOKEN = 'ADD_CUSTOM_TOKEN';
