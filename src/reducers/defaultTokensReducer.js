@@ -18,10 +18,19 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { SET_STABLE_TOKEN } from 'constants/assetsConstants';
+import { FETCHING_DEFAULT_LIST, SET_STABLE_DEFAULT_LIST, SET_DEFAULT_LIST } from 'constants/assetsConstants';
 
-export type StableTokensReducerState = {
-  data: any,
+// Utils
+import NonStableTokens from 'utils/tokens/tokens.json';
+import StableTokens from 'utils/tokens/stable-tokens.json';
+
+// Models
+import type { Asset } from 'models/Asset';
+
+export type DefaultTokensReducerState = {
+  tokens: Asset[],
+  stableTokens: Asset[],
+  isFetching: boolean,
 };
 
 export type TokensAction = {
@@ -30,13 +39,25 @@ export type TokensAction = {
 };
 
 export const initialState = {
-  data: [],
+  tokens: NonStableTokens,
+  stableTokens: StableTokens,
+  isFetching: false,
 };
 
-export default function (state: StableTokensReducerState = initialState, action: TokensAction) {
+export default function (state: DefaultTokensReducerState = initialState, action: TokensAction) {
   switch (action.type) {
-    case SET_STABLE_TOKEN:
-      return { ...state, data: action.payload };
+    case SET_STABLE_DEFAULT_LIST:
+      return { ...state, stableTokens: action.payload };
+
+    case SET_DEFAULT_LIST:
+      return { ...state, tokens: action.payload };
+
+    case FETCHING_DEFAULT_LIST:
+      return {
+        ...state,
+        isFetching: action.payload,
+      };
+
     default:
       return state;
   }

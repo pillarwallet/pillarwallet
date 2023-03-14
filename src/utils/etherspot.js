@@ -56,7 +56,7 @@ import type {
   GatewayEstimatedBatch,
 } from 'utils/types/etherspot';
 import type { Transaction, TransactionFeeInfo } from 'models/Transaction';
-import type { Asset, AssetCore } from 'models/Asset';
+import type { Asset, AssetCore, AssetOption } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Chain } from 'models/Chain';
 import type { ExchangeProvider, ExchangeOffer } from 'models/Exchange';
@@ -284,3 +284,31 @@ export const getChainTokenListName = (chain: Chain): ?string => {
 
   return null;
 };
+
+export const filteredWithDefaultAssets = (
+  assets: AssetOption[],
+  defaultAssets: AssetOption[],
+  chain?: Chain,
+): AssetOption[] => {
+  if (!assets || !defaultAssets) return [];
+
+  const newAssets = chain ? assets.filter((asset) => asset.chain === chain) : assets;
+
+  const filteredDefaultAssets: AssetOption[] = defaultAssets?.filter(
+    (defaultToken) => !newAssets.some((token) => isSame(defaultToken, token)),
+  );
+  return chain ? filteredDefaultAssets?.filter((token) => token.chain === chain) : filteredDefaultAssets;
+};
+
+export const filteredWithStableAssets = (assets: AssetOption[], stableTokens: AssetOption[]): AssetOption[] => {
+  if (!assets || !stableTokens) return [];
+
+  return assets.filter((assetToken) => stableTokens?.some((stableToken) => isSame(assetToken, stableToken)));
+};
+
+export const filteredWithChain = (assets: AssetOption[], chain: Chain): AssetOption[] => {
+  if (!assets || !chain) return [];
+  return assets.filter((asset) => asset.chain === chain);
+};
+
+const isSame = (a: AssetOption, b: AssetOption) => a.symbol === b.symbol && a.address === b.address;
