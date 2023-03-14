@@ -17,6 +17,9 @@
 
     <uses-permission android:name="android.permission.VIBRATE"/>
 
+    <!-- react-native-play-install-referrer -->
+    <uses-permission android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE"/>
+
     <uses-feature
             android:name="android.hardware.camera"
             android:required="false" />
