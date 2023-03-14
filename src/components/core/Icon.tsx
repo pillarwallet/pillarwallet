@@ -142,6 +142,7 @@ import IconAllNetworksLight from 'assets/icons/svg/services-48-circle-pillar-exc
 import IconOptimism from 'assets/icons/svg/icon-24-optimism.svg';
 import IconGnosis from 'assets/icons/svg/icon-24-gnosis.svg';
 import IconArbitrum from 'assets/icons/svg/icon-24-arbitrum.svg';
+import IconxDai from 'assets/icons/svg/icon-24-xdai.svg';
 
 const components = {
   // Generic icons
@@ -290,6 +291,21 @@ const Icon: React.FC<Props> = ({ name, color, style, ...rest }) => {
       <Component fill={color ?? colors.basic010} {...rest} />
     </View>
   ) : null;
+};
+
+export const IconComponentPerChain = {
+  ethereum: IconEthereum,
+  polygon: IconPolygon,
+  binance: IconBinance,
+  xdai: IconGnosis,
+  avalanche: IconAvalanche,
+  optimism: IconOptimism,
+  arbitrum: IconArbitrum,
+};
+
+export const NativeTokenIcon = {
+  ...IconComponentPerChain,
+  xdai: IconxDai,
 };
 
 export default Icon;

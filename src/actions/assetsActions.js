@@ -614,7 +614,7 @@ export const fetchAllAccountsTotalBalancesAction = () => {
   };
 };
 
-export const fetchAssetsBalancesAction = () => {
+export const fetchAssetsBalancesAction = (isRefreshingPart?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
@@ -622,7 +622,6 @@ export const fetchAssetsBalancesAction = () => {
       session: {
         data: { isOnline },
       },
-      assets: { popularAssets },
     } = getState();
 
     const activeAccount = getActiveAccount(accounts);
@@ -630,14 +629,8 @@ export const fetchAssetsBalancesAction = () => {
 
     dispatch({ type: SET_FETCHING_ASSETS_BALANCES, payload: true });
 
-    dispatch(fetchSupportedAssetsAction());
-    if (
-      !popularAssets?.[CHAIN.POLYGON] ||
-      !popularAssets?.[CHAIN.ETHEREUM] ||
-      !popularAssets?.[CHAIN.XDAI] ||
-      !popularAssets?.[CHAIN.BINANCE] ||
-      !popularAssets?.[CHAIN.OPTIMISM]
-    ) {
+    if (!isRefreshingPart) {
+      dispatch(fetchSupportedAssetsAction());
       dispatch(fetchPopularAssetsAction());
     }
 
@@ -664,7 +657,7 @@ export const resetAccountAssetsBalancesAction = (accountId: string) => {
   };
 };
 
-export const fetchAllAccountsAssetsBalancesAction = () => {
+export const fetchAllAccountsAssetsBalancesAction = (isRefreshingPart?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       assetsBalances: { isFetching },
@@ -679,8 +672,10 @@ export const fetchAllAccountsAssetsBalancesAction = () => {
 
     dispatch({ type: SET_FETCHING_ASSETS_BALANCES, payload: true });
 
-    await dispatch(fetchPopularAssetsAction());
-    await dispatch(fetchSupportedAssetsAction());
+    if (!isRefreshingPart) {
+      await dispatch(fetchPopularAssetsAction());
+      await dispatch(fetchSupportedAssetsAction());
+    }
 
     const promises = accounts.map((account) => dispatch(fetchAccountWalletBalancesAction(account)));
 

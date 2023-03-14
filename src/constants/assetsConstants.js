@@ -156,8 +156,6 @@ export const PLR_ADDRESS_AVALANCHE = ''; // TODO: to be added when available
 
 export const CMC_STABLE_COINS = 'CmcStableCoins';
 
-export const SET_STABLE_TOKEN = 'SET_STABLE_TOKEN';
-
 export const ETHERSPOT_STABLE_COIN = 'EtherspotStableCoins';
 export const NFT_FLAG = 'NFT_FLAG';
 export const ETHERSPOT_POPULAR_COIN = 'EtherspotPopularTokens';
@@ -167,3 +165,9 @@ export const IS_ADD_TOKENS_FETCHED = 'IS_ADD_TOKENS_FETCHED';
 export const ADD_TOKENS_LIST = 'ADD_TOKENS_LIST';
 
 export const ADD_CUSTOM_TOKEN = 'ADD_CUSTOM_TOKEN';
+export const ETHERSPOT_DEFAULT_LIST = 'EtherspotDefaultList';
+export const ETHERSPOT_DEFAULT_STABLE_LIST = 'EtherspotDefaultStablesList';
+
+export const FETCHING_DEFAULT_LIST = 'FETCHING_DEFAULT_LIST';
+export const SET_DEFAULT_LIST = 'SET_DEFAULT_LIST';
+export const SET_STABLE_DEFAULT_LIST = 'SET_STABLE_DEFAULT_LIST';

@@ -136,7 +136,7 @@ export const nativeAssetPerChain = {
     name: 'Ethereum',
     symbol: ETH,
     decimals: 18,
-    iconUrl: 'https://tokens.1inch.exchange/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png',
+    iconUrl: 'ethereum',
   },
   polygon: {
     chain: CHAIN.POLYGON,
@@ -144,7 +144,7 @@ export const nativeAssetPerChain = {
     name: 'Matic',
     symbol: MATIC,
     decimals: 18,
-    iconUrl: 'https://tokens.1inch.exchange/0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0.png',
+    iconUrl: 'polygon',
   },
   binance: {
     chain: CHAIN.BINANCE,
@@ -152,8 +152,7 @@ export const nativeAssetPerChain = {
     name: 'BNB',
     symbol: BNB,
     decimals: 18,
-    iconUrl:
-      'https://images.prismic.io/pillar-app/d8e73973-82f1-4b20-a068-fe20e21816b0_0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c_1.png?auto=compress,format',
+    iconUrl: 'binance',
   },
   xdai: {
     chain: CHAIN.XDAI,
@@ -161,7 +160,7 @@ export const nativeAssetPerChain = {
     name: 'xDAI',
     symbol: XDAI,
     decimals: 18,
-    iconUrl: 'https://tokens.1inch.exchange/0x6b175474e89094c44da98b954eedeac495271d0f.png',
+    iconUrl: 'xdai',
   },
   avalanche: {
     chain: CHAIN.AVALANCHE,
@@ -169,7 +168,7 @@ export const nativeAssetPerChain = {
     name: 'Avalanche',
     symbol: AVAX,
     decimals: 18,
-    iconUrl: 'https://image.pngaaa.com/19/5554019-middle.png',
+    iconUrl: 'avalanche',
   },
   optimism: {
     chain: CHAIN.OPTIMISM,
@@ -177,7 +176,7 @@ export const nativeAssetPerChain = {
     name: 'Ethereum',
     symbol: ETH,
     decimals: 18,
-    iconUrl: 'https://tokens.1inch.exchange/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png',
+    iconUrl: 'ethereum',
   },
   arbitrum: {
     chain: CHAIN.ARBITRUM,
@@ -185,7 +184,7 @@ export const nativeAssetPerChain = {
     name: 'Ether',
     symbol: ETH,
     decimals: 18,
-    iconUrl: 'https://tokens.1inch.exchange/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png',
+    iconUrl: 'ethereum',
   },
 };
 

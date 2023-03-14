@@ -34,7 +34,14 @@ import { firebaseCrashlytics } from 'services/firebase';
 import { IS_APP_VERSION_V3 } from 'constants/appConstants';
 import { AUTH_FLOW, ONBOARDING_FLOW, PIN_CODE_UNLOCK, MENU_SELECT_APPEARANCE } from 'constants/navigationConstants';
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import { SET_SUPPORTED_ASSETS, SET_POPULAR_ASSETS, ADD_TOKENS_LIST, ADD_CUSTOM_TOKEN } from 'constants/assetsConstants';
+import {
+  SET_SUPPORTED_ASSETS,
+  SET_POPULAR_ASSETS,
+  ADD_TOKENS_LIST,
+  ADD_CUSTOM_TOKEN,
+  SET_STABLE_DEFAULT_LIST,
+  SET_DEFAULT_LIST,
+} from 'constants/assetsConstants';
 import { SET_ASSETS_BALANCES } from 'constants/assetsBalancesConstants';
 import { UPDATE_PIN_ATTEMPTS, UPDATE_WALLET_BACKUP_STATUS } from 'constants/walletConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
@@ -69,6 +76,8 @@ import { SET_APP_HOLDINGS } from 'constants/appsHoldingsConstants';
 // utils
 import { getWalletFromStorage } from 'utils/wallet';
 import { findFirstArchanovaAccount, findFirstEtherspotAccount, getAccountAddress } from 'utils/accounts';
+import NonStableTokens from 'utils/tokens/tokens.json';
+import StableTokens from 'utils/tokens/stable-tokens.json';
 
 // selectors
 import { accountsSelector, activeAccountAddressSelector } from 'selectors';
@@ -108,9 +117,17 @@ export const initAppAndRedirectAction = () => {
       storageData = await migrate('popularAssets', storageData, dispatch, getState);
       storageData = await migrate('addTokensList', storageData, dispatch, getState);
       storageData = await migrate('customTokensList', storageData, dispatch, getState);
+      storageData = await migrate('defaultTokens', storageData, dispatch, getState);
 
       const { accounts = [] } = get(storageData, 'accounts', {});
       dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });
+
+      const defaultTokens = get(storageData, 'defaultTokens', { tokens: NonStableTokens, stableTokens: StableTokens });
+      dispatch({
+        type: SET_STABLE_DEFAULT_LIST,
+        payload: defaultTokens?.defaultTokens?.stableTokens,
+      });
+      dispatch({ type: SET_DEFAULT_LIST, payload: defaultTokens?.defaultTokens?.tokens });
 
       const supportedAssets = storageData?.supportedAssets?.supportedAssets ?? {};
       dispatch({ type: SET_SUPPORTED_ASSETS, payload: supportedAssets });

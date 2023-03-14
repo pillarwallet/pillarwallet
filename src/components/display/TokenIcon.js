@@ -23,6 +23,7 @@ import styled from 'styled-components/native';
 
 // Components
 import CollectibleImage from 'components/CollectibleImage';
+import { IconComponentPerChain } from 'components/core/Icon';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
@@ -32,15 +33,6 @@ import { spacing } from 'utils/variables';
 // Types
 import type { ViewStyleProp, ImageStyleProp } from 'utils/types/react-native';
 import type { Chain } from 'models/Chain';
-
-// Assets
-import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
-import IconBinance from 'assets/icons/svg/icon-24-binance.svg';
-import IconPolygon from 'assets/icons/svg/icon-24-polygon.svg';
-import IconAvalanche from 'assets/icons/svg/icon-24-avalanche.svg';
-import IconOptimism from 'assets/icons/svg/icon-24-optimism.svg';
-import IconGnosis from 'assets/icons/svg/icon-24-gnosis.svg';
-import IconArbitrum from 'assets/icons/svg/icon-24-arbitrum.svg';
 
 type Props = {|
   url: ?string,
@@ -94,16 +86,6 @@ function TokenIcon({ url, size = 48, chain, style, imageStyle, chainIconStyle, s
 }
 
 export default TokenIcon;
-
-const IconComponentPerChain = {
-  ethereum: IconEthereum,
-  polygon: IconPolygon,
-  binance: IconBinance,
-  xdai: IconGnosis,
-  avalanche: IconAvalanche,
-  optimism: IconOptimism,
-  arbitrum: IconArbitrum,
-};
 
 const Container = styled.View``;
 

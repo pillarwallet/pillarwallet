@@ -63,13 +63,13 @@ import cacheReducer from './cacheReducer';
 import transactionEstimateReducer from './transactionEstimateReducer';
 import liquidityPoolsReducer from './liquidityPoolsReducer';
 import totalBalancesReducer from './totalBalancesReducer';
-import stableTokensReducer from './stableTokensReducer';
 import transactionNotificationReducer from './transactionNotificationReducer';
 import nftFlagReducer from './nftFlagReducer';
 import appsHoldingsReducer from './appsHoldingsReducer';
 import deployAccountsReducer from './deployAccountsReducer';
 import addTokensReducer from './addTokensReducer';
 import addCustomTokensReducer from './addCustomTokensReducer';
+import defaultTokensReducer from './defaultTokensReducer';
 
 // local types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
@@ -113,13 +113,13 @@ import type { OnboardingReducerAction, OnboardingReducerState } from './onboardi
 import type { TransactionEstimateReducerAction, TransactionEstimateReducerState } from './transactionEstimateReducer';
 import type { LiquidityPoolsReducerState, LiquidityPoolsReducerAction } from './liquidityPoolsReducer';
 import type { TotalBalancesReducerState, TotalBalancesReducerAction } from './totalBalancesReducer';
-import type { StableTokensReducerState, TokensAction } from './stableTokensReducer';
 import type { TransactionNotificationState, TransactionNotificationAction } from './transactionNotificationReducer.tsx';
 import type { NFTFlagReducerAction, NFTFlagReducerState } from './nftFlagReducer';
 import type { AppsHoldingsReducerState, AppsHoldingsReducerAction } from './appsHoldingsReducer';
 import type { DeployAccountsAction, DeployAccountsReducerState } from './deployAccountsReducer';
 import type { AddTokensReducerAction, AddTokensReducerState } from './addTokensReducer';
 import type { AddCustomTokensReducerState, AddCustomTokensReducerAction } from './addCustomTokensReducer';
+import type { DefaultTokensReducerState, TokensAction } from './defaultTokensReducer';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -157,13 +157,13 @@ export type RootReducerState = {|
   firestore: IReduxFirestoreState,
   gasThreshold: IReduxGasThresholdState,
   nativeIntegration: IReduxNativeIntegrationState,
-  stableTokens: StableTokensReducerState,
   transactionNotification: TransactionNotificationState,
   nftFlag: NFTFlagReducerState,
   appsHoldings: AppsHoldingsReducerState,
   deployAccounts: DeployAccountsReducerState,
   addTokensList: AddTokensReducerState,
   customTokensList: AddCustomTokensReducerState,
+  defaultTokens: DefaultTokensReducerState,
 |};
 
 type RootReducerAction =
@@ -242,7 +242,6 @@ const appReducer = combineReducers({
   transactionEstimate: transactionEstimateReducer,
   liquidityPools: liquidityPoolsReducer,
   totalBalances: totalBalancesReducer,
-  stableTokens: stableTokensReducer,
   nftFlag: nftFlagReducer,
   appsHoldings: appsHoldingsReducer,
   firestore: firestoreReducer,
@@ -252,6 +251,7 @@ const appReducer = combineReducers({
   deployAccounts: deployAccountsReducer,
   addTokensList: addTokensReducer,
   customTokensList: addCustomTokensReducer,
+  defaultTokens: defaultTokensReducer,
 });
 
 export const initialState = appReducer(undefined, {});

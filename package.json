@@ -149,6 +149,7 @@
     "react-native-pager-view": "^5.1.7",
     "react-native-parsed-text": "^0.0.21",
     "react-native-permissions": "^2.0.10",
+    "react-native-play-install-referrer": "^1.1.8",
     "react-native-qrcode-svg": "^5.1.2",
     "react-native-randombytes": "^3.0.0",
     "react-native-reanimated": "^1.13.2",
