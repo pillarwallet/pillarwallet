@@ -457,7 +457,7 @@ const handleGatewayBatchUpdatedNotification = async (
     existingTransaction.hash
   ) {
     dispatch(setHistoryTransactionStatusByHashAction(existingTransaction.hash, TX_CONFIRMED_STATUS));
-    dispatch(fetchAssetsBalancesAction());
+    dispatch(fetchAssetsBalancesAction(true));
 
     if (!isEmpty(assetData)) {
       const { symbol, decimals } = assetData;

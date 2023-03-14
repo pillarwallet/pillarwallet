@@ -66,7 +66,7 @@ export default function ({ data, index }) {
         );
         setHash(submitedBatchHash);
         setTimerStatus(STATUS.STOPPED);
-        dispatch(fetchAllAccountsAssetsBalancesAction());
+        dispatch(fetchAllAccountsAssetsBalancesAction(true));
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
