@@ -17288,6 +17288,11 @@ react-native-permissions@^2.0.10:
   resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-2.2.2.tgz#3d2a63f6b7d6be52fc86e30f77412a9566283028"
   integrity sha512-ihf4shQDSX5Oo9ChQXb9kr13mmyyNem5MaEvOpr3dCjhBOBWyEMztXm9/uPK1Qg5PsNpaYLa1KpcPZDCw87LXg==
 
+react-native-play-install-referrer@^1.1.8:
+  version "1.1.8"
+  resolved "https://registry.yarnpkg.com/react-native-play-install-referrer/-/react-native-play-install-referrer-1.1.8.tgz#db9b7ab787be0af9a335c939cf0d165c91069fa9"
+  integrity sha512-g+LLv4Tkt3gWJ68OnhaBy25zYpP43OlLydL6siRjGAcl1fMc/DvfnNFWL4Oe1zrpwW4cmB0QGrKYtcbKnSGK3Q==
+
 react-native-qrcode-svg@^5.1.2:
   version "5.3.2"
   resolved "https://registry.yarnpkg.com/react-native-qrcode-svg/-/react-native-qrcode-svg-5.3.2.tgz#6d82c50f4bd264e8eecc08533b0ac2fade8178d3"

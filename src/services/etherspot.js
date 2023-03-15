@@ -62,7 +62,7 @@ import { mapToEthereumTransactions } from 'utils/transactions';
 import { getCaptureFee } from 'utils/exchange';
 
 // constants
-import { ETH, ADDRESS_ZERO, ETHERSPOT_STABLE_COIN, ETHERSPOT_POPULAR_COIN } from 'constants/assetsConstants';
+import { ETH, ADDRESS_ZERO, ETHERSPOT_POPULAR_COIN } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 import { PROJECT_KEY } from 'constants/etherspotConstants';
@@ -805,16 +805,23 @@ export class EtherspotService {
     }
   }
 
-  async getStableAssets(chain: Chain) {
+  async getTokenListTokens(chain: Chain, name: string): Promise<?(Asset[])> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {
-      logBreadcrumb('getStableAssets', 'failed: no sdk instance for chain', { chain });
+      logBreadcrumb('getTokenListTokens', 'failed: no sdk instance for chain', { chain });
       return null;
     }
     try {
-      return await sdk.getTokenListTokens({ name: ETHERSPOT_STABLE_COIN });
+      let tokens: TokenListToken[] = await sdk.getTokenListTokens({ name });
+      if (!tokens) {
+        logBreadcrumb('getTokenListTokens', 'EtherspotService getTokenListTokens failed: no tokens returned', {
+          name,
+        });
+        tokens = []; // let append native assets
+      }
+      return tokens.map((token) => parseTokenListToken(token));
     } catch (e) {
-      reportErrorLog('EtherspotService getStableAssets failed', { error: e });
+      reportErrorLog('EtherspotService getTokenListTokens failed', { error: e, chain, name });
       return null;
     }
   }
