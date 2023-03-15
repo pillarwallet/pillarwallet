@@ -46,6 +46,8 @@ interface IAddCashModal {
 const AddCashModal: FC<IAddCashModal> = ({ setAddCashUrl }) => {
   const modalRef = useRef(null);
   const { t, tRoot } = useTranslationWithPrefix('servicesContent.ramp.addCash.selectResidentModal');
+  const { t: tPelerin } = useTranslationWithPrefix('servicesContent.ramp.addCash.pelerinWidget');
+
   const [usResident, setUsResident] = useState(true);
   const [nonUsResident, setNonUsResident] = useState(false);
   const [deployingAccount, setDeployingAccount] = useState(false);
@@ -59,7 +61,7 @@ const AddCashModal: FC<IAddCashModal> = ({ setAddCashUrl }) => {
   }, []);
 
   const openPelerin = async () => {
-    const url = await pelerinWidgetUrl(deployingAccount, setDeployingAccount, setDeployError);
+    const url = await pelerinWidgetUrl(deployingAccount, setDeployingAccount, setDeployError, tPelerin);
     setAddCashUrl?.(url);
   };
 

@@ -20,7 +20,6 @@
 import { Account, AccountStates, GatewayTransactionStates, NotificationTypes, Sdk } from 'etherspot';
 import WertWidget from '@wert-io/widget-initializer';
 import { map } from 'rxjs/operators';
-import { useTranslationWithPrefix } from 'translations/translate';
 
 // Services
 import { firebaseRemoteConfig } from 'services/firebase';
@@ -112,9 +111,8 @@ export const pelerinWidgetUrl = async (
   deployingAccount = false,
   setDeployingAccount?: (value: boolean) => void,
   showAlert?: (message: string) => void,
+  t?: (t: string) => string,
 ) => {
-  const { t } = useTranslationWithPrefix('servicesContent.ramp.addCash.pelerinWidget');
-
   const chain = chainFromChainId[CHAIN_ID.XDAI];
 
   const sdk: Sdk | undefined = etherspotService.getSdkForChain(chain);
@@ -127,7 +125,7 @@ export const pelerinWidgetUrl = async (
 
   if (account?.state === AccountStates.UnDeployed) {
     if (deployingAccount) {
-      !!showAlert && showAlert(t('currentlyDeploying'));
+      !!showAlert && showAlert(t?.('currentlyDeploying'));
       return;
     }
 
@@ -136,7 +134,7 @@ export const pelerinWidgetUrl = async (
     !!setDeployingAccount && setDeployingAccount(false);
 
     if (!hash || hash === AccountStates.Deployed || hash === AccountStates.UnDeployed) {
-      !!showAlert && showAlert(t('deployError'));
+      !!showAlert && showAlert(t?.('deployError'));
       return;
     }
 
@@ -155,13 +153,13 @@ export const pelerinWidgetUrl = async (
             ];
 
             if (submittedBatch?.transaction?.state && failedStates.includes(submittedBatch?.transaction?.state)) {
-              !!showAlert && showAlert(t('deployError'));
+              !!showAlert && showAlert(t?.('deployError'));
             } else if (submittedBatch?.transaction?.state === GatewayTransactionStates.Sent) {
               const signature = await sdk.signMessage({ message });
               base64Hash = Buffer.from(signature.replace('0x', ''), 'hex').toString('base64');
 
               if (!base64Hash) {
-                !!showAlert && showAlert(t('signatureError'));
+                !!showAlert && showAlert(t?.('signatureError'));
                 return;
               }
 
@@ -178,7 +176,7 @@ export const pelerinWidgetUrl = async (
     const signature = await sdk.signMessage({ message });
     base64Hash = Buffer.from(signature.replace('0x', ''), 'hex').toString('base64');
     if (!base64Hash) {
-      !!showAlert && showAlert(t('signatureError'));
+      !!showAlert && showAlert(t?.('signatureError'));
       return;
     }
 
