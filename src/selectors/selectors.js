@@ -80,7 +80,7 @@ export const appsHoldingsSelector = ({ appsHoldings }: RootReducerState) => apps
 
 export const useAppHoldings = () => useRootSelector((root) => root.appsHoldings);
 
-export const stableTokensSelector = ({ stableTokens }: RootReducerState) => stableTokens.data;
+export const defaultTokensSelector = ({ defaultTokens }: RootReducerState) => defaultTokens;
 
 export const bannerDataSelector = ({ onboarding }: RootReducerState) => onboarding.bannerData;
 

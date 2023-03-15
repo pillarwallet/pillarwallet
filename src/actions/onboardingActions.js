@@ -75,7 +75,11 @@ import {
   resetAndStartImportWalletAction,
 } from 'actions/authActions';
 import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedAssetTransferActions';
-import { importEtherspotAccountsAction, initEtherspotServiceAction, setStableTokens } from 'actions/etherspotActions';
+import {
+  importEtherspotAccountsAction,
+  initEtherspotServiceAction,
+  fetchDefaultTokens,
+} from 'actions/etherspotActions';
 import {
   fetchSupportedAssetsAction,
   fetchOfflineLocalAssets,
@@ -385,6 +389,10 @@ export const setupAppServicesAction = (privateKey: ?string) => {
       logBreadcrumb('onboarding', 'setupAppServicesAction: cannot find key based address');
     }
 
+    // by default fetch default tokens
+    logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching fetchDefaultTokens');
+    dispatch(fetchDefaultTokens());
+
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching fetchAllAccountsTotalBalancesAction');
     dispatch(fetchAllAccountsTotalBalancesAction());
 
@@ -420,9 +428,6 @@ export const setupAppServicesAction = (privateKey: ?string) => {
 
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching loadRemoteConfigWithUserPropertiesAction');
     dispatch(loadRemoteConfigWithUserPropertiesAction());
-
-    logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching setStableTokens');
-    dispatch(setStableTokens());
   };
 };
 
