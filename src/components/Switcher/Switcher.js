@@ -27,10 +27,11 @@ type Props = {
   isOn?: boolean,
   onToggle: ?(boolean) => mixed,
   disabled?: boolean,
+  testID?: string,
 };
 
 type State = {
-  offsetX: Animated.Value
+  offsetX: Animated.Value,
 };
 
 const TOGGLE_DIAMETER = 28;
@@ -41,10 +42,15 @@ const Toggle = styled.View`
   align-items: center;
   justify-content: center;
   position: absolute;
-  background-color: ${({ isOn }) => isOn
-    ? css`${getColorByTheme({ lightKey: 'basic070', darkKey: 'basic050' })}`
-    : css`${getColorByTheme({ lightKey: 'basic070', darkCustom: '#a7a7a7' })}`};
-  elevation: ${({ disabled }) => disabled ? 0 : 2};
+  background-color: ${({ isOn }) =>
+    isOn
+      ? css`
+          ${getColorByTheme({ lightKey: 'basic070', darkKey: 'basic050' })}
+        `
+      : css`
+          ${getColorByTheme({ lightKey: 'basic070', darkCustom: '#a7a7a7' })}
+        `};
+  elevation: ${({ disabled }) => (disabled ? 0 : 2)};
   ${({ theme }) => theme.current === LIGHT_THEME && 'box-shadow: 0px 2px 2px rgba(0,0,0,0.05);'}
   width: ${TOGGLE_DIAMETER}px;
   height: ${TOGGLE_DIAMETER}px;
@@ -56,12 +62,11 @@ const SwitcherTouchable = styled.TouchableOpacity`
   width: 50px;
   border-radius: ${(TOGGLE_DIAMETER / 2) + 3}px;
   height: ${TOGGLE_DIAMETER + 3}px;
-  background-color: ${({ isOn, theme }) => isOn ? theme.colors.basic020 : theme.colors.basic080};
+  background-color: ${({ isOn, theme }) => (isOn ? theme.colors.basic020 : theme.colors.basic080)};
   ${({ disabled }) => disabled && 'opacity: 0.4;'}
 `;
 
 const AnimatedToggle = Animated.createAnimatedComponent(Toggle);
-
 
 class Switcher extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -79,26 +84,17 @@ class Switcher extends React.Component<Props, State> {
   toggle = () => {
     const { isOn } = this.props;
     const { offsetX } = this.state;
-    const toValue = isOn
-      ? ON_POSITION
-      : OFF_POSITION;
+    const toValue = isOn ? ON_POSITION : OFF_POSITION;
 
-    Animated.timing(
-      offsetX,
-      {
-        toValue,
-        duration: 300,
-        useNativeDriver: true,
-      },
-    ).start();
+    Animated.timing(offsetX, {
+      toValue,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
   };
 
   render() {
-    const {
-      isOn,
-      onToggle,
-      disabled,
-    } = this.props;
+    const { isOn, onToggle, disabled, testID } = this.props;
     const { offsetX } = this.state;
 
     return (
@@ -107,6 +103,7 @@ class Switcher extends React.Component<Props, State> {
         onPress={() => onToggle?.(!isOn)}
         disabled={disabled}
         isOn={isOn}
+        testID={testID}
       >
         <AnimatedToggle
           isOn={isOn}

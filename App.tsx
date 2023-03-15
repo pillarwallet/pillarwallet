@@ -438,6 +438,7 @@ const mapDispatchToProps = (dispatch: Dispatch): Partial<Props> => ({
   reduxFetchGasThresholds: () => dispatch(fetchGasThresholds()),
 });
 
+// @ts-ignore
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(withTranslation()(App));
 
 const AppRoot = () => (

@@ -120,6 +120,7 @@ class ImportWalletLegals extends React.Component<Props, State> {
               lightText
               wrapperStyle={{ marginBottom: 16 }}
               checked={hasAgreedToTerms}
+              testID={`${TAG}-checkbox-agree_to_terms`}
             >
               <CheckboxText>
                 {t('auth:withLink.readUnderstandAgreeTo', {
@@ -135,6 +136,7 @@ class ImportWalletLegals extends React.Component<Props, State> {
               small
               lightText
               checked={hasAgreedToPolicy}
+              testID={`${TAG}-checkbox-agree_to_policy`}
             >
               <CheckboxText>
                 {t('auth:withLink.readUnderstandAgreeTo', {
@@ -149,6 +151,7 @@ class ImportWalletLegals extends React.Component<Props, State> {
               disabled={!canGoNext}
               title={t('auth:button.proceed')}
               onPress={() => navigation.navigate(IMPORT_WALLET)}
+              testID={`${TAG}-button-proceed`}
             />
           </ButtonWrapper>
         </Wrapper>
@@ -182,3 +185,5 @@ const CheckboxText = styled(BaseText)`
 const StyledButton = styled(Button)`
   margin: 0 6px;
 `;
+
+const TAG = 'ImportWalletLegals';

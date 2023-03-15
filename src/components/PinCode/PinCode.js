@@ -38,7 +38,6 @@ import { maxPinCodeLengthSelector } from 'selectors/appSettings';
 // types
 import type { ViewStyleProp } from 'utils/types/react-native';
 
-
 type Props = {
   onPinEntered: Function,
   onPinChanged?: Function,
@@ -49,6 +48,7 @@ type Props = {
   customStyle?: ViewStyleProp,
   isLoading?: boolean,
   maxPinCodeLength?: number,
+  testIdTag?: string,
 };
 
 const PinDotsWrapper = styled(Wrapper)`
@@ -60,7 +60,6 @@ const Container = styled.View`
   flex-grow: 1;
   justify-content: space-between;
 `;
-
 
 const PinDotsWrapperAnimated = Animated.createAnimatedComponent(PinDotsWrapper);
 
@@ -76,6 +75,7 @@ const PinCode = ({
   showForgotButton = true,
   flex = true,
   maxPinCodeLength: defaultMaxPinCodeLength,
+  testIdTag,
 }: Props) => {
   const [pinCode, setPinCode] = useState([]);
   const maxPinCodeLength = defaultMaxPinCodeLength ?? useRootSelector(maxPinCodeLengthSelector);
@@ -98,9 +98,7 @@ const PinCode = ({
       return;
     }
 
-    const newPinCode = value === KEYPAD_BUTTON_DELETE
-      ? pinCode.slice(0, -1)
-      : [...pinCode, value];
+    const newPinCode = value === KEYPAD_BUTTON_DELETE ? pinCode.slice(0, -1) : [...pinCode, value];
 
     const enteredPinCodeLength = newPinCode.length;
 
@@ -127,12 +125,14 @@ const PinCode = ({
         flex={flex ? 1 : null}
         style={[
           {
-            transform: [{
-              translateX: errorShakeAnimation.interpolate({
-                inputRange: [0, 0.08, 0.25, 0.41, 0.58, 0.75, 0.92, 1],
-                outputRange: ([0, -10, 10, -10, 10, -5, 5, 0]: number[]),
-              }),
-            }],
+            transform: [
+              {
+                translateX: errorShakeAnimation.interpolate({
+                  inputRange: [0, 0.08, 0.25, 0.41, 0.58, 0.75, 0.92, 1],
+                  outputRange: ([0, -10, 10, -10, 10, -5, 5, 0]: number[]),
+                }),
+              },
+            ],
           },
           customStyle,
         ]}
@@ -147,11 +147,7 @@ const PinCode = ({
           />
         )}
       </PinDotsWrapperAnimated>
-      <KeyPad
-        type="pincode"
-        options={{ showForgotButton }}
-        onKeyPress={handleButtonPressed}
-      />
+      <KeyPad type="pincode" options={{ showForgotButton }} onKeyPress={handleButtonPressed} testIdTag={testIdTag} />
     </Container>
   );
 };
