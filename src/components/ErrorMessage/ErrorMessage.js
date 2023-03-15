@@ -26,7 +26,8 @@ import { themedColors } from 'utils/themes';
 type Props = {
   children: React.Node,
   wrapperStyle?: Object,
-}
+  testID?: string,
+};
 
 const ErrorMessageBackground = styled.View`
   width: 100%;
@@ -41,14 +42,11 @@ const ErrorMessageText = styled(MediumText)`
 `;
 
 const ErrorMessage = (props: Props) => {
-  const { wrapperStyle } = props;
+  const { wrapperStyle, testID } = props;
   return (
     <ErrorMessageBackground style={wrapperStyle}>
-      <ErrorMessageText>
-        {props.children}
-      </ErrorMessageText>
+      <ErrorMessageText testID={testID}>{props.children}</ErrorMessageText>
     </ErrorMessageBackground>
-
   );
 };
 

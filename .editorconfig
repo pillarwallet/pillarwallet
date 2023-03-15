@@ -1,0 +1,24 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+insert_final_newline = true
+
+# ensure character set
+[*.{js,ts,tsx}]
+charset = utf-8
+
+# 2 space indentation using spaces, single quotes
+[*.{js,ts,tsx}]
+indent_style = space
+indent_size = 2
+quote_type = single
+max_line_length = 120
+
+[{package.json}]
+indent_style = space
+indent_size = 2
