@@ -18,13 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { FC } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
 import { Platform } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { NavigationActions } from 'react-navigation';
+import InAppBrowser from 'react-native-inappbrowser-reborn';
 
 // Components
 import Text from 'components/core/Text';
@@ -38,15 +38,10 @@ import { formatFiatValue, formatFiatChangeExtended } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 import { isKeyBasedAccount } from 'utils/accounts';
-
-// Constants
-import { ADD_CASH } from 'constants/navigationConstants';
+import { showServiceLaunchErrorToast } from 'utils/inAppBrowser';
 
 // Hooks
 import { useAppHoldings } from 'hooks/apps';
-
-// Services
-import { navigate } from 'services/navigation';
 
 // Actions
 import { dismissAddCashTooltipAction } from 'actions/appSettingsActions';
@@ -84,9 +79,10 @@ const BalanceSection: FC<IBalanceSection> = ({ balanceInFiat, changeInFiat, show
 
   const visibleAddCashTooltip = !addCashTooltipDismissed && parseFloat(balanceInFiatString) === 0.0;
 
-  const [visibleTooltip, setVisibleTooltip] = React.useState(false);
+  const [visibleTooltip, setVisibleTooltip] = useState(false);
+  const [addCashUrl, setAddCashUrl] = useState(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (visibleAddCashTooltip) {
       setTimeout(() => {
         setVisibleTooltip(true);
@@ -96,8 +92,32 @@ const BalanceSection: FC<IBalanceSection> = ({ balanceInFiat, changeInFiat, show
     }
   }, [addCashTooltipDismissed, balanceInFiat, visibleAddCashTooltip]);
 
+  const openBrowser = async (url: string) => {
+    const isAvailable = await InAppBrowser.isAvailable();
+
+    if (url && isAvailable) {
+      InAppBrowser.open(url, {
+        // iOS Properties
+        dismissButtonStyle: 'close',
+        // Android Properties
+        showTitle: true,
+        enableUrlBarHiding: true,
+        enableDefaultShare: true,
+      });
+    } else showServiceLaunchErrorToast();
+
+    setAddCashUrl(null);
+  };
+
+  useEffect(() => {
+    if (!addCashUrl) return;
+
+    // Delay open Add Cash URL so that it doesn't close with the modal
+    setTimeout(() => openBrowser(addCashUrl), 500);
+  }, [addCashUrl]);
+
   const onAddCashPress = () => {
-    Modal.open(() => <AddCashModal />);
+    Modal.open(() => <AddCashModal setAddCashUrl={setAddCashUrl} />);
     dispatch(dismissAddCashTooltipAction());
   };
 

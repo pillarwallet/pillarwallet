@@ -20,21 +20,17 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
-import { NavigationActions } from 'react-navigation';
 
 // Constants
-import { ADD_CASH_BROWSER } from 'constants/navigationConstants';
 import { CHAIN_ID } from 'constants/chainConstants';
 
 // Utils
 import { fontStyles, spacing, borderRadiusSizes, appFont } from 'utils/variables';
-import { showServiceLaunchErrorToast } from 'utils/inAppBrowser';
 import { rampWidgetUrl, pelerinWidgetUrl } from 'utils/fiatToCrypto';
 import { chainFromChainId } from 'utils/chains';
 
 // Services
 import etherspotService from 'services/etherspot';
-import { navigate } from 'services/navigation';
 
 // Components
 import SlideModal from 'components/Modals/SlideModal';
@@ -43,7 +39,11 @@ import Button from 'components/core/Button';
 import RadioButton from 'components/RadioButton';
 import Icon from 'components/core/Icon';
 
-const AddCashModal: FC = () => {
+interface IAddCashModal {
+  setAddCashUrl?: (url: string) => void;
+}
+
+const AddCashModal: FC<IAddCashModal> = ({ setAddCashUrl }) => {
   const modalRef = useRef(null);
   const { t, tRoot } = useTranslationWithPrefix('servicesContent.ramp.addCash.selectResidentModal');
   const [usResident, setUsResident] = useState(true);
@@ -58,25 +58,9 @@ const AddCashModal: FC = () => {
     };
   }, []);
 
-  const openBrowser = (url: string, title: string) => {
-    if (url) {
-      navigate(
-        NavigationActions.navigate({
-          routeName: ADD_CASH_BROWSER,
-          params: {
-            url,
-            title,
-          },
-        }),
-      );
-    } else {
-      showServiceLaunchErrorToast();
-    }
-  };
-
   const openPelerin = async () => {
     const url = await pelerinWidgetUrl(deployingAccount, setDeployingAccount, setDeployError);
-    openBrowser(url, t('options.pelerinTitle'));
+    setAddCashUrl?.(url);
   };
 
   const openRamp = () => {
@@ -85,7 +69,7 @@ const AddCashModal: FC = () => {
     if (cryptoAddress === null) return;
 
     const url = rampWidgetUrl(cryptoAddress);
-    openBrowser(url, t('options.rampTitle'));
+    setAddCashUrl?.(url);
   };
 
   const selectUsResident = () => {

@@ -99,7 +99,6 @@ export const buildMtPelerinOptions = (code: string, address: string) => {
     rfr: 'etherspot',
     bsc: 'GBP',
     bdc: 'MATIC',
-    mode: 'dark',
     hash: '',
     code: code,
     addr: address || '',
