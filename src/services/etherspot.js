@@ -477,6 +477,7 @@ export class EtherspotService {
     try {
       await this.estimateTransactionsBatch(chain);
     } catch (e) {
+      reportErrorLog('setBatchDeployAccount -> estimateTransactionsBatch failed', { error: e, chain });
       return AccountStates.UnDeployed;
     }
 
@@ -485,6 +486,7 @@ export class EtherspotService {
       if (returnHash) return hash;
       await this.waitForTransactionHashFromSubmittedBatch(chain, hash);
     } catch (e) {
+      reportErrorLog('setBatchDeployAccount -> sdk.submitGatewayBatch failed', { error: e, chain });
       return AccountStates.UnDeployed;
     }
 

@@ -1185,6 +1185,11 @@
             "chainName": "Polygon, BSC, xDai, Avalanche"
           },
           "warningMessage": "Your smart wallet is not deployed on Ethereum.\n{{deploymentCost}} smart wallet deployment cost will be added to this transaction. No action required."
+        },
+        "pelerinWidget": {
+          "deployError": "Failed to deploy the Etherspot wallet, please try again later.",
+          "signatureError": "There was an error getting the signature, please try again.",
+          "currentlyDeploying": "Deploying Etherspot wallet, please try again later."
         }
       }
     },
