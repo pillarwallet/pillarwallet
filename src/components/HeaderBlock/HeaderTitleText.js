@@ -26,6 +26,7 @@ type Props = {
   centerText?: boolean,
   color?: string,
   style?: Object,
+  testID?: string,
 };
 
 const StyledText = styled(MediumText)`
