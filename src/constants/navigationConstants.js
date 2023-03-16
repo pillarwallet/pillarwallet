@@ -24,6 +24,7 @@ export const MAIN_FLOW = 'MAIN_FLOW';
 export const ASSETS = 'ASSETS';
 export const SERVICES = 'SERVICES';
 export const ADD_CASH = 'ADD_CASH';
+export const ADD_CASH_BROWSER = 'ADD_CASH_BROWSER';
 export const GET_NOTIFICATIONS = 'GET_NOTIFICATIONS';
 export const SERVICES_FLOW = 'SERVICES_FLOW';
 export const ME_TAB = 'ME_TAB';
