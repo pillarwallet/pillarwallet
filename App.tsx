@@ -37,6 +37,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import Instabug from 'instabug-reactnative';
 import appsFlyer from 'react-native-appsflyer';
+import { PlayInstallReferrer } from 'react-native-play-install-referrer';
 
 import 'services/localisation/translations';
 import localeConfig from 'configs/localeConfig';
@@ -74,7 +75,7 @@ import { getThemeByType, defaultTheme } from 'utils/themes';
 import { getActiveRouteName } from 'utils/navigation';
 import { log } from 'utils/logger';
 import { initInstabug, setInstabugTheme } from 'utils/monitoring';
-import { logBreadcrumb, reportOrWarn } from 'utils/common';
+import { logBreadcrumb, reportOrWarn, reportLog } from 'utils/common';
 
 // services
 import { setTopLevelNavigator } from 'services/navigation';
@@ -242,6 +243,17 @@ class App extends React.Component<Props, any> {
       },
       (error) => reportOrWarn('AppsFlyer reported an error whilst running initSdk', error),
     );
+
+    // GA Install Referrer - get install timestamp, install version, ...
+    if (Platform.OS === 'android') {
+      PlayInstallReferrer.getInstallReferrerInfo((installReferrerInfo, error) => {
+        if (!error) {
+          reportLog('GA Install Referrer: installReferrerInfo', installReferrerInfo, 'info');
+        } else {
+          reportLog('GA Install Referrer: An error occurred getInstallReferrerInfo method', error, 'error');
+        }
+      });
+    }
 
     // hold the UI and wait until network status finished for later app connectivity checks
     await NetInfo.fetch()
@@ -438,6 +450,7 @@ const mapDispatchToProps = (dispatch: Dispatch): Partial<Props> => ({
   reduxFetchGasThresholds: () => dispatch(fetchGasThresholds()),
 });
 
+// @ts-ignore
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(withTranslation()(App));
 
 const AppRoot = () => (

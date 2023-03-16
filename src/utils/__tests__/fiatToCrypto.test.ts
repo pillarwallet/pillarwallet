@@ -19,7 +19,7 @@
 */
 import querystring from 'querystring';
 
-import { rampWidgetUrl } from '../fiatToCrypto';
+import { rampWidgetUrl } from 'utils/fiatToCrypto';
 
 describe('The fiatToCrypto.js utility module', () => {
   describe('The rampWidgetUrl function', () => {
@@ -39,8 +39,9 @@ describe('The fiatToCrypto.js utility module', () => {
         fiatValue: fakeFiatValue,
         hostApiKey: null,
         userAddress: fakeEthAddress,
-        swapAsset: ['ETH', 'DAI', 'PLR', 'USDC', 'USDT', 'MATIC', 'MATIC_DAI', 'MATIC_USDC', 'xDAI', 'BSC_BNB']
-          .join(','),
+        swapAsset: ['ETH', 'DAI', 'PLR', 'USDC', 'USDT', 'MATIC', 'MATIC_DAI', 'MATIC_USDC', 'xDAI', 'BSC_BNB'].join(
+          ',',
+        ),
       };
       const expectedUrl = `${rampStagingUrl}?${querystring.stringify(expectedParams)}`;
 

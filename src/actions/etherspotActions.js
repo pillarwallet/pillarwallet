@@ -28,7 +28,13 @@ import Toast from 'components/Toast';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { SET_HISTORY, TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 import { CHAIN_NAMES, CHAIN_SHORT } from 'constants/chainConstants';
-import { SET_STABLE_TOKEN } from 'constants/assetsConstants';
+import {
+  ETHERSPOT_DEFAULT_STABLE_LIST,
+  ETHERSPOT_DEFAULT_LIST,
+  FETCHING_DEFAULT_LIST,
+  SET_STABLE_DEFAULT_LIST,
+  SET_DEFAULT_LIST,
+} from 'constants/assetsConstants';
 
 // actions
 import { addAccountAction, updateAccountExtraIfNeededAction, setActiveAccountAction } from 'actions/accountsActions';
@@ -37,9 +43,11 @@ import { setEnsNameIfNeededAction } from 'actions/ensRegistryActions';
 import { setHistoryTransactionStatusByHashAction } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { logEventAction } from 'actions/analyticsActions';
+import { updateRatesAction } from 'actions/ratesActions';
 
 // services
 import etherspotService from 'services/etherspot';
+import { getExchangeRates } from 'services/assets';
 
 // selectors
 import { accountsSelector, historySelector, supportedAssetsPerChainSelector, activeAccountSelector } from 'selectors';
@@ -260,25 +268,80 @@ export const reserveEtherspotEnsNameAction = (username: string) => {
   };
 };
 
-export const setStableTokens = () => {
+export const fetchDefaultTokens = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const activeAccount = activeAccountSelector(getState());
+    const {
+      session: {
+        data: { isOnline },
+      },
+    } = getState();
 
-    if (!activeAccount) {
+    if (!activeAccount || !isOnline) {
       return;
     }
 
     const supportedChain = getSupportedChains(activeAccount);
 
-    const tokens = await Promise.all(supportedChain.map((chain) => etherspotService.getStableAssets(chain)));
+    dispatch({ type: FETCHING_DEFAULT_LIST, payload: true });
 
-    const filteredArr: any[] = [];
-
-    await tokens.forEach((item: any) => {
-      item && filteredArr.push(...item);
+    // For Get Default Token List
+    const chainTokens = await Promise.all(
+      supportedChain?.map((chain) => etherspotService.getTokenListTokens(chain, ETHERSPOT_DEFAULT_LIST)),
+    ).catch((e) => {
+      reportErrorLog('EtherspotActions fetchDefaultTokens -> getTokenListTokens failed', {
+        error: e,
+        name: ETHERSPOT_DEFAULT_LIST,
+      });
+      return [];
     });
 
-    dispatch({ type: SET_STABLE_TOKEN, payload: filteredArr });
+    // For Get Default Stable List
+    const chainStableTokens = await Promise.all(
+      supportedChain?.map((chain) => etherspotService.getTokenListTokens(chain, ETHERSPOT_DEFAULT_STABLE_LIST)),
+    ).catch((e) => {
+      reportErrorLog('EtherspotActions fetchDefaultTokens -> getTokenListTokens failed', {
+        error: e,
+        name: ETHERSPOT_DEFAULT_STABLE_LIST,
+      });
+      return [];
+    });
+
+    const tokens: any[] = [];
+    await Promise.all(
+      chainTokens?.map(async (item: any) => {
+        if (!isEmpty(item)) {
+          tokens.push(...item);
+          await getExchangeRates(item[0].chain, item, async (rates) => {
+            if (rates) await dispatch(updateRatesAction(item[0].chain, rates));
+          });
+        }
+      }),
+    ).catch((error) => {
+      reportErrorLog('EtherspotActions fetchDefaultTokens -> getExchangeRates failed', {
+        error,
+        chainTokens,
+      });
+    });
+
+    const stableTokens: any[] = [];
+    chainStableTokens?.forEach((item: any) => {
+      if (!isEmpty(item)) stableTokens.push(...item);
+    });
+
+    const filterTokensList = tokens?.filter(
+      (token) =>
+        !stableTokens?.some(
+          (stableToken) => token.symbol === stableToken.symbol && token.address === stableToken.address,
+        ),
+    );
+
+    if (isEmpty(filterTokensList)) return;
+
+    dispatch({ type: SET_DEFAULT_LIST, payload: filterTokensList });
+    dispatch({ type: SET_STABLE_DEFAULT_LIST, payload: stableTokens });
+    dispatch(saveDbAction('defaultTokens', { tokens: filterTokensList, stableTokens }, true));
+    dispatch({ type: FETCHING_DEFAULT_LIST, payload: false });
   };
 };
 
@@ -394,7 +457,7 @@ const handleGatewayBatchUpdatedNotification = async (
     existingTransaction.hash
   ) {
     dispatch(setHistoryTransactionStatusByHashAction(existingTransaction.hash, TX_CONFIRMED_STATUS));
-    dispatch(fetchAssetsBalancesAction());
+    dispatch(fetchAssetsBalancesAction(true));
 
     if (!isEmpty(assetData)) {
       const { symbol, decimals } = assetData;

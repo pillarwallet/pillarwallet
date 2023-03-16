@@ -87,6 +87,7 @@ const PinCodeConfirmation = ({ setOnboardingPinCode, navigation }) => {
           showForgotButton={false}
           pinError={!!errorMessage}
           flex={false}
+          testIdTag={TAG}
         />
       </ContentWrapper>
     </ContainerWithHeader>
@@ -109,3 +110,5 @@ const HeaderText = styled(MediumText)`
   text-align: center;
   margin: ${spacing.large}px 0;
 `;
+
+const TAG = 'PinCodeConfirmation';

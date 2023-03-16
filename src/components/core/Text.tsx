@@ -32,9 +32,10 @@ export type TextVariant = keyof typeof objectFontStyles;
 type Props = TextProps & {
   variant?: TextVariant;
   color?: string;
+  testID?: string;
 };
 
-function Text({ variant, color, style, ...rest }: Props) {
+function Text({ variant, color, style, testID, ...rest }: Props) {
   const colors = useThemeColors();
   const propStyle = StyleSheet.flatten(style);
 
@@ -48,7 +49,7 @@ function Text({ variant, color, style, ...rest }: Props) {
     style,
   ];
 
-  return <RNText {...rest} style={resultStyle} />;
+  return <RNText {...rest} style={resultStyle} testID={testID} />;
 }
 
 const baseStyle: TextStyleProp = {

@@ -49,6 +49,7 @@ type Props = {
   titleColor?: string;
   titleStyle?: TextStyleProp;
   leftIconStyle?: ViewStyleProp;
+  testID?: string;
 };
 
 function Button({
@@ -62,6 +63,7 @@ function Button({
   titleColor,
   titleStyle,
   leftIconStyle,
+  testID,
 }: Props) {
   const [localDisabled, setLocalDisabled] = React.useState(false);
   const colors = useThemeColors();
@@ -88,6 +90,7 @@ function Button({
       style={style}
       $variant={variant}
       $size={size}
+      testID={testID}
     >
       {leftIcon && <LeftIcon name={leftIcon} color={titleColor} style={leftIconStyle} />}
 

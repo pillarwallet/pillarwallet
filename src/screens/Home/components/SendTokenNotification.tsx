@@ -64,7 +64,7 @@ export default function ({ data, index }) {
         const submitedBatchHash = await etherspotService.waitForTransactionHashFromSubmittedBatch(chain, batchHash);
         setHash(submitedBatchHash);
         setTimerStatus(STATUS.STOPPED);
-        dispatch(fetchAllAccountsAssetsBalancesAction());
+        dispatch(fetchAllAccountsAssetsBalancesAction(true));
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
