@@ -39,6 +39,7 @@ import { customTokensListSelector, useRootSelector } from 'selectors';
 
 // Actions
 import { manageCustomTokens } from 'actions/assetsActions';
+import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
@@ -84,8 +85,9 @@ function AddTokenListItem({
     setEnableToken(isTokenAvailableInList(customTokensList, token));
   }, [customTokensList]);
 
-  const onChangeToggle = () => {
-    dispatch(manageCustomTokens(token));
+  const onChangeToggle = async () => {
+    await dispatch(manageCustomTokens(token));
+    dispatch(fetchAssetsBalancesAction());
   };
 
   return (

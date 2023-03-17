@@ -119,6 +119,7 @@ import NIWarningScreen from 'screens/NativeIntegration/NIWarning';
 import GetNotificationsScreen from 'screens/Notification/GetNotifications';
 import AddTokensScreen from 'screens/Assets/AddTokens';
 import TokenWithToggles from 'screens/Assets/TokensWithToggles';
+import ManageTokenLists from 'screens/Assets/ManageTokenLists';
 
 // components
 import Toast from 'components/Toast';
@@ -256,6 +257,7 @@ import {
   NI_TRANSACTION_COMPLETED,
   ADD_TOKENS,
   TOKENS_WITH_TOGGLES,
+  MANAGE_TOKEN_LISTS,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -318,6 +320,7 @@ const assetsFlow = createStackNavigator(
     [COLLECTIBLE]: CollectibleScreen,
     [ADD_TOKENS]: AddTokensScreen,
     [TOKENS_WITH_TOGGLES]: TokenWithToggles,
+    [MANAGE_TOKEN_LISTS]: ManageTokenLists,
   },
   StackNavigatorConfig,
 );
@@ -385,6 +388,7 @@ const homeFlow = createStackNavigator(
     [HOME]: HomeScreen,
     [ADD_TOKENS]: AddTokensScreen,
     [TOKENS_WITH_TOGGLES]: TokenWithToggles,
+    [MANAGE_TOKEN_LISTS]: ManageTokenLists,
     [HOME_HISTORY]: HistoryScreen,
     [COLLECTIBLE]: CollectibleScreen,
     [STORYBOOK]: StorybookScreen,
@@ -506,6 +510,7 @@ const menuFlow = createStackNavigator(
   {
     [MENU]: MenuScreen,
     [MENU_SETTINGS]: MenuSettingsScreen,
+    [MANAGE_TOKEN_LISTS]: ManageTokenLists,
     [MENU_SELECT_LANGUAGE]: MenuSelectLanguageScreen,
     [MENU_SELECT_APPEARANCE]: MenuSelectAppearanceScreen,
     [MENU_SELECT_CURRENCY]: MenuSelectCurrencyScreen,

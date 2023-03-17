@@ -28,6 +28,7 @@ import {
   GatewayBatchStates,
   AccountDashboardProtocols as EtherspotAccountDashboardProtocols,
 } from 'etherspot';
+import { isEmpty } from 'lodash';
 
 // constants
 import { TX_CONFIRMED_STATUS, TX_FAILED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
@@ -307,8 +308,8 @@ export const filteredWithStableAssets = (assets: AssetOption[], stableTokens: As
 };
 
 export const filteredWithChain = (assets: AssetOption[], chain: Chain): AssetOption[] => {
-  if (!assets || !chain) return [];
-  return assets.filter((asset) => asset.chain === chain);
+  if (isEmpty(assets)) return [];
+  return chain ? assets.filter((asset) => asset.chain === chain) : assets;
 };
 
 const isSame = (a: AssetOption, b: AssetOption) => a.symbol === b.symbol && a.address === b.address;

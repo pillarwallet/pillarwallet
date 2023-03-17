@@ -19,57 +19,39 @@
 */
 
 import * as React from 'react';
-import { FlatList } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
-import { isEmpty } from 'lodash';
 import { useTranslation } from 'translations/translate';
+import styled from 'styled-components/native';
 
 // Components
 import { Container } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import ChainSelectorContent from 'components/ChainSelector/ChainSelectorContent';
-import AddTokenListItem from 'components/lists/AddTokenListItem';
-import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import SearchBar from 'components/SearchBar';
+import Icon from 'components/core/Icon';
+import Checkbox from 'components/legacy/Checkbox';
+import Button from 'components/core/Button';
 
 // Utils
-import { getMatchingTokens } from 'utils/wallet';
-import { fontSizes } from 'utils/variables';
-import { filteredWithChain } from 'utils/etherspot';
+import { fontSizes, fontStyles } from 'utils/variables';
+import { useThemeColors } from 'utils/themes';
 
 export default function () {
   const { t } = useTranslation();
-
   const navigation = useNavigation();
-
-  const { name, tokens } = navigation.getParam('tokenInfo');
+  const colors = useThemeColors();
 
   const [selectedChain, setSelectedChain] = React.useState(null);
   const [query, setQuery] = React.useState('');
-
-  const tokensAccordingToChain = filteredWithChain(tokens, selectedChain);
-
-  const searchItems = getMatchingTokens(tokensAccordingToChain, query);
-
-  const renderItem = ({ item: token }) => {
-    if (!token) return;
-    return <AddTokenListItem listType="togglesList" {...token} onPress={() => {}} />;
-  };
-
-  function getItemKey(item) {
-    const { address, chain } = item;
-    return chain + '__' + address;
-  }
-
-  const memoizedValue = React.useMemo(() => renderItem, [tokensAccordingToChain, searchItems]);
+  const [hasAgreedToTerms, setHasAgreedToTerms] = React.useState(false);
 
   return (
     <Container>
-      <HeaderBlock navigation={navigation} centerItems={[{ title: name }]} noPaddingTop />
+      <HeaderBlock navigation={navigation} centerItems={[{ title: t('label.manageTokenLists') }]} noPaddingTop />
       <ChainSelectorContent selectedAssetChain={selectedChain} onSelectChain={setSelectedChain} />
 
       <SearchBar
-        accessibilityHint="search_bar"
+        accessibilityHint="manage_token_search_bar"
         inputStyle={{ fontSize: fontSizes.big }}
         style={{ width: '100%' }}
         query={query}
@@ -77,14 +59,45 @@ export default function () {
         placeholder={t('label.find_token')}
       />
 
-      <FlatList
-        key={query ? 'tokens_search_list' : 'tokens_with_toggles'}
-        removeClippedSubviews
-        data={query ? searchItems : tokensAccordingToChain}
-        renderItem={memoizedValue}
-        keyExtractor={getItemKey}
-        ListEmptyComponent={() => <EmptyStateParagraph wide title={t('label.nothingFound')} />}
-      />
+      <SubContainer>
+        <WarningContainer>
+          <Icon name="small-warning" color={colors.helpIcon} />
+          <WarningText>{t('paragraph.tokenNotListedWarning')}</WarningText>
+        </WarningContainer>
+
+        <Checkbox
+          onPress={() => {
+            setHasAgreedToTerms(!hasAgreedToTerms);
+          }}
+          small
+          lightText
+          checked={hasAgreedToTerms}
+          wrapperStyle={{ marginVertical: 16 }}
+        >
+          {t('paragraph.importTokenPermission')}
+        </Checkbox>
+
+        <Button title={t('label.importCustomToken')} onPress={() => {}} disabled={!hasAgreedToTerms} />
+      </SubContainer>
     </Container>
   );
 }
+
+const WarningContainer = styled.View`
+  margin: 24px 0px 18px;
+  padding: 12px 62px 12px 16px;
+  border-radius: 16px;
+  flex-direction: row;
+  align-items: center;
+  border: ${({ theme }) => theme.colors.helpIcon};
+`;
+
+const WarningText = styled.Text`
+  ${fontStyles.small}
+  margin: 0 0 0 20px;
+  color: ${({ theme }) => theme.colors.helpIcon};
+`;
+
+const SubContainer = styled.View`
+  margin-horizontal: 20px;
+`;

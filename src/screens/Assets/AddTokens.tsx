@@ -33,27 +33,32 @@ import AddTokenListItem from 'components/lists/AddTokenListItem';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Spinner from 'components/Spinner';
 
+// Utils
+import { filteredWithChain } from 'utils/etherspot';
+import { getActiveAccount, isSmartWalletAccount } from 'utils/accounts';
+
 // Constants
 import { TOKENS_WITH_TOGGLES } from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // Actions
 import { addTokensListAction } from 'actions/assetsActions';
 
 // Selector
-import { useRootSelector, addTokensListSelector } from 'selectors';
+import { useRootSelector, addTokensListSelector, useAccounts } from 'selectors';
 
 export function AddTokens() {
   const navigation = useNavigation();
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const accounts = useAccounts();
+  const activeAccount = getActiveAccount(accounts);
+  const isSmartWallet = isSmartWalletAccount(activeAccount);
+
   const { addTokensList: tokenList, isFetching } = useRootSelector(addTokensListSelector);
 
   const [selectedChain, setSelectedChain] = React.useState(null);
-  const tokensInfoAccordingToChain = !isEmpty(tokenList)
-    ? selectedChain
-      ? tokenList.filter((tokenInfo) => tokenInfo.chain === selectedChain)
-      : tokenList
-    : [];
+  const tokensAccordingToChain = filteredWithChain(tokenList, !isSmartWallet ? CHAIN.ETHEREUM : selectedChain);
 
   React.useEffect(() => {
     dispatch(addTokensListAction());
@@ -84,14 +89,16 @@ export function AddTokens() {
         centerItems={[{ title: t('label.add_tokens') }]}
         noPaddingTop
       />
+
       <ChainSelectorContent selectedAssetChain={selectedChain} onSelectChain={setSelectedChain} />
+
       {isFetching && isEmpty(tokenList) ? (
         <Spinner size={40} />
       ) : (
         <FlatList
           key={'add_tokens_list'}
           accessibilityHint="add_tokens_list"
-          data={tokensInfoAccordingToChain}
+          data={tokensAccordingToChain}
           renderItem={({ item }) => renderItem(item)}
           keyExtractor={getItemKey}
           ListEmptyComponent={() => <EmptyStateParagraph wide title={t('label.nothingFound')} />}

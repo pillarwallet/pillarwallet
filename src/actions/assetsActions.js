@@ -50,11 +50,13 @@ import {
   RESET_ACCOUNT_TOTAL_BALANCES,
 } from 'constants/totalsBalancesConstants';
 import { CHAIN } from 'constants/chainConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // services
 import etherspotService from 'services/etherspot';
 import archanovaService from 'services/archanova';
 import KeyBasedWallet from 'services/keyBasedWallet';
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // utils
 import { transformBalancesToObject, isTokenAvailableInList, isSame } from 'utils/assets';
@@ -91,7 +93,6 @@ import OptimismGoerliTokens from 'utils/tokens/optimism-goerli-tokens.json';
 import OptimismTokens from 'utils/tokens/optimism-tokens';
 import ArbitrumTokens from 'utils/tokens/arbitrum-tokens';
 import XdaiTokens from 'utils/tokens/xdai-tokens';
-import AddTokensLinks from 'utils/addTokensLinks.json';
 
 // selectors
 import {
@@ -631,7 +632,7 @@ export const fetchAssetsBalancesAction = (isRefreshingPart?: boolean) => {
 
     if (!isRefreshingPart) {
       dispatch(fetchSupportedAssetsAction());
-      dispatch(fetchPopularAssetsAction());
+      // dispatch(fetchPopularAssetsAction());
     }
 
     dispatch(fetchAccountWalletBalancesAction(activeAccount));
@@ -673,7 +674,7 @@ export const fetchAllAccountsAssetsBalancesAction = (isRefreshingPart?: boolean)
     dispatch({ type: SET_FETCHING_ASSETS_BALANCES, payload: true });
 
     if (!isRefreshingPart) {
-      await dispatch(fetchPopularAssetsAction());
+      // await dispatch(fetchPopularAssetsAction());
       await dispatch(fetchSupportedAssetsAction());
     }
 
@@ -712,18 +713,18 @@ export const fetchSupportedAssetsAction = () => {
         // nothing to do if returned empty
         if (isEmpty(chainSupportedAssets)) return;
 
-        const updatedPopularAssets = popularAssetsPerChainSelector(getState());
+        const customTokensList = customTokensListSelector(getState());
 
-        const popularAssets = isEmpty(updatedPopularAssets?.[chain]) ? [] : updatedPopularAssets?.[chain];
+        const customAssets = isEmpty(customTokensList) ? [] : customTokensList;
 
         const removedDuplicateSupportedAssets = chainSupportedAssets.filter(
           (item) =>
-            !popularAssets?.some(
-              (popularAsset) => item.symbol === popularAsset?.symbol && item.address === popularAsset?.address,
+            !customAssets?.some(
+              (customAsset) => item.symbol === customAsset?.symbol && item.address === customAsset?.address,
             ),
         );
 
-        const totalSupportedAssets = [...removedDuplicateSupportedAssets, ...popularAssets];
+        const totalSupportedAssets = [...customAssets, ...removedDuplicateSupportedAssets];
 
         dispatch({
           type: SET_CHAIN_SUPPORTED_ASSETS,
@@ -830,8 +831,20 @@ export const addTokensListAction = () => {
 
     dispatch({ type: ADD_TOKENS_FETCHING, payload: true });
 
+    const tokenList = firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_TOKENLISTS);
+
+    if (isEmpty(tokenList)) {
+      reportErrorLog('assetsActions addTokensListAction: fetching remote config data failed', {
+        key: REMOTE_CONFIG.APP_TOKENLISTS,
+      });
+      dispatch({ type: ADD_TOKENS_FETCHING, payload: false });
+      return;
+    }
+
+    const parsedTokenLists = JSON.parse(tokenList);
+
     const tokensList = await Promise.all(
-      AddTokensLinks.map(async (item) => {
+      parsedTokenLists.map(async (item) => {
         const res = await fetchUrl(item.link);
         const jsonResponse = await res.json();
 
@@ -888,7 +901,7 @@ export const manageCustomTokens = (token: Asset) => {
       dispatch({ type: ADD_CUSTOM_TOKEN, payload: newTokensList });
     }
 
-    const customTokensListInfo = customTokensListSelector(getState());
-    dispatch(saveDbAction('customTokensList', { customTokensList: customTokensListInfo }, true));
+    const customTokensList = customTokensListSelector(getState());
+    dispatch(saveDbAction('customTokensList', { customTokensList }, true));
   };
 };

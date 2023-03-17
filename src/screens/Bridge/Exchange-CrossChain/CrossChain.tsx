@@ -214,7 +214,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
 
         <ToAssetSelector
           title={t('assetSelector.choose_token_crosschain')}
-          assets={toAssets}
+          assets={toOptions}
           selectedAsset={toAsset}
           onSelectAsset={handleSelectToAsset}
           value={offer?.exchangeRate}

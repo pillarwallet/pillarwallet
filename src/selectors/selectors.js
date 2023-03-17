@@ -84,7 +84,7 @@ export const defaultTokensSelector = ({ defaultTokens }: RootReducerState) => de
 
 export const addTokensListSelector = ({ addTokensList }: RootReducerState) => addTokensList;
 
-export const customTokensListSelector = ({ customTokensList }: RootReducerState) => customTokensList.data;
+export const customTokensListSelector = ({ customTokensList }: RootReducerState) => customTokensList?.data;
 
 export const bannerDataSelector = ({ onboarding }: RootReducerState) => onboarding.bannerData;
 

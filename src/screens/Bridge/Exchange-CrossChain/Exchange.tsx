@@ -260,7 +260,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
         <ToAssetSelector
           chain={chain}
           title={t('assetSelector.choose_token_swap')}
-          assets={toAssets}
+          assets={toOptions}
           selectedAsset={toAsset}
           onSelectAsset={handleSelectToAsset}
           value={toValue}

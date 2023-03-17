@@ -84,7 +84,6 @@ import {
   fetchSupportedAssetsAction,
   fetchOfflineLocalAssets,
   fetchAllAccountsTotalBalancesAction,
-  fetchPopularAssetsAction,
 } from 'actions/assetsActions';
 import { fetchTutorialDataIfNeededAction, bannerDataAction } from 'actions/cmsActions';
 import { initialDeepLinkExecutedAction } from 'actions/appSettingsActions';
@@ -370,7 +369,7 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     await dispatch(initEtherspotServiceAction(privateKey));
 
     // user might not be registered at this point
-    await dispatch(fetchPopularAssetsAction());
+    // await dispatch(fetchPopularAssetsAction());
     await dispatch(fetchSupportedAssetsAction());
 
     // create Archanova accounts if needed

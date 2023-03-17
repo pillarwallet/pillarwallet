@@ -37,7 +37,7 @@ import Banner from 'components/Banner/Banner';
 import WalletMigrationArchanovaBanner from 'screens/WalletMigrationArchanova/Banner';
 
 // Constants
-import { MENU_SETTINGS, CONTACTS_FLOW, STORYBOOK } from 'constants/navigationConstants';
+import { MENU_SETTINGS, CONTACTS_FLOW, STORYBOOK, MANAGE_TOKEN_LISTS } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
@@ -80,7 +80,7 @@ const Menu = () => {
 
   const [repliesFlag, setRepliesFlag] = useState(false);
 
-  Replies.hasChats(previousChat => {
+  Replies.hasChats((previousChat) => {
     if (previousChat) {
       setRepliesFlag(true);
     }
@@ -89,6 +89,7 @@ const Menu = () => {
   const goToSettings = () => navigation.navigate(MENU_SETTINGS);
   const goToInviteFriends = () => navigation.navigate(CONTACTS_FLOW);
   const goToStorybook = () => navigation.navigate(STORYBOOK);
+  const goToManageTokenLists = () => navigation.navigate(MANAGE_TOKEN_LISTS);
 
   const goToSupportConversations = () => Replies.show();
   const goToKnowledgebase = () => Linking.openURL(knowledgebaseUrl);
@@ -122,6 +123,7 @@ const Menu = () => {
           valueColor={colors.negative}
           onPress={goToSettings}
         />
+        <MenuItem title={t('item.tokens')} icon="tokens" onPress={goToManageTokenLists} />
         <MenuItem title={t('item.addressBook')} icon="contacts" onPress={goToInviteFriends} />
         <MenuItem
           title={enoughPlrBalance ? t('item.liveChatSupport') : t('item.emailSupport')}

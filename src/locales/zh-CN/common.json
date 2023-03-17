@@ -294,7 +294,9 @@
     "risk_stable": "{{percentage}}% 的低风险马厩",
     "add_tokens": "添加代币",
     "number_of_tokens": "{{tokens}} 代币",
-    "find_token":"查找令牌或输入地址"
+    "find_token":"查找令牌或输入地址",
+    "manageTokenLists":"管理令牌列表",
+    "importCustomToken":"导入自定义令牌"
   },
   "button": {
     "activate": "启用",
@@ -434,7 +436,9 @@
     "nativeIntegrationWarning": "以下工具可让您直接访问智能合约。这被认为是一种专业工具，如果您不知道自己在做什么，请不要尝试使用此工具，因为它可能会导致资金损失。",
     "ownRisk":"继续自担风险。",
     "riskWithType": "您的投资组合现在是{{type}}。",
-    "portfolio_riskiness": "你搬到马厩的次数越多，\n你承担的风险就越小。"
+    "portfolio_riskiness": "你搬到马厩的次数越多，\n你承担的风险就越小。",
+    "tokenNotListedWarning": "此令牌未在 Uniswap 上正式列出。您可以自行承担进口和交易风险。",
+    "importTokenPermission": "我确认我要导入此令牌"
   },
   "insight": {
     "pillarNetworkActivate": {
@@ -617,6 +621,7 @@
   "menu": {
     "item": {
       "settings": "设置",
+      "tokens": "代币",
       "addressBook": "地址簿",
       "supportChat": "支持",
       "storybook": "故事书",

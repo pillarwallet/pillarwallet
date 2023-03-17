@@ -44,7 +44,7 @@ import SearchBar from 'components/SearchBar';
 import Text from 'components/core/Text';
 
 // Constants
-import { ASSET, ADD_TOKENS } from 'constants/navigationConstants';
+import { ASSET, ADD_TOKENS, MANAGE_TOKEN_LISTS } from 'constants/navigationConstants';
 import { TOKENS, STABLES, ALL, WALLET_DROPDOWN_REF } from 'constants/walletConstants';
 
 // Selectors
@@ -189,15 +189,26 @@ function WalletTabScrollContent({ isNavigateToHome, hasPositiveBalance }: Props)
 
   const renderAddToken = () => {
     return (
-      <AddTokenButton
-        onPress={() => {
-          navigation.navigate(ADD_TOKENS);
-        }}
-      >
-        <Icon name="add-token" />
-        <Spacing w={7} />
-        <AddTokenText>{tRoot('label.add_tokens')}</AddTokenText>
-      </AddTokenButton>
+      <FooterRowContainer>
+        <AddTokenButton
+          onPress={() => {
+            navigation.navigate(ADD_TOKENS);
+          }}
+        >
+          <Icon name="add-token" />
+          <Spacing w={7} />
+          <AddTokenText>{tRoot('label.add_tokens')}</AddTokenText>
+        </AddTokenButton>
+        <AddTokenButton
+          onPress={() => {
+            navigation.navigate(MANAGE_TOKEN_LISTS);
+          }}
+        >
+          <Icon name="tokens" width={24} height={24} />
+          <Spacing w={7} />
+          <AddTokenText>{tRoot('menu.item.tokens')}</AddTokenText>
+        </AddTokenButton>
+      </FooterRowContainer>
     );
   };
 
@@ -265,4 +276,10 @@ const Button = styled.TouchableOpacity``;
 const EmptyStateWrapper = styled.View`
   flex: 1;
   align-items: center;
+`;
+
+const FooterRowContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
 `;
