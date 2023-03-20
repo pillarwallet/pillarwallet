@@ -141,6 +141,8 @@ import IconAllNetworksLight from 'assets/icons/svg/services-48-circle-pillar-exc
 import IconOptimism from 'assets/icons/svg/icon-24-optimism.svg';
 import IconGnosis from 'assets/icons/svg/icon-24-gnosis.svg';
 import IconArbitrum from 'assets/icons/svg/icon-24-arbitrum.svg';
+import IconRampNetwork from 'assets/icons/svg/icon-16-ramp.svg';
+import IconPelerin from 'assets/icons/svg/icon-16-pelerin.svg';
 import IconxDai from 'assets/icons/svg/icon-24-xdai.svg';
 
 const components = {
@@ -257,17 +259,19 @@ const components = {
   'wallet-connect': IconWalletConnect,
   'all-networks': IconAllNetworks,
   'all-networks-light': IconAllNetworksLight,
+  'ramp-network': IconRampNetwork,
+  pelerin: IconPelerin,
 };
 
 export type IconName = keyof typeof components;
 
-type Props = {
+interface IIcon {
   name: IconName;
   color?: string;
   width?: number;
   height?: number;
   style?: ViewStyleProp;
-};
+}
 
 /**
  * Modern component to display SVG icons.
@@ -280,7 +284,7 @@ type Props = {
  * @note Use it only for small icon-like images.
  * @note Be aware that the #000 will be replaced by `basic010` color by default or by `color` prop.
  */
-const Icon: React.FC<Props> = ({ name, color, style, ...rest }) => {
+const Icon: React.FC<IIcon> = ({ name, color, style, ...rest }) => {
   const colors = useThemeColors();
 
   const Component = components[name];

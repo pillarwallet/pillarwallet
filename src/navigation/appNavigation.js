@@ -101,6 +101,7 @@ import LiquidityPoolsInfoScreen from 'screens/LiquidityPools/LiquidityPoolsInfo'
 import TutorialScreen from 'screens/Tutorial';
 import EnsMigrationConfirmScreen from 'screens/EnsMigrationConfirm';
 import AddCashScreen from 'screens/AddCash/AddCash';
+import AddCashBrowser from 'screens/AddCash/AddCashBrowser';
 import LegalScreen from 'screens/LegalScreen/LegalScreen';
 import BackupWalletIntro from 'screens/BackupWallet/Intro';
 import BackupPhraseValidateScreen from 'screens/BackupWallet/BackupPhraseValidate';
@@ -236,6 +237,7 @@ import {
   WEB_VIEW,
   ENS_MIGRATION_FLOW,
   ADD_CASH,
+  ADD_CASH_BROWSER,
   GET_NOTIFICATIONS,
   LEGAL_SCREEN,
   SET_WALLET_PIN_CODE,
@@ -336,6 +338,7 @@ const servicesFlow = createStackNavigator(
 // ADD CASH FLOW
 const addCashFlow = createStackNavigator(
   {
+    [ADD_CASH_BROWSER]: AddCashBrowser,
     [ADD_CASH]: AddCashScreen,
     [GET_NOTIFICATIONS]: GetNotificationsScreen,
   },

@@ -22,7 +22,8 @@
           "translations": ["./src/translations"],
           "utils": ["./src/utils"],
           "src": ["./src"]
-        }
+        },
+        "presets": ["module:metro-react-native-babel-preset"]
       }
     ]
   ]
