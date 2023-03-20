@@ -270,7 +270,12 @@ class PinCodeUnlock extends React.Component<Props, State> {
     } = this.props;
     const { waitingTime, showPin } = this.state;
     const pinError = walletErrorMessage || this.errorMessage || null;
-    const showError = pinError ? <ErrorMessage testID={`${TAG}-error-pin_error`}>{pinError}</ErrorMessage> : null;
+    const showError = pinError ? (
+      // eslint-disable-next-line i18next/no-literal-string
+      <ErrorMessage testID={`${TAG}-error-pin_error`} accessibilityLabel={`${TAG}-error-pin_error`}>
+        {pinError}
+      </ErrorMessage>
+    ) : null;
 
     if (showPin) {
       return (
@@ -278,7 +283,8 @@ class PinCodeUnlock extends React.Component<Props, State> {
           <Header centerTitle title={t('auth:enterPincode')} />
           {showError}
           {waitingTime > 0 && (
-            <ErrorMessage testID={`${TAG}-error-max_attempts`}>
+            // eslint-disable-next-line i18next/no-literal-string
+            <ErrorMessage testID={`${TAG}-error-max_attempts`} accessibilityLabel={`${TAG}-error-max_attempts`}>
               {t('auth:error.tooManyAttemptsTryAgain', { waitDuration: waitingTime.toFixed(0) })}
             </ErrorMessage>
           )}

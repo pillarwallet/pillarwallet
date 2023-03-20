@@ -80,6 +80,8 @@ const WelcomeBack = () => {
         onPress={proceedToNextScreen}
         title={t('auth:button.next')}
         testID={`${TAG}-button-next`}
+        // eslint-disable-next-line i18next/no-literal-string
+        accessibilityLabel={`${TAG}-button-next`}
       />
     </Wrapper>
   );

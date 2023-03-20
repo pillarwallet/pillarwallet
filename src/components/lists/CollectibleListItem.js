@@ -40,14 +40,21 @@ type Props = {|
   leftAddOn?: React.Node,
   style?: ViewStyleProp,
   testID?: string,
+  accessibilityLabel?: string,
 |};
 
 /**
  * Standard collectible list item displaying icon, name and optionally subtitle and left add-on (e.g. checkbox).
  */
-function CollectibleListItem({ collectible, subtitle, onPress, leftAddOn, style, testID }: Props) {
+function CollectibleListItem({ collectible, subtitle, onPress, leftAddOn, style, testID, accessibilityLabel }: Props) {
   return (
-    <Container onPress={onPress} disabled={!onPress} style={style} testID={testID}>
+    <Container
+      onPress={onPress}
+      disabled={!onPress}
+      style={style}
+      testID={testID}
+      accessibilityLabel={accessibilityLabel}
+    >
       {!!leftAddOn && <LeftAddOn>{leftAddOn}</LeftAddOn>}
 
       <CollectibleImage source={{ uri: collectible.iconUrl }} width={48} height={48} style={styles.icon} />
