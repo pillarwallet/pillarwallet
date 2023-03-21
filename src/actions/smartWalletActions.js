@@ -52,11 +52,7 @@ import {
 } from 'constants/archanovaConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { ETH } from 'constants/assetsConstants';
-import {
-  ADD_HISTORY_TRANSACTION,
-  SET_HISTORY,
-  TX_CONFIRMED_STATUS,
-} from 'constants/historyConstants';
+import { ADD_HISTORY_TRANSACTION, SET_HISTORY, TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 import {
   MARK_PLR_TANK_INITIALISED,
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
@@ -87,15 +83,8 @@ import { navigate } from 'services/navigation';
 import etherspotService from 'services/etherspot';
 
 // selectors
-import {
-  archanovaAccountEthereumAssetsSelector,
-  ethereumSupportedAssetsSelector,
-} from 'selectors/assets';
-import {
-  accountsSelector,
-  activeAccountAddressSelector,
-  activeAccountIdSelector,
-} from 'selectors';
+import { archanovaAccountEthereumAssetsSelector, ethereumSupportedAssetsSelector } from 'selectors/assets';
+import { accountsSelector, activeAccountAddressSelector, activeAccountIdSelector } from 'selectors';
 import { archanovaAccountEthereumHistorySelector } from 'selectors/history';
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 
@@ -131,12 +120,7 @@ import {
   isHiddenUnsettledTransaction,
   buildArchanovaTxFeeInfo,
 } from 'utils/archanova';
-import {
-  addressesEqual,
-  findAssetByAddress,
-  getAssetsAsList,
-  getBalance,
-} from 'utils/assets';
+import { addressesEqual, findAssetByAddress, getAssetsAsList, getBalance } from 'utils/assets';
 import {
   formatMoney,
   formatUnits,
@@ -146,11 +130,7 @@ import {
   reportErrorLog,
   logBreadcrumb,
 } from 'utils/common';
-import {
-  formatToRawPrivateKey,
-  getPrivateKeyFromPin,
-  normalizeWalletAddress,
-} from 'utils/wallet';
+import { formatToRawPrivateKey, getPrivateKeyFromPin, normalizeWalletAddress } from 'utils/wallet';
 import { nativeAssetPerChain } from 'utils/chains';
 import { fromEthersBigNumber } from 'utils/bigNumber';
 import { getDeviceUniqueId } from 'utils/device';
@@ -177,7 +157,6 @@ import {
 } from './transactionEstimateActions';
 import { setDeviceUniqueIdIfNeededAction } from './appSettingsActions';
 
-
 const isValidSyntheticExchangePayment = (type: string, extra: any) => {
   const syntheticsExchangeType = get(sdkConstants, 'AccountPaymentTypes.SyntheticsExchange');
   return !isEmpty(type) && !isEmpty(extra) && type === syntheticsExchangeType;
@@ -196,9 +175,14 @@ export const loadSmartWalletAccountsAction = (privateKey?: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (!archanovaService || !archanovaService.sdkInitialized) return;
 
-    const { session: { data: { isOnline } } } = getState();
+    const {
+      session: {
+        data: { isOnline },
+      },
+      onboarding: { isNewUser },
+    } = getState();
 
-    if (!isOnline) return;
+    if (!isOnline || isNewUser) return;
 
     let archanovaAccounts = await archanovaService.getAccounts();
     if (!archanovaAccounts?.length && privateKey) {
@@ -218,11 +202,9 @@ export const loadSmartWalletAccountsAction = (privateKey?: string) => {
 
     await dispatch(saveDbAction('smartWallet', { accounts: archanovaAccounts }));
 
-    archanovaAccounts.forEach((account) => dispatch(addAccountAction(
-      account.address,
-      ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET,
-      account,
-    )));
+    archanovaAccounts.forEach((account) =>
+      dispatch(addAccountAction(account.address, ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET, account)),
+    );
   };
 };
 
@@ -243,7 +225,13 @@ export const setSmartWalletDeploymentDataAction = (
   hash: ?string = null,
   error: ?ArchanovaWalletDeploymentError = null,
 ) => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      onboarding: { isNewUser },
+    } = getState();
+
+    if (isNewUser) return;
+
     const deploymentData = { hash, error };
     dispatch(saveDbAction('smartWallet', { deploymentData }));
     dispatch({
@@ -275,7 +263,15 @@ export const fetchConnectedArchanovaAccountAction = () => {
 export const connectArchanovaAccountAction = (accountId: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (!archanovaService || !archanovaService.sdkInitialized) return;
-    let { smartWallet: { connectedAccount: accountWithDevices } } = getState();
+
+    const {
+      smartWallet: { connectedAccount },
+      onboarding: { isNewUser },
+    } = getState();
+
+    if (isNewUser) return;
+
+    let accountWithDevices = connectedAccount;
 
     if (isEmpty(accountWithDevices)) {
       accountWithDevices = await archanovaService.connectAccount(accountId);
@@ -300,8 +296,10 @@ export const connectArchanovaAccountAction = (accountId: string) => {
     // sync deployed account state
     const connectedAccountState = accountWithDevices?.state;
     const currentUpgradeStatus = getState().smartWallet.upgrade?.status;
-    if (currentUpgradeStatus !== ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE
-      && connectedAccountState === sdkConstants.AccountStates.Deployed) {
+    if (
+      currentUpgradeStatus !== ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE &&
+      connectedAccountState === sdkConstants.AccountStates.Deployed
+    ) {
       dispatch(setSmartWalletUpgradeStatusAction(ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
     }
   };
@@ -311,19 +309,13 @@ export const deploySmartWalletAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       smartWallet: {
-        connectedAccount: {
-          address: accountAddress,
-          state: accountState,
-        },
-        upgrade: {
-          status: upgradeStatus,
-          deploymentStarted,
-          deploymentEstimate,
-        },
+        connectedAccount: { address: accountAddress, state: accountState },
+        upgrade: { status: upgradeStatus, deploymentStarted, deploymentEstimate },
       },
+      onboarding: { isNewUser },
     } = getState();
 
-    if (upgradeStatus !== ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYING || !deploymentStarted) {
+    if (!isNewUser && (upgradeStatus !== ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYING || !deploymentStarted)) {
       dispatch({ type: START_ARCHANOVA_WALLET_DEPLOYMENT });
     }
 
@@ -335,6 +327,8 @@ export const deploySmartWalletAction = () => {
       printLog('deploySmartWalletAction account is already deployed!');
       return;
     }
+
+    if (isNewUser) return;
 
     const { deployTxHash, error } = await archanovaService.deployAccount(deploymentEstimate?.raw);
 
@@ -367,11 +361,14 @@ export const fetchVirtualAccountBalanceAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
-      session: { data: { isOnline } },
+      session: {
+        data: { isOnline },
+      },
       smartWallet: { connectedAccount },
+      onboarding: { isNewUser },
     } = getState();
 
-    if (!isConnectedToArchanovaSmartAccount(connectedAccount) || !isOnline) return;
+    if (!isConnectedToArchanovaSmartAccount(connectedAccount) || !isOnline || isNewUser) return;
 
     const plrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
 
@@ -407,9 +404,8 @@ export const fetchVirtualAccountBalanceAction = () => {
     // process pending balances
     const accountPaymentNetworkBalances = pendingBalances.reduce((memo, tokenBalance) => {
       const assetAddress = tokenBalance?.token?.address ?? nativeAssetPerChain.ethereum.address;
-      const {
-        decimals: assetDecimals = nativeAssetPerChain.ethereum.decimals,
-      } = findAssetByAddress(supportedAssets, assetAddress) ?? {};
+      const { decimals: assetDecimals = nativeAssetPerChain.ethereum.decimals } =
+        findAssetByAddress(supportedAssets, assetAddress) ?? {};
       const balance = tokenBalance?.incoming ?? new BigNumber(0);
 
       return {
@@ -420,7 +416,9 @@ export const fetchVirtualAccountBalanceAction = () => {
         },
       };
     }, {});
-    const { paymentNetwork: { balances } } = getState();
+    const {
+      paymentNetwork: { balances },
+    } = getState();
     const updatedBalances = {
       ...balances,
       [accountId]: accountPaymentNetworkBalances,
@@ -444,7 +442,9 @@ export const managePPNInitFlagAction = () => {
     if (!hasPpnPayments) return;
 
     await dispatch(fetchVirtualAccountBalanceAction());
-    const { paymentNetwork: { availableStake } } = getState();
+    const {
+      paymentNetwork: { availableStake },
+    } = getState();
 
     if (availableStake || hasPpnPayments) {
       dispatch({ type: MARK_PLR_TANK_INITIALISED });
@@ -458,7 +458,10 @@ export const syncVirtualAccountTransactionsAction = () => {
     const {
       accounts: { data: accounts },
       smartWallet: { lastSyncedPaymentId },
+      onboarding: { isNewUser },
     } = getState();
+
+    if (isNewUser) return;
 
     const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount) return;
@@ -467,19 +470,21 @@ export const syncVirtualAccountTransactionsAction = () => {
     const supportedAssets = ethereumSupportedAssetsSelector(getState());
 
     // filter out already stored payments
-    const { history: { data: currentHistory } } = getState();
+    const {
+      history: { data: currentHistory },
+    } = getState();
 
     // Archanova is Ethereum only
     const existingTransactions = currentHistory[accountId]?.[CHAIN.ETHEREUM] || [];
 
     // new or updated payment is one that doesn't exist in history contain or its payment state was updated
-    const newOrUpdatedPayments = payments.filter(
-      ({ hash: paymentHash, state: prevStateInPPN }) => existingTransactions.some(
+    const newOrUpdatedPayments = payments.filter(({ hash: paymentHash, state: prevStateInPPN }) =>
+      existingTransactions.some(
         ({ hash, stateInPPN }) => isCaseInsensitiveMatch(hash, paymentHash) && stateInPPN === prevStateInPPN,
       ),
     );
 
-    const transformedNewPayments = newOrUpdatedPayments.map(payment => {
+    const transformedNewPayments = newOrUpdatedPayments.map((payment) => {
       const {
         symbol: assetSymbol = nativeAssetPerChain.ethereum.symbol,
         address: assetAddress = nativeAssetPerChain.ethereum.address,
@@ -538,9 +543,8 @@ export const syncVirtualAccountTransactionsAction = () => {
       }
 
       // if transaction exists this will update only its status and stateInPPN
-      const existingTransaction = existingTransactions.find(({
-        hash,
-      }) => isCaseInsensitiveMatch(hash, paymentHash)) || {};
+      const existingTransaction =
+        existingTransactions.find(({ hash }) => isCaseInsensitiveMatch(hash, paymentHash)) || {};
 
       return buildHistoryTransaction({
         from: senderAddress,
@@ -642,11 +646,12 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const createdDeviceState = get(sdkConstants, 'AccountDeviceStates.Created', '');
 
       // check if new account device state state is "deployed" and next state is not "created" (means undeployment)
-      if (newAccountDeviceState === deployedDeviceState
-        && newAccountDeviceNextState !== createdDeviceState) {
+      if (newAccountDeviceState === deployedDeviceState && newAccountDeviceNextState !== createdDeviceState) {
         // check if current wallet smart wallet account device is deployed
-        if (currentAccountState !== deployedDeviceState
-          && accountUpgradeStatus !== ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
+        if (
+          currentAccountState !== deployedDeviceState &&
+          accountUpgradeStatus !== ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE
+        ) {
           dispatch(setSmartWalletUpgradeStatusAction(ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
           navigate(WALLET_ACTIVATED);
         }
@@ -666,7 +671,9 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         paymentNetwork: { txToListen },
         wallet: { data: walletData },
       } = getState();
-      let { history: { data: currentHistory } } = getState();
+      let {
+        history: { data: currentHistory },
+      } = getState();
       const archanovaAccount = findFirstArchanovaAccount(accounts);
       if (!archanovaAccount) return;
 
@@ -680,11 +687,11 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const txReceiverAddress = get(event, 'payload.to.address', '');
       const txSenderEnsName = get(event, 'payload.from.account.ensName', '');
       const txType = get(event, 'payload.transactionType', '');
-      const txToListenFound = txToListen.find(hash => isCaseInsensitiveMatch(hash, txHash));
+      const txToListenFound = txToListen.find((hash) => isCaseInsensitiveMatch(hash, txHash));
       const skipNotifications = [transactionTypes.TopUpErc20Approve];
 
       const allAccountHistory = getCrossChainAccountHistory(currentHistory[archanovaAccountAddress]);
-      const txFromHistory = allAccountHistory.find(tx => tx.hash === txHash);
+      const txFromHistory = allAccountHistory.find((tx) => tx.hash === txHash);
 
       const getPaymentFromHistory = () => {
         const symbol = get(txFromHistory, 'extra.symbol', '');
@@ -739,15 +746,12 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
           }
 
           if (txToListenFound) {
-            const { txUpdated, updatedHistory } = updateHistoryRecord(
-              currentHistory,
-              txHash,
-              (transaction) => ({
-                ...transaction,
-                gasPrice: txGasInfo.price ? txGasInfo.price.toNumber() : transaction.gasPrice,
-                gasUsed: txGasInfo.used ? txGasInfo.used.toNumber() : transaction.gasUsed,
-                status: TX_CONFIRMED_STATUS,
-              }));
+            const { txUpdated, updatedHistory } = updateHistoryRecord(currentHistory, txHash, (transaction) => ({
+              ...transaction,
+              gasPrice: txGasInfo.price ? txGasInfo.price.toNumber() : transaction.gasPrice,
+              gasUsed: txGasInfo.used ? txGasInfo.used.toNumber() : transaction.gasUsed,
+              status: TX_CONFIRMED_STATUS,
+            }));
 
             if (txUpdated) {
               dispatch(saveDbAction('history', { history: updatedHistory }, true));
@@ -769,13 +773,10 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       }
 
       if (txStatus === TRANSACTION_CREATED && txType === transactionTypes.UpdateAccountEnsName) {
-        const { txUpdated, updatedHistory } = updateHistoryRecord(
-          currentHistory,
-          txHash,
-          (transaction) => ({
-            ...transaction,
-            extra: { ensName: txSenderEnsName },
-          }));
+        const { txUpdated, updatedHistory } = updateHistoryRecord(currentHistory, txHash, (transaction) => ({
+          ...transaction,
+          extra: { ensName: txSenderEnsName },
+        }));
 
         if (txUpdated) {
           dispatch(saveDbAction('history', { history: updatedHistory }, true));
@@ -827,9 +828,11 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const txAmountFormatted = formatUnits(txAmount, decimals);
 
       // check if received transaction
-      if (addressesEqual(archanovaAccountAddress, txReceiverAddress)
-        && !addressesEqual(txReceiverAddress, txSenderAddress)
-        && [ARCHANOVA_PPN_PAYMENT_COMPLETED, ARCHANOVA_PPN_PAYMENT_PROCESSED].includes(txStatus)) {
+      if (
+        addressesEqual(archanovaAccountAddress, txReceiverAddress) &&
+        !addressesEqual(txReceiverAddress, txSenderAddress) &&
+        [ARCHANOVA_PPN_PAYMENT_COMPLETED, ARCHANOVA_PPN_PAYMENT_PROCESSED].includes(txStatus)
+      ) {
         const paymentInfo = `${formatMoney(txAmountFormatted.toString(), 4)} ${txToken}`;
         if (txStatus === ARCHANOVA_PPN_PAYMENT_COMPLETED) {
           Toast.show({
@@ -854,12 +857,14 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
 };
 
 export const initArchanovaSdkAction = (walletPrivateKey: string, forceInit: boolean = false) => {
-  return async (dispatch: Dispatch) => {
-    await archanovaService.init(
-      walletPrivateKey,
-      (event) => dispatch(onSmartWalletSdkEventAction(event)),
-      forceInit,
-    );
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      onboarding: { isNewUser },
+    } = getState();
+
+    if (isNewUser) return;
+
+    await archanovaService.init(walletPrivateKey, (event) => dispatch(onSmartWalletSdkEventAction(event)), forceInit);
     const initialized: boolean = archanovaService.sdkInitialized;
     dispatch({
       type: SET_ARCHANOVA_SDK_INIT,
@@ -873,11 +878,12 @@ export const ensureArchanovaAccountConnectedAction = (privateKey?: string) => {
     const {
       accounts: { data: accounts },
       smartWallet: { connectedAccount },
+      onboarding: { isNewUser },
     } = getState();
 
     const accountId = getActiveAccountId(accounts);
 
-    if (!archanovaService || !archanovaService.sdkInitialized) {
+    if (isNewUser || !archanovaService || !archanovaService.sdkInitialized) {
       if (privateKey) {
         await dispatch(initArchanovaSdkAction(privateKey));
       } else {
@@ -894,6 +900,12 @@ export const ensureArchanovaAccountConnectedAction = (privateKey?: string) => {
 export const estimateTopUpVirtualAccountAction = (amount: string = '1') => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (!archanovaService || !archanovaService.sdkInitialized) return;
+
+    const {
+      onboarding: { isNewUser },
+    } = getState();
+
+    if (isNewUser) return;
 
     dispatch({ type: RESET_ESTIMATED_TOPUP_FEE });
 
@@ -919,17 +931,15 @@ export const estimateTopUpVirtualAccountAction = (amount: string = '1') => {
 
     const value = utils.parseUnits(amount, decimals);
 
-    const response = await archanovaService
-      .estimateTopUpAccountVirtualBalance(value, address)
-      .catch((e) => {
-        Toast.show({
-          message: t('toast.backendProblem'),
-          emoji: 'hushed',
-          autoClose: false,
-        });
-        reportErrorLog('Failed to estimate top up account virtual balance', { error: e });
-        return {};
+    const response = await archanovaService.estimateTopUpAccountVirtualBalance(value, address).catch((e) => {
+      Toast.show({
+        message: t('toast.backendProblem'),
+        emoji: 'hushed',
+        autoClose: false,
       });
+      reportErrorLog('Failed to estimate top up account virtual balance', { error: e });
+      return {};
+    });
     if (isEmpty(response)) return;
 
     const estimate = buildArchanovaTransactionEstimate(response);
@@ -947,7 +957,11 @@ export const topUpVirtualAccountAction = (amount: string, payForGasWithToken: bo
 
     const {
       accounts: { data: accounts },
+      onboarding: { isNewUser },
     } = getState();
+
+    if (isNewUser) return;
+
     const archanovaAccount = findFirstArchanovaAccount(accounts);
     if (!archanovaAccount) return;
 
@@ -967,38 +981,31 @@ export const topUpVirtualAccountAction = (amount: string, payForGasWithToken: bo
     const accountId = getAccountId(archanovaAccount);
     const accountAddress = getAccountAddress(archanovaAccount);
 
-    const {
-      decimals,
-      symbol: assetSymbol,
-      address: assetAddress,
-    } = ppnAsset;
+    const { decimals, symbol: assetSymbol, address: assetAddress } = ppnAsset;
 
     const value = utils.parseUnits(amount.toString(), decimals);
 
-    const estimated = await archanovaService
-      .estimateTopUpAccountVirtualBalance(value, assetAddress)
-      .catch((e) => {
-        Toast.show({
-          message: t('toast.backendProblem'),
-          emoji: 'hushed',
-          autoClose: false,
-        });
-        reportErrorLog('Failed to estimate top up account virtual balance', { error: e });
-        return {};
+    const estimated = await archanovaService.estimateTopUpAccountVirtualBalance(value, assetAddress).catch((e) => {
+      Toast.show({
+        message: t('toast.backendProblem'),
+        emoji: 'hushed',
+        autoClose: false,
       });
+      reportErrorLog('Failed to estimate top up account virtual balance', { error: e });
+      return {};
+    });
 
     if (isEmpty(estimated)) return;
 
-    const txHash = await archanovaService.topUpAccountVirtualBalance(estimated, payForGasWithToken)
-      .catch((e) => {
-        Toast.show({
-          message: t('toast.backendProblem'),
-          emoji: 'hushed',
-          autoClose: false,
-        });
-        reportErrorLog('Failed to top up account virtual balance', { error: e });
-        return null;
+    const txHash = await archanovaService.topUpAccountVirtualBalance(estimated, payForGasWithToken).catch((e) => {
+      Toast.show({
+        message: t('toast.backendProblem'),
+        emoji: 'hushed',
+        autoClose: false,
       });
+      reportErrorLog('Failed to top up account virtual balance', { error: e });
+      return null;
+    });
 
     if (txHash) {
       const transaction = buildHistoryTransaction({
@@ -1025,7 +1032,9 @@ export const topUpVirtualAccountAction = (amount: string, payForGasWithToken: bo
         payload: txHash,
       });
 
-      const { history: { data: currentHistory } } = getState();
+      const {
+        history: { data: currentHistory },
+      } = getState();
       dispatch(saveDbAction('history', { history: currentHistory }, true));
       const paymentInfo = `${formatMoney(amount.toString(), 4)} ${PPN_TOKEN}`;
 
@@ -1039,8 +1048,14 @@ export const topUpVirtualAccountAction = (amount: string, payForGasWithToken: bo
 };
 
 export const estimateWithdrawFromVirtualAccountAction = (amount: string) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Function, getState: GetState) => {
     if (!archanovaService || !archanovaService.sdkInitialized) return;
+
+    const {
+      onboarding: { isNewUser },
+    } = getState();
+
+    if (isNewUser) return;
 
     dispatch({ type: RESET_ESTIMATED_WITHDRAWAL_FEE });
 
@@ -1061,17 +1076,15 @@ export const estimateWithdrawFromVirtualAccountAction = (amount: string) => {
 
     const value = utils.parseUnits(amount, decimals);
 
-    const response = await archanovaService
-      .estimateWithdrawFromVirtualAccount(value, address)
-      .catch((e) => {
-        Toast.show({
-          message: t('toast.backendProblem'),
-          emoji: 'hushed',
-          autoClose: false,
-        });
-        reportErrorLog('Failed to estimate withdraw from virtual account', { error: e });
-        return {};
+    const response = await archanovaService.estimateWithdrawFromVirtualAccount(value, address).catch((e) => {
+      Toast.show({
+        message: t('toast.backendProblem'),
+        emoji: 'hushed',
+        autoClose: false,
       });
+      reportErrorLog('Failed to estimate withdraw from virtual account', { error: e });
+      return {};
+    });
     if (isEmpty(response)) return;
 
     const estimate = buildArchanovaTransactionEstimate(response);
@@ -1089,7 +1102,11 @@ export const withdrawFromVirtualAccountAction = (amount: string, payForGasWithTo
 
     const {
       accounts: { data: accounts },
+      onboarding: { isNewUser },
     } = getState();
+
+    if (isNewUser) return;
+
     const archanovaAccount = findFirstArchanovaAccount(accounts);
     if (!archanovaAccount) return;
 
@@ -1106,41 +1123,34 @@ export const withdrawFromVirtualAccountAction = (amount: string, payForGasWithTo
       return;
     }
 
-    const {
-      decimals,
-      address: assetAddress,
-      symbol: assetSymbol,
-    } = ppnAsset;
+    const { decimals, address: assetAddress, symbol: assetSymbol } = ppnAsset;
 
     const value = utils.parseUnits(amount.toString(), decimals);
 
     const accountId = getAccountId(archanovaAccount);
     const accountAddress = getAccountAddress(archanovaAccount);
 
-    const estimated = await archanovaService
-      .estimateWithdrawFromVirtualAccount(value, assetAddress)
-      .catch((e) => {
-        Toast.show({
-          message: t('toast.backendProblem'),
-          emoji: 'hushed',
-          autoClose: false,
-        });
-        reportErrorLog('Failed to estimate withdraw from virtual account', { error: e });
-        return {};
+    const estimated = await archanovaService.estimateWithdrawFromVirtualAccount(value, assetAddress).catch((e) => {
+      Toast.show({
+        message: t('toast.backendProblem'),
+        emoji: 'hushed',
+        autoClose: false,
       });
+      reportErrorLog('Failed to estimate withdraw from virtual account', { error: e });
+      return {};
+    });
 
     if (isEmpty(estimated)) return;
 
-    const txHash = await archanovaService.withdrawFromVirtualAccount(estimated, payForGasWithToken)
-      .catch((e) => {
-        Toast.show({
-          message: t('toast.backendProblem'),
-          emoji: 'hushed',
-          autoClose: false,
-        });
-        reportErrorLog('Failed to withdraw from virtual account', { error: e });
-        return null;
+    const txHash = await archanovaService.withdrawFromVirtualAccount(estimated, payForGasWithToken).catch((e) => {
+      Toast.show({
+        message: t('toast.backendProblem'),
+        emoji: 'hushed',
+        autoClose: false,
       });
+      reportErrorLog('Failed to withdraw from virtual account', { error: e });
+      return null;
+    });
 
     if (txHash) {
       const transaction = buildHistoryTransaction({
@@ -1167,7 +1177,9 @@ export const withdrawFromVirtualAccountAction = (amount: string, payForGasWithTo
         payload: txHash,
       });
 
-      const { history: { data: currentHistory } } = getState();
+      const {
+        history: { data: currentHistory },
+      } = getState();
       dispatch(saveDbAction('history', { history: currentHistory }, true));
 
       const paymentInfo = `${formatMoney(amount.toString(), 4)} ${PPN_TOKEN}`;
@@ -1250,18 +1262,16 @@ export const estimateSettleBalanceAction = (txToSettle: Object) => {
     dispatch({ type: RESET_ESTIMATED_SETTLE_TX_FEE });
 
     const hashes = txToSettle.map(({ hash }) => hash);
-    const response = await archanovaService
-      .estimatePaymentSettlement(hashes)
-      .catch((e) => {
-        Toast.show({
-          message: t('toast.backendProblem'),
-          emoji: 'hushed',
-          supportLink: true,
-          autoClose: false,
-        });
-        reportErrorLog('Failed to estimate payment settlement', { error: e, hashes });
-        return {};
+    const response = await archanovaService.estimatePaymentSettlement(hashes).catch((e) => {
+      Toast.show({
+        message: t('toast.backendProblem'),
+        emoji: 'hushed',
+        supportLink: true,
+        autoClose: false,
       });
+      reportErrorLog('Failed to estimate payment settlement', { error: e, hashes });
+      return {};
+    });
     if (isEmpty(response)) return;
 
     const estimate = buildArchanovaTransactionEstimate(response);
@@ -1281,32 +1291,29 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[], payForGasWith
     }
 
     const hashes = txToSettle.map(({ hash }) => hash);
-    const estimated = await archanovaService
-      .estimatePaymentSettlement(hashes)
-      .catch((e) => {
-        Toast.show({
-          message: t('toast.backendProblem'),
-          emoji: 'hushed',
-          supportLink: true,
-          autoClose: false,
-        });
-        reportErrorLog('Failed to estimate payment settlement', { error: e, hashes });
-        return {};
+    const estimated = await archanovaService.estimatePaymentSettlement(hashes).catch((e) => {
+      Toast.show({
+        message: t('toast.backendProblem'),
+        emoji: 'hushed',
+        supportLink: true,
+        autoClose: false,
       });
+      reportErrorLog('Failed to estimate payment settlement', { error: e, hashes });
+      return {};
+    });
 
     if (isEmpty(estimated)) return;
 
-    const txHash = await archanovaService.withdrawAccountPayment(estimated, payForGasWithToken)
-      .catch((e) => {
-        Toast.show({
-          message: t('toast.backendProblem'),
-          emoji: 'hushed',
-          supportLink: true,
-          autoClose: false,
-        });
-        reportErrorLog('Failed to settle transactions', { error: e, hashes });
-        return null;
+    const txHash = await archanovaService.withdrawAccountPayment(estimated, payForGasWithToken).catch((e) => {
+      Toast.show({
+        message: t('toast.backendProblem'),
+        emoji: 'hushed',
+        supportLink: true,
+        autoClose: false,
       });
+      reportErrorLog('Failed to settle transactions', { error: e, hashes });
+      return null;
+    });
 
     if (txHash) {
       const accounts = accountsSelector(getState());
@@ -1353,7 +1360,9 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[], payForGasWith
       });
 
       // history state is updated with ADD_HISTORY_TRANSACTION, update in storage
-      const { history: { data: currentHistory } } = getState();
+      const {
+        history: { data: currentHistory },
+      } = getState();
       dispatch(saveDbAction('history', { history: currentHistory }, true));
 
       Toast.show({
@@ -1372,8 +1381,12 @@ export const importArchanovaAccountsIfNeededAction = (privateKey: string) => {
     if (!archanovaService || !archanovaService.sdkInitialized) return;
 
     // nothing to do offline
-    const { session: { data: session } } = getState();
-    if (!session.isOnline) return;
+    const {
+      session: { data: session },
+      onboarding: { isNewUser },
+    } = getState();
+
+    if (!session.isOnline || isNewUser) return;
 
     // check if archanova accounts were ever created, otherwise there is no need to create new
     const archanovaAccounts = await archanovaService.getAccounts();
@@ -1382,9 +1395,11 @@ export const importArchanovaAccountsIfNeededAction = (privateKey: string) => {
     // Archanova supports Ethereum only
     const ethereumSupportedAssets = ethereumSupportedAssetsSelector(getState());
 
-    const archanovaAccountsBalances = await Promise.all(archanovaAccounts.map(({
-      address,
-    }) => etherspotService.getBalances(CHAIN.ETHEREUM, address, ethereumSupportedAssets)));
+    const archanovaAccountsBalances = await Promise.all(
+      archanovaAccounts.map(({ address }) =>
+        etherspotService.getBalances(CHAIN.ETHEREUM, address, ethereumSupportedAssets),
+      ),
+    );
 
     // no need to import empty balance accounts
     const archanovaAccountsHasBalances = archanovaAccountsBalances.some((accountBalances) => !isEmpty(accountBalances));
@@ -1393,11 +1408,9 @@ export const importArchanovaAccountsIfNeededAction = (privateKey: string) => {
     dispatch({ type: SET_ARCHANOVA_WALLET_ACCOUNTS, payload: archanovaAccounts });
     await dispatch(saveDbAction('smartWallet', { accounts: archanovaAccounts }));
 
-    archanovaAccounts.forEach((account) => dispatch(addAccountAction(
-      account.address,
-      ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET,
-      account,
-    )));
+    archanovaAccounts.forEach((account) =>
+      dispatch(addAccountAction(account.address, ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET, account)),
+    );
 
     const accountId = normalizeWalletAddress(archanovaAccounts[0].address);
     await dispatch(connectArchanovaAccountAction(accountId));
@@ -1411,7 +1424,7 @@ export const initArchanovaSdkWithPrivateKeyOrPinAction = ({ privateKey: _private
   return async (dispatch: Dispatch, getState: GetState) => {
     let privateKey = _privateKey;
     if (!_privateKey && pin) {
-      const deviceUniqueId = getState().appSettings.data.deviceUniqueId ?? await getDeviceUniqueId();
+      const deviceUniqueId = getState().appSettings.data.deviceUniqueId ?? (await getDeviceUniqueId());
       dispatch(setDeviceUniqueIdIfNeededAction(deviceUniqueId));
 
       privateKey = await getPrivateKeyFromPin(pin, deviceUniqueId);
@@ -1425,7 +1438,9 @@ export const switchToGasTokenRelayerAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (!archanovaService || !archanovaService.sdkInitialized) return;
 
-    const { accounts: { data: accounts } } = getState();
+    const {
+      accounts: { data: accounts },
+    } = getState();
     const smartWalletAccount = findFirstArchanovaAccount(accounts);
     if (!smartWalletAccount) return;
     const accountId = getAccountId(smartWalletAccount);
@@ -1463,12 +1478,10 @@ export const estimateSmartWalletDeploymentAction = () => {
   return async (dispatch: Dispatch) => {
     dispatch({ type: SET_GETTING_ARCHANOVA_WALLET_DEPLOYMENT_ESTIMATE, payload: true });
 
-    const rawEstimate = await archanovaService
-      .estimateAccountDeployment()
-      .catch((error) => {
-        reportErrorLog('estimateAccountDeployment failed', { error });
-        return null;
-      });
+    const rawEstimate = await archanovaService.estimateAccountDeployment().catch((error) => {
+      reportErrorLog('estimateAccountDeployment failed', { error });
+      return null;
+    });
 
     const estimated = {
       raw: rawEstimate,
@@ -1478,7 +1491,6 @@ export const estimateSmartWalletDeploymentAction = () => {
     dispatch({ type: SET_ARCHANOVA_WALLET_DEPLOYMENT_ESTIMATE, payload: estimated });
   };
 };
-
 
 /**
  * should recover from 2 reported scenarios:
@@ -1540,7 +1552,7 @@ export const checkArchanovaSessionIfNeededAction = () => {
   };
 };
 
-export const estimateEnsMigrationFromArchanovaToEtherspotAction = (rawTransactions: ?string[]) => {
+export const estimateEnsMigrationFromArchanovaToEtherspotAction = (rawTransactions: ?(string[])) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const accounts = accountsSelector(getState());
     const activeAccount = getActiveAccount(accounts);
@@ -1585,7 +1597,7 @@ export const estimateEnsMigrationFromArchanovaToEtherspotAction = (rawTransactio
 };
 
 export const migrateEnsFromArchanovaToEtherspotAction = (
-  rawTransactions: ?string[],
+  rawTransactions: ?(string[]),
   statusCallback: (status: TransactionStatus) => void,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -1594,13 +1606,11 @@ export const migrateEnsFromArchanovaToEtherspotAction = (
     const activeAccount = getActiveAccount(accounts);
     const archanovaAccount = findFirstArchanovaAccount(accounts);
     const etherspotAccount = findFirstEtherspotAccount(accounts);
-    const { transactionEstimate: { feeInfo } } = getState();
+    const {
+      transactionEstimate: { feeInfo },
+    } = getState();
 
-    if (!rawTransactions
-      || !activeAccount
-      || !archanovaAccount
-      || !etherspotAccount
-      || !feeInfo) {
+    if (!rawTransactions || !activeAccount || !archanovaAccount || !etherspotAccount || !feeInfo) {
       Toast.show({
         message: t('toast.ensMigrationCannotProceed'),
         emoji: 'hushed',
