@@ -173,6 +173,7 @@ describe('Onboarding actions', () => {
         backupStatus: mockBackupStatus,
         data: mockImportedWallet,
       },
+      onboarding: mockOnboarding,
     });
 
     const expectedActions = [
@@ -197,6 +198,7 @@ describe('Onboarding actions', () => {
         backupStatus: mockBackupStatus,
         data: mockImportedWallet,
       },
+      onboarding: mockOnboarding,
     });
 
     const expectedActions = [
@@ -232,6 +234,7 @@ describe('Onboarding actions', () => {
       rates: { data: {} },
       badges: { data: [] },
       totalBalances: {},
+      onboarding: mockOnboarding,
     });
 
     const expectedActions = [
@@ -282,6 +285,7 @@ describe('Onboarding actions', () => {
       badges: { data: [] },
       walletEvents: { data: [] },
       totalBalances: {},
+      onboarding: mockOnboarding,
     });
 
     const expectedActions = [
@@ -329,6 +333,7 @@ describe('Onboarding actions', () => {
       },
       user: { data: mockUser },
       assets: { supportedAssets: { ethereum: localAssets(CHAIN.ETHEREUM) } },
+      onboarding: mockOnboarding,
     });
 
     const expectedActions = [
