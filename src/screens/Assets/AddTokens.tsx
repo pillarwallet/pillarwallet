@@ -82,13 +82,8 @@ export function AddTokens() {
   }
 
   return (
-    <Container accessibilityHint="add_tokens_main_content">
-      <HeaderBlock
-        accessibilityHint="header_block"
-        navigation={navigation}
-        centerItems={[{ title: t('label.add_tokens') }]}
-        noPaddingTop
-      />
+    <Container>
+      <HeaderBlock navigation={navigation} centerItems={[{ title: t('label.add_tokens') }]} noPaddingTop />
 
       <ChainSelectorContent selectedAssetChain={selectedChain} onSelectChain={setSelectedChain} />
 
@@ -97,7 +92,6 @@ export function AddTokens() {
       ) : (
         <FlatList
           key={'add_tokens_list'}
-          accessibilityHint="add_tokens_list"
           data={tokensAccordingToChain}
           renderItem={({ item }) => renderItem(item)}
           keyExtractor={getItemKey}
@@ -107,5 +101,7 @@ export function AddTokens() {
     </Container>
   );
 }
+
+const TAG = 'ADD_TOKEN';
 
 export default AddTokens;

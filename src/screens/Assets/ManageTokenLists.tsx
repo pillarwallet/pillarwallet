@@ -124,7 +124,6 @@ export default function () {
       <HeaderBlock navigation={navigation} centerItems={[{ title: t('label.manageTokenLists') }]} noPaddingTop />
       <ChainSelectorContent selectedAssetChain={selectedChain} onSelectChain={setSelectedChain} />
       <SearchBar
-        accessibilityHint="manage_token_search_bar"
         style={{ width: '90%', alignSelf: 'center' }}
         query={query}
         onQueryChange={setQuery}

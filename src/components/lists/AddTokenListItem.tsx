@@ -90,7 +90,7 @@ function AddTokenListItem({
 
   return (
     <Container
-      accessibilityHint="add_tokens_list_item"
+      accessibilityLabel={`${TAG}-${listType}-token`}
       onPress={onPress}
       disabled={!onPress || listType === 'togglesList'}
       style={style}
@@ -115,6 +115,8 @@ function AddTokenListItem({
     </Container>
   );
 }
+
+const TAG = 'ADD_TOKEN_LIST';
 
 export default AddTokenListItem;
 

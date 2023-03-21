@@ -105,8 +105,6 @@ class Switcher extends React.Component<Props, State> {
 
     return (
       <SwitcherTouchable
-        // eslint-disable-next-line i18next/no-literal-string
-        accessibilityHint="switch"
         activeOpacity={1}
         onPress={() => onToggle?.(!isOn)}
         disabled={disabled}

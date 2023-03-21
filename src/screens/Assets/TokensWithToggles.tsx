@@ -69,7 +69,6 @@ export default function () {
       <ChainSelectorContent selectedAssetChain={selectedChain} onSelectChain={setSelectedChain} />
 
       <SearchBar
-        accessibilityHint="search_bar"
         inputStyle={{ fontSize: fontSizes.big }}
         style={{ width: '100%' }}
         query={query}
