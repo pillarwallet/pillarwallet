@@ -87,6 +87,7 @@ const mockOnboarding: Object = {
   wallet: null,
   pinCode: '123456',
   user: { username: mockUser.username },
+  isNewUser: false,
 };
 
 const mockBackupStatus: Object = {
