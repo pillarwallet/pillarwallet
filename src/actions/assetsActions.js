@@ -32,7 +32,6 @@ import {
   ASSET_CATEGORY,
   SET_CHAIN_SUPPORTED_ASSETS,
   USD,
-  SET_CHAIN_POPULAR_ASSETS,
   ADD_TOKENS_FETCHING,
   ADD_TOKENS_LIST,
   IS_ADD_TOKENS_FETCHED,
@@ -102,7 +101,6 @@ import {
   accountsSelector,
   activeAccountSelector,
   supportedAssetsPerChainSelector,
-  popularAssetsPerChainSelector,
   addTokensListSelector,
   customTokensListSelector,
 } from 'selectors';
@@ -635,7 +633,6 @@ export const fetchAssetsBalancesAction = (isRefreshingPart?: boolean) => {
 
     if (!isRefreshingPart) {
       dispatch(fetchSupportedAssetsAction());
-      // dispatch(fetchPopularAssetsAction());
     }
 
     dispatch(fetchAccountWalletBalancesAction(activeAccount));
@@ -677,7 +674,6 @@ export const fetchAllAccountsAssetsBalancesAction = (isRefreshingPart?: boolean)
     dispatch({ type: SET_FETCHING_ASSETS_BALANCES, payload: true });
 
     if (!isRefreshingPart) {
-      // await dispatch(fetchPopularAssetsAction());
       await dispatch(fetchSupportedAssetsAction());
     }
 
@@ -738,37 +734,6 @@ export const fetchSupportedAssetsAction = () => {
 
     const updatedSupportedAssets = supportedAssetsPerChainSelector(getState());
     dispatch(saveDbAction('supportedAssets', { supportedAssets: updatedSupportedAssets }, true));
-  };
-};
-
-export const fetchPopularAssetsAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      session: {
-        data: { isOnline },
-      },
-    } = getState();
-
-    // nothing to do if offline
-    if (!isOnline) return;
-
-    await Promise.all(
-      Object.keys(CHAIN).map(async (chainKey) => {
-        const chain = CHAIN[chainKey];
-        const chainPopularAssets = await etherspotService.getEtherspotPopularTokens(chain);
-
-        // nothing to do if returned empty
-        if (isEmpty(chainPopularAssets)) return;
-
-        dispatch({
-          type: SET_CHAIN_POPULAR_ASSETS,
-          payload: { chain, assets: chainPopularAssets },
-        });
-      }),
-    );
-
-    const updatedPopularAssets = popularAssetsPerChainSelector(getState());
-    dispatch(saveDbAction('popularAssets', { popularAssets: updatedPopularAssets }, true));
   };
 };
 

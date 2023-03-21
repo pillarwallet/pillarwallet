@@ -23,7 +23,6 @@ import loadAndMigrateHistory from './history';
 import loadAndMigrateCollectibles from './collectibles';
 import loadAndMigrateCollectiblesHistory from './collectiblesHistory';
 import loadAndMigrateSupportedAssets from './supportedAssets';
-import loadAndMigratePopularAssets from './popularAssets';
 import loadAndMigrateRates from './rates';
 import loadAndMigrateAddTokens from './addTokens';
 import loadAndMigrateCustomTokens from './customTokens';
@@ -62,10 +61,6 @@ export async function migrate(
 
     case 'supportedAssets':
       data = loadAndMigrateSupportedAssets(storageData);
-      break;
-
-    case 'popularAssets':
-      data = loadAndMigratePopularAssets(storageData);
       break;
 
     case 'rates':

@@ -24,13 +24,7 @@ import { BigNumber } from 'bignumber.js';
 import { orderBy } from 'lodash';
 
 // Selectors
-import {
-  useRootSelector,
-  useSupportedAssetsPerChain,
-  usePopularAssetsPerChain,
-  useRatesPerChain,
-  useFiatCurrency,
-} from 'selectors';
+import { useRootSelector, useSupportedAssetsPerChain, useRatesPerChain, useFiatCurrency } from 'selectors';
 import { useSupportedChains } from 'selectors/chains';
 import { accountAssetsPerChainSelector } from 'selectors/assets';
 import { accountWalletAssetsBalancesSelector } from 'selectors/balances';
@@ -54,7 +48,7 @@ import { DAI, USDT, USDC, BUSD } from 'constants/assetsConstants';
 // Types
 import type { QueryResult } from 'utils/types/react-query';
 import type { Asset, AssetByAddress, AssetOption, AssetsPerChain } from 'models/Asset';
-import type { WalletAssetsBalances, AssetBalance } from 'models/Balances';
+import type { WalletAssetsBalances } from 'models/Balances';
 import type { ExchangeOffer } from 'models/Exchange';
 import type { Currency, RatesPerChain, RatesByAssetAddress } from 'models/Rates';
 import type { Chain, ChainRecord } from 'models/Chain';
@@ -175,78 +169,6 @@ export function useToAssets(chain: ?Chain) {
   return React.useMemo(() => {
     return getExchangeToAssetOptions(chain, supportedAssetsPerChain, walletBalancesPerChain, ratesPerChain, currency);
   }, [chain, supportedAssetsPerChain, walletBalancesPerChain, ratesPerChain, currency]);
-}
-
-export function useToPopularAssets(chain: ?Chain, isCrossChain?: boolean): AssetOption[] {
-  const supportedChains = useSupportedChains();
-  const filteredSupportedList = supportedChains.filter((chainNm: Chain) => chainNm !== chain);
-
-  const popularAssetsPerChain = usePopularAssetsPerChain();
-  const supportedAssetsPerChain = useSupportedAssetsPerChain();
-  const walletBalancesPerChain = useRootSelector(accountWalletAssetsBalancesSelector);
-  const ratesPerChain = useRatesPerChain();
-  const currency = useFiatCurrency();
-
-  return React.useMemo(() => {
-    if (isCrossChain) {
-      return filteredSupportedList.flatMap((chainNm) =>
-        getPopularToAssetOptions(
-          chainNm,
-          popularAssetsPerChain,
-          supportedAssetsPerChain,
-          walletBalancesPerChain,
-          ratesPerChain,
-          currency,
-        ),
-      );
-    }
-    return getPopularToAssetOptions(
-      chain,
-      popularAssetsPerChain,
-      supportedAssetsPerChain,
-      walletBalancesPerChain,
-      ratesPerChain,
-      currency,
-    );
-  }, [
-    isCrossChain,
-    chain,
-    popularAssetsPerChain,
-    supportedAssetsPerChain,
-    walletBalancesPerChain,
-    ratesPerChain,
-    currency,
-    filteredSupportedList,
-  ]);
-}
-
-function getPopularToAssetOptions(
-  chain: ?Chain,
-  popularAssetsPerChain: AssetsPerChain,
-  supportedAssetsPerChain: AssetsPerChain,
-  walletBalancesPerChain: ChainRecord<WalletAssetsBalances>,
-  ratesPerChain: RatesPerChain,
-  currency: Currency,
-): AssetOption[] {
-  if (!chain) return [];
-
-  const popularAssets: any = popularAssetsPerChain?.[chain] ?? [];
-  const supportedAssets: any = supportedAssetsPerChain?.[chain] ?? [];
-  const walletBalances = walletBalancesPerChain?.[chain] ?? {};
-  const rates = ratesPerChain?.[chain] ?? {};
-
-  Object.values(walletBalances)?.forEach((balanceInfo: AssetBalance | any) => {
-    const findAsset = popularAssets?.find((asset) => asset.address === balanceInfo.address);
-
-    if (!findAsset) {
-      const supportedAsset: AssetsPerChain | any = supportedAssets?.find(
-        (asset) => asset.address === balanceInfo.address,
-      );
-      popularAssets.push(supportedAsset);
-    }
-  });
-
-  return popularAssets.map((asset) => getAssetOption(asset, walletBalances, rates, currency, chain));
 }
 
 function getExchangeToAssetOptions(

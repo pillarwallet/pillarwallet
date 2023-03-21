@@ -73,7 +73,6 @@ import {
   sortingOffersToGasFee,
   sortOffers,
   useGasFeeAssets,
-  useToPopularAssets,
 } from './utils';
 import GasFeeAssetSelection from './GasFeeAssetSelection';
 
@@ -109,7 +108,6 @@ function Exchange({ fetchExchangeTitle }: Props) {
 
   const fromOptions = useFromAssets();
   const toOptions = useToAssets(chain);
-  const toAssets = useToPopularAssets(chain);
 
   const gasFeeAssets = useGasFeeAssets(chain);
 
@@ -121,12 +119,9 @@ function Exchange({ fetchExchangeTitle }: Props) {
   );
 
   const toAsset = React.useMemo(() => {
-    const asset = toAssets.find((a) => a.chain === chain && addressesEqual(a.address, toAddress));
-    if (!asset) {
-      return toOptions.find((a) => a.chain === chain && addressesEqual(a.address, toAddress));
-    }
+    const asset = toOptions.find((a) => a.chain === chain && addressesEqual(a.address, toAddress));
     return asset;
-  }, [toAssets, toAddress, chain]);
+  }, [toOptions, toAddress, chain]);
 
   const rates = useChainRates(chain);
   const currency = useFiatCurrency();

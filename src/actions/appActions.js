@@ -36,7 +36,6 @@ import { AUTH_FLOW, ONBOARDING_FLOW, PIN_CODE_UNLOCK, MENU_SELECT_APPEARANCE } f
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import {
   SET_SUPPORTED_ASSETS,
-  SET_POPULAR_ASSETS,
   ADD_TOKENS_LIST,
   ADD_CUSTOM_TOKEN,
   SET_STABLE_DEFAULT_LIST,
@@ -114,7 +113,6 @@ export const initAppAndRedirectAction = () => {
       storageData = await migrate('supportedAssets', storageData, dispatch, getState);
       storageData = await migrate('rates', storageData, dispatch, getState);
       storageData = await migrate('appsHoldings', storageData, dispatch, getState);
-      storageData = await migrate('popularAssets', storageData, dispatch, getState);
       storageData = await migrate('addTokensList', storageData, dispatch, getState);
       storageData = await migrate('customTokensList', storageData, dispatch, getState);
       storageData = await migrate('defaultTokens', storageData, dispatch, getState);
@@ -131,9 +129,6 @@ export const initAppAndRedirectAction = () => {
 
       const supportedAssets = storageData?.supportedAssets?.supportedAssets ?? {};
       dispatch({ type: SET_SUPPORTED_ASSETS, payload: supportedAssets });
-
-      const popularAssets = storageData?.popularAssets?.popularAssets ?? {};
-      dispatch({ type: SET_POPULAR_ASSETS, payload: popularAssets });
 
       const addTokensList = storageData?.addTokensList?.addTokensList ?? [];
       dispatch({ type: ADD_TOKENS_LIST, payload: addTokensList });

@@ -22,8 +22,6 @@ import { ethers } from 'ethers';
 // reducer
 export const SET_SUPPORTED_ASSETS = 'SET_SUPPORTED_ASSETS';
 export const SET_CHAIN_SUPPORTED_ASSETS = 'SET_CHAIN_SUPPORTED_ASSETS';
-export const SET_POPULAR_ASSETS = 'SET_POPULAR_ASSETS';
-export const SET_CHAIN_POPULAR_ASSETS = 'SET_CHAIN_POPULAR_ASSETS';
 
 // fiat
 export const USD = ('USD': 'USD');

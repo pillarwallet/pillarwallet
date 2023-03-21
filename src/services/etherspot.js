@@ -62,7 +62,7 @@ import { mapToEthereumTransactions } from 'utils/transactions';
 import { getCaptureFee } from 'utils/exchange';
 
 // constants
-import { ETH, ADDRESS_ZERO, ETHERSPOT_POPULAR_COIN } from 'constants/assetsConstants';
+import { ETH, ADDRESS_ZERO } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 import { PROJECT_KEY } from 'constants/etherspotConstants';
@@ -867,38 +867,6 @@ export class EtherspotService {
       return supportedAssets;
     } catch (error) {
       reportErrorLog('EtherspotService getSupportedAssets failed', { error });
-      return null;
-    }
-  }
-
-  async getEtherspotPopularTokens(chain: Chain): Promise<?(Asset[])> {
-    const sdk = this.getSdkForChain(chain);
-    if (!sdk) {
-      logBreadcrumb('getEtherspotPopularTokens', 'failed: no sdk instance for chain', { chain });
-      return null;
-    }
-
-    try {
-      let tokens: TokenListToken[] = await sdk.getTokenListTokens({ name: ETHERSPOT_POPULAR_COIN });
-
-      if (!tokens) {
-        logBreadcrumb(
-          'getEtherspotPopularTokens',
-          'EtherspotService getEtherspotPopularTokens failed: no tokens returned',
-          {
-            name: ETHERSPOT_POPULAR_COIN,
-          },
-        );
-        tokens = []; // let append native assets
-      }
-
-      let popularAssets = tokens.map((token) => parseTokenListToken(token));
-
-      popularAssets = appendNativeAssetIfNeeded(chain, popularAssets);
-
-      return popularAssets;
-    } catch (error) {
-      reportErrorLog('EtherspotService getEtherspotPopularTokens failed', { error });
       return null;
     }
   }

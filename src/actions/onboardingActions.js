@@ -369,7 +369,6 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     await dispatch(initEtherspotServiceAction(privateKey));
 
     // user might not be registered at this point
-    // await dispatch(fetchPopularAssetsAction());
     await dispatch(fetchSupportedAssetsAction());
 
     // create Archanova accounts if needed

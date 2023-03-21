@@ -52,7 +52,6 @@ export const useChainRates = (chain: ?Chain) => {
 };
 
 export const useSupportedAssetsPerChain = () => useRootSelector(supportedAssetsPerChainSelector);
-export const usePopularAssetsPerChain = () => useRootSelector(popularAssetsPerChainSelector);
 
 export const useChainSupportedAssets = (chain: ?Chain): Asset[] => {
   const supportedAssetPerChain = useSupportedAssetsPerChain();
@@ -106,9 +105,6 @@ export const syntheticAssetsSelector = ({ synthetics }: RootReducerState) => syn
 
 export const supportedAssetsPerChainSelector = (root: RootReducerState): AssetsPerChain =>
   root.assets?.supportedAssets ?? EMPTY_OBJECT;
-
-export const popularAssetsPerChainSelector = (root: RootReducerState): AssetsPerChain =>
-  root.assets?.popularAssets ?? EMPTY_OBJECT;
 
 export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>
   get(appSettings, 'data.blockchainNetwork', 'Ethereum');
