@@ -198,21 +198,15 @@ const ReceiveModal: FC<IReceiveModal> = ({ address, onModalHide, theme }) => {
           </ChainIconRow>
 
           {isEtherspotAccount(activeAccount) && (
-            <WarningText style={styles.singleAddressInfo}>
+            <InfoText style={styles.singleAddressInfo}>
               {t('receiveModal.deployedOn', { deployed: buildDeployedList() })}
-            </WarningText>
+            </InfoText>
           )}
-        </DeployInfoWrapper>
 
-        {showWarning && (
-          <WarningText color={colors.orange} style={styles.deployWarning}>
-            {t('receiveModal.ethereumWarning')}{' '}
-            <DeployLink color={colors.link} onPress={() => showDeploymentInterjection(CHAIN.ETHEREUM)}>
-              {t('receiveModal.additionalFee')}{' '}
-              <Icon width={16} name="info" color={colors.link} style={{ marginTop: -5 }} />
-            </DeployLink>
-          </WarningText>
-        )}
+          <InfoText color={colors.secondaryAccent} style={styles.singleAddressInfo}>
+            {'Check Deployment Status'}
+          </InfoText>
+        </DeployInfoWrapper>
 
         <CopyButton>
           <Button
@@ -281,12 +275,13 @@ const ShareButton = styled.View`
   margin-bottom: ${spacing.medium}px;
 `;
 
-const InfoView = styled.View`
+const InfoView = styled.View<{ marginTop?: number }>`
   align-items: center;
   justify-content: space-between;
   width: 100%;
   max-height: ${DEVICE_HEIGHT * 0.75}px;
   padding: 0 ${spacing.extraLarge}px;
+  ${({ marginTop }) => marginTop && `margin-top: ${marginTop}px;`}
 `;
 
 const ImageWrapper = styled.View`
@@ -295,7 +290,7 @@ const ImageWrapper = styled.View`
   justify-content: center;
 `;
 
-const WarningText = styled(Text)<{ color?: string }>`
+const InfoText = styled(Text)<{ color?: string }>`
   ${fontStyles.regular};
   text-align: center;
   color: ${({ theme, color }) => color || theme.colors.secondaryText};
@@ -322,7 +317,7 @@ const ReceiveTitle = styled.Text`
 `;
 
 const DeployInfoWrapper = styled.View`
-  width: 100%;
+  width: 100%
   background-color: ${({ theme }) => theme.colors.basic060};
   padding: ${spacing.large}px ${spacing.small}px;
   border-radius: ${borderRadiusSizes.defaultButton}px;
@@ -330,19 +325,17 @@ const DeployInfoWrapper = styled.View`
 `;
 
 const ChainIconRow = styled.View`
-  display: flex;
-  width: 100%;
+  align-self: stretch;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: ${spacing.mediumLarge}px;
 `;
 
 const ChainIconWrapper = styled.View`
   position: relative;
   width: 38px;
   height: 38px;
-  padding: ${spacing.medium}px;
+  padding: ${spacing.largePlus}px;
 
   display: flex;
   align-items: center;
