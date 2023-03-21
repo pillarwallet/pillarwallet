@@ -126,7 +126,8 @@ const InAppBrowser: FC<IInAppBrowser> = ({ initialUrl = '', iconUrl }) => {
         buttonActions={buttonActions}
       />
 
-      <WebView ref={webviewRef} source={{ uri: url }} onLoad={onLoad} onLoadEnd={onLoadEnd} />
+      {/* @ts-ignore */}
+      <WebView ref={webviewRef} source={{ uri: url }} onLoad={onLoad} onLoadEnd={onLoadEnd} originWhitelist={['*']} />
     </Container>
   );
 };

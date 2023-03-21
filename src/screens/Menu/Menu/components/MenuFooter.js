@@ -29,11 +29,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 import Button from 'components/core/Button';
 
 // Constants
-import {
-  MENU_SYSTEM_INFORMATION,
-  BACKUP_WALLET_IN_SETTINGS_FLOW,
-  LEGAL_SCREEN,
-} from 'constants/navigationConstants';
+import { MENU_SYSTEM_INFORMATION, BACKUP_WALLET_IN_SETTINGS_FLOW, LEGAL_SCREEN } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
@@ -48,7 +44,6 @@ import { firebaseRemoteConfig } from 'services/firebase';
 // Utils
 import { useThemeColors } from 'utils/themes';
 import { objectFontStyles, spacing } from 'utils/variables';
-
 
 const MenuFooter = () => {
   const { t, tRoot } = useTranslationWithPrefix('menu.footer');
@@ -99,6 +94,7 @@ const MenuFooter = () => {
           style={styles.button}
           titleStyle={styles.buttonTitle}
           titleColor={colors.secondaryText}
+          testID={`${TAG}-button-privacy_policy`}
         />
         <Button
           title={t('termsOfService')}
@@ -108,6 +104,7 @@ const MenuFooter = () => {
           style={styles.button}
           titleStyle={styles.buttonTitle}
           titleColor={colors.secondaryText}
+          testID={`${TAG}-button-terms_of_service`}
         />
         <Button
           title={t('systemInformation')}
@@ -117,6 +114,7 @@ const MenuFooter = () => {
           style={styles.button}
           titleStyle={styles.buttonTitle}
           titleColor={colors.secondaryText}
+          testID={`${TAG}-button-system_information`}
         />
       </LeftColumn>
 
@@ -129,6 +127,7 @@ const MenuFooter = () => {
           size="compact"
           style={styles.button}
           titleStyle={styles.buttonTitle}
+          testID={`${TAG}-button-logout`}
         />
       </RightColumn>
     </Container>
@@ -160,3 +159,5 @@ const RightColumn = styled.View`
   flex: 1;
   align-items: flex-end;
 `;
+
+const TAG = 'MenuFooter';

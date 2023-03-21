@@ -449,11 +449,11 @@ export class EtherspotService {
     return Promise.all(transactions.map((transaction) => sdk.batchExecuteAccountTransaction(transaction)));
   }
 
-  async setbatchDeployAccount(chain: Chain) {
+  async setBatchDeployAccount(chain: Chain, returnHash?: boolean = false) {
     const sdk = this.getSdkForChain(chain);
 
     if (!sdk) {
-      logBreadcrumb('setbatchDeployAccount', 'failed: no SDK for chain set', { chain });
+      logBreadcrumb('setBatchDeployAccount', 'failed: no SDK for chain set', { chain });
       return null;
     }
 
@@ -468,21 +468,27 @@ export class EtherspotService {
     this.clearTransactionsBatch(chain);
 
     /*
-     ! This method is usefull in only mainnets (Polygon or Gnosis). testnets in need gas token.
+     ! This method is useful in only mainnets (Polygon or Gnosis). testnets in need gas token.
      */
-    // Deploy perticular network (Polygon or Gnosis)
+    // Deploy particular network (Polygon or Gnosis)
     await sdk.batchDeployAccount();
 
     // Estimate for deploy account transaction
     try {
       await this.estimateTransactionsBatch(chain);
     } catch (e) {
+      reportErrorLog('setBatchDeployAccount -> estimateTransactionsBatch failed', { error: e, chain });
       return AccountStates.UnDeployed;
     }
 
-    const { hash } = await sdk.submitGatewayBatch();
-
-    await this.waitForTransactionHashFromSubmittedBatch(chain, hash);
+    try {
+      const { hash } = await sdk.submitGatewayBatch();
+      if (returnHash) return hash;
+      await this.waitForTransactionHashFromSubmittedBatch(chain, hash);
+    } catch (e) {
+      reportErrorLog('setBatchDeployAccount -> sdk.submitGatewayBatch failed', { error: e, chain });
+      return AccountStates.UnDeployed;
+    }
 
     /*
      * Taken little bit more time for transaction response

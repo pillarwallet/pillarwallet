@@ -27,10 +27,11 @@ type Props = {
   isOn?: boolean,
   onToggle: ?(boolean) => mixed,
   disabled?: boolean,
+  testID?: string,
 };
 
 type State = {
-  offsetX: Animated.Value
+  offsetX: Animated.Value,
 };
 
 const TOGGLE_DIAMETER = 28;
@@ -64,7 +65,6 @@ const SwitcherTouchable = styled.TouchableOpacity`
 
 const AnimatedToggle = Animated.createAnimatedComponent(Toggle);
 
-
 class Switcher extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -81,26 +81,17 @@ class Switcher extends React.Component<Props, State> {
   toggle = () => {
     const { isOn } = this.props;
     const { offsetX } = this.state;
-    const toValue = isOn
-      ? ON_POSITION
-      : OFF_POSITION;
+    const toValue = isOn ? ON_POSITION : OFF_POSITION;
 
-    Animated.timing(
-      offsetX,
-      {
-        toValue,
-        duration: 300,
-        useNativeDriver: true,
-      },
-    ).start();
+    Animated.timing(offsetX, {
+      toValue,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
   };
 
   render() {
-    const {
-      isOn,
-      onToggle,
-      disabled,
-    } = this.props;
+    const { isOn, onToggle, disabled, testID } = this.props;
     const { offsetX } = this.state;
 
     return (
@@ -109,6 +100,7 @@ class Switcher extends React.Component<Props, State> {
         onPress={() => onToggle?.(!isOn)}
         disabled={disabled}
         isOn={isOn}
+        testID={testID}
       >
         <AnimatedToggle
           isOn={isOn}

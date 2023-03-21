@@ -222,17 +222,30 @@ function Home() {
       <>
         <Container>
           <HeaderBlock
-            leftItems={[{ svgIcon: 'menu', color: colors.basic020, onPress: () => navigation.navigate(MENU) }]}
+            leftItems={[
+              {
+                svgIcon: 'menu',
+                color: colors.basic020,
+                onPress: () => navigation.navigate(MENU),
+                testID: `${TAG}-button-header_menu`, // eslint-disable-line i18next/no-literal-string
+              },
+            ]}
             centerItems={[
               {
                 custom: <UserNameAndImage user={user?.username} address={accountAddress} />,
               },
             ]}
             rightItems={[
-              { svgIcon: 'history', color: colors.basic020, onPress: () => navigation.navigate(HOME_HISTORY) },
+              {
+                svgIcon: 'history',
+                color: colors.basic020,
+                onPress: () => navigation.navigate(HOME_HISTORY),
+                testID: `${TAG}-button-header_history`, // eslint-disable-line i18next/no-literal-string
+              },
             ]}
             navigation={navigation}
             noPaddingTop
+            testIdTag={TAG}
           />
 
           {/* this should stay first element, avoid putting it inside UserNameAndImage */}
@@ -301,3 +314,5 @@ function Home() {
 }
 
 export default Home;
+
+const TAG = 'Home';

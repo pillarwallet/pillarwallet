@@ -28,20 +28,20 @@ import Text from 'components/core/Text';
 // Utils
 import { fontStyles, spacing } from 'utils/variables';
 
-
 type Props = {|
   title: string,
   icon: IconName,
   onPress: () => mixed,
   value?: string,
   valueColor?: string,
-  subtitle?: string
+  subtitle?: string,
+  testID?: string,
 |};
 
-const MenuItem = ({ title, icon, onPress, value, valueColor, subtitle }: Props) => {
+const MenuItem = ({ title, icon, onPress, value, valueColor, subtitle, testID }: Props) => {
   return (
     <Container>
-      <TouchableContainer onPress={onPress}>
+      <TouchableContainer onPress={onPress} testID={testID}>
         <ItemIcon name={icon} width={16} height={16} />
         <Title>{title}</Title>
         {!!value && <Value $color={valueColor}>{value}</Value>}

@@ -122,6 +122,7 @@ const Menu = () => {
           value={!isBackedUp ? tRoot('menu.settings.backupNotFinishedWarning') : ''}
           valueColor={colors.negative}
           onPress={goToSettings}
+          testID={`${TAG}-button-settings`}
         />
         <MenuItem title={t('item.tokens')} icon="tokens" onPress={goToManageTokenLists} />
         <MenuItem title={t('item.addressBook')} icon="contacts" onPress={goToInviteFriends} />
@@ -130,12 +131,30 @@ const Menu = () => {
           subtitle={!enoughPlrBalance ? t('item.liveChatActivate') : ''}
           icon="message"
           onPress={goToEmailSupport}
+          testID={`${TAG}-button-email_support`}
         />
         {repliesFlag && enoughPlrBalance ? (
-          <MenuItem title={t('item.supportConversations')} icon="message" onPress={goToSupportConversations} />
+          <MenuItem
+            title={t('item.supportConversations')}
+            icon="message"
+            onPress={goToSupportConversations}
+            testID={`${TAG}-button-support_conversations`}
+          />
         ) : null}
-        <MenuItem title={t('item.knowledgebase')} icon="info" onPress={goToKnowledgebase} />
-        {__DEV__ && <MenuItem title={t('item.storybook')} icon="lifebuoy" onPress={goToStorybook} />}
+        <MenuItem
+          title={t('item.knowledgebase')}
+          icon="info"
+          onPress={goToKnowledgebase}
+          testID={`${TAG}-button-knowledge_base`}
+        />
+        {__DEV__ && (
+          <MenuItem
+            title={t('item.storybook')}
+            icon="lifebuoy"
+            onPress={goToStorybook}
+            testID={`${TAG}-button-storybook`}
+          />
+        )}
 
         <SocialMediaLinks />
 
@@ -169,3 +188,5 @@ const BannersContainer = styled.View`
 const FlexSpacer = styled.View`
   flex-grow: 1;
 `;
+
+const TAG = 'Menu';

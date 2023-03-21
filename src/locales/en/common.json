@@ -54,8 +54,8 @@
   "minute_plural": "{{count}} minutes",
   "tutorialTitle": "Welcome to Pillar!",
   "tutorialSubtitle": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-  "smart_wallet":"Smart Wallet",
-  "key_wallet":"Key Wallet",
+  "smart_wallet": "Smart Wallet",
+  "key_wallet": "Key Wallet",
 
   "units": {
     "1e3": "{{value}}K",
@@ -72,11 +72,11 @@
     "avalanche": "Avalanche",
     "optimism": "Optimism",
     "optimism_kovan": "Optimism Kovan",
-    "gorli":"Ethereum Görli",
-    "sokol":"Gnosis Sokol",
-    "binance_test":"Binance Testnet",
-    "mumbai":"Polygon Mumbai",
-    "optimism_gorli":"Optimistic Görli",
+    "gorli": "Ethereum Görli",
+    "sokol": "Gnosis Sokol",
+    "binance_test": "Binance Testnet",
+    "mumbai": "Polygon Mumbai",
+    "optimism_gorli": "Optimistic Görli",
     "arbitrum": "Arbitrum",
     "arbitrum_nitro": "Arbitrum Nitro"
   },
@@ -87,7 +87,7 @@
     "xdai": "Gnosis",
     "polygon": "Polygon",
     "avalanche": "Avalanche",
-    "optimism":"Optimism",
+    "optimism": "Optimism",
     "optimism_kovan": "Optimism Kovan",
     "arbitrum": "Arbitrum"
   },
@@ -99,7 +99,7 @@
     "liquidityPools": "Liquidity Pools",
     "rewards": "Rewards",
     "datasets": "Datasets",
-    "apps":"Apps",
+    "apps": "Apps",
     "collectibles": "NFTs"
   },
 
@@ -153,7 +153,7 @@
     "added": "Added",
     "adding": "Adding",
     "all": "All",
-    "allNetwork":"All networks",
+    "allNetwork": "All networks",
     "backedUp": "Backup secured",
     "canceled": "Canceled",
     "collectibleFromUser": "NFT from {{username}}",
@@ -208,7 +208,7 @@
     "swapping": "Swapping",
     "transactionDeploymentWarning": "Don't proceed if you don't want to deploy {{chain}} Smart Wallet.",
     "transactionFee": "Transaction fee",
-    "smartWalletDeploy":"Smart wallet deployment",
+    "smartWalletDeploy": "Smart wallet deployment",
     "today": "Today",
     "toKeyWallet": "to Key wallet",
     "toPPN": "to Pillar Network",
@@ -300,7 +300,7 @@
     "username": "username",
     "assetMigrate": "Migrate assets to Etherspot",
     "ensMigrate": "Migrate ENS to Etherspot",
-    "transaction_submitted":"Transaction submitted",
+    "transaction_submitted": "Transaction submitted",
     "on_network": "on {{network}}",
     "on_position": "{{position}} position",
     "of_stable": "{{percentage}}% of stables - {{type}}",
@@ -372,7 +372,7 @@
     "settleMore": "Settle more",
     "settleTransactions": "Settle transactions",
     "shareAddress": "Share",
-    "share":"Share",
+    "share": "Share",
     "smartWalletFAQ": "Smart Wallet FAQ",
     "subscribe": "Subscribe",
     "support": "Support",
@@ -449,7 +449,7 @@
     "ensNameCopiedToClipboard": "ENS name copied to clipboard.",
     "cameraPermissionMissing": "Camera permissions not granted - cannot open camera preview.",
     "cameraPermission": "Camera Permission",
-    "needCameraPermission":"The camera permission is needed to open the WalletConnect QR code scanner",
+    "needCameraPermission": "The camera permission is needed to open the WalletConnect QR code scanner",
     "didNotReceiveVerificationCodeQuestion": "Didn't receive the code?",
     "instructionsOnBackingUpBackupPhase": "Write down your 12 word backup phrase in the correct order.",
     "backupPhraseVerificationInstructions": "Please select the correct words.",
@@ -461,7 +461,7 @@
     "doNotShareBackup": "Keep it secure as it's the only way to recover your account in an emergency. Don't email or screenshot it.",
     "sessionExpiredReEnterPin": "Login session expired, please enter your PIN to proceed.",
     "addContacts": "Add contacts to address book to easily access favorite addresses for sending assets.",
-    "nativeIntegrationWarning":"The following tool gives you direct access to Smart Contracts. This is considered a professional tool and if you don't know what you're doing, please don't attempt to use this tool as it could result in loss of funds.",
+    "nativeIntegrationWarning": "The following tool gives you direct access to Smart Contracts. This is considered a professional tool and if you don't know what you're doing, please don't attempt to use this tool as it could result in loss of funds.",
     "ownRisk": "Continue at your own risk.",
     "riskWithType": "Your portfolio is {{type}} right now.",
     "portfolio_riskiness": "The more you move to stables,\nthe less risk you take on.",
@@ -655,7 +655,7 @@
     },
     "apps": {
       "title": "Apps",
-      "new":"NEW"
+      "new": "NEW"
     }
   },
 
@@ -682,7 +682,7 @@
       "title": "Settings",
       "appSettings": "App settings",
       "darkMode": "Dark mode",
-      "appearance":"Appearance",
+      "appearance": "Appearance",
       "language": "Language",
       "fiatCurrency": "Local fiat currency",
       "biometricLogin": "Biometric login",
@@ -769,12 +769,12 @@
     "connectedApps": {
       "title": "Connected dapps",
       "connected": "Connected",
-      "switchWallet":"Switch wallet",
-      "switchNetwork":"Switch network",
-      "disconnect":"Disconnect",
-      "etherspot":"Etherspot",
-      "plr_v1":"Pillar v1",
-      "key_based":"Keybased"
+      "switchWallet": "Switch wallet",
+      "switchNetwork": "Switch network",
+      "disconnect": "Disconnect",
+      "etherspot": "Etherspot",
+      "plr_v1": "Pillar v1",
+      "key_based": "Keybased"
     },
     "disconnectModal": {
       "title": "Disconnect",
@@ -1149,7 +1149,7 @@
       "smartWalletNeedToBeActivated": "Smart Wallet needs to be activated to proceed.",
       "unsupportedRequestCallRequestType": "Unsupported Call Request type."
     },
-    "paragraph":{
+    "paragraph": {
       "undeploy_warning_1": "You are connecting to a wallet that's undeployed, you will not be able to execute any transaction, go to ",
       "deploy_manager": "Wallet Manager",
       "undeploy_warning_2": " to deploy.",
@@ -1174,10 +1174,17 @@
         "title": "Buy Crypto",
         "subTitle": "You pay with card",
         "selectResidentModal": {
-          "title": "Specify residence",
+          "title": "Select a provider",
+          "recommendation": "We recommend using sidechains with low-to-no network fees DeFi, NFTs and more.",
+          "highDeploymentFees": "Warning: High deployment fees if buying on Ethereum Mainnet",
+          "deploying": "Deploying...",
           "options": {
-            "usResident": "US resident",
-            "nonUsResident": "Non-US resident"
+            "rampTitle": "RAMP Network",
+            "rampCountry": "US & Europe",
+            "rampDescription": "Buy with USD, EUR or GBP with Apple & Google Pay or Debit card. Cashing out from crypto available.",
+            "pelerinTitle": "Mt Pelerin",
+            "pelerinCountry": "Europe",
+            "pelerinDescription": "Buy with EUR and CHF with a Debit card. Cashing out from crypto available."
           }
         },
         "selectNetworkModal": {
@@ -1187,10 +1194,15 @@
             "sidechains": "Sidechains",
             "recommended": "Recommended",
             "highGasPrice": "High gas price 🔥",
-            "ethereum": "Ethereum", 
+            "ethereum": "Ethereum",
             "chainName": "Polygon, BSC, xDai, Avalanche"
           },
           "warningMessage": "Your smart wallet is not deployed on Ethereum.\n{{deploymentCost}} smart wallet deployment cost will be added to this transaction. No action required."
+        },
+        "pelerinWidget": {
+          "deployError": "Failed to deploy the Etherspot wallet, please try again later.",
+          "signatureError": "There was an error getting the signature, please try again.",
+          "currentlyDeploying": "Deploying Etherspot wallet, please try again later."
         }
       }
     },
@@ -1412,14 +1424,14 @@
         "title": "No live offers",
         "paragraph": "Currently no matching offers from exchange services are provided."
       },
-      "routes":{
+      "routes": {
         "title": "No routes available",
         "paragraph": "Currently no matching routes from cross-chain services are provided."
       }
     },
-    "gas_fee_asset":{
-      "title":"Paying fees with",
-      "left":"left"
+    "gas_fee_asset": {
+      "title": "Paying fees with",
+      "left": "left"
     }
   },
 
@@ -1616,9 +1628,9 @@
 
   "tooltip": {
     "switchAccountsByTappingHere": "You can switch accounts by tapping here",
-    "start_by_cash":"Start by adding cash",
+    "start_by_cash": "Start by adding cash",
     "switch_account": "Switched to your Key Wallet for the Etherspot Dashboard",
-    "signInDeFi":"Sign in to DeFi",
+    "signInDeFi": "Sign in to DeFi",
     "includesDeploymentFee": "One-time Smart Wallet deployment fee",
     "registerENS": "Register your unique ENS name"
   },
@@ -1648,21 +1660,21 @@
     }
   },
 
-  "getNotifications":{
+  "getNotifications": {
     "title": "Get notifications",
     "description": "Pillar will notify on your transactions status and requests from dapps. Never spam, always on point."
   },
 
-  "transactionNotification":{
-    "selling":"Selling",
-    "you_received":"You have received",
-    "sending":"Sending",
-    "you_sent":"You have sent",
-    "to":"to",
-    "sold":"Sold",
-    "on":"on",
-    "for":"for",
-    "gas":"Gas",
-    "time":"Time"
+  "transactionNotification": {
+    "selling": "Selling",
+    "you_received": "You have received",
+    "sending": "Sending",
+    "you_sent": "You have sent",
+    "to": "to",
+    "sold": "Sold",
+    "on": "on",
+    "for": "for",
+    "gas": "Gas",
+    "time": "Time"
   }
 }

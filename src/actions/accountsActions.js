@@ -286,7 +286,7 @@ export const switchToEtherspotAccountIfNeededAction = () => {
 
     const etherspotAccount = findFirstEtherspotAccount(accounts);
     if (!etherspotAccount) {
-      logBreadcrumb('switchToEtherspotAccountIfNeededAction', 'no Eterspot account found', { accounts });
+      logBreadcrumb('switchToEtherspotAccountIfNeededAction', 'no Etherspot account found', { accounts });
       return;
     }
 
@@ -309,7 +309,7 @@ export const deployAccounts = () => {
 
     dispatch({ type: DEPLOY_ACCOUNTS_FETCHING, payload: true });
 
-    const networkPromises = networkChains.map((chain) => etherspotServices.setbatchDeployAccount(chain));
+    const networkPromises = networkChains.map((chain) => etherspotServices.setBatchDeployAccount(chain));
     const statusReponses = await Promise.all(networkPromises);
 
     const finalResponse = networkChains.map((chain, index) => {

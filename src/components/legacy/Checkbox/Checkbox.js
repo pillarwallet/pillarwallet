@@ -27,7 +27,6 @@ import { LIGHT_THEME } from 'constants/appSettingsConstants';
 import type { Theme } from 'models/Theme';
 import { getColorByTheme, getThemeColors } from 'utils/themes';
 
-
 type Props = {
   text?: string,
   onPress?: () => void,
@@ -40,34 +39,41 @@ type Props = {
   small?: boolean,
   theme: Theme,
   positive?: boolean,
+  testID?: string,
 };
 
 const CheckboxBox = styled.View`
   width: 24px;
   height: 24px;
   margin-right: ${spacing.mediumLarge}px;
-  border-radius: ${({ rounded }) => rounded ? 12 : 2}px;
+  border-radius: ${({ rounded }) => (rounded ? 12 : 2)}px;
   flex: 0 0 24px;
   border-width: 1px;
-  border-color: ${({ active }) => active
-    ? css`${getColorByTheme({ lightKey: 'primaryAccent130', darkKey: 'basic090' })}`
-    : css`${getColorByTheme({ lightKey: 'basic080', darkKey: 'basic090' })}`};
+  border-color: ${({ active }) =>
+    active
+      ? css`
+          ${getColorByTheme({ lightKey: 'primaryAccent130', darkKey: 'basic090' })}
+        `
+      : css`
+          ${getColorByTheme({ lightKey: 'basic080', darkKey: 'basic090' })}
+        `};
   justify-content: center;
   align-items: center;
   background-color: ${getColorByTheme({ lightKey: 'basic070', darkKey: 'basic090' })};
-  ${({ rounded, clickable, theme }) => rounded && clickable && theme.current === LIGHT_THEME
-    ? `
+  ${({ rounded, clickable, theme }) =>
+    rounded && clickable && theme.current === LIGHT_THEME
+      ? `
       shadow-color: #000000;
       shadow-radius: 3px;
       shadow-opacity: 0.15;
       shadow-offset: 0px 2px;
       elevation: 4;`
-    : ''}
+      : ''}
 `;
 
 const CheckboxText = styled(BaseText)`
-  ${props => props.small ? fontStyles.regular : fontStyles.medium};
-  color: ${({ light, theme }) => light ? theme.colors.basic020 : theme.colors.basic010};
+  ${(props) => (props.small ? fontStyles.regular : fontStyles.medium)};
+  color: ${({ light, theme }) => (light ? theme.colors.basic020 : theme.colors.basic010)};
   flex-wrap: wrap;
 `;
 
@@ -81,7 +87,7 @@ const CheckboxWrapper = styled.View`
   flex-direction: row;
   align-items: flex-start;
   width: 100%;
-  opacity: ${props => props.disabled ? 0.5 : 1};
+  opacity: ${(props) => (props.disabled ? 0.5 : 1)};
 `;
 
 /**
@@ -102,33 +108,37 @@ const Checkbox = (props: Props) => {
     checked,
     onPress,
     positive,
+    testID,
   } = props;
 
   const colors = getThemeColors(theme);
 
   return (
-    <TouchableOpacity
-      onPress={!disabled ? onPress : null}
-      style={wrapperStyle}
-      disabled={!onPress}
-    >
+    <TouchableOpacity onPress={!disabled ? onPress : null} style={wrapperStyle} disabled={!onPress} testID={testID}>
       <CheckboxWrapper disabled={disabled}>
         <CheckboxBox active={checked} rounded={rounded} positive={positive} clickable={!disabled}>
-          {!!checked &&
-          <Icon
-            name="check"
-            style={{
-              color: positive ? colors.positive : colors.primary,
-              fontSize: fontSizes.tiny,
-            }}
-          />
-          }
+          {!!checked && (
+            <Icon
+              name="check"
+              style={{
+                color: positive ? colors.positive : colors.primary,
+                fontSize: fontSizes.tiny,
+              }}
+            />
+          )}
         </CheckboxBox>
-        {!!text && <CheckboxText small={small} light={lightText}>{text}</CheckboxText>}
-        {!!children &&
-        <TextWrapper>
-          <CheckboxText small={small} light={lightText}>{children}</CheckboxText>
-        </TextWrapper>}
+        {!!text && (
+          <CheckboxText small={small} light={lightText}>
+            {text}
+          </CheckboxText>
+        )}
+        {!!children && (
+          <TextWrapper>
+            <CheckboxText small={small} light={lightText}>
+              {children}
+            </CheckboxText>
+          </TextWrapper>
+        )}
       </CheckboxWrapper>
     </TouchableOpacity>
   );

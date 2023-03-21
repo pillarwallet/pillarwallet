@@ -46,7 +46,6 @@ import { excludeFromMonitoring } from 'utils/monitoring';
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
-
 type Props = {
   importWalletFromMnemonic: (mnemonic: string) => void,
   wallet: Object,
@@ -145,7 +144,9 @@ class ImportWallet extends React.Component<Props, State> {
     if (activeTab === DEV) {
       return (
         <TextInput
-          getInputRef={(ref) => { this.devPhraseInput = ref; }}
+          getInputRef={(ref) => {
+            this.devPhraseInput = ref;
+          }}
           inputProps={{
             ...inputProps,
             multiline: true,
@@ -156,6 +157,7 @@ class ImportWallet extends React.Component<Props, State> {
             if (!this.devPhraseInput) return;
             this.devPhraseInput.focus();
           }}
+          testID={`${TAG}-input-phrase_word`}
         />
       );
     }
@@ -164,12 +166,18 @@ class ImportWallet extends React.Component<Props, State> {
       <React.Fragment>
         <Row>
           {Object.keys(backupPhrase).map((key) => {
-            return (<BackupWordText key={key}>{`${key}. ${backupPhrase[key]}`}</BackupWordText>);
+            return (
+              <BackupWordText key={key} testID={`${TAG}-text-seed_word_${key}`}>
+                {`${key}. ${backupPhrase[key]}`}
+              </BackupWordText>
+            );
           })}
         </Row>
-        <Label>{t('auth:seedWord', { wordNumber: currentWordIndex })}</Label>
+        <Label testID={`${TAG}-text-seed_word_index`}>{t('auth:seedWord', { wordNumber: currentWordIndex })}</Label>
         <TextInput
-          getInputRef={(ref) => { this.backupPhraseInput = ref; }}
+          getInputRef={(ref) => {
+            this.backupPhraseInput = ref;
+          }}
           inputProps={{
             ...inputProps,
             returnKeyType: 'next',
@@ -182,18 +190,14 @@ class ImportWallet extends React.Component<Props, State> {
             if (!this.backupPhraseInput) return;
             this.backupPhraseInput.focus();
           }}
+          testID={`${TAG}-input-phrase_word`}
         />
       </React.Fragment>
     );
   };
 
   renderFooterButtons = (tabsInfo) => {
-    const {
-      activeTab,
-      currentBPWord,
-      currentWordIndex,
-      importError,
-    } = this.state;
+    const { activeTab, currentBPWord, currentWordIndex, importError } = this.state;
     const { isImportingWallet } = this.props;
 
     if (activeTab === TWORDSPHRASE) {
@@ -214,6 +218,7 @@ class ImportWallet extends React.Component<Props, State> {
               disabled={isImportingWallet}
               secondary
               block={false}
+              testID={`${TAG}-button-prev_word`}
             />
           )}
           <StyledButton
@@ -224,6 +229,7 @@ class ImportWallet extends React.Component<Props, State> {
             disabled={!currentBPWord || isImportingWallet}
             isLoading={isImportingWallet}
             block={false}
+            testID={`${TAG}-button-next_word`}
           />
         </ButtonsWrapper>
       );
@@ -235,6 +241,7 @@ class ImportWallet extends React.Component<Props, State> {
         title={t('auth:button.reimport')}
         onPress={this.handleImportSubmit}
         isLoading={isImportingWallet}
+        testID={`${TAG}-button-reimport_wallet`}
       />
     );
   };
@@ -272,25 +279,23 @@ class ImportWallet extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      tWordsPhrase,
-      currentBPWord,
-      activeTab,
-    } = this.state;
+    const { tWordsPhrase, currentBPWord, activeTab } = this.state;
 
     const restoreWalletTabs = [
       {
         id: TWORDSPHRASE,
         name: t('auth:title.backupPhrase'),
         onPress: () => this.setActiveTab(TWORDSPHRASE),
+        testID: `${TAG}-button-tab.${TWORDSPHRASE}`, // eslint-disable-line i18next/no-literal-string
       },
     ];
 
     if (__DEV__) {
       restoreWalletTabs.push({
         id: DEV,
-        name: 'Dev\'s phrase', // eslint-disable-line i18next/no-literal-string
+        name: "Dev's phrase", // eslint-disable-line i18next/no-literal-string
         onPress: () => this.setActiveTab(DEV),
+        testID: `${TAG}-button-tab.${DEV}`, // eslint-disable-line i18next/no-literal-string
       });
     }
 
@@ -333,11 +338,7 @@ class ImportWallet extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  onboarding: {
-    wallet,
-    errorMessage,
-    isImportingWallet,
-  },
+  onboarding: { wallet, errorMessage, isImportingWallet },
 }: RootReducerState): $Shape<Props> => ({
   wallet,
   errorMessage,
@@ -368,7 +369,7 @@ const FooterWrapper = styled.View`
 const ButtonsWrapper = styled.View`
   justify-content: center;
   align-items: center;
-  flex-direction: ${props => props.isRow ? 'row' : 'column'};
+  flex-direction: ${(props) => (props.isRow ? 'row' : 'column')};
 `;
 
 const StyledButton = styled(Button)`
@@ -399,3 +400,5 @@ const BackupWordText = styled(BaseText)`
   align-items: flex-start;
   color: ${themedColors.secondaryText};
 `;
+
+const TAG = 'ImportWallet';

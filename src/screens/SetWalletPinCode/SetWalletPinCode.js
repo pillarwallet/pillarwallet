@@ -94,6 +94,7 @@ const SetWalletPinCode = ({ navigation, wallet }: Props) => {
           showForgotButton={false}
           pinError={!!errorMessage}
           flex={false}
+          testIdTag={TAG}
         />
       </ContentWrapper>
     </ContainerWithHeader>
@@ -116,3 +117,5 @@ const HeaderText = styled(MediumText)`
   margin-top: ${spacing.large}px;
   margin-bottom: 9px;
 `;
+
+const TAG = 'SetWalletPinCode';
