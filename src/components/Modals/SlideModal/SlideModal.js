@@ -327,7 +327,6 @@ const wrapperStyle = {
   alignSelf: 'center',
   zIndex: 11,
   width: '100%',
-  height: 70,
 };
 
 const ContentWrapper = styled.View`

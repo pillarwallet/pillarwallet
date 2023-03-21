@@ -1610,7 +1610,11 @@
     "copyButton": "Address",
     "activationText": "You need to activate your smart wallet first.",
     "activateText": "Activate",
-    "notDeployedText": "⚠️ Sending tokens is unavailable. Currently you can only receive tokens in <0>{{chain}}</0> wallet"
+    "notDeployedText": "⚠️ Sending tokens is unavailable. Currently you can only receive tokens in <0>{{chain}}</0> wallet",
+    "etherspotTitle": "Etherspot Account",
+    "deployedOn": "Smart Contract based wallets on {{deployed}} are already deployed.",
+    "ethereumWarning": "Sending assets on Ethereum to this wallet comes with",
+    "additionalFee": "an additional fee"
   },
 
   "tooltip": {
