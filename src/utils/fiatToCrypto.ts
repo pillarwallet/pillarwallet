@@ -94,7 +94,7 @@ export const buildMtPelerinOptions = (code: string, address: string) => {
     tabs: 'buy',
     chain: 'xdai_mainnet',
     net: 'matic_mainnet',
-    nets: 'arbitrum_mainnet,bsc_mainnet,mainnet,optimism_mainnet,xdai_mainnet',
+    nets: 'arbitrum_mainnet,matic_mainnet,bsc_mainnet,mainnet,optimism_mainnet,xdai_mainnet',
     crys: 'BNB,BTCB,BUSD,DAI,ETH,FRAX,LUSD,MATIC,USDC,USDT,WBTC,WETH,XDAI',
     rfr: 'etherspot',
     bsc: 'GBP',
