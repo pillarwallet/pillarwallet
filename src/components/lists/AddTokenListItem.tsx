@@ -39,7 +39,6 @@ import { customTokensListSelector, useRootSelector } from 'selectors';
 
 // Actions
 import { manageCustomTokens } from 'actions/assetsActions';
-import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 
 // Types
 import type { ViewStyleProp } from 'utils/types/react-native';
@@ -77,7 +76,7 @@ function AddTokenListItem({
   const config = useChainConfig(chain);
   const title = config.title;
 
-  const token = { chain, name, iconUrl, ...rest };
+  const token: Asset = { chain, name, iconUrl, ...rest };
 
   const [enableToken, setEnableToken] = useState(false);
 
@@ -85,9 +84,8 @@ function AddTokenListItem({
     setEnableToken(isTokenAvailableInList(customTokensList, token));
   }, [customTokensList]);
 
-  const onChangeToggle = async () => {
-    await dispatch(manageCustomTokens(token));
-    dispatch(fetchAssetsBalancesAction());
+  const onChangeToggle = async (status) => {
+    dispatch(manageCustomTokens(token));
   };
 
   return (
@@ -101,8 +99,12 @@ function AddTokenListItem({
       <TokenIcon url={iconUrl || logoURI} chain={chain} setMarginRight />
 
       <TitleContainer>
-        <NormalText numberOfLines={1}>{name}</NormalText>
-        {listType !== 'normal' && <Subtitle numberOfLines={1}>{t('label.on_network', { network: title })}</Subtitle>}
+        <NormalText numberOfLines={1}>{listType === 'searchList' ? token.symbol : name}</NormalText>
+        {listType !== 'normal' && (
+          <Subtitle numberOfLines={1}>
+            {listType === 'searchList' ? name + t('label.erc20') : t('label.on_network', { network: title })}
+          </Subtitle>
+        )}
       </TitleContainer>
 
       {listType === 'togglesList' && <Switcher isOn={enableToken} onToggle={onChangeToggle} />}

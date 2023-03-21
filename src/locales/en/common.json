@@ -315,7 +315,12 @@
     "number_of_tokens": "{{tokens}} tokens",
     "find_token":"Find a token or input address",
     "manageTokenLists":"Manage token lists",
-    "importCustomToken":"Import custom token"
+    "importCustomToken":"Import custom token",
+    "importNumberOfCustomToken":"Import {{tokens}} custom tokens",
+    "contractAddress": "Contract Address",
+    "erc20": " (ERС-20)",
+    "tokenExists": "This token is already exists",
+    "addedCustomToken": "Add a new custom token"
   },
 
   "button": {

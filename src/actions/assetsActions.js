@@ -21,6 +21,9 @@ import { isEmpty } from 'lodash';
 import { toChecksumAddress } from '@netgum/utils';
 import t from 'translations/translate';
 
+// Components
+import Toast from 'components/Toast';
+
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import {
@@ -79,7 +82,7 @@ import {
 } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
-import { assetsCategoryFromEtherspotBalancesCategory, parseTokenListToken } from 'utils/etherspot';
+import { assetsCategoryFromEtherspotBalancesCategory, parseTokenListToken, filteredWithChain } from 'utils/etherspot';
 import { isProdEnv } from 'utils/environment';
 import PolygonTokens from 'utils/tokens/polygon-tokens';
 import MumbaiTokens from 'utils/tokens/mumbai-tokens';
@@ -705,6 +708,8 @@ export const fetchSupportedAssetsAction = () => {
     // nothing to do if offline
     if (!isOnline) return;
 
+    const customTokensList = customTokensListSelector(getState());
+
     await Promise.all(
       Object.keys(CHAIN).map(async (chainKey) => {
         const chain = CHAIN[chainKey];
@@ -713,18 +718,16 @@ export const fetchSupportedAssetsAction = () => {
         // nothing to do if returned empty
         if (isEmpty(chainSupportedAssets)) return;
 
-        const customTokensList = customTokensListSelector(getState());
+        const chainCustomAssets = isEmpty(customTokensList) ? [] : filteredWithChain(customTokensList, chain);
 
-        const customAssets = isEmpty(customTokensList) ? [] : customTokensList;
-
-        const removedDuplicateSupportedAssets = chainSupportedAssets.filter(
+        const removedDuplicateSupportedAssets = chainCustomAssets.filter(
           (item) =>
-            !customAssets?.some(
+            !chainSupportedAssets?.some(
               (customAsset) => item.symbol === customAsset?.symbol && item.address === customAsset?.address,
             ),
         );
 
-        const totalSupportedAssets = [...customAssets, ...removedDuplicateSupportedAssets];
+        const totalSupportedAssets = [...chainSupportedAssets, ...removedDuplicateSupportedAssets];
 
         dispatch({
           type: SET_CHAIN_SUPPORTED_ASSETS,
@@ -884,7 +887,7 @@ export const addTokensListAction = () => {
   };
 };
 
-export const manageCustomTokens = (token: Asset) => {
+export const manageCustomTokens = (token: Asset, isCustomTokenImport?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       customTokensList: { data },
@@ -892,16 +895,35 @@ export const manageCustomTokens = (token: Asset) => {
 
     const isTokenAvailable = isTokenAvailableInList(data, token);
 
+    if (isTokenAvailable && isCustomTokenImport) {
+      Toast.show({
+        message: t('label.tokenExists'),
+        emoji: 'eyes',
+      });
+      return;
+    }
+
     if (isTokenAvailable) {
       const filteredTokensList = data.filter((tokenA) => !isSame(token, tokenA));
       dispatch({ type: ADD_CUSTOM_TOKEN, payload: filteredTokensList });
     } else {
+      if (isCustomTokenImport) {
+        Toast.show({
+          message: t('label.addedCustomToken'),
+          emoji: 'ok_hand',
+        });
+      }
       const arr = [...data];
       const newTokensList = isEmpty(arr) ? [token] : arr.concat([token]);
       dispatch({ type: ADD_CUSTOM_TOKEN, payload: newTokensList });
     }
 
     const customTokensList = customTokensListSelector(getState());
+
     dispatch(saveDbAction('customTokensList', { customTokensList }, true));
+
+    setTimeout(() => {
+      dispatch(fetchSupportedAssetsAction());
+    }, 1000);
   };
 };

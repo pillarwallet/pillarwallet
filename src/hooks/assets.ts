@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import isEmpty from 'lodash.isempty';
+import { useQuery } from 'react-query';
 
 // Selectors
 import { defaultTokensSelector, useRootSelector } from 'selectors';
@@ -26,6 +27,7 @@ import { defaultTokensSelector, useRootSelector } from 'selectors';
 import { useFromAssets } from 'screens/Bridge/Exchange-CrossChain/utils';
 import { sum } from 'utils/number';
 import { filteredWithDefaultAssets, filteredWithChain, filteredWithStableAssets } from 'utils/etherspot';
+import { getChainsAssetsToAddress } from 'utils/assets';
 
 // Constants
 import { TOKENS, STABLES, ALL } from 'constants/walletConstants';
@@ -156,4 +158,17 @@ export function useFilteredAssets(chain: Chain | null, tabName: string) {
   }
 
   return { assets, totalBalance: sumOfAssetsBalance(assets) };
+}
+
+export function useAssetsToAddress(supportedChain: Chain[], contractAddress: string): any {
+  const enabled = !!supportedChain && !!contractAddress;
+
+  return useQuery(
+    ['useAssetsToAddress', supportedChain, contractAddress],
+    () => getChainsAssetsToAddress(supportedChain, contractAddress),
+    {
+      enabled,
+      cacheTime: 0,
+    },
+  );
 }

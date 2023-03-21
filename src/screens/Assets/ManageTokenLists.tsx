@@ -19,9 +19,14 @@
 */
 
 import * as React from 'react';
+import { Keyboard } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useTranslation } from 'translations/translate';
 import styled from 'styled-components/native';
+import Clipboard from '@react-native-community/clipboard';
+import { useDispatch } from 'react-redux';
+import { isEmpty } from 'lodash';
+import { useDebounce } from 'use-debounce';
 
 // Components
 import { Container } from 'components/layout/Layout';
@@ -31,54 +36,139 @@ import SearchBar from 'components/SearchBar';
 import Icon from 'components/core/Icon';
 import Checkbox from 'components/legacy/Checkbox';
 import Button from 'components/core/Button';
+import { Spacing } from 'components/legacy/Layout';
+import AddTokenListItem from 'components/lists/AddTokenListItem';
+import Spinner from 'components/Spinner';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+
+// Hooks
+import { useAssetsToAddress } from 'hooks/assets';
 
 // Utils
-import { fontSizes, fontStyles } from 'utils/variables';
+import { fontStyles } from 'utils/variables';
 import { useThemeColors } from 'utils/themes';
+import { addressesEqual } from 'utils/assets';
+import { isValidAddress } from 'utils/validators';
+
+// Selector
+import { useSupportedChains } from 'selectors/chains';
+import { useRootSelector, activeAccountAddressSelector } from 'selectors';
+
+// Actions
+import { manageCustomTokens } from 'actions/assetsActions';
+import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 
 export default function () {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const colors = useThemeColors();
+  const dispatch = useDispatch();
+
+  const chains = useSupportedChains();
+  const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
 
   const [selectedChain, setSelectedChain] = React.useState(null);
   const [query, setQuery] = React.useState('');
   const [hasAgreedToTerms, setHasAgreedToTerms] = React.useState(false);
+  const [debouncedSearchAddress] = useDebounce(query, 500);
+
+  const {
+    data: tokensList,
+    isLoading,
+    isSuccess,
+  } = useAssetsToAddress(selectedChain ? [selectedChain] : chains, debouncedSearchAddress);
+
+  const getValidationError = () => {
+    if ((query && !isValidAddress(query)) || addressesEqual(query, activeAccountAddress)) {
+      return t('contactSelector.error.incorrectAddress');
+    }
+
+    return null;
+  };
+  const errorMessage = getValidationError();
+
+  React.useEffect(() => {
+    setHasAgreedToTerms(false);
+  }, [query]);
+
+  const renderItem = (token: any) => {
+    if (!token) return;
+    return <AddTokenListItem listType="searchList" {...token} />;
+  };
+
+  const handlePaste = async () => {
+    Keyboard.dismiss();
+    const value = await Clipboard.getString();
+    setQuery(value);
+  };
+
+  const isDisabled =
+    (isEmpty(tokensList) && query) || (!hasAgreedToTerms && !isEmpty(tokensList)) || isLoading || errorMessage;
+
+  const buttonTitle = isEmpty(query)
+    ? t('button.paste')
+    : tokensList?.length > 1
+    ? t('label.importNumberOfCustomToken', { tokens: tokensList?.length })
+    : t('label.importCustomToken');
+
+  const importToken = () => {
+    tokensList?.forEach((token) => {
+      dispatch(manageCustomTokens(token, true));
+    });
+    dispatch(fetchAssetsBalancesAction());
+    navigation.goBack();
+  };
 
   return (
     <Container>
       <HeaderBlock navigation={navigation} centerItems={[{ title: t('label.manageTokenLists') }]} noPaddingTop />
       <ChainSelectorContent selectedAssetChain={selectedChain} onSelectChain={setSelectedChain} />
-
       <SearchBar
         accessibilityHint="manage_token_search_bar"
-        inputStyle={{ fontSize: fontSizes.big }}
-        style={{ width: '100%' }}
+        style={{ width: '90%', alignSelf: 'center' }}
         query={query}
         onQueryChange={setQuery}
-        placeholder={t('label.find_token')}
+        error={!!errorMessage}
+        placeholder={t('label.contractAddress')}
       />
+      {isLoading && <Spinner size={30} />}
+      {!isLoading && tokensList?.map(renderItem)}
 
-      <SubContainer>
-        <WarningContainer>
-          <Icon name="small-warning" color={colors.helpIcon} />
-          <WarningText>{t('paragraph.tokenNotListedWarning')}</WarningText>
-        </WarningContainer>
+      {isSuccess && isEmpty(tokensList) && !errorMessage && (
+        <EmptyStateParagraph wide title={t('label.nothingFound')} />
+      )}
 
-        <Checkbox
+      {isEmpty(tokensList) && <Spacing h={46} />}
+      <FooterContainer>
+        {!isEmpty(tokensList) && !isLoading && (
+          <>
+            <WarningContainer>
+              <Icon name="small-warning" color={colors.helpIcon} />
+              <WarningText>{t('paragraph.tokenNotListedWarning')}</WarningText>
+            </WarningContainer>
+
+            <Checkbox
+              onPress={() => {
+                setHasAgreedToTerms(!hasAgreedToTerms);
+              }}
+              small
+              lightText
+              checked={hasAgreedToTerms}
+              wrapperStyle={{ marginVertical: 16 }}
+            >
+              {t('paragraph.importTokenPermission')}
+            </Checkbox>
+          </>
+        )}
+
+        <Button
+          title={errorMessage ? errorMessage : buttonTitle}
           onPress={() => {
-            setHasAgreedToTerms(!hasAgreedToTerms);
+            isEmpty(query) ? handlePaste() : importToken();
           }}
-          small
-          lightText
-          checked={hasAgreedToTerms}
-          wrapperStyle={{ marginVertical: 16 }}
-        >
-          {t('paragraph.importTokenPermission')}
-        </Checkbox>
-
-        <Button title={t('label.importCustomToken')} onPress={() => {}} disabled={!hasAgreedToTerms} />
-      </SubContainer>
+          disabled={isDisabled}
+        />
+      </FooterContainer>
     </Container>
   );
 }
@@ -98,6 +188,6 @@ const WarningText = styled.Text`
   color: ${({ theme }) => theme.colors.helpIcon};
 `;
 
-const SubContainer = styled.View`
+const FooterContainer = styled.View`
   margin-horizontal: 20px;
 `;

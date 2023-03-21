@@ -296,7 +296,12 @@
     "number_of_tokens": "{{tokens}} 代币",
     "find_token":"查找令牌或输入地址",
     "manageTokenLists":"管理令牌列表",
-    "importCustomToken":"导入自定义令牌"
+    "importCustomToken":"导入自定义令牌",
+    "importNumberOfCustomToken":"导入 {{tokens}} 自定义令牌",
+    "contractAddress": "合约地址",
+    "erc20": " (ERС-20)",
+    "tokenExists": "此令牌已存在",
+    "addedCustomToken": "添加新的自定义令牌"
   },
   "button": {
     "activate": "启用",

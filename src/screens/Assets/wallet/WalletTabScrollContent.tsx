@@ -56,6 +56,7 @@ import { wrapBigNumberOrNil } from 'utils/bigNumber';
 import { useThemeColors } from 'utils/themes';
 import { getMatchingTokens } from 'utils/wallet';
 import { fontStyles } from 'utils/variables';
+import { hitSlop20 } from 'utils/common';
 
 // Modals
 import type { Chain } from 'models/Chain';
@@ -191,6 +192,7 @@ function WalletTabScrollContent({ isNavigateToHome, hasPositiveBalance }: Props)
     return (
       <FooterRowContainer>
         <AddTokenButton
+          hitSlop={hitSlop20}
           onPress={() => {
             navigation.navigate(ADD_TOKENS);
           }}
@@ -200,6 +202,7 @@ function WalletTabScrollContent({ isNavigateToHome, hasPositiveBalance }: Props)
           <AddTokenText>{tRoot('label.add_tokens')}</AddTokenText>
         </AddTokenButton>
         <AddTokenButton
+          hitSlop={hitSlop20}
           onPress={() => {
             navigation.navigate(MANAGE_TOKEN_LISTS);
           }}

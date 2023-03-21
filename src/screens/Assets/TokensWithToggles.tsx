@@ -83,6 +83,8 @@ export default function () {
         data={query ? searchItems : tokensAccordingToChain}
         renderItem={memoizedValue}
         keyExtractor={getItemKey}
+        keyboardShouldPersistTaps="always"
+        contentInsetAdjustmentBehavior="scrollableAxes"
         ListEmptyComponent={() => <EmptyStateParagraph wide title={t('label.nothingFound')} />}
       />
     </Container>
