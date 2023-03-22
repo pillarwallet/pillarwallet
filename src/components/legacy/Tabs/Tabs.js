@@ -27,6 +27,7 @@ type Tab = {
   name: string,
   onPress: () => void,
   testID?: string,
+  accessibilityLabel?: string,
 };
 
 type TabProps = Tab & {
@@ -57,10 +58,10 @@ const TabContainer = styled.TouchableOpacity`
   align-items: center;
 `;
 
-const TabComponent = ({ name, onPress, active, testID }: TabProps) => {
+const TabComponent = ({ name, onPress, active, testID, accessibilityLabel }: TabProps) => {
   if (active) {
     return (
-      <TabContainer onPress={onPress} testID={testID}>
+      <TabContainer onPress={onPress} testID={testID} accessibilityLabel={accessibilityLabel}>
         <View>
           <BaseText regular>{name}</BaseText>
           <Underline />

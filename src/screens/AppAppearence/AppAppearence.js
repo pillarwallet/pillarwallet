@@ -106,6 +106,8 @@ const AppAppearence = () => {
             onPress={onPressLightTheme}
             style={isLightThemePressed && [selectedThemeStyle, { borderColor: colors.buttonPrimaryBackground }]}
             testID={`${TAG}-button-light_theme`}
+            // eslint-disable-next-line i18next/no-literal-string
+            accessibilityLabel={`${TAG}-button-light_theme`}
           >
             <ThemeImage source={lightTheme} />
             <Text variant="small" style={appearenceStyles.textStyle}>
@@ -116,6 +118,8 @@ const AppAppearence = () => {
             onPress={onPressDarkTheme}
             style={isDarkThemePressed && [selectedThemeStyle, { borderColor: colors.buttonPrimaryBackground }]}
             testID={`${TAG}-button-dark_theme`}
+            // eslint-disable-next-line i18next/no-literal-string
+            accessibilityLabel={`${TAG}-button-dark_theme`}
           >
             <ThemeImage source={darkTheme} />
             <Text variant="small" style={appearenceStyles.textStyle}>
@@ -129,6 +133,8 @@ const AppAppearence = () => {
           style={appearenceStyles.confirmButton}
           onPress={onConfirm}
           testID={`${TAG}-button-confirm`}
+          // eslint-disable-next-line i18next/no-literal-string
+          accessibilityLabel={`${TAG}-button-confirm`}
         />
       </Center>
     </Container>
