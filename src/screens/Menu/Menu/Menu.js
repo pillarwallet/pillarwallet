@@ -122,6 +122,8 @@ const Menu = () => {
           valueColor={colors.negative}
           onPress={goToSettings}
           testID={`${TAG}-button-settings`}
+          // eslint-disable-next-line i18next/no-literal-string
+          accessibilityLabel={`${TAG}-button-settings`}
         />
         <MenuItem title={t('item.addressBook')} icon="contacts" onPress={goToInviteFriends} />
         <MenuItem
@@ -130,6 +132,8 @@ const Menu = () => {
           icon="message"
           onPress={goToEmailSupport}
           testID={`${TAG}-button-email_support`}
+          // eslint-disable-next-line i18next/no-literal-string
+          accessibilityLabel={`${TAG}-button-email_support`}
         />
         {repliesFlag && enoughPlrBalance ? (
           <MenuItem
@@ -137,6 +141,8 @@ const Menu = () => {
             icon="message"
             onPress={goToSupportConversations}
             testID={`${TAG}-button-support_conversations`}
+            // eslint-disable-next-line i18next/no-literal-string
+            accessibilityLabel={`${TAG}-button-support_conversations`}
           />
         ) : null}
         <MenuItem
@@ -144,6 +150,8 @@ const Menu = () => {
           icon="info"
           onPress={goToKnowledgebase}
           testID={`${TAG}-button-knowledge_base`}
+          // eslint-disable-next-line i18next/no-literal-string
+          accessibilityLabel={`${TAG}-button-knowledge_base`}
         />
         {__DEV__ && (
           <MenuItem
@@ -151,6 +159,8 @@ const Menu = () => {
             icon="lifebuoy"
             onPress={goToStorybook}
             testID={`${TAG}-button-storybook`}
+            // eslint-disable-next-line i18next/no-literal-string
+            accessibilityLabel={`${TAG}-button-storybook`}
           />
         )}
 

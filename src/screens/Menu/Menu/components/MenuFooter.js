@@ -95,6 +95,8 @@ const MenuFooter = () => {
           titleStyle={styles.buttonTitle}
           titleColor={colors.secondaryText}
           testID={`${TAG}-button-privacy_policy`}
+          // eslint-disable-next-line i18next/no-literal-string
+          accessibilityLabel={`${TAG}-button-privacy_policy`}
         />
         <Button
           title={t('termsOfService')}
@@ -105,6 +107,8 @@ const MenuFooter = () => {
           titleStyle={styles.buttonTitle}
           titleColor={colors.secondaryText}
           testID={`${TAG}-button-terms_of_service`}
+          // eslint-disable-next-line i18next/no-literal-string
+          accessibilityLabel={`${TAG}-button-terms_of_service`}
         />
         <Button
           title={t('systemInformation')}
@@ -115,6 +119,8 @@ const MenuFooter = () => {
           titleStyle={styles.buttonTitle}
           titleColor={colors.secondaryText}
           testID={`${TAG}-button-system_information`}
+          // eslint-disable-next-line i18next/no-literal-string
+          accessibilityLabel={`${TAG}-button-system_information`}
         />
       </LeftColumn>
 
@@ -128,6 +134,8 @@ const MenuFooter = () => {
           style={styles.button}
           titleStyle={styles.buttonTitle}
           testID={`${TAG}-button-logout`}
+          // eslint-disable-next-line i18next/no-literal-string
+          accessibilityLabel={`${TAG}-button-logout`}
         />
       </RightColumn>
     </Container>

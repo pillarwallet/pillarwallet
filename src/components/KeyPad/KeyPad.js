@@ -152,7 +152,12 @@ class KeyPad extends React.Component<Props> {
       if (Platform.OS === 'ios') {
         return (
           <KeyInput key={value}>
-            <PinButton onPress={this.handleKeyPress(value)} testID={TAG && `${TAG}-button-keypad_${value}`}>
+            <PinButton
+              onPress={this.handleKeyPress(value)}
+              testID={TAG && `${TAG}-button-keypad_${value}`}
+              // eslint-disable-next-line i18next/no-literal-string
+              accessibilityLabel={TAG && `${TAG}-button-keypad_${value}`}
+            >
               {this.renderButton(btn)}
             </PinButton>
           </KeyInput>
@@ -164,6 +169,8 @@ class KeyPad extends React.Component<Props> {
             onPress={this.handleKeyPress(value)}
             background={TouchableNativeFeedback.SelectableBackgroundBorderless()}
             testID={TAG && `$${TAG}-button-keypad_${value}`}
+            // eslint-disable-next-line i18next/no-literal-string
+            accessibilityLabel={TAG && `$${TAG}-button-keypad_${value}`}
           >
             <RippleSizer>{this.renderButton(btn)}</RippleSizer>
           </TouchableNativeFeedback>
