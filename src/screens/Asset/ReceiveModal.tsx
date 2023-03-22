@@ -141,6 +141,13 @@ const ReceiveModal: FC<IReceiveModal> = ({ address, onModalHide, theme }) => {
           <ReceiveTitle>{t('receiveModal.etherspotTitle')}</ReceiveTitle>
         )
       }
+      backgroundElement={
+        <BackgroundElementWrapper>
+          <QRCodeWrapper>
+            <QRCodeWithTheme value={address} size={200} />
+          </QRCodeWrapper>
+        </BackgroundElementWrapper>
+      }
     >
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
         <InfoView>
@@ -174,12 +181,6 @@ const ReceiveModal: FC<IReceiveModal> = ({ address, onModalHide, theme }) => {
             </TextWithCopy>
           )}
         </InfoView>
-
-        {/* {!!address && (
-          <QRCodeWrapper>
-            <QRCodeWithTheme value={address} size={104} />
-          </QRCodeWrapper>
-        )} */}
 
         <DeployInfoWrapper>
           <ChainIconRow>
@@ -260,6 +261,13 @@ const WalletAddress = styled(Text)`
   text-align: center;
   font-size: ${fontSizes.medium}px;
   line-height: ${lineHeights.medium}px;
+`;
+
+const QRCodeWrapper = styled.View`
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin: ${spacing.largePlus}px;
 `;
 
 const CopyButton = styled.View`
@@ -358,4 +366,12 @@ const ChainDeployedIcon = styled(Icon)`
   width: 18px;
   border-radius: ${borderRadiusSizes.medium}px;
   background-color: ${({ theme }) => theme.colors.basic050};
+`;
+
+const BackgroundElementWrapper = styled.View`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 88px;
 `;

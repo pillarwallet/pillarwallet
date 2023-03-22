@@ -76,6 +76,7 @@ type OwnProps = {|
   closeFlag?: boolean,
   fillHeight?: boolean,
   isSwipeClose?: boolean,
+  backgroundElement?: Node,
 |};
 
 type Props = {|
@@ -167,6 +168,7 @@ class SlideModal extends React.Component<Props, State> {
       closeFlag = false,
       fillHeight,
       isSwipeClose,
+      backgroundElement,
     } = this.props;
 
     const customTheme = getTheme(this.props);
@@ -296,6 +298,7 @@ class SlideModal extends React.Component<Props, State> {
         {...fwdProps}
         avoidKeyboard={false}
       >
+        {!!backgroundElement && <BackgroundWrapper>{backgroundElement}</BackgroundWrapper>}
         <ContentWrapper fullScreen={fullScreen} bgColor={backgroundColor} noTopPadding={noTopPadding}>
           <TouchableBackground activeOpacity={1} onPress={onClose} />
 
@@ -387,4 +390,14 @@ const HandleBar = styled.View`
   border-radius: 2.5px;
   margin-top: ${spacing.medium}px;
   align-self: center;
+`;
+
+const BackgroundWrapper = styled.View`
+  width: 100%;
+  height: 100%
+  flex: 1
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: ${({ theme }) => theme.colors.basic090};
 `;
