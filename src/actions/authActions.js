@@ -82,7 +82,7 @@ import {
   checkKeyBasedAssetTransferTransactionsAction,
 } from './keyBasedAssetTransferActions';
 import { setSessionTranslationBundleInitialisedAction } from './sessionActions';
-import { importEtherspotAccountsAction, initEtherspotServiceAction, fetchDefaultTokens } from './etherspotActions';
+import { importEtherspotAccountsAction, initEtherspotServiceAction, fetchDefaultTokensRates } from './etherspotActions';
 import { setEnsNameIfNeededAction } from './ensRegistryActions';
 import { fetchTutorialDataIfNeededAction, bannerDataAction } from './cmsActions';
 import { fetchAllAccountsAssetsBalancesAction, fetchAllAccountsTotalBalancesAction } from './assetsActions';
@@ -227,7 +227,7 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
     if (!keyBasedAccount) dispatch(addAccountAction(address, ACCOUNT_TYPES.KEY_BASED));
 
     // by default fetch default tokens
-    dispatch(fetchDefaultTokens());
+    dispatch(fetchDefaultTokensRates());
 
     dispatch(fetchTransactionsHistoryAction());
     dispatch(setEnsNameIfNeededAction());

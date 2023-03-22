@@ -78,7 +78,7 @@ import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedA
 import {
   importEtherspotAccountsAction,
   initEtherspotServiceAction,
-  fetchDefaultTokens,
+  fetchDefaultTokensRates,
 } from 'actions/etherspotActions';
 import {
   fetchSupportedAssetsAction,
@@ -390,8 +390,8 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     }
 
     // by default fetch default tokens
-    logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching fetchDefaultTokens');
-    dispatch(fetchDefaultTokens());
+    logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching fetchDefaultTokensRates');
+    dispatch(fetchDefaultTokensRates());
 
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching fetchAllAccountsTotalBalancesAction');
     dispatch(fetchAllAccountsTotalBalancesAction());

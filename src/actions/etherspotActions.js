@@ -28,13 +28,6 @@ import Toast from 'components/Toast';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { SET_HISTORY, TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 import { CHAIN_NAMES, CHAIN_SHORT } from 'constants/chainConstants';
-import {
-  ETHERSPOT_DEFAULT_STABLE_LIST,
-  ETHERSPOT_DEFAULT_LIST,
-  FETCHING_DEFAULT_LIST,
-  SET_STABLE_DEFAULT_LIST,
-  SET_DEFAULT_LIST,
-} from 'constants/assetsConstants';
 
 // actions
 import { addAccountAction, updateAccountExtraIfNeededAction, setActiveAccountAction } from 'actions/accountsActions';
@@ -58,14 +51,17 @@ import { normalizeWalletAddress } from 'utils/wallet';
 import { formatUnits, isCaseInsensitiveMatch, reportErrorLog, logBreadcrumb } from 'utils/common';
 import { findAccountById, findFirstEtherspotAccount, getAccountId, isEtherspotAccount } from 'utils/accounts';
 import { findAssetByAddress } from 'utils/assets';
-import { parseEtherspotTransactionState } from 'utils/etherspot';
+import { parseEtherspotTransactionState, filteredWithChain } from 'utils/etherspot';
 import { isLogV2AppEvents } from 'utils/environment';
 import { getSupportedChains } from 'utils/chains';
+import DefaultStableTokens from 'utils/tokens/stable-tokens.json';
+import DefaultTokens from 'utils/tokens/tokens.json';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Chain } from 'models/Chain';
 import type { EtherspotAccountExtra } from 'models/Account';
+import type { Asset } from 'models/Asset';
 
 export const connectEtherspotAccountAction = (accountId: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -268,7 +264,7 @@ export const reserveEtherspotEnsNameAction = (username: string) => {
   };
 };
 
-export const fetchDefaultTokens = () => {
+export const fetchDefaultTokensRates = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const activeAccount = activeAccountSelector(getState());
     const {
@@ -283,65 +279,21 @@ export const fetchDefaultTokens = () => {
 
     const supportedChain = getSupportedChains(activeAccount);
 
-    dispatch({ type: FETCHING_DEFAULT_LIST, payload: true });
-
-    // For Get Default Token List
-    const chainTokens = await Promise.all(
-      supportedChain?.map((chain) => etherspotService.getTokenListTokens(chain, ETHERSPOT_DEFAULT_LIST)),
-    ).catch((e) => {
-      reportErrorLog('EtherspotActions fetchDefaultTokens -> getTokenListTokens failed', {
-        error: e,
-        name: ETHERSPOT_DEFAULT_LIST,
-      });
-      return [];
-    });
-
-    // For Get Default Stable List
-    const chainStableTokens = await Promise.all(
-      supportedChain?.map((chain) => etherspotService.getTokenListTokens(chain, ETHERSPOT_DEFAULT_STABLE_LIST)),
-    ).catch((e) => {
-      reportErrorLog('EtherspotActions fetchDefaultTokens -> getTokenListTokens failed', {
-        error: e,
-        name: ETHERSPOT_DEFAULT_STABLE_LIST,
-      });
-      return [];
-    });
-
-    const tokens: any[] = [];
     await Promise.all(
-      chainTokens?.map(async (item: any) => {
-        if (!isEmpty(item)) {
-          tokens.push(...item);
-          await getExchangeRates(item[0].chain, item, async (rates) => {
-            if (rates) await dispatch(updateRatesAction(item[0].chain, rates));
-          });
-        }
+      supportedChain?.map(async (chain: Chain) => {
+        const tokens = DefaultTokens.concat(DefaultStableTokens);
+
+        const chainAssets: Asset[] = filteredWithChain(tokens, chain);
+
+        await getExchangeRates(chain, chainAssets, async (rates) => {
+          if (rates) await dispatch(updateRatesAction(chain, rates));
+        });
       }),
     ).catch((error) => {
-      reportErrorLog('EtherspotActions fetchDefaultTokens -> getExchangeRates failed', {
+      reportErrorLog('EtherspotActions fetchDefaultTokensRates -> getExchangeRates failed', {
         error,
-        chainTokens,
       });
     });
-
-    const stableTokens: any[] = [];
-    chainStableTokens?.forEach((item: any) => {
-      if (!isEmpty(item)) stableTokens.push(...item);
-    });
-
-    const filterTokensList = tokens?.filter(
-      (token) =>
-        !stableTokens?.some(
-          (stableToken) => token.symbol === stableToken.symbol && token.address === stableToken.address,
-        ),
-    );
-
-    if (isEmpty(filterTokensList)) return;
-
-    dispatch({ type: SET_DEFAULT_LIST, payload: filterTokensList });
-    dispatch({ type: SET_STABLE_DEFAULT_LIST, payload: stableTokens });
-    dispatch(saveDbAction('defaultTokens', { tokens: filterTokensList, stableTokens }, true));
-    dispatch({ type: FETCHING_DEFAULT_LIST, payload: false });
   };
 };
 
