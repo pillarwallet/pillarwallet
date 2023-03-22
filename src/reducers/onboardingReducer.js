@@ -32,13 +32,13 @@ import {
   SET_REGISTERING_USER,
   SET_TUTORIAL_DATA,
   SET_BANNER_DATA,
+  SET_NEW_USER,
 } from 'constants/onboardingConstants';
 
 // Types
 import type { EthereumWallet } from 'models/Wallet';
 import type { TutorialDataObject, CmsBannerDocument } from 'models/CMSData';
 import type { OnboardingUser } from 'models/User';
-
 
 export type OnboardingReducerState = {
   pinCode: ?string,
@@ -52,6 +52,7 @@ export type OnboardingReducerState = {
   isFinishingOnboarding: boolean,
   tutorialData: ?TutorialDataObject,
   bannerData: ?CmsBannerDocument,
+  isNewUser: boolean,
 };
 
 export type OnboardingReducerAction = {
@@ -71,6 +72,7 @@ export const initialState = {
   isFinishingOnboarding: false,
   tutorialData: null,
   bannerData: null,
+  isNewUser: false,
 };
 
 export default function onboardingReducer(
@@ -141,6 +143,11 @@ export default function onboardingReducer(
       return {
         ...state,
         bannerData: action.payload,
+      };
+    case SET_NEW_USER:
+      return {
+        ...state,
+        isNewUser: action.payload,
       };
     case RESET_ONBOARDING:
       return { ...initialState };
