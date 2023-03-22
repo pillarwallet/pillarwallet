@@ -121,6 +121,8 @@ class ImportWalletLegals extends React.Component<Props, State> {
               wrapperStyle={{ marginBottom: 16 }}
               checked={hasAgreedToTerms}
               testID={`${TAG}-checkbox-agree_to_terms`}
+              // eslint-disable-next-line i18next/no-literal-string
+              accessibilityLabel={`${TAG}-checkbox-agree_to_terms`}
             >
               <CheckboxText>
                 {t('auth:withLink.readUnderstandAgreeTo', {
@@ -137,6 +139,8 @@ class ImportWalletLegals extends React.Component<Props, State> {
               lightText
               checked={hasAgreedToPolicy}
               testID={`${TAG}-checkbox-agree_to_policy`}
+              // eslint-disable-next-line i18next/no-literal-string
+              accessibilityLabel={`${TAG}-checkbox-agree_to_policy`}
             >
               <CheckboxText>
                 {t('auth:withLink.readUnderstandAgreeTo', {
@@ -152,6 +156,8 @@ class ImportWalletLegals extends React.Component<Props, State> {
               title={t('auth:button.proceed')}
               onPress={() => navigation.navigate(IMPORT_WALLET)}
               testID={`${TAG}-button-proceed`}
+              // eslint-disable-next-line i18next/no-literal-string
+              accessibilityLabel={`${TAG}-button-proceed`}
             />
           </ButtonWrapper>
         </Wrapper>

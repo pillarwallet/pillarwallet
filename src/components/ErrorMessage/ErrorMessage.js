@@ -27,6 +27,7 @@ type Props = {
   children: React.Node,
   wrapperStyle?: Object,
   testID?: string,
+  accessibilityLabel?: string,
 };
 
 const ErrorMessageBackground = styled.View`
@@ -42,10 +43,12 @@ const ErrorMessageText = styled(MediumText)`
 `;
 
 const ErrorMessage = (props: Props) => {
-  const { wrapperStyle, testID } = props;
+  const { wrapperStyle, testID, accessibilityLabel } = props;
   return (
     <ErrorMessageBackground style={wrapperStyle}>
-      <ErrorMessageText testID={testID}>{props.children}</ErrorMessageText>
+      <ErrorMessageText testID={testID} accessibilityLabel={accessibilityLabel}>
+        {props.children}
+      </ErrorMessageText>
     </ErrorMessageBackground>
   );
 };
