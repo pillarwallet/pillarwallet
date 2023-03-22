@@ -95,7 +95,7 @@ const AppAppearence = () => {
 
   return (
     <Container>
-      <HeaderBlock leftItems={[{ close: true }]} onClose={onBackPress} noPaddingTop />
+      <HeaderBlock leftItems={[{ close: true }]} onClose={onBackPress} noPaddingTop testIdTag={TAG} />
       <Center flex={1} padding={spacing.rhythm}>
         <Title>{t('auth:title.appAppearence')}</Title>
         <Text color={colors.tertiaryText} variant="medium" style={appearenceStyles.textStyle}>
@@ -105,6 +105,7 @@ const AppAppearence = () => {
           <Themes
             onPress={onPressLightTheme}
             style={isLightThemePressed && [selectedThemeStyle, { borderColor: colors.buttonPrimaryBackground }]}
+            testID={`${TAG}-button-light_theme`}
           >
             <ThemeImage source={lightTheme} />
             <Text variant="small" style={appearenceStyles.textStyle}>
@@ -114,6 +115,7 @@ const AppAppearence = () => {
           <Themes
             onPress={onPressDarkTheme}
             style={isDarkThemePressed && [selectedThemeStyle, { borderColor: colors.buttonPrimaryBackground }]}
+            testID={`${TAG}-button-dark_theme`}
           >
             <ThemeImage source={darkTheme} />
             <Text variant="small" style={appearenceStyles.textStyle}>
@@ -126,6 +128,7 @@ const AppAppearence = () => {
           size="large"
           style={appearenceStyles.confirmButton}
           onPress={onConfirm}
+          testID={`${TAG}-button-confirm`}
         />
       </Center>
     </Container>
@@ -176,3 +179,5 @@ const ThemeImage = styled(Image)`
 `;
 
 export default AppAppearence;
+
+const TAG = 'AppAppearance';

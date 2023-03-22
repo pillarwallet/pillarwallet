@@ -71,7 +71,8 @@ type Props = {
   leftSideSymbol?: string,
   inputError?: boolean,
   avoidAutoFocus?: boolean,
-  disableSelection?: boolean
+  disableSelection?: boolean,
+  testID?: string,
 };
 
 type State = {
@@ -261,6 +262,7 @@ class TextInput extends React.Component<Props, State> {
       inputError = false,
       avoidAutoFocus = false,
       disableSelection,
+      testID,
     } = this.props;
     let { fallbackSource, hasError } = this.props;
 
@@ -344,6 +346,7 @@ class TextInput extends React.Component<Props, State> {
                       smallPadding={!!onRightAddonPress}
                       autoFocus={!avoidAutoFocus}
                       selection={disableSelection ? undefined : selectionStart}
+                      testID={testID}
                     />
                   </View>
                 </TouchableWithoutFeedback>
@@ -372,6 +375,7 @@ class TextInput extends React.Component<Props, State> {
                     this.rnInput = ref;
                   }}
                   onFocus={this.handleRNFocus}
+                  testID={testID}
                 />
               )}
             </ItemHolder>

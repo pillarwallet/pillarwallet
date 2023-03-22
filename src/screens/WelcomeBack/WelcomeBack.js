@@ -75,7 +75,12 @@ const WelcomeBack = () => {
       <Paragraph small light center style={{ marginBottom: 40, paddingLeft: 40, paddingRight: 40 }}>
         {t('auth:paragraph.successfullyRestoredWallet')}
       </Paragraph>
-      <Button marginBottom={20} onPress={proceedToNextScreen} title={t('auth:button.next')} />
+      <Button
+        marginBottom={20}
+        onPress={proceedToNextScreen}
+        title={t('auth:button.next')}
+        testID={`${TAG}-button-next`}
+      />
     </Wrapper>
   );
 
@@ -134,3 +139,5 @@ const Text = styled(MediumText)`
 const ContentWrapper = styled.View`
   flex: 1;
 `;
+
+const TAG = 'WelcomeBack';

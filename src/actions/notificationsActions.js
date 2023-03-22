@@ -50,11 +50,7 @@ import { firebaseMessaging } from 'services/firebase';
 
 // Utils
 import { getNotificationsVisibleStatus } from 'utils/getNotification';
-import {
-  processNotification,
-  resetAppNotificationsBadgeNumber,
-  getToastNotification,
-} from 'utils/notifications';
+import { processNotification, resetAppNotificationsBadgeNumber, getToastNotification } from 'utils/notifications';
 import { logBreadcrumb } from 'utils/common';
 
 // Types
@@ -66,6 +62,7 @@ import { activeAccountAddressSelector } from 'selectors';
 
 let notificationsListener = null;
 let disabledPushNotificationsListener = null;
+let disabledFetchingBalanceListener = null;
 let notificationsOpenerListener = null;
 
 const NOTIFICATION_ROUTES = {
@@ -88,7 +85,13 @@ export const fetchAllNotificationsAction = () => {
   return async (dispatch: Dispatch) => {
     dispatch(fetchTransactionsHistoryAction());
     dispatch(fetchAllCollectiblesDataAction());
-    dispatch(fetchAssetsBalancesAction());
+    dispatch(fetchAssetsBalancesAction(true));
+  };
+};
+
+export const fetchAssetsBalanceNotificationsAction = () => {
+  return async (dispatch: Dispatch) => {
+    dispatch(fetchAssetsBalancesAction(true));
   };
 };
 
@@ -97,11 +100,7 @@ const onFirebaseMessageAction = (message: FirebaseMessage) => {
     if (checkForSupportAlert(message.data)) return;
     const type = message?.data?.type;
 
-    if ([
-      FCM_DATA_TYPE.BCX,
-      FCM_DATA_TYPE.PPN,
-      FCM_DATA_TYPE.SMART_WALLET,
-    ].includes(type)) {
+    if ([FCM_DATA_TYPE.BCX, FCM_DATA_TYPE.PPN, FCM_DATA_TYPE.SMART_WALLET].includes(type)) {
       dispatch(fetchAllNotificationsAction());
     }
 
@@ -122,10 +121,7 @@ const onFirebaseMessageAction = (message: FirebaseMessage) => {
 export const hasFCMPermission = async () => {
   try {
     const status = await firebaseMessaging.requestPermission();
-    return [
-      messaging.AuthorizationStatus.AUTHORIZED,
-      messaging.AuthorizationStatus.PROVISIONAL,
-    ].includes(status);
+    return [messaging.AuthorizationStatus.AUTHORIZED, messaging.AuthorizationStatus.PROVISIONAL].includes(status);
   } catch (e) {
     logBreadcrumb('Notification Actions', 'Notification Actions: failed firebase request permission', { e });
     return null;
@@ -136,15 +132,21 @@ export const subscribeToPushNotificationsAction = () => {
   return async (dispatch: Dispatch) => {
     if (await getNotificationsVisibleStatus()) {
       if (notificationsListener !== null) return;
-      notificationsListener = firebaseMessaging.onMessage(debounce(message => {
-        dispatch(onFirebaseMessageAction(message));
-      }, 500));
+      notificationsListener = firebaseMessaging.onMessage(
+        debounce((message) => {
+          dispatch(onFirebaseMessageAction(message));
+        }, 500),
+      );
     } else {
       dispatch(fetchAllNotificationsAction());
       if (disabledPushNotificationsListener !== null) return;
       disabledPushNotificationsListener = setInterval(() => {
         dispatch(fetchAllNotificationsAction());
       }, 30000);
+      if (disabledFetchingBalanceListener !== null) return;
+      disabledFetchingBalanceListener = setInterval(() => {
+        dispatch(fetchAssetsBalanceNotificationsAction());
+      }, 10000);
     }
   };
 };
@@ -162,6 +164,10 @@ export const stopListeningNotificationsAction = () => {
       clearInterval(disabledPushNotificationsListener);
       disabledPushNotificationsListener = null;
     }
+    if (disabledFetchingBalanceListener !== null) {
+      clearInterval(disabledFetchingBalanceListener);
+      disabledFetchingBalanceListener = null;
+    }
 
     if (notificationsListener !== null) {
       notificationsListener();
@@ -175,10 +181,10 @@ export const stopListeningNotificationsAction = () => {
 export const startListeningOnOpenNotificationAction = () => {
   return async (dispatch: Dispatch) => {
     /*
-    * TODO: Android initial notification and onOpened event are not working
-    * seems like native lifecycle onIntent event is not fired
-    * this can be linked to 0.59 version support and we should check after upgrade to latest
-    */
+     * TODO: Android initial notification and onOpened event are not working
+     * seems like native lifecycle onIntent event is not fired
+     * this can be linked to 0.59 version support and we should check after upgrade to latest
+     */
     const initialNotification = await Notifications.getInitialNotification();
     if (!isEmpty(initialNotification)) {
       checkForSupportAlert(initialNotification.payload);
@@ -209,7 +215,7 @@ export const startListeningOnOpenNotificationAction = () => {
       if (notificationRoute && currentFlow !== AUTH_FLOW) {
         if (type === BCX) {
           dispatch(fetchTransactionsHistoryAction());
-          dispatch(fetchAssetsBalancesAction());
+          dispatch(fetchAssetsBalancesAction(true));
         }
         if (type === COLLECTIBLE) {
           dispatch(fetchAllCollectiblesDataAction());
