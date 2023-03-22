@@ -27,6 +27,7 @@ import { firebaseRemoteConfig } from 'services/firebase';
 // Constants
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { CHAIN_ID } from 'constants/chainConstants';
+import { MATIC } from 'constants/assetsConstants';
 
 // Config
 import { getEnv } from 'configs/envConfig';
@@ -64,6 +65,9 @@ export const rampWidgetUrl = (
     fiatCurrency,
     fiatValue,
     swapAsset: isEtherspotAccount ? ETHERSPOT_RAMP_CURRENCY_TOKENS.join(',') : ARCHANOVA_RAMP_CURRENCY_TOKENS,
+    defaultFlow: 'ONRAMP',
+    enabledFlows: 'ONRAMP,OFFRAMP',
+    defaultAsset: MATIC,
   };
 
   const url = `${getEnv().RAMPNETWORK_WIDGET_URL}/${buildUrlOptions(params)}`;
