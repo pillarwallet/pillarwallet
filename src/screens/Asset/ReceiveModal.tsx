@@ -86,7 +86,7 @@ const ReceiveModal: FC<IReceiveModal> = ({ address, onModalHide, theme }) => {
 
   const handleCopyToClipboard = (addressName: string) => {
     Clipboard.setString(addressName);
-    Toast.show({ message: t('toast.addressCopiedToClipboard'), emoji: 'ok_hand' });
+    Toast.show({ message: t('toast.addressCopiedToClipboard'), emoji: 'ok_hand', autoClose: true });
     setCloseFlag(true);
   };
 
@@ -263,13 +263,6 @@ const WalletAddress = styled(Text)`
   line-height: ${lineHeights.medium}px;
 `;
 
-const QRCodeWrapper = styled.View`
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  margin: ${spacing.largePlus}px;
-`;
-
 const CopyButton = styled.View`
   width: 100%;
   justify-content: space-between;
@@ -374,4 +367,12 @@ const BackgroundElementWrapper = styled.View`
   align-items: center;
   justify-content: center;
   padding-top: 88px;
+`;
+
+const QRCodeWrapper = styled.View`
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin: ${spacing.largePlus}px;
+  opacity: 0.8;
 `;

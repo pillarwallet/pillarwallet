@@ -399,5 +399,5 @@ const BackgroundWrapper = styled.View`
   position: absolute;
   top: 0;
   right: 0;
-  background-color: ${({ theme }) => theme.colors.basic090};
+  background-color: ${({ theme }) => theme.colors.basic070};
 `;
