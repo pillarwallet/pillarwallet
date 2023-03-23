@@ -29,8 +29,7 @@ import Toast, { ToastProvider } from '../Toast';
 // Testing toast existence is achieved by looking for (hopefully unique)
 // message text.
 
-const hasText = (text: string) =>
-  (node) => node.children.some(child => child === text);
+const hasText = (text: string) => (node) => node.children.some((child) => child === text);
 
 const hasToast = (renderer: $FlowFixMe, message: string) => {
   return renderer.root.findAll(hasText(message)).length === 1;
@@ -60,21 +59,17 @@ describe('Toasts', () => {
 
   it('renders a single toast', () => {
     const message = 'TOAST MESSAGE';
-    Toast.show({ message, emoji: 'hash' });
+    Toast.show({ message, emoji: 'hash', autoClose: false });
     jest.runAllTimers();
     expect(hasToast(rendererInstance, message)).toEqual(true);
   });
 
   it('renders multiple toasts', () => {
-    const messages = [
-      'TOAST MESSAGE 1',
-      'TOAST MESSAGE 2',
-      'TOAST MESSAGE 3',
-    ];
+    const messages = ['TOAST MESSAGE 1', 'TOAST MESSAGE 2', 'TOAST MESSAGE 3'];
 
-    messages.forEach(message => Toast.show({ message, emoji: 'hash' }));
+    messages.forEach((message) => Toast.show({ message, emoji: 'hash', autoClose: false }));
     jest.runAllTimers();
-    expect(messages.every(msg => hasToast(rendererInstance, msg))).toEqual(true);
+    expect(messages.every((msg) => hasToast(rendererInstance, msg))).toEqual(true);
   });
 
   it('renders a toast in the last mounted instance', () => {
@@ -88,7 +83,7 @@ describe('Toasts', () => {
     });
 
     const message = 'TOAST MESSAGE';
-    Toast.show({ message, emoji: 'hash' });
+    Toast.show({ message, emoji: 'hash', autoClose: false });
     jest.runAllTimers();
 
     expect(hasToast(rendererInstance, message)).toEqual(false);
@@ -108,7 +103,7 @@ describe('Toasts', () => {
     });
 
     const message = 'TOAST MESSAGE';
-    Toast.show({ message, emoji: 'hash' });
+    Toast.show({ message, emoji: 'hash', autoClose: false });
     jest.runAllTimers();
 
     act(() => extraInstance.unmount());
@@ -121,8 +116,8 @@ describe('Toasts', () => {
     const message1 = 'TOAST MESSAGE 1';
     const message2 = 'TOAST MESSAGE 2';
 
-    const id1 = Toast.show({ message: message1, emoji: 'hash' });
-    Toast.show({ message: message2, emoji: 'hash' });
+    const id1 = Toast.show({ message: message1, emoji: 'hash', autoClose: false });
+    Toast.show({ message: message2, emoji: 'hash', autoClose: false });
     jest.runAllTimers();
 
     expect(typeof id1).toEqual('string');
@@ -137,24 +132,20 @@ describe('Toasts', () => {
   });
 
   it('allows to dismiss all toasts', () => {
-    const messages = [
-      'TOAST MESSAGE 1',
-      'TOAST MESSAGE 2',
-      'TOAST MESSAGE 3',
-    ];
+    const messages = ['TOAST MESSAGE 1', 'TOAST MESSAGE 2', 'TOAST MESSAGE 3'];
 
-    messages.forEach(message => Toast.show({ message, emoji: 'hash' }));
+    messages.forEach((message) => Toast.show({ message, emoji: 'hash', autoClose: false }));
     jest.runAllTimers();
 
     Toast.closeAll();
     jest.runAllTimers();
-    expect(messages.every(msg => !hasToast(rendererInstance, msg))).toEqual(true);
+    expect(messages.every((msg) => !hasToast(rendererInstance, msg))).toEqual(true);
   });
 
   it('allows to check toast visibility', () => {
     expect(Toast.isVisible()).toEqual(false);
 
-    Toast.show({ message: 'TOAST MESSAGE', emoji: 'hash' });
+    Toast.show({ message: 'TOAST MESSAGE', emoji: 'hash', autoClose: false });
     jest.runAllTimers();
     expect(Toast.isVisible()).toEqual(true);
 
@@ -168,7 +159,6 @@ describe('Toasts', () => {
     Toast.show({
       message,
       emoji: 'hash',
-      autoClose: true,
     });
 
     jest.runAllTimers();
@@ -181,7 +171,6 @@ describe('Toasts', () => {
     Toast.show({
       message: '',
       emoji: 'hash',
-      autoClose: true,
       onClose,
     });
 
@@ -197,6 +186,7 @@ describe('Toasts', () => {
       Toast.show({
         message: '',
         emoji: 'hash',
+        autoClose: false,
         onClose,
       });
     }
