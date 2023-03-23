@@ -104,6 +104,8 @@ function BiometricLoginSetting({ pin, wallet }: Props) {
       value={!!useBiometrics}
       onChangeValue={handleBiometricPress}
       testID={`${TAG}-button-toggle`}
+      // eslint-disable-next-line i18next/no-literal-string
+      accessibilityLabel={`${TAG}-button-toggle`}
     />
   );
 }

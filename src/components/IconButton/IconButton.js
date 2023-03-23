@@ -45,6 +45,7 @@ export type Props = {
   secondary?: boolean,
   hitSlop?: { top: number, left: number, bottom: number, right: number },
   testID?: string,
+  accessibilityLabel?: string,
 };
 
 const IconButtonWrapper = styled.TouchableOpacity`
@@ -75,6 +76,7 @@ const IconButton = (props: Props) => {
     theme,
     hitSlop,
     testID,
+    accessibilityLabel,
   } = props;
   const colors = getThemeColors(theme);
   const iconColor = secondary ? colors.basic030 : color;
@@ -102,6 +104,7 @@ const IconButton = (props: Props) => {
       horizontalAlign={horizontalAlign}
       hitSlop={hitSlop}
       testID={testID}
+      accessibilityLabel={accessibilityLabel}
     >
       <Icon {...iconParams} />
       {!!iconText && <ButtonText style={iconTextStyle}>{iconText}</ButtonText>}
