@@ -64,7 +64,7 @@ const testnetChainIds = [
   CHAIN_ID.ARBITRUM_NITRO,
 ];
 
-const mainNetChainIds = [
+const mainnetChainIds = [
   CHAIN_ID.ETHEREUM_MAINNET,
   CHAIN_ID.BINANCE,
   CHAIN_ID.XDAI,
@@ -74,9 +74,9 @@ const mainNetChainIds = [
   CHAIN_ID.ARBITRUM,
 ];
 
-export const isTestNetsChainId = (chainId: number) => testnetChainIds.some((id) => chainId === id);
+export const isTestnetChainId = (chainId: number) => testnetChainIds.some((id) => chainId === id);
 
-export const isMainNetsChainId = (chainId: number) => mainNetChainIds.some((id) => chainId === id);
+export const isMainnetChainId = (chainId: number) => mainnetChainIds.some((id) => chainId === id);
 
 /**
  * Maps chain value to chain id, supporting testnet(s) for test env.

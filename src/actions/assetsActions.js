@@ -66,8 +66,8 @@ import {
   chainFromChainId,
   getSupportedChains,
   nativeAssetPerChain,
-  isTestNetsChainId,
-  isMainNetsChainId,
+  isTestnetChainId,
+  isMainnetChainId,
 } from 'utils/chains';
 import { BigNumber, parseTokenAmount, reportErrorLog, logBreadcrumb, fetchUrl } from 'utils/common';
 import { buildHistoryTransaction, parseFeeWithGasToken } from 'utils/history';
@@ -81,12 +81,7 @@ import {
 } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
-import {
-  assetsCategoryFromEtherspotBalancesCategory,
-  parseTokenListToken,
-  filteredWithChain,
-  filteredWithDefaultAssets,
-} from 'utils/etherspot';
+import { assetsCategoryFromEtherspotBalancesCategory, parseTokenListToken, filteredWithChain } from 'utils/etherspot';
 import { isProdEnv } from 'utils/environment';
 import PolygonTokens from 'utils/tokens/polygon-tokens';
 import MumbaiTokens from 'utils/tokens/mumbai-tokens';
@@ -721,7 +716,12 @@ export const fetchSupportedAssetsAction = () => {
 
         const chainCustomAssets = isEmpty(customTokensList) ? [] : filteredWithChain(customTokensList, chain);
 
-        const removedDuplicateSupportedAssets = filteredWithDefaultAssets(chainSupportedAssets, chainCustomAssets);
+        const removedDuplicateSupportedAssets = chainCustomAssets.filter(
+          (item) =>
+            !chainSupportedAssets?.some(
+              (customAsset) => item.address.toLowerCase() === customAsset?.address?.toLowerCase(),
+            ),
+        );
 
         const totalSupportedAssets = [...chainSupportedAssets, ...removedDuplicateSupportedAssets];
 
@@ -832,7 +832,7 @@ export const addTokensListAction = () => {
         if (!res || res?.status !== 200 || !jsonResponse) return null;
 
         const tokens = jsonResponse.tokens
-          ?.filter((token) => (isMainnet ? isMainNetsChainId(token.chainId) : isTestNetsChainId(token.chainId)))
+          ?.filter((token) => (isMainnet ? isMainnetChainId(token.chainId) : isTestnetChainId(token.chainId)))
           ?.map((token) => parseTokenListToken(token));
 
         if (isEmpty(tokens)) return null;
