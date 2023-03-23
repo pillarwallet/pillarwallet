@@ -422,7 +422,8 @@ export const sortInvestmentPositions = (positionsInfo: AccountInvestmentPosition
   return newArr;
 };
 
-export const isSame = (a: Asset, b: Asset) => a.symbol === b.symbol && a.address === b.address;
+export const isSame = (a: Asset, b: Asset) =>
+  a.symbol === b.symbol && a.address.toLowerCase() === b.address.toLowerCase();
 
 export const isTokenAvailableInList = (tokensList: Asset[], token: Asset): boolean => {
   if (isEmpty(tokensList) || !token) return false;

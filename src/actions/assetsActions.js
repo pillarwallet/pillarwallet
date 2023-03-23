@@ -81,7 +81,12 @@ import {
 } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
-import { assetsCategoryFromEtherspotBalancesCategory, parseTokenListToken, filteredWithChain } from 'utils/etherspot';
+import {
+  assetsCategoryFromEtherspotBalancesCategory,
+  parseTokenListToken,
+  filteredWithChain,
+  filteredWithDefaultAssets,
+} from 'utils/etherspot';
 import { isProdEnv } from 'utils/environment';
 import PolygonTokens from 'utils/tokens/polygon-tokens';
 import MumbaiTokens from 'utils/tokens/mumbai-tokens';
@@ -716,12 +721,7 @@ export const fetchSupportedAssetsAction = () => {
 
         const chainCustomAssets = isEmpty(customTokensList) ? [] : filteredWithChain(customTokensList, chain);
 
-        const removedDuplicateSupportedAssets = chainCustomAssets.filter(
-          (item) =>
-            !chainSupportedAssets?.some(
-              (customAsset) => item.symbol === customAsset?.symbol && item.address === customAsset?.address,
-            ),
-        );
+        const removedDuplicateSupportedAssets = filteredWithDefaultAssets(chainSupportedAssets, chainCustomAssets);
 
         const totalSupportedAssets = [...chainSupportedAssets, ...removedDuplicateSupportedAssets];
 
@@ -799,17 +799,30 @@ export const addTokensListAction = () => {
 
     dispatch({ type: ADD_TOKENS_FETCHING, payload: true });
 
-    const tokenList = firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_TOKENLISTS);
+    const remoteTokenList = firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_TOKENLISTS);
 
-    if (isEmpty(tokenList)) {
+    if (isEmpty(remoteTokenList)) {
       reportErrorLog('assetsActions addTokensListAction: fetching remote config data failed', {
         key: REMOTE_CONFIG.APP_TOKENLISTS,
       });
       dispatch({ type: ADD_TOKENS_FETCHING, payload: false });
+      Toast.show({
+        message: t('error.fetchTokenListFailed'),
+        emoji: 'hushed',
+      });
       return;
     }
 
-    const parsedTokenLists = JSON.parse(tokenList);
+    let parsedTokenLists;
+    try {
+      parsedTokenLists = JSON.parse(remoteTokenList);
+    } catch (error) {
+      reportErrorLog('assetsActions addTokensListAction: json parse failed', {
+        remoteTokenList,
+      });
+      dispatch({ type: ADD_TOKENS_FETCHING, payload: false });
+      return;
+    }
 
     const tokensList = await Promise.all(
       parsedTokenLists.map(async (item) => {

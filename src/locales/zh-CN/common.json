@@ -600,7 +600,8 @@
     "failedToSignMessage": "未能签署消息",
     "failedToBuildTransaction": "建立交易失败",
     "failedToEstimateTransaction": "无法估计交易",
-    "failedToSubmitTransaction": "提交交易失败"
+    "failedToSubmitTransaction": "提交交易失败",
+    "fetchTokenListFailed": "获取令牌列表失败。"
   },
   "home": {
     "balance": {

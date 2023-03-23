@@ -628,6 +628,7 @@
     "failedToBuildTransaction": "Failed to build transaction",
     "failedToEstimateTransaction": "Failed to estimate transaction",
     "failedToSubmitTransaction": "Failed to submit transaction",
+    "fetchTokenListFailed": "Fetching token list failed.",
     "failedKeychain": {
       "title": "Your device is not supported",
       "nonEtherspotMessage": "Due to security concerns, we don’t support devices with disabled keychain access.",
