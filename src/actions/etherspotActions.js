@@ -286,7 +286,7 @@ export const fetchDefaultTokensRates = () => {
         const chainAssets: Asset[] = filteredWithChain(tokens, chain);
 
         await getExchangeRates(chain, chainAssets, async (rates) => {
-          if (rates) await dispatch(updateRatesAction(chain, rates));
+          if (rates) dispatch(updateRatesAction(chain, rates));
         });
       }),
     ).catch((error) => {
