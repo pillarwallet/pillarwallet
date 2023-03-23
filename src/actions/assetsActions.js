@@ -61,7 +61,7 @@ import KeyBasedWallet from 'services/keyBasedWallet';
 import { firebaseRemoteConfig } from 'services/firebase';
 
 // utils
-import { transformBalancesToObject, isTokenAvailableInList, isSame } from 'utils/assets';
+import { transformBalancesToObject, isTokenAvailableInList, isSameAsset } from 'utils/assets';
 import {
   chainFromChainId,
   getSupportedChains,
@@ -717,10 +717,7 @@ export const fetchSupportedAssetsAction = () => {
         const chainCustomAssets = isEmpty(customTokensList) ? [] : filteredWithChain(customTokensList, chain);
 
         const removedDuplicateSupportedAssets = chainCustomAssets.filter(
-          (item) =>
-            !chainSupportedAssets?.some(
-              (customAsset) => item.address.toLowerCase() === customAsset?.address?.toLowerCase(),
-            ),
+          (item) => !chainSupportedAssets?.some((customAsset) => isSameAsset(item, customAsset)),
         );
 
         const totalSupportedAssets = [...chainSupportedAssets, ...removedDuplicateSupportedAssets];
@@ -882,7 +879,7 @@ export const manageCustomTokens = (token: Asset, isCustomTokenImport?: boolean) 
     }
 
     if (isTokenAvailable) {
-      const filteredTokensList = data.filter((tokenA) => !isSame(token, tokenA));
+      const filteredTokensList = data.filter((tokenA) => !isSameAsset(token, tokenA));
       dispatch({ type: ADD_CUSTOM_TOKEN, payload: filteredTokensList });
     } else {
       if (isCustomTokenImport) {
