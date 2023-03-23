@@ -73,6 +73,7 @@ type Props = {
   avoidAutoFocus?: boolean,
   disableSelection?: boolean,
   testID?: string,
+  accessibilityLabel?: string,
 };
 
 type State = {
@@ -263,6 +264,7 @@ class TextInput extends React.Component<Props, State> {
       avoidAutoFocus = false,
       disableSelection,
       testID,
+      accessibilityLabel,
     } = this.props;
     let { fallbackSource, hasError } = this.props;
 
@@ -347,6 +349,7 @@ class TextInput extends React.Component<Props, State> {
                       autoFocus={!avoidAutoFocus}
                       selection={disableSelection ? undefined : selectionStart}
                       testID={testID}
+                      accessibilityLabel={accessibilityLabel}
                     />
                   </View>
                 </TouchableWithoutFeedback>
@@ -376,6 +379,7 @@ class TextInput extends React.Component<Props, State> {
                   }}
                   onFocus={this.handleRNFocus}
                   testID={testID}
+                  accessibilityLabel={accessibilityLabel}
                 />
               )}
             </ItemHolder>
