@@ -26,7 +26,9 @@ import { themedColors } from 'utils/themes';
 type Props = {
   children: React.Node,
   wrapperStyle?: Object,
-}
+  testID?: string,
+  accessibilityLabel?: string,
+};
 
 const ErrorMessageBackground = styled.View`
   width: 100%;
@@ -41,14 +43,13 @@ const ErrorMessageText = styled(MediumText)`
 `;
 
 const ErrorMessage = (props: Props) => {
-  const { wrapperStyle } = props;
+  const { wrapperStyle, testID, accessibilityLabel } = props;
   return (
     <ErrorMessageBackground style={wrapperStyle}>
-      <ErrorMessageText>
+      <ErrorMessageText testID={testID} accessibilityLabel={accessibilityLabel}>
         {props.children}
       </ErrorMessageText>
     </ErrorMessageBackground>
-
   );
 };
 

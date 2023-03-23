@@ -60,6 +60,8 @@ export type Props = {|
   transparent?: boolean,
   primarySecond?: boolean,
   warning?: boolean,
+  testID?: string,
+  accessibilityLabel?: string,
 |};
 
 type CombinedProps = {|
@@ -340,6 +342,8 @@ class Button extends React.Component<CombinedProps, State> {
         borderRadius={small ? 3 : 6}
         style={style}
         variant={variant}
+        testID={this.props.testID}
+        accessibilityLabel={this.props.accessibilityLabel}
       >
         {this.renderButtonContent(variant)}
         {children}

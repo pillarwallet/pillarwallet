@@ -59,15 +59,15 @@ const PinButton = styled.TouchableOpacity`
 `;
 
 const ButtonText = styled(BaseText)`
-  font-size: ${props => props.fontSize || fontSizes.large}px;
+  font-size: ${(props) => props.fontSize || fontSizes.large}px;
   align-self: center;
   line-height: 56px;
 `;
 
 const RippleSizer = styled.View`
-   height: 55px;
-   width: 100%;
-   align-self: center;
+  height: 55px;
+  width: 100%;
+  align-self: center;
 `;
 
 const ImageHolder = styled.View`
@@ -85,7 +85,6 @@ const Image = styled(RNImage)`
   height: 25px;
   align-self: center;
 `;
-
 
 const IMAGE = 'image';
 const STRING = 'string';
@@ -106,7 +105,8 @@ type Props = {
   style?: Object,
   inputColor?: string,
   theme: Theme,
-}
+  testIdTag?: string,
+};
 
 class KeyPad extends React.Component<Props> {
   static defaultProps = {
@@ -118,13 +118,7 @@ class KeyPad extends React.Component<Props> {
   };
 
   renderButton = (btn: KeyPadButton) => {
-    const {
-      label,
-      type,
-      image,
-      imageDarkTheme,
-      value,
-    } = btn;
+    const { label, type, image, imageDarkTheme, value } = btn;
     const { theme } = this.props;
     const { current: currentTheme = LIGHT_THEME } = theme;
     const colors = getThemeColors(theme);
@@ -142,30 +136,28 @@ class KeyPad extends React.Component<Props> {
       buttonFontSize = fontSizes.big;
     }
 
-    return (
-      <ButtonText fontSize={buttonFontSize}>
-        {label}
-      </ButtonText>
-    );
+    return <ButtonText fontSize={buttonFontSize}>{label}</ButtonText>;
   };
 
   renderKeys(buttons: any) {
     return buttons.map((btn: KeyPadButton) => {
-      const {
-        value,
-        label,
-      } = btn;
+      const { value, label } = btn;
+
+      const TAG = this.props.testIdTag;
 
       if (!label && label !== 0) {
-        return (
-          <KeyInput key={value} />
-        );
+        return <KeyInput key={value} />;
       }
 
       if (Platform.OS === 'ios') {
         return (
           <KeyInput key={value}>
-            <PinButton onPress={this.handleKeyPress(value)}>
+            <PinButton
+              onPress={this.handleKeyPress(value)}
+              testID={TAG && `${TAG}-button-keypad_${value}`}
+              // eslint-disable-next-line i18next/no-literal-string
+              accessibilityLabel={TAG && `${TAG}-button-keypad_${value}`}
+            >
               {this.renderButton(btn)}
             </PinButton>
           </KeyInput>
@@ -176,10 +168,11 @@ class KeyPad extends React.Component<Props> {
           <TouchableNativeFeedback
             onPress={this.handleKeyPress(value)}
             background={TouchableNativeFeedback.SelectableBackgroundBorderless()}
+            testID={TAG && `$${TAG}-button-keypad_${value}`}
+            // eslint-disable-next-line i18next/no-literal-string
+            accessibilityLabel={TAG && `$${TAG}-button-keypad_${value}`}
           >
-            <RippleSizer>
-              {this.renderButton(btn)}
-            </RippleSizer>
+            <RippleSizer>{this.renderButton(btn)}</RippleSizer>
           </TouchableNativeFeedback>
         </KeyInput>
       );
@@ -187,19 +180,12 @@ class KeyPad extends React.Component<Props> {
   }
 
   render() {
-    const {
-      style,
-      type,
-      customButtons,
-      options,
-    } = this.props;
+    const { style, type, customButtons, options } = this.props;
     const buttons = customButtons || (keyPadTypes[type] ? keyPadTypes[type](options) : keyPadTypes.numeric());
 
     return (
       <KeyPadWrapper style={style} ref={excludeFromMonitoring}>
-        <KeyPadInner>
-          {this.renderKeys(buttons)}
-        </KeyPadInner>
+        <KeyPadInner>{this.renderKeys(buttons)}</KeyPadInner>
       </KeyPadWrapper>
     );
   }

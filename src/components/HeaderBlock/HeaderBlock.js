@@ -53,6 +53,8 @@ type NavItem = {|
   style?: ViewStyleProp,
   color?: string,
   fontSize?: number,
+  testID?: string,
+  accessibilityLabel?: string,
 |};
 
 export type OwnProps = {|
@@ -73,16 +75,19 @@ export type OwnProps = {|
   wrapperStyle?: Object,
   noHorizontalPadding?: boolean,
   forceInsetTop?: string,
+  testIdTag?: string,
 |};
 
 type Props = {|
   ...OwnProps,
   theme: Theme,
-|}
+|};
 
 const Wrapper = styled(Animated.View)`
   width: 100%;
-  ${({ floating }) => floating && `
+  ${({ floating }) =>
+    floating &&
+    `
     position: absolute;
     top: 0;
     left: 0;
@@ -98,7 +103,10 @@ const HeaderContentWrapper = styled.View`
 `;
 
 const SafeArea = styled(SafeAreaView)`
-  ${({ noPaddingTop, androidStatusbarHeight }) => !noPaddingTop && androidStatusbarHeight && `
+  ${({ noPaddingTop, androidStatusbarHeight }) =>
+    !noPaddingTop &&
+    androidStatusbarHeight &&
+    `
     margin-top: ${androidStatusbarHeight}px;
   `}
 `;
@@ -120,7 +128,7 @@ const CenterItems = styled.View`
 `;
 
 const LeftItems = styled.View`
-  flex: ${props => props.sideFlex ?? 1};
+  flex: ${(props) => props.sideFlex ?? 1};
   align-items: center;
   justify-content: flex-start;
   flex-direction: row;
@@ -128,7 +136,7 @@ const LeftItems = styled.View`
 `;
 
 const RightItems = styled.View`
-  flex: ${props => props.sideFlex ?? 1};
+  flex: ${(props) => props.sideFlex ?? 1};
   align-items: center;
   justify-content: flex-end;
   flex-direction: row;
@@ -142,7 +150,7 @@ const BackIcon = styled(IconButton)`
   width: 36px;
   height: 36px;
   border-radius: 36px;
-  background-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic050' })}
+  background-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic050' })};
 `;
 
 const ActionIcon = styled(IconButton)`
@@ -166,7 +174,7 @@ const CloseIcon = styled(IconButton)`
   align-self: center;
   padding: 15px;
   border-radius: 36px;
-  background-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic050' })}
+  background-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic050' })};
 `;
 
 const TextButton = styled.TouchableOpacity`
@@ -217,6 +225,7 @@ class HeaderBlock extends React.Component<Props> {
       customOnBack,
       theme,
       leftSideFlex,
+      testIdTag,
     } = this.props;
     const colors = getThemeColors(theme);
 
@@ -226,28 +235,25 @@ class HeaderBlock extends React.Component<Props> {
           sideFlex={sideFlex ?? leftSideFlex}
           style={!centerItems.length && !rightItems.length && !leftSideFlex ? { flexGrow: 2 } : {}}
         >
-          {(leftItems.length || !!noBack)
-            ? leftItems.map((item) => this.renderSideItems(item, LEFT))
-            : (
-              <BackIcon
-                icon="back"
-                color={colors.basic010}
-                onPress={customOnBack || (() => (navigation && navigation.goBack(null)))}
-                fontSize={fontSizes.big}
-              />
-            )
-          }
+          {leftItems.length || !!noBack ? (
+            leftItems.map((item) => this.renderSideItems(item, LEFT))
+          ) : (
+            <BackIcon
+              icon="back"
+              color={colors.basic010}
+              onPress={customOnBack || (() => navigation && navigation.goBack(null))}
+              fontSize={fontSizes.big}
+              testID={testIdTag && `${TAG}-${testIdTag}-button-left_back`}
+              accessibilityLabel={testIdTag && `${TAG}-${testIdTag}-button-left_back`}
+            />
+          )}
         </LeftItems>
-        {!!centerItems.length &&
-        <CenterItems>
-          {centerItems.map((item) => this.renderSideItems(item, CENTER))}
-        </CenterItems>
-        }
-        {(!!centerItems.length || !!rightItems.length) &&
-          <RightItems sideFlex={sideFlex}>
-            {rightItems.map((item) => this.renderSideItems(item, RIGHT))}
-          </RightItems>
-        }
+        {!!centerItems.length && (
+          <CenterItems>{centerItems.map((item) => this.renderSideItems(item, CENTER))}</CenterItems>
+        )}
+        {(!!centerItems.length || !!rightItems.length) && (
+          <RightItems sideFlex={sideFlex}>{rightItems.map((item) => this.renderSideItems(item, RIGHT))}</RightItems>
+        )}
       </HeaderRow>
     );
   };
@@ -259,14 +265,13 @@ class HeaderBlock extends React.Component<Props> {
     if (type === RIGHT && !item.noMargin) commonStyle.marginLeft = spacing.small;
     if (item.title) {
       return (
-        <View
-          style={[commonStyle, itemStyle]}
-          key={item.title}
-        >
+        <View style={[commonStyle, itemStyle]} key={item.title}>
           <HeaderTitleText
             style={item.color ? { color: item.color } : {}}
             onPress={item.onPress}
             centerText={type === CENTER}
+            testID={item.testID}
+            accessibilityLabel={item.accessibilityLabel}
           >
             {item.title}
           </HeaderTitleText>
@@ -282,8 +287,9 @@ class HeaderBlock extends React.Component<Props> {
         <View style={[commonStyle, itemStyle, additionalIconStyle]} key={item.icon}>
           <ActionIcon
             icon={item.icon}
-            color={item.color
-              || getColorByThemeOutsideStyled(theme.current, { lightKey: 'basic010', darkKey: 'basic020' })}
+            color={
+              item.color || getColorByThemeOutsideStyled(theme.current, { lightKey: 'basic010', darkKey: 'basic020' })
+            }
             onPress={item.onPress}
             fontSize={item.fontSize || fontSizes.large}
             horizontalAlign="flex-start"
@@ -323,11 +329,7 @@ class HeaderBlock extends React.Component<Props> {
     }
     if (item.iconSource) {
       return (
-        <TouchableOpacity
-          onPress={item.onPress}
-          key={item.key || item.iconSource}
-          style={[commonStyle, itemStyle]}
-        >
+        <TouchableOpacity onPress={item.onPress} key={item.key || item.iconSource} style={[commonStyle, itemStyle]}>
           <IconImage source={item.iconSource} />
           {!!item.indicator && <Indicator />}
         </TouchableOpacity>
@@ -335,11 +337,7 @@ class HeaderBlock extends React.Component<Props> {
     }
     if (item.link) {
       return (
-        <TextButton
-          onPress={item.onPress}
-          key={item.link}
-          style={[commonStyle, itemStyle]}
-        >
+        <TextButton onPress={item.onPress} key={item.link} style={[commonStyle, itemStyle]}>
           <ButtonLabel maxFontSizeMultiplier={1.1}>{item.link}</ButtonLabel>
           {item.addon}
         </TextButton>
@@ -385,7 +383,7 @@ class HeaderBlock extends React.Component<Props> {
       );
     }
     if (item.actionButton) {
-      return (<HeaderActionButton {...item.actionButton} wrapperStyle={[commonStyle, itemStyle]} />);
+      return <HeaderActionButton {...item.actionButton} wrapperStyle={[commonStyle, itemStyle]} />;
     }
     if (item.custom) {
       return (
@@ -418,10 +416,7 @@ class HeaderBlock extends React.Component<Props> {
 
     return (
       <ThemeProvider theme={updatedTheme}>
-        <Wrapper
-          floating={floating}
-          style={{ backgroundColor, ...wrapperStyle }}
-        >
+        <Wrapper floating={floating} style={{ backgroundColor, ...wrapperStyle }}>
           <SafeArea
             forceInset={{ bottom: 'never', top: forceInsetTop }}
             noPaddingTop={noPaddingTop}
@@ -438,3 +433,5 @@ class HeaderBlock extends React.Component<Props> {
 }
 
 export default (withTheme(HeaderBlock): React.AbstractComponent<OwnProps>);
+
+const TAG = 'HeaderBlock';

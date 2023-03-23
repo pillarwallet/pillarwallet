@@ -18,11 +18,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { ETH, DAI, PLR, USDC, USDT, MATIC, XDAI } from 'constants/assetsConstants';
+import { ETH, DAI, USDC, USDT, MATIC, XDAI } from 'constants/assetsConstants';
 
 export const MATIC_DAI = 'MATIC_DAI';
 export const MATIC_USDC = 'MATIC_USDC';
 export const BSC_BNB = 'BSC_BNB';
 
-export const ETHERSPOT_RAMP_CURRENCY_TOKENS = [ETH, DAI, PLR, USDC, USDT, MATIC, MATIC_DAI, MATIC_USDC, XDAI, BSC_BNB];
+export const ETHERSPOT_RAMP_CURRENCY_TOKENS = [ETH, DAI, USDC, USDT, MATIC, MATIC_DAI, MATIC_USDC, XDAI, BSC_BNB];
 export const ARCHANOVA_RAMP_CURRENCY_TOKENS = ETH;

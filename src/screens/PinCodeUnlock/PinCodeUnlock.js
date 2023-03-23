@@ -56,7 +56,6 @@ import type { InitArchanovaProps } from 'models/ArchanovaWalletAccount';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { OnValidPinCallback } from 'models/Wallet';
 
-
 const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
 
@@ -64,7 +63,7 @@ type HandleUnlockActionProps = {
   pin?: string,
   privateKey?: string,
   defaultAction: () => void,
-}
+};
 
 type Props = {
   loginWithPin: (pin: string, callback: ?OnValidPinCallback, useBiometrics: ?boolean) => void,
@@ -122,7 +121,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
     if (navigation.getParam('omitPin')) {
       getKeychainDataObject()
-        .then(data => {
+        .then((data) => {
           this.loginWithPrivateKey(data);
         })
         .catch(() => {
@@ -151,7 +150,9 @@ class PinCodeUnlock extends React.Component<Props, State> {
     const { useBiometrics } = this.props;
     if (useBiometrics) {
       this.showBiometricLogin();
-    } else { this.setState({ showPin: true }); }
+    } else {
+      this.setState({ showPin: true });
+    }
   };
 
   handleUnlockAction = async ({ pin, privateKey, defaultAction }: HandleUnlockActionProps) => {
@@ -187,10 +188,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   handleAppStateChange = (nextAppState: string) => {
     const { lastAppState } = this.state;
-    if (nextAppState === ACTIVE_APP_STATE
-      && lastAppState === BACKGROUND_APP_STATE
-      && !this.errorMessage
-    ) {
+    if (nextAppState === ACTIVE_APP_STATE && lastAppState === BACKGROUND_APP_STATE && !this.errorMessage) {
       this.triggerAuthentication();
     }
     this.setState({ lastAppState: nextAppState });
@@ -210,7 +208,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
     this.setState({ biometricsShown: true }, () => {
       getKeychainDataObject()
-        .then(data => {
+        .then((data) => {
           this.setState({ biometricsShown: false });
           this.loginWithPrivateKey(data);
         })
@@ -272,26 +270,33 @@ class PinCodeUnlock extends React.Component<Props, State> {
     } = this.props;
     const { waitingTime, showPin } = this.state;
     const pinError = walletErrorMessage || this.errorMessage || null;
-    const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
+    const showError = pinError ? (
+      // eslint-disable-next-line i18next/no-literal-string
+      <ErrorMessage testID={`${TAG}-error-pin_error`} accessibilityLabel={`${TAG}-error-pin_error`}>
+        {pinError}
+      </ErrorMessage>
+    ) : null;
 
     if (showPin) {
       return (
         <Container>
           <Header centerTitle title={t('auth:enterPincode')} />
           {showError}
-          {waitingTime > 0 &&
-            <ErrorMessage>
+          {waitingTime > 0 && (
+            // eslint-disable-next-line i18next/no-literal-string
+            <ErrorMessage testID={`${TAG}-error-max_attempts`} accessibilityLabel={`${TAG}-error-max_attempts`}>
               {t('auth:error.tooManyAttemptsTryAgain', { waitDuration: waitingTime.toFixed(0) })}
             </ErrorMessage>
-          }
-          {waitingTime <= 0 &&
+          )}
+          {waitingTime <= 0 && (
             <PinCode
               onPinEntered={this.handlePinSubmit}
               onForgotPin={this.handleForgotPasscode}
               pinError={!!pinError}
               isLoading={isAuthorizing}
+              testIdTag={TAG}
             />
-          }
+          )}
         </Container>
       );
     }
@@ -302,8 +307,12 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   wallet,
-  appSettings: { data: { useBiometrics } },
-  session: { data: { isAuthorizing } },
+  appSettings: {
+    data: { useBiometrics },
+  },
+  session: {
+    data: { isAuthorizing },
+  },
 }: RootReducerState): $Shape<Props> => ({
   wallet,
   useBiometrics,
@@ -311,19 +320,15 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  loginWithPin: (
-    pin: string,
-    callback: ?OnValidPinCallback,
-  ) => dispatch(loginAction(pin, null, callback)),
-  loginWithPrivateKey: (
-    privateKey: string,
-    callback: ?OnValidPinCallback,
-  ) => dispatch(loginAction(null, privateKey, callback)),
-  initSmartWalletSdkWithPrivateKeyOrPin: (
-    initProps: InitArchanovaProps,
-  ) => dispatch(initArchanovaSdkWithPrivateKeyOrPinAction(initProps)),
+  loginWithPin: (pin: string, callback: ?OnValidPinCallback) => dispatch(loginAction(pin, null, callback)),
+  loginWithPrivateKey: (privateKey: string, callback: ?OnValidPinCallback) =>
+    dispatch(loginAction(null, privateKey, callback)),
+  initSmartWalletSdkWithPrivateKeyOrPin: (initProps: InitArchanovaProps) =>
+    dispatch(initArchanovaSdkWithPrivateKeyOrPinAction(initProps)),
   switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
   removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PinCodeUnlock);
+
+const TAG = 'PinCodeUnlock';

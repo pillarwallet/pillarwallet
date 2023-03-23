@@ -38,12 +38,11 @@ import { spacing } from 'utils/variables';
 // types
 import type { OnValidPinCallback } from 'models/Wallet';
 
-
 type Props = {
   checkPin: (pin: string, onValidPin: ?OnValidPinCallback) => Function,
   wallet: Object,
   navigation: NavigationScreenProp<*>,
-}
+};
 
 const FooterParagraph = styled(Paragraph)`
   margin-bottom: ${spacing.rhythm}px;
@@ -68,27 +67,35 @@ class ForgotPin extends React.Component<Props, {}> {
   render() {
     return (
       <ContainerWithHeader
-        headerProps={({
+        headerProps={{
           centerItems: [{ title: t('auth:title.forgotPin') }],
           rightItems: [{ close: true }],
           noBack: true,
           onClose: this.goBackToPin,
-        })}
-        footer={(
+        }}
+        footer={
           <FooterWrapper>
-            <FooterParagraph>
-              {t('auth:paragraph.restoreWalletWarning')}
-            </FooterParagraph>
+            <FooterParagraph>{t('auth:paragraph.restoreWalletWarning')}</FooterParagraph>
             <Button
               leftIconName="down-arrow"
               danger
               marginBottom={4}
               onPress={this.toImportWallet}
               title={t('auth:title.importWallet')}
+              testID={`${TAG}-button-import_wallet`}
+              // eslint-disable-next-line i18next/no-literal-string
+              accessibilityLabel={`${TAG}-button-import_wallet`}
             />
-            <Button onPress={this.goBackToPin} transparent title={t('auth:button.backToPin')} />
+            <Button
+              onPress={this.goBackToPin}
+              transparent
+              title={t('auth:button.backToPin')}
+              testID={`${TAG}-button-back`}
+              // eslint-disable-next-line i18next/no-literal-string
+              accessibilityLabel={`${TAG}-button-back`}
+            />
           </FooterWrapper>
-        )}
+        }
       >
         <Wrapper regularPadding style={{ marginTop: spacing.layoutSides }}>
           <Paragraph>{t('auth:paragraph.restoreWalletInstructions')}</Paragraph>
@@ -102,3 +109,5 @@ class ForgotPin extends React.Component<Props, {}> {
 const mapStateToProps = ({ wallet: { data: wallet } }) => ({ wallet });
 
 export default connect(mapStateToProps)(ForgotPin);
+
+const TAG = 'ForgotPin';

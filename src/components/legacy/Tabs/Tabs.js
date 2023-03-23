@@ -26,6 +26,8 @@ type Tab = {
   id: string,
   name: string,
   onPress: () => void,
+  testID?: string,
+  accessibilityLabel?: string,
 };
 
 type TabProps = Tab & {
@@ -56,10 +58,10 @@ const TabContainer = styled.TouchableOpacity`
   align-items: center;
 `;
 
-const TabComponent = ({ name, onPress, active }: TabProps) => {
+const TabComponent = ({ name, onPress, active, testID, accessibilityLabel }: TabProps) => {
   if (active) {
     return (
-      <TabContainer onPress={onPress}>
+      <TabContainer onPress={onPress} testID={testID} accessibilityLabel={accessibilityLabel}>
         <View>
           <BaseText regular>{name}</BaseText>
           <Underline />
@@ -69,7 +71,9 @@ const TabComponent = ({ name, onPress, active }: TabProps) => {
   }
   return (
     <TabContainer onPress={onPress}>
-      <BaseText regular secondary>{name}</BaseText>
+      <BaseText regular secondary>
+        {name}
+      </BaseText>
     </TabContainer>
   );
 };
@@ -82,7 +86,9 @@ const TabComponent = ({ name, onPress, active }: TabProps) => {
 const Tabs = ({ tabs, activeTab, wrapperStyle }: Props) => {
   return (
     <TabsContainer style={wrapperStyle}>
-      {tabs.map(tab => <TabComponent {...tab} active={activeTab === tab.id} key={tab.id} />)}
+      {tabs.map((tab) => (
+        <TabComponent {...tab} active={activeTab === tab.id} key={tab.id} />
+      ))}
     </TabsContainer>
   );
 };

@@ -78,7 +78,12 @@ const LegalScreen = () => {
         navigation={navigation}
         noPaddingTop
       />
-      {!isPrismicHTMLFetched && <ErrorMessage>{errorMessage}</ErrorMessage>}
+      {!isPrismicHTMLFetched && (
+        // eslint-disable-next-line i18next/no-literal-string
+        <ErrorMessage testID={`${TAG}-error-no_prismic_html`} accessibilityLabel={`${TAG}-error-no_prismic_html`}>
+          {errorMessage}
+        </ErrorMessage>
+      )}
       <Content>
         {isLoading && <Spinner size={30} />}
         {!!isPrismicHTMLFetched && !isLoading && (
@@ -87,8 +92,22 @@ const LegalScreen = () => {
       </Content>
       {!!onBoardingFlow && (
         <Footer>
-          <Button title={t('auth:button.accept')} size="large" style={styles.buttonStyle} />
-          <Button title={t('auth:button.reject')} size="large" variant="text" />
+          <Button
+            title={t('auth:button.accept')}
+            size="large"
+            style={styles.buttonStyle}
+            testID={`${TAG}-button-accept`}
+            // eslint-disable-next-line i18next/no-literal-string
+            accessibilityLabel={`${TAG}-button-accept`}
+          />
+          <Button
+            title={t('auth:button.reject')}
+            size="large"
+            variant="text"
+            testID={`${TAG}-button-reject`}
+            // eslint-disable-next-line i18next/no-literal-string
+            accessibilityLabel={`${TAG}-button-reject`}
+          />
         </Footer>
       )}
     </Container>
@@ -96,7 +115,6 @@ const LegalScreen = () => {
 };
 
 export default LegalScreen;
-
 
 const styles = {
   buttonStyle: {
@@ -109,3 +127,5 @@ const ErrorMessage = styled(Text)`
   text-align: center;
   color: ${({ theme }) => theme.colors.negative};
 `;
+
+const TAG = 'LegalScreen';

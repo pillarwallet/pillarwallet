@@ -44,7 +44,6 @@ import { themedColors } from 'utils/themes';
 // types
 import type { Dispatch } from 'reducers/rootReducer';
 
-
 type Props = {
   navigation: NavigationScreenProp<*>,
   beginOnboarding: (enableBiometrics: boolean) => void,
@@ -76,7 +75,7 @@ const ButtonsWrapper = styled.View`
 const TouchIdImage = styled(Image)`
   width: 164px;
   height: 164px;
-  tintColor: ${themedColors.positive};
+  tintcolor: ${themedColors.positive};
 `;
 
 const getBiometryImage = (biometryType: string) => {
@@ -98,7 +97,9 @@ const showFaceIDFailed = () => {
     emoji: 'pensive',
     supportLink: true,
     link: t('label.faceIDSettings'),
-    onLinkPress: () => { Linking.openURL('app-settings:'); },
+    onLinkPress: () => {
+      Linking.openURL('app-settings:');
+    },
     autoClose: true,
   });
 };
@@ -116,9 +117,7 @@ class BiometricsPrompt extends React.Component<Props> {
      * is given to the app and not the user (obvious, but just making a note if questions rise)
      */
     const biometryType = navigation.getParam('biometryType');
-    if (setBiometrics
-      && Platform.OS === 'ios'
-      && biometryType === Keychain.BIOMETRY_TYPE.FACE_ID) {
+    if (setBiometrics && Platform.OS === 'ios' && biometryType === Keychain.BIOMETRY_TYPE.FACE_ID) {
       requestPermission(PERMISSIONS.IOS.FACE_ID)
         .then((status) => beginOnboarding(status === RESULTS.GRANTED))
         .catch(showFaceIDFailed);
@@ -144,11 +143,17 @@ class BiometricsPrompt extends React.Component<Props> {
                 title={t('auth:button.yesPlease')}
                 onPress={() => this.proceedToBeginOnboarding(true)}
                 marginBottom={4}
+                testID={`${TAG}-button-yes`}
+                // eslint-disable-next-line i18next/no-literal-string
+                accessibilityLabel={`${TAG}-button-yes`}
               />
               <Button
                 transparent
                 title={t('auth:button.okToUsePinCodeOnly')}
                 onPress={() => this.proceedToBeginOnboarding(false)}
+                testID={`${TAG}-pin_only`}
+                // eslint-disable-next-line i18next/no-literal-string
+                accessibilityLabel={`${TAG}-pin_only`}
               />
             </ButtonsWrapper>
           </ContentInnerWrapper>
@@ -163,3 +168,5 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
 });
 
 export default connect(null, mapDispatchToProps)(BiometricsPrompt);
+
+const TAG = 'BiometricsPrompt';

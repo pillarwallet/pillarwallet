@@ -95,6 +95,8 @@ const BiometricModal = ({ onModalHide, biometricType, hasNoBiometrics = false }:
             titleColor={colors.buttonTextTitle}
             variant="text"
             onPress={() => proceedToBeginOnboarding()}
+            testID={`${TAG}-button-cancel`}
+            accessibilityLabel={`${TAG}-button-cancel`}
           />
           <VerticalDivider />
           <ButtonText
@@ -103,6 +105,8 @@ const BiometricModal = ({ onModalHide, biometricType, hasNoBiometrics = false }:
             style={styles.button}
             titleColor={colors.buttonTextTitle}
             onPress={() => proceedToBeginOnboarding(true)}
+            testID={`${TAG}-button-enable`}
+            accessibilityLabel={`${TAG}-button-enable`}
           />
         </ButtonWrapper>
       </View>
@@ -149,3 +153,5 @@ const ButtonWrapper = styled.View`
 const ButtonText = styled(Button)`
   flex: 1;
 `;
+
+const TAG = 'BiometricModal';

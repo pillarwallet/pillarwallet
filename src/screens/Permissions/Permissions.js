@@ -42,7 +42,6 @@ import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 import type { Theme } from 'models/Theme';
 import Button from 'components/legacy/Button';
 
-
 type Props = {
   navigation: NavigationScreenProp<*>,
   theme: Theme,
@@ -98,10 +97,7 @@ const FooterWrapper = styled.View`
   padding: ${spacing.layoutSides}px;
 `;
 
-const Permissions = ({
-  navigation,
-  theme,
-}: Props) => {
+const Permissions = ({ navigation, theme }: Props) => {
   const [openCollapseKey, setOpenCollapseKey] = useState(null);
   const [openInnerCollapseKey, setOpenInnerCollapseKey] = useState(null);
   const [hasAgreedToTerms, setHasAgreedToTerms] = useState(false);
@@ -225,20 +221,15 @@ const Permissions = ({
   const colors = getThemeColors(theme);
 
   const renderSectionContent = ({ item: sectionContent }: Object) => {
-    const {
-      key,
-      title,
-      paragraph,
-      custom,
-    } = sectionContent;
+    const { key, title, paragraph, custom } = sectionContent;
     if (paragraph) {
       return (
         <CollapsibleListItem
-          customToggle={(
+          customToggle={
             <InnerSectionToggle>
               <InnerSectionTitle>{title}</InnerSectionTitle>
             </InnerSectionToggle>
-          )}
+          }
           open={openInnerCollapseKey === key}
           onPress={() => toggleInnerCollapse(key)}
           toggleWrapperStyle={{
@@ -251,56 +242,52 @@ const Permissions = ({
             borderBottomWidth: 0.5,
           }}
           collapseContent={
-            <View style={{
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              flex: 1,
-              marginRight: 30,
-              marginLeft: -6,
-            }}
+            <View
+              style={{
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                flex: 1,
+                marginRight: 30,
+                marginLeft: -6,
+              }}
             >
               <Paragraph light small>
                 {paragraph}
               </Paragraph>
             </View>
           }
+          testID={`${TAG}-button-sub_permission_dropdown.${key}`}
+          // eslint-disable-next-line i18next/no-literal-string
+          accessibilityLabel={`${TAG}-button-sub_permission_dropdown.${key}`}
         />
       );
     }
     if (custom) {
-      return (
-        <View style={{ marginHorizontal: 15 }}>
-          {custom}
-        </View>
-      );
+      return <View style={{ marginHorizontal: 15 }}>{custom}</View>;
     }
     return (
-      <SectionTitle key={key} style={{ margin: 30, fontSize: fontSizes.medium }}>{title}</SectionTitle>
+      <SectionTitle key={key} style={{ margin: 30, fontSize: fontSizes.medium }}>
+        {title}
+      </SectionTitle>
     );
   };
 
   const renderCollapseContent = (sectionKey: string) => {
     const section = sections.find((thisSection) => thisSection.key === sectionKey) || {};
     const { content } = section;
-    return (
-      <FlatList
-        keyExtractor={item => item.key}
-        data={content}
-        renderItem={renderSectionContent}
-      />
-    );
+    return <FlatList keyExtractor={(item) => item.key} data={content} renderItem={renderSectionContent} />;
   };
 
   const renderSection = ({ item: { title, key } }: Object) => (
     <CollapsibleListItem
-      customToggle={(
+      customToggle={
         <SectionToggle>
           <SectionTitle>{title}</SectionTitle>
           <IconHolder>
             <TickIcon name="check" />
           </IconHolder>
         </SectionToggle>
-      )}
+      }
       open={openCollapseKey === key}
       onPress={() => toggleCollapse(key)}
       toggleWrapperStyle={{
@@ -316,13 +303,14 @@ const Permissions = ({
       }}
       collapseContent={renderCollapseContent(key)}
       noPadding
+      testID={`${TAG}-button-permission_dropdown.${key}`}
+      // eslint-disable-next-line i18next/no-literal-string
+      accessibilityLabel={`${TAG}-button-permission_dropdown.${key}`}
     />
   );
 
   return (
-    <ContainerWithHeader
-      headerProps={{ centerItems: [{ title: t('auth:title.permissions') }] }}
-    >
+    <ContainerWithHeader headerProps={{ centerItems: [{ title: t('auth:title.permissions') }] }}>
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,
@@ -330,7 +318,7 @@ const Permissions = ({
         }}
       >
         <StyledFlatList
-          keyExtractor={item => item.key}
+          keyExtractor={(item) => item.key}
           data={sections}
           renderItem={renderSection}
           contentContainerStyle={{
@@ -345,6 +333,9 @@ const Permissions = ({
             lightText
             checked={hasAgreedToTerms}
             wrapperStyle={{ marginBottom: 16 }}
+            testID={`${TAG}-checkbox-agree_to_terms`}
+            // eslint-disable-next-line i18next/no-literal-string
+            accessibilityLabel={`${TAG}-checkbox-agree_to_terms`}
           >
             {t('auth:withLink.readUnderstandAgreeTo', { linkedText: t('auth:termsOfUse') })}
           </Checkbox>
@@ -352,6 +343,9 @@ const Permissions = ({
             title={t('auth:button.proceed')}
             onPress={handleAgree}
             disabled={!hasAgreedToTerms}
+            testID={`${TAG}-button-submit`}
+            // eslint-disable-next-line i18next/no-literal-string
+            accessibilityLabel={`${TAG}-button-submit`}
           />
         </FooterWrapper>
       </ScrollView>
@@ -360,3 +354,5 @@ const Permissions = ({
 };
 
 export default withTheme(Permissions);
+
+const TAG = 'Permissions';

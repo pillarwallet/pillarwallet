@@ -34,14 +34,16 @@ type Props = {|
   icon: IconName,
   value: boolean,
   onChangeValue: (value: boolean) => mixed,
+  testID?: string,
+  accessibilityLabel?: string,
 |};
 
-const SettingsToggle = ({ title, icon, value, onChangeValue }: Props) => {
+const SettingsToggle = ({ title, icon, value, onChangeValue, testID, accessibilityLabel }: Props) => {
   return (
     <Container>
       <Icon name={icon} width={16} height={16} style={styles.icon} />
       <Title>{title}</Title>
-      <Switcher isOn={value} onToggle={onChangeValue} />
+      <Switcher isOn={value} onToggle={onChangeValue} testID={testID} accessibilityLabel={accessibilityLabel} />
     </Container>
   );
 };

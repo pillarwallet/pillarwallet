@@ -38,15 +38,15 @@ class AddCashValueInputAccessoryHolder extends React.Component<{}, State> {
     if (instance) {
       instance.handleAddAccessory(onSelectValueCallback);
     }
-  }
+  };
 
   static removeAccessory = () => {
-    this.instances.forEach(instance => {
+    this.instances.forEach((instance) => {
       if (instance.isActive()) {
         instance.handleRemoveAccessory();
       }
     });
-  }
+  };
 
   state = {
     isVisible: false,
@@ -70,23 +70,23 @@ class AddCashValueInputAccessoryHolder extends React.Component<{}, State> {
       isActive: true,
       onSelectValueCallback,
     });
-  }
+  };
 
   handleRemoveAccessory = () => {
     this.setState({ isActive: false });
-  }
+  };
 
   handleKeyboardDidShow = () => {
     this.setState({ isVisible: true });
-  }
+  };
 
   isActive = () => {
     return this.state.isActive;
-  }
+  };
 
   handleKeyboardDidHide = () => {
     this.setState({ isVisible: false });
-  }
+  };
 
   render() {
     const { isVisible, isActive, onSelectValueCallback } = this.state;
@@ -100,9 +100,7 @@ class AddCashValueInputAccessoryHolder extends React.Component<{}, State> {
     if (!isVisible || !isActive) {
       return null;
     }
-    return (
-      <AddCashValueInputAccessory onSelectValue={onSelectValueCallback} />
-    );
+    return <AddCashValueInputAccessory onSelectValue={onSelectValueCallback} />;
   }
 }
 

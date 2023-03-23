@@ -18,13 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
-import { useNavigation } from 'react-navigation-hooks';
 import { Platform } from 'react-native';
 import { useDispatch } from 'react-redux';
+import InAppBrowser from 'react-native-inappbrowser-reborn';
 
 // Components
 import Text from 'components/core/Text';
@@ -38,9 +38,7 @@ import { formatFiatValue, formatFiatChangeExtended } from 'utils/format';
 import { useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 import { isKeyBasedAccount } from 'utils/accounts';
-
-// Constants
-import { ADD_CASH } from 'constants/navigationConstants';
+import { showServiceLaunchErrorToast } from 'utils/inAppBrowser';
 
 // Hooks
 import { useAppHoldings } from 'hooks/apps';
@@ -48,20 +46,23 @@ import { useAppHoldings } from 'hooks/apps';
 // Actions
 import { dismissAddCashTooltipAction } from 'actions/appSettingsActions';
 
+// Components
+import AddCashModal from 'screens/AddCash/modal/AddCashModal';
+import Modal from 'components/Modal';
+
 // Local
 import SpecialButton from './components/SpecialButton';
 
-type Props = {|
-  balanceInFiat: BigNumber,
-  changeInFiat?: ?BigNumber,
-  showBalance?: boolean,
-  onBalanceClick?: () => mixed,
-|};
+type IBalanceSection = {
+  balanceInFiat: BigNumber;
+  changeInFiat?: BigNumber;
+  showBalance?: boolean;
+  onBalanceClick?: () => void;
+};
 
-function BalanceSection({ balanceInFiat, changeInFiat, showBalance, onBalanceClick }: Props) {
+const BalanceSection: FC<IBalanceSection> = ({ balanceInFiat, changeInFiat, showBalance, onBalanceClick }) => {
   const { t, tRoot } = useTranslationWithPrefix('home.balance');
   const colors = useThemeColors();
-  const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const fiatCurrency = useFiatCurrency();
@@ -72,14 +73,16 @@ function BalanceSection({ balanceInFiat, changeInFiat, showBalance, onBalanceCli
   const formattedChange = formatFiatChangeExtended(changeInFiat, initialBalance, fiatCurrency);
 
   balanceInFiat = balanceInFiat.plus(totalBalanceOfHoldings);
+  const balanceInFiatString = balanceInFiat.toString();
 
   const { addCashTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
 
-  const visibleAddCashTooltip = !addCashTooltipDismissed && parseFloat(balanceInFiat) === 0.0;
+  const visibleAddCashTooltip = !addCashTooltipDismissed && parseFloat(balanceInFiatString) === 0.0;
 
-  const [visibleTooltip, setVisibleTooltip] = React.useState(false);
+  const [visibleTooltip, setVisibleTooltip] = useState(false);
+  const [addCashUrl, setAddCashUrl] = useState(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (visibleAddCashTooltip) {
       setTimeout(() => {
         setVisibleTooltip(true);
@@ -89,8 +92,32 @@ function BalanceSection({ balanceInFiat, changeInFiat, showBalance, onBalanceCli
     }
   }, [addCashTooltipDismissed, balanceInFiat, visibleAddCashTooltip]);
 
+  const openBrowser = async (url: string) => {
+    const isAvailable = await InAppBrowser.isAvailable();
+
+    if (url && isAvailable) {
+      InAppBrowser.open(url, {
+        // iOS Properties
+        dismissButtonStyle: 'close',
+        // Android Properties
+        showTitle: true,
+        enableUrlBarHiding: true,
+        enableDefaultShare: true,
+      });
+    } else showServiceLaunchErrorToast();
+
+    setAddCashUrl(null);
+  };
+
+  useEffect(() => {
+    if (!addCashUrl) return;
+
+    // Delay open Add Cash URL so that it doesn't close with the modal
+    setTimeout(() => openBrowser(addCashUrl), 500);
+  }, [addCashUrl]);
+
   const onAddCashPress = () => {
-    navigation.navigate(ADD_CASH);
+    Modal.open(() => <AddCashModal setAddCashUrl={setAddCashUrl} />);
     dispatch(dismissAddCashTooltipAction());
   };
 
@@ -127,7 +154,7 @@ function BalanceSection({ balanceInFiat, changeInFiat, showBalance, onBalanceCli
       )}
     </>
   );
-}
+};
 
 export default BalanceSection;
 

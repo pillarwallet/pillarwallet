@@ -44,11 +44,13 @@ export type Props = {
   theme: Theme,
   secondary?: boolean,
   hitSlop?: { top: number, left: number, bottom: number, right: number },
+  testID?: string,
+  accessibilityLabel?: string,
 };
 
 const IconButtonWrapper = styled.TouchableOpacity`
   justify-content: center;
-  align-items: ${props => props.horizontalAlign ? props.horizontalAlign : 'center'};
+  align-items: ${(props) => (props.horizontalAlign ? props.horizontalAlign : 'center')};
   padding: 0;
 `;
 
@@ -73,6 +75,8 @@ const IconButton = (props: Props) => {
     secondary,
     theme,
     hitSlop,
+    testID,
+    accessibilityLabel,
   } = props;
   const colors = getThemeColors(theme);
   const iconColor = secondary ? colors.basic030 : color;
@@ -94,7 +98,14 @@ const IconButton = (props: Props) => {
     type,
   };
   return (
-    <IconButtonWrapper style={style} onPress={onPress} horizontalAlign={horizontalAlign} hitSlop={hitSlop}>
+    <IconButtonWrapper
+      style={style}
+      onPress={onPress}
+      horizontalAlign={horizontalAlign}
+      hitSlop={hitSlop}
+      testID={testID}
+      accessibilityLabel={accessibilityLabel}
+    >
       <Icon {...iconParams} />
       {!!iconText && <ButtonText style={iconTextStyle}>{iconText}</ButtonText>}
     </IconButtonWrapper>
