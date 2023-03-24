@@ -38,6 +38,9 @@ import { objectFontStyles } from 'utils/variables';
 // Selectors
 import { useSupportedChains } from 'selectors/chains';
 
+// Constants
+import { CHAIN } from 'constants/chainConstants';
+
 // Actions
 import { switchAccountAction } from 'actions/accountsActions';
 
@@ -89,7 +92,10 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ chain, onChangeChain }) => {
   const isActiveEtherspotAccount = isEtherspotAccount(activeAccount);
   const isActiveArchanovaAccount = isArchanovaAccount(activeAccount);
 
-  const requestedChainInfo = chains?.find((chainInfo) => chainInfo.chain === chain);
+  let requestedChainInfo = chains?.find((chainInfo) => chainInfo.chain === chain);
+  if (!requestedChainInfo) {
+    requestedChainInfo = chains?.find((chainInfo) => chainInfo.chain === CHAIN.ETHEREUM);
+  }
 
   const [showList, setShowList] = React.useState(false);
   const [contentHeight, setContentHeight] = React.useState(0);

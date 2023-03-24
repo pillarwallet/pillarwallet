@@ -398,17 +398,6 @@ export const mockSupportedAssets = [
   },
 ];
 
-export const mockPopularAssets = [
-  {
-    address: '0x111111111117dC0aa78b770fA6A738034120C302',
-    chainId: 1,
-    decimals: 18,
-    logoURI: 'https://tokens.1inch.io/0x111111111117dc0aa78b770fa6a738034120c302.png',
-    name: '1INCH Token',
-    symbol: '1INCH',
-  },
-];
-
 export const mockStableAssets = [
   {
     address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
@@ -491,7 +480,6 @@ jest.setMock('services/etherspot', {
   getAccounts: jest.fn(),
   getAccountPerChains: () => ({ ethereum: mockEtherspotApiAccount, xdai: null, binance: null, polygon: null }),
   getSupportedAssets: (chain) => Promise.resolve(chain === CHAIN.ETHEREUM ? mockSupportedAssets : []),
-  getEtherspotPopularTokens: (chain) => Promise.resolve(chain === CHAIN.ETHEREUM ? mockPopularAssets : []),
   getBalances: mockEtherspotGetBalances,
   getAccountTotalBalances: () => Promise.resolve(),
   getTokenListTokens: () => Promise.resolve(),

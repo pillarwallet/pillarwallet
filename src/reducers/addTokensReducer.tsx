@@ -18,43 +18,46 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 // constants
-import { SET_SUPPORTED_ASSETS, SET_CHAIN_SUPPORTED_ASSETS } from 'constants/assetsConstants';
+import { ADD_TOKENS_FETCHING, ADD_TOKENS_LIST, IS_ADD_TOKENS_FETCHED } from 'constants/assetsConstants';
 
-// utils
-import { sortAssetsArray, sortSupportedAssets } from 'utils/assets';
+// Modals
+import type { AddTokens } from 'models/Asset';
 
-// types
-import type { AssetsPerChain } from 'models/Asset';
-
-export type AssetsReducerState = {
-  supportedAssets: AssetsPerChain,
+export type AddTokensReducerState = {
+  addTokensList: AddTokens[];
+  isFetching: boolean;
+  isFetched: boolean;
 };
 
-export type AssetsReducerAction = {
-  type: string,
-  payload: any,
+export type AddTokensReducerAction = {
+  type: string;
+  payload: any;
 };
 
 export const initialState = {
-  supportedAssets: { ethereum: [] },
+  addTokensList: [],
+  isFetching: false,
+  isFetched: false,
 };
 
-export default function assetsReducer(state: AssetsReducerState = initialState, action: AssetsReducerAction) {
+export default function addTokensReducer(state: AddTokensReducerState = initialState, action: AddTokensReducerAction) {
   switch (action.type) {
-    case SET_SUPPORTED_ASSETS:
+    case ADD_TOKENS_FETCHING:
       return {
         ...state,
-        supportedAssets: sortSupportedAssets(action.payload),
+        isFetching: action.payload,
       };
 
-    case SET_CHAIN_SUPPORTED_ASSETS:
-      const { chain, assets } = action.payload;
+    case ADD_TOKENS_LIST:
       return {
         ...state,
-        supportedAssets: {
-          ...state.supportedAssets,
-          [chain]: sortAssetsArray(assets),
-        },
+        addTokensList: action.payload,
+      };
+
+    case IS_ADD_TOKENS_FETCHED:
+      return {
+        ...state,
+        isFetched: action.payload,
       };
 
     default:

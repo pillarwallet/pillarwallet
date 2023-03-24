@@ -18,43 +18,33 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 // constants
-import { SET_SUPPORTED_ASSETS, SET_CHAIN_SUPPORTED_ASSETS } from 'constants/assetsConstants';
+import { ADD_CUSTOM_TOKEN } from 'constants/assetsConstants';
 
-// utils
-import { sortAssetsArray, sortSupportedAssets } from 'utils/assets';
+// Modals
+import type { Asset } from 'models/Asset';
 
-// types
-import type { AssetsPerChain } from 'models/Asset';
-
-export type AssetsReducerState = {
-  supportedAssets: AssetsPerChain,
+export type AddCustomTokensReducerState = {
+  data: Asset[];
 };
 
-export type AssetsReducerAction = {
-  type: string,
-  payload: any,
+export type AddCustomTokensReducerAction = {
+  type: string;
+  payload: any;
 };
 
 export const initialState = {
-  supportedAssets: { ethereum: [] },
+  data: [],
 };
 
-export default function assetsReducer(state: AssetsReducerState = initialState, action: AssetsReducerAction) {
+export default function manageCustomTokensReducer(
+  state: AddCustomTokensReducerState = initialState,
+  action: AddCustomTokensReducerAction,
+) {
   switch (action.type) {
-    case SET_SUPPORTED_ASSETS:
+    case ADD_CUSTOM_TOKEN:
       return {
         ...state,
-        supportedAssets: sortSupportedAssets(action.payload),
-      };
-
-    case SET_CHAIN_SUPPORTED_ASSETS:
-      const { chain, assets } = action.payload;
-      return {
-        ...state,
-        supportedAssets: {
-          ...state.supportedAssets,
-          [chain]: sortAssetsArray(assets),
-        },
+        data: action.payload,
       };
 
     default:

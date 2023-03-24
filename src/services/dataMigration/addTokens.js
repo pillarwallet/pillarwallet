@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,23 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { BigNumber } from 'ethers';
 
-// feel free to update with new methods that can be called
-export type EtherspotErc721Interface = {
-  callTokenURI: (tokenId: string) => Promise<?string>,
-};
+export default function (storageData: Object) {
+  const tokens = storageData?.addTokensList?.addTokensList || [];
 
-// feel free to update with new methods that can be called
-export type EtherspotErc20Interface = {
-  callAllowance: (senderAddress: string, spenderAddress: string) => Promise<?BigNumber>,
-  callName: () => Promise<?string>,
-  callSymbol: () => Promise<?string>,
-  callDecimals: () => Promise<?number>,
-};
-
-// feel free to update with new methods that can be called
-export type EtherspotUnipoolInterface = {
-  callBalanceOf: (address: string) => Promise<?BigNumber>,
-  callEarned: (address: string) => Promise<?BigNumber>,
-};
+  return tokens;
+}

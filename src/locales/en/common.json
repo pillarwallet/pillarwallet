@@ -310,7 +310,17 @@
     "low_risk": "low risk",
     "no_risk": "no risk",
     "risk_assets": "{{percentage}}% of risky assets",
-    "risk_stable": "{{percentage}}% of low risk stables"
+    "risk_stable": "{{percentage}}% of low risk stables",
+    "add_tokens": "Add Tokens",
+    "number_of_tokens": "{{tokens}} tokens",
+    "find_token":"Find a token or input address",
+    "manageTokenLists":"Manage token lists",
+    "importCustomToken":"Import custom token",
+    "importNumberOfCustomToken":"Import {{tokens}} custom tokens",
+    "contractAddress": "Contract Address",
+    "erc20": " (ERС-20)",
+    "tokenExists": "This token is already exists",
+    "addedCustomToken": "Add a new custom token"
   },
 
   "button": {
@@ -454,7 +464,9 @@
     "nativeIntegrationWarning": "The following tool gives you direct access to Smart Contracts. This is considered a professional tool and if you don't know what you're doing, please don't attempt to use this tool as it could result in loss of funds.",
     "ownRisk": "Continue at your own risk.",
     "riskWithType": "Your portfolio is {{type}} right now.",
-    "portfolio_riskiness": "The more you move to stables,\nthe less risk you take on."
+    "portfolio_riskiness": "The more you move to stables,\nthe less risk you take on.",
+    "tokenNotListedWarning": "This token is not officially listed on Uniswap. You can import and trade it at your own risk.",
+    "importTokenPermission": "I confirm that i want to import this token"
   },
 
   "insight": {
@@ -616,6 +628,7 @@
     "failedToBuildTransaction": "Failed to build transaction",
     "failedToEstimateTransaction": "Failed to estimate transaction",
     "failedToSubmitTransaction": "Failed to submit transaction",
+    "fetchTokenListFailed": "Fetching token list failed.",
     "failedKeychain": {
       "title": "Your device is not supported",
       "nonEtherspotMessage": "Due to security concerns, we don’t support devices with disabled keychain access.",
@@ -650,6 +663,7 @@
   "menu": {
     "item": {
       "settings": "Settings",
+      "tokens": "Tokens",
       "addressBook": "Address book",
       "supportChat": "Support",
       "emailSupport": "Email support",

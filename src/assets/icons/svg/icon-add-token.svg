@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="25px" height="24px" viewBox="0 0 25 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>CF9558F2-C319-4DA7-87E1-63EC9821D55F</title>
+    <g id="Assets" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="001-Wallet-All" transform="translate(-146.000000, -1168.000000)">
+            <g id="Tokens" transform="translate(0.000000, 332.000000)">
+                <g id="Button" transform="translate(20.000000, 812.000000)">
+                    <g id="Icon" transform="translate(126.351351, 24.000000)">
+                        <polygon id="Path" opacity="0" points="0 0 24.2594595 0 24.2594595 24 0 24"></polygon>
+                        <ellipse id="Oval" stroke="#FAFAFA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" cx="6.06486486" cy="10" rx="2.02162162" ry="2"></ellipse>
+                        <line x1="6.06486486" y1="4" x2="6.06486486" y2="8" id="Path" stroke="#FAFAFA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></line>
+                        <line x1="6.06486486" y1="12" x2="6.06486486" y2="20" id="Path" stroke="#FAFAFA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></line>
+                        <ellipse id="Oval" stroke="#FAFAFA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" cx="12.1297297" cy="16" rx="2.02162162" ry="2"></ellipse>
+                        <line x1="12.1297297" y1="4" x2="12.1297297" y2="14" id="Path" stroke="#FAFAFA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></line>
+                        <line x1="12.1297297" y1="18" x2="12.1297297" y2="20" id="Path" stroke="#FAFAFA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></line>
+                        <ellipse id="Oval" stroke="#FAFAFA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" cx="18.1945946" cy="7" rx="2.02162162" ry="2"></ellipse>
+                        <line x1="18.1945946" y1="4" x2="18.1945946" y2="5" id="Path" stroke="#FAFAFA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></line>
+                        <line x1="18.1945946" y1="9" x2="18.1945946" y2="20" id="Path" stroke="#FAFAFA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></line>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

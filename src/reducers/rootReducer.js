@@ -67,6 +67,8 @@ import transactionNotificationReducer from './transactionNotificationReducer';
 import nftFlagReducer from './nftFlagReducer';
 import appsHoldingsReducer from './appsHoldingsReducer';
 import deployAccountsReducer from './deployAccountsReducer';
+import addTokensReducer from './addTokensReducer';
+import addCustomTokensReducer from './addCustomTokensReducer';
 import defaultTokensReducer from './defaultTokensReducer';
 
 // local types
@@ -115,6 +117,8 @@ import type { TransactionNotificationState, TransactionNotificationAction } from
 import type { NFTFlagReducerAction, NFTFlagReducerState } from './nftFlagReducer';
 import type { AppsHoldingsReducerState, AppsHoldingsReducerAction } from './appsHoldingsReducer';
 import type { DeployAccountsAction, DeployAccountsReducerState } from './deployAccountsReducer';
+import type { AddTokensReducerAction, AddTokensReducerState } from './addTokensReducer';
+import type { AddCustomTokensReducerState, AddCustomTokensReducerAction } from './addCustomTokensReducer';
 import type { DefaultTokensReducerState, TokensAction } from './defaultTokensReducer';
 
 export type RootReducerState = {|
@@ -157,6 +161,8 @@ export type RootReducerState = {|
   nftFlag: NFTFlagReducerState,
   appsHoldings: AppsHoldingsReducerState,
   deployAccounts: DeployAccountsReducerState,
+  addTokensList: AddTokensReducerState,
+  customTokensList: AddCustomTokensReducerState,
   defaultTokens: DefaultTokensReducerState,
 |};
 
@@ -191,7 +197,9 @@ type RootReducerAction =
   | AppsHoldingsReducerAction
   | TokensAction
   | TransactionNotificationAction
-  | DeployAccountsAction;
+  | DeployAccountsAction
+  | AddTokensReducerAction
+  | AddCustomTokensReducerAction;
 
 export type GetState = () => RootReducerState;
 export type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
@@ -241,6 +249,8 @@ const appReducer = combineReducers({
   nativeIntegration: nativeIntegrationReducer,
   transactionNotification: transactionNotificationReducer,
   deployAccounts: deployAccountsReducer,
+  addTokensList: addTokensReducer,
+  customTokensList: addCustomTokensReducer,
   defaultTokens: defaultTokensReducer,
 });
 

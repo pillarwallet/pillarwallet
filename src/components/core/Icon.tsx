@@ -129,6 +129,8 @@ import CheckmarkCircle from 'assets/icons/svg/24-circle-checkmark.svg';
 import CheckmarkGreen from 'assets/icons/svg/24-checkmark.svg';
 import CrossRed from 'assets/icons/svg/24-x.svg';
 import IconHelp from 'assets/icons/svg/24-circle-help.svg';
+import AddTokenIcon from 'assets/icons/svg/icon-add-token.svg';
+import IconTokens from 'assets/icons/svg/icon-24-tokens.svg';
 import IconCheckmarkCircleGreen from 'assets/icons/svg/icon-18-checkmark-circle.svg';
 
 // Assets: services icons
@@ -256,6 +258,8 @@ const components = {
   'checkmark-green': CheckmarkGreen,
   'cross-red': CrossRed,
   help: IconHelp,
+  'add-token': AddTokenIcon,
+  tokens: IconTokens,
   'checkmark-circle-green': IconCheckmarkCircleGreen,
 
   // Service icons

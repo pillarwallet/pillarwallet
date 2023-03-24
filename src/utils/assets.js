@@ -33,11 +33,18 @@ import {
   reportOrWarn,
   addressAsKey,
   valueForAddress,
+  reportErrorLog,
 } from 'utils/common';
 import { nativeAssetPerChain } from 'utils/chains';
 import { getAssetRateInFiat } from 'utils/rates';
 import { caseInsensitiveIncludes } from 'utils/strings';
 import { getGasAddress } from 'utils/transactions';
+
+// services
+import etherspotService from 'services/etherspot';
+
+// abi
+import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 
 // types
 import type {
@@ -56,6 +63,7 @@ import type { Currency, RatesByAssetAddress } from 'models/Rates';
 import type { Value } from 'models/Value';
 import { omitNilProps } from 'utils/object';
 import type { AccountInvestmentPositionsInfo } from 'etherspot';
+import type { EtherspotErc20Interface } from 'models/Etherspot';
 
 const sortAssetsFn = (a: Asset, b: Asset): number => {
   return a.symbol.localeCompare(b.symbol);
@@ -288,7 +296,11 @@ export const getAssetOptionKey = (option: ?AssetOption) => {
 
 export const isAssetOptionMatchedByQuery = (option: AssetOption, query: ?string) => {
   if (!query) return true;
-  return caseInsensitiveIncludes(option.name, query) || caseInsensitiveIncludes(option.symbol, query);
+  return (
+    caseInsensitiveIncludes(option.name, query) ||
+    caseInsensitiveIncludes(option.symbol, query) ||
+    caseInsensitiveIncludes(option.address, query)
+  );
 };
 
 export const mapAssetDataToAsset = (assetData: TokenData, chain: Chain): Asset => {
@@ -408,4 +420,61 @@ export const sortInvestmentPositions = (positionsInfo: AccountInvestmentPosition
     }
   });
   return newArr;
+};
+
+export const isSameAsset = (a: Asset, b: Asset) => a.address?.toLowerCase() === b.address?.toLowerCase();
+
+export const isTokenAvailableInList = (tokensList: Asset[], token: Asset): boolean => {
+  if (isEmpty(tokensList) || !token) return false;
+  return tokensList?.some((tokenA) => isSameAsset(token, tokenA));
+};
+
+export const getAssetsToAddress = async (chain: Chain, contractAddress: string) => {
+  try {
+    const erc20Contract = etherspotService.getContract<?EtherspotErc20Interface>(
+      chain,
+      ERC20_CONTRACT_ABI,
+      contractAddress,
+    );
+
+    if (!erc20Contract) {
+      reportErrorLog('getAssetsToAddress failed: no erc20Contract on getAssetsToAddress', {
+        contractAddress,
+        chain,
+      });
+      return null;
+    }
+
+    const name = await erc20Contract.callName();
+    const symbol = await erc20Contract.callSymbol();
+    const decimals = await erc20Contract.callDecimals();
+
+    return {
+      address: contractAddress,
+      chain,
+      name,
+      symbol,
+      decimals,
+      iconUrl: null,
+    };
+  } catch (error) {
+    reportErrorLog('Contract address to get token details: getAssetsToAddress failed', {
+      error,
+      chain,
+    });
+    return null;
+  }
+};
+
+export const getChainsAssetsToAddress = async (supportedChains: Chain[], contractAddress: string) => {
+  const assets = await Promise.all(supportedChains?.map((chain) => getAssetsToAddress(chain, contractAddress))).catch(
+    (error) => {
+      reportErrorLog('Contract address to get token details fot supported chains: getChainsAssetsToAddress failed', {
+        error,
+        supportedChains,
+      });
+      return null;
+    },
+  );
+  return assets ? assets.filter((asset) => !!asset) : [];
 };

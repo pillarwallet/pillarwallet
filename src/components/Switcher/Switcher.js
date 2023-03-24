@@ -43,15 +43,10 @@ const Toggle = styled.View`
   align-items: center;
   justify-content: center;
   position: absolute;
-  background-color: ${({ isOn }) =>
-    isOn
-      ? css`
-          ${getColorByTheme({ lightKey: 'basic070', darkKey: 'basic050' })}
-        `
-      : css`
-          ${getColorByTheme({ lightKey: 'basic070', darkCustom: '#a7a7a7' })}
-        `};
-  elevation: ${({ disabled }) => (disabled ? 0 : 2)};
+  background-color: ${({ isOn }) => isOn
+    ? css`${getColorByTheme({ lightKey: 'basic070', darkKey: 'basic000' })}`
+    : css`${getColorByTheme({ lightKey: 'basic070', darkKey: 'basic000' })}`};
+  elevation: ${({ disabled }) => disabled ? 0 : 2};
   ${({ theme }) => theme.current === LIGHT_THEME && 'box-shadow: 0px 2px 2px rgba(0,0,0,0.05);'}
   width: ${TOGGLE_DIAMETER}px;
   height: ${TOGGLE_DIAMETER}px;
@@ -63,7 +58,9 @@ const SwitcherTouchable = styled.TouchableOpacity`
   width: 50px;
   border-radius: ${(TOGGLE_DIAMETER / 2) + 3}px;
   height: ${TOGGLE_DIAMETER + 3}px;
-  background-color: ${({ isOn, theme }) => (isOn ? theme.colors.basic020 : theme.colors.basic080)};
+  background-color: ${({ isOn }) => isOn
+    ? css`${getColorByTheme({ lightKey: 'basic020', darkKey: 'primaryAccent280' })}`
+    : css`${getColorByTheme({ lightKey: 'basic080', darkKey: 'basic030' })}`};};
   ${({ disabled }) => disabled && 'opacity: 0.4;'}
 `;
 

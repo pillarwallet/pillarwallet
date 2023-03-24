@@ -28,6 +28,7 @@ import {
   GatewayBatchStates,
   AccountDashboardProtocols as EtherspotAccountDashboardProtocols,
 } from 'etherspot';
+import { isEmpty } from 'lodash';
 
 // constants
 import { TX_CONFIRMED_STATUS, TX_FAILED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
@@ -295,7 +296,7 @@ export const filteredWithDefaultAssets = (
   const newAssets = chain ? assets.filter((asset) => asset.chain === chain) : assets;
 
   const filteredDefaultAssets: AssetOption[] = defaultAssets?.filter(
-    (defaultToken) => !newAssets.some((token) => isSame(defaultToken, token)),
+    (defaultToken) => !newAssets.some((token) => isSameAsset(defaultToken, token)),
   );
   return chain ? filteredDefaultAssets?.filter((token) => token.chain === chain) : filteredDefaultAssets;
 };
@@ -303,12 +304,12 @@ export const filteredWithDefaultAssets = (
 export const filteredWithStableAssets = (assets: AssetOption[], stableTokens: AssetOption[]): AssetOption[] => {
   if (!assets || !stableTokens) return [];
 
-  return assets.filter((assetToken) => stableTokens?.some((stableToken) => isSame(assetToken, stableToken)));
+  return assets.filter((assetToken) => stableTokens?.some((stableToken) => isSameAsset(assetToken, stableToken)));
 };
 
 export const filteredWithChain = (assets: Asset[], chain: Chain): Asset[] => {
-  if (!assets || !chain) return [];
-  return assets.filter((asset) => asset.chain === chain);
+  if (isEmpty(assets)) return [];
+  return chain ? assets.filter((asset) => asset.chain === chain) : assets;
 };
 
-const isSame = (a: AssetOption, b: AssetOption) => a.symbol === b.symbol && a.address === b.address;
+const isSameAsset = (a: AssetOption, b: AssetOption) => a.address?.toLowerCase() === b.address?.toLowerCase();

@@ -22,8 +22,6 @@ import { ethers } from 'ethers';
 // reducer
 export const SET_SUPPORTED_ASSETS = 'SET_SUPPORTED_ASSETS';
 export const SET_CHAIN_SUPPORTED_ASSETS = 'SET_CHAIN_SUPPORTED_ASSETS';
-export const SET_POPULAR_ASSETS = 'SET_POPULAR_ASSETS';
-export const SET_CHAIN_POPULAR_ASSETS = 'SET_CHAIN_POPULAR_ASSETS';
 
 // fiat
 export const USD = ('USD': 'USD');
@@ -159,6 +157,12 @@ export const CMC_STABLE_COINS = 'CmcStableCoins';
 export const ETHERSPOT_STABLE_COIN = 'EtherspotStableCoins';
 export const NFT_FLAG = 'NFT_FLAG';
 export const ETHERSPOT_POPULAR_COIN = 'EtherspotPopularTokens';
+
+export const ADD_TOKENS_FETCHING = 'ADD_TOKENS_FETCHING';
+export const IS_ADD_TOKENS_FETCHED = 'IS_ADD_TOKENS_FETCHED';
+export const ADD_TOKENS_LIST = 'ADD_TOKENS_LIST';
+
+export const ADD_CUSTOM_TOKEN = 'ADD_CUSTOM_TOKEN';
 export const ETHERSPOT_DEFAULT_LIST = 'EtherspotDefaultList';
 export const ETHERSPOT_DEFAULT_STABLE_LIST = 'EtherspotDefaultStablesList';
 

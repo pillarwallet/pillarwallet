@@ -25,7 +25,7 @@ import ReduxAsyncQueue from 'redux-async-queue';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 
 // constants
-import { ASSET_CATEGORY, SET_CHAIN_SUPPORTED_ASSETS, SET_CHAIN_POPULAR_ASSETS } from 'constants/assetsConstants';
+import { ASSET_CATEGORY, SET_CHAIN_SUPPORTED_ASSETS } from 'constants/assetsConstants';
 import { SET_ACCOUNT_ASSETS_BALANCES, SET_FETCHING_ASSETS_BALANCES } from 'constants/assetsBalancesConstants';
 import { INITIAL_REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { CHAIN } from 'constants/chainConstants';
@@ -34,7 +34,7 @@ import { CHAIN } from 'constants/chainConstants';
 import etherspotService from 'services/etherspot';
 
 // test utils
-import { mockEthAddress, mockPlrAddress, mockSupportedAssets, mockPopularAssets } from 'testUtils/jestSetup';
+import { mockEthAddress, mockPlrAddress, mockSupportedAssets } from 'testUtils/jestSetup';
 
 const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
 
@@ -79,7 +79,7 @@ Object.defineProperty(mockWallet, 'sendTransaction', {
 });
 
 const initialState = {
-  assets: { supportedAssets: { ethereum: mockSupportedAssets }, popularAssets: { ethereum: mockPopularAssets } },
+  assets: { supportedAssets: { ethereum: mockSupportedAssets } },
   txCount: { data: { lastCount: 0, lastNonce: 0 } },
   history: { data: {} },
   wallet: { data: { address: mockWallet.address } },
@@ -107,19 +107,13 @@ describe('Assets actions', () => {
 
     const supportedAssetsPayload = {
       chain: CHAIN.ETHEREUM,
-      assets: [...mockSupportedAssets, ...mockPopularAssets],
-    };
-
-    const popularAssetsPayload = {
-      chain: CHAIN.ETHEREUM,
-      assets: mockPopularAssets,
+      assets: mockSupportedAssets,
     };
 
     const expectedActions = [
       { type: SET_FETCHING_ASSETS_BALANCES, payload: true },
       { type: SET_FETCHING_ASSETS_BALANCES, payload: false },
       { type: SET_CHAIN_SUPPORTED_ASSETS, payload: supportedAssetsPayload },
-      { type: SET_CHAIN_POPULAR_ASSETS, payload: popularAssetsPayload },
       { type: SET_ACCOUNT_ASSETS_BALANCES, payload: updateBalancesPayload },
     ];
 

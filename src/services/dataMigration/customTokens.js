@@ -18,27 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-// Constants
-import { CHAIN } from 'constants/chainConstants';
+export default function (storageData: Object) {
+  const tokens = storageData?.customTokensList?.customTokensList || [];
 
-// Local
-import { addChainFieldIfNeeded } from './supportedAssets';
-
-export default function (storageData: Object | any) {
-  let popularAssets = storageData?.popularAssets?.popularAssets || {};
-
-  // Version 1: migrate to multi-chain assets
-  if (Array.isArray(popularAssets)) {
-    popularAssets = { ethereum: popularAssets };
-  }
-
-  // Version 2: add chain field
-  addChainFieldIfNeeded(popularAssets, CHAIN.ETHEREUM);
-  addChainFieldIfNeeded(popularAssets, CHAIN.POLYGON);
-  addChainFieldIfNeeded(popularAssets, CHAIN.BINANCE);
-  addChainFieldIfNeeded(popularAssets, CHAIN.XDAI);
-  addChainFieldIfNeeded(popularAssets, CHAIN.OPTIMISM);
-  addChainFieldIfNeeded(popularAssets, CHAIN.AVALANCHE);
-
-  return popularAssets;
+  return tokens;
 }
