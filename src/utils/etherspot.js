@@ -296,7 +296,7 @@ export const filteredWithDefaultAssets = (
   const newAssets = chain ? assets.filter((asset) => asset.chain === chain) : assets;
 
   const filteredDefaultAssets: AssetOption[] = defaultAssets?.filter(
-    (defaultToken) => !newAssets.some((token) => isSame(defaultToken, token)),
+    (defaultToken) => !newAssets.some((token) => isSameAsset(defaultToken, token)),
   );
   return chain ? filteredDefaultAssets?.filter((token) => token.chain === chain) : filteredDefaultAssets;
 };
@@ -304,7 +304,7 @@ export const filteredWithDefaultAssets = (
 export const filteredWithStableAssets = (assets: AssetOption[], stableTokens: AssetOption[]): AssetOption[] => {
   if (!assets || !stableTokens) return [];
 
-  return assets.filter((assetToken) => stableTokens?.some((stableToken) => isSame(assetToken, stableToken)));
+  return assets.filter((assetToken) => stableTokens?.some((stableToken) => isSameAsset(assetToken, stableToken)));
 };
 
 export const filteredWithChain = (assets: Asset[], chain: Chain): Asset[] => {
@@ -312,5 +312,4 @@ export const filteredWithChain = (assets: Asset[], chain: Chain): Asset[] => {
   return chain ? assets.filter((asset) => asset.chain === chain) : assets;
 };
 
-const isSame = (a: AssetOption, b: AssetOption) =>
-  a.symbol === b.symbol && a.address.toLowerCase() === b.address.toLowerCase();
+const isSameAsset = (a: AssetOption, b: AssetOption) => a.address.toLowerCase() === b.address.toLowerCase();

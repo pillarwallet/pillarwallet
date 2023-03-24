@@ -422,12 +422,11 @@ export const sortInvestmentPositions = (positionsInfo: AccountInvestmentPosition
   return newArr;
 };
 
-export const isSame = (a: Asset, b: Asset) =>
-  a.symbol === b.symbol && a.address.toLowerCase() === b.address.toLowerCase();
+export const isSameAsset = (a: Asset, b: Asset) => a.address.toLowerCase() === b.address.toLowerCase();
 
 export const isTokenAvailableInList = (tokensList: Asset[], token: Asset): boolean => {
   if (isEmpty(tokensList) || !token) return false;
-  return tokensList?.some((tokenA) => isSame(token, tokenA));
+  return tokensList?.some((tokenA) => isSameAsset(token, tokenA));
 };
 
 export const getAssetsToAddress = async (chain: Chain, contractAddress: string) => {
