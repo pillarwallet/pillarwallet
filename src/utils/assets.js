@@ -283,7 +283,7 @@ export const getAssetOption = (
 
 export const getAssetOptionKey = (option: ?AssetOption) => {
   if (!option) return '';
-  return `${option.chain}-${option.address ?? option.contractAddress}`;
+  return `${option.chain}-${option.address ?? option.contractAddress}-${option.symbol}`;
 };
 
 export const isAssetOptionMatchedByQuery = (option: AssetOption, query: ?string) => {
