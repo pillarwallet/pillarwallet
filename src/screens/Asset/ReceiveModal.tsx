@@ -176,7 +176,7 @@ const ReceiveModal: FC<IReceiveModal> = ({ address, onModalHide, theme }) => {
                       width={18}
                       style={IconContainer}
                       name={'checkmark-circle-green'}
-                      color={theme.colors.black}
+                      color={colors.black}
                     />
                   )}
                 </ChainIconWrapper>
