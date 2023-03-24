@@ -22,6 +22,81 @@
 import { nativeAssetPerChain } from 'utils/chains';
 import { reportErrorLog } from 'utils/common';
 
+// Assets
+const aave = require('assets/tokens/aave.png');
+const ada = require('assets/tokens/ADA-9F4.png');
+const apecoin = require('assets/tokens/apecoin.png');
+const atom = require('assets/tokens/ATOM-596.png');
+const avax = require('assets/tokens/avax.png');
+const axs = require('assets/tokens/axs.png');
+const bitcoin = require('assets/tokens/bitcoin.png');
+const bob = require('assets/tokens/bob.png');
+const busd = require('assets/tokens/busd.png');
+const chainlink = require('assets/tokens/chainlink.png');
+const crv = require('assets/tokens/crv.png');
+const dai = require('assets/tokens/dai.png');
+const doge = require('assets/tokens/doge.png');
+const dot = require('assets/tokens/DOT-64C.png');
+const fil = require('assets/tokens/FIL-E2C.png');
+const fxs = require('assets/tokens/fxs.png');
+const gmx = require('assets/tokens/GMX.png');
+const gno = require('assets/tokens/gno.png');
+const lusd = require('assets/tokens/lusd.png');
+const mana = require('assets/tokens/mana.png');
+const op = require('assets/tokens/op.png');
+const pillar = require('assets/tokens/pillar.png');
+const sand = require('assets/tokens/sand.png');
+const sol = require('assets/tokens/sol.jpeg');
+const uniswap = require('assets/tokens/uniswap.png');
+const usdc = require('assets/tokens/USDC-CD2.png');
+const usdt = require('assets/tokens/usdt.png');
+const velo = require('assets/tokens/velo.png');
+const xrp = require('assets/tokens/XRP-BF2.png');
+
+const defaultTokens = [
+  { name: 'aave', path: aave },
+  { name: 'ada', path: ada },
+  { name: 'apecoin', path: apecoin },
+  { name: 'atom', path: atom },
+  { name: 'avax', path: avax },
+  { name: 'axs', path: axs },
+  { name: 'bitcoin', path: bitcoin },
+  { name: 'bob', path: bob },
+  { name: 'busd', path: busd },
+  { name: 'chainlink', path: chainlink },
+  { name: 'crv', path: crv },
+  { name: 'dai', path: dai },
+  { name: 'doge', path: doge },
+  { name: 'dot', path: dot },
+  { name: 'fil', path: fil },
+  { name: 'fxs', path: fxs },
+  { name: 'gmx', path: gmx },
+  { name: 'gno', path: gno },
+  { name: 'lusd', path: lusd },
+  { name: 'mana', path: mana },
+  { name: 'op', path: op },
+  { name: 'pillar', path: pillar },
+  { name: 'sand', path: sand },
+  { name: 'sol', path: sol },
+  { name: 'uniswap', path: uniswap },
+  { name: 'usdc', path: usdc },
+  { name: 'usdt', path: usdt },
+  { name: 'velo', path: velo },
+  { name: 'xrp', path: xrp },
+];
+
+export const defaultTokensIcon = (name: string) => {
+  if (!name) return null;
+
+  const tokenIcon = defaultTokens.find((tokenInfo) => tokenInfo.name === name);
+
+  if (!tokenIcon) {
+    return null;
+  }
+
+  return tokenIcon.path;
+};
+
 export const isChainIcon = (nameOrUrl: string): boolean => {
   if (!nameOrUrl) {
     reportErrorLog('isChainIcon: Icon url or name not found', { nameOrUrl });
