@@ -90,25 +90,6 @@ const ReceiveModal: FC<IReceiveModal> = ({ address, onModalHide, theme }) => {
     setCloseFlag(true);
   };
 
-  const handleCopyFromChain = (chain: Chain, title: string) => {
-    if (isEtherspotAccount(activeAccount)) {
-      const accountAddress = etherspotService.getAccountAddress(chain);
-      if (accountAddress) {
-        Clipboard.setString(accountAddress);
-        Toast.show({
-          message: t('toast.chainAddressCopiedToClipboard', { chain: title }),
-          emoji: 'ok_hand',
-          autoClose: true,
-        });
-        setCloseFlag(true);
-      } else {
-        Toast.show({ message: t('toast.missingCopyAddress'), emoji: 'hushed', autoClose: false });
-      }
-    } else {
-      handleCopyToClipboard(address);
-    }
-  };
-
   const showWarning = !isKeyBasedAccount(activeAccount) && !isDeployedOnChain.ethereum;
   const { username } = user;
   const ensName = getAccountEnsName(activeAccount);
@@ -191,7 +172,12 @@ const ReceiveModal: FC<IReceiveModal> = ({ address, onModalHide, theme }) => {
                 <ChainIconWrapper>
                   <ChainViewIcon width={38} style={IconContainer} name={chain + '38'} />
                   {isDeployedOnChain[chain] && (
-                    <ChainDeployedIcon width={18} style={IconContainer} name={'checkmark-circle-green'} color="#000" />
+                    <ChainDeployedIcon
+                      width={18}
+                      style={IconContainer}
+                      name={'checkmark-circle-green'}
+                      color={theme.colors.black}
+                    />
                   )}
                 </ChainIconWrapper>
               );
@@ -205,7 +191,7 @@ const ReceiveModal: FC<IReceiveModal> = ({ address, onModalHide, theme }) => {
           )}
 
           <InfoText color={colors.secondaryAccent} style={styles.singleAddressInfo}>
-            {'Check Deployment Status'}
+            {t('receiveModal.checkDeploymentStatus')}
           </InfoText>
         </DeployInfoWrapper>
 
@@ -295,11 +281,6 @@ const InfoText = styled(Text)<{ color?: string }>`
   ${fontStyles.regular};
   text-align: center;
   color: ${({ theme, color }) => color || theme.colors.secondaryText};
-`;
-
-const DeployLink = styled(Text)`
-  justify-content: center;
-  align-items: center;
 `;
 
 const IconContainer = styled.View`

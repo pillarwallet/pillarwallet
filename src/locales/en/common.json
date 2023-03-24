@@ -1614,7 +1614,8 @@
     "etherspotTitle": "Etherspot Account",
     "deployedOn": "Smart Contract based wallets on {{deployed}} are already deployed.",
     "ethereumWarning": "Sending assets on Ethereum to this wallet comes with",
-    "additionalFee": "an additional fee"
+    "additionalFee": "an additional fee",
+    "checkDeploymentStatus": "Check Deployment Status"
   },
 
   "tooltip": {
