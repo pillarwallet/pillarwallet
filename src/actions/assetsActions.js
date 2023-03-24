@@ -813,6 +813,10 @@ export const addTokensListAction = () => {
     let parsedTokenLists;
     try {
       parsedTokenLists = JSON.parse(remoteTokenList);
+      dispatch({
+        type: ADD_TOKENS_LIST,
+        payload: null,
+      });
     } catch (error) {
       reportErrorLog('assetsActions addTokensListAction: json parse failed', {
         remoteTokenList,
@@ -821,7 +825,7 @@ export const addTokensListAction = () => {
       return;
     }
 
-    const tokensList = await Promise.all(
+    await Promise.all(
       parsedTokenLists.map(async (item) => {
         const res = await fetchUrl(item.link);
         const jsonResponse = await res.json();
@@ -834,31 +838,30 @@ export const addTokensListAction = () => {
 
         if (isEmpty(tokens)) return null;
 
-        return { chain: item.chain, ...jsonResponse, tokens };
+        const { addTokensList } = addTokensListSelector(getState());
+        const tokenInfo = { chain: item.chain, ...jsonResponse, tokens };
+
+        dispatch({
+          type: ADD_TOKENS_LIST,
+          payload: isEmpty(addTokensList) ? [tokenInfo] : [...addTokensList, tokenInfo],
+        });
+
+        dispatch(
+          saveDbAction(
+            'addTokensList',
+            { addTokensList: isEmpty(addTokensList) ? [tokenInfo] : [...addTokensList, tokenInfo] },
+            true,
+          ),
+        );
+
+        dispatch({ type: ADD_TOKENS_FETCHING, payload: false });
+        dispatch({ type: IS_ADD_TOKENS_FETCHED, payload: true });
+
+        return addTokensList;
       }),
     ).catch((error) => {
       reportErrorLog('AddTokensList failed', { error });
-      return null;
     });
-
-    if (!tokensList) {
-      dispatch({ type: ADD_TOKENS_FETCHING, payload: false });
-      return;
-    }
-
-    const filteredTokensList = tokensList.filter((token) => !!token);
-
-    filteredTokensList?.sort((tokenA, tokenB) => tokenB.tokens?.length - tokenA.tokens?.length);
-
-    dispatch({
-      type: ADD_TOKENS_LIST,
-      payload: filteredTokensList,
-    });
-
-    const AddTokensListInfo = addTokensListSelector(getState());
-    dispatch(saveDbAction('addTokensList', { addTokensList: AddTokensListInfo.addTokensList }, true));
-    dispatch({ type: ADD_TOKENS_FETCHING, payload: false });
-    dispatch({ type: IS_ADD_TOKENS_FETCHED, payload: true });
   };
 };
 

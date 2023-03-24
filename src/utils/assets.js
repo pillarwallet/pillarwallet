@@ -422,7 +422,7 @@ export const sortInvestmentPositions = (positionsInfo: AccountInvestmentPosition
   return newArr;
 };
 
-export const isSameAsset = (a: Asset, b: Asset) => a.address.toLowerCase() === b.address.toLowerCase();
+export const isSameAsset = (a: Asset, b: Asset) => a.address?.toLowerCase() === b.address?.toLowerCase();
 
 export const isTokenAvailableInList = (tokensList: Asset[], token: Asset): boolean => {
   if (isEmpty(tokensList) || !token) return false;

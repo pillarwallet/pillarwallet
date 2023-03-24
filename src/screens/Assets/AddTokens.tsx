@@ -60,6 +60,8 @@ export function AddTokens() {
   const [selectedChain, setSelectedChain] = React.useState(null);
   const tokensAccordingToChain = filteredWithChain(tokenList, !isSmartWallet ? CHAIN.ETHEREUM : selectedChain);
 
+  tokensAccordingToChain?.sort((tokenA, tokenB) => tokenB.tokens?.length - tokenA.tokens?.length);
+
   React.useEffect(() => {
     dispatch(addTokensListAction());
   }, []);

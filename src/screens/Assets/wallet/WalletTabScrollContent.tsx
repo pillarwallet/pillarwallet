@@ -263,6 +263,7 @@ const AddTokenButton = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  padding: 15px;
 `;
 
 const AddTokenText = styled(Text)`
