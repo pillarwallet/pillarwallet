@@ -65,9 +65,6 @@ export const rampWidgetUrl = (
     fiatCurrency,
     fiatValue,
     swapAsset: isEtherspotAccount ? ETHERSPOT_RAMP_CURRENCY_TOKENS.join(',') : ARCHANOVA_RAMP_CURRENCY_TOKENS,
-    defaultFlow: 'ONRAMP',
-    enabledFlows: 'ONRAMP,OFFRAMP',
-    defaultAsset: MATIC,
   };
 
   const url = `${getEnv().RAMPNETWORK_WIDGET_URL}/${buildUrlOptions(params)}`;
