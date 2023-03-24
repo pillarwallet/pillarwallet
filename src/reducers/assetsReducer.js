@@ -18,12 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 // constants
-import {
-  SET_SUPPORTED_ASSETS,
-  SET_POPULAR_ASSETS,
-  SET_CHAIN_SUPPORTED_ASSETS,
-  SET_CHAIN_POPULAR_ASSETS,
-} from 'constants/assetsConstants';
+import { SET_SUPPORTED_ASSETS, SET_CHAIN_SUPPORTED_ASSETS } from 'constants/assetsConstants';
 
 // utils
 import { sortAssetsArray, sortSupportedAssets } from 'utils/assets';
@@ -33,7 +28,6 @@ import type { AssetsPerChain } from 'models/Asset';
 
 export type AssetsReducerState = {
   supportedAssets: AssetsPerChain,
-  popularAssets: AssetsPerChain,
 };
 
 export type AssetsReducerAction = {
@@ -43,7 +37,6 @@ export type AssetsReducerAction = {
 
 export const initialState = {
   supportedAssets: { ethereum: [] },
-  popularAssets: { ethereum: [] },
 };
 
 export default function assetsReducer(state: AssetsReducerState = initialState, action: AssetsReducerAction) {
@@ -61,22 +54,6 @@ export default function assetsReducer(state: AssetsReducerState = initialState, 
         supportedAssets: {
           ...state.supportedAssets,
           [chain]: sortAssetsArray(assets),
-        },
-      };
-
-    case SET_POPULAR_ASSETS:
-      return {
-        ...state,
-        popularAssets: sortSupportedAssets(action.payload),
-      };
-
-    case SET_CHAIN_POPULAR_ASSETS:
-      const { chain: popularAssetsChain, assets: popularAssets } = action.payload;
-      return {
-        ...state,
-        popularAssets: {
-          ...state.popularAssets,
-          [popularAssetsChain]: sortAssetsArray(popularAssets),
         },
       };
 

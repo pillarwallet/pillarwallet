@@ -41,9 +41,10 @@ import Icon from 'components/core/Icon';
 import PortfolioRiskinessModal from 'components/Modals/PortfolioRiskiness/PortfolioRiskinessModal';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import SearchBar from 'components/SearchBar';
+import Text from 'components/core/Text';
 
 // Constants
-import { ASSET } from 'constants/navigationConstants';
+import { ASSET, ADD_TOKENS, MANAGE_TOKEN_LISTS } from 'constants/navigationConstants';
 import { TOKENS, STABLES, ALL, WALLET_DROPDOWN_REF } from 'constants/walletConstants';
 
 // Selectors
@@ -54,6 +55,8 @@ import { spacing } from 'utils/variables';
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
 import { useThemeColors } from 'utils/themes';
 import { getMatchingTokens } from 'utils/wallet';
+import { fontStyles } from 'utils/variables';
+import { hitSlop20 } from 'utils/common';
 
 // Modals
 import type { Chain } from 'models/Chain';
@@ -185,6 +188,33 @@ function WalletTabScrollContent({ isNavigateToHome, hasPositiveBalance }: Props)
     );
   };
 
+  const renderAddToken = () => {
+    return (
+      <FooterRowContainer>
+        <AddTokenButton
+          hitSlop={hitSlop20}
+          onPress={() => {
+            navigation.navigate(ADD_TOKENS);
+          }}
+        >
+          <Icon name="add-token" />
+          <Spacing w={7} />
+          <AddTokenText>{tRoot('label.add_tokens')}</AddTokenText>
+        </AddTokenButton>
+        <AddTokenButton
+          hitSlop={hitSlop20}
+          onPress={() => {
+            navigation.navigate(MANAGE_TOKEN_LISTS);
+          }}
+        >
+          <Icon name="tokens" width={24} height={24} />
+          <Spacing w={7} />
+          <AddTokenText>{tRoot('menu.item.tokens')}</AddTokenText>
+        </AddTokenButton>
+      </FooterRowContainer>
+    );
+  };
+
   return (
     <AnimationScroll
       maincontent={
@@ -196,6 +226,8 @@ function WalletTabScrollContent({ isNavigateToHome, hasPositiveBalance }: Props)
           contentContainerStyle={{
             paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET,
           }}
+          ListFooterComponent={renderAddToken}
+          ListFooterComponentStyle={{ marginVertical: 30 }}
           scrollEnabled={false}
         />
       }
@@ -227,6 +259,17 @@ const BannerContent = styled.View`
   width: 100%;
 `;
 
+const AddTokenButton = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+`;
+
+const AddTokenText = styled(Text)`
+  ${fontStyles.medium};
+`;
+
 const ProgressContent = styled.View`
   flex-direction: row;
   align-items: center;
@@ -237,4 +280,10 @@ const Button = styled.TouchableOpacity``;
 const EmptyStateWrapper = styled.View`
   flex: 1;
   align-items: center;
+`;
+
+const FooterRowContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
 `;

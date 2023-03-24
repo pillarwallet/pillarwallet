@@ -158,6 +158,8 @@ class ImportWallet extends React.Component<Props, State> {
             this.devPhraseInput.focus();
           }}
           testID={`${TAG}-input-phrase_word`}
+          // eslint-disable-next-line i18next/no-literal-string
+          accessibilityLabel={`${TAG}-input-phrase_word`}
         />
       );
     }
@@ -191,6 +193,8 @@ class ImportWallet extends React.Component<Props, State> {
             this.backupPhraseInput.focus();
           }}
           testID={`${TAG}-input-phrase_word`}
+          // eslint-disable-next-line i18next/no-literal-string
+          accessibilityLabel={`${TAG}-input-phrase_word`}
         />
       </React.Fragment>
     );

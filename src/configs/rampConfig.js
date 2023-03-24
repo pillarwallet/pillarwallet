@@ -23,6 +23,22 @@ import { ETH, DAI, USDC, USDT, MATIC, XDAI } from 'constants/assetsConstants';
 export const MATIC_DAI = 'MATIC_DAI';
 export const MATIC_USDC = 'MATIC_USDC';
 export const BSC_BNB = 'BSC_BNB';
+export const ARBITRUM_ETH = 'ARBITRUM_ETH';
+export const OPTIMISM_DAI = 'OPTIMISM_DAI';
+export const OPTIMISM_ETH = 'OPTIMISM_ETH';
 
-export const ETHERSPOT_RAMP_CURRENCY_TOKENS = [ETH, DAI, USDC, USDT, MATIC, MATIC_DAI, MATIC_USDC, XDAI, BSC_BNB];
+export const ETHERSPOT_RAMP_CURRENCY_TOKENS = [
+  ETH,
+  DAI,
+  USDC,
+  USDT,
+  MATIC,
+  MATIC_DAI,
+  MATIC_USDC,
+  XDAI,
+  BSC_BNB,
+  ARBITRUM_ETH,
+  OPTIMISM_DAI,
+  OPTIMISM_ETH,
+];
 export const ARCHANOVA_RAMP_CURRENCY_TOKENS = ETH;

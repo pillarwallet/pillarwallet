@@ -28,6 +28,7 @@ type Props = {
   onToggle: ?(boolean) => mixed,
   disabled?: boolean,
   testID?: string,
+  accessibilityLabel?: string,
 };
 
 type State = {
@@ -42,15 +43,10 @@ const Toggle = styled.View`
   align-items: center;
   justify-content: center;
   position: absolute;
-  background-color: ${({ isOn }) =>
-    isOn
-      ? css`
-          ${getColorByTheme({ lightKey: 'basic070', darkKey: 'basic050' })}
-        `
-      : css`
-          ${getColorByTheme({ lightKey: 'basic070', darkCustom: '#a7a7a7' })}
-        `};
-  elevation: ${({ disabled }) => (disabled ? 0 : 2)};
+  background-color: ${({ isOn }) => isOn
+    ? css`${getColorByTheme({ lightKey: 'basic070', darkKey: 'basic000' })}`
+    : css`${getColorByTheme({ lightKey: 'basic070', darkKey: 'basic000' })}`};
+  elevation: ${({ disabled }) => disabled ? 0 : 2};
   ${({ theme }) => theme.current === LIGHT_THEME && 'box-shadow: 0px 2px 2px rgba(0,0,0,0.05);'}
   width: ${TOGGLE_DIAMETER}px;
   height: ${TOGGLE_DIAMETER}px;
@@ -62,7 +58,9 @@ const SwitcherTouchable = styled.TouchableOpacity`
   width: 50px;
   border-radius: ${(TOGGLE_DIAMETER / 2) + 3}px;
   height: ${TOGGLE_DIAMETER + 3}px;
-  background-color: ${({ isOn, theme }) => (isOn ? theme.colors.basic020 : theme.colors.basic080)};
+  background-color: ${({ isOn }) => isOn
+    ? css`${getColorByTheme({ lightKey: 'basic020', darkKey: 'primaryAccent280' })}`
+    : css`${getColorByTheme({ lightKey: 'basic080', darkKey: 'basic030' })}`};};
   ${({ disabled }) => disabled && 'opacity: 0.4;'}
 `;
 
@@ -94,7 +92,7 @@ class Switcher extends React.Component<Props, State> {
   };
 
   render() {
-    const { isOn, onToggle, disabled, testID } = this.props;
+    const { isOn, onToggle, disabled, testID, accessibilityLabel } = this.props;
     const { offsetX } = this.state;
 
     return (
@@ -104,6 +102,7 @@ class Switcher extends React.Component<Props, State> {
         disabled={disabled}
         isOn={isOn}
         testID={testID}
+        accessibilityLabel={accessibilityLabel}
       >
         <AnimatedToggle
           isOn={isOn}

@@ -27,6 +27,7 @@ import { firebaseRemoteConfig } from 'services/firebase';
 // Constants
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { CHAIN_ID } from 'constants/chainConstants';
+import { MATIC } from 'constants/assetsConstants';
 
 // Config
 import { getEnv } from 'configs/envConfig';
@@ -94,8 +95,8 @@ export const buildMtPelerinOptions = (code: string, address: string) => {
     tabs: 'buy',
     chain: 'xdai_mainnet',
     net: 'matic_mainnet',
-    nets: 'arbitrum_mainnet,avalanche_mainnet,bsc_mainnet,fantom_mainnet,mainnet,optimism_mainnet,xdai_mainnet',
-    crys: 'AVAX,BNB,BTCB,BUSD,DAI,ETH,FRAX,LUSD,MAI,MATIC,RBTC,RDOC,RIF,USDC,USDT,WBTC,WETH,XCHF,XDAI,XTZ',
+    nets: 'arbitrum_mainnet,matic_mainnet,bsc_mainnet,mainnet,optimism_mainnet,xdai_mainnet',
+    crys: 'BNB,BTCB,BUSD,DAI,ETH,FRAX,LUSD,MATIC,USDC,USDT,WBTC,WETH,XDAI',
     rfr: 'etherspot',
     bsc: 'GBP',
     bdc: 'MATIC',

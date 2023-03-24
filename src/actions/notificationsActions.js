@@ -85,7 +85,6 @@ export const fetchAllNotificationsAction = () => {
   return async (dispatch: Dispatch) => {
     dispatch(fetchTransactionsHistoryAction());
     dispatch(fetchAllCollectiblesDataAction());
-    dispatch(fetchAssetsBalancesAction(true));
   };
 };
 

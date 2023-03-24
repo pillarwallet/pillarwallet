@@ -29,7 +29,7 @@ import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { SET_USER } from 'constants/userConstants';
 import { SET_ARCHANOVA_WALLET_ACCOUNTS, SET_ARCHANOVA_SDK_INIT } from 'constants/archanovaConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
-import { ETH, PLR, SET_CHAIN_SUPPORTED_ASSETS, SET_CHAIN_POPULAR_ASSETS } from 'constants/assetsConstants';
+import { ETH, PLR, SET_CHAIN_SUPPORTED_ASSETS } from 'constants/assetsConstants';
 import { SET_FETCHING_HISTORY, SET_HISTORY } from 'constants/historyConstants';
 import { SET_FETCHING_RATES } from 'constants/ratesConstants';
 import { CHAIN } from 'constants/chainConstants';
@@ -51,7 +51,6 @@ import {
   mockArchanovaAccountApiData,
   mockArchanovaConnectedAccount,
   mockSupportedAssets,
-  mockPopularAssets,
   mockEtherspotAccountExtra,
   mockEthAddress,
   mockPlrAddress,
@@ -87,6 +86,7 @@ const mockOnboarding: Object = {
   wallet: null,
   pinCode: '123456',
   user: { username: mockUser.username },
+  isNewUser: false,
 };
 
 const mockBackupStatus: Object = {
@@ -172,6 +172,7 @@ describe('Onboarding actions', () => {
         backupStatus: mockBackupStatus,
         data: mockImportedWallet,
       },
+      onboarding: mockOnboarding,
     });
 
     const expectedActions = [
@@ -196,6 +197,7 @@ describe('Onboarding actions', () => {
         backupStatus: mockBackupStatus,
         data: mockImportedWallet,
       },
+      onboarding: mockOnboarding,
     });
 
     const expectedActions = [
@@ -225,21 +227,21 @@ describe('Onboarding actions', () => {
       user: { data: mockUser },
       accounts: { data: [] },
       smartWallet: {},
-      assets: { supportedAssets: { ethereum: mockSupportedAssets }, popularAssets: { ethereum: mockPopularAssets } },
+      assets: { supportedAssets: { ethereum: mockSupportedAssets } },
       history: { data: {} },
       assetsBalances: mockAssetsBalancesStore,
       rates: { data: {} },
       badges: { data: [] },
       totalBalances: {},
+      onboarding: mockOnboarding,
     });
 
     const expectedActions = [
       { type: UPDATE_SESSION, payload: { fcmToken: mockFcmToken } },
       {
         type: SET_CHAIN_SUPPORTED_ASSETS,
-        payload: { chain: CHAIN.ETHEREUM, assets: [...mockSupportedAssets, ...mockPopularAssets] },
+        payload: { chain: CHAIN.ETHEREUM, assets: mockSupportedAssets },
       },
-      { type: SET_CHAIN_POPULAR_ASSETS, payload: { chain: CHAIN.ETHEREUM, assets: mockPopularAssets } },
       { type: SET_ARCHANOVA_SDK_INIT, payload: true }, // archanova init for account check
 
       // etherspot
@@ -274,22 +276,22 @@ describe('Onboarding actions', () => {
       user: { data: mockUser },
       accounts: { data: [mockArchanovaAccount] },
       smartWallet: { connectedAccount: mockArchanovaConnectedAccount },
-      assets: { supportedAssets: { ethereum: mockSupportedAssets }, popularAssets: { ethereum: mockPopularAssets } },
+      assets: { supportedAssets: { ethereum: mockSupportedAssets } },
       history: { data: {} },
       assetsBalances: mockAssetsBalancesStore,
       rates: { data: {} },
       badges: { data: [] },
       walletEvents: { data: [] },
       totalBalances: {},
+      onboarding: mockOnboarding,
     });
 
     const expectedActions = [
       { type: UPDATE_SESSION, payload: { fcmToken: mockFcmToken } },
       {
         type: SET_CHAIN_SUPPORTED_ASSETS,
-        payload: { chain: CHAIN.ETHEREUM, assets: [...mockSupportedAssets, ...mockPopularAssets] },
+        payload: { chain: CHAIN.ETHEREUM, assets: mockSupportedAssets },
       },
-      { type: SET_CHAIN_POPULAR_ASSETS, payload: { chain: CHAIN.ETHEREUM, assets: mockPopularAssets } },
       { type: SET_ARCHANOVA_SDK_INIT, payload: true }, // archanova init for account check
 
       // archanova
@@ -328,6 +330,7 @@ describe('Onboarding actions', () => {
       },
       user: { data: mockUser },
       assets: { supportedAssets: { ethereum: localAssets(CHAIN.ETHEREUM) } },
+      onboarding: mockOnboarding,
     });
 
     const expectedActions = [

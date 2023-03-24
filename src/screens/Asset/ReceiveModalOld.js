@@ -146,12 +146,12 @@ const ReceiveModal = ({ activeAccount, address, onModalHide, user, theme }: Prop
               {t('receiveModal.notDeployedText', {
                 chain: title,
                 mediumText: true,
-                color: colors.recieveModalWarningText,
+                color: colors.receiveModalWarningText,
               })}{' '}
               {t('receiveModal.activationText', {
                 chain: title,
                 mediumText: true,
-                color: colors.recieveModalWarningText,
+                color: colors.receiveModalWarningText,
               })}{' '}
               <ActivateText onPress={() => showDeploymentInterjection(chain)}>
                 {t('receiveModal.activateText', {
@@ -250,7 +250,7 @@ const ReceiveModal = ({ activeAccount, address, onModalHide, user, theme }: Prop
               {t('receiveModal.notDeployedWarning', {
                 chain: t('chains.ethereum'),
                 mediumText: true,
-                color: colors.recieveModalWarningText,
+                color: colors.receiveModalWarningText,
               })}{' '}
               <Text color={colors.link} onPress={() => showDeploymentInterjection(CHAIN.ETHEREUM)}>
                 {t('receiveModal.withCaution')}

@@ -97,7 +97,7 @@ export const semanticLightThemeColors = {
   tabUnderline: lightThemeColors.basic000,
   pagerActive: '#000000',
   pagerInactive: '#d4d9db',
-  recieveModalWarningText: '#62688f',
+  receiveModalWarningText: '#62688f',
   hazardIconColor: '#8b939e',
   refreshControl: '#0000004C',
   pillarText: '#000000',
@@ -161,7 +161,7 @@ export const semanticDarkThemeColors = {
   tabUnderline: baseColors.electricViolet,
   pagerActive: darkThemeColors.basic010,
   pagerInactive: '#4D4D4D',
-  recieveModalWarningText: '#62688f',
+  receiveModalWarningText: '#62688f',
   hazardIconColor: '#8b939e',
   refreshControl: '#FFFFFF4C',
   pillarText: '#e7e7e7',
@@ -277,9 +277,9 @@ export const themedColors = {
     lightTheme: semanticLightThemeColors.graphPrimaryColor,
     darkTheme: semanticDarkThemeColors.graphPrimaryColor,
   }),
-  recieveModalWarningText: theme('current', {
-    lightTheme: semanticLightThemeColors.recieveModalWarningText,
-    darkTheme: semanticDarkThemeColors.recieveModalWarningText,
+  receiveModalWarningText: theme('current', {
+    lightTheme: semanticLightThemeColors.receiveModalWarningText,
+    darkTheme: semanticDarkThemeColors.receiveModalWarningText,
   }),
   hazardIconColor: theme('current', {
     lightTheme: semanticLightThemeColors.hazardIconColor,

@@ -66,7 +66,7 @@ const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollect
     return arr?.sort((a, b) => b?.token?.balance?.balanceInFiat - a?.token?.balance?.balanceInFiat);
   }, [sections]);
 
-  const renderItem = (item: Item) => {
+  const renderItem = ({ item }) => {
     const { token, collectible } = item;
 
     if (token) {
@@ -107,16 +107,17 @@ const DefaultAssetList = ({ tokens, collectibles, onSelectToken, onSelectCollect
     );
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const memoizedValue = React.useMemo(() => renderItem, [sortTokensList]);
+
   return (
     <FlatList
       data={sortTokensList}
-      renderItem={({ item }) => renderItem(item)}
+      renderItem={memoizedValue}
       keyExtractor={getItemKey}
       keyboardShouldPersistTaps="always"
       ListEmptyComponent={renderEmptyState()}
       contentInsetAdjustmentBehavior="scrollableAxes"
-      removeClippedSubviews
-      scrollEventThrottle={1}
       contentContainerStyle={styles.contentContainer}
     />
   );

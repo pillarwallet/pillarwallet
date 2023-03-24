@@ -27,6 +27,9 @@ export type EtherspotErc721Interface = {
 // feel free to update with new methods that can be called
 export type EtherspotErc20Interface = {
   callAllowance: (senderAddress: string, spenderAddress: string) => Promise<?BigNumber>,
+  callName: () => Promise<?string>,
+  callSymbol: () => Promise<?string>,
+  callDecimals: () => Promise<?number>,
 };
 
 // feel free to update with new methods that can be called

@@ -129,6 +129,9 @@ import CheckmarkCircle from 'assets/icons/svg/24-circle-checkmark.svg';
 import CheckmarkGreen from 'assets/icons/svg/24-checkmark.svg';
 import CrossRed from 'assets/icons/svg/24-x.svg';
 import IconHelp from 'assets/icons/svg/24-circle-help.svg';
+import AddTokenIcon from 'assets/icons/svg/icon-add-token.svg';
+import IconTokens from 'assets/icons/svg/icon-24-tokens.svg';
+import IconCheckmarkCircleGreen from 'assets/icons/svg/icon-18-checkmark-circle.svg';
 
 // Assets: services icons
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
@@ -144,6 +147,14 @@ import IconArbitrum from 'assets/icons/svg/icon-24-arbitrum.svg';
 import IconRampNetwork from 'assets/icons/svg/icon-16-ramp.svg';
 import IconPelerin from 'assets/icons/svg/icon-16-pelerin.svg';
 import IconxDai from 'assets/icons/svg/icon-24-xdai.svg';
+
+// Assets: services icons 38px
+import IconEthereum38 from 'assets/icons/svg/icon-38-ethereum.svg';
+import IconBinance38 from 'assets/icons/svg/icon-38-binance.svg';
+import IconPolygon38 from 'assets/icons/svg/icon-38-polygon.svg';
+import IconOptimism38 from 'assets/icons/svg/icon-38-optimism.svg';
+import IconGnosis38 from 'assets/icons/svg/icon-38-gnosis.svg';
+import IconArbitrum38 from 'assets/icons/svg/icon-38-arbitrum.svg';
 
 const components = {
   // Generic icons
@@ -247,6 +258,9 @@ const components = {
   'checkmark-green': CheckmarkGreen,
   'cross-red': CrossRed,
   help: IconHelp,
+  'add-token': AddTokenIcon,
+  tokens: IconTokens,
+  'checkmark-circle-green': IconCheckmarkCircleGreen,
 
   // Service icons
   binance: IconBinance,
@@ -261,6 +275,14 @@ const components = {
   'all-networks-light': IconAllNetworksLight,
   'ramp-network': IconRampNetwork,
   pelerin: IconPelerin,
+
+  // Service icons 38px
+  binance38: IconBinance38,
+  ethereum38: IconEthereum38,
+  polygon38: IconPolygon38,
+  xdai38: IconGnosis38,
+  optimism38: IconOptimism38,
+  arbitrum38: IconArbitrum38,
 };
 
 export type IconName = keyof typeof components;
