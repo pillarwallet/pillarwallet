@@ -54,6 +54,7 @@ type NavItem = {|
   color?: string,
   fontSize?: number,
   testID?: string,
+  accessibilityLabel?: string,
 |};
 
 export type OwnProps = {|
@@ -243,6 +244,7 @@ class HeaderBlock extends React.Component<Props> {
               onPress={customOnBack || (() => navigation && navigation.goBack(null))}
               fontSize={fontSizes.big}
               testID={testIdTag && `${TAG}-${testIdTag}-button-left_back`}
+              accessibilityLabel={testIdTag && `${TAG}-${testIdTag}-button-left_back`}
             />
           )}
         </LeftItems>
@@ -269,6 +271,7 @@ class HeaderBlock extends React.Component<Props> {
             onPress={item.onPress}
             centerText={type === CENTER}
             testID={item.testID}
+            accessibilityLabel={item.accessibilityLabel}
           >
             {item.title}
           </HeaderTitleText>

@@ -28,6 +28,7 @@ type Props = {
   onToggle: ?(boolean) => mixed,
   disabled?: boolean,
   testID?: string,
+  accessibilityLabel?: string,
 };
 
 type State = {
@@ -91,7 +92,7 @@ class Switcher extends React.Component<Props, State> {
   };
 
   render() {
-    const { isOn, onToggle, disabled, testID } = this.props;
+    const { isOn, onToggle, disabled, testID, accessibilityLabel } = this.props;
     const { offsetX } = this.state;
 
     return (
@@ -101,6 +102,7 @@ class Switcher extends React.Component<Props, State> {
         disabled={disabled}
         isOn={isOn}
         testID={testID}
+        accessibilityLabel={accessibilityLabel}
       >
         <AnimatedToggle
           isOn={isOn}

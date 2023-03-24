@@ -144,12 +144,16 @@ class BiometricsPrompt extends React.Component<Props> {
                 onPress={() => this.proceedToBeginOnboarding(true)}
                 marginBottom={4}
                 testID={`${TAG}-button-yes`}
+                // eslint-disable-next-line i18next/no-literal-string
+                accessibilityLabel={`${TAG}-button-yes`}
               />
               <Button
                 transparent
                 title={t('auth:button.okToUsePinCodeOnly')}
                 onPress={() => this.proceedToBeginOnboarding(false)}
                 testID={`${TAG}-pin_only`}
+                // eslint-disable-next-line i18next/no-literal-string
+                accessibilityLabel={`${TAG}-pin_only`}
               />
             </ButtonsWrapper>
           </ContentInnerWrapper>

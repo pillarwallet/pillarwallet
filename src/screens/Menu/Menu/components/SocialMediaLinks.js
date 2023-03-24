@@ -48,13 +48,28 @@ const SocialMediaLinks = () => {
 
   return (
     <Container>
-      <TouchableWrapper onPress={() => openUrl(discordUrl)} testID={`${TAG}-button-discord`}>
+      <TouchableWrapper
+        onPress={() => openUrl(discordUrl)}
+        testID={`${TAG}-button-discord`}
+        // eslint-disable-next-line i18next/no-literal-string
+        accessibilityLabel={`${TAG}-button-discord`}
+      >
         <LogoDiscord fill={isDarkTheme ? discordColors.dark : discordColors.light} style={styles.discord} />
       </TouchableWrapper>
-      <TouchableWrapper onPress={() => openUrl(twitterUrl)} testID={`${TAG}-button-twitter`}>
+      <TouchableWrapper
+        onPress={() => openUrl(twitterUrl)}
+        testID={`${TAG}-button-twitter`}
+        // eslint-disable-next-line i18next/no-literal-string
+        accessibilityLabel={`${TAG}-button-twitter`}
+      >
         <LogoTwitter />
       </TouchableWrapper>
-      <TouchableWrapper onPress={() => openUrl(youTubeUrl)} testID={`${TAG}-button-youtube`}>
+      <TouchableWrapper
+        onPress={() => openUrl(youTubeUrl)}
+        testID={`${TAG}-button-youtube`}
+        // eslint-disable-next-line i18next/no-literal-string
+        accessibilityLabel={`${TAG}-button-youtube`}
+      >
         <LogoYouTube />
       </TouchableWrapper>
     </Container>

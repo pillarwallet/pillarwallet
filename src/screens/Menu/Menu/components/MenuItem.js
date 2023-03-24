@@ -36,12 +36,13 @@ type Props = {|
   valueColor?: string,
   subtitle?: string,
   testID?: string,
+  accessibilityLabel?: string,
 |};
 
-const MenuItem = ({ title, icon, onPress, value, valueColor, subtitle, testID }: Props) => {
+const MenuItem = ({ title, icon, onPress, value, valueColor, subtitle, testID, accessibilityLabel }: Props) => {
   return (
     <Container>
-      <TouchableContainer onPress={onPress} testID={testID}>
+      <TouchableContainer onPress={onPress} testID={testID} accessibilityLabel={accessibilityLabel}>
         <ItemIcon name={icon} width={16} height={16} />
         <Title>{title}</Title>
         {!!value && <Value $color={valueColor}>{value}</Value>}

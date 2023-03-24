@@ -20,14 +20,13 @@
 import isEmpty from 'lodash.isempty';
 import { useQuery } from 'react-query';
 
-// Selectors
-import { defaultTokensSelector, useRootSelector } from 'selectors';
-
 // Utils
 import { useFromAssets } from 'screens/Bridge/Exchange-CrossChain/utils';
 import { sum } from 'utils/number';
 import { filteredWithDefaultAssets, filteredWithChain, filteredWithStableAssets } from 'utils/etherspot';
 import { getChainsAssetsToAddress } from 'utils/assets';
+import DefaultStableTokens from 'utils/tokens/stable-tokens.json';
+import DefaultTokens from 'utils/tokens/tokens.json';
 
 // Constants
 import { TOKENS, STABLES, ALL } from 'constants/walletConstants';
@@ -37,7 +36,6 @@ import type { Chain } from 'models/Chain';
 
 export function useStableAssets(chain?: Chain) {
   const fromAssets: any = useFromAssets();
-  const { stableTokens } = useRootSelector(defaultTokensSelector);
 
   let assets = [...fromAssets];
 
@@ -45,11 +43,11 @@ export function useStableAssets(chain?: Chain) {
     assets = filteredWithChain(assets, chain);
   }
 
-  let tokens = filteredWithStableAssets(assets, stableTokens);
+  let tokens = filteredWithStableAssets(assets, DefaultStableTokens);
 
   if (!tokens?.[0])
     return {
-      tokens: stableTokens,
+      tokens: DefaultStableTokens,
       percentage: !assets?.[0] ? 50 : 0,
     };
 
@@ -67,7 +65,7 @@ export function useStableAssets(chain?: Chain) {
 
   tokens.sort((a, b) => b?.balance?.balanceInFiat - a?.balance?.balanceInFiat);
 
-  const filterStableDefaultTokens = filteredWithDefaultAssets(tokens, stableTokens);
+  const filterStableDefaultTokens = filteredWithDefaultAssets(tokens, DefaultStableTokens);
 
   tokens = [...tokens, ...filterStableDefaultTokens];
 
@@ -76,7 +74,6 @@ export function useStableAssets(chain?: Chain) {
 
 export function useNonStableAssets(chain?: Chain) {
   const fromAssets: any = useFromAssets();
-  const { tokens: defaultTokens, stableTokens } = useRootSelector(defaultTokensSelector);
   const { percentage: stablePercentage } = useStableAssets(chain);
 
   let assets = [...fromAssets];
@@ -84,20 +81,20 @@ export function useNonStableAssets(chain?: Chain) {
     assets = filteredWithChain(assets, chain);
   }
 
-  let tokens = filteredWithDefaultAssets(stableTokens, assets);
+  let tokens = filteredWithDefaultAssets(DefaultStableTokens, assets);
 
   const percentage: number = 100 - stablePercentage;
 
   if (!tokens?.[0])
     return {
-      tokens: defaultTokens,
+      tokens: DefaultTokens,
       percentage,
       totalPercentage: 100,
     };
 
   tokens.sort((a, b) => b?.balance?.balanceInFiat - a?.balance?.balanceInFiat);
 
-  const filterDefaultAssets = filteredWithDefaultAssets(tokens, defaultTokens);
+  const filterDefaultAssets = filteredWithDefaultAssets(tokens, DefaultTokens);
 
   tokens = [...tokens, ...filterDefaultAssets];
 

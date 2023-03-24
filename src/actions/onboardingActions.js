@@ -38,6 +38,7 @@ import {
   SET_ONBOARDING_USERNAME_REGISTRATION_FAILED,
   SET_ONBOARDING_WALLET,
   SET_REGISTERING_USER,
+  SET_NEW_USER,
 } from 'constants/onboardingConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -54,6 +55,7 @@ import { getAccountEnsName, findFirstEtherspotAccount } from 'utils/accounts';
 import { isLogV2AppEvents } from 'utils/environment';
 
 // services
+import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { firebaseMessaging, firebaseRemoteConfig } from 'services/firebase';
 import { getExistingServicesAccounts, isUsernameTaken } from 'services/onboarding';
@@ -78,7 +80,7 @@ import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedA
 import {
   importEtherspotAccountsAction,
   initEtherspotServiceAction,
-  fetchDefaultTokens,
+  fetchDefaultTokensRates,
 } from 'actions/etherspotActions';
 import {
   fetchSupportedAssetsAction,
@@ -275,8 +277,14 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
         pinCode,
         wallet: importedWallet, // wallet was already added in import step
         user: onboardingUsername,
+        isNewUser: isNewUserState,
       },
     } = getState();
+
+    const storage = Storage.getInstance('db');
+    const isNewUserDb = await storage.get('is_new_user');
+
+    const isNewUser = !!isNewUserDb?.isNewUser ?? !!isNewUserState;
 
     logBreadcrumb('onboarding', 'walletSetupAction: checking for pinCode');
     if (!pinCode) {
@@ -285,6 +293,13 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
     }
 
     const isImported = !!importedWallet;
+
+    // flag as a new user (not using archanova services)
+    if (!isImported || isNewUser) {
+      logBreadcrumb('onboarding', 'walletSetupAction: flagging account as a new user');
+      dispatch({ type: SET_NEW_USER, payload: true });
+      dispatch(saveDbAction('is_new_user', { isNewUser: true }));
+    } else logBreadcrumb('onboarding', 'walletSetupAction: importing wallet');
 
     logBreadcrumb('onboarding', 'walletSetupAction: creating new mnemonic if importedWallet is not present');
     // will return new mnemonic if importedWallet is not present
@@ -346,7 +361,20 @@ export const setupAppServicesAction = (privateKey: ?string) => {
       session: {
         data: { isOnline },
       },
+      onboarding: { isNewUser: isNewUserState },
     } = getState();
+
+    const storage = Storage.getInstance('db');
+    const isNewUserDb = await storage.get('is_new_user');
+
+    const isNewUser = !!isNewUserDb?.isNewUser ?? !!isNewUserState;
+
+    // flag as a new user (not using archanova services)
+    if (isNewUser) {
+      logBreadcrumb('onboarding', 'walletSetupAction: flagging account as a new user');
+      dispatch({ type: SET_NEW_USER, payload: true });
+      dispatch(saveDbAction('is_new_user', { isNewUser: true }));
+    }
 
     logBreadcrumb('onboarding', 'setupAppServicesAction: checking for private key');
     if (!privateKey) {
@@ -372,8 +400,10 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     await dispatch(fetchSupportedAssetsAction());
 
     // create Archanova accounts if needed
-    logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching importArchanovaAccountsIfNeededAction');
-    await dispatch(importArchanovaAccountsIfNeededAction(privateKey));
+    if (!isNewUser) {
+      logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching importArchanovaAccountsIfNeededAction');
+      await dispatch(importArchanovaAccountsIfNeededAction(privateKey));
+    }
 
     // create Etherspot accounts
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching importEtherspotAccountsAction');
@@ -388,8 +418,8 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     }
 
     // by default fetch default tokens
-    logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching fetchDefaultTokens');
-    dispatch(fetchDefaultTokens());
+    logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching fetchDefaultTokensRates');
+    dispatch(fetchDefaultTokensRates());
 
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching fetchAllAccountsTotalBalancesAction');
     dispatch(fetchAllAccountsTotalBalancesAction());
@@ -549,6 +579,8 @@ export const importWalletFromMnemonicAction = (mnemonicInput: string) => {
 
     logBreadcrumb('onboarding', 'importWalletFromMnemonicAction: dispatching SET_IMPORTING_WALLET');
     dispatch({ type: SET_IMPORTING_WALLET });
+    dispatch({ type: SET_NEW_USER, payload: false });
+    dispatch(saveDbAction('is_new_user', { isNewUser: false }));
 
     let importedWallet;
     try {
