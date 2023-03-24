@@ -466,7 +466,7 @@ export const sendAssetAction = (
     }
 
     if (receiverEnsName) {
-      logBreadcrumb('Send Flow', 'sendAssetAction: recieverENSName available dispatching addEnsRegistryRecordAction', {
+      logBreadcrumb('Send Flow', 'sendAssetAction: receiverENSName available dispatching addEnsRegistryRecordAction', {
         to,
         receiverEnsName,
       });

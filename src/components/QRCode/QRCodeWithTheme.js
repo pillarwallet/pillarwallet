@@ -31,18 +31,13 @@ type Props = {
 };
 
 const QRCodeWithTheme = (props: Props) => {
-  const {
-    value,
-    size,
-    theme,
-    getRef,
-  } = props;
+  const { value, size, theme, getRef } = props;
   return (
     <QRCode
       getRef={getRef}
       value={value}
       size={size}
-      color={getColorByThemeOutsideStyled(theme.current, { lightKey: 'basic010', darkKey: 'basic070' })}
+      color={getColorByThemeOutsideStyled(theme.current, { lightKey: 'basic010', darkKey: 'basic70' })}
       backgroundColor={getColorByThemeOutsideStyled(theme.current, { lightKey: 'basic050', darkKey: 'basic000' })}
     />
   );
