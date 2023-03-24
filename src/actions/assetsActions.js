@@ -21,7 +21,7 @@ import { isEmpty } from 'lodash';
 import { toChecksumAddress } from '@netgum/utils';
 import t from 'translations/translate';
 
-// Components
+// components
 import Toast from 'components/Toast';
 
 // constants
