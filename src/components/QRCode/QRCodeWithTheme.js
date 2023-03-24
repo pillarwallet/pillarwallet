@@ -37,7 +37,7 @@ const QRCodeWithTheme = (props: Props) => {
       getRef={getRef}
       value={value}
       size={size}
-      color={getColorByThemeOutsideStyled(theme.current, { lightKey: 'basic010', darkKey: 'basic70' })}
+      color={getColorByThemeOutsideStyled(theme.current, { lightKey: 'basic010', darkKey: 'basic070' })}
       backgroundColor={getColorByThemeOutsideStyled(theme.current, { lightKey: 'basic050', darkKey: 'basic000' })}
     />
   );
