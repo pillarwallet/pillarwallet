@@ -33,9 +33,10 @@ type Props = TextProps & {
   variant?: TextVariant;
   color?: string;
   testID?: string;
+  accessibilityLabel?: string;
 };
 
-function Text({ variant, color, style, testID, ...rest }: Props) {
+function Text({ variant, color, style, testID, accessibilityLabel, ...rest }: Props) {
   const colors = useThemeColors();
   const propStyle = StyleSheet.flatten(style);
 
@@ -49,7 +50,7 @@ function Text({ variant, color, style, testID, ...rest }: Props) {
     style,
   ];
 
-  return <RNText {...rest} style={resultStyle} testID={testID} />;
+  return <RNText {...rest} style={resultStyle} testID={testID} accessibilityLabel={accessibilityLabel} />;
 }
 
 const baseStyle: TextStyleProp = {

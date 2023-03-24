@@ -40,6 +40,7 @@ type Props = {
   theme: Theme,
   positive?: boolean,
   testID?: string,
+  accessibilityLabel?: string,
 };
 
 const CheckboxBox = styled.View`
@@ -109,12 +110,19 @@ const Checkbox = (props: Props) => {
     onPress,
     positive,
     testID,
+    accessibilityLabel,
   } = props;
 
   const colors = getThemeColors(theme);
 
   return (
-    <TouchableOpacity onPress={!disabled ? onPress : null} style={wrapperStyle} disabled={!onPress} testID={testID}>
+    <TouchableOpacity
+      onPress={!disabled ? onPress : null}
+      style={wrapperStyle}
+      disabled={!onPress}
+      testID={testID}
+      accessibilityLabel={accessibilityLabel}
+    >
       <CheckboxWrapper disabled={disabled}>
         <CheckboxBox active={checked} rounded={rounded} positive={positive} clickable={!disabled}>
           {!!checked && (

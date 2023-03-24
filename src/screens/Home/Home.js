@@ -228,6 +228,7 @@ function Home() {
                 color: colors.basic020,
                 onPress: () => navigation.navigate(MENU),
                 testID: `${TAG}-button-header_menu`, // eslint-disable-line i18next/no-literal-string
+                accessibilityLabel: `${TAG}-button-header_menu`, // eslint-disable-line i18next/no-literal-string
               },
             ]}
             centerItems={[
@@ -241,6 +242,7 @@ function Home() {
                 color: colors.basic020,
                 onPress: () => navigation.navigate(HOME_HISTORY),
                 testID: `${TAG}-button-header_history`, // eslint-disable-line i18next/no-literal-string
+                accessibilityLabel: `${TAG}-button-header_history`, // eslint-disable-line i18next/no-literal-string
               },
             ]}
             navigation={navigation}

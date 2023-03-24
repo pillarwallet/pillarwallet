@@ -83,12 +83,16 @@ class ForgotPin extends React.Component<Props, {}> {
               onPress={this.toImportWallet}
               title={t('auth:title.importWallet')}
               testID={`${TAG}-button-import_wallet`}
+              // eslint-disable-next-line i18next/no-literal-string
+              accessibilityLabel={`${TAG}-button-import_wallet`}
             />
             <Button
               onPress={this.goBackToPin}
               transparent
               title={t('auth:button.backToPin')}
               testID={`${TAG}-button-back`}
+              // eslint-disable-next-line i18next/no-literal-string
+              accessibilityLabel={`${TAG}-button-back`}
             />
           </FooterWrapper>
         }

@@ -19,11 +19,12 @@
 */
 
 import * as React from 'react';
+import { Image as RNImage } from 'react-native';
 import { SvgCssUri } from 'react-native-svg';
 
 // Utils
 import { isSvgImage } from 'utils/images';
-import { isChainIcon } from 'utils/tokens';
+import { isChainIcon, defaultTokensIcon } from 'utils/tokens';
 
 // Components
 import Image from 'components/Image';
@@ -45,6 +46,19 @@ const CollectibleImage = (props: Props) => {
   if (isSvgImage(uri)) {
     return <SvgCssUri uri={uri} width={props.width || '100%'} height={props.height || '100%'} {...props} />;
   }
+
+  const defaultTokenPath = defaultTokensIcon(uri);
+
+  if (defaultTokenPath) {
+    return (
+      <RNImage
+        {...props}
+        source={defaultTokenPath}
+        style={[{ width: props.width || '100%', height: props.height || '100%' }, props.style]}
+      />
+    );
+  }
+
   return <Image {...props} style={[{ width: props.width || '100%', height: props.height || '100%' }, props.style]} />;
 };
 

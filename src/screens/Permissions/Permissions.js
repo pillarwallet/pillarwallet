@@ -257,6 +257,8 @@ const Permissions = ({ navigation, theme }: Props) => {
             </View>
           }
           testID={`${TAG}-button-sub_permission_dropdown.${key}`}
+          // eslint-disable-next-line i18next/no-literal-string
+          accessibilityLabel={`${TAG}-button-sub_permission_dropdown.${key}`}
         />
       );
     }
@@ -302,6 +304,8 @@ const Permissions = ({ navigation, theme }: Props) => {
       collapseContent={renderCollapseContent(key)}
       noPadding
       testID={`${TAG}-button-permission_dropdown.${key}`}
+      // eslint-disable-next-line i18next/no-literal-string
+      accessibilityLabel={`${TAG}-button-permission_dropdown.${key}`}
     />
   );
 
@@ -330,6 +334,8 @@ const Permissions = ({ navigation, theme }: Props) => {
             checked={hasAgreedToTerms}
             wrapperStyle={{ marginBottom: 16 }}
             testID={`${TAG}-checkbox-agree_to_terms`}
+            // eslint-disable-next-line i18next/no-literal-string
+            accessibilityLabel={`${TAG}-checkbox-agree_to_terms`}
           >
             {t('auth:withLink.readUnderstandAgreeTo', { linkedText: t('auth:termsOfUse') })}
           </Checkbox>
@@ -338,6 +344,8 @@ const Permissions = ({ navigation, theme }: Props) => {
             onPress={handleAgree}
             disabled={!hasAgreedToTerms}
             testID={`${TAG}-button-submit`}
+            // eslint-disable-next-line i18next/no-literal-string
+            accessibilityLabel={`${TAG}-button-submit`}
           />
         </FooterWrapper>
       </ScrollView>

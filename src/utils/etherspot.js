@@ -306,7 +306,7 @@ export const filteredWithStableAssets = (assets: AssetOption[], stableTokens: As
   return assets.filter((assetToken) => stableTokens?.some((stableToken) => isSame(assetToken, stableToken)));
 };
 
-export const filteredWithChain = (assets: AssetOption[], chain: Chain): AssetOption[] => {
+export const filteredWithChain = (assets: Asset[], chain: Chain): Asset[] => {
   if (!assets || !chain) return [];
   return assets.filter((asset) => asset.chain === chain);
 };

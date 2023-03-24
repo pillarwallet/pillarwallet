@@ -46,6 +46,7 @@ import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { NFT_FLAG } from 'constants/assetsConstants';
+import { SET_NEW_USER } from 'constants/onboardingConstants';
 
 // utils
 import { logBreadcrumb, reportLog } from 'utils/common';
@@ -82,7 +83,7 @@ import {
   checkKeyBasedAssetTransferTransactionsAction,
 } from './keyBasedAssetTransferActions';
 import { setSessionTranslationBundleInitialisedAction } from './sessionActions';
-import { importEtherspotAccountsAction, initEtherspotServiceAction, fetchDefaultTokens } from './etherspotActions';
+import { importEtherspotAccountsAction, initEtherspotServiceAction, fetchDefaultTokensRates } from './etherspotActions';
 import { setEnsNameIfNeededAction } from './ensRegistryActions';
 import { fetchTutorialDataIfNeededAction, bannerDataAction } from './cmsActions';
 import { fetchAllAccountsAssetsBalancesAction, fetchAllAccountsTotalBalancesAction } from './assetsActions';
@@ -117,8 +118,19 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
       },
       accounts: { data: accounts },
       user: { data: user },
-      onboarding: { bannerData },
+      onboarding: { bannerData, isNewUser: isNewUserState },
     } = getState();
+
+    const isNewUserDb = await storage.get('is_new_user');
+
+    const isNewUser = !!isNewUserDb?.isNewUser ?? !!isNewUserState;
+
+    // flag as a new user (not using archanova services)
+    if (isNewUser) {
+      logBreadcrumb('loginAction', 'flagging account as a new user');
+      dispatch({ type: SET_NEW_USER, payload: true });
+      dispatch(saveDbAction('is_new_user', { isNewUser: true }));
+    }
 
     dispatch({ type: UPDATE_SESSION, payload: { isAuthorizing: true } });
 
@@ -227,7 +239,7 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
     if (!keyBasedAccount) dispatch(addAccountAction(address, ACCOUNT_TYPES.KEY_BASED));
 
     // by default fetch default tokens
-    dispatch(fetchDefaultTokens());
+    dispatch(fetchDefaultTokensRates());
 
     dispatch(fetchTransactionsHistoryAction());
     dispatch(setEnsNameIfNeededAction());
