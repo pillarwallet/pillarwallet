@@ -489,10 +489,10 @@ export const finishOnboardingAction = (retry?: boolean) => {
 
     // do not reset onboarding in case there were errors as retry will happen in app flow
     if (!errorMessage && !usernameRegistrationFailed) {
-      logBreadcrumb('onboarding', 'finishOnboardingAction: no errors recieved, dispatching RESET_ONBOARDING');
+      logBreadcrumb('onboarding', 'finishOnboardingAction: no errors received, dispatching RESET_ONBOARDING');
       dispatch({ type: RESET_ONBOARDING });
     } else {
-      logBreadcrumb('finishOnboardingAction', 'errors recieved retry will happen in application', errorMessage);
+      logBreadcrumb('finishOnboardingAction', 'errors received retry will happen in application', errorMessage);
     }
 
     /**

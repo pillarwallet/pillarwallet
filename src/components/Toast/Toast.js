@@ -98,7 +98,7 @@ export default class Toast {
         link,
         onLinkPress,
         supportLink,
-        autoClose = false,
+        autoClose = true,
         ...rest
       } = options;
 
