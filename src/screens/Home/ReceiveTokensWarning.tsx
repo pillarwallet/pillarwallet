@@ -19,7 +19,7 @@
 */
 
 import React, { FC, useEffect, useState, useCallback } from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { View } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
@@ -49,12 +49,7 @@ import { useSupportedChains } from 'selectors/chains';
 // Components
 import { Container, Content } from 'components/layout/Layout';
 import Button from 'components/core/Button';
-import HeaderBlock from 'components/HeaderBlock';
-import Modal from 'components/Modal';
-import ReceiveModal from 'screens/Asset/ReceiveModal';
 import Text from 'components/core/Text';
-import Spinner from 'components/Spinner';
-import Tooltip from 'components/Tooltip';
 import Image from 'components/Image';
 import Icon from 'components/core/Icon';
 import CheckBoxWithText from 'components/core/CheckBoxWithText';
