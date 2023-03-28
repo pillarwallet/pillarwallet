@@ -721,17 +721,13 @@ export const fetchSupportedAssetsAction = () => {
         // nothing to do if returned empty
         if (isEmpty(chainSupportedAssets)) return;
 
-        const removedDuplicateSupportedAssets = filteredWithDefaultAssets(
-          chainSupportedAssets,
-          customTokensList,
-          chain,
-        );
+        const filteredCustomAssets = filteredWithDefaultAssets(chainSupportedAssets, customTokensList, chain);
 
-        let totalSupportedAssets = [...chainSupportedAssets, ...removedDuplicateSupportedAssets];
+        let totalSupportedAssets = [...chainSupportedAssets, ...filteredCustomAssets];
 
-        const removedDuplicateDefaultAssets = filteredWithDefaultAssets(totalSupportedAssets, defaultTokens, chain);
+        const filteredDefaultAssets = filteredWithDefaultAssets(totalSupportedAssets, defaultTokens, chain);
 
-        totalSupportedAssets = [...totalSupportedAssets, ...removedDuplicateDefaultAssets];
+        totalSupportedAssets = [...totalSupportedAssets, ...filteredDefaultAssets];
 
         dispatch({
           type: SET_CHAIN_SUPPORTED_ASSETS,

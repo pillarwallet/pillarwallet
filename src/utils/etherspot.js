@@ -313,4 +313,4 @@ export const filteredWithChain = (assets: Asset[], chain: Chain): Asset[] => {
 };
 
 const isSameAsset = (a: AssetOption, b: AssetOption) =>
-  a.symbol === b.symbol && a.address.toLowerCase() === b.address.toLowerCase();
+  a.symbol === b.symbol && a?.address?.toLowerCase() === b?.address?.toLowerCase();
