@@ -145,7 +145,7 @@ export const subscribeToPushNotificationsAction = () => {
       if (disabledFetchingBalanceListener !== null) return;
       disabledFetchingBalanceListener = setInterval(() => {
         dispatch(fetchAssetsBalanceNotificationsAction());
-      }, 10000);
+      }, 20000);
     }
   };
 };

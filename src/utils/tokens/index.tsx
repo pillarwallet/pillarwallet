@@ -52,6 +52,7 @@ const usdc = require('assets/tokens/USDC-CD2.png');
 const usdt = require('assets/tokens/usdt.png');
 const velo = require('assets/tokens/velo.png');
 const xrp = require('assets/tokens/XRP-BF2.png');
+const mai = require('assets/tokens/mai.png');
 
 const defaultTokens = [
   { name: 'aave', path: aave },
@@ -83,6 +84,7 @@ const defaultTokens = [
   { name: 'usdt', path: usdt },
   { name: 'velo', path: velo },
   { name: 'xrp', path: xrp },
+  { name: 'mai', path: mai },
 ];
 
 export const defaultTokensIcon = (name: string) => {
