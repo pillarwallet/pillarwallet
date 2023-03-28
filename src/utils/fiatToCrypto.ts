@@ -92,7 +92,6 @@ export const buildMtPelerinOptions = (code: string, address: string) => {
   let onRampOptions = {
     lang: 'en',
     tab: 'buy',
-    tabs: 'buy',
     chain: 'xdai_mainnet',
     net: 'matic_mainnet',
     nets: 'arbitrum_mainnet,matic_mainnet,bsc_mainnet,mainnet,optimism_mainnet,xdai_mainnet',
@@ -100,6 +99,8 @@ export const buildMtPelerinOptions = (code: string, address: string) => {
     rfr: 'etherspot',
     bsc: 'GBP',
     bdc: 'MATIC',
+    ssc: 'MATIC',
+    sdc: 'GBP',
     hash: '',
     code: code,
     addr: address || '',
