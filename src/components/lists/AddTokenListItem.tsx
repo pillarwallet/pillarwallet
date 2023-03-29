@@ -102,7 +102,9 @@ function AddTokenListItem({
         <NormalText numberOfLines={1}>{listType === 'searchList' ? token.symbol : name}</NormalText>
         {listType !== 'normal' && (
           <Subtitle numberOfLines={1}>
-            {listType === 'searchList' ? name + t('label.erc20') : t('label.on_network', { network: title })}
+            {listType === 'searchList'
+              ? name + t('label.erc20')
+              : t('label.symbol_with_network', { network: title, symbol: token.symbol })}
           </Subtitle>
         )}
       </TitleContainer>

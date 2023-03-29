@@ -302,6 +302,7 @@
     "ensMigrate": "Migrate ENS to Etherspot",
     "transaction_submitted": "Transaction submitted",
     "on_network": "on {{network}}",
+    "symbol_with_network": "{{symbol}} on {{network}}",
     "on_position": "{{position}} position",
     "of_stable": "{{percentage}}% of stables - {{type}}",
     "high_risk": "high risk",
