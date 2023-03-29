@@ -105,6 +105,6 @@ const CheckMark = styled(Icon).attrs({ name: 'check' })`
 
 const CheckBoxText = styled(BaseText)`
   ${(props) => (props.small ? fontStyles.regular : fontStyles.medium)};
-  color: ${({ light, theme }) => (light ? theme.colors.basic020 : theme.colors.basic010)};
+  color: ${({ light, theme }) => (light ? theme.colors.basic020 : theme.colors.basic000)};
   flex-wrap: wrap;
 `;
