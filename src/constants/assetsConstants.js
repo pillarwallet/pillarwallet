@@ -156,7 +156,7 @@ export const CMC_STABLE_COINS = 'CmcStableCoins';
 
 export const ETHERSPOT_STABLE_COIN = 'EtherspotStableCoins';
 export const NFT_FLAG = 'NFT_FLAG';
-export const ETHERSPOT_POPULAR_COIN = 'EtherspotPopularTokens';
+export const ETHERSPOT_POPULAR_TOKENS = 'EtherspotPopularTokens';
 
 export const ADD_TOKENS_FETCHING = 'ADD_TOKENS_FETCHING';
 export const IS_ADD_TOKENS_FETCHED = 'IS_ADD_TOKENS_FETCHED';

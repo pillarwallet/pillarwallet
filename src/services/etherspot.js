@@ -54,17 +54,15 @@ import {
   appendNativeAssetIfNeeded,
   buildExchangeOffer,
   buildTransactionFeeInfo,
-  getChainTokenListName,
 } from 'utils/etherspot';
-import { addressesEqual, findAssetByAddress } from 'utils/assets';
+import { addressesEqual } from 'utils/assets';
 import { nativeAssetPerChain, mapChainToChainId, mapProdChainId } from 'utils/chains';
 import { mapToEthereumTransactions } from 'utils/transactions';
 import { getCaptureFee } from 'utils/exchange';
 
 // constants
-import { ETH, ADDRESS_ZERO } from 'constants/assetsConstants';
+import { ETH, ADDRESS_ZERO, ETHERSPOT_POPULAR_TOKENS } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
-import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 import { PROJECT_KEY } from 'constants/etherspotConstants';
 
 // types
@@ -807,27 +805,6 @@ export class EtherspotService {
     }
   }
 
-  async getTokenListTokens(chain: Chain, name: string): Promise<?(Asset[])> {
-    const sdk = this.getSdkForChain(chain);
-    if (!sdk) {
-      logBreadcrumb('getTokenListTokens', 'failed: no sdk instance for chain', { chain });
-      return null;
-    }
-    try {
-      let tokens: TokenListToken[] = await sdk.getTokenListTokens({ name });
-      if (!tokens) {
-        logBreadcrumb('getTokenListTokens', 'EtherspotService getTokenListTokens failed: no tokens returned', {
-          name,
-        });
-        tokens = []; // let append native assets
-      }
-      return tokens.map((token) => parseTokenListToken(token));
-    } catch (e) {
-      reportErrorLog('EtherspotService getTokenListTokens failed', { error: e, chain, name });
-      return null;
-    }
-  }
-
   async getSupportedAssets(chain: Chain): Promise<?(Asset[])> {
     const sdk = this.getSdkForChain(chain);
     if (!sdk) {
@@ -836,13 +813,11 @@ export class EtherspotService {
     }
 
     try {
-      const tokenListName = getChainTokenListName(chain);
-
-      let tokens: TokenListToken[] = await sdk.getTokenListTokens({ name: tokenListName });
+      let tokens: TokenListToken[] = await sdk.getTokenListTokens({ name: ETHERSPOT_POPULAR_TOKENS });
 
       if (!tokens) {
         logBreadcrumb('getSupportedAssetsByChain', 'EtherspotService getSupportedAssets failed: no tokens returned', {
-          tokenListName,
+          ETHERSPOT_POPULAR_TOKENS,
         });
         tokens = []; // let append native assets
       }
@@ -850,25 +825,6 @@ export class EtherspotService {
       let supportedAssets = tokens.map((token) => parseTokenListToken(token));
 
       supportedAssets = appendNativeAssetIfNeeded(chain, supportedAssets);
-
-      // rest of checks are Ethereum mainnet (prod) only
-      if (chain !== CHAIN.ETHEREUM || !isProdEnv()) return supportedAssets;
-
-      // add LP tokens from our own list, later this can be replaced with Etherspot list for LP tokens
-      LIQUIDITY_POOLS().forEach(({ uniswapPairAddress: address, name, symbol, iconUrl }) => {
-        const existingAsset = findAssetByAddress(supportedAssets, address);
-        if (!existingAsset) {
-          supportedAssets.push({
-            chain,
-            address,
-            name,
-            symbol,
-            // eslint-disable-next-line max-len
-            decimals: 18, // ref https://raw.githubusercontent.com/jab416171/uniswap-pairtokens/master/uniswap_pair_tokens.json
-            iconUrl,
-          });
-        }
-      });
 
       return supportedAssets;
     } catch (error) {
