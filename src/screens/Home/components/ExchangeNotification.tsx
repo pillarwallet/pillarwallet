@@ -65,7 +65,7 @@ export default function ({ data, index }) {
     if (timerStatus === STATUS.STOPPED) {
       setTimeout(() => {
         dispatch(stopListeningGetBalancesAction());
-      }, 1000 * 60);
+      }, 1500 * 60);
     }
   }, [timerStatus]);
 
