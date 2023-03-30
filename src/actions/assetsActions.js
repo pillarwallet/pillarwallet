@@ -78,7 +78,11 @@ import {
 } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
-import { assetsCategoryFromEtherspotBalancesCategory, parseTokenListToken, filteredWithChain } from 'utils/etherspot';
+import {
+  assetsCategoryFromEtherspotBalancesCategory,
+  parseTokenListToken,
+  filteredWithDefaultAssets,
+} from 'utils/etherspot';
 import { isProdEnv } from 'utils/environment';
 import PolygonTokens from 'utils/tokens/polygon-tokens';
 import MumbaiTokens from 'utils/tokens/mumbai-tokens';
@@ -92,6 +96,8 @@ import OptimismGoerliTokens from 'utils/tokens/optimism-goerli-tokens.json';
 import OptimismTokens from 'utils/tokens/optimism-tokens';
 import ArbitrumTokens from 'utils/tokens/arbitrum-tokens';
 import XdaiTokens from 'utils/tokens/xdai-tokens';
+import DefaultTokens from 'utils/tokens/tokens.json';
+import DefaultStableTokens from 'utils/tokens/stable-tokens.json';
 
 // selectors
 import {
@@ -707,17 +713,18 @@ export const fetchSupportedAssetsAction = () => {
       Object.keys(CHAIN).map(async (chainKey) => {
         const chain = CHAIN[chainKey];
         const chainSupportedAssets = await etherspotService.getSupportedAssets(chain);
+        const defaultTokens = DefaultTokens.concat(DefaultStableTokens);
 
         // nothing to do if returned empty
         if (isEmpty(chainSupportedAssets)) return;
 
-        const chainCustomAssets = isEmpty(customTokensList) ? [] : filteredWithChain(customTokensList, chain);
+        const filteredCustomAssets = filteredWithDefaultAssets(chainSupportedAssets, customTokensList, chain);
 
-        const removedDuplicateSupportedAssets = chainCustomAssets.filter(
-          (item) => !chainSupportedAssets?.some((customAsset) => isSameAsset(item, customAsset)),
-        );
+        let totalSupportedAssets = [...chainSupportedAssets, ...filteredCustomAssets];
 
-        const totalSupportedAssets = [...chainSupportedAssets, ...removedDuplicateSupportedAssets];
+        const filteredDefaultAssets = filteredWithDefaultAssets(totalSupportedAssets, defaultTokens, chain);
+
+        totalSupportedAssets = [...totalSupportedAssets, ...filteredDefaultAssets];
 
         dispatch({
           type: SET_CHAIN_SUPPORTED_ASSETS,
