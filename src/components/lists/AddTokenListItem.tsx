@@ -33,6 +33,7 @@ import Switcher from 'components/Switcher';
 import { fontStyles, spacing } from 'utils/variables';
 import { useChainConfig } from 'utils/uiConfig';
 import { isTokenAvailableInList } from 'utils/assets';
+import { isProdEnv } from 'utils/environment';
 
 // Selector
 import { customTokensListSelector, useRootSelector } from 'selectors';
@@ -51,7 +52,8 @@ type Props = {
   listType?: list;
   logoURI?: string;
   iconUrl?: string;
-  tokens?: Asset[];
+  testnetTokens?: number;
+  mainnetTokens?: number;
   onPress?: () => void;
   style?: ViewStyleProp;
   rest?: any;
@@ -66,7 +68,8 @@ function AddTokenListItem({
   iconUrl,
   onPress,
   style,
-  tokens,
+  testnetTokens,
+  mainnetTokens,
   listType = 'normal',
   ...rest
 }: Props) {
@@ -76,6 +79,8 @@ function AddTokenListItem({
   const config = useChainConfig(chain);
   const title = config.title;
 
+  const isMainnet = isProdEnv();
+
   const token: Asset = { chain, name, iconUrl, ...rest };
 
   const [enableToken, setEnableToken] = useState(false);
@@ -84,7 +89,7 @@ function AddTokenListItem({
     setEnableToken(isTokenAvailableInList(customTokensList, token));
   }, [customTokensList]);
 
-  const onChangeToggle = async (status) => {
+  const onChangeToggle = async () => {
     dispatch(manageCustomTokens(token));
   };
 
@@ -112,7 +117,9 @@ function AddTokenListItem({
       {listType === 'togglesList' && <Switcher isOn={enableToken} onToggle={onChangeToggle} />}
 
       {listType === 'normal' && (
-        <NormalText numberOfLines={1}>{t('label.number_of_tokens', { tokens: tokens?.length || 0 })}</NormalText>
+        <NormalText numberOfLines={1}>
+          {t('label.number_of_tokens', { tokens: (isMainnet ? mainnetTokens : testnetTokens) || 0 })}
+        </NormalText>
       )}
     </Container>
   );

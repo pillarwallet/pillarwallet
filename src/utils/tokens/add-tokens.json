@@ -1,0 +1,106 @@
+[
+  {
+    "chain": "optimism",
+    "link": "https://static.optimism.io/optimism.tokenlist.json",
+    "name": "Optimism",
+    "logoURI": "https://ethereum-optimism.github.io/optimism.svg",
+    "testnetTokens": 38,
+    "mainnetTokens": 192
+  },
+  {
+    "chain": "optimism",
+    "link": "https://tokens.coingecko.com/optimistic-ethereum/all.json",
+    "name": "CoinGecko",
+    "logoURI": "https://www.coingecko.com/assets/thumbnail-007177f3eca19695592f0b8b0eabbdae282b54154e1be912285c9034ea6cbaf2.png",
+    "testnetTokens": 0,
+    "mainnetTokens": 101
+  },
+  {
+    "chain": "arbitrum",
+    "link": "https://bridge.arbitrum.io/token-list-42161.json",
+    "name": "Arb Whitelist Era",
+    "logoURI": "arbitrum",
+    "testnetTokens": 0,
+    "mainnetTokens": 200
+  },
+  {
+    "chain": "arbitrum",
+    "link": "https://tokens.coingecko.com/arbitrum-one/all.json",
+    "name": "CoinGecko",
+    "logoURI": "https://www.coingecko.com/assets/thumbnail-007177f3eca19695592f0b8b0eabbdae282b54154e1be912285c9034ea6cbaf2.png",
+    "testnetTokens": 0,
+    "mainnetTokens": 301
+  },
+  {
+    "chain": "xdai",
+    "link": "https://tokens.coingecko.com/xdai/all.json",
+    "name": "CoinGecko",
+    "logoURI": "https://www.coingecko.com/assets/thumbnail-007177f3eca19695592f0b8b0eabbdae282b54154e1be912285c9034ea6cbaf2.png",
+    "testnetTokens": 0,
+    "mainnetTokens": 71
+  },
+  {
+    "chain": "xdai",
+    "link": "https://tokens.honeyswap.org/",
+    "name": "Honeyswap Default",
+    "logoURI": "https://s2.coinmarketcap.com/static/img/exchanges/64x64/1190.png",
+    "testnetTokens": 4,
+    "mainnetTokens": 334
+  },
+  {
+    "chain": "ethereum",
+    "link": "https://tokens.coingecko.com/uniswap/all.json",
+    "name": "CoinGecko",
+    "logoURI": "https://www.coingecko.com/assets/thumbnail-007177f3eca19695592f0b8b0eabbdae282b54154e1be912285c9034ea6cbaf2.png",
+    "testnetTokens": 0,
+    "mainnetTokens": 4125
+  },
+  {
+    "chain": "ethereum",
+    "link": "https://gateway.ipfs.io/ipns/tokens.uniswap.org",
+    "name": "Uniswap Labs Default",
+    "logoURI": "ipfs://QmNa8mQkrNKp1WEEeGjFezDmDeodkWRevGFN8JCV7b4Xir",
+    "testnetTokens": 4,
+    "mainnetTokens": 615
+  },
+  {
+    "chain": "binance",
+    "link": "https://tokens.pancakeswap.finance/pancakeswap-extended.json",
+    "name": "PancakeSwap Extended",
+    "logoURI": "https://pancakeswap.finance/logo.png",
+    "testnetTokens": 0,
+    "mainnetTokens": 329
+  },
+  {
+    "chain": "binance",
+    "link": "https://tokens.coingecko.com/binance-smart-chain/all.json",
+    "name": "CoinGecko",
+    "logoURI": "https://www.coingecko.com/assets/thumbnail-007177f3eca19695592f0b8b0eabbdae282b54154e1be912285c9034ea6cbaf2.png",
+    "testnetTokens": 0,
+    "mainnetTokens": 4082
+  },
+  {
+    "chain": "polygon",
+    "link": "https://raw.githubusercontent.com/dfyn/new-host/main/list-token.tokenlist.json",
+    "name": "Default list",
+    "logoURI": "https://raw.githubusercontent.com/ganeshbhagi/new-host/main/logo.png",
+    "testnetTokens": 0,
+    "mainnetTokens": 136
+  },
+  {
+    "chain": "polygon",
+    "link": "https://unpkg.com/@cometh-game/default-token-list@latest/build/comethswap-default.tokenlist.json",
+    "name": "Comethswap Default List",
+    "logoURI": "https://swap.cometh.io/images/192x192_App_Icon.png",
+    "testnetTokens": 4,
+    "mainnetTokens": 119
+  },
+  {
+    "chain": "polygon",
+    "link": "https://unpkg.com/quickswap-default-token-list@latest/build/quickswap-default.tokenlist.json",
+    "name": "Quickswap Token List",
+    "logoURI": "ipfs://QmQ9GCVmLQkbPohxKeCYkbpmwfTvHXrY64TmBsPQAZdbqZ",
+    "testnetTokens": 5,
+    "mainnetTokens": 166
+  }
+]
