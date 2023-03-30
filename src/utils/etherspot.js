@@ -35,11 +35,6 @@ import { TX_CONFIRMED_STATUS, TX_FAILED_STATUS, TX_PENDING_STATUS } from 'consta
 import { ASSET_CATEGORY } from 'constants/assetsConstants';
 import { EXCHANGE_PROVIDER } from 'constants/exchangeConstants';
 import { TRANSACTION_STATUS } from 'models/History';
-import { CHAIN } from 'constants/chainConstants';
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
-
-// services
-import { firebaseRemoteConfig } from 'services/firebase';
 
 // utils
 import { isEtherspotAccount } from 'utils/accounts';
@@ -47,7 +42,6 @@ import { findAssetByAddress } from 'utils/assets';
 import { fromEthersBigNumber } from 'utils/bigNumber';
 import { chainFromChainId, nativeAssetPerChain } from 'utils/chains';
 import { buildHistoryTransaction } from 'utils/history';
-import { isProdEnv } from 'utils/environment';
 import { isCaseInsensitiveMatch } from 'utils/common';
 
 // types
@@ -273,17 +267,6 @@ export const assetsCategoryFromEtherspotBalancesCategory = {
   [EtherspotAccountDashboardProtocols.Investments]: ASSET_CATEGORY.INVESTMENTS,
   // TODO: enable once rewards available
   // [AccountDashboardProtocols.Rewards]: ASSET_CATEGORY.REWARDS
-};
-
-export const getChainTokenListName = (chain: Chain): ?string => {
-  if (chain === CHAIN.ETHEREUM && isProdEnv()) {
-    return firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_TOKEN_LIST_ETHEREUM);
-  }
-
-  if (chain === CHAIN.BINANCE) return firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_TOKEN_LIST_BSC);
-  if (chain === CHAIN.POLYGON) return firebaseRemoteConfig.getString(REMOTE_CONFIG.FEATURE_TOKEN_LIST_POLYGON);
-
-  return null;
 };
 
 export const filteredWithDefaultAssets = (
