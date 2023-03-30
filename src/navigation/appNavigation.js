@@ -121,6 +121,7 @@ import GetNotificationsScreen from 'screens/Notification/GetNotifications';
 import AddTokensScreen from 'screens/Assets/AddTokens';
 import TokenWithToggles from 'screens/Assets/TokensWithToggles';
 import ManageTokenLists from 'screens/Assets/ManageTokenLists';
+import ReceiveTokensWarning from 'screens/Home/ReceiveTokensWarning';
 
 // components
 import Toast from 'components/Toast';
@@ -260,6 +261,7 @@ import {
   ADD_TOKENS,
   TOKENS_WITH_TOGGLES,
   MANAGE_TOKEN_LISTS,
+  RECEIVE_TOKENS_WARNING,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -399,6 +401,7 @@ const homeFlow = createStackNavigator(
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
     [REGISTER_ENS]: RegisterENSScreen,
+    [RECEIVE_TOKENS_WARNING]: ReceiveTokensWarning,
   },
   StackNavigatorConfig,
 );

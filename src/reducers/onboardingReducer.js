@@ -33,6 +33,7 @@ import {
   SET_TUTORIAL_DATA,
   SET_BANNER_DATA,
   SET_NEW_USER,
+  SET_VIEWED_RECEIVE_TOKENS_WARNING,
 } from 'constants/onboardingConstants';
 
 // Types
@@ -53,6 +54,7 @@ export type OnboardingReducerState = {
   tutorialData: ?TutorialDataObject,
   bannerData: ?CmsBannerDocument,
   isNewUser: boolean,
+  viewedReceiveTokensWarning: boolean,
 };
 
 export type OnboardingReducerAction = {
@@ -73,6 +75,7 @@ export const initialState = {
   tutorialData: null,
   bannerData: null,
   isNewUser: false,
+  viewedReceiveTokensWarning: false,
 };
 
 export default function onboardingReducer(
@@ -148,6 +151,11 @@ export default function onboardingReducer(
       return {
         ...state,
         isNewUser: action.payload,
+      };
+    case SET_VIEWED_RECEIVE_TOKENS_WARNING:
+      return {
+        ...state,
+        viewedReceiveTokensWarning: action.payload,
       };
     case RESET_ONBOARDING:
       return { ...initialState };

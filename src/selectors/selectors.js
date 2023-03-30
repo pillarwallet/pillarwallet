@@ -87,6 +87,9 @@ export const customTokensListSelector = ({ customTokensList }: RootReducerState)
 
 export const bannerDataSelector = ({ onboarding }: RootReducerState) => onboarding.bannerData;
 
+export const viewedReceiveTokensWarningSelector = ({ onboarding }: RootReducerState) =>
+  onboarding.viewedReceiveTokensWarning;
+
 export const paymentNetworkBalancesSelector = ({ paymentNetwork }: RootReducerState) => paymentNetwork.balances;
 
 export const accountsSelector = ({ accounts }: RootReducerState) => accounts.data;

@@ -156,6 +156,14 @@ import IconOptimism38 from 'assets/icons/svg/icon-38-optimism.svg';
 import IconGnosis38 from 'assets/icons/svg/icon-38-gnosis.svg';
 import IconArbitrum38 from 'assets/icons/svg/icon-38-arbitrum.svg';
 
+// Assets: services icons 16px
+import IconEthereum16 from 'assets/icons/svg/icon-16-ethereum.svg';
+import IconBinance16 from 'assets/icons/svg/icon-16-binance.svg';
+import IconPolygon16 from 'assets/icons/svg/icon-16-polygon.svg';
+import IconOptimism16 from 'assets/icons/svg/icon-16-optimism.svg';
+import IconGnosis16 from 'assets/icons/svg/icon-16-gnosis.svg';
+import IconArbitrum16 from 'assets/icons/svg/icon-16-arbitrum.svg';
+
 const components = {
   // Generic icons
   'add-cash': IconAddCash,
@@ -283,6 +291,14 @@ const components = {
   xdai38: IconGnosis38,
   optimism38: IconOptimism38,
   arbitrum38: IconArbitrum38,
+
+  // Service icons 16px
+  binance16: IconBinance16,
+  ethereum16: IconEthereum16,
+  polygon16: IconPolygon16,
+  xdai16: IconGnosis16,
+  optimism16: IconOptimism16,
+  arbitrum16: IconArbitrum16,
 };
 
 export type IconName = keyof typeof components;
