@@ -22,8 +22,6 @@ import * as React from 'react';
 import { FlatList } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useTranslation } from 'translations/translate';
-import { useDispatch } from 'react-redux';
-import { isEmpty } from 'lodash';
 
 // Components
 import { Container } from 'components/layout/Layout';
@@ -31,40 +29,36 @@ import HeaderBlock from 'components/HeaderBlock';
 import ChainSelectorContent from 'components/ChainSelector/ChainSelectorContent';
 import AddTokenListItem from 'components/lists/AddTokenListItem';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import Spinner from 'components/Spinner';
 
 // Utils
 import { filteredWithChain } from 'utils/etherspot';
 import { getActiveAccount, isSmartWalletAccount } from 'utils/accounts';
+import AddTokensLinks from 'utils/tokens/add-tokens.json';
+import { isProdEnv } from 'utils/environment';
 
 // Constants
 import { TOKENS_WITH_TOGGLES } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
 
-// Actions
-import { addTokensListAction } from 'actions/assetsActions';
-
 // Selector
-import { useRootSelector, addTokensListSelector, useAccounts } from 'selectors';
+import { useAccounts } from 'selectors';
 
 export function AddTokens() {
   const navigation = useNavigation();
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+
   const accounts = useAccounts();
   const activeAccount = getActiveAccount(accounts);
   const isSmartWallet = isSmartWalletAccount(activeAccount);
 
-  const { addTokensList: tokenList, isFetching } = useRootSelector(addTokensListSelector);
+  const isMainnet = isProdEnv();
 
   const [selectedChain, setSelectedChain] = React.useState(null);
-  const tokensAccordingToChain = filteredWithChain(tokenList, !isSmartWallet ? CHAIN.ETHEREUM : selectedChain);
+  const tokensAccordingToChain = filteredWithChain(AddTokensLinks, !isSmartWallet ? CHAIN.ETHEREUM : selectedChain);
 
-  tokensAccordingToChain?.sort((tokenA, tokenB) => tokenB.tokens?.length - tokenA.tokens?.length);
-
-  React.useEffect(() => {
-    dispatch(addTokensListAction());
-  }, []);
+  tokensAccordingToChain?.sort((tokenA, tokenB) =>
+    isMainnet ? tokenB.mainnetTokens - tokenA.mainnetTokens : tokenB.testnetTokens - tokenA.testnetTokens,
+  );
 
   const renderItem = (token: any) => {
     if (!token) return;
@@ -79,8 +73,8 @@ export function AddTokens() {
   };
 
   function getItemKey(item) {
-    const { tokens, name, chain } = item;
-    return name + '__' + chain + '__' + tokens?.length;
+    const { name, chain } = item;
+    return name + '__' + chain;
   }
 
   return (
@@ -89,21 +83,15 @@ export function AddTokens() {
 
       <ChainSelectorContent selectedAssetChain={selectedChain} onSelectChain={setSelectedChain} />
 
-      {isFetching && isEmpty(tokenList) ? (
-        <Spinner size={40} />
-      ) : (
-        <FlatList
-          key={'add_tokens_list'}
-          data={tokensAccordingToChain}
-          renderItem={({ item }) => renderItem(item)}
-          keyExtractor={getItemKey}
-          ListEmptyComponent={() => <EmptyStateParagraph wide title={t('label.nothingFound')} />}
-        />
-      )}
+      <FlatList
+        key={'add_tokens_list'}
+        data={tokensAccordingToChain}
+        renderItem={({ item }) => renderItem(item)}
+        keyExtractor={getItemKey}
+        ListEmptyComponent={() => <EmptyStateParagraph wide title={t('label.nothingFound')} />}
+      />
     </Container>
   );
 }
-
-const TAG = 'ADD_TOKEN';
 
 export default AddTokens;

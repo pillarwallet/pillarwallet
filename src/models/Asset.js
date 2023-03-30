@@ -137,4 +137,13 @@ export type AssetDataNavigationParam = {
   chain: Chain,
 };
 
+export type AddTokensItem = {
+  chain: Chain,
+  link: string,
+  name: string,
+  logoURI: string,
+  testnetTokens: number,
+  mainnetTokens: number,
+};
+
 export type AssetsPerChain = ChainRecord<Asset[]>;

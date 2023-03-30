@@ -32,7 +32,12 @@ import ReceiveModal from 'screens/Asset/ReceiveModal';
 import Tooltip from 'components/Tooltip';
 
 // Constants
-import { CONNECT_FLOW, BRIDGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';
+import {
+  CONNECT_FLOW,
+  BRIDGE_FLOW,
+  SEND_TOKEN_FROM_HOME_FLOW,
+  RECEIVE_TOKENS_WARNING,
+} from 'constants/navigationConstants';
 
 // Utils
 import { isArchanovaAccount } from 'utils/accounts';
@@ -40,7 +45,13 @@ import { sumRecord } from 'utils/bigNumber';
 import { spacing } from 'utils/variables';
 
 // Selectors
-import { useRootSelector, activeAccountAddressSelector, useActiveAccount, useIsExchangeAvailable } from 'selectors';
+import {
+  useRootSelector,
+  activeAccountAddressSelector,
+  useActiveAccount,
+  useIsExchangeAvailable,
+  viewedReceiveTokensWarningSelector,
+} from 'selectors';
 import { accountWalletBalancePerChainSelector } from 'selectors/totalBalances';
 import { useArchanovaWalletStatus } from 'selectors/archanova';
 
@@ -53,6 +64,7 @@ function FloatingActions() {
   const dispatch = useDispatch();
 
   const address = useRootSelector(activeAccountAddressSelector);
+  const viewedReceiveTokensWarning = useRootSelector(viewedReceiveTokensWarningSelector);
   const { signInDeFiTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
   const isExchangeAvailable = useIsExchangeAvailable();
   const [visibleTooltip, setVisibleTooltip] = React.useState(false);
@@ -63,11 +75,21 @@ function FloatingActions() {
     Modal.open(() => <ReceiveModal address={address} />);
   };
 
+  const onReceivePress = () => {
+    if (viewedReceiveTokensWarning) {
+      showReceiveModal();
+    } else {
+      navigation.navigate(RECEIVE_TOKENS_WARNING, {
+        onContinue: showReceiveModal,
+      });
+    }
+  };
+
   const items = [
     {
       title: t('receive'),
       iconName: 'qrcode',
-      onPress: showReceiveModal,
+      onPress: onReceivePress,
     },
     isExchangeAvailable && {
       title: t('swap'),

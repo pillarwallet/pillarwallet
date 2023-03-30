@@ -87,7 +87,7 @@ import { importEtherspotAccountsAction, initEtherspotServiceAction, fetchDefault
 import { setEnsNameIfNeededAction } from './ensRegistryActions';
 import { fetchTutorialDataIfNeededAction, bannerDataAction } from './cmsActions';
 import { fetchAllAccountsAssetsBalancesAction, fetchAllAccountsTotalBalancesAction } from './assetsActions';
-import { finishOnboardingAction } from './onboardingActions';
+import { finishOnboardingAction, setViewedReceiveTokensWarning } from './onboardingActions';
 import { addMissingWalletEventsIfNeededAction } from './walletEventsActions';
 import { fetchAllCollectiblesDataAction } from './collectiblesActions';
 import { fetchAppsHoldingsAction } from './appsHoldingsActions';
@@ -121,8 +121,18 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
       onboarding: { bannerData, isNewUser: isNewUserState },
     } = getState();
 
-    const isNewUserDb = await storage.get('is_new_user');
+    const viewedReceiveTokensWarningDb = await storage.get('viewed_receive_tokens_warning');
+    logBreadcrumb('loginAction', 'checking if warning viewed', viewedReceiveTokensWarningDb);
+    if (viewedReceiveTokensWarningDb?.viewedReceiveTokensWarning) {
+      logBreadcrumb(
+        'loginAction',
+        'flagging warning as viewed',
+        viewedReceiveTokensWarningDb.viewedReceiveTokensWarning,
+      );
+      dispatch(setViewedReceiveTokensWarning(viewedReceiveTokensWarningDb.viewedReceiveTokensWarning));
+    }
 
+    const isNewUserDb = await storage.get('is_new_user');
     const isNewUser = !!isNewUserDb?.isNewUser ?? !!isNewUserState;
 
     // flag as a new user (not using archanova services)

@@ -33,17 +33,16 @@ import QRCodeWithTheme from 'components/QRCode';
 import Toast from 'components/Toast';
 import ProfileImage from 'components/ProfileImage';
 import TextWithCopy from 'components/display/TextWithCopy';
-import Icon, { IconName } from 'components/core/Icon';
+import Icon from 'components/core/Icon';
 
 // Utils
 import { spacing, fontStyles, fontSizes, appFont, borderRadiusSizes, lineHeights } from 'utils/variables';
-import { getAccountEnsName, isEtherspotAccount, isKeyBasedAccount, getActiveAccount } from 'utils/accounts';
+import { getAccountEnsName, isEtherspotAccount, getActiveAccount } from 'utils/accounts';
 import { getThemeColors } from 'utils/themes';
 import { useChainsConfig } from 'utils/uiConfig';
 import { getDeviceHeight } from 'utils/common';
 
 // Types
-import type { Chain } from 'models/Chain';
 import type { Theme } from 'models/Theme';
 
 // Selectors
@@ -51,14 +50,8 @@ import { useSupportedChains } from 'selectors/chains';
 import { accountsSelector, useRootSelector } from 'selectors';
 import { useUser } from 'selectors/user';
 
-// Services
-import etherspotService from 'services/etherspot';
-
 // Hooks
 import { useDeploymentStatus } from 'hooks/deploymentStatus';
-
-// Constants
-import { CHAIN } from 'constants/chainConstants';
 
 const DEVICE_HEIGHT = getDeviceHeight();
 
@@ -80,7 +73,7 @@ const ReceiveModal: FC<IReceiveModal> = ({ address, onModalHide, theme }) => {
   }, [address]);
 
   const colors = getThemeColors(theme);
-  const { isDeployedOnChain, showDeploymentInterjection } = useDeploymentStatus();
+  const { isDeployedOnChain } = useDeploymentStatus();
   const chains = useSupportedChains();
   const chainsConfig = useChainsConfig();
 
@@ -90,7 +83,6 @@ const ReceiveModal: FC<IReceiveModal> = ({ address, onModalHide, theme }) => {
     setCloseFlag(true);
   };
 
-  const showWarning = !isKeyBasedAccount(activeAccount) && !isDeployedOnChain.ethereum;
   const { username } = user;
   const ensName = getAccountEnsName(activeAccount);
 
@@ -176,7 +168,7 @@ const ReceiveModal: FC<IReceiveModal> = ({ address, onModalHide, theme }) => {
                       width={18}
                       style={IconContainer}
                       name={'checkmark-circle-green'}
-                      color={theme.colors.black}
+                      color={colors.black}
                     />
                   )}
                 </ChainIconWrapper>
