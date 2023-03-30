@@ -37,6 +37,7 @@ import etherspotService from 'services/etherspot';
 // Actions
 import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 import { fetchAllAccountsAssetsBalancesAction } from 'actions/assetsActions';
+import { startListeningGetBalancesAction, stopListeningGetBalancesAction } from 'actions/notificationsActions';
 
 // Hooks
 import { STATUS, useTimer } from 'hooks/timer';
@@ -56,6 +57,17 @@ export default function ({ data, index }) {
   const { fromValue, toValue, gasValue } = useExchangeAmountsNotification(data.offer);
 
   const { fromAmount, toAmount, fromAsset, toAsset } = data.offer;
+
+  React.useEffect(() => {
+    if (timerStatus === STATUS.STARTED) {
+      dispatch(startListeningGetBalancesAction());
+    }
+    if (timerStatus === STATUS.STOPPED) {
+      setTimeout(() => {
+        dispatch(stopListeningGetBalancesAction());
+      }, 1000 * 60);
+    }
+  }, [timerStatus]);
 
   React.useEffect(() => {
     (async () => {

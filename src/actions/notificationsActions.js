@@ -85,6 +85,7 @@ export const fetchAllNotificationsAction = () => {
   return async (dispatch: Dispatch) => {
     dispatch(fetchTransactionsHistoryAction());
     dispatch(fetchAllCollectiblesDataAction());
+    dispatch(fetchAssetsBalancesAction(true));
   };
 };
 
@@ -142,10 +143,30 @@ export const subscribeToPushNotificationsAction = () => {
       disabledPushNotificationsListener = setInterval(() => {
         dispatch(fetchAllNotificationsAction());
       }, 30000);
-      if (disabledFetchingBalanceListener !== null) return;
-      disabledFetchingBalanceListener = setInterval(() => {
-        dispatch(fetchAssetsBalanceNotificationsAction());
-      }, 10000);
+    }
+  };
+};
+
+export const startListeningGetBalancesAction = () => {
+  return (dispatch: Dispatch) => {
+    if (disabledFetchingBalanceListener !== null) return;
+    console.log('====================================');
+    console.log('CALL START LISTENING', new Date());
+    console.log('====================================');
+    disabledFetchingBalanceListener = setInterval(() => {
+      dispatch(fetchAssetsBalanceNotificationsAction());
+    }, 10000);
+  };
+};
+
+export const stopListeningGetBalancesAction = () => {
+  return () => {
+    if (disabledFetchingBalanceListener !== null) {
+      console.log('====================================');
+      console.log('CALL STOP LISTENING', new Date());
+      console.log('====================================');
+      clearInterval(disabledFetchingBalanceListener);
+      disabledFetchingBalanceListener = null;
     }
   };
 };
