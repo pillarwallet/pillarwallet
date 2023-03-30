@@ -21,8 +21,8 @@
 import * as React from 'react';
 import { FlatList } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
-import { isEmpty } from 'lodash';
 import { useTranslation } from 'translations/translate';
+import { useDispatch } from 'react-redux';
 
 // Components
 import { Container } from 'components/layout/Layout';
@@ -31,6 +31,13 @@ import ChainSelectorContent from 'components/ChainSelector/ChainSelectorContent'
 import AddTokenListItem from 'components/lists/AddTokenListItem';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import SearchBar from 'components/SearchBar';
+import Spinner from 'components/Spinner';
+
+// Actions
+import { addTokensListAction } from 'actions/assetsActions';
+
+// Selectors
+import { useRootSelector, addTokensListSelector } from 'selectors';
 
 // Utils
 import { getMatchingTokens } from 'utils/wallet';
@@ -39,15 +46,21 @@ import { filteredWithChain } from 'utils/etherspot';
 
 export default function () {
   const { t } = useTranslation();
-
+  const dispatch = useDispatch();
   const navigation = useNavigation();
+  const tokenInfo = navigation.getParam('tokenInfo');
+  const { addTokensList: tokenList, isFetching } = useRootSelector(addTokensListSelector);
 
-  const { name, tokens } = navigation.getParam('tokenInfo');
+  const fetchedTokenInfo = tokenList.find((token) => token.chain === tokenInfo.chain && token.name === tokenInfo.name);
+
+  React.useEffect(() => {
+    dispatch(addTokensListAction(tokenInfo));
+  }, []);
 
   const [selectedChain, setSelectedChain] = React.useState(null);
   const [query, setQuery] = React.useState('');
 
-  const tokensAccordingToChain = filteredWithChain(tokens, selectedChain);
+  const tokensAccordingToChain = filteredWithChain(fetchedTokenInfo?.tokens, selectedChain);
 
   const searchItems = getMatchingTokens(tokensAccordingToChain, query);
 
@@ -63,9 +76,14 @@ export default function () {
 
   const memoizedValue = React.useMemo(() => renderItem, [tokensAccordingToChain, searchItems]);
 
+  const emptyState = () => {
+    if (isFetching) return <Spinner size={40} />;
+    return <EmptyStateParagraph wide title={t('label.nothingFound')} />;
+  };
+
   return (
     <Container>
-      <HeaderBlock navigation={navigation} centerItems={[{ title: name }]} noPaddingTop />
+      <HeaderBlock navigation={navigation} centerItems={[{ title: tokenInfo.name }]} noPaddingTop />
       <ChainSelectorContent selectedAssetChain={selectedChain} onSelectChain={setSelectedChain} />
 
       <SearchBar
@@ -84,7 +102,7 @@ export default function () {
         keyExtractor={getItemKey}
         keyboardShouldPersistTaps="always"
         contentInsetAdjustmentBehavior="scrollableAxes"
-        ListEmptyComponent={() => <EmptyStateParagraph wide title={t('label.nothingFound')} />}
+        ListEmptyComponent={emptyState}
       />
     </Container>
   );

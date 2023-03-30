@@ -34,7 +34,6 @@ import {
   USD,
   ADD_TOKENS_FETCHING,
   ADD_TOKENS_LIST,
-  IS_ADD_TOKENS_FETCHED,
   ADD_CUSTOM_TOKEN,
 } from 'constants/assetsConstants';
 import {
@@ -52,13 +51,11 @@ import {
   RESET_ACCOUNT_TOTAL_BALANCES,
 } from 'constants/totalsBalancesConstants';
 import { CHAIN } from 'constants/chainConstants';
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // services
 import etherspotService from 'services/etherspot';
 import archanovaService from 'services/archanova';
 import KeyBasedWallet from 'services/keyBasedWallet';
-import { firebaseRemoteConfig } from 'services/firebase';
 
 // utils
 import { transformBalancesToObject, isTokenAvailableInList, isSameAsset } from 'utils/assets';
@@ -118,7 +115,7 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { TransactionPayload, TransactionResult, TransactionStatus } from 'models/Transaction';
 import type { WalletAssetsBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
-import type { Asset } from 'models/Asset';
+import type { Asset, AddTokensItem } from 'models/Asset';
 
 // actions
 import { saveDbAction } from './dbActions';
@@ -787,88 +784,65 @@ export const localAssets = (chain: Chain) => {
   return [];
 };
 
-export const addTokensListAction = () => {
+export const addTokensListAction = (tokenInfo: AddTokensItem) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       session: {
         data: { isOnline },
       },
-      addTokensList: { isFetching, isFetched },
+      addTokensList: { isFetching },
     } = getState();
 
     const isMainnet = isProdEnv();
 
     // nothing to do if offline
-    if (!isOnline || isFetching || isFetched) return;
+    if (!isOnline || isFetching) return;
 
     dispatch({ type: ADD_TOKENS_FETCHING, payload: true });
 
-    const remoteTokenList = firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_TOKENLISTS);
+    const { addTokensList } = addTokensListSelector(getState());
 
-    if (isEmpty(remoteTokenList)) {
-      reportErrorLog('assetsActions addTokensListAction: fetching remote config data failed', {
-        key: REMOTE_CONFIG.APP_TOKENLISTS,
-      });
-      dispatch({ type: ADD_TOKENS_FETCHING, payload: false });
-      Toast.show({
-        message: t('error.fetchTokenListFailed'),
-        emoji: 'hushed',
-      });
-      return;
-    }
+    const tokenIndex = addTokensList.findIndex((obj) => obj.chain === tokenInfo.chain && obj.name === tokenInfo.name);
 
-    let parsedTokenLists;
     try {
-      parsedTokenLists = JSON.parse(remoteTokenList);
+      const res = await fetchUrl(tokenInfo.link);
+      const jsonResponse = await res.json();
+
+      if (!res || res?.status !== 200 || !jsonResponse) {
+        Toast.show({
+          message: t('error.fetchTokenListFailed'),
+          emoji: 'hushed',
+        });
+        dispatch({ type: ADD_TOKENS_FETCHING, payload: false });
+        return;
+      }
+
+      const tokens = jsonResponse.tokens
+        ?.filter((token) => (isMainnet ? isMainnetChainId(token.chainId) : isTestnetChainId(token.chainId)))
+        ?.map((token) => parseTokenListToken(token));
+
+      dispatch({ type: ADD_TOKENS_FETCHING, payload: false });
+
+      if (isEmpty(tokens)) return;
+
+      const token = { chain: tokenInfo.chain, ...jsonResponse, tokens };
+
+      let newTokenList = [...addTokensList];
+      if (tokenIndex !== -1) {
+        newTokenList[tokenIndex] = token;
+      } else {
+        newTokenList = [...newTokenList, token];
+      }
+
       dispatch({
         type: ADD_TOKENS_LIST,
-        payload: null,
+        payload: newTokenList,
       });
+
+      dispatch(saveDbAction('addTokensList', { addTokensList: newTokenList }, true));
     } catch (error) {
-      reportErrorLog('assetsActions addTokensListAction: json parse failed', {
-        remoteTokenList,
-      });
-      dispatch({ type: ADD_TOKENS_FETCHING, payload: false });
-      return;
-    }
-
-    await Promise.all(
-      parsedTokenLists.map(async (item) => {
-        const res = await fetchUrl(item.link);
-        const jsonResponse = await res.json();
-
-        if (!res || res?.status !== 200 || !jsonResponse) return null;
-
-        const tokens = jsonResponse.tokens
-          ?.filter((token) => (isMainnet ? isMainnetChainId(token.chainId) : isTestnetChainId(token.chainId)))
-          ?.map((token) => parseTokenListToken(token));
-
-        if (isEmpty(tokens)) return null;
-
-        const { addTokensList } = addTokensListSelector(getState());
-        const tokenInfo = { chain: item.chain, ...jsonResponse, tokens };
-
-        dispatch({
-          type: ADD_TOKENS_LIST,
-          payload: isEmpty(addTokensList) ? [tokenInfo] : [...addTokensList, tokenInfo],
-        });
-
-        dispatch(
-          saveDbAction(
-            'addTokensList',
-            { addTokensList: isEmpty(addTokensList) ? [tokenInfo] : [...addTokensList, tokenInfo] },
-            true,
-          ),
-        );
-
-        dispatch({ type: ADD_TOKENS_FETCHING, payload: false });
-        dispatch({ type: IS_ADD_TOKENS_FETCHED, payload: true });
-
-        return addTokensList;
-      }),
-    ).catch((error) => {
       reportErrorLog('AddTokensList failed', { error });
-    });
+    }
   };
 };
 
