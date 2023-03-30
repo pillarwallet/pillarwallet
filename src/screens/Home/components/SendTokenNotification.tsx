@@ -38,6 +38,7 @@ import etherspotService from 'services/etherspot';
 // Actions
 import { viewTransactionOnBlockchainAction } from 'actions/historyActions';
 import { fetchAllAccountsAssetsBalancesAction } from 'actions/assetsActions';
+import { startListeningGetBalancesAction, stopListeningGetBalancesAction } from 'actions/notificationsActions';
 
 // Constants
 import { TRANSACTION_TYPE } from 'constants/transactionsConstants';
@@ -57,6 +58,15 @@ export default function ({ data, index }) {
   const time = useTimer(timerStatus, setTimerStatus);
 
   const { contractAddress, to, assetData, amount, chain, batchHash, type } = data;
+
+  React.useEffect(() => {
+    if (timerStatus === STATUS.STARTED) {
+      dispatch(startListeningGetBalancesAction());
+      setTimeout(() => {
+        dispatch(stopListeningGetBalancesAction());
+      }, 1000 * 60);
+    }
+  }, [timerStatus]);
 
   React.useEffect(() => {
     (async () => {
