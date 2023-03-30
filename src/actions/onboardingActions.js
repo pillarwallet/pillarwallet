@@ -39,6 +39,7 @@ import {
   SET_ONBOARDING_WALLET,
   SET_REGISTERING_USER,
   SET_NEW_USER,
+  SET_VIEWED_RECEIVE_TOKENS_WARNING,
 } from 'constants/onboardingConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -282,8 +283,19 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
     } = getState();
 
     const storage = Storage.getInstance('db');
-    const isNewUserDb = await storage.get('is_new_user');
 
+    const viewedReceiveTokensWarningDb = storage.get('viewed_receive_tokens_warning');
+    logBreadcrumb('onboarding', 'walletSetupAction: checking for warning viewed', viewedReceiveTokensWarningDb);
+    if (viewedReceiveTokensWarningDb?.viewedReceiveTokensWarning) {
+      logBreadcrumb(
+        'walletSetupAction',
+        'flagging warning as viewed',
+        viewedReceiveTokensWarningDb.viewedReceiveTokensWarning,
+      );
+      dispatch(setViewedReceiveTokensWarning(viewedReceiveTokensWarningDb.viewedReceiveTokensWarning));
+    }
+
+    const isNewUserDb = await storage.get('is_new_user');
     const isNewUser = !!isNewUserDb?.isNewUser ?? !!isNewUserState;
 
     logBreadcrumb('onboarding', 'walletSetupAction: checking for pinCode');
@@ -580,7 +592,9 @@ export const importWalletFromMnemonicAction = (mnemonicInput: string) => {
     logBreadcrumb('onboarding', 'importWalletFromMnemonicAction: dispatching SET_IMPORTING_WALLET');
     dispatch({ type: SET_IMPORTING_WALLET });
     dispatch({ type: SET_NEW_USER, payload: false });
+    dispatch({ type: SET_VIEWED_RECEIVE_TOKENS_WARNING, payload: false });
     dispatch(saveDbAction('is_new_user', { isNewUser: false }));
+    dispatch(setViewedReceiveTokensWarning(false));
 
     let importedWallet;
     try {
@@ -760,6 +774,17 @@ export const resetWalletImportErrorAction = () => {
     dispatch({
       type: SET_ONBOARDING_ERROR,
       payload: null,
+    });
+  };
+};
+
+export const setViewedReceiveTokensWarning = (viewed: boolean) => {
+  return async (dispatch: Dispatch) => {
+    logBreadcrumb('onboarding', 'setViewedReceiveTokensWarning: dispatching SET_VIEWED_RECEIVE_TOKENS_WARNING', viewed);
+    dispatch(saveDbAction('viewed_receive_tokens_warning', { viewedReceiveTokensWarning: viewed }));
+    dispatch({
+      type: SET_VIEWED_RECEIVE_TOKENS_WARNING,
+      payload: viewed,
     });
   };
 };

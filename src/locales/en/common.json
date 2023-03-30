@@ -314,10 +314,10 @@
     "risk_stable": "{{percentage}}% of low risk stables",
     "add_tokens": "Add Tokens",
     "number_of_tokens": "{{tokens}} tokens",
-    "find_token":"Find a token or input address",
-    "manageTokenLists":"Manage token lists",
-    "importCustomToken":"Import custom token",
-    "importNumberOfCustomToken":"Import {{tokens}} custom tokens",
+    "find_token": "Find a token or input address",
+    "manageTokenLists": "Manage token lists",
+    "importCustomToken": "Import custom token",
+    "importNumberOfCustomToken": "Import {{tokens}} custom tokens",
     "contractAddress": "Contract Address",
     "erc20": " (ERС-20)",
     "tokenExists": "This token is already exists",
@@ -658,6 +658,16 @@
     "apps": {
       "title": "Apps",
       "new": "NEW"
+    },
+    "receiveTokenWarning": {
+      "pillarDescription": "Pillar is a super-powered crypto wallet designed for efficient trading of multiple assets and leveraging up in multichain DeFi with just one tap.",
+      "stableCoinDetails": "You can pay all your fees in stablecoins and earn yield without performing multiple steps.",
+      "pillarSecure": "Due to its smart-contract architecture, Pillar is more secure than other wallets.",
+      "pillarBenefits": "To enjoy these benefits, you need to deploy your wallets, which is a one-time cost that you pay on your first transaction.",
+      "pillarDeployment1": "Pillar doesn't make any money from the deployment, we cover the costs of",
+      "pillarDeployment2": "Gnosis for you.",
+      "checkAddress": "Before sending your assets to your address, check the current deployment costs:",
+      "understood": "Got it. Don’t show this message again."
     }
   },
 
