@@ -150,9 +150,6 @@ export const subscribeToPushNotificationsAction = () => {
 export const startListeningGetBalancesAction = () => {
   return (dispatch: Dispatch) => {
     if (disabledFetchingBalanceListener !== null) return;
-    console.log('====================================');
-    console.log('CALL START LISTENING', new Date());
-    console.log('====================================');
     disabledFetchingBalanceListener = setInterval(() => {
       dispatch(fetchAssetsBalanceNotificationsAction());
     }, 10000);
@@ -162,9 +159,6 @@ export const startListeningGetBalancesAction = () => {
 export const stopListeningGetBalancesAction = () => {
   return () => {
     if (disabledFetchingBalanceListener !== null) {
-      console.log('====================================');
-      console.log('CALL STOP LISTENING', new Date());
-      console.log('====================================');
       clearInterval(disabledFetchingBalanceListener);
       disabledFetchingBalanceListener = null;
     }
