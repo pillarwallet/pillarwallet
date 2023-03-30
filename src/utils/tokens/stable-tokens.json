@@ -31,6 +31,14 @@
     "decimals": 18,
     "iconUrl": "xdai"
   },
+   {
+    "chain": "xdai",
+    "address": "0x4ECaBa5870353805a9F068101A40E0f32ed605C6",
+    "name": "USDT",
+    "symbol": "USDT",
+    "decimals": 6,
+    "iconUrl": "usdt"
+  },
   {
     "chain": "binance",
     "address": "0x55d398326f99059fF775485246999027B3197955",
@@ -88,6 +96,14 @@
     "iconUrl": "usdc"
   },
   {
+    "chain": "polygon",
+    "address": "0xa3Fa99A148fA48D14Ed51d610c367C61876997F1",
+    "name": "MAI",
+    "symbol": "MAI",
+    "decimals": 18,
+    "iconUrl": "mai"
+  },
+  {
     "chain": "optimism",
     "address": "0xc40F949F8a4e094D1b49a23ea9241D289B7b2819",
     "name": "LUSD",
@@ -102,5 +118,13 @@
     "symbol": "FRAX",
     "decimals": 18,
     "iconUrl": "fxs"
+  },
+  {
+    "chain": "polygon",
+    "address": "0xB0B195aEFA3650A6908f15CdaC7D92F8a5791B0B",
+    "name": "BOB",
+    "symbol": "BOB",
+    "decimals": 18,
+    "iconUrl": "bob"
   }
 ]
