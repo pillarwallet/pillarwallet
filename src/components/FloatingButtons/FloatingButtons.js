@@ -39,6 +39,7 @@ export type Item = {|
   iconName?: IconName,
   iconSource?: ImageSource,
   onPress?: () => mixed,
+  customIcon?: any,
   disabled?: boolean,
 |};
 
@@ -63,6 +64,7 @@ const FloatingButtons = ({ items: falsyItems, applyBottomInset = true }: Props) 
           <ItemTouchable key={item.title} onPress={item.onPress} disabled={item.disabled} testID="FloatingButtonItem">
             <ItemIconWrapper>
               {!!item.iconName && <Icon name={item.iconName} />}
+              {!!item.customIcon && item.customIcon}
               {!!item.iconSource && <ItemIconImage source={item.iconSource} />}
             </ItemIconWrapper>
             <ItemTitle>{item.title}</ItemTitle>
