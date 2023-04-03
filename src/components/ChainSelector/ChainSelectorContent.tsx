@@ -35,15 +35,20 @@ import { useThemeColors } from 'utils/themes';
 import type { Chain } from 'models/Chain';
 
 interface Props {
+  supportedChain?: Chain[];
   selectedAssetChain: Chain;
   onSelectChain: (chain: Chain) => void;
 }
 
 const ChainSelectorContent = (props: Props) => {
-  const { selectedAssetChain, onSelectChain } = props;
-  const chains = useSupportedChains();
+  const { selectedAssetChain, onSelectChain, supportedChain } = props;
+  let chains = useSupportedChains();
   const chainConfig = useChainsConfig();
   const colors = useThemeColors();
+
+  if (supportedChain) {
+    chains = supportedChain.filter((chain) => chains.includes(chain));
+  }
 
   const onPressChain = (chain: Chain) => {
     // Basically second time select chain to disselect chain
