@@ -313,6 +313,7 @@
     "risk_assets": "{{percentage}}% of risky assets",
     "risk_stable": "{{percentage}}% of low risk stables",
     "add_tokens": "Add Tokens",
+    "custom_token_import": "Custom Token Import",
     "number_of_tokens": "{{tokens}} tokens",
     "find_token": "Find a token or input address",
     "manageTokenLists": "Manage token lists",
