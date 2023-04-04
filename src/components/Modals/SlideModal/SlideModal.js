@@ -21,7 +21,7 @@
 import * as React from 'react';
 import type { Node as ReactNode } from 'react';
 import styled, { withTheme } from 'styled-components/native';
-import { Dimensions } from 'react-native';
+import { Dimensions, Platform } from 'react-native';
 import type { LayoutEvent } from 'react-native/Libraries/Types/CoreEventTypes';
 import isEmpty from 'lodash.isempty';
 import pick from 'lodash.pick';
@@ -77,6 +77,7 @@ type OwnProps = {|
   fillHeight?: boolean,
   isSwipeClose?: boolean,
   backgroundElement?: Node,
+  propagateSwipe?: boolean,
 |};
 
 type Props = {|
@@ -169,6 +170,7 @@ class SlideModal extends React.Component<Props, State> {
       fillHeight,
       isSwipeClose,
       backgroundElement,
+      propagateSwipe,
     } = this.props;
 
     const customTheme = getTheme(this.props);
@@ -297,8 +299,11 @@ class SlideModal extends React.Component<Props, State> {
         }}
         {...fwdProps}
         avoidKeyboard={false}
+        propagateSwipe={propagateSwipe}
       >
-        {!!backgroundElement && <BackgroundWrapper>{backgroundElement}</BackgroundWrapper>}
+        {!!backgroundElement && (
+          <BackgroundWrapper modalHeight={this.state.contentHeight}>{backgroundElement}</BackgroundWrapper>
+        )}
         <ContentWrapper fullScreen={fullScreen} bgColor={backgroundColor} noTopPadding={noTopPadding}>
           <TouchableBackground activeOpacity={1} onPress={onClose} />
 
@@ -395,9 +400,12 @@ const HandleBar = styled.View`
 const BackgroundWrapper = styled.View`
   width: 100%;
   height: 100%
-  flex: 1
+  padding-top: ${Platform.OS === 'ios' ? spacing.large : 0}px;
+  padding-bottom: ${({ modalHeight }) => modalHeight || 0}px;
+
   position: absolute;
   top: 0;
   right: 0;
+
   background-color: ${({ theme }) => theme.colors.basic070};
 `;
