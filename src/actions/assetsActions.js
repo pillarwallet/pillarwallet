@@ -817,7 +817,7 @@ export const addTokensListAction = (tokenInfo: AddTokensItem) => {
         return;
       }
 
-      const tokens = jsonResponse.tokens
+      let tokens = jsonResponse.tokens
         ?.filter((token) => (isMainnet ? isMainnetChainId(token.chainId) : isTestnetChainId(token.chainId)))
         ?.map((token) => parseTokenListToken(token));
 
@@ -825,7 +825,18 @@ export const addTokensListAction = (tokenInfo: AddTokensItem) => {
 
       if (isEmpty(tokens)) return;
 
-      const token = { chain: tokenInfo.chain, ...jsonResponse, tokens };
+      if (tokenInfo.chain === CHAIN.OPTIMISM && jsonResponse.name === 'Optimism') {
+        tokens = tokens.filter((token) => token.chain === CHAIN.OPTIMISM);
+      }
+
+      const supportedChains = [];
+      tokens.forEach((token) => {
+        if (!supportedChains.includes(token.chain)) {
+          supportedChains.push(token.chain);
+        }
+      });
+
+      const token = { chain: tokenInfo.chain, ...jsonResponse, tokens, supportedChains };
 
       let newTokenList = [...addTokensList];
       if (tokenIndex !== -1) {

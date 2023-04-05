@@ -59,7 +59,6 @@ const testnetChainIds = [
   CHAIN_ID.BINANCE_TESTNET,
   CHAIN_ID.SOKOL,
   CHAIN_ID.MUMBAI,
-  CHAIN_ID.FUJI,
   CHAIN_ID.OPTIMISM_GOERLI,
   CHAIN_ID.ARBITRUM_NITRO,
 ];
@@ -69,14 +68,25 @@ const mainnetChainIds = [
   CHAIN_ID.BINANCE,
   CHAIN_ID.XDAI,
   CHAIN_ID.POLYGON,
-  CHAIN_ID.AVALANCHE,
   CHAIN_ID.OPTIMISM,
   CHAIN_ID.ARBITRUM,
 ];
 
-export const isTestnetChainId = (chainId: number) => testnetChainIds.some((id) => chainId === id);
+export const isTestnetChainId = (chainId: number) => {
+  const visibleAvalanche = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_CHAIN_SWITCH_43114);
+  if (visibleAvalanche) {
+    testnetChainIds.push(CHAIN_ID.FUJI);
+  }
+  return testnetChainIds.some((id) => chainId === id);
+};
 
-export const isMainnetChainId = (chainId: number) => mainnetChainIds.some((id) => chainId === id);
+export const isMainnetChainId = (chainId: number) => {
+  const visibleAvalanche = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_CHAIN_SWITCH_43114);
+  if (visibleAvalanche) {
+    mainnetChainIds.push(CHAIN_ID.AVALANCHE);
+  }
+  return mainnetChainIds.some((id) => chainId === id);
+};
 
 /**
  * Maps chain value to chain id, supporting testnet(s) for test env.
