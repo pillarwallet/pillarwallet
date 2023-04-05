@@ -77,6 +77,7 @@ type Props = {|
   style?: any,
   backdropDismissable?: boolean,
   isSwipeClose?: boolean,
+  propagateSwipe?: boolean,
 |};
 
 type State = {|
@@ -150,7 +151,14 @@ class Modal extends React.Component<Props, State> {
   render() {
     // swipeDirection is passed explicitly to work around issues with using
     // spread operator on union types
-    const { children, swipeDirection, backdropDismissable = false, isSwipeClose = false, ...props } = this.props;
+    const {
+      children,
+      swipeDirection,
+      backdropDismissable = false,
+      isSwipeClose = false,
+      propagateSwipe = true,
+      ...props
+    } = this.props;
     const { isVisible } = this.state;
 
     // render contents direrctly with overlay-like background if the modal was
@@ -162,7 +170,7 @@ class Modal extends React.Component<Props, State> {
     ) : (
       <RNModal
         isVisible={isVisible}
-        propagateSwipe
+        propagateSwipe={propagateSwipe}
         swipeDirection={swipeDirection ?? 'down'}
         onSwipeComplete={!isSwipeClose ? this.close : null}
         onBackdropPress={!backdropDismissable ? this.close : null}

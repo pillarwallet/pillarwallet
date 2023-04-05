@@ -90,6 +90,7 @@ function FloatingActions() {
       title: t('receive'),
       iconName: 'qrcode',
       onPress: onReceivePress,
+      disabled: !address,
     },
     isExchangeAvailable && {
       title: t('swap'),

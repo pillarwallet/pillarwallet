@@ -31,14 +31,13 @@ import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/legacy/Button';
 import QRCodeWithTheme from 'components/QRCode';
 import Toast from 'components/Toast';
-import ProfileImage from 'components/ProfileImage';
 import TextWithCopy from 'components/display/TextWithCopy';
 import Icon from 'components/core/Icon';
 
 // Utils
 import { spacing, fontStyles, fontSizes, appFont, borderRadiusSizes, lineHeights } from 'utils/variables';
 import { getAccountEnsName, isEtherspotAccount, getActiveAccount } from 'utils/accounts';
-import { getThemeColors } from 'utils/themes';
+import { getColorByTheme, getThemeColors } from 'utils/themes';
 import { useChainsConfig } from 'utils/uiConfig';
 import { getDeviceHeight } from 'utils/common';
 
@@ -83,7 +82,6 @@ const ReceiveModal: FC<IReceiveModal> = ({ address, onModalHide, theme }) => {
     setCloseFlag(true);
   };
 
-  const { username } = user;
   const ensName = getAccountEnsName(activeAccount);
 
   const buildDeployedList = () => {
@@ -101,58 +99,37 @@ const ReceiveModal: FC<IReceiveModal> = ({ address, onModalHide, theme }) => {
   return (
     <SlideModal
       onModalHide={onModalHide}
+      hideHeader
+      noTopPadding
       noPadding
       noClose
-      showHeader
       closeFlag={closeFlag}
-      centerFloatingItem={
-        !isEtherspotAccount(activeAccount) ? (
-          <ImageWrapper style={{ position: 'absolute', marginTop: -24 }}>
-            <ProfileImage userName={username == null ? address : username} diameter={48} />
-          </ImageWrapper>
-        ) : (
-          <ReceiveTitle>{t('receiveModal.etherspotTitle')}</ReceiveTitle>
-        )
-      }
+      propagateSwipe={false}
       backgroundElement={
         <BackgroundElementWrapper>
-          <QRCodeWrapper>
-            <QRCodeWithTheme value={address} size={200} />
-          </QRCodeWrapper>
+          {address && (
+            <QRCodeWrapper>
+              <QRCodeWithTheme value={address} size={200} />
+            </QRCodeWrapper>
+          )}
         </BackgroundElementWrapper>
       }
     >
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
-        <InfoView>
-          {!!ensName && (
-            <TextWithCopy
-              textToCopy={ensName}
-              toastText={t('toast.ensNameCopiedToClipboard')}
-              iconColor={colors.link}
-              textStyle={styles.ensName}
-              adjustsFontSizeToFit
-              numberOfLines={1}
-            >
-              {ensName}
-            </TextWithCopy>
-          )}
+        <ReceiveTitle>{t('receiveModal.etherspotTitle')}</ReceiveTitle>
 
-          {ensName ? (
-            <WalletAddress numberOfLines={1} adjustsFontSizeToFit>
-              {address}
-            </WalletAddress>
-          ) : (
+        <InfoView>
+          <AddressWrapper>
             <TextWithCopy
               toastText={t('toast.addressCopiedToClipboard')}
               textToCopy={address}
               textStyle={[styles.address, { color: colors.secondaryText }]}
               iconColor={colors.link}
-              adjustsFontSizeToFit
-              numberOfLines={1}
+              numberOfLines={2}
             >
-              {address}
+              {address || ''}
             </TextWithCopy>
-          )}
+          </AddressWrapper>
         </InfoView>
 
         <DeployInfoWrapper>
@@ -176,28 +153,28 @@ const ReceiveModal: FC<IReceiveModal> = ({ address, onModalHide, theme }) => {
             })}
           </ChainIconRow>
 
-          {isEtherspotAccount(activeAccount) && (
-            <InfoText style={styles.singleAddressInfo}>
-              {t('receiveModal.deployedOn', { deployed: buildDeployedList() })}
-            </InfoText>
-          )}
+          <InfoText style={styles.singleAddressInfo}>
+            {t('receiveModal.deployedOn', { deployed: buildDeployedList() })}
+          </InfoText>
 
           <InfoText color={colors.secondaryAccent} style={styles.singleAddressInfo}>
             {t('receiveModal.checkDeploymentStatus')}
           </InfoText>
         </DeployInfoWrapper>
 
-        <CopyButton>
-          <Button
-            title={t('button.copyAddress')}
-            onPress={() => handleCopyToClipboard(address)}
-            style={styles.copyButton}
-          />
-        </CopyButton>
+        <ButtonRow>
+          <CopyButton>
+            <Button
+              title={t('button.copyAddress')}
+              onPress={() => handleCopyToClipboard(address)}
+              style={styles.copyButton}
+            />
+          </CopyButton>
 
-        <ShareButton>
-          <Button transparent title={t('button.share')} onPress={handleAddressShare} />
-        </ShareButton>
+          <ShareButton>
+            <Icon name="open-link" color={colors.basic070} />
+          </ShareButton>
+        </ButtonRow>
       </ContentWrapper>
     </SlideModal>
   );
@@ -213,6 +190,7 @@ const styles = {
   address: {
     fontSize: fontSizes.medium,
     lineHeight: lineHeights.medium,
+    textAlign: 'center',
   },
   singleAddressInfo: {
     marginTop: spacing.medium,
@@ -229,29 +207,39 @@ const styles = {
 };
 
 const ContentWrapper = styled(SafeAreaView)`
-  padding: 10px ${spacing.layoutSides}px 30px;
+  padding: 0 ${spacing.layoutSides}px 30px;
   align-items: center;
 `;
 
-const WalletAddress = styled(Text)`
-  color: ${({ theme }) => theme.colors.secondaryText};
-  margin-top: ${spacing.mediumLarge}px;
-  text-align: center;
-  font-size: ${fontSizes.medium}px;
-  line-height: ${lineHeights.medium}px;
+const AddressWrapper = styled.View`
+  padding: 0 ${spacing.extraPlusLarge}px;
+`;
+
+const ButtonRow = styled.View`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: ${spacing.largePlus}px;
 `;
 
 const CopyButton = styled.View`
-  width: 100%;
+  flex: 1;
   justify-content: space-between;
-  margin-top: ${spacing.largePlus}px;
-  margin-bottom: ${spacing.small}px;
 `;
 
 const ShareButton = styled.View`
-  width: 100%;
-  justify-content: space-between;
-  margin-bottom: ${spacing.medium}px;
+  border-radius: 100px;
+  height: 48px;
+  width: 48px;
+  margin-left: ${spacing.large}px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic040' })};
 `;
 
 const InfoView = styled.View<{ marginTop?: number }>`
@@ -261,12 +249,6 @@ const InfoView = styled.View<{ marginTop?: number }>`
   max-height: ${DEVICE_HEIGHT * 0.75}px;
   padding: 0 ${spacing.extraLarge}px;
   ${({ marginTop }) => marginTop && `margin-top: ${marginTop}px;`}
-`;
-
-const ImageWrapper = styled.View`
-  width: 100%;
-  align-items: center;
-  justify-content: center;
 `;
 
 const InfoText = styled(Text)<{ color?: string }>`
@@ -286,7 +268,7 @@ const ReceiveTitle = styled.Text`
   justify-content: center;
   align-items: center;
   font-family: ${appFont.medium};
-  margin: ${spacing.small + spacing.extraLarge}px ${spacing.largePlus}px ${spacing.mediumLarge}px;
+  margin: ${spacing.large}px ${spacing.largePlus}px ${spacing.mediumLarge}px;
   color: ${({ theme }) => theme.colors.text};
 `;
 
@@ -336,16 +318,15 @@ const ChainDeployedIcon = styled(Icon)`
 
 const BackgroundElementWrapper = styled.View`
   width: 100%;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-top: 88px;
 `;
 
 const QRCodeWrapper = styled.View`
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  margin: ${spacing.largePlus}px;
   opacity: 0.8;
 `;

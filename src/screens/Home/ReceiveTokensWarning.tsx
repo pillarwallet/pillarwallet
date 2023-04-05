@@ -24,6 +24,7 @@ import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 import { useDispatch } from 'react-redux';
+import Lottie from 'lottie-react-native';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
@@ -34,7 +35,7 @@ import type { Chain } from 'models/Chain';
 
 // Utils
 import { images } from 'utils/images';
-import { spacing } from 'utils/variables';
+import { fontSizes, spacing } from 'utils/variables';
 import { calculateDeploymentFee } from 'utils/deploymentCost';
 import { useChainsConfig } from 'utils/uiConfig';
 
@@ -54,6 +55,11 @@ import Image from 'components/Image';
 import Icon from 'components/core/Icon';
 import CheckBoxWithText from 'components/core/CheckBoxWithText';
 
+// Hooks
+import { useDeploymentStatus } from 'hooks/deploymentStatus';
+
+const loader = require('assets/loaders/loader.json');
+
 interface IReceiveTokensWarning {
   theme: Theme;
 }
@@ -63,6 +69,8 @@ const ReceiveTokensWarning: FC<IReceiveTokensWarning> = ({ theme }) => {
   const dispatch = useDispatch();
   const { t, tRoot } = useTranslationWithPrefix('home.receiveTokenWarning');
   const { pillarIcon } = images(theme);
+
+  const orderedChains = [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.OPTIMISM, CHAIN.ARBITRUM, CHAIN.ETHEREUM];
 
   const onContinue: () => void = navigation.getParam('onContinue');
 
@@ -74,6 +82,7 @@ const ReceiveTokensWarning: FC<IReceiveTokensWarning> = ({ theme }) => {
   const fiatCurrency = useFiatCurrency();
   const chainRatesPerChain = useRatesPerChain();
   const gasInfoPerChain = useGasInfoPerChain();
+  const { isDeployedOnChain } = useDeploymentStatus();
 
   useEffect(() => {
     if (!chains?.length) return;
@@ -108,27 +117,37 @@ const ReceiveTokensWarning: FC<IReceiveTokensWarning> = ({ theme }) => {
 
         <InfoWrapper>
           <InfoRow noMargin>
-            <EmojiText>🔥</EmojiText>
+            <EmojiWrapper>
+              <EmojiText>🔥</EmojiText>
+            </EmojiWrapper>
             <InfoText>{t('pillarDescription')}</InfoText>
           </InfoRow>
 
           <InfoRow>
-            <EmojiText>⛽️</EmojiText>
+            <EmojiWrapper>
+              <EmojiText>⛽️</EmojiText>
+            </EmojiWrapper>
             <InfoText>{t('stableCoinDetails')}</InfoText>
           </InfoRow>
 
           <InfoRow>
-            <EmojiText>🔐</EmojiText>
+            <EmojiWrapper>
+              <EmojiText>🔐</EmojiText>
+            </EmojiWrapper>
             <InfoText>{t('pillarSecure')}</InfoText>
           </InfoRow>
 
           <InfoRow>
-            <EmojiText>💰</EmojiText>
+            <EmojiWrapper>
+              <EmojiText>💰</EmojiText>
+            </EmojiWrapper>
             <InfoText>{t('pillarBenefits')}</InfoText>
           </InfoRow>
 
           <InfoRow>
-            <EmojiText>🤝</EmojiText>
+            <EmojiWrapper>
+              <EmojiText>🤝</EmojiText>
+            </EmojiWrapper>
             <InfoText>
               {/* @ts-ignore: Icon.name doesn't recognize joint strings */}
               {t('pillarDeployment1')} <Icon name={CHAIN.XDAI + '16'} /> {t('pillarDeployment2')}
@@ -136,22 +155,31 @@ const ReceiveTokensWarning: FC<IReceiveTokensWarning> = ({ theme }) => {
           </InfoRow>
 
           <InfoRow>
-            <EmojiText>⚠️</EmojiText>
+            <EmojiWrapper>
+              <EmojiText>⚠️</EmojiText>
+            </EmojiWrapper>
             <InfoText>{t('checkAddress')}</InfoText>
           </InfoRow>
         </InfoWrapper>
 
         <DeployCostWrapper>
-          {chains.map((chain) => {
-            if (!chain || chain === CHAIN.XDAI) return null;
-
+          {orderedChains.map((chain) => {
             const { titleShort } = chainsConfig[chain];
 
             return (
               <DeployRow>
                 <ChainIcon name={chain + '16'} style={{ marginRight: spacing.small }} />
                 <DeployText>{titleShort}</DeployText>
-                <DeployText right>{deploymentFee(chain)?.fiatValue}</DeployText>
+                {!isDeployedOnChain?.[chain] && !deploymentFee(chain)?.fiatValue ? (
+                  <LottieWrapper>
+                    {/* @ts-ignore: Lottie not recognized as JSX element by typescript */}
+                    <Lottie source={loader} autoPlay loop style={{ height: fontSizes.medium }} />
+                  </LottieWrapper>
+                ) : (
+                  <DeployText right>
+                    {isDeployedOnChain?.[chain] ? 'Deployed!' : deploymentFee(chain)?.fiatValue}
+                  </DeployText>
+                )}
               </DeployRow>
             );
           })}
@@ -191,6 +219,11 @@ const InfoRow = styled.View<{ noMargin?: boolean }>`
   display: flex;
   flex-direction: row;
   ${({ noMargin }) => !noMargin && `margin-top: ${spacing.small}px;`}
+`;
+
+const EmojiWrapper = styled.View`
+  display: flex;
+  flex-direction: column;
 `;
 
 const EmojiText = styled(Text)`
@@ -234,4 +267,14 @@ const CopyButton = styled.View`
   justify-content: space-between;
   margin-top: ${spacing.largePlus}px;
   margin-bottom: ${spacing.small}px;
+`;
+
+const LottieWrapper = styled.View`
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  flex-direction: row;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 `;
