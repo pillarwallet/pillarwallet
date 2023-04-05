@@ -36,6 +36,9 @@ import Spinner from 'components/Spinner';
 // Actions
 import { addTokensListAction } from 'actions/assetsActions';
 
+// Constants
+import { ETHERSPOT_POPULAR_MULTICHAIN } from 'constants/assetsConstants';
+
 // Selectors
 import { useRootSelector, addTokensListSelector } from 'selectors';
 
@@ -60,13 +63,17 @@ export default function () {
   const [selectedChain, setSelectedChain] = React.useState(null);
   const [query, setQuery] = React.useState('');
 
+  const isEtherspotPopularMultichain = tokenInfo.name === ETHERSPOT_POPULAR_MULTICHAIN;
+
   const tokensAccordingToChain = filteredWithChain(fetchedTokenInfo?.tokens, selectedChain);
 
   const searchItems = getMatchingTokens(tokensAccordingToChain, query);
 
   const renderItem = ({ item: token }) => {
     if (!token) return;
-    return <AddTokenListItem listType="togglesList" {...token} onPress={() => {}} />;
+    return (
+      <AddTokenListItem listType="togglesList" {...token} isEtherspotPopularMultichain={isEtherspotPopularMultichain} />
+    );
   };
 
   function getItemKey(item) {
@@ -80,6 +87,8 @@ export default function () {
     if (isFetching) return <Spinner size={40} />;
     return <EmptyStateParagraph wide title={t('label.nothingFound')} />;
   };
+
+  const title = isEtherspotPopularMultichain ? t('label.pillarDefaultList') : tokenInfo.name;
 
   return (
     <Container>

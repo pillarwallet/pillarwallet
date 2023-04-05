@@ -38,6 +38,9 @@ import { isProdEnv } from 'utils/environment';
 // Selector
 import { customTokensListSelector, useRootSelector } from 'selectors';
 
+// Constants
+import { ETHERSPOT_POPULAR_MULTICHAIN } from 'constants/assetsConstants';
+
 // Actions
 import { manageCustomTokens } from 'actions/assetsActions';
 
@@ -56,6 +59,7 @@ type Props = {
   mainnetTokens?: number;
   onPress?: () => void;
   style?: ViewStyleProp;
+  isEtherspotPopularMultichain?: boolean;
   rest?: any;
 };
 
@@ -71,27 +75,40 @@ function AddTokenListItem({
   testnetTokens,
   mainnetTokens,
   listType = 'normal',
+  isEtherspotPopularMultichain,
   ...rest
 }: Props) {
   const { t } = useTranslation();
   const customTokensList = useRootSelector(customTokensListSelector);
   const dispatch = useDispatch();
   const config = useChainConfig(chain);
-  const title = config.title;
+  const networkName = config?.title;
 
   const isMainnet = isProdEnv();
 
   const token: Asset = { chain, name, iconUrl, ...rest };
 
-  const [enableToken, setEnableToken] = useState(false);
+  const [enableToken, setEnableToken] = useState(isEtherspotPopularMultichain);
 
   useEffect(() => {
+    if (isEtherspotPopularMultichain || listType !== 'togglesList') return;
     setEnableToken(isTokenAvailableInList(customTokensList, token));
   }, [customTokensList]);
 
   const onChangeToggle = async () => {
     dispatch(manageCustomTokens(token));
   };
+
+  const title =
+    listType === 'searchList'
+      ? token.symbol
+      : name === ETHERSPOT_POPULAR_MULTICHAIN
+      ? t('label.pillarDefaultList')
+      : name;
+  const subTitle =
+    listType === 'searchList'
+      ? name + t('label.erc20')
+      : t('label.symbol_with_network', { network: networkName, symbol: token.symbol });
 
   return (
     <Container
@@ -104,17 +121,13 @@ function AddTokenListItem({
       <TokenIcon url={iconUrl || logoURI} chain={chain} setMarginRight />
 
       <TitleContainer>
-        <NormalText numberOfLines={1}>{listType === 'searchList' ? token.symbol : name}</NormalText>
-        {listType !== 'normal' && (
-          <Subtitle numberOfLines={1}>
-            {listType === 'searchList'
-              ? name + t('label.erc20')
-              : t('label.symbol_with_network', { network: title, symbol: token.symbol })}
-          </Subtitle>
-        )}
+        <NormalText numberOfLines={1}>{title}</NormalText>
+        {listType !== 'normal' && <Subtitle numberOfLines={1}>{subTitle}</Subtitle>}
       </TitleContainer>
 
-      {listType === 'togglesList' && <Switcher isOn={enableToken} onToggle={onChangeToggle} />}
+      {listType === 'togglesList' && (
+        <Switcher isOn={enableToken} disabled={isEtherspotPopularMultichain} onToggle={onChangeToggle} />
+      )}
 
       {listType === 'normal' && (
         <NormalText numberOfLines={1}>

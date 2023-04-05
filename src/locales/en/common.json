@@ -322,7 +322,8 @@
     "contractAddress": "Contract Address",
     "erc20": " (ERС-20)",
     "tokenExists": "This token is already exists",
-    "addedCustomToken": "Add a new custom token"
+    "addedCustomToken": "Add a new custom token",
+    "pillarDefaultList": "Pillar Default List"
   },
 
   "button": {
