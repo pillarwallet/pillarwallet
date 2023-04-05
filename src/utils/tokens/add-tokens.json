@@ -4,8 +4,8 @@
     "link": "https://static.optimism.io/optimism.tokenlist.json",
     "name": "Optimism",
     "logoURI": "https://ethereum-optimism.github.io/optimism.svg",
-    "testnetTokens": 38,
-    "mainnetTokens": 192
+    "testnetTokens": 19,
+    "mainnetTokens": 100
   },
   {
     "chain": "optimism",

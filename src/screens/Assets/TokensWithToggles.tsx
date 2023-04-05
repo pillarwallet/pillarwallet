@@ -92,8 +92,12 @@ export default function () {
 
   return (
     <Container>
-      <HeaderBlock navigation={navigation} centerItems={[{ title }]} noPaddingTop />
-      <ChainSelectorContent selectedAssetChain={selectedChain} onSelectChain={setSelectedChain} />
+      <HeaderBlock navigation={navigation} centerItems={[{ title: tokenInfo.name }]} noPaddingTop />
+      <ChainSelectorContent
+        supportedChain={fetchedTokenInfo?.supportedChains}
+        selectedAssetChain={selectedChain}
+        onSelectChain={setSelectedChain}
+      />
 
       <SearchBar
         inputStyle={{ fontSize: fontSizes.big }}
