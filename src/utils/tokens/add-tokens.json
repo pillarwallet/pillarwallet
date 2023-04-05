@@ -102,5 +102,13 @@
     "logoURI": "ipfs://QmQ9GCVmLQkbPohxKeCYkbpmwfTvHXrY64TmBsPQAZdbqZ",
     "testnetTokens": 5,
     "mainnetTokens": 166
+  },
+  {
+    "chain": "multichain",
+    "link": "https://raw.githubusercontent.com/etherspot/etherspot-popular-tokens-tokenlist/master/multichain.tokenlist.json",
+    "name": "EtherspotPopularMultichain",
+    "logoURI": "pillar",
+    "testnetTokens": 0,
+    "mainnetTokens": 264
   }
 ]

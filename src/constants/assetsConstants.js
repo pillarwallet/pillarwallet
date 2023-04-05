@@ -169,3 +169,5 @@ export const ETHERSPOT_DEFAULT_STABLE_LIST = 'EtherspotDefaultStablesList';
 export const FETCHING_DEFAULT_LIST = 'FETCHING_DEFAULT_LIST';
 export const SET_DEFAULT_LIST = 'SET_DEFAULT_LIST';
 export const SET_STABLE_DEFAULT_LIST = 'SET_STABLE_DEFAULT_LIST';
+
+export const ETHERSPOT_POPULAR_MULTICHAIN = 'EtherspotPopularMultichain';
