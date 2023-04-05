@@ -170,5 +170,4 @@ export const FETCHING_DEFAULT_LIST = 'FETCHING_DEFAULT_LIST';
 export const SET_DEFAULT_LIST = 'SET_DEFAULT_LIST';
 export const SET_STABLE_DEFAULT_LIST = 'SET_STABLE_DEFAULT_LIST';
 
-export const PILLAR_DEFAULT_LIST = 'Pillar Default List';
 export const ETHERSPOT_POPULAR_MULTICHAIN = 'EtherspotPopularMultichain';

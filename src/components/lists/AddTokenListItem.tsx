@@ -39,7 +39,7 @@ import { isProdEnv } from 'utils/environment';
 import { customTokensListSelector, useRootSelector } from 'selectors';
 
 // Constants
-import { PILLAR_DEFAULT_LIST, ETHERSPOT_POPULAR_MULTICHAIN } from 'constants/assetsConstants';
+import { ETHERSPOT_POPULAR_MULTICHAIN } from 'constants/assetsConstants';
 
 // Actions
 import { manageCustomTokens } from 'actions/assetsActions';
@@ -100,7 +100,11 @@ function AddTokenListItem({
   };
 
   const title =
-    listType === 'searchList' ? token.symbol : name === ETHERSPOT_POPULAR_MULTICHAIN ? PILLAR_DEFAULT_LIST : name;
+    listType === 'searchList'
+      ? token.symbol
+      : name === ETHERSPOT_POPULAR_MULTICHAIN
+      ? t('label.pillarDefaultList')
+      : name;
   const subTitle =
     listType === 'searchList'
       ? name + t('label.erc20')

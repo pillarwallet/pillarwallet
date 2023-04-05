@@ -37,7 +37,7 @@ import Spinner from 'components/Spinner';
 import { addTokensListAction } from 'actions/assetsActions';
 
 // Constants
-import { PILLAR_DEFAULT_LIST, ETHERSPOT_POPULAR_MULTICHAIN } from 'constants/assetsConstants';
+import { ETHERSPOT_POPULAR_MULTICHAIN } from 'constants/assetsConstants';
 
 // Selectors
 import { useRootSelector, addTokensListSelector } from 'selectors';
@@ -88,7 +88,7 @@ export default function () {
     return <EmptyStateParagraph wide title={t('label.nothingFound')} />;
   };
 
-  const title = isEtherspotPopularMultichain ? PILLAR_DEFAULT_LIST : tokenInfo.name;
+  const title = isEtherspotPopularMultichain ? t('label.pillarDefaultList') : tokenInfo.name;
 
   return (
     <Container>
