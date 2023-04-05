@@ -31,6 +31,9 @@ import DefaultTokens from 'utils/tokens/tokens.json';
 // Constants
 import { TOKENS, STABLES, ALL } from 'constants/walletConstants';
 
+// Selectors
+import { useRootSelector, customTokensListSelector } from 'selectors';
+
 // Type
 import type { Chain } from 'models/Chain';
 
@@ -75,6 +78,7 @@ export function useStableAssets(chain?: Chain) {
 export function useNonStableAssets(chain?: Chain) {
   const fromAssets: any = useFromAssets();
   const { percentage: stablePercentage } = useStableAssets(chain);
+  const customTokensList = useRootSelector(customTokensListSelector);
 
   let assets = [...fromAssets];
   if (chain) {
@@ -85,18 +89,25 @@ export function useNonStableAssets(chain?: Chain) {
 
   const percentage: number = 100 - stablePercentage;
 
-  if (!tokens?.[0])
+  if (!tokens?.[0]) {
+    const filteredCustomAssets = filteredWithDefaultAssets(DefaultTokens, customTokensList, chain);
+    const totalTokens = [...DefaultTokens, ...filteredCustomAssets];
     return {
-      tokens: DefaultTokens,
+      tokens: totalTokens,
       percentage,
       totalPercentage: 100,
     };
+  }
 
   tokens.sort((a, b) => b?.balance?.balanceInFiat - a?.balance?.balanceInFiat);
 
   const filterDefaultAssets = filteredWithDefaultAssets(tokens, DefaultTokens);
 
   tokens = [...tokens, ...filterDefaultAssets];
+
+  const filteredCustomAssets = filteredWithDefaultAssets(tokens, customTokensList, chain);
+
+  tokens = [...tokens, ...filteredCustomAssets];
 
   return { tokens, percentage, totalPercentage: isNaN(percentage) ? 0 : percentage };
 }

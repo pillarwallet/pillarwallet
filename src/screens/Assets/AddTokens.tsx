@@ -22,6 +22,7 @@ import * as React from 'react';
 import { FlatList } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useTranslation } from 'translations/translate';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // Components
 import { Container } from 'components/layout/Layout';
@@ -29,6 +30,8 @@ import HeaderBlock from 'components/HeaderBlock';
 import ChainSelectorContent from 'components/ChainSelector/ChainSelectorContent';
 import AddTokenListItem from 'components/lists/AddTokenListItem';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import Icon from 'components/core/Icon';
+import FloatingButtons from 'components/FloatingButtons';
 
 // Utils
 import { filteredWithChain } from 'utils/etherspot';
@@ -37,7 +40,7 @@ import AddTokensLinks from 'utils/tokens/add-tokens.json';
 import { isProdEnv } from 'utils/environment';
 
 // Constants
-import { TOKENS_WITH_TOGGLES } from 'constants/navigationConstants';
+import { TOKENS_WITH_TOGGLES, MANAGE_TOKEN_LISTS } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // Selector
@@ -46,6 +49,7 @@ import { useAccounts } from 'selectors';
 export function AddTokens() {
   const navigation = useNavigation();
   const { t } = useTranslation();
+  const safeArea = useSafeAreaInsets();
 
   const accounts = useAccounts();
   const activeAccount = getActiveAccount(accounts);
@@ -77,6 +81,14 @@ export function AddTokens() {
     return name + '__' + chain;
   }
 
+  const buttons = [
+    {
+      title: t('label.custom_token_import'),
+      customIcon: <Icon name="tokens" width={28} height={28} />,
+      onPress: () => navigation.navigate(MANAGE_TOKEN_LISTS),
+    },
+  ];
+
   return (
     <Container>
       <HeaderBlock navigation={navigation} centerItems={[{ title: t('label.add_tokens') }]} noPaddingTop />
@@ -88,8 +100,13 @@ export function AddTokens() {
         data={tokensAccordingToChain}
         renderItem={({ item }) => renderItem(item)}
         keyExtractor={getItemKey}
+        contentContainerStyle={{
+          paddingBottom: safeArea.bottom + FloatingButtons.SCROLL_VIEW_BOTTOM_INSET,
+        }}
         ListEmptyComponent={() => <EmptyStateParagraph wide title={t('label.nothingFound')} />}
       />
+
+      <FloatingButtons items={buttons} />
     </Container>
   );
 }
