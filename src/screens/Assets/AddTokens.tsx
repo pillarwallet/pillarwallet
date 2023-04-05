@@ -58,7 +58,12 @@ export function AddTokens() {
   const isMainnet = isProdEnv();
 
   const [selectedChain, setSelectedChain] = React.useState(null);
-  const tokensAccordingToChain = filteredWithChain(AddTokensLinks, !isSmartWallet ? CHAIN.ETHEREUM : selectedChain);
+  let tokensAccordingToChain = filteredWithChain(AddTokensLinks, !isSmartWallet ? CHAIN.ETHEREUM : selectedChain);
+
+  if (selectedChain) {
+    const multiChainTokens = AddTokensLinks.filter((token) => token.chain === 'multichain');
+    tokensAccordingToChain = [...tokensAccordingToChain, ...multiChainTokens];
+  }
 
   tokensAccordingToChain?.sort((tokenA, tokenB) =>
     isMainnet ? tokenB.mainnetTokens - tokenA.mainnetTokens : tokenB.testnetTokens - tokenA.testnetTokens,
