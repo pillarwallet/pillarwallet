@@ -18,8 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { FC, useCallback, useState } from 'react';
-import { Share } from 'react-native';
+import React, { FC, useState } from 'react';
 import Clipboard from '@react-native-community/clipboard';
 import { SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
@@ -36,8 +35,7 @@ import Icon from 'components/core/Icon';
 
 // Utils
 import { spacing, fontStyles, fontSizes, appFont, borderRadiusSizes, lineHeights } from 'utils/variables';
-import { getAccountEnsName, isEtherspotAccount, getActiveAccount } from 'utils/accounts';
-import { getColorByTheme, getThemeColors } from 'utils/themes';
+import { getThemeColors } from 'utils/themes';
 import { useChainsConfig } from 'utils/uiConfig';
 import { getDeviceHeight } from 'utils/common';
 
@@ -46,8 +44,6 @@ import type { Theme } from 'models/Theme';
 
 // Selectors
 import { useSupportedChains } from 'selectors/chains';
-import { accountsSelector, useRootSelector } from 'selectors';
-import { useUser } from 'selectors/user';
 
 // Hooks
 import { useDeploymentStatus } from 'hooks/deploymentStatus';
@@ -63,13 +59,6 @@ interface IReceiveModal {
 
 const ReceiveModal: FC<IReceiveModal> = ({ address, onModalHide, theme }) => {
   const [closeFlag, setCloseFlag] = useState(false);
-  const user = useUser();
-  const accounts = useRootSelector(accountsSelector);
-  const activeAccount = getActiveAccount(accounts);
-
-  const handleAddressShare = useCallback(() => {
-    Share.share({ title: t('title.publicAddress'), message: address });
-  }, [address]);
 
   const colors = getThemeColors(theme);
   const { isDeployedOnChain } = useDeploymentStatus();
@@ -81,8 +70,6 @@ const ReceiveModal: FC<IReceiveModal> = ({ address, onModalHide, theme }) => {
     Toast.show({ message: t('toast.addressCopiedToClipboard'), emoji: 'ok_hand', autoClose: true });
     setCloseFlag(true);
   };
-
-  const ensName = getAccountEnsName(activeAccount);
 
   const buildDeployedList = () => {
     const deployedChains: string[] = chains.filter((chain) => !!isDeployedOnChain?.[chain]);
@@ -170,10 +157,6 @@ const ReceiveModal: FC<IReceiveModal> = ({ address, onModalHide, theme }) => {
               style={styles.copyButton}
             />
           </CopyButton>
-
-          <ShareButton>
-            <Icon name="open-link" color={colors.basic070} />
-          </ShareButton>
         </ButtonRow>
       </ContentWrapper>
     </SlideModal>
@@ -227,19 +210,6 @@ const ButtonRow = styled.View`
 const CopyButton = styled.View`
   flex: 1;
   justify-content: space-between;
-`;
-
-const ShareButton = styled.View`
-  border-radius: 100px;
-  height: 48px;
-  width: 48px;
-  margin-left: ${spacing.large}px;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  background-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic040' })};
 `;
 
 const InfoView = styled.View<{ marginTop?: number }>`

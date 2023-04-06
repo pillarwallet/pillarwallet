@@ -37,7 +37,7 @@ import Banner from 'components/Banner/Banner';
 import WalletMigrationArchanovaBanner from 'screens/WalletMigrationArchanova/Banner';
 
 // Constants
-import { MENU_SETTINGS, CONTACTS_FLOW, STORYBOOK, MANAGE_TOKEN_LISTS } from 'constants/navigationConstants';
+import { MENU_SETTINGS, CONTACTS_FLOW, STORYBOOK, ADD_TOKENS } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
@@ -89,7 +89,7 @@ const Menu = () => {
   const goToSettings = () => navigation.navigate(MENU_SETTINGS);
   const goToInviteFriends = () => navigation.navigate(CONTACTS_FLOW);
   const goToStorybook = () => navigation.navigate(STORYBOOK);
-  const goToManageTokenLists = () => navigation.navigate(MANAGE_TOKEN_LISTS);
+  const goToManageTokenLists = () => navigation.navigate(ADD_TOKENS);
 
   const goToSupportConversations = () => Replies.show();
   const goToKnowledgebase = () => Linking.openURL(knowledgebaseUrl);
