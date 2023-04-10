@@ -99,7 +99,7 @@ const ReceiveTokensWarning: FC<IReceiveTokensWarning> = ({ theme }) => {
       if (!chainRates || !gasInfo?.gasPrice?.fast) return null;
       return calculateDeploymentFee(chain, chainRates, fiatCurrency, gasInfo);
     },
-    [chainRatesPerChain, chainRatesPerChain, fiatCurrency],
+    [chainRatesPerChain, chainRatesPerChain, fiatCurrency, gasInfoPerChain],
   );
 
   const onSubmit = () => {
@@ -212,7 +212,7 @@ const PillarIcon = styled(Image)`
 `;
 
 const InfoWrapper = styled.View`
-  padding: 0 20px;
+  padding: 0px 20px 0px 0px;
 `;
 
 const InfoRow = styled.View<{ noMargin?: boolean }>`
@@ -235,7 +235,7 @@ const InfoText = styled(Text)`
 `;
 
 const DeployCostWrapper = styled.View`
-  margin: ${spacing.small}px ${spacing.largePlus * 2}px 0;
+  margin: ${spacing.small}px ${spacing.largePlus}px 0;
 `;
 
 const DeployRow = styled.View`
@@ -258,7 +258,6 @@ const ChainIcon = styled(Icon)`
 const CheckBoxWrapper = styled.View`
   display: flex;
   justify-content: center;
-  align-items: center;
   margin-top: ${spacing.extraLarge}px;
 `;
 
