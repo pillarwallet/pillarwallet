@@ -351,8 +351,6 @@ jobs:
               cd ~/pillarwallet
               chmod +x .circleci/announceURLs.sh
               .circleci/announceURLs.sh "pillarwallet" "$CIRCLE_BRANCH" "ios" "$(cat ~/pillarwallet/ios/output/gym/ios-s3-URL-feature.txt)" "$(cat ~/pillarwallet/buildNumber.txt)"
-              chmod +x .circleci/announceDeployment.sh
-              .circleci/announceDeployment.sh "Pillar Wallet" "*Prod* iOS internal track - Tests pending" "x.xxx.xx" "$(cat ~/pillarwallet/ios/output/gym/ios-s3-URL-feature.txt)"
             fi
       - slack/status:
           fail_only: true
@@ -473,8 +471,6 @@ jobs:
               cd ~/pillarwallet
               chmod +x .circleci/announceURLs.sh
               .circleci/announceURLs.sh "pillarwallet" "$CIRCLE_BRANCH" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/staging/android-s3-URL-feature.txt)" "$(cat ~/pillarwallet/buildNumber.txt)"
-              chmod +x .circleci/announceDeployment.sh
-              .circleci/announceDeployment.sh "Pillar Wallet" "*Prod* Android internal track - Tests pending" "x.xxx.xx" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/staging/android-s3-URL-feature.txt)"
             fi
       - slack/status:
           fail_only: true
@@ -813,8 +809,8 @@ jobs:
             .circleci/announceURLs.sh "pillarwallet" "production" "ios" "$IOS_URL" "$APP_VERSION"
             .circleci/announceURLs.sh "pillarwallet" "production" "android" "$ANDROID_URL" "$APP_VERSION"
             chmod +x .circleci/announceProdBuilds.sh
-            .circleci/announceProdBuilds.sh "Pillar Wallet" "*Prod* Android internal track - Тests pending" "$(cat /tmp/workspace/build-num/app_version.txt)" "$(cat ~/pillarwallet/support_description.txt)" "$ANDROID_URL"
             .circleci/announceProdBuilds.sh "Pillar Wallet" "*Prod* iOS internal track - Тests pending" "$(cat /tmp/workspace/build-num/app_version.txt)" "$(cat ~/pillarwallet/support_description.txt)" "$IOS_URL"
+            .circleci/announceProdBuilds.sh "Pillar Wallet" "*Prod* Android internal track - Тests pending" "$(cat /tmp/workspace/build-num/app_version.txt)" "$(cat ~/pillarwallet/support_description.txt)" "$ANDROID_URL"            
 
 workflows:
   version: 2.1
