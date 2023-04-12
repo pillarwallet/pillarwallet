@@ -22,14 +22,11 @@ import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
 import { isEmpty } from 'lodash';
 import { useTranslationWithPrefix } from 'translations/translate';
-import { Platform } from 'react-native';
-import { useDispatch } from 'react-redux';
 
 // Components
 import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
-import Tooltip from 'components/Tooltip';
 
 // Constants
 import {
@@ -42,7 +39,6 @@ import {
 // Utils
 import { isArchanovaAccount } from 'utils/accounts';
 import { sumRecord } from 'utils/bigNumber';
-import { spacing } from 'utils/variables';
 
 // Selectors
 import {
@@ -55,19 +51,13 @@ import {
 import { accountWalletBalancePerChainSelector } from 'selectors/totalBalances';
 import { useArchanovaWalletStatus } from 'selectors/archanova';
 
-// Actions
-import { dismissSignInDeFiTooltipAction } from 'actions/appSettingsActions';
-
 function FloatingActions() {
-  const { t, tRoot } = useTranslationWithPrefix('home.actions');
+  const { t } = useTranslationWithPrefix('home.actions');
   const navigation = useNavigation();
-  const dispatch = useDispatch();
 
   const address = useRootSelector(activeAccountAddressSelector);
   const viewedReceiveTokensWarning = useRootSelector(viewedReceiveTokensWarningSelector);
-  const { signInDeFiTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
   const isExchangeAvailable = useIsExchangeAvailable();
-  const [visibleTooltip, setVisibleTooltip] = React.useState(false);
 
   const { isSendEnabled, isExchangeEnabled } = useEnabledActions();
 
@@ -111,36 +101,11 @@ function FloatingActions() {
     },
   ];
 
-  React.useEffect(() => {
-    if (!signInDeFiTooltipDismissed) {
-      setTimeout(() => {
-        setVisibleTooltip(true);
-      }, 4000);
-      setTimeout(() => {
-        setVisibleTooltip(false);
-      }, 15000);
-    } else {
-      setVisibleTooltip(false);
-    }
-  }, [signInDeFiTooltipDismissed]);
-
   const onPressButton = () => {
     navigation.navigate(CONNECT_FLOW);
-    dispatch(dismissSignInDeFiTooltipAction());
   };
 
-  return (
-    <>
-      <Tooltip
-        isVisible={visibleTooltip}
-        body={tRoot('tooltip.signInDeFi')}
-        wrapperStyle={[wrapperStyle, { left: isExchangeAvailable ? spacing.largePlus * 5 : spacing.largePlus * 3 }]}
-        onPress={onPressButton}
-        positionOnBottom={false}
-      />
-      <FloatingButtons items={items} />
-    </>
-  );
+  return <FloatingButtons items={items} />;
 }
 
 const useEnabledActions = () => {
@@ -155,14 +120,6 @@ const useEnabledActions = () => {
     isSendEnabled: true,
     isExchangeEnabled: isEnabled,
   };
-};
-
-const wrapperStyle = {
-  zIndex: 9999,
-  alignSelf: 'center',
-  position: 'relative',
-  width: 1,
-  bottom: Platform.OS === 'ios' ? '14.5%' : '11%',
 };
 
 export default FloatingActions;

@@ -23,7 +23,6 @@ import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
 import { Platform } from 'react-native';
-import { useDispatch } from 'react-redux';
 import InAppBrowser from 'react-native-inappbrowser-reborn';
 import { useNavigation } from 'react-navigation-hooks';
 
@@ -43,12 +42,8 @@ import { showServiceLaunchErrorToast } from 'utils/inAppBrowser';
 // Hooks
 import { useAppHoldings } from 'hooks/apps';
 
-// Actions
-import { dismissAddCashTooltipAction } from 'actions/appSettingsActions';
-
 // Components
 import Text from 'components/core/Text';
-import Tooltip from 'components/Tooltip';
 import AddCashModal from 'screens/AddCash/modal/AddCashModal';
 import Modal from 'components/Modal';
 
@@ -66,7 +61,6 @@ const BalanceSection: FC<IBalanceSection> = ({ balanceInFiat, changeInFiat, show
   const { t, tRoot } = useTranslationWithPrefix('home.balance');
   const colors = useThemeColors();
   const navigation = useNavigation();
-  const dispatch = useDispatch();
 
   const fiatCurrency = useFiatCurrency();
   const activeAccount = useActiveAccount();
@@ -76,25 +70,10 @@ const BalanceSection: FC<IBalanceSection> = ({ balanceInFiat, changeInFiat, show
   const formattedChange = formatFiatChangeExtended(changeInFiat, initialBalance, fiatCurrency);
 
   balanceInFiat = balanceInFiat.plus(totalBalanceOfHoldings);
-  const balanceInFiatString = balanceInFiat.toString();
 
-  const { addCashTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
   const viewedReceiveTokensWarning = useRootSelector(viewedReceiveTokensWarningSelector);
 
-  const visibleAddCashTooltip = !addCashTooltipDismissed && parseFloat(balanceInFiatString) === 0.0;
-
-  const [visibleTooltip, setVisibleTooltip] = useState(false);
   const [addCashUrl, setAddCashUrl] = useState(null);
-
-  useEffect(() => {
-    if (visibleAddCashTooltip) {
-      setTimeout(() => {
-        setVisibleTooltip(true);
-      }, 3000);
-    } else {
-      setVisibleTooltip(false);
-    }
-  }, [addCashTooltipDismissed, balanceInFiat, visibleAddCashTooltip]);
 
   const openBrowser = async (url: string) => {
     const isAvailable = await InAppBrowser.isAvailable();
@@ -122,7 +101,6 @@ const BalanceSection: FC<IBalanceSection> = ({ balanceInFiat, changeInFiat, show
 
   const openAddCashModal = () => {
     Modal.open(() => <AddCashModal setAddCashUrl={setAddCashUrl} />);
-    dispatch(dismissAddCashTooltipAction());
   };
 
   const onAddCashPress = () => {
@@ -156,14 +134,6 @@ const BalanceSection: FC<IBalanceSection> = ({ balanceInFiat, changeInFiat, show
           </SecondColumn>
         )}
       </Container>
-      {!isKeyBasedAccount(activeAccount) && (
-        <Tooltip
-          isVisible={visibleTooltip}
-          body={tRoot('tooltip.start_by_cash')}
-          wrapperStyle={wrapperStyle}
-          onPress={onAddCashPress}
-        />
-      )}
     </>
   );
 };
