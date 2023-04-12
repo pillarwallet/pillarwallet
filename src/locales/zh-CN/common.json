@@ -133,7 +133,8 @@
     "unlockWithBiometrics": "使用生物识别传感器解锁",
     "welcome": "欢迎来到 Pillar 钱包！",
     "seedPhrase": "12字种子词组",
-    "portfolio_riskiness": "投资组合风险"
+    "portfolio_riskiness": "投资组合风险",
+    "chain_explorer": "{{title}} 探索者"
   },
   "label": {
     "activate": "启用",
