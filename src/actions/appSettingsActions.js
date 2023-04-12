@@ -244,27 +244,6 @@ export const hideWalletConnectPromoCardAction = () => {
   };
 };
 
-export const dismissAccountSwitchTooltipAction = () => {
-  return (dispatch: Dispatch) => {
-    dispatch(saveDbAction('app_settings', { appSettings: { accountSwitchTooltipDismissed: true } }));
-    dispatch({ type: UPDATE_APP_SETTINGS, payload: { accountSwitchTooltipDismissed: true } });
-  };
-};
-
-export const dismissAddCashTooltipAction = () => {
-  return (dispatch: Dispatch) => {
-    dispatch(saveDbAction('app_settings', { appSettings: { addCashTooltipDismissed: true } }));
-    dispatch({ type: UPDATE_APP_SETTINGS, payload: { addCashTooltipDismissed: true } });
-  };
-};
-
-export const dismissSignInDeFiTooltipAction = () => {
-  return (dispatch: Dispatch) => {
-    dispatch(saveDbAction('app_settings', { appSettings: { signInDeFiTooltipDismissed: true } }));
-    dispatch({ type: UPDATE_APP_SETTINGS, payload: { signInDeFiTooltipDismissed: true } });
-  };
-};
-
 export const dismissSwitchAccountTooltipAction = (status: boolean) => {
   return (dispatch: Dispatch) => {
     dispatch(saveDbAction('app_settings', { appSettings: { switchAccountTooltipDismissed: status } }));

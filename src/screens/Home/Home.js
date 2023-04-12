@@ -108,7 +108,6 @@ function Home() {
 
   const { connectToConnector } = useWalletConnect();
 
-  const [showAccountSwitchTooltip, setShowAccountSwitchTooltip] = React.useState(false);
   const [showENSTooltip, setShowENSSwitchTooltip] = React.useState(false);
   const [balanceVisible, setBalanceVisible] = React.useState(true);
   const [currentSwiperIndex, setCurrentSwiperIndex] = React.useState(1);
@@ -126,7 +125,6 @@ function Home() {
   const showEnsTooltip = featureOnboardingENS && !isEnsNodeCliamed;
   const nativeIntegrationResponse = useRootSelector(nativeIntegrationSelector);
 
-  const { accountSwitchTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
   const balancePerCategory = calculateTotalBalancePerCategory(accountTotalBalances);
   const totalBalance = sumRecord(balancePerCategory);
   const screenName = getActiveScreenName(navigation);
@@ -167,21 +165,11 @@ function Home() {
 
   React.useEffect(() => {
     if (canSwitchAccount) {
-      if (!accountSwitchTooltipDismissed) {
-        setTimeout(() => {
-          setShowAccountSwitchTooltip(true);
-        }, 3000);
-        setTimeout(() => {
-          setShowAccountSwitchTooltip(false);
-          setShowENSSwitchTooltip(true);
-        }, 10000);
-      } else {
-        setTimeout(() => {
-          setShowENSSwitchTooltip(true);
-        }, 4000);
-      }
+      setTimeout(() => {
+        setShowENSSwitchTooltip(true);
+      }, 4000);
     }
-  }, [canSwitchAccount, accountSwitchTooltipDismissed]);
+  }, [canSwitchAccount]);
 
   const onRefresh = () => {
     dispatch(fetchAllAccountsAssetsBalancesAction());
@@ -250,17 +238,8 @@ function Home() {
             testIdTag={TAG}
           />
 
-          {/* this should stay first element, avoid putting it inside UserNameAndImage */}
-          {canSwitchAccount && (
-            <Tooltip
-              isVisible={!accountSwitchTooltipDismissed && showAccountSwitchTooltip}
-              body={t('tooltip.switchAccountsByTappingHere')}
-              wrapperStyle={{ zIndex: 9999, top: -10, position: 'relative' }}
-            />
-          )}
-
           <Tooltip
-            isVisible={!switchAccountTooltipDismissed && isKeyBasedAccount && !showAccountSwitchTooltip}
+            isVisible={!switchAccountTooltipDismissed && isKeyBasedAccount}
             body={t('tooltip.switch_account')}
             wrapperStyle={{ zIndex: 9999, top: -10, position: 'relative' }}
           />

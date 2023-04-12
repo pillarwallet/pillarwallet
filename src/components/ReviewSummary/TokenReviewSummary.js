@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 // components
 import { BaseText, MediumText } from 'components/legacy/Typography';
 import { Spacing } from 'components/legacy/Layout';
-import Image from 'components/Image';
+import CollectibleImage from 'components/CollectibleImage';
 
 // utils
 import { formatFiat, formatTokenAmount } from 'utils/common';
@@ -57,10 +57,6 @@ const Container = styled.View`
   align-items: center;
 `;
 
-const TokenImage = styled(Image)`
-  width: 64px;
-  height: 64px;
-`;
 
 export const TokenReviewSummaryComponent = ({
   assetSymbol,
@@ -91,7 +87,12 @@ export const TokenReviewSummaryComponent = ({
 
   return (
     <Container>
-      <TokenImage source={assetIcon} fallbackSource={!!asset && genericToken} />
+      <CollectibleImage
+        source={assetIcon}
+        width={64}
+        height={64}
+        fallbackSource={!!asset && genericToken}
+      />
       <Spacing h={32} />
       <BaseText regular>{text}</BaseText>
       <Spacing h={4} />
