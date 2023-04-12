@@ -16,6 +16,7 @@ const WalletConnectBrowser: FC = () => {
   const url = navigation.getParam('url');
   const title = navigation.getParam('title');
   const iconUrl = navigation.getParam('iconUrl');
+  const isBlockchainExplorer = navigation.getParam('isBlockchainExplorer');
 
   useEffect(() => {
     if (!url || !Linking.canOpenURL(url)) showServiceLaunchErrorToast();
@@ -26,7 +27,10 @@ const WalletConnectBrowser: FC = () => {
       <HeaderBlock
         leftItems={[{ close: true }]}
         centerItems={[{ title: title }]}
-        navigation={navigation}
+        onClose={() => {
+          if (isBlockchainExplorer) navigation.dismiss();
+          else navigation.goBack();
+        }}
         noPaddingTop
       />
       <InAppBrowser initialUrl={url} iconUrl={iconUrl} />
