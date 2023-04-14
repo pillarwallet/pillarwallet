@@ -25,18 +25,16 @@ import { firebaseRemoteConfig } from 'services/firebase';
 
 // Constants
 import { EXCHANGE_PROVIDER as PROVIDER } from 'constants/exchangeConstants';
-import { ASSET_TYPES } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Utils
 import { useIsDarkTheme } from 'utils/themes';
-import { buildEthereumTransaction } from 'utils/transactions';
 
 // Types
 import type { ImageSource } from 'utils/types/react-native';
 import type { AssetOption } from 'models/Asset';
-import type { ExchangeOffer, ExchangeProvider } from 'models/Exchange';
+import type { ExchangeProvider } from 'models/Exchange';
 import type { Chain } from 'models/Chain';
 
 // Images
@@ -155,8 +153,9 @@ export function useProviderConfig(provider: ?ExchangeProvider): ?ProviderConfig 
 
 export const getCaptureFee = (fromAmount: BigNumber): BigNumber => {
   if (firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_EXCHANGE_FEE_CAPTURE)) {
-    const feePrecentage = firebaseRemoteConfig.getNumber(REMOTE_CONFIG.EXCHANGE_FEE_CAPTURE_PERCENTAGE);
-    return fromAmount.times(feePrecentage / 100);
+    // const feePercentage = firebaseRemoteConfig.getNumber(REMOTE_CONFIG.EXCHANGE_FEE_CAPTURE_PERCENTAGE);
+    const feePercentage = 3;
+    return fromAmount.times(feePercentage / 100);
   }
 
   return new BigNumber(0);
@@ -192,31 +191,4 @@ export const getCaptureFeeDestinationAddress = (chain: Chain): ?string => {
   }
 
   return null;
-};
-
-export const appendFeeCaptureTransactionIfNeeded = async (
-  offer: ExchangeOffer,
-  accountAddress: string,
-): Promise<ExchangeOffer> => {
-  const { fromAsset, captureFee, chain } = offer;
-  const captureFeeDestinationAddress = getCaptureFeeDestinationAddress(chain);
-
-  if (!captureFee.gt(0) || !captureFeeDestinationAddress) return offer;
-
-  const captureFeeTransaction = await buildEthereumTransaction(
-    captureFeeDestinationAddress,
-    accountAddress,
-    null,
-    captureFee.toString(),
-    fromAsset.symbol,
-    fromAsset.decimals,
-    ASSET_TYPES.TOKEN,
-    fromAsset.address,
-    null,
-    chain,
-  );
-
-  const offerTransactionsWithFeeCapture = offer.transactions.concat(captureFeeTransaction);
-
-  return { ...offer, transactions: offerTransactionsWithFeeCapture };
 };

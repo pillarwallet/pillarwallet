@@ -30,7 +30,7 @@ import { TableFee } from 'components/legacy/Table';
 import Spinner from 'components/Spinner';
 
 // Utils
-import { useProviderConfig, appendFeeCaptureTransactionIfNeeded } from 'utils/exchange';
+import { useProviderConfig } from 'utils/exchange';
 import { formatTokenValue, formatFiatValue } from 'utils/format';
 import { spacing, fontStyles } from 'utils/variables';
 import { getAssetValueInFiat } from 'utils/rates';
@@ -49,7 +49,7 @@ import { gasThresholdsSelector } from 'redux/selectors/gas-threshold-selector';
 import { useTransactionsEstimate } from 'hooks/transactions';
 
 // Local
-import { getSortingValue } from './utils';
+import { getSortingValue, appendFeeCaptureTransactionIfNeeded } from './utils';
 
 type Props = {
   offer: ExchangeOffer,

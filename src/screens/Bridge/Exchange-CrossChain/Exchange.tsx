@@ -99,7 +99,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
   const [sortOffersList, setSortOfferList] = React.useState([]);
   const [, setRenderItem] = React.useState(null);
 
-  const [faileEstimateOffers, setFailEstimateOffers] = React.useState(0);
+  const [failedEstimateOffers, setFailEstimateOffers] = React.useState(0);
 
   const [fromValue, setFromValue] = React.useState(null);
   const [debouncedFromValue] = useDebounce(fromValue, 500);
@@ -177,7 +177,13 @@ function Exchange({ fetchExchangeTitle }: Props) {
       return;
     }
 
-    const offer = await appendFeeCaptureTransactionIfNeeded(selectedOffer, getAccountAddress(activeAccount));
+    const offer = await appendFeeCaptureTransactionIfNeeded(
+      selectedOffer,
+      getAccountAddress(activeAccount),
+      true,
+      fromAsset,
+      gasFeeAsset,
+    );
     offer.gasFeeAsset = gasFeeAsset;
     navigation.navigate(EXCHANGE_CONFIRM, { offer });
   };
@@ -228,7 +234,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
     setSortOfferList([]);
   }, [fromValue, toAddress, fromAddress, chain]);
 
-  const showOfferEstimateFailState = faileEstimateOffers === offers?.length;
+  const showOfferEstimateFailState = failedEstimateOffers === offers?.length;
   const ratesNotFound = toAsset && fromValue ? rate === 0 : false;
 
   const sortedOffers = isEmpty(sortOffersList) ? offers : sortingOffersToGasFee(sortOffersList);
@@ -298,7 +304,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
               onPress={() => handleOfferPress(offer)}
               onFetchSortingOfferInfo={onChangeSortingOffers}
               onEstimateFail={() => {
-                setFailEstimateOffers(faileEstimateOffers + 1);
+                setFailEstimateOffers(failedEstimateOffers + 1);
               }}
             />
           ))}
