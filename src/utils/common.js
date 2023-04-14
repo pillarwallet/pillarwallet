@@ -317,7 +317,7 @@ export const formatFiatValue = (value: Value, options?: { skipCents?: boolean })
 export const formatFiat = (value: Value, baseFiatCurrency?: ?string, options?: { skipCents?: boolean }): string => {
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   return parseFloat(value) < 0.01 && parseFloat(value) > 0
-    ? `<${getCurrencySymbol(fiatCurrency)}0.01`
+    ? `< ${getCurrencySymbol(fiatCurrency)}0.01`
     : `${getCurrencySymbol(fiatCurrency)}${formatFiatValue(value, options)}`;
 };
 
