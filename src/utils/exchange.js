@@ -153,8 +153,7 @@ export function useProviderConfig(provider: ?ExchangeProvider): ?ProviderConfig 
 
 export const getCaptureFee = (fromAmount: BigNumber): BigNumber => {
   if (firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_EXCHANGE_FEE_CAPTURE)) {
-    // const feePercentage = firebaseRemoteConfig.getNumber(REMOTE_CONFIG.EXCHANGE_FEE_CAPTURE_PERCENTAGE);
-    const feePercentage = 3;
+    const feePercentage = firebaseRemoteConfig.getNumber(REMOTE_CONFIG.EXCHANGE_FEE_CAPTURE_PERCENTAGE);
     return fromAmount.times(feePercentage / 100);
   }
 
