@@ -55,6 +55,7 @@ import { useFiatCurrency, useChainRates, useActiveAccount } from 'selectors';
 // Types
 import type { AssetOption } from 'models/Asset';
 import type { Chain } from 'models/Chain';
+import type { TransactionPayload } from 'models/Transaction';
 
 // Local
 import FromAssetSelector from './FromAssetSelector';
@@ -208,7 +209,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
       return;
     }
 
-    let transactionPayload: any = mapTransactionsToTransactionPayload(chain, offer.transactions);
+    let transactionPayload: TransactionPayload = mapTransactionsToTransactionPayload(chain, offer.transactions);
     transactionPayload = {
       ...transactionPayload,
       offer: {

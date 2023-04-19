@@ -64,6 +64,7 @@ import { fetchSingleChainAssetRatesAction } from 'actions/ratesActions';
 import type { AssetOption } from 'models/Asset';
 import type { ExchangeOffer } from 'models/Exchange';
 import type { Chain } from 'models/Chain';
+import type {  TransactionPayload } from 'models/Transaction';
 
 // Selectors
 import { useActiveAccount, useChainRates, useFiatCurrency } from 'selectors';
@@ -283,7 +284,10 @@ function Exchange({ fetchExchangeTitle }: Props) {
       return;
     }
 
-    let transactionPayload: any = mapTransactionsToTransactionPayload(selectedOffer?.chain, selectedOffer.transactions);
+    let transactionPayload: TransactionPayload = mapTransactionsToTransactionPayload(
+      selectedOffer?.chain,
+      selectedOffer.transactions,
+    );
     transactionPayload = {
       ...transactionPayload,
       offer: {
