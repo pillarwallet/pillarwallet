@@ -23,6 +23,7 @@ import { BigNumber } from 'bignumber.js';
 import type { ExchangeProviders, TransactionData } from 'utils/types/etherspot';
 import type { AssetCore, AssetOption, Asset } from 'models/Asset';
 import type { Chain } from 'models/Chain';
+import type { TransactionFeeInfo } from 'models/Transaction';
 
 export type ExchangeProvider = ExchangeProviders;
 
@@ -39,4 +40,5 @@ export type ExchangeOffer = {
   toChain?: Chain,
   gasFeeAsset?: AssetOption | Asset,
   sortingValue?: number,
+  feeInfo?: ?TransactionFeeInfo,
 };

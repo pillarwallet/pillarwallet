@@ -27,7 +27,20 @@ import Icon from 'components/core/Icon';
 import { spacing, borderRadiusSizes } from 'utils/variables';
 import { isLightTheme } from 'utils/themes';
 
-const RadioButton = ({ visible }) => {
+// Constants
+import { OFFERS } from 'constants/exchangeConstants';
+
+const RadioButton = ({ visible, style, type }) => {
+  if (type === OFFERS) {
+    return (
+      <>
+        {visible && (
+          <RadioIcon style={style} name={isLightTheme() ? 'selected-radio-button' : 'radio-button-focus-icon'} />
+        )}
+        {!visible && <RadioIcon style={style} name={isLightTheme() ? 'radio-button' : 'radio-button-icon'} />}
+      </>
+    );
+  }
   return (
     <>
       {visible && <RadioIcon name={isLightTheme() ? 'selected-radio-button' : 'checked-radio'} />}

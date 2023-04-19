@@ -96,7 +96,8 @@ const FeeLabelToggle: FC<IFeeLabelToggle> = ({
   const currencySymbol = getCurrencySymbol(fiatCurrency);
 
   const feeInFiat = getTxFeeInFiat(chain, txFeeInWei, gasToken, chainRates, fiatCurrency);
-  const feeInFiatDisplayValue = `${currencySymbol}${feeInFiat.toFixed(2)}`;
+  const feeInFiatDisplayValue =
+    feeInFiat < 0.01 && feeInFiat > 0 ? `< ${currencySymbol}0.01` : `${currencySymbol}${feeInFiat.toFixed(2)}`;
   const labelValue = isFiatValueVisible ? feeInFiatDisplayValue : feeDisplayValue;
 
   showRelayerMigration =
