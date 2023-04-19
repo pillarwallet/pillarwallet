@@ -324,7 +324,12 @@
     "erc20": " (ERС-20)",
     "tokenExists": "This token is already exists",
     "addedCustomToken": "Add a new custom token",
-    "pillarDefaultList": "Pillar Default List"
+    "pillarDefaultList": "Pillar Default List",
+    "offers": "Offers",
+    "best_offer": "Best offer",
+    "see_other_offers": "See other offers",
+    "see_less_offers": "See less offers",
+    "half_min": "30s"
   },
 
   "button": {
@@ -1428,6 +1433,7 @@
       "network": "Network",
       "exchangeRate": "Exchange rate",
       "estFee": "Est. fee",
+      "estTime": "Estimated time",
       "exchangeRateLayout": "{{rate}} {{toAssetCode}}/{{fromAssetCode}}",
       "maxSlippage": "Max. slippage"
     },

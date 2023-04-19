@@ -16,7 +16,7 @@
 */
 
 import * as React from 'react';
-import { Keyboard } from 'react-native';
+import { Keyboard, Platform } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
@@ -30,10 +30,13 @@ import Icon from 'components/core/Icon';
 import Spinner from 'components/Spinner';
 import Banner from 'components/Banner/Banner';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import Text from 'components/core/Text';
+import SwapButton from 'components/legacy/Button';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
-import { EXCHANGE_CONFIRM } from 'constants/navigationConstants';
+import { SEND_TOKEN_PIN_CONFIRM, EXCHANGE_CONFIRM } from 'constants/navigationConstants';
+import { TRANSACTION_TYPE } from 'constants/transactionsConstants';
 
 // Utils
 import { useChainConfig } from 'utils/uiConfig';
@@ -41,9 +44,13 @@ import { nativeAssetPerChain } from 'utils/chains';
 import { addressesEqual } from 'utils/assets';
 import { getActiveScreenName } from 'utils/navigation';
 import { getAssetRateInFiat } from 'utils/rates';
+import { mapTransactionsToTransactionPayload, showTransactionRevertedToast } from 'utils/transactions';
+import { currentDate, currentTime } from 'utils/date';
+import { isLogV2AppEvents } from 'utils/environment';
+import { getAccountType } from 'utils/accounts';
 
 // Selectors
-import { useChainRates, useFiatCurrency } from 'selectors';
+import { useFiatCurrency, useChainRates, useActiveAccount } from 'selectors';
 
 // Types
 import type { AssetOption } from 'models/Asset';
@@ -59,6 +66,10 @@ import GasFeeAssetSelection from './GasFeeAssetSelection';
 // Actions
 import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 import { fetchSingleChainAssetRatesAction } from 'actions/ratesActions';
+import { appsFlyerlogEventAction } from 'actions/analyticsActions';
+
+// Hooks
+import { useTransactionFeeCheck } from 'hooks/transactions';
 
 interface Props {
   fetchCrossChainTitle: (val: string) => void;
@@ -70,6 +81,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const dispatch = useDispatch();
   const fromInputRef: any = React.useRef();
   const screenName = getActiveScreenName(navigation);
+  const activeAccount = useActiveAccount();
 
   const initialChain: Chain = navigation.getParam('chain');
   const initialFromAddress: string =
@@ -85,6 +97,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const [failEstimateOffer, setFailEstimateOffer] = React.useState(false);
 
   const [gasFeeAsset, setGasFeeAsset] = React.useState<AssetOption | null>(null);
+  const [feeInfo, setFeeInfo] = React.useState(null);
 
   const fromOptions = useFromAssets();
   const toOptions = useToAssetsCrossChain(chain);
@@ -110,6 +123,10 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   const rates = useChainRates(toAddressChain);
   const currency = useFiatCurrency();
   const rate = getAssetRateInFiat(rates, toAsset?.address, currency);
+
+  React.useEffect(() => {
+    setFeeInfo(null);
+  }, [fromAddress, toAddress, fromValue]);
 
   React.useEffect(() => {
     if (!fromInputRef || fromValue) return;
@@ -185,6 +202,48 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
     }
   }, [showLoading]);
 
+  const confirmTransaction = () => {
+    if (!feeInfo) {
+      showTransactionRevertedToast();
+      return;
+    }
+
+    let transactionPayload: any = mapTransactionsToTransactionPayload(chain, offer.transactions);
+    transactionPayload = {
+      ...transactionPayload,
+      offer: {
+        ...offer,
+        feeInfo,
+      },
+      type: TRANSACTION_TYPE.EXCHANGE,
+      gasToken: gasFeeAsset,
+    };
+
+    if (activeAccount && isLogV2AppEvents) {
+      dispatch(
+        appsFlyerlogEventAction(`swap_completed_${fromAsset?.symbol}_${toAsset?.symbol}`, {
+          tokenPair: `${fromAsset?.symbol}_${toAsset?.symbol}`,
+          chain,
+          amount_swapped: offer.fromAmount,
+          date: currentDate(),
+          time: currentTime(),
+          platform: Platform.OS,
+          address: toAsset.address,
+          walletType: getAccountType(activeAccount),
+        }),
+      );
+    }
+
+    navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
+      transactionPayload,
+      toAssetSymbol: toAsset.symbol,
+      goBackDismiss: true,
+      transactionType: TRANSACTION_TYPE.EXCHANGE,
+    });
+  };
+
+  const { errorMessage } = useTransactionFeeCheck(chain || CHAIN.ETHEREUM, feeInfo, fromAsset, offer?.fromAmount);
+
   return (
     <Container>
       <Content bounces={false} onScroll={() => Keyboard.dismiss()}>
@@ -232,20 +291,31 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
         )}
 
         {offer && !ratesNotFound && (
-          <OfferCard
-            key={offer.provider}
-            crossChainTxs={txData}
-            offer={offer}
-            disabled={false}
-            isLoading={false}
-            gasFeeAsset={gasFeeAsset}
-            onPress={() => {
-              navigation.navigate(EXCHANGE_CONFIRM, { offer });
-            }}
-            onEstimateFail={() => {
-              setFailEstimateOffer(true);
-            }}
-          />
+          <>
+            <OfferCard
+              key={offer.provider}
+              crossChainTxs={txData}
+              offer={offer}
+              disabled={false}
+              isLoading={false}
+              gasFeeAsset={gasFeeAsset}
+              isSelected={true}
+              onFeeInfo={setFeeInfo}
+              onEstimateFail={() => {
+                setFailEstimateOffer(true);
+              }}
+            />
+            <Spacing h={30} />
+            {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+            {feeInfo && (
+              <SwapButton
+                style={{ borderRadius: 14 }}
+                disabled={!!errorMessage}
+                title={t('button.swap')}
+                onPress={confirmTransaction}
+              />
+            )}
+          </>
         )}
 
         {((!buildTransactionData && buildTransactionFetched) ||
@@ -275,4 +345,10 @@ const EmptyStateWrapper = styled.View`
   justify-content: center;
   align-items: center;
   margin-top: 40px;
+`;
+
+const ErrorMessage = styled(Text)`
+  margin-bottom: 15px;
+  text-align: center;
+  color: ${({ theme }) => theme.colors.negative};
 `;

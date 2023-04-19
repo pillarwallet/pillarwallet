@@ -34,21 +34,27 @@ import Icon from 'components/core/Icon';
 import Spinner from 'components/Spinner';
 import Toast from 'components/Toast';
 import Banner from 'components/Banner/Banner';
+import Text from 'components/core/Text';
+import SwapButton from 'components/legacy/Button';
 
 // Constants
-import { EXCHANGE_CONFIRM } from 'constants/navigationConstants';
+import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+import { TRANSACTION_TYPE } from 'constants/transactionsConstants';
+import { CHAIN } from 'constants/chainConstants';
+import { EXCHANGE_PROVIDER } from 'constants/exchangeConstants';
 
 // Utils
 import { useChainConfig } from 'utils/uiConfig';
 import { isLogV2AppEvents } from 'utils/environment';
 import { nativeAssetPerChain } from 'utils/chains';
 import { addressesEqual } from 'utils/assets';
-import { appendFeeCaptureTransactionIfNeeded } from 'utils/exchange';
-import { getAccountAddress, getAccountType } from 'utils/accounts';
+import { getAccountType } from 'utils/accounts';
 import { hitSlop50w20h } from 'utils/common';
 import { currentDate, currentTime } from 'utils/date';
 import { getActiveScreenName } from 'utils/navigation';
 import { getAssetRateInFiat } from 'utils/rates';
+import { mapTransactionsToTransactionPayload, showTransactionRevertedToast } from 'utils/transactions';
+import { useThemeColors } from 'utils/themes';
 
 // Actions
 import { appsFlyerlogEventAction } from 'actions/analyticsActions';
@@ -61,6 +67,9 @@ import type { Chain } from 'models/Chain';
 
 // Selectors
 import { useActiveAccount, useChainRates, useFiatCurrency } from 'selectors';
+
+// Hooks
+import { useTransactionFeeCheck } from 'hooks/transactions';
 
 // Local
 import FromAssetSelector from './FromAssetSelector';
@@ -87,6 +96,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
   const activeAccount = useActiveAccount();
   const fromInputRef: any = React.useRef();
   const screenName = getActiveScreenName(navigation);
+  const colors = useThemeColors();
 
   const initialChain: Chain = navigation.getParam('chain');
   const initialFromAddress: string =
@@ -97,9 +107,13 @@ function Exchange({ fetchExchangeTitle }: Props) {
   const [fromAddress, setFromAddress] = React.useState(initialFromAddress);
   const [toAddress, setToAddress] = React.useState(initialToAddress);
   const [sortOffersList, setSortOfferList] = React.useState([]);
-  const [, setRenderItem] = React.useState(null);
+  const [renderItem, setRenderItem] = React.useState(null);
+
+  const [selectedProvider, setSelectedProvider] = React.useState('');
 
   const [faileEstimateOffers, setFailEstimateOffers] = React.useState(0);
+  const [hideAllOffers, setHideAllOffers] = React.useState(false);
+  const [showBestOffer, setShowBestOffer] = React.useState(true);
 
   const [fromValue, setFromValue] = React.useState(null);
   const [debouncedFromValue] = useDebounce(fromValue, 500);
@@ -176,10 +190,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
       });
       return;
     }
-
-    const offer = await appendFeeCaptureTransactionIfNeeded(selectedOffer, getAccountAddress(activeAccount));
-    offer.gasFeeAsset = gasFeeAsset;
-    navigation.navigate(EXCHANGE_CONFIRM, { offer });
+    setSelectedProvider(selectedOffer.provider);
   };
 
   const onChangeSortingOffers = (sortOffer) => {
@@ -226,12 +237,85 @@ function Exchange({ fetchExchangeTitle }: Props) {
 
   React.useEffect(() => {
     setSortOfferList([]);
+    setHideAllOffers(false);
+    setShowBestOffer(true);
   }, [fromValue, toAddress, fromAddress, chain]);
 
   const showOfferEstimateFailState = faileEstimateOffers === offers?.length;
   const ratesNotFound = toAsset && fromValue ? rate === 0 : false;
 
   const sortedOffers = isEmpty(sortOffersList) ? offers : sortingOffersToGasFee(sortOffersList);
+
+  // Use for select default best offer
+  React.useEffect(() => {
+    if (isEmpty(sortOffersList)) return;
+
+    const bestOffer = sortedOffers.find((offer) => !!offer.feeInfo && offer.provider !== EXCHANGE_PROVIDER.LIFI);
+    setSelectedProvider(bestOffer?.provider);
+
+    const failEstimatedFee = sortedOffers?.find((offer) => !offer.feeInfo);
+    if (!failEstimatedFee && showBestOffer) {
+      setHideAllOffers(true);
+    }
+  }, [sortedOffers, sortOffersList, renderItem]);
+
+  const exchangeOffers = React.useMemo(() => {
+    if (isEmpty(sortedOffers)) return [];
+
+    const bestOffer = sortedOffers.find((offer) => !!offer.feeInfo && offer.provider !== EXCHANGE_PROVIDER.LIFI);
+    return hideAllOffers ? [bestOffer] : sortedOffers;
+  }, [sortedOffers, offers, sortOffersList, renderItem]);
+
+  const selectedOffer = sortedOffers?.find((offer) => offer.provider === selectedProvider);
+  const validOffers = sortedOffers?.filter((offer) => !!offer.feeInfo);
+  const visibleOffers = !showLoading && !ratesNotFound && !isEmpty(sortedOffers) && !showOfferEstimateFailState;
+
+  const { errorMessage } = useTransactionFeeCheck(
+    chain || CHAIN.ETHEREUM,
+    selectedOffer?.feeInfo,
+    fromAsset,
+    selectedOffer?.fromAmount,
+  );
+
+  const confirmTransaction = () => {
+    if (!selectedOffer?.feeInfo) {
+      showTransactionRevertedToast();
+      return;
+    }
+
+    let transactionPayload: any = mapTransactionsToTransactionPayload(selectedOffer?.chain, selectedOffer.transactions);
+    transactionPayload = {
+      ...transactionPayload,
+      offer: {
+        ...selectedOffer,
+        gasFeeAsset,
+      },
+      type: TRANSACTION_TYPE.EXCHANGE,
+      gasToken: gasFeeAsset,
+    };
+
+    if (activeAccount && isLogV2AppEvents) {
+      dispatch(
+        appsFlyerlogEventAction(`swap_completed_${fromAsset?.symbol}_${toAsset?.symbol}`, {
+          tokenPair: `${fromAsset?.symbol}_${toAsset?.symbol}`,
+          chain,
+          amount_swapped: selectedOffer.fromAmount,
+          date: currentDate(),
+          time: currentTime(),
+          platform: Platform.OS,
+          address: toAsset.address,
+          walletType: getAccountType(activeAccount),
+        }),
+      );
+    }
+
+    navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
+      transactionPayload,
+      toAssetSymbol: toAsset.symbol,
+      goBackDismiss: true,
+      transactionType: TRANSACTION_TYPE.EXCHANGE,
+    });
+  };
 
   return (
     <Container>
@@ -286,22 +370,53 @@ function Exchange({ fetchExchangeTitle }: Props) {
           </EmptyStateWrapper>
         )}
 
-        {!showLoading &&
-          !ratesNotFound &&
-          sortedOffers?.map((offer) => (
-            <OfferCard
-              key={offer.provider}
-              offer={offer}
-              disabled={false}
-              isLoading={false}
-              gasFeeAsset={gasFeeAsset}
-              onPress={() => handleOfferPress(offer)}
-              onFetchSortingOfferInfo={onChangeSortingOffers}
-              onEstimateFail={() => {
-                setFailEstimateOffers(faileEstimateOffers + 1);
-              }}
-            />
-          ))}
+        {visibleOffers && (
+          <>
+            {!isEmpty(validOffers) && (
+              <Text color={colors.basic010} variant="big">
+                {hideAllOffers ? t('label.best_offer') : t('label.offers')}
+              </Text>
+            )}
+            <Spacing h={8} />
+            {exchangeOffers?.map((offer) => (
+              <OfferCard
+                key={offer.provider}
+                isSelected={offer.provider === selectedProvider}
+                offer={offer}
+                disabled={false}
+                isLoading={false}
+                gasFeeAsset={gasFeeAsset}
+                onPress={() => handleOfferPress(offer)}
+                onFetchSortingOfferInfo={onChangeSortingOffers}
+                onEstimateFail={() => {
+                  setFailEstimateOffers(faileEstimateOffers + 1);
+                }}
+              />
+            ))}
+            {validOffers?.length > 1 && (
+              <Button
+                onPress={() => {
+                  setShowBestOffer(false);
+                  setHideAllOffers(!hideAllOffers);
+                }}
+              >
+                <Text variant="regular">
+                  {hideAllOffers ? t('label.see_other_offers') : t('label.see_less_offers')}
+                </Text>
+              </Button>
+            )}
+            <Spacing h={30} />
+            {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+            {!isEmpty(selectedProvider) && (
+              <SwapButton
+                style={{ borderRadius: 14 }}
+                disabled={!!errorMessage}
+                title={t('button.swap')}
+                onPress={confirmTransaction}
+              />
+            )}
+          </>
+        )}
 
         {(showEmptyState || showOfferEstimateFailState || (ratesNotFound && !showLoading)) && (
           <EmptyStateWrapper>
@@ -328,4 +443,14 @@ const EmptyStateWrapper = styled.View`
   justify-content: center;
   align-items: center;
   margin-top: 40px;
+`;
+
+const Button = styled.TouchableOpacity`
+  align-self: center;
+`;
+
+const ErrorMessage = styled(Text)`
+  margin-bottom: 15px;
+  text-align: center;
+  color: ${({ theme }) => theme.colors.negative};
 `;

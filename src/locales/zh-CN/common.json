@@ -304,7 +304,12 @@
     "contractAddress": "合约地址",
     "erc20": " (ERС-20)",
     "tokenExists": "此令牌已存在",
-    "addedCustomToken": "添加新的自定义令牌"
+    "addedCustomToken": "添加新的自定义令牌",
+    "offers": "优惠",
+    "best_offer": "最好的报价",
+    "see_other_offers": "查看其他优惠",
+    "see_less_offers": "少看优惠",
+    "half_min": "30s"
   },
   "button": {
     "activate": "启用",
@@ -1294,6 +1299,7 @@
       "network": "网络",
       "exchangeRate": "汇率",
       "estFee": "美东时间。费用",
+      "estTime": "预计时间",
       "exchangeRateLayout": "{{rate}} {{toAssetCode}}/{{fromAssetCode}}",
       "maxSlippage": "最大限度。滑移"
     },
