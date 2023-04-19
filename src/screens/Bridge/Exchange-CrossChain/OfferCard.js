@@ -28,6 +28,11 @@ import Text from 'components/core/Text';
 import DynamicSizeImage from 'components/DynamicSizeImage';
 import { TableFee } from 'components/legacy/Table';
 import Spinner from 'components/Spinner';
+import RadioButton from 'components/RadioButton';
+import { BaseText } from 'components/legacy/Typography';
+
+// Constants
+import { OFFERS } from 'constants/exchangeConstants';
 
 // Utils
 import { useProviderConfig, appendFeeCaptureTransactionIfNeeded } from 'utils/exchange';
@@ -40,6 +45,7 @@ import { isHighGasFee } from 'utils/transactions';
 // Types
 import type { ExchangeOffer } from 'models/Exchange';
 import type { Asset, AssetOption } from 'models/Asset';
+import type { TransactionFeeInfo } from 'models/Transaction';
 
 // Selectors
 import { useRootSelector, useFiatCurrency, useChainRates, useActiveAccount } from 'selectors';
@@ -59,6 +65,8 @@ type Props = {
   onEstimateFail?: () => void,
   gasFeeAsset: Asset | AssetOption,
   onFetchSortingOfferInfo?: (offerInfo: ExchangeOffer) => void,
+  isSelected?: ?boolean,
+  onFeeInfo?: (feeInfo: ?TransactionFeeInfo) => void,
 };
 
 function OfferCard({
@@ -69,12 +77,15 @@ function OfferCard({
   onEstimateFail,
   gasFeeAsset,
   onFetchSortingOfferInfo,
+  isSelected,
+  onFeeInfo,
 }: Props) {
   const { t } = useTranslation();
   const config = useProviderConfig(offer.provider);
   const activeAccount: any = useActiveAccount();
   const fiatCurrency = useFiatCurrency();
   const gasThresholds = useRootSelector(gasThresholdsSelector);
+
   const [offerInfo, setOfferInfo] = React.useState(null);
 
   React.useEffect(() => {
@@ -117,9 +128,11 @@ function OfferCard({
   }, [estimationErrorMessage]);
 
   React.useEffect(() => {
+    onFeeInfo && onFeeInfo(feeInfo);
     onFetchSortingOfferInfo &&
       onFetchSortingOfferInfo({
         ...offer,
+        feeInfo,
         sortingValue: getSortingValue(toChain || chain, feeInfo, chainRates, fiatCurrency, fiatValue),
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -132,12 +145,18 @@ function OfferCard({
   return (
     <TouchableContainer disabled={disabled || isEstimating} onPress={onPress}>
       <Row>
-        <LeftColumn />
+        <LeftColumn>
+          <Label>{t('exchangeContent.label.estTime')}</Label>
+          <BaseText>{t('label.half_min')}</BaseText>
+        </LeftColumn>
 
         <RightColumn>
-          {!!config?.iconHorizontal && (
-            <DynamicSizeImage imageSource={config.iconHorizontal} fallbackHeight={130} fallbackWidth={32} />
-          )}
+          <Row style={{ minHeight: 20 }}>
+            {!!config?.iconHorizontal && (
+              <DynamicSizeImage imageSource={config.iconHorizontal} fallbackHeight={130} fallbackWidth={32} />
+            )}
+            <RadioButton type={OFFERS} visible={isSelected} style={{ marginRight: 0, marginLeft: 12 }} />
+          </Row>
         </RightColumn>
       </Row>
 
@@ -174,8 +193,8 @@ export default OfferCard;
 const TouchableContainer = styled.TouchableOpacity`
   margin-bottom: ${spacing.mediumLarge}px;
   padding: 0 ${spacing.mediumLarge}px;
-  background-color: ${({ theme }) => theme.colors.card};
-  border-radius: 6px;
+  background-color: ${({ theme }) => theme.colors.basic080};
+  border-radius: 20px;
 `;
 
 const Row = styled.View`
@@ -183,7 +202,7 @@ const Row = styled.View`
   align-items: center;
   min-height: 70px;
   padding: 10px 0;
-  ${({ theme, topSeparator }) => topSeparator && `border-top-width: 1px; border-top-color: ${theme.colors.border};`}
+  ${({ theme, topSeparator }) => topSeparator && `border-top-width: 1px; border-top-color: ${theme.colors.card};`}
 `;
 
 const LeftColumn = styled.View`
