@@ -134,6 +134,8 @@ import IconTokens from 'assets/icons/svg/icon-24-tokens.svg';
 import IconCheckmarkCircleGreen from 'assets/icons/svg/icon-18-checkmark-circle.svg';
 import IconRadioButtonFocus from 'assets/icons/svg/radio-button-focus.svg';
 import IconRadioButton from 'assets/icons/svg/radio-button.svg';
+import PlrTransparentIcon from 'assets/icons/svg/tokens-48-plr-transparent.svg';
+import DashboardLiquidity from 'assets/icons/svg/24-dashboard-liquidity.svg';
 
 // Assets: services icons
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
@@ -273,6 +275,7 @@ const components = {
   'checkmark-circle-green': IconCheckmarkCircleGreen,
   'radio-button-focus-icon': IconRadioButtonFocus,
   'radio-button-icon': IconRadioButton,
+  'dashboard-liquidity': DashboardLiquidity,
 
   // Service icons
   binance: IconBinance,
@@ -287,6 +290,7 @@ const components = {
   'all-networks-light': IconAllNetworksLight,
   'ramp-network': IconRampNetwork,
   pelerin: IconPelerin,
+  'plr-transparent': PlrTransparentIcon,
 
   // Service icons 38px
   binance38: IconBinance38,

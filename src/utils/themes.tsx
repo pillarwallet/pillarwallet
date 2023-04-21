@@ -46,6 +46,7 @@ const commonColors = {
   darkViolet: '#9D2BFF',
   dodgerBlue: '#198DFF',
   preciousPersimmon: '#FD7344',
+  deepViolet: '#31005c',
 };
 
 export const semanticLightThemeColors = {

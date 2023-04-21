@@ -1,0 +1,20 @@
+diff --git a/node_modules/react-native-content-loader/src/index.js b/node_modules/react-native-content-loader/src/index.js
+index a3e50db..cdbbcef 100644
+--- a/node_modules/react-native-content-loader/src/index.js
++++ b/node_modules/react-native-content-loader/src/index.js
+@@ -84,11 +84,13 @@ export default class ContentLoader extends Component {
+         Animated.sequence([
+             Animated.timing(this._animate, {
+                 toValue: 1,
+-                duration: this.state.frequence
++                duration: this.state.frequence,
++                useNativeDriver: true
+             }),
+             Animated.timing(this._animate, {
+                 toValue: 0,
+-                duration: this.state.frequence
++                duration: this.state.frequence,
++                useNativeDriver: true
+             })
+         ]).start((event) => {
+             if (event.finished) {
