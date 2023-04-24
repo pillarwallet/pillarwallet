@@ -36,8 +36,8 @@ export const buildEnvironment = {
   INSTABUG_TOKEN: '_instabug_token_',
   PRISMIC_TOKEN: '_prismic_token_',
   STORYLY_TOKEN: '_storyly_token_',
-  KOCHAVA_IOS_ID: '_kochava_ios_id',
-  KOCHAVA_ANDROID_ID: '_kochava_android_id',
+  KOCHAVA_IOS_ID: '_kochava_ios_id_',
+  KOCHAVA_ANDROID_ID: '_kochava_android_id_',
 };
 
 // Optional Developer variables are fixed for both environment contexts, undefined by default
