@@ -258,8 +258,8 @@ class App extends React.Component<Props, any> {
 
     // Kochava init
     logBreadcrumb('App.js', `Kochava: initialize`);
-    KochavaTracker.instance.registerIosAppGuid('kopillar-multichain-defi-wallet-jsh');
-    KochavaTracker.instance.registerAndroidAppGuid('kopillar-multichain-defi-wallet-5ci');
+    KochavaTracker.instance.registerIosAppGuid(getEnv().KOCHAVA_IOS_ID);
+    KochavaTracker.instance.registerAndroidAppGuid(getEnv().KOCHAVA_ANDROID_ID);
     KochavaTracker.instance.start();
 
     // hold the UI and wait until network status finished for later app connectivity checks
