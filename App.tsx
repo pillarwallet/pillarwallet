@@ -38,6 +38,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import Instabug from 'instabug-reactnative';
 import appsFlyer from 'react-native-appsflyer';
 import { PlayInstallReferrer } from 'react-native-play-install-referrer';
+import { KochavaTracker } from 'react-native-kochava-tracker';
 
 import 'services/localisation/translations';
 import localeConfig from 'configs/localeConfig';
@@ -254,6 +255,12 @@ class App extends React.Component<Props, any> {
         }
       });
     }
+
+    // Kochava init
+    logBreadcrumb('App.js', `Kochava: initialize`);
+    KochavaTracker.instance.registerIosAppGuid('kopillar-multichain-defi-wallet-jsh');
+    KochavaTracker.instance.registerAndroidAppGuid('kopillar-multichain-defi-wallet-5ci');
+    KochavaTracker.instance.start();
 
     // hold the UI and wait until network status finished for later app connectivity checks
     await NetInfo.fetch()

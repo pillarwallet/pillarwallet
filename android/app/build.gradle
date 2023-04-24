@@ -80,7 +80,7 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-    enableHermes: false,  // clean and rebuild if changing
+    enableHermes: true,  // clean and rebuild if changing
     // custom build params:
     bundleInDebug: false,
     bundleInRelease: true,
@@ -261,6 +261,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:23.0.0' // react-native-notifications override for Intercom PN handler implementation
     implementation 'com.google.firebase:firebase-iid:21.1.0'
     implementation "androidx.multidex:multidex:${rootProject.ext.multidex_version}" // custom: support multidex builds
+		implementation 'com.google.android.gms:play-services-ads-identifier:17.1.0' // ads identifier
+		implementation 'com.android.installreferrer:installreferrer:2.2' // install referrer
+		implementation 'com.google.android.gms:play-services-appset:16.0.0' // play services appset 
 }
 
 // Run this once to be able to run the application with BUCK
