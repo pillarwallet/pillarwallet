@@ -42,7 +42,7 @@ import {
   SET_DEFAULT_LIST,
 } from 'constants/assetsConstants';
 import { SET_ASSETS_BALANCES } from 'constants/assetsBalancesConstants';
-import { UPDATE_PIN_ATTEMPTS, UPDATE_WALLET_BACKUP_STATUS } from 'constants/walletConstants';
+import { UPDATE_PIN_ATTEMPTS, TODAY_FAILED_ATTEMPTS, UPDATE_WALLET_BACKUP_STATUS } from 'constants/walletConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { SET_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'constants/collectiblesConstants';
 import { SET_RATES } from 'constants/ratesConstants';
@@ -188,15 +188,27 @@ export const initAppAndRedirectAction = () => {
       const user = storageData?.user?.user ?? {};
       dispatch({ type: SET_USER, payload: user });
 
-      const { pinAttempt = {} } = get(storageData, 'pinAttempt', {});
-      const { pinAttemptsCount = 0, lastPinAttempt = 0 } = pinAttempt;
-      dispatch({
-        type: UPDATE_PIN_ATTEMPTS,
-        payload: {
-          pinAttemptsCount,
-          lastPinAttempt,
-        },
-      });
+      const { failedAttempts = {}, pinAttempt = {} } = get(storageData, 'pinAttempt', {});
+      const { numberOfFailedAttempts = 0, date = new Date() } = failedAttempts;
+      const { pinAttemptsCount = 0 } = pinAttempt;
+
+      if (new Date(date)?.toDateString() === new Date()?.toDateString()) {
+        dispatch({
+          type: UPDATE_PIN_ATTEMPTS,
+          payload: {
+            pinAttemptsCount,
+          },
+        });
+        dispatch({
+          type: TODAY_FAILED_ATTEMPTS,
+          payload: {
+            failedAttempts: {
+              numberOfFailedAttempts,
+              date,
+            },
+          },
+        });
+      }
 
       const {
         upgradeStatus = null,
