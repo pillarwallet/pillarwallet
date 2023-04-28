@@ -2,6 +2,7 @@
 <PROJECT_ROOT>/node_modules/metro/node_modules/resolve/test/resolver/malformed_package_json/package.json
 <PROJECT_ROOT>/node_modules/.resolve-pN2TYoo5/test/resolver/malformed_package_json/package.json
 <PROJECT_ROOT>/node_modules/resolve/test/resolver/malformed_package_json/package.json
+<PROJECT_ROOT>/node_modules/eslint-plugin-react/resolve/test/resolver/malformed_package_json/package.json
 <PROJECT_ROOT>/node_modules/.findup-2XwtwOIH/test/fixture/config.json
 <PROJECT_ROOT>/node_modules/.findup-2XwtwOIH/test/fixture/f/e/d/c/b/a/top.json
 <PROJECT_ROOT>/node_modules/.findup-2XwtwOIH/test/fixture/f/e/d/c/config.json
