@@ -30,6 +30,7 @@ import {
   UPDATE_PIN_ATTEMPTS,
   UPDATE_WALLET_BACKUP_STATUS,
   SET_WALLET_IS_ENCRYPTING,
+  TODAY_FAILED_ATTEMPTS,
 } from 'constants/walletConstants';
 import { MENU_SETTINGS } from 'constants/navigationConstants';
 
@@ -52,7 +53,6 @@ import { saveDbAction } from './dbActions';
 import { addWalletBackupEventAction } from './walletEventsActions';
 import { changeUseBiometricsAction, setDeviceUniqueIdIfNeededAction } from './appSettingsActions';
 
-
 export const backupWalletAction = () => {
   return (dispatch: Dispatch) => {
     dispatch({ type: UPDATE_WALLET_BACKUP_STATUS, payload: { isBackedUp: true } });
@@ -68,22 +68,60 @@ export const removePrivateKeyFromMemoryAction = () => ({ type: REMOVE_WALLET_PRI
 
 export const updatePinAttemptsAction = (isInvalidPin: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { wallet: { pinAttemptsCount } } = getState();
+    const {
+      wallet: { pinAttemptsCount, failedAttempts },
+    } = getState();
     const newCount = isInvalidPin ? pinAttemptsCount + 1 : 0;
-    const currentTimeStamp = isInvalidPin ? Date.now() : 0;
     dispatch({
       type: UPDATE_PIN_ATTEMPTS,
       payload: {
         pinAttemptsCount: newCount,
-        lastPinAttempt: currentTimeStamp,
       },
     });
-    dispatch(saveDbAction('pinAttempt', {
-      pinAttempt: {
-        pinAttemptsCount: newCount,
-        lastPinAttempt: currentTimeStamp,
-      },
-    }));
+
+    const { numberOfFailedAttempts, date } = failedAttempts;
+
+    const isSameDay = new Date(date)?.toDateString() === new Date()?.toDateString();
+    dispatch(
+      saveDbAction('pinAttempt', {
+        pinAttempt: {
+          pinAttemptsCount: newCount,
+        },
+        failedAttempts: {
+          numberOfFailedAttempts,
+          date: isSameDay ? date : new Date(),
+        },
+      }),
+    );
+
+    if (newCount > 2 + numberOfFailedAttempts) {
+      dispatch({
+        type: TODAY_FAILED_ATTEMPTS,
+        payload: {
+          failedAttempts: {
+            numberOfFailedAttempts: numberOfFailedAttempts + 1,
+            date: new Date(),
+          },
+        },
+      });
+      dispatch(
+        saveDbAction('pinAttempt', {
+          pinAttempt: {
+            pinAttemptsCount: 0,
+          },
+          failedAttempts: {
+            numberOfFailedAttempts: numberOfFailedAttempts + 1,
+            date: new Date(),
+          },
+        }),
+      );
+      dispatch({
+        type: UPDATE_PIN_ATTEMPTS,
+        payload: {
+          pinAttemptsCount: 0,
+        },
+      });
+    }
   };
 };
 
@@ -96,21 +134,24 @@ export const encryptAndSaveWalletAction = (
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch({ type: SET_WALLET_IS_ENCRYPTING, payload: true });
 
-    const deviceUniqueId = getState().appSettings.data.deviceUniqueId ?? await getDeviceUniqueId();
+    const deviceUniqueId = getState().appSettings.data.deviceUniqueId ?? (await getDeviceUniqueId());
     dispatch(setDeviceUniqueIdIfNeededAction(deviceUniqueId));
 
     const saltedPin = await getSaltedPin(pin, deviceUniqueId);
-    const encryptedWallet = await wallet.encrypt(saltedPin, { scrypt: { N: 16384 } })
+    const encryptedWallet = await wallet
+      .encrypt(saltedPin, { scrypt: { N: 16384 } })
       .then(JSON.parse)
       .catch(() => ({}));
 
-    dispatch(saveDbAction('wallet', {
-      wallet: {
-        ...encryptedWallet,
-        backupStatus,
-        pinV2: true, // pin digits count changed
-      },
-    }));
+    dispatch(
+      saveDbAction('wallet', {
+        wallet: {
+          ...encryptedWallet,
+          backupStatus,
+          pinV2: true, // pin digits count changed
+        },
+      }),
+    );
 
     // save data to keychain
     const { mnemonic, privateKey } = wallet;
@@ -132,7 +173,9 @@ export const encryptAndSaveWalletAction = (
 export const checkForWalletBackupToastAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
     const {
-      wallet: { backupStatus: { isImported, isBackedUp } },
+      wallet: {
+        backupStatus: { isImported, isBackedUp },
+      },
     } = getState();
 
     if (isImported || isBackedUp) return;

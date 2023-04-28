@@ -294,6 +294,7 @@ export const checkAuthAction = (
     if (!wallet || decryptError) {
       logBreadcrumb('checkAuthAction', 'failed to get decrypted wallet', { decryptError });
       dispatch({ type: SET_WALLET_ERROR, payload: t('auth:error.invalidPin.default') });
+      dispatch(updatePinAttemptsAction(true));
       return;
     }
 
