@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView } from 'react-native';
 import t from 'translations/translate';
 import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
@@ -39,6 +39,7 @@ import { HeaderLoader, GraphLoader } from './components/Loaders';
 import DurationSelection from './components/DurationSelection';
 import YourBalanceContent from './components/YourBalanceContent';
 import TokenAnalytics from './components/TokenAnalytics';
+import AnimatedGraph from 'components/AnimatedGraph';
 
 const AssetScreen = () => {
   const navigation = useNavigation();
@@ -47,6 +48,14 @@ const AssetScreen = () => {
   const { chain, imageUrl } = assetData;
 
   const config = useChainConfig(chain);
+
+  const [graphLoader, setGraphLoader] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setGraphLoader(false);
+    }, 2000);
+  }, []);
 
   const networkName = chain ? config.title : undefined;
 
@@ -62,12 +71,19 @@ const AssetScreen = () => {
         customOnBack={() => navigation.goBack()}
         noPaddingTop
       />
-      <Content paddingHorizontal={0} paddingVertical={0}>
+      <Content bounces={false} paddingHorizontal={0} paddingVertical={0}>
         <Container style={{ alignItems: 'center' }}>
           <Spacing h={20} />
           <HeaderLoader />
-          <Spacing h={20} />
-          <GraphLoader />
+          {graphLoader ? (
+            <>
+              <Spacing h={20} />
+              <GraphLoader />
+            </>
+          ) : (
+            <AnimatedGraph />
+          )}
+
           <Spacing h={20} />
           <DurationSelection />
           <Spacing h={20} />

@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-native-gifted-charts/src/LineChart/index.tsx b/node_modules/react-native-gifted-charts/src/LineChart/index.tsx
+index 8ef5ecc..f34f561 100644
+--- a/node_modules/react-native-gifted-charts/src/LineChart/index.tsx
++++ b/node_modules/react-native-gifted-charts/src/LineChart/index.tsx
+@@ -2952,6 +2952,8 @@ export const LineChart = (props: propTypes) => {
+               marginTop: pointerItemLocal.pointerShiftY || 0,
+               backgroundColor: pointerColorLocal,
+               borderRadius: pointerRadius || 0,
++              borderWidth: 1.6,
++              borderColor: '#1a1a1a'
+             }}
+           />
+         )}

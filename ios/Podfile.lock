@@ -3,8 +3,8 @@ PODS:
     - AppsFlyerFramework/Main (= 6.6.1)
   - AppsFlyerFramework/Main (6.6.1)
   - boost-for-react-native (1.63.0)
-  - BVLinearGradient (2.5.4):
-    - React
+  - BVLinearGradient (2.6.2):
+    - React-Core
   - CocoaAsyncSocket (7.6.5)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.63.4)
@@ -527,7 +527,7 @@ PODS:
     - Sentry (= 6.1.4)
   - RNShare (1.2.1):
     - React
-  - RNSVG (12.3.0):
+  - RNSVG (13.9.0):
     - React-Core
   - RNVectorIcons (6.7.0):
     - React
@@ -835,7 +835,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   AppsFlyerFramework: 5e4b385a27dc6179e132b1617f76809412eb2f88
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
-  BVLinearGradient: 8cbc5155c978f2e43098818c91d206d07aae6d30
+  BVLinearGradient: 34a999fda29036898a09c6a6b728b0b4189e1a44
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DoubleConversion: cde416483dac037923206447da6e1454df403714
   FBLazyVector: 3bb422f41b18121b71783a905c10e58606f7dc3e
@@ -929,7 +929,7 @@ SPEC CHECKSUMS:
   RNScrypt: 95fdef077b482e9fdf8a761120cb69d129ef4016
   RNSentry: 6f8f9ee7e4c939dcd35e5633b94d0e3782888e46
   RNShare: 48cf88cadf9ca2143cdaa557c1ec7f8808040ffc
-  RNSVG: 302bfc9905bd8122f08966dc2ce2d07b7b52b9f8
+  RNSVG: 53c661b76829783cdaf9b7a57258f3d3b4c28315
   RNVectorIcons: 368d6d8b8301224e5ffb6254191f4f8876c2be0d
   RSKImageCropper: 1ac71e9a82e3f41eea3eedfff8eacb0d3821c9ec
   SDWebImage: 9169792e9eec3e45bba2a0c02f74bf8bd922d1ee
@@ -942,6 +942,6 @@ SPEC CHECKSUMS:
   toolbar-android: 2a73856e98b750d7e71ce4644d3f41cc98211719
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6
 
-PODFILE CHECKSUM: 9ad9a6d48a1698a0be01082608394dc1ed69d827
+PODFILE CHECKSUM: 9777448f338d36bea98b46251a9994ce851ee278
 
 COCOAPODS: 1.11.3
