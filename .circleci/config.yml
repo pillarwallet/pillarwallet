@@ -9,7 +9,7 @@ executors:
   ios-executor:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "13.2.1"
+      xcode: "14.3.0"
     resource_class: macos.x86.medium.gen2
     environment:
       NODE_OPTIONS: "--max-old-space-size=4096"
@@ -594,8 +594,6 @@ jobs:
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
-            export ITMSTRANSPORTER_FORCE_ITMS_PACKAGE_UPLOAD=$ITMSTRANSP_FORCE_ITMS_PACKAGE_UPLOAD
-            echo "ITMSTRANSPORTER force value is: " $ITMSTRANSPORTER_FORCE_ITMS_PACKAGE_UPLOAD
             cd ios && bundle exec fastlane deploy_prod APP_BUILD_NUMBER:$APP_BUILD_NUMBER build_number:$buildNumber APP_NAME:"Pillar Wallet"
       - run:
           name: Copy production iOS artifact to S3
