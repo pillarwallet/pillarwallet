@@ -19,7 +19,6 @@
 */
 import React from 'react';
 import styled from 'styled-components/native';
-import { useTranslation } from 'translations/translate';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
@@ -28,61 +27,44 @@ import { useThemeColors } from 'utils/themes';
 import Text from 'components/core/Text';
 import { Spacing } from 'components/legacy/Layout';
 
-// Local
-import { BalanceLoader } from './Loaders';
-
-const YourBalanceContent = ({ isLoading }) => {
+const HeaderContent = () => {
   const colors = useThemeColors();
-  const { t } = useTranslation();
 
   return (
-    <Container>
+    <>
+      <Text variant="large">$0.04</Text>
+      <Spacing h={6} />
       <RowContainer>
-        <Text variant={'small'} color={colors.tertiaryText}>
-          {'Your Balance'}
+        <Text variant="small" color={colors.tertiaryText}>
+          Past Week
         </Text>
-        <Text variant={'small'} color={colors.tertiaryText}>
-          {'24 H'}
+        <Spacing w={4} />
+        <Text variant="regular" color={colors.caribbeanGreen}>
+          +1.2% ($0.00012)
         </Text>
       </RowContainer>
-      <Spacing h={5} />
-      {isLoading ? (
-        <BalanceLoader />
-      ) : (
-        <>
-          <RowContainer>
-            <Text variant={'large'} style={{ fontSize: 20 }} color={colors.basic000}>
-              $0.00
-            </Text>
-            <Text variant={'large'} style={{ fontSize: 20 }} color={colors.caribbeanGreen}>
-              $0.00
-            </Text>
-          </RowContainer>
-          <RowContainer>
-            <Text variant={'small'} color={colors.tertiaryText}>
-              0 PLR
-            </Text>
-            <Text variant={'small'} color={colors.caribbeanGreen}>
-              $0.00
-            </Text>
-          </RowContainer>
-        </>
-      )}
-    </Container>
+      <RowContainer>
+        <Text variant="small" color={colors.tertiaryText}>
+          Volume 24h:
+        </Text>
+        <Spacing w={4} />
+        <Text variant="small" color={colors.basic000}>
+          $867
+        </Text>
+        <Spacing w={4} />
+        <Text variant="small" color={colors.caribbeanGreen}>
+          +12%
+        </Text>
+      </RowContainer>
+    </>
   );
 };
 
-const TAG = 'YOUR-BALANCE';
-
-export default YourBalanceContent;
-
-const Container = styled.View`
-  width: 90%;
-`;
+export default HeaderContent;
 
 const RowContainer = styled.View`
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
-  width: 100%;
+  justify-content: center;
+  width: 90%;
 `;

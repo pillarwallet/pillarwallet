@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React, { useEffect, useState } from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import t from 'translations/translate';
 import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 
@@ -40,6 +40,7 @@ import DurationSelection from './components/DurationSelection';
 import YourBalanceContent from './components/YourBalanceContent';
 import TokenAnalytics from './components/TokenAnalytics';
 import AnimatedGraph from 'components/AnimatedGraph';
+import HeaderContent from './components/HeaderContent';
 
 const AssetScreen = () => {
   const navigation = useNavigation();
@@ -49,11 +50,11 @@ const AssetScreen = () => {
 
   const config = useChainConfig(chain);
 
-  const [graphLoader, setGraphLoader] = useState(true);
+  const [loader, setLoader] = useState(true);
 
   useEffect(() => {
     setTimeout(() => {
-      setGraphLoader(false);
+      setLoader(false);
     }, 2000);
   }, []);
 
@@ -74,22 +75,23 @@ const AssetScreen = () => {
       <Content bounces={false} paddingHorizontal={0} paddingVertical={0}>
         <Container style={{ alignItems: 'center' }}>
           <Spacing h={20} />
-          <HeaderLoader />
-          {graphLoader ? (
+          {loader ? <HeaderLoader /> : <HeaderContent />}
+          {loader ? (
             <>
-              <Spacing h={20} />
+              <Spacing h={11} />
               <GraphLoader />
+              <Spacing h={11} />
             </>
           ) : (
             <AnimatedGraph />
           )}
 
-          <Spacing h={20} />
+          <Spacing h={10} />
           <DurationSelection />
           <Spacing h={20} />
-          <YourBalanceContent />
+          <YourBalanceContent isLoading={loader} />
           <Spacing h={36} />
-          <TokenAnalytics />
+          <TokenAnalytics isLoading={loader} />
         </Container>
       </Content>
     </Container>

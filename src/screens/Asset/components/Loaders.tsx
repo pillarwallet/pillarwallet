@@ -45,11 +45,11 @@ export const HeaderLoader = () => {
       secondaryColor={isDarkTheme ? DARK_SECONDARY_COLOR : LIGHT_SECONDARY_COLOR}
       duration={1000}
       width={179}
-      height={95}
+      height={100}
     >
-      <Rect x="54.5" y="0" rx="4" ry="4" width="70" height="25" />
-      <Rect x="0" y="35" rx="4" ry="4" width="179" height="15" />
-      <Rect x="0" y="55" rx="4" ry="4" width="179" height="15" />
+      <Rect x="54.5" y="5" rx="4" ry="4" width="70" height="25" />
+      <Rect x="0" y="40" rx="4" ry="4" width="179" height="15" />
+      <Rect x="0" y="60" rx="4" ry="4" width="179" height="15" />
     </ContentLoader>
   );
 };
@@ -89,20 +89,20 @@ export const BalanceLoader = () => {
         secondaryColor={isDarkTheme ? DARK_SECONDARY_COLOR : LIGHT_SECONDARY_COLOR}
         duration={1000}
         width={98}
-        height={50}
+        height={55}
       >
-        <Rect x="0" y="0" rx="4" ry="4" width="98" height="22" />
-        <Rect x="0" y="27" rx="4" ry="4" width="98" height="13" />
+        <Rect x="0" y="10" rx="4" ry="4" width="98" height="22" />
+        <Rect x="0" y="37" rx="4" ry="4" width="98" height="13" />
       </ContentLoader>
       <ContentLoader
         primaryColor={isDarkTheme ? DARK_PRIMARY_COLOR : LIGHT_PRIMARY_COLOR}
         secondaryColor={isDarkTheme ? DARK_SECONDARY_COLOR : LIGHT_SECONDARY_COLOR}
         duration={1000}
         width={98}
-        height={50}
+        height={55}
       >
-        <Rect x="0" y="0" rx="4" ry="4" width="98" height="22" />
-        <Rect x="0" y="27" rx="4" ry="4" width="98" height="13" />
+        <Rect x="0" y="10" rx="4" ry="4" width="98" height="22" />
+        <Rect x="0" y="37" rx="4" ry="4" width="98" height="13" />
       </ContentLoader>
     </RowContainer>
   );

@@ -28,7 +28,7 @@ import { Spacing } from 'components/legacy/Layout';
 import CategoryListItem from './CategoryListItem';
 import TokenAnalyticsListItem from './TokenAnalyticsListItem';
 
-const TokenAnalytics = () => {
+const TokenAnalytics = ({ isLoading }) => {
   const { t } = useTranslation();
   const [visibleContent, setVisibleContent] = useState(true);
 
@@ -46,7 +46,7 @@ const TokenAnalytics = () => {
       <Spacing h={7} />
       {visibleContent && (
         <>
-          <TokenAnalyticsListItem />
+          <TokenAnalyticsListItem isLoading={isLoading} />
         </>
       )}
     </Container>

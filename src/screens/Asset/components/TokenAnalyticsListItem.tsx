@@ -24,6 +24,7 @@ import { useTranslation } from 'translations/translate';
 
 // Utils
 import { fontStyles } from 'utils/variables';
+import { useThemeColors } from 'utils/themes';
 
 // Components
 import Text from 'components/core/Text';
@@ -33,23 +34,42 @@ import { Spacing } from 'components/legacy/Layout';
 // Local
 import { AllTimeLoader, TokenAnalyticsLoader } from './Loaders';
 
-const TokenAnalyticsListItem = () => {
+const TokenAnalyticsListItem = ({ isLoading }) => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
 
   const analyticsList = [
-    { label: t('label.marketCap'), value: '$1' },
-    { label: t('label.fdv'), value: '$1', icon: 'info' },
-    { label: t('label.totalLiquidity'), value: '$1', icon: 'history' },
-    { label: t('label.supply'), value: '$1' },
-    { label: t('label.holders'), value: '$1' },
-    { label: t('label.trandingVol'), value: '$1', icon: 'history' },
+    { label: t('label.marketCap'), value: '$79,9B' },
+    { label: t('label.fdv'), value: '$1,09B', icon: 'info' },
+    { label: t('label.totalLiquidity'), value: '$347K', icon: 'history', percentageDifference: '+1.24%' },
+    { label: t('label.supply'), value: '259.3M' },
+    { label: t('label.holders'), value: '1,40K' },
+    { label: t('label.trandingVol'), value: '$867', icon: 'history', percentageDifference: '-0.24%' },
   ];
 
   const renderItem = ({ item, index }) => {
     return (
       <ItemContainer key={item.label} style={(index === 2 || index === 5) && [{ marginRight: 0, width: '40%' }]}>
-        {/* <ValueText>{item.value}</ValueText> */}
-        <TokenAnalyticsLoader />
+        {isLoading ? (
+          <TokenAnalyticsLoader />
+        ) : (
+          <RowContainer style={{ justifyContent: 'flex-start' }}>
+            <Text variant="medium" color={colors.basic000} style={{ lineHeight: 22 }}>
+              {item.value}
+            </Text>
+            <Spacing w={4} />
+            {item?.percentageDifference && (
+              <Text
+                variant="small"
+                color={index === 5 ? colors.negative : colors.caribbeanGreen}
+                style={{ lineHeight: 22 }}
+              >
+                {item.percentageDifference}
+              </Text>
+            )}
+          </RowContainer>
+        )}
+
         <Spacing h={6} />
         <RowContainer>
           <LabelText>{item.label}</LabelText>
@@ -75,22 +95,23 @@ const TokenAnalyticsListItem = () => {
       <Spacing h={18} />
       <RowContainer>
         <LabelText>{t('label.allTimeHigh')}</LabelText>
-        <AllTimeLoader />
+        {/* <AllTimeLoader /> */}
+        <LabelText color={colors.basic000}>$1.5</LabelText>
       </RowContainer>
       <Spacing h={4} />
       <RowContainer>
         <SmallText>2023, Jul 26 13:45</SmallText>
-        <AllTimeLoader />
+        {isLoading ? <AllTimeLoader /> : <SmallText color={colors.negative}>-57.22%</SmallText>}
       </RowContainer>
       <Spacing h={10} />
       <RowContainer>
         <LabelText>{t('label.allTimeLow')}</LabelText>
-        <AllTimeLoader />
+        {isLoading ? <AllTimeLoader /> : <LabelText color={colors.basic000}>$1.5</LabelText>}
       </RowContainer>
       <Spacing h={4} />
       <RowContainer>
         <SmallText>2023, Jul 26 13:45</SmallText>
-        <AllTimeLoader />
+        {isLoading ? <AllTimeLoader /> : <SmallText color={colors.caribbeanGreen}>+3454.65%</SmallText>}
       </RowContainer>
     </>
   );
@@ -108,12 +129,12 @@ const RowContainer = styled.View`
 
 const LabelText = styled(Text)`
   ${fontStyles.small};
-  color: ${({ theme }) => theme.colors.basic010};
+  color: ${({ theme, color }) => (color ? color : theme.colors.basic010)};
 `;
 
 const SmallText = styled(Text)`
   ${fontStyles.tiny};
-  color: ${({ theme }) => theme.colors.basic020};
+  color: ${({ theme, color }) => (color ? color : theme.colors.basic020)};
 `;
 
 const ItemContainer = styled.View`

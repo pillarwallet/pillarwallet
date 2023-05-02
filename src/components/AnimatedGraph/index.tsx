@@ -50,6 +50,14 @@ const ptData: any = [
   { value: 385, date: '14 Apr 2022' },
   { value: 280, date: '15 Apr 2022' },
   { value: 390, date: '16 Apr 2022' },
+  { value: 160, date: '17 Apr 2022' },
+  { value: 180, date: '17 Apr 2022' },
+  { value: 190, date: '18 Apr 2022' },
+  { value: 180, date: '19 Apr 2022' },
+  { value: 140, date: '20 Apr 2022' },
+  { value: 145, date: '20 Apr 2022' },
+  { value: 160, date: '21 Apr 2022' },
+  { value: 200, date: '22 Apr 2022' },
 ];
 
 const AnimatedGraph = () => {
@@ -67,7 +75,7 @@ const AnimatedGraph = () => {
         animationDuration={1700}
         data={ptData}
         width={SIZE}
-        spacing={SIZE / ptData?.length}
+        spacing={SIZE / ptData?.length + 1}
         color={colors.caribbeanGreen}
         thickness={2.1}
         startFillColor={colors.caribbeanGreen}
@@ -76,11 +84,11 @@ const AnimatedGraph = () => {
         endOpacity={0.01}
         stepHeight={0}
         disableScroll
-        height={200}
+        height={155}
         maxValue={500}
         initialSpacing={0}
         pointerConfig={{
-          pointerStripHeight: 200,
+          pointerStripHeight: 150,
           pointerStripColor: colors.secondaryText,
           pointerStripWidth: 1,
           pointerColor: colors.caribbeanGreen,
@@ -108,7 +116,7 @@ const styles = StyleSheet.create({
   textStyle: {
     position: 'absolute',
     left: -15,
-    top: 250,
+    top: 200,
   },
 });
 
