@@ -9,12 +9,12 @@ executors:
   ios-executor:
     working_directory: ~/pillarwallet
     macos:
-      xcode: '14.1.0'
+      xcode: "14.1.0"
     resource_class: macos.x86.medium.gen2
     environment:
-      NODE_OPTIONS: '--max-old-space-size=4096'
+      NODE_OPTIONS: "--max-old-space-size=4096"
       FL_OUTPUT_DIR: output
-      _JAVA_OPTIONS: '-Xms128m -Xmx3024m'
+      _JAVA_OPTIONS: "-Xms128m -Xmx3024m"
       GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx1248m -XX:+HeapDumpOnOutOfMemoryError"'
       HOMEBREW_NO_AUTO_UPDATE: 1
 
@@ -29,9 +29,9 @@ executors:
           password: $DOCKERHUB_PASSWORD
     resource_class: large
     environment:
-      NODE_OPTIONS: '--max-old-space-size=4096'
+      NODE_OPTIONS: "--max-old-space-size=4096"
       TERM: dumb
-      _JAVA_OPTIONS: '-Xmx4096m -XX:+UnlockExperimentalVMOptions -XX:+UseContainerSupport'
+      _JAVA_OPTIONS: "-Xmx4096m -XX:+UnlockExperimentalVMOptions -XX:+UseContainerSupport"
       GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx4096m -Dfile.encoding=UTF-8"'
       LC_ALL: en_US.UTF-8
       LANG: en_US.UTF-8
@@ -45,16 +45,16 @@ executors:
           password: $DOCKERHUB_PASSWORD
     resource_class: large
     environment:
-      NODE_OPTIONS: '--max-old-space-size=4096'
+      NODE_OPTIONS: "--max-old-space-size=4096"
     shell: /bin/bash --login -o pipefail
 
   python3-alpine-executor:
     working_directory: ~/pillarwallet
     docker:
-      - image: python:3.7-alpine
-        auth:
-          username: $DOCKERHUB_USER
-          password: $DOCKERHUB_PASSWORD
+    - image: python:3.7-alpine
+      auth:
+        username: $DOCKERHUB_USER
+        password: $DOCKERHUB_PASSWORD
     resource_class: small
 
 aliases:
@@ -215,6 +215,7 @@ aliases:
           echo "Skipping... branch is not develop/master"
         fi
 jobs:
+
   build-and-test:
     executor: node16-executor
     steps:
@@ -245,7 +246,7 @@ jobs:
       - slack/status:
           fail_only: true
           failure_message: "Triggered by: *${CIRCLE_USERNAME}* \n\n Hi *${CIRCLE_USERNAME}*, the *$CIRCLE_JOB* job has failed. :circleci-fail:"
-          webhook: '${SLACK_WEBHOOK_URL}'
+          webhook: "${SLACK_WEBHOOK_URL}"
 
   appcenter_ios:
     executor: ios-executor
@@ -282,6 +283,7 @@ jobs:
             cd ios
             bundle exec pod install --verbose
       - *save_pod_cache
+
       - run:
           name: Set staging environment
           command: |
@@ -352,8 +354,8 @@ jobs:
             fi
       - slack/status:
           fail_only: true
-          failure_message: '$CIRCLE_BRANCH - $(gshuf -n 1 ios_appcenter.txt) :circleci-fail:'
-          webhook: '${SLACK_WEBHOOK_URL}'
+          failure_message: "$CIRCLE_BRANCH - $(gshuf -n 1 ios_appcenter.txt) :circleci-fail:"
+          webhook: "${SLACK_WEBHOOK_URL}"
 
   appcenter_android:
     executor: android-executor
@@ -473,7 +475,7 @@ jobs:
       - slack/status:
           fail_only: true
           failure_message: '$CIRCLE_BRANCH - $(shuf -n 1 android_appcenter.txt) :circleci-fail:'
-          webhook: '${SLACK_WEBHOOK_URL}'
+          webhook: "${SLACK_WEBHOOK_URL}"
 
   bump-push-git-tag:
     executor: python3-alpine-executor
@@ -581,6 +583,7 @@ jobs:
             cd ios
             bundle exec pod install --verbose
       - *save_pod_cache
+
       - run:
           name: Fetch App Store Connect API key
           command: |
@@ -625,7 +628,7 @@ jobs:
           fail_only: true
           only_for_branches: master
           failure_message: '$(gshuf -n 1 ios_prod.txt) :circleci-fail:'
-          webhook: '${SLACK_WEBHOOK_URL}'
+          webhook: "${SLACK_WEBHOOK_URL}"
 
   prod_android:
     executor: android-executor
@@ -765,7 +768,7 @@ jobs:
           fail_only: true
           only_for_branches: master
           failure_message: '$(shuf -n 1 android_prod.txt) :circleci-fail:'
-          webhook: '${SLACK_WEBHOOK_URL}'
+          webhook: "${SLACK_WEBHOOK_URL}"
 
   publish_releases_to_github:
     working_directory: ~/pillarwallet
@@ -805,7 +808,7 @@ jobs:
             .circleci/announceURLs.sh "pillarwallet" "production" "android" "$ANDROID_URL" "$APP_VERSION"
             chmod +x .circleci/announceProdBuilds.sh
             .circleci/announceProdBuilds.sh "Pillar Wallet" "*Prod* iOS internal track - Тests pending" "$(cat /tmp/workspace/build-num/app_version.txt)" "$(cat ~/pillarwallet/support_description.txt)" "$IOS_URL"
-            .circleci/announceProdBuilds.sh "Pillar Wallet" "*Prod* Android internal track - Тests pending" "$(cat /tmp/workspace/build-num/app_version.txt)" "$(cat ~/pillarwallet/support_description.txt)" "$ANDROID_URL"
+            .circleci/announceProdBuilds.sh "Pillar Wallet" "*Prod* Android internal track - Тests pending" "$(cat /tmp/workspace/build-num/app_version.txt)" "$(cat ~/pillarwallet/support_description.txt)" "$ANDROID_URL"            
 
 workflows:
   version: 2.1
@@ -822,7 +825,7 @@ workflows:
                 - /.*(u|U)(i|I)(-|_).*/
                 - /.*(-|_)(u|U)(i|I).*/
                 - /.*(u|U)(i|I)\/.*/
-
+                
   build_and_deploy_appcenter:
     jobs:
       - build-and-test:
