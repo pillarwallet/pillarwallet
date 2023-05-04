@@ -234,7 +234,7 @@ jobs:
             - build-num
             - releases
       - *node_restore_cache
-      - *android_latest_npm
+      # - *android_latest_npm
       - *yarn_restore_cache
       - *yarn_install
       - *yarn_save_cache
