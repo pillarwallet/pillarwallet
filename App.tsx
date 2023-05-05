@@ -257,9 +257,13 @@ class App extends React.Component<Props, any> {
     }
 
     // Kochava init
-    logBreadcrumb('App.js', `Kochava: initialize`);
-    KochavaTracker.instance.registerIosAppGuid(getEnv().KOCHAVA_IOS_ID);
-    KochavaTracker.instance.registerAndroidAppGuid(getEnv().KOCHAVA_ANDROID_ID);
+    if (Platform.OS === 'android') {
+      logBreadcrumb('App.js', `Kochava: initialize android`);
+      KochavaTracker.instance.registerAndroidAppGuid(getEnv().KOCHAVA_ANDROID_ID);
+    } else {
+      logBreadcrumb('App.js', `Kochava: initialize ios`);
+      KochavaTracker.instance.registerIosAppGuid(getEnv().KOCHAVA_IOS_ID);
+    }
     KochavaTracker.instance.start();
 
     // hold the UI and wait until network status finished for later app connectivity checks
