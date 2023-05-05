@@ -9,7 +9,7 @@ executors:
   ios-executor:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "14.3.0"
+      xcode: "14.1.0"
     resource_class: macos.x86.medium.gen2
     environment:
       NODE_OPTIONS: "--max-old-space-size=4096"
@@ -36,10 +36,10 @@ executors:
       LC_ALL: en_US.UTF-8
       LANG: en_US.UTF-8
 
-  node14-executor:
+  node16-executor:
     working_directory: ~/pillarwallet
     docker:
-      - image: cimg/node:14.18.1
+      - image: cimg/node:16.15.1
         auth:
           username: $DOCKERHUB_USER
           password: $DOCKERHUB_PASSWORD
@@ -217,7 +217,7 @@ aliases:
 jobs:
 
   build-and-test:
-    executor: node14-executor
+    executor: node16-executor
     steps:
       - checkout
       - run:
@@ -234,7 +234,7 @@ jobs:
             - build-num
             - releases
       - *node_restore_cache
-      - *android_latest_npm
+      # - *android_latest_npm
       - *yarn_restore_cache
       - *yarn_install
       - *yarn_save_cache
