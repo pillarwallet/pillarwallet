@@ -62,6 +62,11 @@ const mockUser: Object = {
   username: 'Jon',
 };
 
+const mockFailedAttempts = {
+  numberOfFailedAttempts: 0,
+  date: new Date(),
+};
+
 const mockNewEtherspotAccount = { ...mockEtherspotAccount, extra: mockEtherspotAccountExtra };
 const mockNewKeyBasedAccount = {
   id: '0x9c',
@@ -91,6 +96,7 @@ describe('Auth actions', () => {
       wallet: {
         data: mockWallet,
         backupStatus: { isBackedUp: false, isImported: false },
+        failedAttempts: mockFailedAttempts,
       },
       connectionKeyPairs: { data: [], lastConnectionKeyIndex: -1 },
       accounts: { data: [mockActiveSmartWalletAccount] },
@@ -118,7 +124,8 @@ describe('Auth actions', () => {
 
       { type: NFT_FLAG, payload: undefined },
 
-      { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
+      { type: UPDATE_PIN_ATTEMPTS, payload: { pinAttemptsCount: 0 } },
+
       { type: UPDATE_APP_SETTINGS, payload: { initialDeepLinkExecuted: true } },
 
       { type: UPDATE_SESSION, payload: { isAuthorizing: false } },
