@@ -373,6 +373,8 @@ PODS:
     - React
   - react-native-date-picker (3.4.3):
     - React-Core
+  - react-native-kochava-tracker (2.2.0):
+    - React
   - react-native-netinfo (5.9.10):
     - React-Core
   - react-native-notifications (3.2.1):
@@ -584,6 +586,7 @@ DEPENDENCIES:
   - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-cookies (from `../node_modules/react-native-cookies/ios`)
   - react-native-date-picker (from `../node_modules/react-native-date-picker`)
+  - react-native-kochava-tracker (from `../node_modules/react-native-kochava-tracker`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-notifications (from `../node_modules/react-native-notifications`)
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
@@ -724,6 +727,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-cookies/ios"
   react-native-date-picker:
     :path: "../node_modules/react-native-date-picker"
+  react-native-kochava-tracker:
+    :path: "../node_modules/react-native-kochava-tracker"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-notifications:
@@ -888,6 +893,7 @@ SPEC CHECKSUMS:
   react-native-camera: b8cc03e2feec0c04403d0998e37cf519d8fd4c6f
   react-native-cookies: 854d59c4135c70b92a02ca4930e68e4e2eb58150
   react-native-date-picker: 201b481c94dcb7678f4712477ad026dd7793305b
+  react-native-kochava-tracker: cdc03ae934c09b5ceca2100a81af13ca263f1f6a
   react-native-netinfo: 30fb89fa913c342be82a887b56e96be6d71201dd
   react-native-notifications: 66c59381a466cb561c4036028ef6401a6b1a8a71
   react-native-pager-view: da490aa1f902c9a5aeecf0909cc975ad0e92e53e
