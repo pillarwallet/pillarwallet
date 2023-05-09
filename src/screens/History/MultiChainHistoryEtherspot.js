@@ -45,9 +45,8 @@ import { useChainsConfig } from 'utils/uiConfig';
 import { getAccountId, getMigratedEnsName } from 'utils/accounts';
 
 // Types
-import { EVENT_TYPE, type Event, type WalletEvent } from 'models/History';
+import { EVENT_TYPE, type Event, type WalletEvent, type EnsNameRegisteredEvent } from 'models/History';
 import type { Chain } from 'models/Chain';
-import type { EnsNameRegisteredEvent } from 'models/History';
 
 function MultiChainHistoryEtherspot() {
   const [tabIndex, setTabIndex] = useState(0);

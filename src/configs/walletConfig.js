@@ -17,6 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export const ALLOWED_PIN_ATTEMPTS = 5;
+export const ALLOWED_PIN_ATTEMPTS = 3;
+
+export const LOCK_TIME = 5 * 60;
 
 export const PIN_LOCK_MULTIPLIER = 2;
