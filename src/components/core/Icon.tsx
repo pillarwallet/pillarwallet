@@ -132,6 +132,8 @@ import IconHelp from 'assets/icons/svg/24-circle-help.svg';
 import AddTokenIcon from 'assets/icons/svg/icon-add-token.svg';
 import IconTokens from 'assets/icons/svg/icon-24-tokens.svg';
 import IconCheckmarkCircleGreen from 'assets/icons/svg/icon-18-checkmark-circle.svg';
+import IconRadioButtonFocus from 'assets/icons/svg/radio-button-focus.svg';
+import IconRadioButton from 'assets/icons/svg/radio-button.svg';
 
 // Assets: services icons
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
@@ -269,6 +271,8 @@ const components = {
   'add-token': AddTokenIcon,
   tokens: IconTokens,
   'checkmark-circle-green': IconCheckmarkCircleGreen,
+  'radio-button-focus-icon': IconRadioButtonFocus,
+  'radio-button-icon': IconRadioButton,
 
   // Service icons
   binance: IconBinance,

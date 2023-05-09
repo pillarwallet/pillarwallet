@@ -96,7 +96,7 @@ const TokenFiatValueAccessory = ({
 
       <SubContainer>
         {chain && balance && (
-          <TokenBalance>{t('label.balanceTokenFormat', { balance: balance?.toFixed(2) })}</TokenBalance>
+          <TokenBalance>{t('label.balanceTokenFormat', { balance: balance?.toFixed(4) })}</TokenBalance>
         )}
         {!disableUseMax && (
           <TouchableOpacity hitSlop={hitSlop10} onPress={handleUseMaxValue}>
