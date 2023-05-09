@@ -191,6 +191,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
       });
       return;
     }
+
     setSelectedProvider(selectedOffer.provider);
   };
 
@@ -242,7 +243,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
     setShowBestOffer(true);
   }, [fromValue, toAddress, fromAddress, chain]);
 
-  const showOfferEstimateFailState = faileEstimateOffers === offers?.length;
+  const showOfferEstimateFailState = failedEstimateOffers === offers?.length;
   const ratesNotFound = toAsset && fromValue ? rate === 0 : false;
 
   const sortedOffers = isEmpty(sortOffersList) ? offers : sortingOffersToGasFee(sortOffersList);
