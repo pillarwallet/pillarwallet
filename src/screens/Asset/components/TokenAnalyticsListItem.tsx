@@ -80,7 +80,7 @@ const TokenAnalyticsListItem = ({ tokenRate, tokenDetails, marketDetails }) => {
       <ItemContainer
         key={item.label}
         isDark={isDarkTheme}
-        style={(index === 2 || index === 5) && [{ marginRight: 0, width: '40%' }]}
+        style={(index === 2 || index === 5) && [{ marginRight: 0, width: '39%' }]}
       >
         {isLoading ? (
           <TokenAnalyticsLoader />
@@ -128,16 +128,26 @@ const TokenAnalyticsListItem = ({ tokenRate, tokenDetails, marketDetails }) => {
       <Spacing h={18} />
       <RowContainer>
         <LabelText>{t('label.allTimeHigh')}</LabelText>
-        <LabelText color={colors.basic000}>
-          {data?.allTimeHigh ? `${currencySymbol + convertDecimalNumber(data.allTimeHigh)}` : t('label.notApplicable')}
-        </LabelText>
+        {isLoading ? (
+          <AllTimeLoader />
+        ) : (
+          <LabelText color={colors.basic000}>
+            {data?.allTimeHigh
+              ? `${currencySymbol + convertDecimalNumber(data.allTimeHigh)}`
+              : t('label.notApplicable')}
+          </LabelText>
+        )}
       </RowContainer>
       {allTimeHighPercentage && (
         <RowContainer>
           <LabelText />
-          <Text variant="tiny" color={data.allTimeHigh > tokenRate ? colors.negative : colors.positive}>
-            {allTimeHighPercentage?.toFixed(2)}%
-          </Text>
+          {isLoading ? (
+            <AllTimeLoader />
+          ) : (
+            <Text variant="tiny" color={data.allTimeHigh > tokenRate ? colors.negative : colors.positive}>
+              {allTimeHighPercentage?.toFixed(2)}%
+            </Text>
+          )}
         </RowContainer>
       )}
       <Spacing h={10} />
@@ -154,9 +164,13 @@ const TokenAnalyticsListItem = ({ tokenRate, tokenDetails, marketDetails }) => {
       {allTimeLowPercentage && (
         <RowContainer>
           <LabelText />
-          <Text variant="tiny" color={data.allTimeLow < tokenRate ? colors.positive : colors.negative}>
-            +{allTimeLowPercentage?.toFixed(2)}%
-          </Text>
+          {isLoading ? (
+            <AllTimeLoader />
+          ) : (
+            <Text variant="tiny" color={data.allTimeLow < tokenRate ? colors.positive : colors.negative}>
+              +{allTimeLowPercentage?.toFixed(2)}%
+            </Text>
+          )}
         </RowContainer>
       )}
       <Spacing h={4} />
