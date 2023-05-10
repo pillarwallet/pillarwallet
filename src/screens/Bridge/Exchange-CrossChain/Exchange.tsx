@@ -48,7 +48,7 @@ import { useChainConfig } from 'utils/uiConfig';
 import { isLogV2AppEvents } from 'utils/environment';
 import { nativeAssetPerChain } from 'utils/chains';
 import { addressesEqual } from 'utils/assets';
-import { getAccountType } from 'utils/accounts';
+import { getAccountType, getAccountAddress } from 'utils/accounts';
 import { hitSlop50w20h } from 'utils/common';
 import { currentDate, currentTime } from 'utils/date';
 import { getActiveScreenName } from 'utils/navigation';
@@ -64,7 +64,7 @@ import { fetchSingleChainAssetRatesAction } from 'actions/ratesActions';
 import type { AssetOption } from 'models/Asset';
 import type { ExchangeOffer } from 'models/Exchange';
 import type { Chain } from 'models/Chain';
-import type {  TransactionPayload } from 'models/Transaction';
+import type { TransactionPayload } from 'models/Transaction';
 
 // Selectors
 import { useActiveAccount, useChainRates, useFiatCurrency } from 'selectors';
@@ -83,8 +83,11 @@ import {
   sortingOffersToGasFee,
   sortOffers,
   useGasFeeAssets,
+  getSortingValue,
+  appendFeeCaptureTransactionIfNeeded,
 } from './utils';
 import GasFeeAssetSelection from './GasFeeAssetSelection';
+// Local
 
 interface Props {
   fetchExchangeTitle: (val: string) => void;
@@ -112,7 +115,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
 
   const [selectedProvider, setSelectedProvider] = React.useState('');
 
-  const [faileEstimateOffers, setFailEstimateOffers] = React.useState(0);
+  const [failedEstimateOffers, setFailEstimateOffers] = React.useState(0);
   const [hideAllOffers, setHideAllOffers] = React.useState(false);
   const [showBestOffer, setShowBestOffer] = React.useState(true);
 
@@ -279,20 +282,22 @@ function Exchange({ fetchExchangeTitle }: Props) {
     selectedOffer?.fromAmount,
   );
 
-  const confirmTransaction = () => {
-    if (!selectedOffer?.feeInfo) {
+  const confirmTransaction = async () => {
+    const offerWithFee = await appendFeeCaptureTransactionIfNeeded(selectedOffer, getAccountAddress(activeAccount));
+
+    if (!offerWithFee?.feeInfo) {
       showTransactionRevertedToast();
       return;
     }
 
     let transactionPayload: TransactionPayload = mapTransactionsToTransactionPayload(
-      selectedOffer?.chain,
-      selectedOffer.transactions,
+      offerWithFee?.chain,
+      offerWithFee.transactions,
     );
     transactionPayload = {
       ...transactionPayload,
       offer: {
-        ...selectedOffer,
+        ...offerWithFee,
         gasFeeAsset,
       },
       type: TRANSACTION_TYPE.EXCHANGE,
@@ -304,7 +309,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
         appsFlyerlogEventAction(`swap_completed_${fromAsset?.symbol}_${toAsset?.symbol}`, {
           tokenPair: `${fromAsset?.symbol}_${toAsset?.symbol}`,
           chain,
-          amount_swapped: selectedOffer.fromAmount,
+          amount_swapped: offerWithFee.fromAmount,
           date: currentDate(),
           time: currentTime(),
           platform: Platform.OS,
@@ -394,7 +399,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
                 onPress={() => handleOfferPress(offer)}
                 onFetchSortingOfferInfo={onChangeSortingOffers}
                 onEstimateFail={() => {
-                  setFailEstimateOffers(faileEstimateOffers + 1);
+                  setFailEstimateOffers(failedEstimateOffers + 1);
                 }}
               />
             ))}
