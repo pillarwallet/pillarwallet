@@ -318,7 +318,8 @@
     "trandingVol": "交易量",
     "allTimeHigh": "历来最高",
     "allTimeLow": "历来最低点",
-    "your_balance": "您的余额"
+    "your_balance": "您的余额",
+    "volume_24": "24小时成交量"
   },
   "button": {
     "activate": "启用",

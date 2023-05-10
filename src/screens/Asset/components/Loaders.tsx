@@ -31,7 +31,7 @@ import { useIsDarkTheme } from 'utils/themes';
 import Icon from 'components/core/Icon';
 
 const DARK_PRIMARY_COLOR = 'rgba(31, 30, 30, 0.4)';
-const DARK_SECONDARY_COLOR = 'rgba(45, 45, 45, 0.33)';
+const DARK_SECONDARY_COLOR = 'rgba(55, 55, 55, 1)';
 
 const LIGHT_PRIMARY_COLOR = 'rgba(235, 240, 246, 0.1)';
 const LIGHT_SECONDARY_COLOR = 'rgba(252, 253, 255, 0.1)';
@@ -64,20 +64,17 @@ export const GraphLoader = () => {
   );
 };
 
-export const TokenAnalyticsLoader = () => {
-  const isDarkTheme = useIsDarkTheme();
-  return (
-    <ContentLoader
-      primaryColor={'rgba(59, 0, 110, 0.33)'}
-      secondaryColor={'rgba(74, 0, 138, 0.4)'}
-      duration={1000}
-      width={66}
-      height={23}
-    >
-      <Rect x="0" y="0" rx="4" ry="4" width="66" height="15" />
-    </ContentLoader>
-  );
-};
+export const TokenAnalyticsLoader = () => (
+  <ContentLoader
+    primaryColor={'rgba(59, 0, 110, 0.33)'}
+    secondaryColor={'rgba(74, 0, 138, 0.4)'}
+    duration={1000}
+    width={66}
+    height={23}
+  >
+    <Rect x="0" y="0" rx="4" ry="4" width="66" height="15" />
+  </ContentLoader>
+);
 
 export const BalanceLoader = () => {
   const isDarkTheme = useIsDarkTheme();
@@ -88,21 +85,21 @@ export const BalanceLoader = () => {
         primaryColor={isDarkTheme ? DARK_PRIMARY_COLOR : LIGHT_PRIMARY_COLOR}
         secondaryColor={isDarkTheme ? DARK_SECONDARY_COLOR : LIGHT_SECONDARY_COLOR}
         duration={1000}
-        width={98}
-        height={55}
+        width={99}
+        height={50}
       >
-        <Rect x="0" y="10" rx="4" ry="4" width="98" height="22" />
-        <Rect x="0" y="37" rx="4" ry="4" width="98" height="13" />
+        <Rect x="0" y="5" rx="4" ry="4" width="98" height="22" />
+        <Rect x="0" y="32" rx="4" ry="4" width="98" height="13" />
       </ContentLoader>
       <ContentLoader
         primaryColor={isDarkTheme ? DARK_PRIMARY_COLOR : LIGHT_PRIMARY_COLOR}
         secondaryColor={isDarkTheme ? DARK_SECONDARY_COLOR : LIGHT_SECONDARY_COLOR}
         duration={1000}
         width={98}
-        height={55}
+        height={50}
       >
-        <Rect x="0" y="10" rx="4" ry="4" width="98" height="22" />
-        <Rect x="0" y="37" rx="4" ry="4" width="98" height="13" />
+        <Rect x="0" y="5" rx="4" ry="4" width="98" height="22" />
+        <Rect x="0" y="32" rx="4" ry="4" width="98" height="13" />
       </ContentLoader>
     </RowContainer>
   );

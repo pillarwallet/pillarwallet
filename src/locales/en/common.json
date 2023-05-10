@@ -338,7 +338,8 @@
     "trandingVol": "Trading Vol.",
     "allTimeHigh": "All-Time High",
     "allTimeLow": "All-Time Low",
-    "your_balance": "Your Balance"
+    "your_balance": "Your Balance",
+    "volume_24": "Volume 24h"
   },
 
   "button": {

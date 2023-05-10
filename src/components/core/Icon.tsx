@@ -136,6 +136,8 @@ import IconRadioButtonFocus from 'assets/icons/svg/radio-button-focus.svg';
 import IconRadioButton from 'assets/icons/svg/radio-button.svg';
 import PlrTransparentIcon from 'assets/icons/svg/tokens-48-plr-transparent.svg';
 import DashboardLiquidity from 'assets/icons/svg/24-dashboard-liquidity.svg';
+import BuyIcon from 'assets/icons/svg/24-card-in.svg';
+import SellIcon from 'assets/icons/svg/24-card-out.svg';
 
 // Assets: services icons
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
@@ -291,6 +293,8 @@ const components = {
   'ramp-network': IconRampNetwork,
   pelerin: IconPelerin,
   'plr-transparent': PlrTransparentIcon,
+  buy: BuyIcon,
+  sell: SellIcon,
 
   // Service icons 38px
   binance38: IconBinance38,

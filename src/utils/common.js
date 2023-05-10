@@ -609,6 +609,25 @@ export const formatBigAmount = (value: Value) => {
   return _value.toFixed(2);
 };
 
+export function nFormatter(num: ?number) {
+  if (!num) return 0;
+  if (num >= 1000000000) {
+    // eslint-disable-next-line prefer-template
+    return (num / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B';
+  }
+  if (num >= 1000000) {
+    // eslint-disable-next-line prefer-template
+    return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+  }
+  if (num >= 1000) {
+    // eslint-disable-next-line prefer-template
+    return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+  }
+  return num?.toFixed(2);
+}
+
+export const convertDecimalNumber = (value: number) => value?.toFixed(value < 1 ? 4 : 2) || 0;
+
 export const formatBigFiatAmount = (value: Value, fiatCurrency: string) => {
   const currencySymbol = getCurrencySymbol(fiatCurrency);
   return `${currencySymbol}${formatBigAmount(value)}`;

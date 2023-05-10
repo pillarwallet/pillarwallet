@@ -17,8 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { useEffect, useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import React, { useMemo, useState } from 'react';
 import t from 'translations/translate';
 import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 
@@ -28,37 +27,81 @@ import HeaderBlock from 'components/HeaderBlock';
 import TokenIcon from 'components/display/TokenIcon';
 import { Spacing } from 'components/legacy/Layout';
 
+// Selectors
+import { useChainRates, useRootSelector } from 'selectors';
+import { accountAssetsBalancesSelector } from 'selectors/balances';
+
 // Utils
 import { useChainConfig } from 'utils/uiConfig';
+import { useTokenDetailsQuery, useMarketDetailsQuery, useHistoricalTokenPriceQuery } from 'utils/etherspot';
+import { getAssetRateInFiat } from 'utils/rates';
+import { getBalance } from 'utils/assets';
+import { convertDecimalNumber } from 'utils/common';
+
+// Constants
+import { ONE_DAY } from 'constants/assetsConstants';
+import { USD } from 'constants/assetsConstants';
 
 // models, types
 import type { AssetDataNavigationParam } from 'models/Asset';
 
 // Local
-import { HeaderLoader, GraphLoader } from './components/Loaders';
 import DurationSelection from './components/DurationSelection';
 import YourBalanceContent from './components/YourBalanceContent';
 import TokenAnalytics from './components/TokenAnalytics';
 import AnimatedGraph from 'components/AnimatedGraph';
 import HeaderContent from './components/HeaderContent';
+import AnimatedFloatingActions from './AnimatedFloatingActions';
 
 const AssetScreen = () => {
   const navigation = useNavigation();
 
-  const assetData: AssetDataNavigationParam = useNavigationParam('assetData');
-  const { chain, imageUrl } = assetData;
+  const accountAssetsBalances = useRootSelector(accountAssetsBalancesSelector);
 
+  const assetData: AssetDataNavigationParam = useNavigationParam('assetData');
+  const { chain, imageUrl, contractAddress, token } = assetData;
+
+  const chainRates = useChainRates(chain);
   const config = useChainConfig(chain);
 
-  const [loader, setLoader] = useState(true);
+  const [selectedPeriod, setSelectedPeriod] = useState(ONE_DAY);
+  const [pointerTokenValue, setPointerTokenValue] = useState(0);
+  const [pointerVisible, setPointerVisible] = useState(false);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setLoader(false);
-    }, 2000);
-  }, []);
+  let tokenDetailsQuery = useTokenDetailsQuery(assetData);
+  let marketDetailsQuery = useMarketDetailsQuery(assetData);
+  let historicalTokenPricesQuery = useHistoricalTokenPriceQuery(assetData, selectedPeriod);
+
+  if (tokenDetailsQuery?.data) {
+    const { tokenAddress } = tokenDetailsQuery?.data;
+    if (tokenAddress !== contractAddress?.toLowerCase()) {
+      tokenDetailsQuery.data = null;
+    }
+  }
+  if (marketDetailsQuery?.data) {
+    const { symbol } = marketDetailsQuery?.data;
+    if (symbol !== token) {
+      marketDetailsQuery.data = null;
+    }
+  }
+  if (historicalTokenPricesQuery?.data) {
+    const { items } = historicalTokenPricesQuery.data;
+    if (items?.[0]?.tokenAddress !== contractAddress?.toLowerCase()) {
+      historicalTokenPricesQuery.data = null;
+    }
+  }
 
   const networkName = chain ? config.title : undefined;
+
+  const tokenRateCMC = useMemo(() => {
+    if (!tokenDetailsQuery.data) return null;
+    const { usdPrice } = tokenDetailsQuery.data;
+    return convertDecimalNumber(usdPrice);
+  }, [tokenDetailsQuery.data]);
+
+  const tokenRate = getAssetRateInFiat(chainRates, contractAddress, USD);
+  const walletBalances = accountAssetsBalances[chain]?.wallet ?? {};
+  const balance = getBalance(walletBalances, contractAddress);
 
   return (
     <Container>
@@ -69,31 +112,49 @@ const AssetScreen = () => {
           },
           { title: ` ${assetData.name} ${t('label.on_network', { network: networkName })}` },
         ]}
-        customOnBack={() => navigation.goBack()}
+        customOnBack={() => navigation.dismiss()}
         noPaddingTop
       />
       <Content bounces={false} paddingHorizontal={0} paddingVertical={0}>
         <Container style={{ alignItems: 'center' }}>
           <Spacing h={20} />
-          {loader ? <HeaderLoader /> : <HeaderContent />}
-          {loader ? (
-            <>
-              <Spacing h={11} />
-              <GraphLoader />
-              <Spacing h={11} />
-            </>
-          ) : (
-            <AnimatedGraph />
-          )}
-
+          <HeaderContent
+            period={selectedPeriod}
+            tokenRate={pointerVisible ? convertDecimalNumber(pointerTokenValue) : tokenRateCMC || tokenRate}
+            marketDetails={marketDetailsQuery}
+            tokenDetails={tokenDetailsQuery}
+          />
           <Spacing h={10} />
-          <DurationSelection />
+
+          <AnimatedGraph
+            period={selectedPeriod}
+            marketData={marketDetailsQuery.data}
+            historicData={historicalTokenPricesQuery}
+            onChangePointer={(item, isActive) => {
+              setPointerTokenValue(item.value);
+              setPointerVisible(isActive);
+            }}
+          />
+          <Spacing h={10} />
+          <DurationSelection selectedPeriod={selectedPeriod} onSelectPeriod={setSelectedPeriod} />
           <Spacing h={20} />
-          <YourBalanceContent isLoading={loader} />
+          <YourBalanceContent
+            tokenRate={tokenRateCMC || tokenRate}
+            period={selectedPeriod}
+            balance={balance}
+            marketDetails={marketDetailsQuery}
+            assetData={assetData}
+          />
           <Spacing h={36} />
-          <TokenAnalytics isLoading={loader} />
+          <TokenAnalytics
+            tokenRate={tokenRateCMC || tokenRate}
+            tokenDetails={tokenDetailsQuery}
+            marketDetails={marketDetailsQuery}
+          />
+          <Spacing h={130} />
         </Container>
       </Content>
+      <AnimatedFloatingActions assetData={assetData} />
     </Container>
   );
 };

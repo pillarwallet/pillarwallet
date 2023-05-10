@@ -24,32 +24,64 @@ import { useTranslation } from 'translations/translate';
 
 // Utils
 import { fontStyles } from 'utils/variables';
-import { useThemeColors } from 'utils/themes';
+import { useThemeColors, useIsDarkTheme } from 'utils/themes';
+import { getCurrencySymbol, nFormatter, convertDecimalNumber } from 'utils/common';
 
 // Components
 import Text from 'components/core/Text';
 import Icon from 'components/core/Icon';
 import { Spacing } from 'components/legacy/Layout';
 
+// Constants
+import { USD } from 'constants/assetsConstants';
+
 // Local
 import { AllTimeLoader, TokenAnalyticsLoader } from './Loaders';
 
-const TokenAnalyticsListItem = ({ isLoading }) => {
+const TokenAnalyticsListItem = ({ tokenRate, tokenDetails, marketDetails }) => {
   const { t } = useTranslation();
   const colors = useThemeColors();
+  const currencySymbol = getCurrencySymbol(USD);
+  const isDarkTheme = useIsDarkTheme();
+
+  const { data, isLoading } = marketDetails;
+  const { data: tokenDetailsData } = tokenDetails;
 
   const analyticsList = [
-    { label: t('label.marketCap'), value: '$79,9B' },
-    { label: t('label.fdv'), value: '$1,09B', icon: 'info' },
-    { label: t('label.totalLiquidity'), value: '$347K', icon: 'history', percentageDifference: '+1.24%' },
-    { label: t('label.supply'), value: '259.3M' },
-    { label: t('label.holders'), value: '1,40K' },
-    { label: t('label.trandingVol'), value: '$867', icon: 'history', percentageDifference: '-0.24%' },
+    {
+      label: t('label.marketCap'),
+      value: data?.marketCap ? `${currencySymbol + nFormatter(data.marketCap)}` : t('label.notApplicable'),
+    },
+    {
+      label: t('label.fdv'),
+      value: data?.fullyDilutedValuation
+        ? `${currencySymbol + nFormatter(data.fullyDilutedValuation)}`
+        : t('label.notApplicable'),
+      icon: 'info',
+    },
+    {
+      label: t('label.totalLiquidity'),
+      value: tokenDetailsData?.liquidityUSD
+        ? `${currencySymbol + nFormatter(tokenDetailsData.liquidityUSD)}`
+        : t('label.notApplicable'),
+      icon: 'history',
+    },
+    { label: t('label.supply'), value: t('label.notApplicable') },
+    { label: t('label.holders'), value: t('label.notApplicable') },
+    {
+      label: t('label.trandingVol'),
+      value: tokenDetailsData?.tradingVolume ? nFormatter(tokenDetailsData.tradingVolume) : t('label.notApplicable'),
+      icon: 'history',
+    },
   ];
 
   const renderItem = ({ item, index }) => {
     return (
-      <ItemContainer key={item.label} style={(index === 2 || index === 5) && [{ marginRight: 0, width: '40%' }]}>
+      <ItemContainer
+        key={item.label}
+        isDark={isDarkTheme}
+        style={(index === 2 || index === 5) && [{ marginRight: 0, width: '40%' }]}
+      >
         {isLoading ? (
           <TokenAnalyticsLoader />
         ) : (
@@ -59,11 +91,7 @@ const TokenAnalyticsListItem = ({ isLoading }) => {
             </Text>
             <Spacing w={4} />
             {item?.percentageDifference && (
-              <Text
-                variant="small"
-                color={index === 5 ? colors.negative : colors.caribbeanGreen}
-                style={{ lineHeight: 22 }}
-              >
+              <Text variant="small" color={index === 5 ? colors.negative : colors.positive} style={{ lineHeight: 22 }}>
                 {item.percentageDifference}
               </Text>
             )}
@@ -83,6 +111,11 @@ const TokenAnalyticsListItem = ({ isLoading }) => {
     );
   };
 
+  const allTimeHighPercentage =
+    data?.allTimeHigh && !!tokenRate ? ((parseFloat(tokenRate) - data.allTimeHigh) * 100) / data.allTimeHigh : null;
+  const allTimeLowPercentage =
+    data?.allTimeLow && !!tokenRate ? ((parseFloat(tokenRate) - data.allTimeLow) * 100) / data.allTimeLow : null;
+
   return (
     <>
       <FlatList
@@ -95,29 +128,41 @@ const TokenAnalyticsListItem = ({ isLoading }) => {
       <Spacing h={18} />
       <RowContainer>
         <LabelText>{t('label.allTimeHigh')}</LabelText>
-        {/* <AllTimeLoader /> */}
-        <LabelText color={colors.basic000}>$1.5</LabelText>
+        <LabelText color={colors.basic000}>
+          {data?.allTimeHigh ? `${currencySymbol + convertDecimalNumber(data.allTimeHigh)}` : t('label.notApplicable')}
+        </LabelText>
       </RowContainer>
-      <Spacing h={4} />
-      <RowContainer>
-        <SmallText>2023, Jul 26 13:45</SmallText>
-        {isLoading ? <AllTimeLoader /> : <SmallText color={colors.negative}>-57.22%</SmallText>}
-      </RowContainer>
+      {allTimeHighPercentage && (
+        <RowContainer>
+          <LabelText />
+          <Text variant="tiny" color={data.allTimeHigh > tokenRate ? colors.negative : colors.positive}>
+            {allTimeHighPercentage?.toFixed(2)}%
+          </Text>
+        </RowContainer>
+      )}
       <Spacing h={10} />
       <RowContainer>
         <LabelText>{t('label.allTimeLow')}</LabelText>
-        {isLoading ? <AllTimeLoader /> : <LabelText color={colors.basic000}>$1.5</LabelText>}
+        {isLoading ? (
+          <AllTimeLoader />
+        ) : (
+          <LabelText color={colors.basic000}>
+            {data?.allTimeLow ? `${currencySymbol + convertDecimalNumber(data.allTimeLow)}` : t('label.notApplicable')}
+          </LabelText>
+        )}
       </RowContainer>
+      {allTimeLowPercentage && (
+        <RowContainer>
+          <LabelText />
+          <Text variant="tiny" color={data.allTimeLow < tokenRate ? colors.positive : colors.negative}>
+            +{allTimeLowPercentage?.toFixed(2)}%
+          </Text>
+        </RowContainer>
+      )}
       <Spacing h={4} />
-      <RowContainer>
-        <SmallText>2023, Jul 26 13:45</SmallText>
-        {isLoading ? <AllTimeLoader /> : <SmallText color={colors.caribbeanGreen}>+3454.65%</SmallText>}
-      </RowContainer>
     </>
   );
 };
-
-const TAG = 'token-analytics-list-item';
 
 export default TokenAnalyticsListItem;
 
@@ -132,18 +177,13 @@ const LabelText = styled(Text)`
   color: ${({ theme, color }) => (color ? color : theme.colors.basic010)};
 `;
 
-const SmallText = styled(Text)`
-  ${fontStyles.tiny};
-  color: ${({ theme, color }) => (color ? color : theme.colors.basic020)};
-`;
-
 const ItemContainer = styled.View`
   width: 27%;
   margin-right: 12px;
   margin-vertical: 6px;
   padding: 12px 10px 14px 12px;
   border-radius: 10px;
-  background-color: ${({ theme }) => theme.colors.deepViolet};
+  background-color: ${({ theme, isDark }) => (isDark ? theme.colors.deepViolet : theme.colors.deepViolet + '10')};
 `;
 
 const Button = styled.TouchableOpacity``;

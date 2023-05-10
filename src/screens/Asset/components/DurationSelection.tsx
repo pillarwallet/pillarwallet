@@ -17,41 +17,45 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
+import { getGraphPeriod } from 'utils/assets';
 
 // Components
 import Text from 'components/core/Text';
 
-const DurationSelection = () => {
+interface Props {
+  selectedPeriod: string;
+  onSelectPeriod: (periodInfo: PeriodProps) => void;
+}
+
+type PeriodProps = {
+  id: string;
+  label: string;
+};
+
+const DurationSelection = ({ selectedPeriod, onSelectPeriod }: Props) => {
   const colors = useThemeColors();
   const { t } = useTranslation();
-  const [selectedDuration, setSelectedDuration] = useState(t('button.twentyfour_hour'));
 
-  const durationList = [
-    t('button.one_hour'),
-    t('button.twentyfour_hour'),
-    t('button.seven_day'),
-    t('button.one_month'),
-    t('button.one_year'),
-  ];
+  const durationList = getGraphPeriod();
 
-  const renderText = (title) => (
+  const renderText = (item) => (
     <Button
-      key={title}
-      isSelected={title === selectedDuration}
+      key={item.id}
+      isSelected={item.id === selectedPeriod}
       onPress={() => {
-        setSelectedDuration(title);
+        onSelectPeriod(item.id);
       }}
       testID={`${TAG}-button-enable`}
       accessibilityLabel={`${TAG}-button-enable`}
     >
-      <Text variant={'small'} color={title === selectedDuration ? colors.basic010 : colors.basic030}>
-        {title}
+      <Text variant={'small'} color={item.id === selectedPeriod ? colors.basic010 : colors.basic030}>
+        {item.label}
       </Text>
     </Button>
   );

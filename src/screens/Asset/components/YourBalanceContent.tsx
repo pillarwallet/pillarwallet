@@ -17,12 +17,19 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
+import { getGraphPeriod } from 'utils/assets';
+import { formatFiat, getCurrencySymbol } from 'utils/common';
+import { wrapBigNumberOrNil } from 'utils/bigNumber';
+
+// Constants
+import { ONE_DAY } from 'constants/assetsConstants';
+import { USD } from 'constants/assetsConstants';
 
 // Components
 import Text from 'components/core/Text';
@@ -30,40 +37,76 @@ import { Spacing } from 'components/legacy/Layout';
 
 // Local
 import { BalanceLoader } from './Loaders';
+import { isEmpty } from 'lodash';
 
-const YourBalanceContent = ({ isLoading }) => {
+const YourBalanceContent = ({ period, tokenRate, balance, marketDetails, assetData }) => {
   const colors = useThemeColors();
   const { t } = useTranslation();
+  const currencySymbol = getCurrencySymbol(USD);
+
+  const { token } = assetData;
+
+  const { data: marketDetailsData, isLoading: marketDetailsLoading } = marketDetails;
+
+  const isWalletEmpty = balance <= 0;
+  const totalInFiat = isWalletEmpty ? 0 : balance * tokenRate;
+  const fiatAmount = formatFiat(totalInFiat, USD);
+
+  const periodInfo = getGraphPeriod(ONE_DAY);
+
+  const oneDayChangePercentage = useMemo(() => {
+    const zeroPercentage = 0;
+    if (isEmpty(marketDetailsData)) return zeroPercentage;
+    const { priceChangePercentage24h } = marketDetailsData;
+
+    if (!priceChangePercentage24h) return zeroPercentage;
+
+    return priceChangePercentage24h;
+  }, [marketDetailsData]);
+
+  const isPositive = oneDayChangePercentage === 0 || wrapBigNumberOrNil(oneDayChangePercentage).gt(0);
+
+  const changedPercentageValue = useMemo(() => {
+    const changedPriceValue = (totalInFiat * oneDayChangePercentage) / 100;
+
+    if (!isPositive) {
+      return `${currencySymbol}${(changedPriceValue * -1)?.toFixed(2)}`;
+    }
+    return `${currencySymbol}${changedPriceValue?.toFixed(2)}`;
+  }, [marketDetailsData, period]);
+
+  const changePercentage = `${oneDayChangePercentage?.toFixed(2)}%`;
 
   return (
     <Container>
       <RowContainer>
         <Text variant={'small'} color={colors.tertiaryText}>
-          {'Your Balance'}
+          {t('label.your_balance')}
         </Text>
         <Text variant={'small'} color={colors.tertiaryText}>
-          {'24 H'}
+          {periodInfo.label}
         </Text>
       </RowContainer>
       <Spacing h={5} />
-      {isLoading ? (
+      {marketDetailsLoading ? (
         <BalanceLoader />
       ) : (
         <>
           <RowContainer>
-            <Text variant={'large'} style={{ fontSize: 20 }} color={colors.basic000}>
-              $0.00
+            <Text style={{ fontSize: 20 }} color={colors.basic000}>
+              {fiatAmount}
             </Text>
-            <Text variant={'large'} style={{ fontSize: 20 }} color={colors.caribbeanGreen}>
-              $0.00
+            <Text style={{ fontSize: 20 }} color={isPositive ? colors.positive : colors.negative}>
+              {changedPercentageValue}
             </Text>
           </RowContainer>
           <RowContainer>
             <Text variant={'small'} color={colors.tertiaryText}>
-              0 PLR
+              {t('tokenValue', { value: balance, token })}
             </Text>
-            <Text variant={'small'} color={colors.caribbeanGreen}>
-              $0.00
+            <Text variant={'small'} color={isPositive ? colors.positive : colors.negative}>
+              {isPositive && '+'}
+              {changePercentage}
             </Text>
           </RowContainer>
         </>
@@ -71,8 +114,6 @@ const YourBalanceContent = ({ isLoading }) => {
     </Container>
   );
 };
-
-const TAG = 'YOUR-BALANCE';
 
 export default YourBalanceContent;
 

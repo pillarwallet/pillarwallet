@@ -17,51 +17,107 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React from 'react';
-import { Dimensions, View, StyleSheet } from 'react-native';
+import React, { useMemo } from 'react';
+import { Dimensions, View, StyleSheet, Animated, Easing } from 'react-native';
 import { LineChart } from 'react-native-gifted-charts';
+import moment from 'moment';
+import { isEmpty } from 'lodash';
+import styled from 'styled-components/native';
+import LinearGradient from 'react-native-linear-gradient';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
+import { getPriceChangePercentage } from 'utils/assets';
+import { wrapBigNumberOrNil } from 'utils/bigNumber';
+
+// Constants
+import { ONE_DAY } from 'constants/assetsConstants';
 
 // Components
-import Text from 'components/core/Text';
+import Icon from 'components/core/Icon';
+
+// Types
+import type { HistoricalTokenPrices, MarketDetails } from 'models/Asset';
+import PointerLevel from './PointerLevel';
 
 export const { width: SIZE } = Dimensions.get('window');
 
-const ptData: any = [
-  { value: 160, date: '6 Apr 2022' },
-  { value: 180, date: '6 Apr 2022' },
-  { value: 190, date: '6 Apr 2022' },
-  { value: 180, date: '6 Apr 2022' },
-  { value: 140, date: '6 Apr 2022' },
-  { value: 145, date: '6 Apr 2022' },
-  { value: 160, date: '7 Apr 2022' },
-  { value: 200, date: '8 Apr 2022' },
+interface Props {
+  period: string;
+  marketData: MarketDetails;
+  historicData: HistoricProps;
+  onChangePointer: (items: any, isActive: boolean) => void;
+}
 
-  { value: 220, date: '9 Apr 2022' },
-  {
-    value: 240,
-    date: '10 Apr 2022',
-  },
-  { value: 280, date: '11 Apr 2022' },
-  { value: 260, date: '12 Apr 2022' },
-  { value: 340, date: '13 Apr 2022' },
-  { value: 385, date: '14 Apr 2022' },
-  { value: 280, date: '15 Apr 2022' },
-  { value: 390, date: '16 Apr 2022' },
-  { value: 160, date: '17 Apr 2022' },
-  { value: 180, date: '17 Apr 2022' },
-  { value: 190, date: '18 Apr 2022' },
-  { value: 180, date: '19 Apr 2022' },
-  { value: 140, date: '20 Apr 2022' },
-  { value: 145, date: '20 Apr 2022' },
-  { value: 160, date: '21 Apr 2022' },
-  { value: 200, date: '22 Apr 2022' },
-];
+interface HistoricProps {
+  data: HistoricalTokenPrices;
+  status: string;
+  isLoading: boolean;
+}
 
-const AnimatedGraph = () => {
+const AnimatedGraph = ({ period, marketData, historicData, onChangePointer }: Props) => {
   const colors = useThemeColors();
+
+  const { data, status, isLoading } = historicData;
+
+  const filterList = useMemo(() => {
+    const list = [];
+    data?.items?.forEach((perticularItem) => {
+      if (perticularItem.timestamp && perticularItem.usdPrice) {
+        list.push({
+          value: perticularItem.usdPrice,
+          date: moment(perticularItem.timestamp * 1000).format(period === ONE_DAY ? 'MMM DD hh:mm' : 'MMM DD'),
+        });
+      }
+    });
+    return list;
+  }, [data, isLoading, status]);
+
+  const currentPricePercentage = useMemo(() => {
+    if (isEmpty(marketData)) return 0;
+    const pricePercentage = getPriceChangePercentage(period, marketData);
+    return pricePercentage;
+  }, [marketData, period]);
+
+  const isPositive = currentPricePercentage === 0 || wrapBigNumberOrNil(currentPricePercentage).gt(0);
+
+  const GRADIENT_COLORS = ['#5c0cac', '#5c0cac10'];
+
+  if (isLoading || isEmpty(data?.items)) {
+    const spinValue = new Animated.Value(0);
+
+    Animated.timing(spinValue, {
+      toValue: 3 * 60,
+      duration: 3000 * 60,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    }).start();
+
+    const spin = spinValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['0deg', '360deg'],
+    });
+
+    return (
+      <View style={styles.loaderContent}>
+        <Animated.View
+          style={[
+            styles.animatedView,
+            {
+              transform: [{ rotate: spin }],
+            },
+          ]}
+        >
+          <BackgroundGradient colors={GRADIENT_COLORS} useAngle></BackgroundGradient>
+        </Animated.View>
+        <IconContainer>
+          <Icon name="plr-transparent" />
+        </IconContainer>
+      </View>
+    );
+  }
+
+  const maxValue = filterList?.reduce((a, b) => Math.max(a, b.value), 0) || null;
 
   return (
     <View style={{ width: '100%' }}>
@@ -72,40 +128,39 @@ const AnimatedGraph = () => {
         hideAxesAndRules
         hideDataPoints
         yAxisSide={'right'}
-        animationDuration={1700}
-        data={ptData}
+        animationDuration={1500}
+        data={filterList}
         width={SIZE}
-        spacing={SIZE / ptData?.length + 1}
-        color={colors.caribbeanGreen}
+        spacing={SIZE / filterList?.length}
+        color={isPositive ? colors.positive : colors.negative}
         thickness={2.1}
-        startFillColor={colors.caribbeanGreen}
-        endFillColor={colors.caribbeanGreen}
-        startOpacity={0.2}
+        startFillColor={isPositive ? colors.positive : colors.negative}
+        endFillColor={isPositive ? colors.positive : colors.negative}
+        startOpacity={0.3}
         endOpacity={0.01}
         stepHeight={0}
         disableScroll
         height={155}
-        maxValue={500}
+        maxValue={maxValue * 1.1}
         initialSpacing={0}
         pointerConfig={{
           pointerStripHeight: 150,
           pointerStripColor: colors.secondaryText,
           pointerStripWidth: 1,
-          pointerColor: colors.caribbeanGreen,
+          pointerColor: isPositive ? colors.positive : colors.negative,
           radius: 6,
           pointerLabelHeight: 50,
           pointerLabelWidth: 100,
-          strokeDashArray: [3, 3],
+          strokeDashArray: [5, 5],
           stripOverPointer: true,
+          shiftPointerLabelX: -15,
+          pointerVanishDelay: 0,
+          activatePointersDelay: 0,
           activatePointersOnLongPress: true,
           autoAdjustPointerLabelPosition: false,
-          pointerLabelComponent: (items) => {
-            return (
-              <Text variant="tiny" style={styles.textStyle}>
-                {items[0].date}
-              </Text>
-            );
-          },
+          pointerLabelComponent: (items, isActive) => (
+            <PointerLevel items={items} isActive={isActive} onChangePointer={onChangePointer} />
+          ),
         }}
       />
     </View>
@@ -113,11 +168,37 @@ const AnimatedGraph = () => {
 };
 
 const styles = StyleSheet.create({
+  loaderContent: {
+    height: 200,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   textStyle: {
     position: 'absolute',
-    left: -15,
-    top: 200,
+    top: 190,
+  },
+  animatedView: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
   },
 });
+
+const IconContainer = styled.View`
+  background-color: ${({ theme }) => theme.colors.basic070};
+  border-radius: 24px;
+  shadow-color: #5c0cac;
+  shadow-opacity: 0.58;
+  shadow-radius: 24;
+  elevation: 56;
+  width: 48px;
+  height: 48px;
+`;
+
+const BackgroundGradient = styled(LinearGradient)`
+  border-radius: 26px;
+  height: 52px;
+  width: 52px;
+`;
 
 export default AnimatedGraph;

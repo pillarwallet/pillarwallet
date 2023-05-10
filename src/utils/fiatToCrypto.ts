@@ -26,7 +26,7 @@ import { firebaseRemoteConfig } from 'services/firebase';
 
 // Constants
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
-import { CHAIN_ID } from 'constants/chainConstants';
+import { CHAIN_ID, CHAIN } from 'constants/chainConstants';
 import { MATIC } from 'constants/assetsConstants';
 
 // Config
@@ -39,6 +39,9 @@ import etherspotService from 'services/etherspot';
 
 // Utils
 import { chainFromChainId } from 'utils/chains';
+
+// Types
+import type { Chain } from 'models/Chain';
 
 const PILLAR = 'Pillar';
 
@@ -87,19 +90,43 @@ export const wertWidgetUrl = (address: string, fiatValue: string) => {
   return wertWidget.getEmbedUrl();
 };
 
+export const pelerinSupportedAssets = [
+  'BNB',
+  'BTCB',
+  'BUSD',
+  'DAI',
+  'ETH',
+  'FRAX',
+  'LUSD',
+  'MATIC',
+  'USDC',
+  'USDT',
+  'WBTC',
+  'WETH',
+  'XDAI',
+];
+
 // Pelerin
-export const buildMtPelerinOptions = (code: string, address: string) => {
+export const buildMtPelerinOptions = (
+  code: string,
+  address: string,
+  tab: string = 'buy',
+  token?: string,
+  chain?: Chain,
+) => {
+  const net = getNetTypeFromChain(chain);
+
   let onRampOptions = {
     lang: 'en',
-    tab: 'buy',
+    tab,
     chain: 'xdai_mainnet',
-    net: 'matic_mainnet',
+    net,
     nets: 'arbitrum_mainnet,matic_mainnet,bsc_mainnet,mainnet,optimism_mainnet,xdai_mainnet',
     crys: 'BNB,BTCB,BUSD,DAI,ETH,FRAX,LUSD,MATIC,USDC,USDT,WBTC,WETH,XDAI',
     rfr: 'etherspot',
     bsc: 'GBP',
-    bdc: 'MATIC',
-    ssc: 'MATIC',
+    bdc: token || 'MATIC',
+    ssc: token || 'MATIC',
     sdc: 'GBP',
     hash: '',
     code: code,
@@ -109,11 +136,23 @@ export const buildMtPelerinOptions = (code: string, address: string) => {
   return onRampOptions;
 };
 
+const getNetTypeFromChain = (chain: Chain) => {
+  if (chain === CHAIN.ETHEREUM) return 'mainnet';
+  if (chain === CHAIN.BINANCE) return 'bsc_mainnet';
+  if (chain === CHAIN.XDAI) return 'xdai_mainnet';
+  if (chain === CHAIN.OPTIMISM) return 'optimism_mainnet';
+  if (chain === CHAIN.ARBITRUM) return 'arbitrum_mainnet';
+  return 'matic_mainnet';
+};
+
 export const pelerinWidgetUrl = async (
   deployingAccount = false,
   setDeployingAccount?: (value: boolean) => void,
   showAlert?: (message: string) => void,
   t?: (t: string) => string,
+  tab?: string,
+  token?: string,
+  tokenChain?: Chain,
 ) => {
   const chain = chainFromChainId[CHAIN_ID.XDAI];
 
@@ -123,7 +162,7 @@ export const pelerinWidgetUrl = async (
   let base64Hash = '';
   const code = Math.floor(Math.random() * 8999) + 1000;
   const message = 'MtPelerin-' + code;
-  let onRampOptions = buildMtPelerinOptions(code.toString(), account.address);
+  let onRampOptions = buildMtPelerinOptions(code.toString(), account.address, tab, token, tokenChain);
 
   if (account?.state === AccountStates.UnDeployed) {
     if (deployingAccount) {
