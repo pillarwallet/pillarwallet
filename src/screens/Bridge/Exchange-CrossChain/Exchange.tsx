@@ -19,7 +19,6 @@ import * as React from 'react';
 import { Keyboard, Platform } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
-import { useDebounce } from 'use-debounce';
 import { isEmpty, maxBy } from 'lodash';
 import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
@@ -120,7 +119,6 @@ function Exchange({ fetchExchangeTitle }: Props) {
   const [showBestOffer, setShowBestOffer] = React.useState(true);
 
   const [fromValue, setFromValue] = React.useState(null);
-  const [debouncedFromValue] = useDebounce(fromValue, 500);
 
   const [gasFeeAsset, setGasFeeAsset] = React.useState<AssetOption | null>(null);
 
@@ -145,7 +143,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
   const currency = useFiatCurrency();
   const rate = getAssetRateInFiat(rates, toAsset?.address, currency);
 
-  const offersQuery = useOffersQuery(chain, fromAsset, toAsset, debouncedFromValue);
+  const offersQuery = useOffersQuery(chain, fromAsset, toAsset, fromValue);
   const offers = sortOffers(offersQuery.data);
 
   React.useEffect(() => {
@@ -241,6 +239,12 @@ function Exchange({ fetchExchangeTitle }: Props) {
   }, [showLoading]);
 
   React.useEffect(() => {
+    if (gasFeeAsset) {
+      setHideAllOffers(false);
+    }
+  }, [gasFeeAsset]);
+
+  React.useEffect(() => {
     setSortOfferList([]);
     setHideAllOffers(false);
     setShowBestOffer(true);
@@ -249,13 +253,16 @@ function Exchange({ fetchExchangeTitle }: Props) {
   const showOfferEstimateFailState = failedEstimateOffers === offers?.length;
   const ratesNotFound = toAsset && fromValue ? rate === 0 : false;
 
-  const sortedOffers = isEmpty(sortOffersList) ? offers : sortingOffersToGasFee(sortOffersList);
+  const sortedOffers = React.useMemo(() => {
+    if (isEmpty(sortOffersList)) return offers;
+    else return sortingOffersToGasFee(sortOffersList);
+  }, [renderItem, gasFeeAsset, sortOffersList, offers]);
 
   // Use for select default best offer
   React.useEffect(() => {
     if (isEmpty(sortOffersList)) return;
 
-    const bestOffer = sortedOffers.find((offer) => !!offer.feeInfo && offer.provider !== EXCHANGE_PROVIDER.LIFI);
+    const bestOffer = sortedOffers?.find((offer) => !!offer.feeInfo && offer.provider !== EXCHANGE_PROVIDER.LIFI);
     setSelectedProvider(bestOffer?.provider);
 
     const failEstimatedFee = sortedOffers?.find((offer) => !offer.feeInfo);
@@ -267,8 +274,8 @@ function Exchange({ fetchExchangeTitle }: Props) {
   const exchangeOffers = React.useMemo(() => {
     if (isEmpty(sortedOffers)) return [];
 
-    const bestOffer = sortedOffers.find((offer) => !!offer.feeInfo && offer.provider !== EXCHANGE_PROVIDER.LIFI);
-    return hideAllOffers ? [bestOffer] : sortedOffers;
+    const bestOffer = sortedOffers?.find((offer) => !!offer.feeInfo && offer.provider !== EXCHANGE_PROVIDER.LIFI);
+    return hideAllOffers ? (!!bestOffer ? [bestOffer] : sortedOffers.slice(0, 1)) : sortedOffers;
   }, [sortedOffers, offers, sortOffersList, renderItem]);
 
   const selectedOffer = sortedOffers?.find((offer) => offer.provider === selectedProvider);
