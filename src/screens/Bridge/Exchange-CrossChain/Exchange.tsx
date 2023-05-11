@@ -19,6 +19,7 @@ import * as React from 'react';
 import { Keyboard, Platform } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
+import { useDebounce } from 'use-debounce';
 import { isEmpty, maxBy } from 'lodash';
 import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
@@ -119,6 +120,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
   const [showBestOffer, setShowBestOffer] = React.useState(true);
 
   const [fromValue, setFromValue] = React.useState(null);
+  const [debouncedFromValue] = useDebounce(fromValue, 500);
 
   const [gasFeeAsset, setGasFeeAsset] = React.useState<AssetOption | null>(null);
 
@@ -143,7 +145,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
   const currency = useFiatCurrency();
   const rate = getAssetRateInFiat(rates, toAsset?.address, currency);
 
-  const offersQuery = useOffersQuery(chain, fromAsset, toAsset, fromValue);
+  const offersQuery = useOffersQuery(chain, fromAsset, toAsset, debouncedFromValue);
   const offers = sortOffers(offersQuery.data);
 
   React.useEffect(() => {
@@ -235,6 +237,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
   React.useEffect(() => {
     if (showLoading) {
       setFailEstimateOffers(0);
+      setSortOfferList([]);
     }
   }, [showLoading]);
 
