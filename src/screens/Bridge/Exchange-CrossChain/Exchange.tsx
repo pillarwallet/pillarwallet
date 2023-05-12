@@ -237,8 +237,15 @@ function Exchange({ fetchExchangeTitle }: Props) {
   React.useEffect(() => {
     if (showLoading) {
       setFailEstimateOffers(0);
+      setSortOfferList([]);
     }
   }, [showLoading]);
+
+  React.useEffect(() => {
+    if (gasFeeAsset) {
+      setHideAllOffers(false);
+    }
+  }, [gasFeeAsset]);
 
   React.useEffect(() => {
     setSortOfferList([]);
@@ -249,13 +256,16 @@ function Exchange({ fetchExchangeTitle }: Props) {
   const showOfferEstimateFailState = failedEstimateOffers === offers?.length;
   const ratesNotFound = toAsset && fromValue ? rate === 0 : false;
 
-  const sortedOffers = isEmpty(sortOffersList) ? offers : sortingOffersToGasFee(sortOffersList);
+  const sortedOffers = React.useMemo(() => {
+    if (isEmpty(sortOffersList)) return offers;
+    else return sortingOffersToGasFee(sortOffersList);
+  }, [renderItem, gasFeeAsset, sortOffersList, offers]);
 
   // Use for select default best offer
   React.useEffect(() => {
     if (isEmpty(sortOffersList)) return;
 
-    const bestOffer = sortedOffers.find((offer) => !!offer.feeInfo && offer.provider !== EXCHANGE_PROVIDER.LIFI);
+    const bestOffer = sortedOffers?.find((offer) => !!offer.feeInfo && offer.provider !== EXCHANGE_PROVIDER.LIFI);
     setSelectedProvider(bestOffer?.provider);
 
     const failEstimatedFee = sortedOffers?.find((offer) => !offer.feeInfo);
@@ -267,8 +277,8 @@ function Exchange({ fetchExchangeTitle }: Props) {
   const exchangeOffers = React.useMemo(() => {
     if (isEmpty(sortedOffers)) return [];
 
-    const bestOffer = sortedOffers.find((offer) => !!offer.feeInfo && offer.provider !== EXCHANGE_PROVIDER.LIFI);
-    return hideAllOffers ? [bestOffer] : sortedOffers;
+    const bestOffer = sortedOffers?.find((offer) => !!offer.feeInfo && offer.provider !== EXCHANGE_PROVIDER.LIFI);
+    return hideAllOffers ? (!!bestOffer ? [bestOffer] : sortedOffers.slice(0, 1)) : sortedOffers;
   }, [sortedOffers, offers, sortOffersList, renderItem]);
 
   const selectedOffer = sortedOffers?.find((offer) => offer.provider === selectedProvider);
