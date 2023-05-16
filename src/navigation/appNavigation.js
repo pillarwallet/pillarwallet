@@ -122,6 +122,8 @@ import AddTokensScreen from 'screens/Assets/AddTokens';
 import TokenWithToggles from 'screens/Assets/TokensWithToggles';
 import ManageTokenLists from 'screens/Assets/ManageTokenLists';
 import ReceiveTokensWarning from 'screens/Home/ReceiveTokensWarning';
+import PlrStaking from 'screens/PlrStaking/PlrStaking';
+import PlrStakingValidator from 'screens/PlrStaking/PlrStakingValidator';
 
 // components
 import Toast from 'components/Toast';
@@ -262,6 +264,9 @@ import {
   TOKENS_WITH_TOGGLES,
   MANAGE_TOKEN_LISTS,
   RECEIVE_TOKENS_WARNING,
+  PILLAR_STAKING_FLOW,
+  PLR_STAKING,
+  PLR_STAKING_VALIDATOR,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -606,6 +611,14 @@ const liquidityPoolsFlow = createStackNavigator(
   StackNavigatorConfig,
 );
 
+const plrStakingFlow = createStackNavigator(
+  {
+    [PLR_STAKING]: PlrStaking,
+    [PLR_STAKING_VALIDATOR]: PlrStakingValidator,
+  },
+  StackNavigatorConfig,
+);
+
 const MainStack = createStackNavigator(
   {
     [HOME_FLOW]: homeFlow,
@@ -660,6 +673,7 @@ const AppFlowNavigation = createStackNavigator(
     [IMPORT_FLOW_FROM_SETTINGS]: ImportFlowFromSettings,
     [BRIDGE_FLOW]: bridgeFlow,
     [NATIVE_INTEGRATION_FLOW]: nativeIntegrationFlow,
+    [PILLAR_STAKING_FLOW]: plrStakingFlow,
   },
   modalTransition,
 );

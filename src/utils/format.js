@@ -50,7 +50,7 @@ export function formatValue(value: ?BigNumber | number, options?: FormatValueOpt
   const stripTrailingZeros = options?.stripTrailingZeros ?? false;
 
   if (options?.decimalPlaces != null) {
-    value = value.decimalPlaces(options?.decimalPlaces, BigNumber.ROUND_DOWN);
+    value = value?.decimalPlaces(options?.decimalPlaces, BigNumber.ROUND_DOWN);
   }
 
   return stripTrailingZeros ? value.toFormat() : value.toFormat(options?.decimalPlaces, BigNumber.ROUND_DOWN);

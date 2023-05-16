@@ -110,6 +110,9 @@ export const semanticLightThemeColors = {
   toastTextColor: lightThemeColors.basic090,
   bannerTextColor: baseColors.white,
   basic60: '#ebf0f6',
+  plrStaking: '#31005c',
+  plrStakingAlt: '#45196c',
+  plrStakingHighlight: '#b866ff',
 };
 
 export const semanticDarkThemeColors = {
@@ -174,6 +177,9 @@ export const semanticDarkThemeColors = {
   toastTextColor: darkThemeColors.basic010,
   bannerTextColor: baseColors.black,
   basic60: '#141414',
+  plrStaking: '#31005c',
+  plrStakingAlt: '#45196c',
+  plrStakingHighlight: '#b866ff',
 };
 
 export const themedColors = {

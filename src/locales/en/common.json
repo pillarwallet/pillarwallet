@@ -676,6 +676,11 @@
       "pillarDeployment2": "Gnosis for you.",
       "checkAddress": "Before sending your assets to your address, check the current deployment costs:",
       "understood": "Got it. Don’t show this message again."
+    },
+    "investments": {
+      "title": "PLR Staking",
+      "description": "Earn ETH by staking your PLR tokens.\n80% PLR of the vault staked.",
+      "closeTime": "Subscription will close in {{closeTime}}"
     }
   },
 
@@ -1702,5 +1707,26 @@
     "for": "for",
     "gas": "Gas",
     "time": "Time"
+  },
+
+  "plrStaking": {
+    "title": "Pillar Staking",
+    "info": "Stake PLR to earn ETH on Ethereum without running a validator. Rewards are distributed quarterly after ETH validator withdrawals are live. Proportional distribution based on staked percentage of PLR pool. Staked tokens (stkPLR) are 1:1 issued, and PLR tokens are locked for 52 weeks.",
+    "limitWarning": "You need a minimum of 10,000 PLR tokens on Ethereum, swap more assets to PLR on Ethereum.",
+    "plrAvailable": "You have PLR assets on {{chainAmount}} chain{{s}}",
+    "pillar": "Pillar",
+    "assetSelector": {
+      "from": "From",
+      "to": "To",
+      "on": "on {{network}}",
+      "max": "Max",
+      "balance": "Balance {{balance}}"
+    },
+    "button": {
+      "chooseAsset": "Choose Asset",
+      "stake": "Stake"
+    },
+    "validator": { "title": "Staking Pillar Validator" },
+    "chooseAsset": "Choose asset"
   }
 }

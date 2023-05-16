@@ -189,6 +189,8 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
   };
 
   const handleSelectToAsset = (asset: AssetOption) => {
+    console.log('plrAsset', asset);
+
     setToAddress(asset.address);
     setToAddressChain(asset.chain);
     dispatch(fetchSingleChainAssetRatesAction(asset.chain, asset));

@@ -76,6 +76,7 @@ import { useBioMetricsPopup } from 'hooks/biometrics';
 import BalanceSection from './BalanceSection';
 import AssetsSection from './AssetsSection';
 import FloatingActions from './FloatingActions';
+import InvestmentsSection from './InvestmentsSection';
 import { useAccountCollectibleCounts } from './utils';
 import AppsButton from './AppsButton';
 import TransactionNotification from './components/TransactionNotification';
@@ -278,6 +279,8 @@ function Home() {
               accountTotalBalances={accountTotalBalances}
               accountCollectibleCounts={accountCollectibleCounts}
             />
+
+            <InvestmentsSection />
 
             <Banner screenName={screenName} bottomPosition />
 

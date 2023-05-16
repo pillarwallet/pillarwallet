@@ -134,6 +134,7 @@ import IconTokens from 'assets/icons/svg/icon-24-tokens.svg';
 import IconCheckmarkCircleGreen from 'assets/icons/svg/icon-18-checkmark-circle.svg';
 import IconRadioButtonFocus from 'assets/icons/svg/radio-button-focus.svg';
 import IconRadioButton from 'assets/icons/svg/radio-button.svg';
+import IconHomeInvestments from 'assets/icons/svg/icon-24-investments.svg';
 
 // Assets: services icons
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
@@ -165,6 +166,15 @@ import IconPolygon16 from 'assets/icons/svg/icon-16-polygon.svg';
 import IconOptimism16 from 'assets/icons/svg/icon-16-optimism.svg';
 import IconGnosis16 from 'assets/icons/svg/icon-16-gnosis.svg';
 import IconArbitrum16 from 'assets/icons/svg/icon-16-arbitrum.svg';
+
+// Assets: plr token icons
+import IconPlr32 from 'assets/icons/svg/icon-32-plr.svg';
+import IconPlr48 from 'assets/icons/svg/icon-48-plr.svg';
+
+// Assets: wallet icons
+import IconEtherspot16 from 'assets/icons/svg/icon-16-etherspot.svg';
+import IconPillar16 from 'assets/icons/svg/icon-16-pillar.svg';
+import IconWallet16 from 'assets/icons/svg/icon-16-wallet.svg';
 
 const components = {
   // Generic icons
@@ -273,6 +283,7 @@ const components = {
   'checkmark-circle-green': IconCheckmarkCircleGreen,
   'radio-button-focus-icon': IconRadioButtonFocus,
   'radio-button-icon': IconRadioButton,
+  'home-investments': IconHomeInvestments,
 
   // Service icons
   binance: IconBinance,
@@ -303,6 +314,15 @@ const components = {
   xdai16: IconGnosis16,
   optimism16: IconOptimism16,
   arbitrum16: IconArbitrum16,
+
+  // PLR icons
+  plr32: IconPlr32,
+  plr48: IconPlr48,
+
+  // Etherspot icons
+  etherspot16: IconEtherspot16,
+  pillar16: IconPillar16,
+  wallet16: IconWallet16,
 };
 
 export type IconName = keyof typeof components;
