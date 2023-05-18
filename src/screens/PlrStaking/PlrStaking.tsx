@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, Keyboard, Platform } from 'react-native';
 import { useTranslationWithPrefix } from 'translations/translate';
 import styled from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
@@ -7,18 +6,13 @@ import { useDispatch } from 'react-redux';
 
 // Constants
 import { PLR_STAKING_VALIDATOR } from 'constants/navigationConstants';
-import {
-  MAX_PLR_STAKE_AMOUNT,
-  MIN_PLR_STAKE_AMOUNT,
-  WalletType,
-  plrSupportedChains,
-} from 'constants/plrStakingConstants';
+import { MIN_PLR_STAKE_AMOUNT, WalletType, plrSupportedChains } from 'constants/plrStakingConstants';
 
 // Hooks
 import { useStableAssets, useNonStableAssets } from 'hooks/assets';
 
 // Utils
-import { fontSizes, fontStyles, spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 
 // Selectors
 import { useSupportedChains } from 'selectors/chains';

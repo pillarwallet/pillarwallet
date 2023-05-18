@@ -1,18 +1,19 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { ScrollView, Keyboard, Platform } from 'react-native';
 import { useTranslationWithPrefix } from 'translations/translate';
 import styled from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
 import { useDebounce } from 'use-debounce';
-import { BigNumber } from 'bignumber.js';
 
 // Constants
+import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstantsTs';
 import { stkPlrToken } from 'constants/plrStakingConstants';
+import { TRANSACTION_TYPE } from 'constants/transactionsConstants';
 
 // Types
 import type { AssetOption } from 'models/Asset';
+import type { TransactionPayload } from 'models/Transaction';
 
 // Utils
 import { spacing } from 'utils/variables';
@@ -20,13 +21,20 @@ import {
   useToAssetsCrossChain,
   useCrossChainBuildTransactionQuery,
   useGasFeeAssets,
+  useOffersQuery,
+  sortOffers,
 } from 'screens/Bridge/Exchange-CrossChain/utils'; // From Cross-chain screen
 import { getPlrAddressForChain } from 'configs/assetsConfig';
 import { addressesEqual, isNativeAsset } from 'utils/assets';
 import { truncateDecimalPlaces } from 'utils/bigNumber';
+import { buildStakingTransactions, validatePlrStakeAmount } from 'utils/plrStakingHelper';
+import { mapTransactionsToTransactionPayload, showTransactionRevertedToast } from 'utils/transactions';
 
 // Selectors
 import { useWalletAssetBalance } from 'selectors/balances';
+
+// Hooks
+import { useTransactionFeeCheck } from 'hooks/transactions';
 
 // Components
 import { Container, Content } from 'components/layout/Layout';
@@ -34,11 +42,15 @@ import HeaderBlock from 'components/HeaderBlock';
 import { Spacing } from 'components/legacy/Layout';
 import AssetSelectorModal from 'components/Modals/AssetSelectorModal';
 import Button from 'components/core/Button';
+import Text from 'components/core/Text';
+import Spinner from 'components/Spinner';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 // Local
 import GasFeeAssetSelect from './GasFeeAssetSelect';
 import AssetInput from './AssetInput';
-import RouteCard from './RouteCard';
+import BridgeRouteCard from './BridgeRouteCard';
+import SwapRouteCard from './SwapRouteCard';
 
 const PlrStakingValidator = () => {
   const navigation = useNavigation();
@@ -51,10 +63,6 @@ const PlrStakingValidator = () => {
   const wallet = navigation.getParam('wallet');
   const balancesWithoutPlr = navigation.getParam('balancesWithoutPlr');
 
-  const gasFeeAssets = useGasFeeAssets(chain);
-  const balance = useWalletAssetBalance(token?.chain, token?.address);
-  const toOptions = useToAssetsCrossChain(chain);
-
   const inputRef: any = useRef();
   const stakeRef: any = useRef();
 
@@ -66,73 +74,127 @@ const PlrStakingValidator = () => {
 
   const [gasFeeAsset, setGasFeeAsset] = useState<AssetOption | null>(null);
   const [value, setValue] = useState(null);
-  const [debouncedFromValue] = useDebounce(value, 500);
+  const [debouncedValue] = useDebounce(value, 500);
 
+  const [stkPlrAmount, setStkPlrAmount] = useState(null);
   const [offerData, setOfferData] = useState(null);
   const [feeInfo, setFeeInfo] = useState(null);
-  const [failedEstimateOffer, setFailedEstimateOffer] = useState(null);
+  const [showFeeError, setShowFeeError] = useState(false);
+
+  const gasFeeAssets = useGasFeeAssets(selectedChain);
+  const balance = useWalletAssetBalance(selectedToken?.chain, selectedToken?.address);
+  const toOptions = useToAssetsCrossChain(CHAIN.POLYGON); // Get Ethereum assets for PLR token
+  const ethereumPlrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
+
+  const isBridgeTransaction = selectedToken?.chain !== CHAIN.ETHEREUM;
+  const isSwapTransaction = selectedToken?.chain === CHAIN.ETHEREUM && selectedToken?.address !== ethereumPlrAddress;
+  const isEthereumPlr = selectedToken?.chain === CHAIN.ETHEREUM && selectedToken?.address === ethereumPlrAddress;
+
+  // Get Bridge offers
+  let buildTractionQuery;
+  if (isBridgeTransaction) {
+    buildTractionQuery = useCrossChainBuildTransactionQuery(selectedToken, plrToken, debouncedValue);
+  }
+  const buildTransactionData = buildTractionQuery?.data || null;
+  const buildTransactionFetched = buildTractionQuery?.isFetched || false;
+  console.log('bridgeOffers', buildTransactionData);
+
+  // Get Swap offers
+  let offersQuery;
+  if (isSwapTransaction) {
+    console.log('start query');
+
+    offersQuery = useOffersQuery(chain, selectedToken, plrToken, debouncedValue);
+  }
+  const swapOffers = sortOffers(offersQuery?.data);
+  console.log('isSwap', isSwapTransaction);
+  console.log('swapOffers', swapOffers);
+
+  const { errorMessage } = useTransactionFeeCheck(
+    chain || CHAIN.ETHEREUM,
+    offerData?.feeInfo,
+    selectedToken,
+    offerData?.fromAmount,
+  );
 
   useEffect(() => {
     if (!!plrToken || !toOptions) return;
-    const ethereumPlrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
     const asset = toOptions?.find((a) => a.chain === CHAIN.ETHEREUM && addressesEqual(a.address, ethereumPlrAddress));
     if (!!asset) setPlrToken(asset);
   }, [toOptions]);
 
-  const onTokenPress = () => {
-    if (!balancesWithoutPlr?.length) return;
+  const resetForm = (resetValue = false) => {
+    if (resetValue && !!value) setValue(null);
+    if (offerData) setOfferData(null);
+    if (stkPlrAmount) setStkPlrAmount(null);
+    if (showFeeError) setShowFeeError(false);
+  };
 
+  const onValueChange = (newValue: string) => {
+    resetForm();
+    setValue(newValue);
+    if (isEthereumPlr) setStkPlrAmount(newValue);
+  };
+
+  const onTokenPress = () => {
     setShowModal(true);
   };
 
   const onSelectToken = (token) => {
-    setValue(null);
+    resetForm(true);
     setSelectedToken(token);
     setSelectedChain(token?.chain);
   };
 
-  const onToValueChange = () => {};
+  const validatePlr = (): boolean => {
+    return validatePlrStakeAmount(stkPlrAmount);
+  };
 
-  const onExecute = () => {};
+  const onExecute = () => {
+    console.log('attempting execute...');
 
-  const buildTractionQuery = useCrossChainBuildTransactionQuery(selectedToken, plrToken, debouncedFromValue);
-  const buildTransactionData = buildTractionQuery?.data || null;
-  const buildTransactionFetched = buildTractionQuery?.isFetched || false;
+    if (!feeInfo) {
+      showTransactionRevertedToast();
+      return;
+    }
 
-  const txData = useMemo(() => {
-    if (!buildTransactionData || !plrToken) return null;
-    const { approvalTransactionData, transactionData } = buildTransactionData;
-    if (!approvalTransactionData) return [transactionData];
-    return [approvalTransactionData, transactionData];
-  }, [buildTransactionData]);
+    console.log('execute 1', offerData);
 
-  const offer = useMemo(() => {
-    if (!buildTransactionData || !plrToken) return null;
-    const {
-      provider,
-      estimate: { data, toAmount },
-    } = buildTransactionData.quote;
-    const { fromToken, toToken } = data;
+    if (!isEthereumPlr && !offerData?.transactions) return;
 
-    const decimalValue: any = `10e${toToken?.decimals - 1}`;
+    let transactions = [...offerData.transactions];
+    console.log('execute 2', transactions);
 
-    const amount: any = parseInt(toAmount) / (decimalValue ?? 1);
+    const stakeTransactions = buildStakingTransactions(stkPlrAmount, plrToken);
+    console.log('execute 3', stakeTransactions);
 
-    return {
-      provider: provider === 'lifi' ? 'Lifi' : provider,
-      chain,
-      gasFeeAsset,
-      toChain: plrToken.chain,
-      transactions: txData,
-      fromAsset: fromToken,
-      toAsset: toToken,
-      fromAmount: value,
-      toAmount: new BigNumber(amount),
-      exchangeRate: amount,
+    let transactionPayload: TransactionPayload = mapTransactionsToTransactionPayload(chain, transactions);
+    transactionPayload = {
+      ...transactionPayload,
+      offer: !isEthereumPlr
+        ? {
+            ...offerData,
+            feeInfo,
+          }
+        : null,
+      type: TRANSACTION_TYPE.STAKEPLR,
+      gasToken: gasFeeAsset,
     };
-  }, [buildTransactionData]);
 
-  if (!!offer) console.log('offer', offer.toAmount);
+    navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
+      transactionPayload,
+      toAssetSymbol: plrToken.symbol,
+      goBackDismiss: true,
+      transactionType: TRANSACTION_TYPE.STAKEPLR,
+    });
+  };
+
+  const showLoading =
+    !!value && ((isBridgeTransaction && !buildTransactionFetched) || (isSwapTransaction && !swapOffers));
+
+  const noOffers =
+    (isBridgeTransaction && !buildTransactionData && buildTransactionFetched && !!value) ||
+    (isSwapTransaction && !swapOffers?.length && !!value);
 
   return (
     <Container>
@@ -146,7 +208,7 @@ const PlrStakingValidator = () => {
         <AssetInputWrapper>
           <AssetInput
             value={value}
-            onValueChange={setValue}
+            onValueChange={onValueChange}
             asset={selectedToken}
             chain={selectedChain}
             walletType={selectedWallet}
@@ -160,13 +222,15 @@ const PlrStakingValidator = () => {
 
           <Spacing w={spacing.large} />
 
-          {plrToken && (
+          {stkPlrToken && (
             <AssetInput
-              value={truncateDecimalPlaces(offer?.toAmount, 4)}
-              onValueChange={onToValueChange}
-              asset={plrToken}
-              chain={plrToken.chain}
+              value={truncateDecimalPlaces(stkPlrAmount, 4)}
+              asset={stkPlrToken}
+              chain={stkPlrToken.chain}
               walletType={selectedWallet}
+              balance={balance}
+              maxValue={balance}
+              referenceValue={balance}
               referenceDisableMax={true}
               ref={stakeRef}
               disabled={true}
@@ -188,29 +252,87 @@ const PlrStakingValidator = () => {
           </>
         )}
 
-        {!!offer && (
+        {showLoading && (
           <>
-            <Spacing h={20} />
+            <Spacing h={48} />
 
-            <RouteCard
-              key={offer.provider}
-              crossChainTxs={txData}
-              offer={offer}
-              disabled={false}
-              isLoading={false}
-              gasFeeAsset={gasFeeAsset}
-              isSelected={true}
-              onFeeInfo={setFeeInfo}
-              onEstimateFail={() => {
-                setFailedEstimateOffer(true);
-              }}
-              plrToken={plrToken}
-            />
+            <EmptyStateWrapper>
+              <Spinner size={20} />
+            </EmptyStateWrapper>
           </>
         )}
 
-        {!!feeInfo && (
-          <Button title={'Execute'} onPress={onExecute} size="large" disabled={!selectedWallet || !selectedChain} />
+        {noOffers && !showLoading && (
+          <>
+            <Spacing h={30} />
+
+            <EmptyStateWrapper>
+              <EmptyStateParagraph
+                title={tRoot('exchangeContent.emptyState.routes.title')}
+                bodyText={tRoot('exchangeContent.emptyState.routes.paragraph')}
+                large
+              />
+            </EmptyStateWrapper>
+          </>
+        )}
+
+        {isBridgeTransaction && buildTransactionData && buildTransactionFetched && (
+          <BridgeRouteCard
+            value={value}
+            selectedToken={selectedToken}
+            gasFeeAsset={gasFeeAsset}
+            plrToken={stkPlrToken}
+            buildTransactionData={buildTransactionData}
+            buildTransactionFetched={buildTransactionFetched}
+            setStkPlrAmount={setStkPlrAmount}
+            setOfferData={setOfferData}
+            onFeeInfo={setFeeInfo}
+            onEstimateFail={() => {
+              setShowFeeError(true);
+            }}
+          />
+        )}
+
+        {isSwapTransaction && !!swapOffers && (
+          <SwapRouteCard
+            value={value}
+            selectedToken={selectedToken}
+            chain={selectedToken?.chain}
+            offers={swapOffers}
+            selectedOffer={offerData}
+            disabled={false}
+            onEstimateFail={() => {
+              setShowFeeError(true);
+            }}
+            gasFeeAsset={gasFeeAsset}
+            plrToken={plrToken}
+            setOfferData={setOfferData}
+            setStkPlrAmount={setStkPlrAmount}
+            onFeeInfo={setFeeInfo}
+          />
+        )}
+
+        {!!offerData && (
+          <>
+            <Spacing h={30} />
+            {!validatePlr() && (
+              <>
+                <LimitWarningText>
+                  {'You need to stake min 10,000 PLR.\nYou can stake up to max 250,000 PLR.'}
+                </LimitWarningText>
+                <Spacing h={8} />
+              </>
+            )}
+
+            {validatePlr() && errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+
+            <Button
+              title={'Execute'}
+              onPress={onExecute}
+              size="large"
+              disabled={!selectedWallet || !selectedChain || !validatePlr() || !!errorMessage}
+            />
+          </>
         )}
       </Content>
 
@@ -232,4 +354,20 @@ export const AssetInputWrapper = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
+`;
+
+const LimitWarningText = styled(Text)`
+  color: ${({ theme }) => theme.colors.secondaryAccent240};
+  text-align: left;
+`;
+
+const EmptyStateWrapper = styled.View`
+  justify-content: center;
+  align-items: center;
+`;
+
+const ErrorMessage = styled(Text)`
+  margin-bottom: 15px;
+  text-align: center;
+  color: ${({ theme }) => theme.colors.negative};
 `;

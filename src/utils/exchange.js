@@ -91,6 +91,7 @@ type ProviderConfig = {|
   iconVertical: ImageSource,
   iconHorizontal: ImageSource,
   iconMonochrome: ImageSource,
+  iconUrl: string,
 |};
 
 /**
@@ -100,48 +101,57 @@ export function useProvidersConfig(): { [key: ExchangeProvider]: ProviderConfig 
   const { t } = useTranslation();
   const isDarkTheme = useIsDarkTheme();
 
+  // iconUrl should ideally be directed to our CMS
   return {
     [PROVIDER.UNISWAP]: {
       title: t('exchangeContent.providers.uniswap'),
       iconVertical: isDarkTheme ? uniswapDarkVertical : uniswapLightVertical,
       iconHorizontal: isDarkTheme ? uniswapDarkHorizontal : uniswapLightHorizontal,
       iconMonochrome: isDarkTheme ? uniswapDarkMonochrome : uniswapLightMonochrome,
+      iconUrl: 'https://seeklogo.com/images/U/uniswap-uni-logo-7B6173C76E-seeklogo.com.png',
     },
     [PROVIDER.ONE_INCH]: {
       title: t('exchangeContent.providers.oneInch'),
       iconVertical: isDarkTheme ? oneInchDarkVertical : oneInchLightVertical,
       iconHorizontal: isDarkTheme ? oneInchDarkHorizontal : oneInchLightHorizontal,
       iconMonochrome: isDarkTheme ? oneInchDarkMonochrome : oneInchLightMonochrome,
+      iconUrl:
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjfw34dBHtF8K7DU3xM2YwGLyTkTjc_QAqenSqldatkmJP7GalHos6Z9qaHqnOXiuo1Gw&usqp=CAU',
     },
     [PROVIDER.SYNTHETIX]: {
       title: t('exchangeContent.providers.synthetix'),
       iconVertical: isDarkTheme ? synthetixDarkVertical : synthetixLightVertical,
       iconHorizontal: isDarkTheme ? synthetixDarkHorizontal : synthetixLightHorizontal,
       iconMonochrome: isDarkTheme ? synthetixDarkMonochrome : synthetixLightMonochrome,
+      iconUrl: 'https://pbs.twimg.com/profile_images/1486202207024422914/v1_FLAKJ_400x400.png',
     },
     [PROVIDER.SUSHISWAP]: {
       title: t('exchangeContent.providers.sushiswap'),
       iconVertical: isDarkTheme ? sushiswapDarkVertical : sushiswapLightVertical,
       iconHorizontal: isDarkTheme ? sushiswapDarkHorizontal : sushiswapLightHorizontal,
       iconMonochrome: isDarkTheme ? sushiswapDarkMonochrome : sushiswapLightMonochrome,
+      iconUrl: 'https://pbs.twimg.com/profile_images/1622619902350688258/lFs3rTxB_400x400.png',
     },
     [PROVIDER.HONEYSWAP]: {
       title: t('exchangeContent.providers.honeyswap'),
       iconVertical: isDarkTheme ? honeyswapDarkVertical : honeyswapLightVertical,
       iconHorizontal: isDarkTheme ? honeyswapDarkHorizontal : honeyswapLightHorizontal,
       iconMonochrome: isDarkTheme ? honeyswapDarkMonochrome : honeyswapLightMonochrome,
+      iconUrl: 'https://icons.llamao.fi/icons/protocols/honeyswap.png',
     },
     [PROVIDER.PARASWAP]: {
       title: t('exchangeContent.providers.paraswap'),
       iconVertical: isDarkTheme ? paraswapDarkVertical : paraswapLightVertical,
       iconHorizontal: isDarkTheme ? paraswapDarkHorizontal : paraswapLightHorizontal,
       iconMonochrome: isDarkTheme ? paraswapDarkMonochrome : paraswapLightMonochrome,
+      iconUrl: 'https://pbs.twimg.com/profile_images/1475250080307363841/HBwNkCAz_400x400.jpg',
     },
     [PROVIDER.LIFI]: {
       title: t('exchangeContent.providers.lifi'),
       iconVertical: isDarkTheme ? lifiDarkVertical : lifiLightVertical,
       iconHorizontal: isDarkTheme ? lifiDarkHorizontal : lifiLightHorizontal,
       iconMonochrome: isDarkTheme ? lifiDarkMonochrome : lifiLightMonochrome,
+      iconUrl: 'https://li.fi/logo192.png',
     },
   };
 }

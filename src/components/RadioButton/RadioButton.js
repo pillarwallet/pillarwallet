@@ -54,7 +54,7 @@ export default withTheme(RadioButton);
 const RadioIcon = styled(Icon)`
   height: 24px;
   width: 24px;
-  background-color: ${({ theme }) => theme.colors.basic050};
+  background-color: ${({ theme }) => theme.colors.basic090};
   border-radius: ${borderRadiusSizes.medium}px;
   padding-right: ${spacing.medium}px;
   margin-right: ${spacing.medium}px;

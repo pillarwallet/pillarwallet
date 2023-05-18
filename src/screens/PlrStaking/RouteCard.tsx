@@ -18,264 +18,130 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { useEffect } from 'react';
+import React, { FC } from 'react';
 import styled from 'styled-components/native';
-import { useTranslation } from 'translations/translate';
-import { View } from 'react-native';
-
-// Components
-import Button from 'components/core/Button';
-import Text from 'components/core/Text';
-import DynamicSizeImage from 'components/DynamicSizeImage';
-import { TableFee } from 'components/legacy/Table';
-import Spinner from 'components/Spinner';
-import RadioButton from 'components/RadioButton';
-import { BaseText } from 'components/legacy/Typography';
-import { Spacing } from 'components/layout/Layout';
-import TokenIcon from 'components/display/TokenIcon';
 
 // Constants
 import { OFFERS } from 'constants/exchangeConstants';
 
 // Utils
-import { useProviderConfig } from 'utils/exchange';
-import { formatTokenValue, formatFiatValue } from 'utils/format';
-import { spacing, fontStyles } from 'utils/variables';
-import { getAssetValueInFiat } from 'utils/rates';
-import { getAccountAddress } from 'utils/accounts';
-import { isHighGasFee } from 'utils/transactions';
-import { useChainsConfig } from 'utils/uiConfig';
+import { fontStyles } from 'utils/variables';
 
 // Types
-import type { ExchangeOffer } from 'models/Exchange';
-import type { Asset, AssetOption } from 'models/Asset';
+import type { AssetOption } from 'models/Asset';
+import type { Chain } from 'models/Chain';
 import type { TransactionFeeInfo } from 'models/Transaction';
 
-// Selectors
-import { useRootSelector, useFiatCurrency, useChainRates, useActiveAccount } from 'selectors';
-import { gasThresholdsSelector } from 'redux/selectors/gas-threshold-selector';
+// Components
+import TokenIcon from 'components/display/TokenIcon';
+import { TableFee } from 'components/legacy/Table';
+import RadioButton from 'components/RadioButton';
+import Text from 'components/core/Text';
 
-// Hooks
-import { useTransactionsEstimate } from 'hooks/transactions';
-
-// Local
-import { getSortingValue, appendFeeCaptureTransactionIfNeeded } from 'screens/Bridge/Exchange-CrossChain/utils';
-
-type Props = {
-  offer: ExchangeOffer;
-  onPress?: () => Promise<void>;
-  disabled?: boolean;
-  isLoading?: boolean;
-  crossChainTxs?: any[];
-  onEstimateFail?: () => void;
-  gasFeeAsset: Asset | AssetOption;
-  onFetchSortingOfferInfo?: (offerInfo: ExchangeOffer) => void;
-  isSelected?: boolean;
-  onFeeInfo?: (feeInfo: TransactionFeeInfo | null) => void;
+interface IRouteCard {
+  offer?: any;
+  selected?: boolean;
+  chain?: Chain;
   plrToken?: AssetOption;
-};
-
-function OfferCard({
-  offer,
-  onPress,
-  disabled,
-  isLoading,
-  crossChainTxs,
-  onEstimateFail,
-  gasFeeAsset,
-  onFetchSortingOfferInfo,
-  isSelected,
-  onFeeInfo,
-  plrToken,
-}: Props) {
-  const { t } = useTranslation();
-  const config = useProviderConfig(offer.provider);
-  const activeAccount: any = useActiveAccount();
-  const fiatCurrency = useFiatCurrency();
-  const gasThresholds = useRootSelector(gasThresholdsSelector);
-  const chainsConfig = useChainsConfig();
-
-  const [offerInfo, setOfferInfo] = React.useState(null);
-
-  useEffect(() => {
-    async function call() {
-      const addTxsOffer = await appendFeeCaptureTransactionIfNeeded(offer, getAccountAddress(activeAccount));
-      setOfferInfo(addTxsOffer);
-    }
-    call();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [offer]);
-
-  const { chain, toChain, toAsset, toAmount } = offer;
-
-  const { titleShort: networkName } = chainsConfig[toChain];
-
-  const rates = useChainRates(toChain || chain);
-  const currency = useFiatCurrency();
-
-  const fiatValue = getAssetValueInFiat(toAmount, toAsset?.address, rates, currency) ?? null;
-  const formattedFiatValue = formatFiatValue(fiatValue, currency);
-
-  const {
-    feeInfo,
-    errorMessage: estimationErrorMessage,
-    isEstimating,
-  } = useTransactionsEstimate(chain, crossChainTxs || offerInfo?.transactions, true, gasFeeAsset);
-
-  const chainRates = useChainRates(chain);
-
-  const highFee = isHighGasFee(chain, feeInfo?.fee, feeInfo?.gasToken, chainRates, fiatCurrency, gasThresholds);
-
-  const formattedToAmount = formatTokenValue(offer.toAmount, offer.toAsset.symbol, { decimalPlaces: 0 }) ?? '';
-
-  // eslint-disable-next-line i18next/no-literal-string
-
-  useEffect(() => {
-    if (estimationErrorMessage) {
-      onEstimateFail && onEstimateFail();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [estimationErrorMessage]);
-
-  useEffect(() => {
-    onFeeInfo && onFeeInfo(feeInfo);
-    onFetchSortingOfferInfo &&
-      onFetchSortingOfferInfo({
-        ...offer,
-        feeInfo,
-        sortingValue: getSortingValue(toChain || chain, feeInfo, chainRates, fiatCurrency, fiatValue),
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [feeInfo, estimationErrorMessage, isEstimating]);
-
-  // if (estimationErrorMessage) {
-  //   return null;
-  // }
-
-  return (
-    <>
-      <RouteText>Route</RouteText>
-
-      <Spacing h={8} />
-
-      {/* <TouchableContainer disabled={disabled || isEstimating} onPress={() => onPress?.()}>
-        <Row>
-          <LeftColumn>
-            <Label>{t('exchangeContent.label.estTime')}</Label>
-            <BaseText>{t('label.half_min')}</BaseText>
-          </LeftColumn>
-
-          <RightColumn>
-            <Row style={{ minHeight: 20 }}>
-              {!!config?.iconHorizontal && (
-                <DynamicSizeImage imageSource={config.iconHorizontal} fallbackHeight={130} fallbackWidth={32} />
-              )}
-              <RadioButton type={OFFERS} visible={isSelected} style={{ marginRight: 0, marginLeft: 12 }} />
-            </Row>
-          </RightColumn>
-        </Row>
-
-        <Row topSeparator>
-          <LeftColumn>
-            {isEstimating ? (
-              <EmptyStateWrapper>
-                <Spinner size={20} />
-              </EmptyStateWrapper>
-            ) : (
-              <>
-                <Label>{t('exchangeContent.label.estFee')}</Label>
-                <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={chain} highFee={highFee} />
-              </>
-            )}
-          </LeftColumn>
-
-          <RightColumn>
-            <Button onPress={onPress} disabled={disabled || isEstimating} size="compact" style={{ borderRadius: 6 }} />
-          </RightColumn>
-        </Row>
-      </TouchableContainer> */}
-
-      <RouteWrapper>
-        <RouteContainer>
-          <IconWrapper>{plrToken && <TokenIcon url={plrToken?.icon} size={48} chain={plrToken?.chain} />}</IconWrapper>
-
-          <RouteInfoWrapper>
-            <RouteInfoRow>
-              <MainText>{formattedToAmount}</MainText>
-              <MainText highlighted>{`on ${networkName}`}</MainText>
-            </RouteInfoRow>
-
-            <RouteInfoRow>
-              <SubText>
-                <HighlightText>Est. fee:</HighlightText>
-                {` $53.2`}
-              </SubText>
-              <SubText>
-                <HighlightText>Est. time:</HighlightText>
-                {` 2 mins`}
-              </SubText>
-            </RouteInfoRow>
-          </RouteInfoWrapper>
-
-          <RadioButtonWrapper>
-            <RadioButton type={OFFERS} visible={isSelected} style={{ marginRight: 0, marginLeft: 12 }} />
-          </RadioButtonWrapper>
-        </RouteContainer>
-      </RouteWrapper>
-    </>
-  );
+  formattedToAmount?: string;
+  formattedFromAmount?: string;
+  networkName?: string;
+  providerConfig?: any;
+  feeInfo?: any;
+  highFee?: boolean;
+  onSelectOffer?: (offer: any, feeInfo: TransactionFeeInfo | null) => void;
+  disabled?: boolean;
 }
 
-export default OfferCard;
+const RouteCard: FC<IRouteCard> = ({
+  offer,
+  selected,
+  chain,
+  plrToken,
+  formattedToAmount,
+  formattedFromAmount,
+  networkName,
+  providerConfig: config,
+  feeInfo,
+  highFee,
+  onSelectOffer,
+  disabled,
+}) => {
+  return (
+    <RouteWrapper>
+      <RouteContainer onPress={() => onSelectOffer?.(offer, feeInfo)} disabled={disabled || !onSelectOffer}>
+        <IconWrapper>{plrToken && <TokenIcon url={plrToken?.iconUrl} size={48} chain={plrToken?.chain} />}</IconWrapper>
 
-const TouchableContainer = styled.TouchableOpacity`
-  margin-bottom: ${spacing.mediumLarge}px;
-  padding: 0 ${spacing.mediumLarge}px;
-  background-color: ${({ theme }) => theme.colors.basic080};
-  border-radius: 20px;
-`;
+        <RouteInfoWrapper>
+          <RouteInfoRow>
+            <MainText>{formattedToAmount}</MainText>
+            <MainText highlighted>{`on ${networkName}`}</MainText>
+          </RouteInfoRow>
 
-const Row = styled.View`
-  flex-direction: row;
-  align-items: center;
-  min-height: 70px;
-  padding: 10px 0;
-  ${({ theme, topSeparator }) => topSeparator && `border-top-width: 1px; border-top-color: ${theme.colors.card};`}
-`;
+          <RouteInfoRow>
+            <SubText>
+              <HighlightText>{'Est. fee: '}</HighlightText>
+              <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={chain} highFee={highFee} />
+            </SubText>
+            <SubText>
+              <HighlightText>Est. time:</HighlightText>
+              {` 2 mins`}
+            </SubText>
+          </RouteInfoRow>
+        </RouteInfoWrapper>
 
-const LeftColumn = styled.View`
-  flex: 1;
-  align-items: flex-start;
-`;
+        <RadioButtonWrapper>
+          <RadioButton type={OFFERS} visible={selected} style={{ marginRight: 0, marginLeft: 12 }} />
+        </RadioButtonWrapper>
+      </RouteContainer>
 
-const RightColumn = styled.View`
-  align-items: flex-end;
-  margin-left: ${spacing.mediumLarge}px;
-`;
+      <RouteBreakdownContainer>
+        <IconWrapper>{config && <TokenIcon url={config.iconUrl} size={32} chain={plrToken?.chain} />}</IconWrapper>
 
-const Label = styled(Text)`
-  ${fontStyles.regular};
-  color: ${({ theme }) => theme.colors.secondaryText};
-`;
+        <RouteInfoWrapper>
+          <RouteInfoRow>
+            <MainText>{`Swap via ${config?.title} on ${networkName}`}</MainText>
+          </RouteInfoRow>
 
-const EmptyStateWrapper = styled.View`
-  justify-content: center;
-  align-items: center;
-`;
+          <RouteInfoRow>
+            <MainText>{`${formattedFromAmount} → ${formattedToAmount}`}</MainText>
+          </RouteInfoRow>
+        </RouteInfoWrapper>
+      </RouteBreakdownContainer>
 
-const RouteText = styled(Text)`
-  ${fontStyles.big};
-  color: ${({ theme }) => theme.colors.basic010};
-`;
+      <RouteBreakdownContainer>
+        <IconWrapper>{plrToken && <TokenIcon url={plrToken?.iconUrl} size={32} chain={plrToken?.chain} />}</IconWrapper>
 
+        <RouteInfoWrapper>
+          <RouteInfoRow>
+            <MainText>{`Stake ${formattedToAmount} on ${networkName}`}</MainText>
+          </RouteInfoRow>
+        </RouteInfoWrapper>
+      </RouteBreakdownContainer>
+    </RouteWrapper>
+  );
+};
+
+export default RouteCard;
 // Routes
 const RouteWrapper = styled.View`
   flex-direction: column;
 `;
 
-const RouteContainer = styled.View`
+const RouteContainer = styled.TouchableOpacity`
   margin: 0 0 8px;
-  padding: 20px;
+  padding: 10px 10px 12px 16px;
+  border-radius: 20px;
+  background-color: ${({ theme }) => theme.colors.basic050};
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+const RouteBreakdownContainer = styled.View`
+  margin: 0 0 8px;
+  padding: 10px;
   border-radius: 20px;
   background-color: ${({ theme }) => theme.colors.basic050};
 
@@ -285,7 +151,8 @@ const RouteContainer = styled.View`
 `;
 
 const IconWrapper = styled.View`
-  min-width: 48px;
+  align-items: center;
+  justify-content: center;
 `;
 
 const RouteInfoWrapper = styled.View`
@@ -293,6 +160,7 @@ const RouteInfoWrapper = styled.View`
   flex: 1;
   flex-direction: column;
   padding-left: 16px;
+  justify-content: center;
 `;
 
 const RouteInfoRow = styled.View`

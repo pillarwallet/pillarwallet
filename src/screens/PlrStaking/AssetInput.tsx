@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import { BigNumber } from 'bignumber.js';
 
 // Constants
-import { WalletType, mapWalletTypeToIcon, mapWalletTypeToName } from 'constants/plrStakingConstants';
+import { WalletType } from 'constants/plrStakingConstants';
 
 // Types
 import type { Asset } from 'models/Asset';
@@ -19,6 +19,7 @@ import { truncateDecimalPlaces } from 'utils/bigNumber';
 import { hitSlop10 } from 'utils/common';
 import { formatFiatValue } from 'utils/format';
 import { getAssetValueInFiat } from 'utils/rates';
+import { mapWalletTypeToName, mapWalletTypeToIcon } from 'utils/plrStakingHelper';
 
 // Selectors
 import { useFiatCurrency, useChainRates } from 'selectors';
@@ -37,7 +38,7 @@ type Instance = typeof RNTextInput;
 
 interface IAssetInput extends React.ComponentPropsWithoutRef<Instance> {
   value: string;
-  onValueChange: (value: string) => void;
+  onValueChange?: (value: string) => void;
   asset: Asset;
   chain: string;
   walletType?: WalletType;
@@ -132,7 +133,7 @@ const AssetInput = forwardRef<Instance, IAssetInput>(
           <WalletText>{mapWalletTypeToName(walletType)}</WalletText>
         </WalletTextWrapper>
 
-        <InputContainer disabled={disabled}>
+        <InputContainer onPress={() => onTokenPress?.()} disabled={disabled}>
           {!!asset && (
             <TokenInfo disabled={disabled || !onTokenPress}>
               <TokenIcon url={asset?.iconUrl} size={34} chain={chain} />
@@ -163,17 +164,16 @@ const AssetInput = forwardRef<Instance, IAssetInput>(
           </FiatWrapper>
         </InputContainer>
 
-        {(referenceDisableMax == null || referenceDisableMax == undefined || referenceDisableMax === false) && (
-          <MaxAmountWrapper>
-            <SubContainer>
-              {chain && balance && <TokenBalance>{t('balance', { balance: balance?.toFixed(4) })}</TokenBalance>}
-            </SubContainer>
-            {/* @ts-ignore - TS cannot read Touchable as a JSX element */}
+        <MaxAmountWrapper>
+          <SubContainer>
+            {chain && balance && <TokenBalance>{t('balance', { balance: balance?.toFixed(4) })}</TokenBalance>}
+          </SubContainer>
+          {(referenceDisableMax == null || referenceDisableMax == undefined || referenceDisableMax === false) && ( //@ts-ignore - TS cannot read Touchable as a JSX element
             <TouchableOpacity hitSlop={hitSlop10} onPress={handleUseMaxValue} disabled={disabled}>
               <TextButtonTitle disabled={disabled}>{t('max')}</TextButtonTitle>
             </TouchableOpacity>
-          </MaxAmountWrapper>
-        )}
+          )}
+        </MaxAmountWrapper>
       </Container>
     );
   },
