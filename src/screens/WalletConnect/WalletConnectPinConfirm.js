@@ -23,6 +23,8 @@ import { createStructuredSelector } from 'reselect';
 import { useNavigation } from 'react-navigation-hooks';
 import { Wallet } from 'ethers';
 import { useTranslation } from 'react-i18next';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { formatJsonRpcResult } from '@json-rpc-tools/utils';
 
 // components
 import CheckAuth from 'components/CheckAuth';
@@ -75,11 +77,19 @@ type Props = {
 const WalletConnectPinConfirmScreeen = ({ resetIncorrectPassword, useBiometrics, sendAsset, activeAccount }: Props) => {
   const [isChecking, setIsChecking] = useState(false);
   const navigation = useNavigation();
-  const { approveCallRequest, switchEthereumChainConnectorRequest, rejectCallRequest } = useWalletConnect();
+  const {
+    approveCallRequest,
+    approveV2CallRequest,
+    switchEthereumChainConnectorRequest,
+    rejectCallRequest,
+    rejectV2CallRequest,
+  } = useWalletConnect();
   const { t } = useTranslation();
 
   const callRequest = navigation.getParam('callRequest');
   const transactionPayload = navigation.getParam('transactionPayload');
+
+  const isV2CallRequest = !!callRequest?.topic;
 
   const dismissScreen = () => {
     resetIncorrectPassword();
@@ -90,7 +100,12 @@ const WalletConnectPinConfirmScreeen = ({ resetIncorrectPassword, useBiometrics,
   const handleSendTransaction = (privateKey): void => {
     const statusCallback = (transactionStatus: TransactionStatus) => {
       if (transactionStatus.isSuccess && transactionStatus.hash) {
-        approveCallRequest(callRequest, transactionStatus.hash);
+        if (isV2CallRequest) {
+          const formatJSON = formatJsonRpcResult(callRequest.callId, transactionStatus.hash);
+          approveV2CallRequest(callRequest.topic, formatJSON);
+        } else {
+          approveCallRequest(callRequest, transactionStatus.hash);
+        }
       } else {
         rejectCallRequest(callRequest);
       }
@@ -113,10 +128,20 @@ const WalletConnectPinConfirmScreeen = ({ resetIncorrectPassword, useBiometrics,
       params: [transaction],
     } = callRequest;
 
-    return signTransaction(transaction, wallet).catch(() => {
-      rejectCallRequest(callRequest);
+    try {
+      const signature = signTransaction(transaction, wallet);
+      if (isV2CallRequest) {
+        return formatJsonRpcResult(callRequest.callId, signature);
+      }
+      return signature;
+    } catch (e) {
+      if (isV2CallRequest) {
+        rejectV2CallRequest(callRequest.topic);
+      } else {
+        rejectCallRequest(callRequest);
+      }
       return null;
-    });
+    }
   };
 
   const handleSignMessage = async (wallet: Wallet): Promise<?string> => {
@@ -129,14 +154,17 @@ const WalletConnectPinConfirmScreeen = ({ resetIncorrectPassword, useBiometrics,
     try {
       switch (method) {
         case PERSONAL_SIGN:
-          result = await signPersonalMessage(message, wallet, isLegacyEip1271);
+          const messageRes = await signPersonalMessage(message, wallet, isLegacyEip1271);
+          result = isV2CallRequest ? formatJsonRpcResult(callRequest.callId, messageRes) : messageRes;
           break;
         case ETH_SIGN_TYPED_DATA:
         case ETH_SIGN_TYPED_DATA_V4:
-          result = await signTypedData(message, wallet, isLegacyEip1271);
+          const signedData = await signTypedData(message, wallet, isLegacyEip1271);
+          result = isV2CallRequest ? formatJsonRpcResult(callRequest.callId, signedData) : signedData;
           break;
         default:
-          result = signMessage(message, wallet);
+          const signMessageRes = await signMessage(message, wallet);
+          result = isV2CallRequest ? formatJsonRpcResult(callRequest.callId, signMessageRes) : signMessageRes;
       }
     } catch (error) {
       reportErrorLog('WalletConnectPinConfirmScreeen -> handleSignMessage failed', { message, callRequest, error });
@@ -177,13 +205,23 @@ const WalletConnectPinConfirmScreeen = ({ resetIncorrectPassword, useBiometrics,
     const signedResult = method === ETH_SIGN_TX ? await handleSignTransaction(wallet) : await handleSignMessage(wallet);
 
     if (signedResult) {
-      approveCallRequest(callRequest, signedResult);
+      if (isV2CallRequest) {
+        approveV2CallRequest(callRequest.topic, signedResult);
+      } else {
+        approveCallRequest(callRequest, signedResult);
+      }
+
       Toast.show({
         message: t('toast.walletConnectRequestApproved'),
         emoji: 'ok_hand',
       });
     } else {
-      rejectCallRequest(callRequest);
+      if (isV2CallRequest) {
+        rejectV2CallRequest(callRequest.topic);
+      } else {
+        rejectCallRequest(callRequest);
+      }
+
       Toast.show({
         message: t('toast.walletConnectRequestRejected'),
         emoji: 'eyes',

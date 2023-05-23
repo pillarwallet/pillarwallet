@@ -55,6 +55,7 @@ import type { Account } from 'models/Account';
 interface Props {
   chain: Chain;
   onChangeChain: (chain: Chain) => void;
+  isV2WC?: boolean;
 }
 
 const useChains = (): any[] => {
@@ -79,7 +80,7 @@ const useChains = (): any[] => {
   return chainTabs;
 };
 
-const WalletConnectSwitchNetwork: FC<Props> = ({ chain, onChangeChain }) => {
+const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, onChangeChain }) => {
   const colors = useThemeColors();
   const chains = useChains();
   const accounts = useWalletConnectAccounts();
@@ -116,7 +117,7 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ chain, onChangeChain }) => {
 
   const renderItem = ({ item, type }): ReactElement<any, any> => (
     <TouchableOpacity
-      disabled={!isActiveEtherspotAccount}
+      disabled={!isActiveEtherspotAccount || isV2WC}
       style={type === 'selectedChain' ? styles.selectedChainContainer : styles.btnContainer}
       onPress={() => {
         setShowList(!showList);
@@ -204,6 +205,7 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ chain, onChangeChain }) => {
         ItemSeparatorComponent={() => <Spacing w={8} />}
         renderItem={({ item }) => (
           <TouchableOpacity
+            disabled={isV2WC}
             style={[styles.walletBtn, activeAccount?.id === item.id && { backgroundColor: colors.modalHandleBar }]}
             onPress={() => dispatch(switchAccountAction(item.id))}
             key={item.id}

@@ -29,12 +29,18 @@ import { disconnectWalletConnectSessionByUrlAction } from 'actions/walletConnect
 import {
   approveWalletConnectCallRequestAction,
   approveWalletConnectConnectorRequestAction,
+  approveWalletConnectV2ConnectorRequestAction,
   connectToWalletConnectConnectorAction,
   estimateWalletConnectCallRequestTransactionAction,
   updateWalletConnectConnectorSessionAction,
   rejectWalletConnectCallRequestAction,
   rejectWalletConnectConnectorRequestAction,
+  rejectWalletConnectV2ConnectorRequestAction,
   switchEthereumChainConnectorAction,
+  approveWalletConnectV2CallRequestAction,
+  rejectWalletConnectV2CallRequestAction,
+  sessionDisconnectV2Action,
+  fetchV2ActiveSessionsAction,
 } from 'actions/walletConnectActions';
 
 // Constants
@@ -43,7 +49,12 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { WalletConnectReducerState } from 'reducers/walletConnectReducer';
-import type { WalletConnectCallRequest, WalletConnectConnector, sessionDataProps } from 'models/WalletConnect';
+import type {
+  WalletConnectCallRequest,
+  WalletConnectConnector,
+  sessionDataProps,
+  BaseNamespace,
+} from 'models/WalletConnect';
 import type { Account } from 'models/Account';
 
 type UseWalletConnectResult = {|
@@ -58,6 +69,12 @@ type UseWalletConnectResult = {|
   estimateCallRequestTransaction: (callRequest: WalletConnectCallRequest) => void,
   updateConnectorSession: (connector: any, session: any) => void,
   switchEthereumChainConnectorRequest: (request: Object) => void,
+  fetchV2ActiveSessions: () => void,
+  approveV2ConnectorRequest: (id: number, namespaces: ?BaseNamespace | any) => void,
+  rejectV2ConnectorRequest: (id: string) => void,
+  rejectV2CallRequest: (id: string, message: any) => void,
+  sessionDisconnectV2: (topic: string) => void,
+  approveV2CallRequest: (topic: string, result: any) => void,
 |};
 
 const useWalletConnect = (): UseWalletConnectResult => {
@@ -82,6 +99,11 @@ const useWalletConnect = (): UseWalletConnectResult => {
     [dispatch],
   );
 
+  const approveV2ConnectorRequest = useCallback(
+    (id: number, namespaces: any) => dispatch(approveWalletConnectV2ConnectorRequestAction(id, namespaces)),
+    [dispatch],
+  );
+
   const updateConnectorSession = useCallback(
     (connector: Object, sessionData: sessionDataProps) =>
       dispatch(updateWalletConnectConnectorSessionAction(connector, sessionData)),
@@ -98,6 +120,11 @@ const useWalletConnect = (): UseWalletConnectResult => {
     [dispatch],
   );
 
+  const rejectV2ConnectorRequest = useCallback(
+    (id: string) => dispatch(rejectWalletConnectV2ConnectorRequestAction(id)),
+    [dispatch],
+  );
+
   const approveCallRequest = useCallback(
     (callRequest: WalletConnectCallRequest, result: string) =>
       dispatch(approveWalletConnectCallRequestAction(callRequest.callId, result)),
@@ -110,6 +137,21 @@ const useWalletConnect = (): UseWalletConnectResult => {
     [dispatch],
   );
 
+  const approveV2CallRequest = useCallback(
+    (topic: string, result: any) => dispatch(approveWalletConnectV2CallRequestAction(topic, result)),
+    [dispatch],
+  );
+
+  const rejectV2CallRequest = useCallback(
+    (topic: string, rejectReasonMessage: string) =>
+      dispatch(rejectWalletConnectV2CallRequestAction(topic, rejectReasonMessage)),
+    [dispatch],
+  );
+
+  const sessionDisconnectV2 = useCallback((topic: string) => dispatch(sessionDisconnectV2Action(topic)), [dispatch]);
+
+  const fetchV2ActiveSessions = useCallback(() => dispatch(fetchV2ActiveSessionsAction()), [dispatch]);
+
   const estimateCallRequestTransaction = useCallback(
     (callRequest: WalletConnectCallRequest) => dispatch(estimateWalletConnectCallRequestTransactionAction(callRequest)),
     [dispatch],
@@ -120,7 +162,9 @@ const useWalletConnect = (): UseWalletConnectResult => {
       activeConnectors,
       callRequests,
       approveConnectorRequest,
+      approveV2ConnectorRequest,
       rejectConnectorRequest,
+      rejectV2ConnectorRequest,
       approveCallRequest,
       rejectCallRequest,
       disconnectSessionByUrl,
@@ -128,12 +172,18 @@ const useWalletConnect = (): UseWalletConnectResult => {
       updateConnectorSession,
       estimateCallRequestTransaction,
       switchEthereumChainConnectorRequest,
+      approveV2CallRequest,
+      rejectV2CallRequest,
+      sessionDisconnectV2,
+      fetchV2ActiveSessions,
     }),
     [
       activeConnectors,
       callRequests,
       approveConnectorRequest,
+      approveV2ConnectorRequest,
       rejectConnectorRequest,
+      rejectV2ConnectorRequest,
       approveCallRequest,
       rejectCallRequest,
       disconnectSessionByUrl,
@@ -141,6 +191,10 @@ const useWalletConnect = (): UseWalletConnectResult => {
       updateConnectorSession,
       estimateCallRequestTransaction,
       switchEthereumChainConnectorRequest,
+      approveV2CallRequest,
+      rejectV2CallRequest,
+      sessionDisconnectV2,
+      fetchV2ActiveSessions,
     ],
   );
 };

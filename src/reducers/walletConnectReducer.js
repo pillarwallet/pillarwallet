@@ -26,14 +26,19 @@ import {
   ADD_WALLETCONNECT_ACTIVE_CONNECTOR,
   REMOVE_WALLETCONNECT_ACTIVE_CONNECTOR,
   RESET_WALLETCONNECT_ACTIVE_CONNECTORS,
+  SET_WALLETCONNECT_CURRENT_PROPOSAL,
 } from 'constants/walletConnectConstants';
 
-import type { WalletConnectConnector, WalletConnectCallRequest } from 'models/WalletConnect';
-
+import type { WalletConnectConnector, WalletConnectCallRequest, WalletConnectV2Proposal } from 'models/WalletConnect';
 
 export type SetWalletConnectConnectorRequestAction = {|
   type: typeof SET_WALLETCONNECT_CONNECTOR_REQUEST,
   payload: { connectorRequest: WalletConnectConnector },
+|};
+
+export type SetWalletConnectCurrentProposalAction = {|
+  type: typeof SET_WALLETCONNECT_CURRENT_PROPOSAL,
+  payload: { currentProposal: ?WalletConnectV2Proposal },
 |};
 
 export type ResetWalletConnectConnectorRequestAction = {|
@@ -42,22 +47,22 @@ export type ResetWalletConnectConnectorRequestAction = {|
 
 export type AddWalletConnectCallRequestAction = {|
   type: typeof ADD_WALLETCONNECT_CALL_REQUEST,
-  payload: { callRequest: WalletConnectCallRequest }
+  payload: { callRequest: WalletConnectCallRequest },
 |};
 
 export type RemoveWalletConnectCallRequestAction = {|
   type: typeof REMOVE_WALLETCONNECT_CALL_REQUEST,
-  payload: { callId: string | number }
+  payload: { callId: string | number },
 |};
 
 export type AddWalletConnectActiveConnectorAction = {|
   type: typeof ADD_WALLETCONNECT_ACTIVE_CONNECTOR,
-  payload: { connector: WalletConnectConnector }
+  payload: { connector: WalletConnectConnector },
 |};
 
 export type RemoveWalletConnectActiveConnectorAction = {|
   type: typeof REMOVE_WALLETCONNECT_ACTIVE_CONNECTOR,
-  payload: { peerId: string }
+  payload: { peerId: string },
 |};
 
 export type ResetWalletConnectActiveConnectorsAction = {|
@@ -66,28 +71,32 @@ export type ResetWalletConnectActiveConnectorsAction = {|
 
 export type SetWalletConnectRequestErrorAction = {|
   type: typeof SET_WALLETCONNECT_REQUEST_ERROR,
-  payload: { message: string }
+  payload: { message: string },
 |};
 
-export type WalletConnectReducerAction = SetWalletConnectConnectorRequestAction
+export type WalletConnectReducerAction =
+  | SetWalletConnectConnectorRequestAction
   | ResetWalletConnectConnectorRequestAction
   | AddWalletConnectCallRequestAction
   | RemoveWalletConnectCallRequestAction
   | AddWalletConnectActiveConnectorAction
   | RemoveWalletConnectActiveConnectorAction
   | ResetWalletConnectActiveConnectorsAction
-  | SetWalletConnectRequestErrorAction;
+  | SetWalletConnectRequestErrorAction
+  | SetWalletConnectCurrentProposalAction;
 
 export type WalletConnectReducerState = {|
   activeConnectors: WalletConnectConnector[],
   connectorRequest: ?WalletConnectConnector,
   callRequests: WalletConnectCallRequest[],
+  currentProposal: ?WalletConnectV2Proposal,
   errorMessage: ?string,
 |};
 
 const initialState: WalletConnectReducerState = {
   activeConnectors: [],
   connectorRequest: null,
+  currentProposal: null,
   callRequests: [],
   errorMessage: null,
 };
@@ -113,8 +122,12 @@ const walletConnectReducer = (
       const { connectorRequest } = action.payload;
       return { ...state, connectorRequest };
 
+    case SET_WALLETCONNECT_CURRENT_PROPOSAL:
+      const { currentProposal } = action.payload;
+      return { ...state, currentProposal };
+
     case RESET_WALLETCONNECT_CONNECTOR_REQUEST:
-      return { ...state, connectorRequest: null };
+      return { ...state, connectorRequest: null, currentProposal: null };
 
     case ADD_WALLETCONNECT_CALL_REQUEST:
       const { callRequest } = action.payload;
@@ -141,6 +154,7 @@ const walletConnectReducer = (
         ...state,
         errorMessage,
         connectorRequest: null,
+        currentProposal: null,
         callRequests: [],
       };
 

@@ -19,13 +19,14 @@
 */
 import {
   ADD_WALLETCONNECT_SESSION,
+  ADD_WALLETCONNECT_V2_SESSION,
   SET_WALLETCONNECT_SESSIONS_IMPORTED,
   REMOVE_WALLETCONNECT_SESSION,
   SET_IS_INITIALIZING_WALLETCONNECT_SESSIONS,
   UPDATE_WALLETCONNECT_SESSION,
 } from 'constants/walletConnectSessionsConstants';
 
-import type { WalletConnectSession } from 'models/WalletConnect';
+import type { WalletConnectSession, WalletConnectV2Session } from 'models/WalletConnect';
 
 export type SetWalletConnectSessionsImportedAction = {|
   type: typeof SET_WALLETCONNECT_SESSIONS_IMPORTED,
@@ -54,12 +55,14 @@ export type WalletConnectSessionsReducerAction =
 
 export type WalletConnectSessionsReducerState = {|
   sessions: WalletConnectSession[],
+  v2Sessions: WalletConnectV2Session[],
   isImported: boolean,
   isInitializingSessions: boolean,
 |};
 
 const initialState: WalletConnectSessionsReducerState = {
   sessions: [],
+  v2Sessions: [],
   isImported: false,
   isInitializingSessions: false,
 };
@@ -77,6 +80,10 @@ const walletConnectSessionsReducer = (
     case ADD_WALLETCONNECT_SESSION:
       const { session } = action.payload;
       return { ...state, sessions: [...sessions, session] };
+
+    case ADD_WALLETCONNECT_V2_SESSION:
+      const { v2Sessions } = action.payload;
+      return { ...state, v2Sessions };
 
     case UPDATE_WALLETCONNECT_SESSION:
       const { session: updatedSession } = action.payload;

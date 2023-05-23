@@ -22,6 +22,7 @@ import * as React from 'react';
 import { DeviceEventEmitter } from 'react-native';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
+import { useDispatch } from 'react-redux';
 
 // Components
 import Text from 'components/core/Text';
@@ -37,6 +38,7 @@ import useWalletConnect, { useWalletConnectAccounts } from 'hooks/useWalletConne
 
 // Actions
 import { switchAccountAction } from 'actions/accountsActions';
+import { updateSessionV2 } from 'actions/walletConnectActions';
 
 // Utils
 import { useThemeColors, getColorByTheme } from 'utils/themes';
@@ -49,8 +51,8 @@ import { WALLET_DROPDOWN_REF } from 'constants/walletConstants';
 
 // Types
 import type { Chain } from 'models/Chain';
-import type { WalletConnectConnector } from 'models/WalletConnect';
-import { useDispatch } from 'react-redux';
+import type { WalletConnectConnector, WalletConnectV2Session } from 'models/WalletConnect';
+import { isEmpty } from 'lodash';
 
 type Props = {|
   title: string,
@@ -58,10 +60,11 @@ type Props = {|
   onPress?: () => void,
   iconUrl: ?string,
   connector: WalletConnectConnector,
+  v2Session?: WalletConnectV2Session,
   rest?: any,
 |};
 
-function AppListItem({ title, iconUrl, onPress, ...rest }: Props) {
+function AppListItem({ title, iconUrl, onPress, v2Session, ...rest }: Props) {
   const colors = useThemeColors();
   const Dropdownref: any = React.useRef();
   const NetworkRef: any = React.useRef();
@@ -69,12 +72,32 @@ function AppListItem({ title, iconUrl, onPress, ...rest }: Props) {
   const { t } = useTranslationWithPrefix('walletConnect.disconnectModal');
   const { connector } = rest;
 
-  const chain = chainFromChainId[connector.chainId];
-  const walletData = useWalletConnectAccounts(connector.accounts[0]);
+  const v2SessionInfo = React.useMemo(() => {
+    if (isEmpty(v2Session)) return null;
+    const { namespaces, requiredNamespaces, topic } = v2Session;
+
+    if (!namespaces || !requiredNamespaces) return null;
+
+    const eipAccounts = Object.values(namespaces)?.[0];
+    const eipChainIds = Object.values(requiredNamespaces)?.[0];
+
+    if (isEmpty(eipAccounts) || isEmpty(eipChainIds)) return null;
+
+    const accounts: string[] = eipAccounts?.accounts || [''];
+    const chainIds: string[] = eipChainIds?.chains || [''];
+
+    const account = accounts[0].split(':')?.[2];
+    const chainId = chainIds[0].split(':')?.[1];
+    const chain = chainFromChainId[Number(chainId)];
+    return { account, chain, topic };
+  }, [v2Session]);
+
+  const chain = v2SessionInfo ? v2SessionInfo?.chain : chainFromChainId[connector.chainId];
+  const walletData = useWalletConnectAccounts(v2SessionInfo ? v2SessionInfo?.account : connector.accounts[0]);
 
   const config = useChainConfig(chain);
 
-  const { updateConnectorSession, disconnectSessionByUrl } = useWalletConnect();
+  const { updateConnectorSession, disconnectSessionByUrl, sessionDisconnectV2 } = useWalletConnect();
 
   const [visibleModal, setVisibleModal] = React.useState(false);
   const [visibleNetworkSwitchModal, setVisibleNetworkSwitchModal] = React.useState(false);
@@ -100,6 +123,7 @@ function AppListItem({ title, iconUrl, onPress, ...rest }: Props) {
   const onChangeChainSession = (updatedChain: Chain) => {
     const chainId = mapChainToChainId(updatedChain);
     if (chainId === connector.chainId) return;
+    if (v2SessionInfo) dispatch(updateSessionV2(v2SessionInfo?.topic, v2Session));
     updateConnectorSession(connector, { chainId, accounts: connector.accounts });
   };
 
@@ -108,7 +132,12 @@ function AppListItem({ title, iconUrl, onPress, ...rest }: Props) {
     updateConnectorSession(connector, { chainId: 1, accounts: [accountId] });
   };
 
-  const disconnect = () => {
+  const disconnect = async () => {
+    if (v2SessionInfo) {
+      sessionDisconnectV2(v2SessionInfo.topic);
+      return;
+    }
+
     const sessionUrl = connector.peerMeta?.url;
     if (!sessionUrl) {
       Toast.show({

@@ -32,11 +32,15 @@ import NoPermissions from 'components/QRCodeScanner/NoPermissions';
 import Toast from 'components/Toast';
 import Icon from 'components/core/Icon';
 
+// Actions
+import { fetchV2ActiveSessionsAction } from 'actions/walletConnectActions';
+
 // Type
 import type { Barcode, Point, Size } from 'react-native-camera';
 
 // Screen
 import ConnectedAppsFloatingButton from 'screens/WalletConnect/Home/components/ConnectedAppsFloatingButton';
+import { useDispatch } from 'react-redux';
 
 type BarcodeBounds = {
   size: Size;
@@ -74,6 +78,7 @@ export default function (props: Props) {
     onNavigateWallet,
     validator,
   } = props;
+  const dispatch = useDispatch();
 
   const colors = useThemeColors();
 
@@ -82,6 +87,7 @@ export default function (props: Props) {
 
   useEffect(() => {
     setIsFinished(false);
+    dispatch(fetchV2ActiveSessionsAction());
   }, []);
 
   useEffect(() => {
