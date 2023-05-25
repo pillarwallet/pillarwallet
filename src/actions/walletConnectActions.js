@@ -276,8 +276,11 @@ export const fetchV2ActiveSessionsAction = () => {
     try {
       await createWeb3Wallet();
       const v2ActiveSessions = await web3wallet?.getActiveSessions();
+
+      dispatch({ type: ADD_WALLETCONNECT_V2_SESSION, payload: { v2Sessions: Object.values(v2ActiveSessions) } });
+
       if (!isEmpty(v2ActiveSessions)) {
-        dispatch({ type: ADD_WALLETCONNECT_V2_SESSION, payload: { v2Sessions: Object.values(v2ActiveSessions) } });
+        dispatch(subscribeToWalletConnectV2ConnectorEventsAction());
       }
     } catch (e) {
       dispatch(setWalletConnectErrorAction(t('error.walletConnect.noMatchingConnector')));
@@ -320,9 +323,7 @@ export const updateSessionV2 = (newChainId: number, session: WalletConnectV2Sess
         },
       });
 
-      await web3wallet?.core.relayer.transportClose();
-
-      dispatch(fetchV2ActiveSessionsAction());
+      dispatch(subscribeToWalletConnectV2ConnectorEventsAction());
     } catch (e) {
       // eslint-disable-next-line i18next/no-literal-string, no-console
       console.log('Error!', e);
