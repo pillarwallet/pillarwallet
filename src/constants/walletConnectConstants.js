@@ -35,6 +35,7 @@ export const WALLETCONNECT_EVENT = {
   SESSION_REQUEST: 'session_request',
   SESSION_UPDATE: 'session_update',
   CALL_REQUEST: 'call_request',
+  AUTH_REQUEST: 'auth_request',
   CONNECT: 'connect',
   DISCONNECT: 'disconnect',
   TRANSPORT_ERROR: 'transport_error', // websocket connection lost

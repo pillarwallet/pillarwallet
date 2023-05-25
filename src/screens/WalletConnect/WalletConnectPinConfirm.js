@@ -102,7 +102,7 @@ const WalletConnectPinConfirmScreeen = ({ resetIncorrectPassword, useBiometrics,
       if (transactionStatus.isSuccess && transactionStatus.hash) {
         if (isV2CallRequest) {
           const formatJSON = formatJsonRpcResult(callRequest.callId, transactionStatus.hash);
-          approveV2CallRequest(callRequest.topic, formatJSON);
+          approveV2CallRequest(callRequest, formatJSON);
         } else {
           approveCallRequest(callRequest, transactionStatus.hash);
         }
@@ -136,7 +136,7 @@ const WalletConnectPinConfirmScreeen = ({ resetIncorrectPassword, useBiometrics,
       return signature;
     } catch (e) {
       if (isV2CallRequest) {
-        rejectV2CallRequest(callRequest.topic);
+        rejectV2CallRequest(callRequest);
       } else {
         rejectCallRequest(callRequest);
       }
@@ -206,7 +206,7 @@ const WalletConnectPinConfirmScreeen = ({ resetIncorrectPassword, useBiometrics,
 
     if (signedResult) {
       if (isV2CallRequest) {
-        approveV2CallRequest(callRequest.topic, signedResult);
+        approveV2CallRequest(callRequest, signedResult);
       } else {
         approveCallRequest(callRequest, signedResult);
       }
@@ -217,7 +217,7 @@ const WalletConnectPinConfirmScreeen = ({ resetIncorrectPassword, useBiometrics,
       });
     } else {
       if (isV2CallRequest) {
-        rejectV2CallRequest(callRequest.topic);
+        rejectV2CallRequest(callRequest);
       } else {
         rejectCallRequest(callRequest);
       }

@@ -18,12 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import t from 'translations/translate';
-import { isEmpty } from 'lodash';
 
 // actions
 import {
   subscribeToWalletConnectConnectorEventsAction,
-  subscribeToWalletConnectV2ConnectorEventsAction,
   fetchV2ActiveSessionsAction,
 } from 'actions/walletConnectActions';
 import { logEventAction } from 'actions/analyticsActions';
@@ -66,7 +64,7 @@ export const setIsCreatingWalletConnectSessionsAction = (isInitializing: boolean
 export const initWalletConnectSessionsAction = (resetExisting: boolean = false) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
-      walletConnectSessions: { isImported, sessions, isInitializingSessions, v2Sessions },
+      walletConnectSessions: { isImported, sessions, isInitializingSessions },
       walletConnect: { activeConnectors },
       wallet: { data: walletData },
       session: {
@@ -85,9 +83,6 @@ export const initWalletConnectSessionsAction = (resetExisting: boolean = false) 
     }
 
     dispatch(fetchV2ActiveSessionsAction());
-    if (!isEmpty(v2Sessions)) {
-      dispatch(subscribeToWalletConnectV2ConnectorEventsAction());
-    }
 
     let storedSessions = [...sessions];
 

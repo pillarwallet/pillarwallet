@@ -78,8 +78,8 @@ export type WalletConnectV2Connector = {|
     event: any,
     chainId: string,
   }): Promise<void>,
-  getActiveSessions(): ?Struct | any,
-  getPendingSessionProposals(): ?Struct | any,
+  getActiveSessions(): any,
+  getPendingSessionProposals(): any,
   getPendingSessionRequests(): PendingSessionRequest[],
 |};
 

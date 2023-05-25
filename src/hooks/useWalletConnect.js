@@ -72,9 +72,9 @@ type UseWalletConnectResult = {|
   fetchV2ActiveSessions: () => void,
   approveV2ConnectorRequest: (id: number, namespaces: ?BaseNamespace | any) => void,
   rejectV2ConnectorRequest: (id: string) => void,
-  rejectV2CallRequest: (id: string, message: any) => void,
+  rejectV2CallRequest: (callRequest: WalletConnectCallRequest, message: any) => void,
   sessionDisconnectV2: (topic: string) => void,
-  approveV2CallRequest: (topic: string, result: any) => void,
+  approveV2CallRequest: (callRequest: WalletConnectCallRequest, result: any) => void,
 |};
 
 const useWalletConnect = (): UseWalletConnectResult => {
@@ -138,13 +138,14 @@ const useWalletConnect = (): UseWalletConnectResult => {
   );
 
   const approveV2CallRequest = useCallback(
-    (topic: string, result: any) => dispatch(approveWalletConnectV2CallRequestAction(topic, result)),
+    (callRequest: WalletConnectCallRequest, result: any) =>
+      dispatch(approveWalletConnectV2CallRequestAction(callRequest, result)),
     [dispatch],
   );
 
   const rejectV2CallRequest = useCallback(
-    (topic: string, rejectReasonMessage: string) =>
-      dispatch(rejectWalletConnectV2CallRequestAction(topic, rejectReasonMessage)),
+    (callRequest: WalletConnectCallRequest, rejectReasonMessage: string) =>
+      dispatch(rejectWalletConnectV2CallRequestAction(callRequest, rejectReasonMessage)),
     [dispatch],
   );
 

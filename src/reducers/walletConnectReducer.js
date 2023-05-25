@@ -131,6 +131,8 @@ const walletConnectReducer = (
 
     case ADD_WALLETCONNECT_CALL_REQUEST:
       const { callRequest } = action.payload;
+      const isExists = callRequests.find((request) => request.callId === callRequest.callId);
+      if (isExists) return { ...state, callRequests };
       return { ...state, callRequests: [...callRequests, callRequest] };
 
     case REMOVE_WALLETCONNECT_CALL_REQUEST:

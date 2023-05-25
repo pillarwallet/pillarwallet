@@ -43,7 +43,6 @@ import { updateSessionV2 } from 'actions/walletConnectActions';
 // Utils
 import { useThemeColors, getColorByTheme } from 'utils/themes';
 import { spacing } from 'utils/variables';
-import { useChainConfig } from 'utils/uiConfig';
 import { mapChainToChainId, chainFromChainId } from 'utils/chains';
 
 // Constants
@@ -60,7 +59,7 @@ type Props = {|
   onPress?: () => void,
   iconUrl: ?string,
   connector: WalletConnectConnector,
-  v2Session?: WalletConnectV2Session,
+  v2Session?: ?WalletConnectV2Session,
   rest?: any,
 |};
 
@@ -84,18 +83,17 @@ function AppListItem({ title, iconUrl, onPress, v2Session, ...rest }: Props) {
     if (isEmpty(eipAccounts) || isEmpty(eipChainIds)) return null;
 
     const accounts: string[] = eipAccounts?.accounts || [''];
-    const chainIds: string[] = eipChainIds?.chains || [''];
+    const v2ChainIds: string[] = eipChainIds?.chains || [''];
 
     const account = accounts[0].split(':')?.[2];
-    const chainId = chainIds[0].split(':')?.[1];
-    const chain = chainFromChainId[Number(chainId)];
-    return { account, chain, topic };
+    const eip155ChainIds = v2ChainIds.map((eip155ChainId) => eip155ChainId.split(':')?.[1]);
+
+    const v2Chains = eip155ChainIds.map((chainId) => chainFromChainId[Number(chainId)]);
+    return { account, chains: v2Chains, topic };
   }, [v2Session]);
 
-  const chain = v2SessionInfo ? v2SessionInfo?.chain : chainFromChainId[connector.chainId];
+  const chain = v2SessionInfo ? v2SessionInfo?.chains[0] : chainFromChainId[connector.chainId];
   const walletData = useWalletConnectAccounts(v2SessionInfo ? v2SessionInfo?.account : connector.accounts[0]);
-
-  const config = useChainConfig(chain);
 
   const { updateConnectorSession, disconnectSessionByUrl, sessionDisconnectV2 } = useWalletConnect();
 
@@ -122,12 +120,14 @@ function AppListItem({ title, iconUrl, onPress, v2Session, ...rest }: Props) {
 
   const onChangeChainSession = (updatedChain: Chain) => {
     const chainId = mapChainToChainId(updatedChain);
-    if (chainId === connector.chainId) return;
-    if (v2SessionInfo) dispatch(updateSessionV2(v2SessionInfo?.topic, v2Session));
-    updateConnectorSession(connector, { chainId, accounts: connector.accounts });
+
+    // if (chainId === connector.chainId) return;
+    if (v2Session) dispatch(updateSessionV2(chainId, v2Session));
+    // updateConnectorSession(connector, { chainId, accounts: connector.accounts });
   };
 
   const onChangeSessionAccount = (accountId: string) => {
+    if (v2Session) return;
     dispatch(switchAccountAction(accountId));
     updateConnectorSession(connector, { chainId: 1, accounts: [accountId] });
   };
@@ -168,10 +168,16 @@ function AppListItem({ title, iconUrl, onPress, v2Session, ...rest }: Props) {
         </TitleContainer>
 
         <RightAddOn ref={NetworkRef} onPress={onChangeNetwork}>
-          <Icon name={chain} width={16} />
-          <Text variant="medium" color={colors.basic010} style={{ marginLeft: 5 }}>
-            {config?.title}
-          </Text>
+          {!v2SessionInfo && <Icon name={chain} width={16} />}
+          {v2SessionInfo &&
+            v2SessionInfo?.chains?.map((v2chain, index) => {
+              return (
+                <>
+                  <Icon name={v2chain} width={16} />
+                  {v2SessionInfo?.chains.length - 1 !== index && <VerticalLine />}
+                </>
+              );
+            })}
         </RightAddOn>
       </TouchableContainer>
       <ConnectedAppsMenu
@@ -215,6 +221,13 @@ const Line = styled.View`
   width: 100%;
   border-top-width: 1px;
   border-color: ${({ theme }) => theme.colors.basic080};
+`;
+
+const VerticalLine = styled.View`
+  width: 1;
+  margin-horizontal: 6px;
+  height: 60%;
+  background-color: ${({ theme }) => theme.colors.basic080};
 `;
 
 const IconContainer = styled.View`

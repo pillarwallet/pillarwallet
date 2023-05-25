@@ -105,10 +105,7 @@ function WalletConnectCallRequestModal({ request }: Props) {
 
     ref.current?.close();
     if (request?.topic) {
-      rejectV2CallRequest(
-        request.topic,
-        formatJsonRpcError(request.callId, getSdkError('USER_REJECTED_METHODS').message),
-      );
+      rejectV2CallRequest(request, formatJsonRpcError(request.callId, getSdkError('USER_REJECTED_METHODS').message));
     } else {
       rejectCallRequest(request);
     }

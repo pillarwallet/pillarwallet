@@ -274,7 +274,7 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
 export const fetchV2ActiveSessionsAction = () => {
   return async (dispatch: Dispatch) => {
     try {
-      if (!web3wallet) await createWeb3Wallet();
+      await createWeb3Wallet();
       const v2ActiveSessions = await web3wallet?.getActiveSessions();
       if (!isEmpty(v2ActiveSessions)) {
         dispatch({ type: ADD_WALLETCONNECT_V2_SESSION, payload: { v2Sessions: Object.values(v2ActiveSessions) } });
@@ -285,23 +285,47 @@ export const fetchV2ActiveSessionsAction = () => {
   };
 };
 
-export const updateSessionV2 = (topic: string, session?: WalletConnectV2Session) => {
-  return async () => {
-    if (!session) return;
-    const { namespaces } = session;
+export const updateSessionV2 = (newChainId: number, session: WalletConnectV2Session) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { namespaces, topic } = session;
     try {
+      await createWeb3Wallet();
+
+      const activeAccount = activeAccountSelector(getState());
+      if (!activeAccount) {
+        Toast.show({
+          message: t('toast.noActiveAccountFound'),
+          emoji: 'hushed',
+          supportLink: true,
+          autoClose: false,
+        });
+        return;
+      }
+
+      const accountAddress = getAccountAddress(activeAccount);
+
+      const methods = namespaces?.eip155.methods;
+      const accounts = namespaces?.eip155.accounts;
+      const events = namespaces?.eip155.events;
+
       await web3wallet?.updateSession({
         topic,
-        namespaces,
+        namespaces: {
+          eip155: {
+            methods,
+            // eslint-disable-next-line i18next/no-literal-string
+            accounts: [...accounts, `eip155:${newChainId}:${accountAddress}`],
+            events,
+          },
+        },
       });
 
-      web3wallet?.on(WALLETCONNECT_EVENT.SESSION_UPDATE, async (payload) => {
-        // eslint-disable-next-line i18next/no-literal-string, no-console
-        console.log('CALL UPDATE LISTNER', payload);
-      });
+      await web3wallet?.core.relayer.transportClose();
+
+      dispatch(fetchV2ActiveSessionsAction());
     } catch (e) {
       // eslint-disable-next-line i18next/no-literal-string, no-console
-      console.log('Error', e);
+      console.log('Error!', e);
     }
   };
 };
@@ -317,7 +341,6 @@ export const sessionDisconnectV2Action = (topic: string) => {
 
     try {
       await createWeb3Wallet();
-
       await web3wallet?.disconnectSession({
         topic,
         reason: getSdkError('USER_DISCONNECTED'),
@@ -352,13 +375,14 @@ export const approveWalletConnectV2ConnectorRequestAction = (id: number, namespa
 
     try {
       if (!web3wallet) await createWeb3Wallet();
+
       await web3wallet?.approveSession({
         id,
         relayProtocol: relays[0].protocol,
         namespaces,
       });
 
-      dispatch(subscribeToWalletConnectV2ConnectorEventsAction());
+      dispatch(fetchV2ActiveSessionsAction());
 
       dispatch(hideWalletConnectPromoCardAction());
 
@@ -523,15 +547,18 @@ export const rejectWalletConnectCallRequestAction = (callId: number, rejectReaso
   };
 };
 
-export const rejectWalletConnectV2CallRequestAction = (topic: string, rejectReasonMessage?: string) => {
+export const rejectWalletConnectV2CallRequestAction = (
+  callRequest: WalletConnectCallRequest,
+  rejectReasonMessage?: string,
+) => {
   return async (dispatch: Dispatch) => {
     try {
       if (!web3wallet) await createWeb3Wallet();
       web3wallet?.respondSessionRequest({
-        topic,
+        topic: callRequest?.topic,
         response: rejectReasonMessage,
       });
-      // dispatch({ type: REMOVE_WALLETCONNECT_CALL_REQUEST, payload: { callId } });
+      dispatch({ type: REMOVE_WALLETCONNECT_CALL_REQUEST, payload: { callId: callRequest.callId } });
     } catch (error) {
       reportErrorLog('rejectWalletConnectCallRequestAction -> rejectRequest failed', { error });
       dispatch(setWalletConnectErrorAction(t('error.walletConnect.callRequestRejectFailed')));
@@ -567,14 +594,15 @@ export const approveWalletConnectCallRequestAction = (callId: number, result: an
   };
 };
 
-export const approveWalletConnectV2CallRequestAction = (topic: string, result: any) => {
+export const approveWalletConnectV2CallRequestAction = (callRequest: WalletConnectCallRequest, result: any) => {
   return async (dispatch: Dispatch) => {
     try {
       if (!web3wallet) await createWeb3Wallet();
       await web3wallet?.respondSessionRequest({
-        topic,
+        topic: callRequest.topic,
         response: result,
       });
+      dispatch({ type: REMOVE_WALLETCONNECT_CALL_REQUEST, payload: { callId: callRequest.callId } });
     } catch (error) {
       reportErrorLog('approveWalletConnectV2CallRequestAction -> approveRequest failed', { error });
       dispatch(setWalletConnectErrorAction(t('error.walletConnect.callRequestApproveFailed')));
@@ -632,6 +660,7 @@ export const switchEthereumChainConnectorAction = (request: any) => {
 export const subscribeToWalletConnectV2ConnectorEventsAction = () => {
   return async (dispatch: Dispatch) => {
     if (!web3wallet) await createWeb3Wallet();
+
     web3wallet?.on(WALLETCONNECT_EVENT.SESSION_REQUEST, async (event) => {
       if (!event || !event?.params) {
         dispatch(setWalletConnectErrorAction(t('error.walletConnect.invalidRequest')));

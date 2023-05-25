@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { FC, ReactElement, useRef, useEffect } from 'react';
+import React, { FC, ReactElement, useRef, useEffect, useMemo } from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View, Modal as RNModal } from 'react-native';
 import { useTranslationWithPrefix } from 'translations/translate';
 import { useDispatch } from 'react-redux';
@@ -34,6 +34,7 @@ import { useChainsConfig } from 'utils/uiConfig';
 import { getDeviceHeight, getDeviceWidth } from 'utils/common';
 import { getActiveAccount, isEtherspotAccount, isArchanovaAccount, findFirstEtherspotAccount } from 'utils/accounts';
 import { objectFontStyles } from 'utils/variables';
+import { chainFromChainId } from 'utils/chains';
 
 // Selectors
 import { useSupportedChains } from 'selectors/chains';
@@ -54,6 +55,7 @@ import type { Account } from 'models/Account';
 
 interface Props {
   chain: Chain;
+  chains?: string[];
   onChangeChain: (chain: Chain) => void;
   isV2WC?: boolean;
 }
@@ -80,7 +82,7 @@ const useChains = (): any[] => {
   return chainTabs;
 };
 
-const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, onChangeChain }) => {
+const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, chains: v2Chains, onChangeChain }) => {
   const colors = useThemeColors();
   const chains = useChains();
   const accounts = useWalletConnectAccounts();
@@ -151,7 +153,7 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, onChangeChain })
           </Text>
         </>
       )}
-      {type === 'selectedChain' && isActiveEtherspotAccount && (
+      {type === 'selectedChain' && isActiveEtherspotAccount && !isV2WC && (
         <Icon
           style={[styles.upDnIcon, { backgroundColor: colors.basic050 }]}
           name={!showList ? 'chevron-down' : 'chevron-up'}
@@ -183,9 +185,23 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, onChangeChain })
     </RNModal>
   );
 
+  const filterdV2Chains = useMemo(() => {
+    if (!isV2WC || !v2Chains) return [];
+    const chainInfo = [];
+    v2Chains.map((v2chain) => {
+      const chainId = v2chain.split(':')?.[1];
+      const v2ChainFromChainId = chainFromChainId[Number(chainId)];
+      const requestedChainInfo = chains?.find((chainInfo) => chainInfo.chain === v2ChainFromChainId);
+      if (!!requestedChainInfo) chainInfo.push(requestedChainInfo);
+    });
+    return chainInfo;
+  }, [v2Chains, isV2WC]);
+
+  const chainNotDeployedInV2 = isV2WC && filterdV2Chains.find((chainInfo) => !chainInfo.isDeployed);
+
   return (
     <>
-      {isActiveEtherspotAccount && !selectedNetwork.isDeployed && (
+      {isActiveEtherspotAccount && (!selectedNetwork.isDeployed || chainNotDeployedInV2) && (
         <Text style={[styles.warning, { color: colors.helpIcon }]}>
           {t('paragraph.undeploy_warning_1')}
           <Text style={{ color: colors.tertiaryText }}>{t('paragraph.deploy_manager')}</Text>
@@ -222,9 +238,12 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, onChangeChain })
           const { height } = event.nativeEvent.layout;
           if (contentHeight !== height) setContentHeight(height);
         }}
-        style={[styles.container, { backgroundColor: colors.basic60 }, !showList && styles.bottomRadius]}
+        style={[styles.container, { backgroundColor: colors.basic070 }, !showList && styles.bottomRadius]}
       >
-        {renderItem({ item: selectedNetwork, type: 'selectedChain' })}
+        {!isV2WC && renderItem({ item: selectedNetwork, type: 'selectedChain' })}
+        {isV2WC &&
+          filterdV2Chains &&
+          filterdV2Chains.map((chainInfo) => renderItem({ item: chainInfo, type: 'selectedChain' }))}
 
         {showList && <View style={[styles.line, { backgroundColor: colors.basic050 }]} />}
       </View>
@@ -242,7 +261,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     marginBottom: 32,
-    height: 54,
+    minHeight: 54,
   },
   mainContent: {
     maxHeight: 180,

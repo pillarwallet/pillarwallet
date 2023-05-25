@@ -100,7 +100,9 @@ function WalletConnectConnectorRequestModal({ isV2WC, connector, chainId }: Prop
       icons: v2AppIcons,
       description: v2Description,
     } = currentProposal?.params?.proposer?.metadata;
-    return { v2AppName, v2AppIcons, v2Description };
+    const chains = currentProposal?.params?.requiredNamespaces?.eip155?.chains;
+
+    return { v2AppName, v2AppIcons, v2Description, chains };
   }, [isV2WC, currentProposal]);
 
   useEffect(() => {
@@ -156,7 +158,12 @@ function WalletConnectConnectorRequestModal({ isV2WC, connector, chainId }: Prop
         <Description>{isV2WC ? currentProposalInfo?.v2Description : description}</Description>
       )}
 
-      <WalletConnectSwitchNetwork isV2WC={isV2WC} chain={chain} onChangeChain={setSelectedChain} />
+      <WalletConnectSwitchNetwork
+        isV2WC={isV2WC}
+        chain={chain}
+        chains={currentProposalInfo?.chains}
+        onChangeChain={setSelectedChain}
+      />
 
       <Button
         disabled={isActiveEtherspotAccount ? !isDeployedOnChain[selectedChain] : false}
