@@ -275,7 +275,10 @@ export const fetchV2ActiveSessionsAction = () => {
   return async (dispatch: Dispatch) => {
     try {
       await createWeb3Wallet();
-      const v2ActiveSessions = await web3wallet?.getActiveSessions();
+
+      if (!web3wallet) return;
+
+      const v2ActiveSessions = await web3wallet.getActiveSessions();
 
       dispatch({ type: ADD_WALLETCONNECT_V2_SESSION, payload: { v2Sessions: Object.values(v2ActiveSessions) } });
 
