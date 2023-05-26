@@ -43,6 +43,8 @@ import type {
 export let web3wallet: WalletConnectV2Connector | any;
 // eslint-disable-next-line import/no-mutable-exports
 export let core;
+// eslint-disable-next-line import/no-mutable-exports
+export let signClient;
 
 /* eslint-disable i18next/no-literal-string */
 const clientMeta = {
@@ -66,6 +68,18 @@ export async function createWeb3Wallet() {
   });
 
   return web3wallet;
+}
+
+export async function web3WalletInit() {
+  const newCore = new Core({
+    projectId: getEnv().PROJECT_ID,
+  });
+
+  const wcInit = await Web3Wallet.init({
+    core: newCore,
+    metadata: clientMeta,
+  });
+  return wcInit;
 }
 
 export async function web3WalletPair(options: WalletConnectOptions) {

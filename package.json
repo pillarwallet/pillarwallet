@@ -57,7 +57,7 @@
     "@walletconnect/core": "^2.7.3",
     "@walletconnect/sign-client": "^2.7.6",
     "@walletconnect/utils": "^2.7.3",
-    "@walletconnect/web3wallet": "^1.7.1",
+    "@walletconnect/web3wallet": "^1.7.5",
     "@wert-io/widget-initializer": "^0.1.2",
     "async-retry": "^1.3.1",
     "asyncstorage-down": "^4.2.0",

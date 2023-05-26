@@ -95,7 +95,7 @@ function AppListItem({ title, iconUrl, onPress, v2Session, ...rest }: Props) {
   const chain = v2SessionInfo ? v2SessionInfo?.chains[0] : chainFromChainId[connector.chainId];
   const walletData = useWalletConnectAccounts(v2SessionInfo ? v2SessionInfo?.account : connector.accounts[0]);
 
-  const { updateConnectorSession, disconnectSessionByUrl, sessionDisconnectV2 } = useWalletConnect();
+  const { updateConnectorSession, disconnectSessionByUrl, disconnectSessionV2ByTopic } = useWalletConnect();
 
   const [visibleModal, setVisibleModal] = React.useState(false);
   const [visibleNetworkSwitchModal, setVisibleNetworkSwitchModal] = React.useState(false);
@@ -134,11 +134,11 @@ function AppListItem({ title, iconUrl, onPress, v2Session, ...rest }: Props) {
 
   const disconnect = async () => {
     if (v2SessionInfo) {
-      sessionDisconnectV2(v2SessionInfo.topic);
+      disconnectSessionV2ByTopic(v2SessionInfo.topic);
       return;
     }
 
-    const sessionUrl = connector.peerMeta?.url;
+    const sessionUrl = connector?.peerMeta?.url;
     if (!sessionUrl) {
       Toast.show({
         message: t('toast.missingSessionUrl'),

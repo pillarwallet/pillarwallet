@@ -22,6 +22,7 @@ import {
   ADD_WALLETCONNECT_V2_SESSION,
   SET_WALLETCONNECT_SESSIONS_IMPORTED,
   REMOVE_WALLETCONNECT_SESSION,
+  REMOVE_WALLETCONNECT_V2_SESSION,
   SET_IS_INITIALIZING_WALLETCONNECT_SESSIONS,
   UPDATE_WALLETCONNECT_SESSION,
 } from 'constants/walletConnectSessionsConstants';
@@ -71,7 +72,7 @@ const walletConnectSessionsReducer = (
   state: WalletConnectSessionsReducerState = initialState,
   action: WalletConnectSessionsReducerAction,
 ): WalletConnectSessionsReducerState => {
-  const { sessions } = state;
+  const { sessions, v2Sessions: existingV2Sessions } = state;
 
   switch (action.type) {
     case SET_WALLETCONNECT_SESSIONS_IMPORTED:
@@ -96,6 +97,13 @@ const walletConnectSessionsReducer = (
       return {
         ...state,
         sessions: sessions.filter(({ peerId: existingPeerId }) => existingPeerId !== peerId),
+      };
+
+    case REMOVE_WALLETCONNECT_V2_SESSION:
+      const { topic } = action.payload;
+      return {
+        ...state,
+        v2Sessions: existingV2Sessions?.filter(({ topic: existingTopic }) => existingTopic !== topic),
       };
 
     case SET_IS_INITIALIZING_WALLETCONNECT_SESSIONS:

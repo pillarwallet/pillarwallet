@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import t from 'translations/translate';
+import { getSdkError } from '@walletconnect/utils';
 
 // actions
 import {
@@ -33,6 +34,7 @@ import Toast from 'components/Toast';
 import {
   ADD_WALLETCONNECT_SESSION,
   REMOVE_WALLETCONNECT_SESSION,
+  REMOVE_WALLETCONNECT_V2_SESSION,
   SET_IS_INITIALIZING_WALLETCONNECT_SESSIONS,
   SET_WALLETCONNECT_SESSIONS_IMPORTED,
 } from 'constants/walletConnectSessionsConstants';
@@ -42,7 +44,7 @@ import {
 } from 'constants/walletConnectConstants';
 
 // services
-import { createConnector, loadLegacyWalletConnectSessions } from 'services/walletConnect';
+import { createConnector, loadLegacyWalletConnectSessions, web3WalletInit } from 'services/walletConnect';
 
 // selectors
 import { activeAccountSelector } from 'selectors';
@@ -161,6 +163,29 @@ export const disconnectWalletConnectSessionByPeerIdAction = (peerId: string) => 
     isLogV2AppEvents() && dispatch(logEventAction('v2_wallet_connect_dapp_disconnect'));
     dispatch({ type: REMOVE_WALLETCONNECT_SESSION, payload: { peerId } });
     dispatch({ type: REMOVE_WALLETCONNECT_ACTIVE_CONNECTOR, payload: { peerId } });
+  };
+};
+
+export const disconnectWalletConnectV2SessionByTopicAction = (topic: string, id?: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      walletConnectSessions: { v2Sessions },
+    } = getState();
+
+    const matchingSession = v2Sessions?.find((session) => session.topic === topic);
+    if (!matchingSession) return;
+
+    if (!id) {
+      const web3wallet = await web3WalletInit();
+      await web3wallet?.disconnectSession({
+        topic,
+        reason: getSdkError('USER_DISCONNECTED'),
+      });
+    }
+
+    dispatch(logEventAction('walletconnect_session_disconnected'));
+    isLogV2AppEvents() && dispatch(logEventAction('v2_wallet_connect_dapp_disconnect'));
+    dispatch({ type: REMOVE_WALLETCONNECT_V2_SESSION, payload: { topic } });
   };
 };
 
