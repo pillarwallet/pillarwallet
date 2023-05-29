@@ -34,16 +34,17 @@ import { addressesEqual, getAssetOption, sortAssets } from 'utils/assets';
 import { getWalletBalanceForAsset } from 'utils/balances';
 import { nativeAssetPerChain } from 'utils/chains';
 import { logBreadcrumb, formatUnits } from 'utils/common';
-import { getGasAddress, getGasDecimals } from 'utils/transactions';
+import { getGasAddress, getGasDecimals, buildEthereumTransaction } from 'utils/transactions';
 import { wrapBigNumber } from 'utils/bigNumber';
 import { getAssetRateInFiat } from 'utils/rates';
+import { getCaptureFeeDestinationAddress } from 'utils/exchange';
 
 // Services
 import etherspotService from 'services/etherspot';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
-import { DAI, USDT, USDC, BUSD } from 'constants/assetsConstants';
+import { DAI, USDT, USDC, BUSD, ASSET_TYPES } from 'constants/assetsConstants';
 
 // Types
 import type { QueryResult } from 'utils/types/react-query';
@@ -282,4 +283,90 @@ const isEnoughAssetBalance = (assetBalance: ?string, amount: string): boolean =>
   } catch {
     return false;
   }
+};
+
+export const getFeeInGasTokenOffer = async (
+  chain: Chain,
+  accountAddress: string,
+  swapToken: AssetOption,
+  gasToken: AssetOption,
+  captureFee: string,
+): Promise<ExchangeOffer | null> => {
+  const offers: ExchangeOffer[] = await etherspotService.getExchangeOffers(
+    chain,
+    swapToken,
+    gasToken,
+    BigNumber(captureFee),
+  );
+
+  if (!offers) return null;
+
+  const sortedOffers = sortingOffersToGasFee(offers);
+  if (!sortedOffers?.length) return null;
+
+  return sortedOffers[0];
+};
+
+export const appendFeeCaptureTransactionIfNeeded = async (
+  offer: ExchangeOffer,
+  accountAddress: string,
+  captureInGasToken: boolean = false,
+  swapToken?: AssetOption | null,
+  gasToken?: AssetOption | null,
+): Promise<ExchangeOffer> => {
+  const { fromAsset, captureFee, chain } = offer;
+  const captureFeeDestinationAddress = getCaptureFeeDestinationAddress(chain);
+
+  if (!captureFee.gt(0) || !captureFeeDestinationAddress) return offer;
+
+  // Swap fee to the gas token before sending to fee capture address
+  if (captureInGasToken && !!gasToken && !!swapToken) {
+    const gasTokenOffer = await getFeeInGasTokenOffer(
+      chain,
+      accountAddress,
+      swapToken,
+      gasToken,
+      captureFee.toString(),
+    );
+
+    if (gasTokenOffer) {
+      const captureFeeTransaction = await buildEthereumTransaction(
+        captureFeeDestinationAddress,
+        accountAddress,
+        null,
+        gasTokenOffer.toAmount.precision(6).toString(),
+        gasToken.symbol,
+        gasToken.decimals,
+        ASSET_TYPES.TOKEN,
+        gasToken.address,
+        null,
+        chain,
+      );
+
+      const offerTransactionsWithFeeCapture = offer.transactions.concat([
+        ...gasTokenOffer.transactions,
+        captureFeeTransaction,
+      ]);
+
+      return { ...offer, transactions: offerTransactionsWithFeeCapture };
+    }
+  }
+
+  // If we're not using the gas token
+  const captureFeeTransaction = await buildEthereumTransaction(
+    captureFeeDestinationAddress,
+    accountAddress,
+    null,
+    captureFee.toString(),
+    fromAsset.symbol,
+    fromAsset.decimals,
+    ASSET_TYPES.TOKEN,
+    fromAsset.address,
+    null,
+    chain,
+  );
+
+  const offerTransactionsWithFeeCapture = offer.transactions.concat(captureFeeTransaction);
+
+  return { ...offer, transactions: offerTransactionsWithFeeCapture };
 };
