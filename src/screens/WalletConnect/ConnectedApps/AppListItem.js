@@ -120,10 +120,12 @@ function AppListItem({ title, iconUrl, onPress, v2Session, ...rest }: Props) {
 
   const onChangeChainSession = (updatedChain: Chain) => {
     const chainId = mapChainToChainId(updatedChain);
-
-    // if (chainId === connector.chainId) return;
-    if (v2Session) dispatch(updateSessionV2(chainId, v2Session));
-    // updateConnectorSession(connector, { chainId, accounts: connector.accounts });
+    if (v2Session) {
+      dispatch(updateSessionV2(chainId, v2Session));
+    } else {
+      if (chainId === connector.chainId) return;
+      updateConnectorSession(connector, { chainId, accounts: connector.accounts });
+    }
   };
 
   const onChangeSessionAccount = (accountId: string) => {
@@ -167,7 +169,7 @@ function AppListItem({ title, iconUrl, onPress, v2Session, ...rest }: Props) {
           <Text color={colors.secondaryText}>{walletData[0]?.label}</Text>
         </TitleContainer>
 
-        <RightAddOn ref={NetworkRef} onPress={onChangeNetwork}>
+        <RightAddOn disabled={v2SessionInfo} ref={NetworkRef} onPress={onChangeNetwork}>
           {!v2SessionInfo && <Icon name={chain} width={16} />}
           {v2SessionInfo &&
             v2SessionInfo?.chains?.map((v2chain, index) => {
@@ -181,6 +183,7 @@ function AppListItem({ title, iconUrl, onPress, v2Session, ...rest }: Props) {
         </RightAddOn>
       </TouchableContainer>
       <ConnectedAppsMenu
+        isV2WC={!!v2SessionInfo}
         visible={visibleModal}
         onHide={setVisibleModal}
         onSelect={(item: itemProps) => {

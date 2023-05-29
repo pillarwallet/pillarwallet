@@ -32,9 +32,6 @@ import NoPermissions from 'components/QRCodeScanner/NoPermissions';
 import Toast from 'components/Toast';
 import Icon from 'components/core/Icon';
 
-// Actions
-import { fetchV2ActiveSessionsAction } from 'actions/walletConnectActions';
-
 // Type
 import type { Barcode, Point, Size } from 'react-native-camera';
 
@@ -87,7 +84,6 @@ export default function (props: Props) {
 
   useEffect(() => {
     setIsFinished(false);
-    dispatch(fetchV2ActiveSessionsAction());
   }, []);
 
   useEffect(() => {

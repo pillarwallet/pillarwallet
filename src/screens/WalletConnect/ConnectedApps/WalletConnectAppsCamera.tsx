@@ -27,9 +27,6 @@ import { spacing } from 'utils/variables';
 // Selectors
 import { useRootSelector } from 'selectors';
 
-// Hooks
-import useWalletConnect from 'hooks/useWalletConnect';
-
 // Local
 import AppListItem from './AppListItem';
 import { type AppItem, useConnectedAppItems } from './selectors';
@@ -38,8 +35,6 @@ import { isEmpty } from 'lodash';
 export default function () {
   const { t } = useTranslationWithPrefix('walletConnect.connectedApps');
   const v2Sessions = useRootSelector((root) => root.walletConnectSessions.v2Sessions);
-
-  const { fetchV2ActiveSessions } = useWalletConnect();
 
   const v2ActiveSessions = React.useMemo(() => {
     if (isEmpty(v2Sessions)) return [];
@@ -51,10 +46,6 @@ export default function () {
   }, [v2Sessions]);
 
   const items = useConnectedAppItems();
-
-  React.useEffect(() => {
-    fetchV2ActiveSessions();
-  }, []);
 
   const sessions = v2ActiveSessions.concat(items);
 

@@ -176,11 +176,18 @@ export const disconnectWalletConnectV2SessionByTopicAction = (topic: string, id?
     if (!matchingSession) return;
 
     if (!id) {
-      const web3wallet = await web3WalletInit();
-      await web3wallet?.disconnectSession({
-        topic,
-        reason: getSdkError('USER_DISCONNECTED'),
-      });
+      try {
+        const web3wallet = await web3WalletInit();
+        await web3wallet?.disconnectSession({
+          topic,
+          reason: getSdkError('USER_DISCONNECTED'),
+        });
+      } catch (error) {
+        reportErrorLog('disconnectWalletConnectV2SessionByTopicAction -> disconnectSession failed ', {
+          error,
+          matchingSession,
+        });
+      }
     }
 
     dispatch(logEventAction('walletconnect_session_disconnected'));
@@ -192,10 +199,11 @@ export const disconnectWalletConnectV2SessionByTopicAction = (topic: string, id?
 const disconnectAllWalletConnectSessionsAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
     const {
-      walletConnectSessions: { sessions },
+      walletConnectSessions: { sessions, v2Sessions },
     } = getState();
 
     sessions.forEach(({ peerId }) => dispatch(disconnectWalletConnectSessionByPeerIdAction(peerId)));
+    v2Sessions.forEach(({ topic }) => dispatch(disconnectWalletConnectV2SessionByTopicAction(topic)));
 
     Toast.show({
       message: t('toast.walletConnectConnectionsExpired'),

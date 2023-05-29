@@ -131,8 +131,7 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
 
     let connector;
     if (isV2URI) {
-      if (!web3wallet) createWeb3Wallet();
-      connector = web3wallet;
+      connector = await createWeb3Wallet();
       await web3WalletPair({ uri });
     } else {
       connector = createConnector({ uri });
@@ -285,7 +284,13 @@ export const fetchV2ActiveSessionsAction = (currentSession?: ?WalletConnectV2Ses
       if (!web3wallet) await createWeb3Wallet();
 
       if (currentSession) {
-        dispatch({ type: ADD_WALLETCONNECT_V2_SESSION, payload: { v2Sessions: [...v2Sessions, currentSession] } });
+        const newArrV2Sessions = [...v2Sessions];
+        const index = newArrV2Sessions?.findIndex((res) => res?.topic === currentSession.topic);
+        if (index !== -1) newArrV2Sessions.splice(index, 1);
+        dispatch({
+          type: ADD_WALLETCONNECT_V2_SESSION,
+          payload: { v2Sessions: [...newArrV2Sessions, currentSession] },
+        });
       } else {
         dispatch({ type: ADD_WALLETCONNECT_V2_SESSION, payload: { v2Sessions } });
       }
@@ -300,15 +305,6 @@ export const fetchV2ActiveSessionsAction = (currentSession?: ?WalletConnectV2Ses
 };
 
 export const updateSessionV2 = (newChainId: number, session: WalletConnectV2Session) => {
-  return async (dispatch: Dispatch) => {
-    dispatch(updateSessionV2Action(newChainId, session));
-
-    // await web3wallet.core.relayer.transportClose();
-    // dispatch(subscribeToWalletConnectV2ConnectorEventsAction());
-  };
-};
-
-export const updateSessionV2Action = (newChainId: number, session: WalletConnectV2Session) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { namespaces, topic } = session;
 
@@ -329,16 +325,28 @@ export const updateSessionV2Action = (newChainId: number, session: WalletConnect
     const accounts = namespaces?.eip155.accounts;
     const events = namespaces?.eip155.events;
 
+    const updatedNamespaces = {
+      eip155: {
+        methods,
+        // eslint-disable-next-line i18next/no-literal-string
+        accounts: [...accounts, `eip155:${newChainId}:${accountAddress}`],
+        events,
+      },
+    };
+
+    dispatch(updateSessionV2Action(newChainId, topic, updatedNamespaces));
+
+    setTimeout(() => {
+      dispatch(subscribeToWalletConnectV2ConnectorEventsAction());
+    }, 5000);
+  };
+};
+
+export const updateSessionV2Action = (newChainId: number, topic: string, namespaces: Object) => {
+  return async () => {
     await web3wallet?.updateSession({
       topic,
-      namespaces: {
-        eip155: {
-          methods,
-          // eslint-disable-next-line i18next/no-literal-string
-          accounts: [...accounts, `eip155:${newChainId}:${accountAddress}`],
-          events,
-        },
-      },
+      namespaces,
     });
   };
 };
@@ -362,8 +370,6 @@ export const approveWalletConnectV2ConnectorRequestAction = (id: number, namespa
     const { relays, pairingTopic } = currentProposal.params;
 
     try {
-      // if (!web3wallet) await createWeb3Wallet();
-
       await web3wallet?.approveSession({
         id,
         relayProtocol: relays[0].protocol,
@@ -551,7 +557,6 @@ export const rejectWalletConnectV2CallRequestAction = (
 ) => {
   return async (dispatch: Dispatch) => {
     try {
-      // if (!web3wallet) await createWeb3Wallet();
       web3wallet?.respondSessionRequest({
         topic: callRequest?.topic,
         response: rejectReasonMessage,
@@ -595,7 +600,6 @@ export const approveWalletConnectCallRequestAction = (callId: number, result: an
 export const approveWalletConnectV2CallRequestAction = (callRequest: WalletConnectCallRequest, result: any) => {
   return async (dispatch: Dispatch) => {
     try {
-      // if (!web3wallet) await createWeb3Wallet();
       await web3wallet?.respondSessionRequest({
         topic: callRequest.topic,
         response: result,
