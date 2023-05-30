@@ -90,21 +90,6 @@ export const wertWidgetUrl = (address: string, fiatValue: string) => {
   return wertWidget.getEmbedUrl();
 };
 
-export const pelerinSupportedAssets = [
-  'BNB',
-  'BTCB',
-  'BUSD',
-  'DAI',
-  'ETH',
-  'FRAX',
-  'LUSD',
-  'MATIC',
-  'USDC',
-  'USDT',
-  'WBTC',
-  'WETH',
-  'XDAI',
-];
 
 // Pelerin
 export const buildMtPelerinOptions = (

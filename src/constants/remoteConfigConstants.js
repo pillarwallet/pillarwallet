@@ -18,6 +18,24 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+const pelerinSupportedAssets = {
+  supportedAssets: [
+    'BNB',
+    'BTCB',
+    'BUSD',
+    'DAI',
+    'ETH',
+    'FRAX',
+    'LUSD',
+    'MATIC',
+    'USDC',
+    'USDT',
+    'WBTC',
+    'WETH',
+    'XDAI',
+  ],
+};
+
 // Feature flags for Services screen items and other constants fetched from
 // Firebase Remote Config
 export const REMOTE_CONFIG = {
@@ -70,6 +88,7 @@ export const REMOTE_CONFIG = {
   APP_CHAIN_SWITCH_43114: 'app_chain_switch_43114',
   APP_NFTS: 'app_nfts',
   APP_TOKENLISTS: 'app_tokenlists',
+  MT_PELERIN_SUPPORTED_ASSETS: 'app_mt_pelerin_supported_assets',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values
@@ -123,4 +142,5 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.APP_CHAIN_SWITCH_43114]: false,
   [REMOTE_CONFIG.APP_NFTS]: false,
   [REMOTE_CONFIG.APP_TOKENLISTS]: '',
+  [REMOTE_CONFIG.MT_PELERIN_SUPPORTED_ASSETS]: JSON.stringify(pelerinSupportedAssets),
 };

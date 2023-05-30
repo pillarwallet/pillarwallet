@@ -25,6 +25,7 @@ import InAppBrowser from 'react-native-inappbrowser-reborn';
 
 // Constants
 import { BRIDGE_TAB, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
 import { useIsExchangeAvailable, useFiatCurrency, accountsSelector, useRootSelector } from 'selectors';
@@ -32,11 +33,14 @@ import { useIsExchangeAvailable, useFiatCurrency, accountsSelector, useRootSelec
 // Components
 import FloatingButtons from 'components/FloatingButtons';
 
+// Services
+import { firebaseRemoteConfig } from 'services/firebase';
+
 // Config
 import { ETHERSPOT_RAMP_CURRENCY_TOKENS } from 'configs/rampConfig';
 
 // Utils
-import { rampWidgetUrl, pelerinWidgetUrl, pelerinSupportedAssets } from 'utils/fiatToCrypto';
+import { rampWidgetUrl, pelerinWidgetUrl } from 'utils/fiatToCrypto';
 import { showServiceLaunchErrorToast } from 'utils/inAppBrowser';
 import { getActiveAccount, isEtherspotAccount } from 'utils/accounts';
 
@@ -126,7 +130,9 @@ const AnimatedFloatingActions = ({ assetData }) => {
     } else showServiceLaunchErrorToast();
   };
 
-  const isPelerinSupported = pelerinSupportedAssets.includes(token);
+  const mtPelerinSupportedAssetsInString = firebaseRemoteConfig.getString(REMOTE_CONFIG.MT_PELERIN_SUPPORTED_ASSETS);
+  const isPelerinSupported = JSON.parse(mtPelerinSupportedAssetsInString).supportedAssets.includes(token);
+
   const isRampSupported = ETHERSPOT_RAMP_CURRENCY_TOKENS.includes(token || chain.toUpperCase() + '_' + token);
 
   const buttons = [

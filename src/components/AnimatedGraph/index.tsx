@@ -81,7 +81,7 @@ const AnimatedGraph = ({ period, marketData, historicData, onChangePointer }: Pr
 
   const isPositive = currentPricePercentage === 0 || wrapBigNumberOrNil(currentPricePercentage).gt(0);
 
-  const GRADIENT_COLORS = ['#5c0cac', '#5c0cac10'];
+  const GRADIENT_COLORS = [colors.metallicViolet, colors.metallicVioletLight];
 
   if (isLoading || isEmpty(data?.items)) {
     const spinValue = new Animated.Value(0);
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
 const IconContainer = styled.View`
   background-color: ${({ theme }) => theme.colors.basic070};
   border-radius: 24px;
-  shadow-color: #5c0cac;
+  shadow-color: ${({ theme }) => theme.colors.metallicViolet};
   shadow-opacity: 0.58;
   shadow-radius: 24;
   elevation: 56;

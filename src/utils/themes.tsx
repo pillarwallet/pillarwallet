@@ -48,6 +48,8 @@ const commonColors = {
   preciousPersimmon: '#FD7344',
   deepViolet: '#31005c',
   caribbeanGreen: '#00e097',
+  metallicViolet: '#5c0cac',
+  metallicVioletLight: '#5c0cac10',
 };
 
 export const semanticLightThemeColors = {
