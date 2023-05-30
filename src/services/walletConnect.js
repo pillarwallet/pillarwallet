@@ -19,7 +19,7 @@
 */
 import WalletConnect from '@walletconnect/client';
 import { Core } from '@walletconnect/core';
-import { Web3Wallet } from '@walletconnect/web3wallet';
+import { IWeb3Wallet, Web3Wallet } from '@walletconnect/web3wallet';
 import { getSdkError } from '@walletconnect/utils';
 
 // Configs
@@ -36,11 +36,10 @@ import type {
   WalletConnectSession,
   WalletConnectConnector,
   WalletConnectOptions,
-  WalletConnectV2Connector,
 } from 'models/WalletConnect';
 
 // eslint-disable-next-line import/no-mutable-exports
-export let web3wallet: WalletConnectV2Connector | any;
+export let web3wallet: IWeb3Wallet;
 // eslint-disable-next-line import/no-mutable-exports
 export let core;
 // eslint-disable-next-line import/no-mutable-exports
