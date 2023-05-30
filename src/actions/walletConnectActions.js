@@ -334,11 +334,9 @@ export const updateSessionV2 = (newChainId: number, session: WalletConnectV2Sess
       },
     };
 
-    dispatch(updateSessionV2Action(newChainId, topic, updatedNamespaces));
+    await dispatch(updateSessionV2Action(newChainId, topic, updatedNamespaces));
 
-    setTimeout(() => {
-      dispatch(subscribeToWalletConnectV2ConnectorEventsAction());
-    }, 5000);
+    dispatch(subscribeToWalletConnectV2ConnectorEventsAction());
   };
 };
 

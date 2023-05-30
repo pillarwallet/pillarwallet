@@ -20,12 +20,7 @@
 
 import 'react-native-gesture-handler';
 import '@ethersproject/shims';
-import BigIntegerPolyfill from 'big-integer';
 import '@walletconnect/react-native-compat';
-
-if (typeof BigInt === 'undefined') {
-  global.BigInt = BigIntegerPolyfill;
-}
 
 import { AppRegistry, LogBox } from 'react-native';
 import App from './App';
