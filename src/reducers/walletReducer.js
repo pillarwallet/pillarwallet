@@ -27,9 +27,9 @@ import {
   SET_WALLET_IS_DECRYPTING,
   SET_WALLET_IS_ENCRYPTING,
   SET_WALLET_IS_CHANGING_PIN,
+  TODAY_FAILED_ATTEMPTS,
 } from 'constants/walletConstants';
 import type { EthereumWallet } from 'models/Wallet';
-
 
 export type BackupStatus = {|
   isImported: boolean,
@@ -45,11 +45,15 @@ export type WalletReducerState = {|
   isEncrypting: boolean,
   isChangingPin: boolean,
   errorMessage: ?string,
+  failedAttempts: {
+    numberOfFailedAttempts: number,
+    date: Date,
+  },
 |};
 
 export type WalletReducerAction = {|
   type: string,
-  payload: any
+  payload: any,
 |};
 
 const initialState = {
@@ -64,12 +68,13 @@ const initialState = {
   isEncrypting: false,
   isChangingPin: false,
   errorMessage: null,
+  failedAttempts: {
+    numberOfFailedAttempts: 0,
+    date: new Date(),
+  },
 };
 
-const walletReducer = (
-  state: WalletReducerState = initialState,
-  action: WalletReducerAction,
-): WalletReducerState => {
+const walletReducer = (state: WalletReducerState = initialState, action: WalletReducerAction): WalletReducerState => {
   switch (action.type) {
     case UPDATE_WALLET_BACKUP_STATUS:
       return {
@@ -95,6 +100,12 @@ const walletReducer = (
         ...state,
         pinAttemptsCount,
         lastPinAttempt,
+      };
+    case TODAY_FAILED_ATTEMPTS:
+      const { failedAttempts } = action.payload;
+      return {
+        ...state,
+        failedAttempts,
       };
     case SET_WALLET_IS_ENCRYPTING:
       return {

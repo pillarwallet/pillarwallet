@@ -1,7 +1,7 @@
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-platform :ios, '10.0'
+platform :ios, '13.0'
 
 target 'pillarwallet' do
   config = use_native_modules!
@@ -11,15 +11,15 @@ target 'pillarwallet' do
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
         config.build_settings.delete 'IPHONEOS_DEPLOYMENT_TARGET'
+				config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = "arm64"
       end
     end
   end
 
   ### Custom Pods
   # pod for splash gif
-  pod 'SwiftyGif'
+  pod 'SwiftyGif', :git => 'https://github.com/kirualex/SwiftyGif'
   
-
   # react-native-permissions:
   permissions_path = '../node_modules/react-native-permissions/ios'
   pod 'Permission-Camera', :path => "#{permissions_path}/Camera.podspec"

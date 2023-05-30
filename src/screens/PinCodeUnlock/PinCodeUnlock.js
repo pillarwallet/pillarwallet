@@ -31,7 +31,7 @@ import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 
 // configs
 import { getEnv } from 'configs/envConfig';
-import { ALLOWED_PIN_ATTEMPTS, PIN_LOCK_MULTIPLIER } from 'configs/walletConfig';
+import { LOCK_TIME } from 'configs/walletConfig';
 
 // constants
 import { FORGOT_PIN } from 'constants/navigationConstants';
@@ -117,7 +117,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
     if (navigation.getParam('forcePin')) return;
 
-    this.handleLocking(true);
+    this.handleLocking();
 
     if (navigation.getParam('omitPin')) {
       getKeychainDataObject()
@@ -188,6 +188,10 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   handleAppStateChange = (nextAppState: string) => {
     const { lastAppState } = this.state;
+
+    if (nextAppState === ACTIVE_APP_STATE) {
+      this.handleLocking();
+    }
     if (nextAppState === ACTIVE_APP_STATE && lastAppState === BACKGROUND_APP_STATE && !this.errorMessage) {
       this.triggerAuthentication();
     }
@@ -216,24 +220,29 @@ class PinCodeUnlock extends React.Component<Props, State> {
     });
   }
 
-  getWaitingTime = (isNewMount: boolean): number => {
-    const { pinAttemptsCount, lastPinAttempt } = this.props.wallet;
-    const lastAttemptSeconds = (Date.now() - lastPinAttempt) / 1000;
-    const nextInterval = pinAttemptsCount * PIN_LOCK_MULTIPLIER;
-    if (pinAttemptsCount > ALLOWED_PIN_ATTEMPTS) {
-      if (isNewMount && lastAttemptSeconds < nextInterval) {
-        return nextInterval - lastAttemptSeconds;
-      }
-      return nextInterval;
+  getWaitingTime = (): number => {
+    const {
+      pinAttemptsCount,
+      failedAttempts: { numberOfFailedAttempts, date },
+    } = this.props.wallet;
+
+    const lastPinAttemptTime = new Date(date);
+    const currentTime = new Date();
+    const nextInterval = new Date(lastPinAttemptTime?.getTime() + (LOCK_TIME * numberOfFailedAttempts * 1000));
+
+    if (pinAttemptsCount === 0 && currentTime < nextInterval) {
+      const pendingTime = (nextInterval - currentTime) / 1000;
+      return parseInt(pendingTime, 10);
     }
+
     return 0;
   };
 
-  handleLocking = (isNewMount: boolean) => {
+  handleLocking = () => {
     if (this.interval) {
       clearInterval(this.interval);
     }
-    const waitingTime = this.getWaitingTime(isNewMount);
+    const waitingTime = this.getWaitingTime();
     if (waitingTime > 0) {
       this.setState({ waitingTime }, () => {
         this.interval = setInterval(() => {
@@ -256,11 +265,19 @@ class PinCodeUnlock extends React.Component<Props, State> {
       pin,
       defaultAction: () => loginWithPin(pin, this.onLoginSuccess),
     });
-    this.handleLocking(false);
+    setTimeout(() => {
+      this.handleLocking();
+    }, 1200);
   };
 
   handleForgotPasscode = () => {
     this.props.navigation.navigate(FORGOT_PIN);
+  };
+
+  formattedHour = (time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time - (minutes * 60);
+    return `${minutes?.toFixed(0)}:${seconds?.toFixed(0)}`;
   };
 
   render() {
@@ -285,7 +302,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
           {waitingTime > 0 && (
             // eslint-disable-next-line i18next/no-literal-string
             <ErrorMessage testID={`${TAG}-error-max_attempts`} accessibilityLabel={`${TAG}-error-max_attempts`}>
-              {t('auth:error.tooManyAttemptsTryAgain', { waitDuration: waitingTime.toFixed(0) })}
+              {t('auth:error.tooManyAttemptsTryAgainError', { waitDuration: this.formattedHour(waitingTime) })}
             </ErrorMessage>
           )}
           {waitingTime <= 0 && (

@@ -28,11 +28,15 @@ import reducer from 'reducers/walletReducer';
 import type { BackupStatus } from 'reducers/walletReducer';
 import type { EthereumWallet } from 'models/Wallet';
 
-
 const mockWallet: EthereumWallet = {
   address: '0xaddr',
   privateKey: '0xprivKey',
   mnemonic: undefined,
+};
+
+const mockFailedAttempts = {
+  numberOfFailedAttempts: 0,
+  date: new Date(),
 };
 
 const mockBackupStatus: BackupStatus = {
@@ -43,11 +47,13 @@ const mockBackupStatus: BackupStatus = {
 describe('Wallet reducer', () => {
   it('should handle SET_WALLET', () => {
     const updateAction = { type: SET_WALLET, payload: mockWallet };
+
     const expected = {
       data: mockWallet,
       backupStatus: mockBackupStatus,
       pinAttemptsCount: 0,
       lastPinAttempt: 0,
+      failedAttempts: mockFailedAttempts,
       isDecrypting: false,
       isEncrypting: false,
       isChangingPin: false,
