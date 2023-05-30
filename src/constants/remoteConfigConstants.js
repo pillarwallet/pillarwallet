@@ -70,6 +70,9 @@ export const REMOTE_CONFIG = {
   APP_CHAIN_SWITCH_43114: 'app_chain_switch_43114',
   APP_NFTS: 'app_nfts',
   APP_TOKENLISTS: 'app_tokenlists',
+  PLR_STAKING_CONTRACT: 'app_plr_staking_contract',
+  PLE_STAKING_TOKEN_ADDRESS: 'app_plr_staking_token_address',
+  FEATURE_PLR_STAKING: 'feature_plr_staking',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values
@@ -123,4 +126,7 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.APP_CHAIN_SWITCH_43114]: false,
   [REMOTE_CONFIG.APP_NFTS]: false,
   [REMOTE_CONFIG.APP_TOKENLISTS]: '',
+  [REMOTE_CONFIG.PLR_STAKING_CONTRACT]: '',
+  [REMOTE_CONFIG.PLE_STAKING_TOKEN_ADDRESS]: '',
+  [REMOTE_CONFIG.FEATURE_PLR_STAKING]: false,
 };

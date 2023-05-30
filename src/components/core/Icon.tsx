@@ -135,6 +135,7 @@ import IconCheckmarkCircleGreen from 'assets/icons/svg/icon-18-checkmark-circle.
 import IconRadioButtonFocus from 'assets/icons/svg/radio-button-focus.svg';
 import IconRadioButton from 'assets/icons/svg/radio-button.svg';
 import IconHomeInvestments from 'assets/icons/svg/icon-24-investments.svg';
+import CombinedShape from 'assets/icons/svg/combined_shape.svg';
 
 // Assets: services icons
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
@@ -284,6 +285,7 @@ const components = {
   'radio-button-focus-icon': IconRadioButtonFocus,
   'radio-button-icon': IconRadioButton,
   'home-investments': IconHomeInvestments,
+  'combined_shape': CombinedShape,
 
   // Service icons
   binance: IconBinance,
