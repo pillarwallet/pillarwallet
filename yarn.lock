@@ -1299,10 +1299,10 @@
   dependencies:
     "@etherspot/archanova-contracts-migrator" "2.2.0"
 
-"@etherspot/contracts@1.9.7":
-  version "1.9.7"
-  resolved "https://registry.yarnpkg.com/@etherspot/contracts/-/contracts-1.9.7.tgz#2773f4dec16620790b10663ce653fc8188cfe6fa"
-  integrity sha512-64tOeERJRaICgGq8jshWZE8c3G4oOrOhPbitZELmPtVhRMLu2U/WJvkEZeIa1aMhMjjR5fxBZ+bRRv5HqOx0RQ==
+"@etherspot/contracts@1.9.9":
+  version "1.9.9"
+  resolved "https://registry.yarnpkg.com/@etherspot/contracts/-/contracts-1.9.9.tgz#2947e4de7c383519e3223ec23f2a14783e04004a"
+  integrity sha512-n53Z39VNmRxPR7XWZ8gkj+gmeMrJka6RfJLRWCDUbVGyKd1sLixd+8e2qqobrpcBYn4uazqAvzWokfqLp5wxRw==
 
 "@ethersproject/abi@5.0.7":
   version "5.0.7"
@@ -4419,16 +4419,7 @@
     "@types/scheduler" "*"
     csstype "^3.0.2"
 
-"@types/react@^17", "@types/react@^17.0.37":
-  version "17.0.58"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.58.tgz#c8bbc82114e5c29001548ebe8ed6c4ba4d3c9fb0"
-  integrity sha512-c1GzVY97P0fGxwGxhYq989j4XwlcHQoto6wQISOC2v6wm3h0PORRWJFHlkRjfGsiG3y1609WdQ+J+tKxvrEd6A==
-  dependencies:
-    "@types/prop-types" "*"
-    "@types/scheduler" "*"
-    csstype "^3.0.2"
-
-"@types/react@^17.0.5":
+"@types/react@^17", "@types/react@^17.0.37", "@types/react@^17.0.5":
   version "17.0.58"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.58.tgz#c8bbc82114e5c29001548ebe8ed6c4ba4d3c9fb0"
   integrity sha512-c1GzVY97P0fGxwGxhYq989j4XwlcHQoto6wQISOC2v6wm3h0PORRWJFHlkRjfGsiG3y1609WdQ+J+tKxvrEd6A==
@@ -9627,13 +9618,13 @@ ethers@^5.7.2:
     "@ethersproject/web" "5.7.1"
     "@ethersproject/wordlists" "5.7.0"
 
-etherspot@1.43.2:
-  version "1.43.2"
-  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.43.2.tgz#367ebe0128eb93699161bacae41dfa48f7071a78"
-  integrity sha512-ChPwDqbq+EkGrPGX5j1/DsBnyoPHN6YKlKRvoFNpjtQJdp3M01Sg5Y9nD3vfU9RYO/CLdlAXpknZGaKEZY1FRQ==
+etherspot@1.43.5:
+  version "1.43.5"
+  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.43.5.tgz#a6f09b1764406cfa0dac848da123eb43f39b712f"
+  integrity sha512-wO6jV5dR9Ep3o3zQGBRPrns5LMtHXYGrm9N1LgxnqD5wPtHb4b0B+phDi6q+Dnp9c56D1+9mO85O759sLC47sA==
   dependencies:
     "@apollo/client" "3.4.0"
-    "@etherspot/contracts" "1.9.7"
+    "@etherspot/contracts" "1.9.9"
     "@lifi/sdk" "1.6.4"
     "@nerdwallet/apollo-cache-policies" "1.2.1"
     class-transformer "0.4.0"
@@ -20113,12 +20104,7 @@ typescript-tuple@^2.2.1:
   dependencies:
     typescript-compare "^0.0.2"
 
-typescript@^4.2.4:
-  version "4.9.5"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.9.5.tgz#095979f9bcc0d09da324d58d03ce8f8374cbe65a"
-  integrity sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==
-
-typescript@^4.3.2, typescript@^4.5.4:
+typescript@^4.2.4, typescript@^4.3.2, typescript@^4.5.4:
   version "4.9.5"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.9.5.tgz#095979f9bcc0d09da324d58d03ce8f8374cbe65a"
   integrity sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==

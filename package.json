@@ -71,7 +71,7 @@
     "eth-sig-util": "^3.0.0",
     "ethereumjs-util": "^7.0.8",
     "ethers": "5.0.19",
-    "etherspot": "1.43.2",
+    "etherspot": "1.43.5",
     "events": "^1.0.0",
     "https-browserify": "~0.0.0",
     "husky": "^7.0.4",
