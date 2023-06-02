@@ -117,7 +117,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
   const [renderItem, setRenderItem] = React.useState(null);
 
   const [selectedProvider, setSelectedProvider] = React.useState('');
-  const [pressToselectedProvider, setPressToSelectedProvider] = React.useState('');
+  const [pressToSelectedProvider, setPressToSelectedProvider] = React.useState('');
 
   const [failedEstimateOffers, setFailEstimateOffers] = React.useState(0);
   const [hideAllOffers, setHideAllOffers] = React.useState(false);
@@ -273,7 +273,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
 
   // Use for select default best offer
   React.useEffect(() => {
-    if (isEmpty(sortOffersList) || pressToselectedProvider) return;
+    if (isEmpty(sortOffersList) || pressToSelectedProvider) return;
 
     const bestOffer = sortedOffers?.find((offer) => !!offer.feeInfo && offer.provider !== EXCHANGE_PROVIDER.LIFI);
     setSelectedProvider(bestOffer?.provider);
