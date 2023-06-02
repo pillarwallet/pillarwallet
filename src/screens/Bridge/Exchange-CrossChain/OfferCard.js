@@ -67,7 +67,7 @@ type Props = {
   onFetchSortingOfferInfo?: (offerInfo: ExchangeOffer) => void,
   isSelected?: ?boolean,
   onFeeInfo?: (feeInfo: ?TransactionFeeInfo) => void,
-  isVisible?: boolean,
+  isVisible: boolean,
 };
 
 function OfferCard({
