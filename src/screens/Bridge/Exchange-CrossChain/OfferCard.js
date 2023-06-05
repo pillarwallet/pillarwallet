@@ -67,6 +67,7 @@ type Props = {
   onFetchSortingOfferInfo?: (offerInfo: ExchangeOffer) => void,
   isSelected?: ?boolean,
   onFeeInfo?: (feeInfo: ?TransactionFeeInfo) => void,
+  onEstimating?: (estimating: boolean) => void,
 };
 
 function OfferCard({
@@ -79,6 +80,7 @@ function OfferCard({
   onFetchSortingOfferInfo,
   isSelected,
   onFeeInfo,
+  onEstimating,
 }: Props) {
   const { t } = useTranslation();
   const config = useProviderConfig(offer.provider);
@@ -128,6 +130,11 @@ function OfferCard({
   }, [estimationErrorMessage]);
 
   React.useEffect(() => {
+    onEstimating && onEstimating(isEstimating);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEstimating]);
+
+  React.useEffect(() => {
     onFeeInfo && onFeeInfo(feeInfo);
     onFetchSortingOfferInfo &&
       onFetchSortingOfferInfo({
@@ -138,7 +145,7 @@ function OfferCard({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [feeInfo, estimationErrorMessage, isEstimating]);
 
-  if (estimationErrorMessage) {
+  if (estimationErrorMessage || isEstimating) {
     return null;
   }
 

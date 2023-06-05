@@ -124,6 +124,8 @@ function Exchange({ fetchExchangeTitle }: Props) {
 
   const [gasFeeAsset, setGasFeeAsset] = React.useState<AssetOption | null>(null);
 
+  const [loading, setLoading] = React.useState(false);
+
   const fromOptions = useFromAssets();
   const toOptions = useToAssets(chain);
 
@@ -384,7 +386,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
 
         <Spacing h={20} />
 
-        {showLoading && (
+        {(showLoading || loading) && (
           <EmptyStateWrapper>
             <Spinner />
           </EmptyStateWrapper>
@@ -408,6 +410,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
                 gasFeeAsset={gasFeeAsset}
                 onPress={() => handleOfferPress(offer)}
                 onFetchSortingOfferInfo={onChangeSortingOffers}
+                onEstimating={setLoading}
                 onEstimateFail={() => {
                   setFailEstimateOffers(failedEstimateOffers + 1);
                 }}
