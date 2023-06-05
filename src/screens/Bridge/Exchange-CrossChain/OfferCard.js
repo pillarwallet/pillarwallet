@@ -139,6 +139,7 @@ function OfferCard({
   }, [estimationErrorMessage]);
 
   React.useEffect(() => {
+    if (isSelected) return;
     onEstimating && onEstimating(isEstimating);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEstimating]);
@@ -155,7 +156,7 @@ function OfferCard({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [feeInfo, estimationErrorMessage, isEstimating]);
 
-  if (estimationErrorMessage || isEstimating || !isVisible) {
+  if (estimationErrorMessage || !isVisible || (!isSelected && isEstimating)) {
     return null;
   }
 

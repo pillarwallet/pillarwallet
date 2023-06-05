@@ -27,6 +27,8 @@ import { useTranslation } from 'translations/translate';
 // Actions
 import { fetchGasThresholds } from 'redux/actions/gas-threshold-actions';
 import { exchangeGasFeeAction } from 'actions/etherspotActions';
+import { appsFlyerlogEventAction } from 'actions/analyticsActions';
+import { fetchSingleChainAssetRatesAction } from 'actions/ratesActions';
 
 // Components
 import { Container, Content, Spacing } from 'components/layout/Layout';
@@ -56,10 +58,6 @@ import { getActiveScreenName } from 'utils/navigation';
 import { getAssetRateInFiat } from 'utils/rates';
 import { mapTransactionsToTransactionPayload, showTransactionRevertedToast } from 'utils/transactions';
 import { useThemeColors } from 'utils/themes';
-
-// Actions
-import { appsFlyerlogEventAction } from 'actions/analyticsActions';
-import { fetchSingleChainAssetRatesAction } from 'actions/ratesActions';
 
 // Types
 import type { AssetOption } from 'models/Asset';
@@ -263,7 +261,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
     setPressToSelectedProvider('');
     setSelectedProvider('');
     dispatch({ type: RESET_EXCHANGE_GAS_FEE_INFO });
-  }, [fromValue, toAddress, fromAddress, chain]);
+  }, [fromValue, toAddress, fromAddress, chain, gasFeeAsset]);
 
   const showOfferEstimateFailState = failedEstimateOffers === offers?.length;
   const ratesNotFound = toAsset && fromValue ? rate === 0 : false;
@@ -410,7 +408,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
 
         {visibleOffers && (
           <>
-            {!isEmpty(validOffers) && (
+            {!isEmpty(validOffers) && !loading && (
               <Text color={colors.basic010} variant="big">
                 {hideAllOffers ? t('label.best_offer') : t('label.offers')}
               </Text>
@@ -433,7 +431,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
                 }}
               />
             ))}
-            {validOffers?.length > 1 && (
+            {validOffers?.length > 1 && !loading && (
               <Button
                 onPress={() => {
                   setShowBestOffer(false);
