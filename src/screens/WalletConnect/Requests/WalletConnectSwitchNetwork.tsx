@@ -32,9 +32,10 @@ import Icon from 'components/core/Icon';
 import { useThemeColors } from 'utils/themes';
 import { useChainsConfig } from 'utils/uiConfig';
 import { getDeviceHeight, getDeviceWidth } from 'utils/common';
-import { getActiveAccount, isEtherspotAccount, isArchanovaAccount, findFirstEtherspotAccount } from 'utils/accounts';
+import { getActiveAccount, isEtherspotAccount, isArchanovaAccount } from 'utils/accounts';
 import { objectFontStyles } from 'utils/variables';
 import { chainFromChainId } from 'utils/chains';
+import { isEtherspotAccountDeployed } from 'utils/etherspot';
 
 // Selectors
 import { useSupportedChains } from 'selectors/chains';
@@ -65,20 +66,16 @@ const useChains = (): any[] => {
   const config = useChainsConfig();
   const accounts = useWalletConnectAccounts();
   const activeAccount: Account | any = getActiveAccount(accounts);
-  const isActiveEtherspotAccount = isEtherspotAccount(activeAccount);
-  const etherspotAccount = findFirstEtherspotAccount(accounts);
 
-  const chainTabs = chains.map((chain) => {
-    const { state } = etherspotAccount.extra[chain];
-    return {
-      key: chain,
-      chain,
-      value: config[chain].title,
-      label: config[chain].titleShort,
-      icon: config[chain].iconName,
-      isDeployed: isActiveEtherspotAccount ? (state === 'Deployed' ? true : false) : true,
-    };
-  });
+  const chainTabs = chains.map((chain) => ({
+    key: chain,
+    chain,
+    value: config[chain].title,
+    label: config[chain].titleShort,
+    icon: config[chain].iconName,
+    isDeployed: isEtherspotAccountDeployed(activeAccount, chain),
+  }));
+
   return chainTabs;
 };
 
@@ -126,6 +123,7 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, chains: v2Chains
         setSelectedNetwork(item);
         onChangeChain(item.chain);
       }}
+      key={item.value}
     >
       <Icon name={item.icon} />
       <Spacing w={8} />
