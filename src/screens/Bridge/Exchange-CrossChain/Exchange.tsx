@@ -26,6 +26,7 @@ import { useTranslation } from 'translations/translate';
 
 // Actions
 import { fetchGasThresholds } from 'redux/actions/gas-threshold-actions';
+import { exchangeGasFeeAction } from 'actions/etherspotActions';
 
 // Components
 import { Container, Content, Spacing } from 'components/layout/Layout';
@@ -41,7 +42,7 @@ import SwapButton from 'components/legacy/Button';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { TRANSACTION_TYPE } from 'constants/transactionsConstants';
 import { CHAIN } from 'constants/chainConstants';
-import { EXCHANGE_PROVIDER } from 'constants/exchangeConstants';
+import { EXCHANGE_PROVIDER, RESET_EXCHANGE_GAS_FEE_INFO } from 'constants/exchangeConstants';
 
 // Utils
 import { useChainConfig } from 'utils/uiConfig';
@@ -67,7 +68,7 @@ import type { Chain } from 'models/Chain';
 import type { TransactionPayload } from 'models/Transaction';
 
 // Selectors
-import { useActiveAccount, useChainRates, useFiatCurrency } from 'selectors';
+import { useExchangeGasFee, useActiveAccount, useChainRates, useFiatCurrency } from 'selectors';
 
 // Hooks
 import { useTransactionFeeCheck } from 'hooks/transactions';
@@ -87,7 +88,6 @@ import {
   appendFeeCaptureTransactionIfNeeded,
 } from './utils';
 import GasFeeAssetSelection from './GasFeeAssetSelection';
-// Local
 
 interface Props {
   fetchExchangeTitle: (val: string) => void;
@@ -101,6 +101,9 @@ function Exchange({ fetchExchangeTitle }: Props) {
   const fromInputRef: any = React.useRef();
   const screenName = getActiveScreenName(navigation);
   const colors = useThemeColors();
+  const gasFeeList = useExchangeGasFee();
+
+  const isEstimaing = gasFeeList?.find((feeInfo) => feeInfo.isEstimating);
 
   const initialChain: Chain = navigation.getParam('chain');
   const initialFromAddress: string =
@@ -114,6 +117,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
   const [renderItem, setRenderItem] = React.useState(null);
 
   const [selectedProvider, setSelectedProvider] = React.useState('');
+  const [pressToSelectedProvider, setPressToSelectedProvider] = React.useState('');
 
   const [failedEstimateOffers, setFailEstimateOffers] = React.useState(0);
   const [hideAllOffers, setHideAllOffers] = React.useState(false);
@@ -196,8 +200,11 @@ function Exchange({ fetchExchangeTitle }: Props) {
       });
       return;
     }
-
     setSelectedProvider(selectedOffer.provider);
+    setPressToSelectedProvider(selectedOffer.provider);
+
+    const offerWithFee = await appendFeeCaptureTransactionIfNeeded(selectedOffer, getAccountAddress(activeAccount));
+    dispatch(exchangeGasFeeAction(offerWithFee, gasFeeAsset));
   };
 
   const onChangeSortingOffers = (sortOffer) => {
@@ -253,6 +260,9 @@ function Exchange({ fetchExchangeTitle }: Props) {
     setSortOfferList([]);
     setHideAllOffers(false);
     setShowBestOffer(true);
+    setPressToSelectedProvider('');
+    setSelectedProvider('');
+    dispatch({ type: RESET_EXCHANGE_GAS_FEE_INFO });
   }, [fromValue, toAddress, fromAddress, chain]);
 
   const showOfferEstimateFailState = failedEstimateOffers === offers?.length;
@@ -265,7 +275,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
 
   // Use for select default best offer
   React.useEffect(() => {
-    if (isEmpty(sortOffersList)) return;
+    if (isEmpty(sortOffersList) || pressToSelectedProvider) return;
 
     const bestOffer = sortedOffers?.find((offer) => !!offer.feeInfo && offer.provider !== EXCHANGE_PROVIDER.LIFI);
     setSelectedProvider(bestOffer?.provider);
@@ -280,7 +290,13 @@ function Exchange({ fetchExchangeTitle }: Props) {
     if (isEmpty(sortedOffers)) return [];
 
     const bestOffer = sortedOffers?.find((offer) => !!offer.feeInfo && offer.provider !== EXCHANGE_PROVIDER.LIFI);
-    return hideAllOffers ? (!!bestOffer ? [bestOffer] : sortedOffers.slice(0, 1)) : sortedOffers;
+
+    if (!!bestOffer) {
+      sortedOffers.sort(function (x, y) {
+        return x.provider === bestOffer.provider ? -1 : y.provider === bestOffer.provider ? 1 : 0;
+      });
+    }
+    return sortedOffers;
   }, [sortedOffers, offers, sortOffersList, renderItem]);
 
   const selectedOffer = sortedOffers?.find((offer) => offer.provider === selectedProvider);
@@ -400,10 +416,11 @@ function Exchange({ fetchExchangeTitle }: Props) {
               </Text>
             )}
             <Spacing h={8} />
-            {exchangeOffers?.map((offer) => (
+            {exchangeOffers.map((offer, index) => (
               <OfferCard
                 key={offer.provider}
                 isSelected={offer.provider === selectedProvider}
+                isVisible={hideAllOffers ? index === 0 : true}
                 offer={offer}
                 disabled={false}
                 isLoading={false}
@@ -433,7 +450,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
             {!isEmpty(selectedProvider) && (
               <SwapButton
                 style={{ borderRadius: 14 }}
-                disabled={!!errorMessage}
+                disabled={!!errorMessage || isEstimaing}
                 title={t('button.swap')}
                 onPress={confirmTransaction}
               />
