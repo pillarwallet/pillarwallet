@@ -21,10 +21,6 @@
 import { ADD_EXCHANGE_GAS_FEE_INFO, RESET_EXCHANGE_GAS_FEE_INFO } from 'constants/exchangeConstants';
 
 // Modals
-import type { GasToken, TransactionFeeInfo } from 'models/Transaction';
-import type { AssetOption, Asset } from 'models/Asset';
-import type { Chain } from 'models/Chain';
-import type { BigNumber } from '@ethersproject/bignumber/lib/bignumber';
 import type { ExchangeFeeInfo } from 'models/Exchange';
 
 export type ExchangeGasFeeReducerState = {

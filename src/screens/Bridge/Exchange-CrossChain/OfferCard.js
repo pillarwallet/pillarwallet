@@ -211,7 +211,7 @@ export default OfferCard;
 const TouchableContainer = styled.TouchableOpacity`
   margin-bottom: ${spacing.mediumLarge}px;
   padding: 0 ${spacing.mediumLarge}px;
-  background-color: ${({ theme }) => theme.colors.basic080};
+  background-color: ${({ theme }) => theme.colors.basic050};
   border-radius: 20px;
 `;
 
