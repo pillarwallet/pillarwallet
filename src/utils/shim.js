@@ -1,5 +1,3 @@
-import BigIntegerPolyfill from 'big-integer';
-
 if (typeof __dirname === 'undefined') global.__dirname = '/'
 if (typeof __filename === 'undefined') global.__filename = ''
 if (typeof process === 'undefined') {
@@ -26,8 +24,3 @@ if (typeof localStorage !== 'undefined') {
 // If using the crypto shim, uncomment the following line to ensure
 // crypto is loaded first, so it can populate global.crypto
 // require('crypto')
-
-// $FlowFixMe
-if (typeof BigInt === 'undefined') {
-  global.BigInt = BigIntegerPolyfill;
-}
