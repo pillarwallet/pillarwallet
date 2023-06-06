@@ -201,10 +201,14 @@ function Exchange({ fetchExchangeTitle }: Props) {
     setSelectedProvider(selectedOffer.provider);
     setPressToSelectedProvider(selectedOffer.provider);
 
-    const offerWithFee = await appendFeeCaptureTransactionIfNeeded(selectedOffer, getAccountAddress(activeAccount));
-    dispatch(exchangeGasFeeAction(offerWithFee, gasFeeAsset));
-
     setHideAllOffers(true);
+
+    const offerWithFee = await appendFeeCaptureTransactionIfNeeded(selectedOffer, getAccountAddress(activeAccount));
+    dispatch(
+      exchangeGasFeeAction(offerWithFee, gasFeeAsset, () => {
+        setHideAllOffers(false);
+      }),
+    );
   };
 
   const onChangeSortingOffers = (sortOffer) => {
@@ -296,16 +300,14 @@ function Exchange({ fetchExchangeTitle }: Props) {
     if (hideAllOffers && selectedProvider) {
       const selectedOffer = sortedOffers?.find((offer) => !!offer.feeInfo && offer.provider === selectedProvider);
       if (selectedOffer) {
-        return sortedOffers.sort(function (x, y) {
-          return x.provider === selectedProvider ? -1 : y.provider === selectedProvider ? 1 : 0;
-        });
+        return sortedOffers.sort((x, y) =>
+          x.provider === selectedProvider ? -1 : y.provider === selectedProvider ? 1 : 0,
+        );
       }
     }
 
     if (!!bestOffer) {
-      sortedOffers.sort(function (x, y) {
-        return x.provider === bestOffer.provider ? -1 : y.provider === bestOffer.provider ? 1 : 0;
-      });
+      sortedOffers.sort((x, y) => (x.provider === bestOffer.provider ? -1 : y.provider === bestOffer.provider ? 1 : 0));
     }
     return sortedOffers;
   }, [sortedOffers, offers, sortOffersList, renderItem]);

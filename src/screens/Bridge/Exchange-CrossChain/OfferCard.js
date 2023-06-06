@@ -118,9 +118,9 @@ function OfferCard({
     isEstimating: isOfferEstimating,
   } = useTransactionsEstimate(chain, crossChainTxs || offerInfo?.transactions, true, gasFeeAsset);
 
-  const feeInfo = gasFeeInfo?.feeInfo ?? offerFeeInfo;
-  const estimationErrorMessage = gasFeeInfo?.errorMessage ?? errorMessage;
-  const isEstimating = gasFeeInfo?.isEstimating ?? isOfferEstimating;
+  const feeInfo = gasFeeInfo ? gasFeeInfo?.feeInfo : offerFeeInfo;
+  const estimationErrorMessage = gasFeeInfo ? gasFeeInfo?.errorMessage : errorMessage;
+  const isEstimating = gasFeeInfo ? gasFeeInfo?.isEstimating : isOfferEstimating;
 
   const chainRates = useChainRates(chain);
 
@@ -140,7 +140,7 @@ function OfferCard({
 
   React.useEffect(() => {
     if (isSelected) return;
-    onEstimating && onEstimating(isEstimating);
+    if (typeof onEstimating === 'function') onEstimating(isEstimating);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEstimating]);
 

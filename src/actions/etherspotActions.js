@@ -430,7 +430,7 @@ const handleGatewayBatchUpdatedNotification = async (
   });
 };
 
-export const exchangeGasFeeAction = (offer: ExchangeOffer, gasFeeAsset: AssetOption | Asset) => {
+export const exchangeGasFeeAction = (offer: ExchangeOffer, gasFeeAsset: AssetOption | Asset, onFailed: () => void) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       session: {
@@ -484,6 +484,7 @@ export const exchangeGasFeeAction = (offer: ExchangeOffer, gasFeeAsset: AssetOpt
         },
       });
     } catch (e) {
+      onFailed();
       dispatch({
         type: ADD_EXCHANGE_GAS_FEE_INFO,
         payload: {
