@@ -42,3 +42,14 @@ export type ExchangeOffer = {
   sortingValue?: number,
   feeInfo?: ?TransactionFeeInfo,
 };
+
+export type ExchangeFeeInfo = {
+  provider: string,
+  chain: Chain,
+  fromAddress: string,
+  toAddress: string,
+  isEstimating: boolean,
+  gasFeeAsset: AssetOption | Asset,
+  feeInfo: TransactionFeeInfo,
+  errorMessage: string | null,
+};
