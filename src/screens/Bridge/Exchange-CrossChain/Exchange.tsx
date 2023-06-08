@@ -272,7 +272,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
   const showOfferEstimateFailState = failedEstimateOffers === offers?.length;
   const ratesNotFound = toAsset && fromValue ? rate === 0 : false;
 
-  const sortedOffers = React.useMemo(() => {
+  const sortedOffers: ExchangeOffer[] = React.useMemo(() => {
     if (isEmpty(sortOffersList)) return offers;
     else return sortingOffersToGasFee(sortOffersList);
   }, [renderItem, gasFeeAsset, sortOffersList, offers]);
