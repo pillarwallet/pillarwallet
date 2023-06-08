@@ -67,6 +67,7 @@ type Props = {
   onFetchSortingOfferInfo?: (offerInfo: ExchangeOffer) => void,
   isSelected?: ?boolean,
   onFeeInfo?: (feeInfo: ?TransactionFeeInfo) => void,
+  onEstimating?: (estimating: boolean) => void,
   isVisible: boolean,
 };
 
@@ -80,6 +81,7 @@ function OfferCard({
   onFetchSortingOfferInfo,
   isSelected,
   onFeeInfo,
+  onEstimating,
   isVisible,
 }: Props) {
   const { t } = useTranslation();
@@ -116,9 +118,9 @@ function OfferCard({
     isEstimating: isOfferEstimating,
   } = useTransactionsEstimate(chain, crossChainTxs || offerInfo?.transactions, true, gasFeeAsset);
 
-  const feeInfo = gasFeeInfo?.feeInfo ?? offerFeeInfo;
-  const estimationErrorMessage = gasFeeInfo?.errorMessage ?? errorMessage;
-  const isEstimating = gasFeeInfo?.isEstimating ?? isOfferEstimating;
+  const feeInfo = gasFeeInfo ? gasFeeInfo?.feeInfo : offerFeeInfo;
+  const estimationErrorMessage = gasFeeInfo ? gasFeeInfo?.errorMessage : errorMessage;
+  const isEstimating = gasFeeInfo ? gasFeeInfo?.isEstimating : isOfferEstimating;
 
   const chainRates = useChainRates(chain);
 
@@ -137,6 +139,12 @@ function OfferCard({
   }, [estimationErrorMessage]);
 
   React.useEffect(() => {
+    if (isSelected) return;
+    if (typeof onEstimating === 'function') onEstimating(isEstimating);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEstimating]);
+
+  React.useEffect(() => {
     if (isSelected && (isEstimating || !feeInfo)) return;
     onFeeInfo && onFeeInfo(feeInfo);
     onFetchSortingOfferInfo &&
@@ -148,7 +156,7 @@ function OfferCard({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [feeInfo, estimationErrorMessage, isEstimating]);
 
-  if (estimationErrorMessage || !isVisible) {
+  if (estimationErrorMessage || !isVisible || (!isSelected && isEstimating)) {
     return null;
   }
 
@@ -203,7 +211,7 @@ export default OfferCard;
 const TouchableContainer = styled.TouchableOpacity`
   margin-bottom: ${spacing.mediumLarge}px;
   padding: 0 ${spacing.mediumLarge}px;
-  background-color: ${({ theme }) => theme.colors.basic080};
+  background-color: ${({ theme }) => theme.colors.basic050};
   border-radius: 20px;
 `;
 

@@ -27,6 +27,8 @@ import { useTranslation } from 'translations/translate';
 // Actions
 import { fetchGasThresholds } from 'redux/actions/gas-threshold-actions';
 import { exchangeGasFeeAction } from 'actions/etherspotActions';
+import { appsFlyerlogEventAction } from 'actions/analyticsActions';
+import { fetchSingleChainAssetRatesAction } from 'actions/ratesActions';
 
 // Components
 import { Container, Content, Spacing } from 'components/layout/Layout';
@@ -56,10 +58,6 @@ import { getActiveScreenName } from 'utils/navigation';
 import { getAssetRateInFiat } from 'utils/rates';
 import { mapTransactionsToTransactionPayload, showTransactionRevertedToast } from 'utils/transactions';
 import { useThemeColors } from 'utils/themes';
-
-// Actions
-import { appsFlyerlogEventAction } from 'actions/analyticsActions';
-import { fetchSingleChainAssetRatesAction } from 'actions/ratesActions';
 
 // Types
 import type { AssetOption } from 'models/Asset';
@@ -127,6 +125,8 @@ function Exchange({ fetchExchangeTitle }: Props) {
   const [debouncedFromValue] = useDebounce(fromValue, 500);
 
   const [gasFeeAsset, setGasFeeAsset] = React.useState<AssetOption | null>(null);
+
+  const [loading, setLoading] = React.useState(false);
 
   const fromOptions = useFromAssets();
   const toOptions = useToAssets(chain);
@@ -201,8 +201,14 @@ function Exchange({ fetchExchangeTitle }: Props) {
     setSelectedProvider(selectedOffer.provider);
     setPressToSelectedProvider(selectedOffer.provider);
 
+    setHideAllOffers(true);
+
     const offerWithFee = await appendFeeCaptureTransactionIfNeeded(selectedOffer, getAccountAddress(activeAccount));
-    dispatch(exchangeGasFeeAction(offerWithFee, gasFeeAsset));
+    dispatch(
+      exchangeGasFeeAction(offerWithFee, gasFeeAsset, () => {
+        setHideAllOffers(false);
+      }),
+    );
   };
 
   const onChangeSortingOffers = (sortOffer) => {
@@ -261,12 +267,12 @@ function Exchange({ fetchExchangeTitle }: Props) {
     setPressToSelectedProvider('');
     setSelectedProvider('');
     dispatch({ type: RESET_EXCHANGE_GAS_FEE_INFO });
-  }, [fromValue, toAddress, fromAddress, chain]);
+  }, [fromValue, toAddress, fromAddress, chain, gasFeeAsset]);
 
   const showOfferEstimateFailState = failedEstimateOffers === offers?.length;
   const ratesNotFound = toAsset && fromValue ? rate === 0 : false;
 
-  const sortedOffers = React.useMemo(() => {
+  const sortedOffers: ExchangeOffer[] = React.useMemo(() => {
     if (isEmpty(sortOffersList)) return offers;
     else return sortingOffersToGasFee(sortOffersList);
   }, [renderItem, gasFeeAsset, sortOffersList, offers]);
@@ -276,9 +282,11 @@ function Exchange({ fetchExchangeTitle }: Props) {
     if (isEmpty(sortOffersList) || pressToSelectedProvider) return;
 
     const bestOffer = sortedOffers?.find((offer) => !!offer.feeInfo && offer.provider !== EXCHANGE_PROVIDER.LIFI);
-    setSelectedProvider(bestOffer?.provider);
 
     const failEstimatedFee = sortedOffers?.find((offer) => !offer.feeInfo);
+    if (!failEstimatedFee) {
+      setSelectedProvider(bestOffer?.provider);
+    }
     if (!failEstimatedFee && showBestOffer) {
       setHideAllOffers(true);
     }
@@ -289,10 +297,17 @@ function Exchange({ fetchExchangeTitle }: Props) {
 
     const bestOffer = sortedOffers?.find((offer) => !!offer.feeInfo && offer.provider !== EXCHANGE_PROVIDER.LIFI);
 
+    if (hideAllOffers && selectedProvider) {
+      const selectedOffer = sortedOffers?.find((offer) => !!offer.feeInfo && offer.provider === selectedProvider);
+      if (selectedOffer) {
+        return sortedOffers.sort((x, y) =>
+          x.provider === selectedProvider ? -1 : y.provider === selectedProvider ? 1 : 0,
+        );
+      }
+    }
+
     if (!!bestOffer) {
-      sortedOffers.sort(function (x, y) {
-        return x.provider === bestOffer.provider ? -1 : y.provider === bestOffer.provider ? 1 : 0;
-      });
+      sortedOffers.sort((x, y) => (x.provider === bestOffer.provider ? -1 : y.provider === bestOffer.provider ? 1 : 0));
     }
     return sortedOffers;
   }, [sortedOffers, offers, sortOffersList, renderItem]);
@@ -400,7 +415,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
 
         <Spacing h={20} />
 
-        {showLoading && (
+        {(showLoading || loading) && (
           <EmptyStateWrapper>
             <Spinner />
           </EmptyStateWrapper>
@@ -408,7 +423,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
 
         {visibleOffers && (
           <>
-            {!isEmpty(validOffers) && (
+            {!isEmpty(validOffers) && !loading && (
               <Text color={colors.basic010} variant="big">
                 {hideAllOffers ? t('label.best_offer') : t('label.offers')}
               </Text>
@@ -425,12 +440,13 @@ function Exchange({ fetchExchangeTitle }: Props) {
                 gasFeeAsset={gasFeeAsset}
                 onPress={() => handleOfferPress(offer)}
                 onFetchSortingOfferInfo={onChangeSortingOffers}
+                onEstimating={setLoading}
                 onEstimateFail={() => {
                   setFailEstimateOffers(failedEstimateOffers + 1);
                 }}
               />
             ))}
-            {validOffers?.length > 1 && (
+            {validOffers?.length > 1 && !loading && (
               <Button
                 onPress={() => {
                   setShowBestOffer(false);
