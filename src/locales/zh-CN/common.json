@@ -1216,6 +1216,8 @@
     "assetHasBeenHidden": "{{assetName}} ({{assetSymbol}}) 已移除。",
     "ensureBackup": "请确保您现在备份您的钱包。",
     "walletConnectUnsupportedApp": "不支持此应用程序。您可以请求对此应用程序的支持。",
+    "walletConnectUnsupportedNetwork": "此应用不支持 {{chainId}} 链。",
+    "walletConnectUnsupportedWalletNetwork": "此钱包不支持 {{chain}} 链。",
     "walletConnectConnectionsExpired": "连接已过期。请重新连接。",
     "cantReadQRCode": "无法读取此二维码。再试一次或使用其他图像。",
     "incorrectQRCode": "二维码不正确。",

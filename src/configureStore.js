@@ -23,7 +23,8 @@
  * Create the Redux store
  */
 import { createStore, applyMiddleware } from 'redux';
-import AsyncStorage from '@react-native-community/async-storage';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { persistStore, persistReducer, createMigrate } from 'redux-persist';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import thunk from 'redux-thunk';

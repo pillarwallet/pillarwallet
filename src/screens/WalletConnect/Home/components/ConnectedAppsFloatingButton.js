@@ -34,6 +34,9 @@ import useWalletConnect from 'hooks/useWalletConnect';
 // Utils
 import { spacing } from 'utils/variables';
 
+// Selectors
+import { useRootSelector } from 'selectors';
+
 // Local
 import WalletConnectAppsCamera from '../../ConnectedApps/WalletConnectAppsCamera';
 
@@ -44,8 +47,9 @@ type Props = {|
 
 const ConnectedAppsFloatingButton = ({ style, isInCameraFloating }: Props) => {
   const { activeConnectors } = useWalletConnect();
+  const v2Sessions = useRootSelector((root) => root.walletConnectSessions.v2Sessions);
 
-  if (activeConnectors.length === 0) {
+  if (activeConnectors.length + v2Sessions.length === 0) {
     return null;
   }
 
@@ -59,7 +63,7 @@ const ConnectedAppsFloatingButton = ({ style, isInCameraFloating }: Props) => {
     <TouchableOpacity onPress={openConnectedApps}>
       <ItemContainer>
         <Text>
-          <Emoji name="zap" /> {activeConnectors.length}
+          <Emoji name="zap" /> {activeConnectors.length + v2Sessions.length}
         </Text>
       </ItemContainer>
     </TouchableOpacity>
