@@ -294,6 +294,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
         {offer && !ratesNotFound && (
           <>
             <OfferCard
+              isVisible
               key={offer.provider}
               crossChainTxs={txData}
               offer={offer}
