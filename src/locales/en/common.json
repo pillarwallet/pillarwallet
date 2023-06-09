@@ -329,7 +329,17 @@
     "best_offer": "Best offer",
     "see_other_offers": "See other offers",
     "see_less_offers": "See less offers",
-    "half_min": "30s"
+    "half_min": "30s",
+    "marketCap": "Market Cap",
+    "fdv": "FDV",
+    "totalLiquidity": "Tot. Liquidity",
+    "supply": "Supply",
+    "holders": "Holders",
+    "trandingVol": "Trading Vol.",
+    "allTimeHigh": "All-Time High",
+    "allTimeLow": "All-Time Low",
+    "your_balance": "Your Balance",
+    "volume_24": "Volume 24h"
   },
 
   "button": {
@@ -449,7 +459,13 @@
     "savedPrivateKey": "I have saved my private key",
     "openInBrowser": "Open in browser",
     "ok": "OK",
-    "i_understood": "I understand"
+    "i_understand": "I understand",
+    "one_hour": "1 H",
+    "twentyfour_hour": "24 H",
+    "seven_day": "7 D",
+    "one_month": "1 M",
+    "one_year": "1 Y",
+    "token_analytics": "Token Analytics"
   },
 
   "paragraph": {

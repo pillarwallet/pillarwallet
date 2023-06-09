@@ -309,7 +309,17 @@
     "best_offer": "最好的报价",
     "see_other_offers": "查看其他优惠",
     "see_less_offers": "少看优惠",
-    "half_min": "30多岁"
+    "half_min": "30多岁",
+    "marketCap": "市值",
+    "fdv": "FDV",
+    "totalLiquidity": "托特。流动性",
+    "supply": "供应",
+    "holders": "持有人",
+    "trandingVol": "交易量",
+    "allTimeHigh": "历来最高",
+    "allTimeLow": "历来最低点",
+    "your_balance": "您的余额",
+    "volume_24": "24小时成交量"
   },
   "button": {
     "activate": "启用",
@@ -426,7 +436,13 @@
     "savedPhrase": "我已经保存了我的 12 个字",
     "savedPrivateKey": "我已经保存了我的私钥",
     "ok": "确认",
-    "i_understood": "我明白"
+    "i_understand": "我明白",
+    "one_hour": "1小时",
+    "twentyfour_hour": "24小时",
+    "seven_day": "7天",
+    "one_month": "1米",
+    "one_year": "1 岁",
+    "token_analytics": "代币分析"
   },
   "paragraph": {
     "addressCopiedToClipboard": "地址已复制到剪贴板。",

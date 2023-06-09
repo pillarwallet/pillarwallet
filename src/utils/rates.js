@@ -68,6 +68,21 @@ export const getAssetPriceInFiat = (assetAddress: ?string, rates: RatesByAssetAd
   return ` • ${currencySymbol}${rate?.toFixed(2)}`;
 };
 
+export const getATokenValueInFiat = (
+  assetAddress: ?string,
+  rates: RatesByAssetAddress,
+  currency: Currency,
+): ?string => {
+  if (!assetAddress) return null;
+
+  const currencySymbol = getCurrencySymbol(currency);
+
+  const rate = getAssetRateInFiat(rates, assetAddress, currency);
+  if (!rate) return `${currencySymbol}0.0`;
+
+  return `${currencySymbol}${rate?.toFixed(2)}`;
+};
+
 export const getAssetValueFromFiat = (
   fiatValue: ?Value,
   assetAddress: ?string,
@@ -90,4 +105,12 @@ export const fiatInvestmentBalance = (balance: BigNumber, rates: RatesPerChain, 
   const fiatAmount = (parseFloat(assetBalance) * nativeAssetRate?.[currency]) / nativeAssetRate?.[USD];
 
   return fiatAmount?.toFixed(2);
+};
+
+export const fiatTokenValue = (tokenValue: number, rates: RatesPerChain, currency: Currency, decimals?: ?number) => {
+  const nativeAssetRate = rates[nativeAssetPerChain[CHAIN.ETHEREUM].address];
+
+  const fiatAmount = (tokenValue * nativeAssetRate?.[currency]) / nativeAssetRate?.[USD];
+
+  return fiatAmount?.toFixed(decimals || 2);
 };

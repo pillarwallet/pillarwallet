@@ -20,9 +20,19 @@
 import { BigNumber as EthersBigNumber, utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { get, isEmpty, mapValues, orderBy } from 'lodash';
+import t from 'translations/translate';
 
 // constants
-import { defaultFiatCurrency, ETH, PLR, ASSET_TYPES } from 'constants/assetsConstants';
+import {
+  defaultFiatCurrency,
+  ETH,
+  PLR,
+  ASSET_TYPES,
+  ONE_DAY,
+  ONE_WEEK,
+  ONE_MONTH,
+  ONE_YEAR,
+} from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // utils
@@ -55,6 +65,7 @@ import type {
   AssetOptionBalance,
   AssetsPerChain,
   TokenData,
+  MarketDetails,
 } from 'models/Asset';
 import type { GasToken } from 'models/Transaction';
 import type { WalletAssetBalance, WalletAssetsBalances } from 'models/Balances';
@@ -428,6 +439,45 @@ export const isSameAsset = (a: Asset, b: Asset) =>
 export const isTokenAvailableInList = (tokensList: Asset[], token: Asset): boolean => {
   if (isEmpty(tokensList) || !token) return false;
   return tokensList?.some((tokenA) => isSameAsset(token, tokenA));
+};
+
+export const getGraphPeriod = (period?: string) => {
+  const durationList = [
+    {
+      id: ONE_DAY,
+      label: t('button.twentyfour_hour'),
+    },
+    {
+      id: ONE_WEEK,
+      label: t('button.seven_day'),
+    },
+    {
+      id: ONE_MONTH,
+      label: t('button.one_month'),
+    },
+    {
+      id: ONE_YEAR,
+      label: t('button.one_year'),
+    },
+  ];
+
+  if (!period) return durationList;
+  return durationList.find((periodInfo) => periodInfo.id === period);
+};
+
+export const getPriceChangePercentage = (period: string, marketData: MarketDetails) => {
+  const zeroValue = 0;
+
+  if (period === ONE_DAY) {
+    return marketData?.priceChangePercentage24h || zeroValue;
+  }
+  if (period === ONE_WEEK) {
+    return marketData?.priceChangePercentage7d || zeroValue;
+  }
+  if (period === ONE_MONTH) {
+    return marketData?.priceChangePercentage1m || zeroValue;
+  }
+  return marketData?.priceChangePercentage1y || zeroValue;
 };
 
 export const getAssetsToAddress = async (chain: Chain, contractAddress: string) => {

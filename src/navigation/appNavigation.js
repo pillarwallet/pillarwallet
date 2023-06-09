@@ -320,13 +320,19 @@ const StackNavigatorConfigDisableGesture = {
 const assetsFlow = createStackNavigator(
   {
     [ASSETS]: AssetsScreen,
-    [ASSET]: AssetScreen,
     [COLLECTIBLE]: CollectibleScreen,
     [ADD_TOKENS]: AddTokensScreen,
     [TOKENS_WITH_TOGGLES]: TokenWithToggles,
     [MANAGE_TOKEN_LISTS]: ManageTokenLists,
   },
   StackNavigatorConfig,
+);
+
+const assetFlow = createStackNavigator(
+  {
+    [ASSET]: AssetScreen,
+  },
+  StackNavigatorConfigDisableGesture,
 );
 
 const exchangeFlow = createStackNavigator(
@@ -636,6 +642,7 @@ const AppFlowNavigation = createStackNavigator(
     [TANK_FUND_FLOW]: tankFundFlow,
     [TANK_WITHDRAWAL_FLOW]: tankWithdrawalFlow,
     [WALLETCONNECT_FLOW]: walletConnectFlow,
+    [ASSET]: assetFlow,
     [PILLAR_NETWORK_INTRO]: PillarNetworkIntro,
     [LOGOUT_PENDING]: LogoutPendingScreen,
     [MENU_FLOW]: menuFlow,
