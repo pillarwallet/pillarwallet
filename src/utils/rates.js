@@ -138,7 +138,7 @@ export const poolsTokenValue = (
   const tokenRate = rates[address];
 
   let tokenValue;
-  if (tokenRate) {
+  if (tokenRate?.[USD]) {
     tokenValue = usdValue / tokenRate?.[USD];
   }
 
