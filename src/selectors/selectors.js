@@ -109,10 +109,16 @@ export const syntheticAssetsSelector = ({ synthetics }: RootReducerState) => syn
 export const supportedAssetsPerChainSelector = (root: RootReducerState): AssetsPerChain =>
   root.assets?.supportedAssets ?? EMPTY_OBJECT;
 
+export const exchangeGasFeeSelector = (root: RootReducerState) => root.exchangeGasFee.data;
+
+export const useExchangeGasFee = () => useRootSelector(exchangeGasFeeSelector);
+
 export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>
   get(appSettings, 'data.blockchainNetwork', 'Ethereum');
 
 export const themeSelector = ({ appSettings }: RootReducerState) => appSettings.data.themeType;
+
+export const biometricSelector = ({ appSettings }: RootReducerState) => appSettings.data.useBiometrics;
 
 export const ratesPerChainSelector = ({ rates }: RootReducerState) => rates.data;
 

@@ -28,6 +28,7 @@ import Toast from 'components/Toast';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { SET_HISTORY, TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 import { CHAIN_NAMES, CHAIN_SHORT } from 'constants/chainConstants';
+import { ADD_EXCHANGE_GAS_FEE_INFO } from 'constants/exchangeConstants';
 
 // actions
 import { addAccountAction, updateAccountExtraIfNeededAction, setActiveAccountAction } from 'actions/accountsActions';
@@ -61,7 +62,8 @@ import DefaultTokens from 'utils/tokens/tokens.json';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Chain } from 'models/Chain';
 import type { EtherspotAccountExtra } from 'models/Account';
-import type { Asset } from 'models/Asset';
+import type { Asset, AssetOption } from 'models/Asset';
+import type { ExchangeOffer } from 'models/Exchange';
 
 export const connectEtherspotAccountAction = (accountId: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -426,4 +428,72 @@ const handleGatewayBatchUpdatedNotification = async (
     emoji: 'ok_hand',
     autoClose: true,
   });
+};
+
+export const exchangeGasFeeAction = (offer: ExchangeOffer, gasFeeAsset: AssetOption | Asset, onFailed: () => void) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      session: {
+        data: { isOnline },
+      },
+      exchangeGasFee: { data },
+    } = getState();
+
+    const isEstimating = data?.find((feeInfo) => feeInfo.isEstimating && feeInfo.provider === offer.provider);
+
+    if (!isOnline || isEstimating) return;
+
+    const payload = {
+      feeInfo: null,
+      chain: offer.chain,
+      gasFeeAsset,
+      provider: offer.provider,
+      fromAddress: offer?.fromAsset?.address,
+      toAddress: offer?.toAsset?.address,
+      errorMessage: null,
+      isEstimating: false,
+    };
+
+    dispatch({
+      type: ADD_EXCHANGE_GAS_FEE_INFO,
+      payload: {
+        data: {
+          ...payload,
+          isEstimating: true,
+        },
+      },
+    });
+
+    try {
+      const feeInfo = await etherspotService.setTransactionsBatchAndEstimate(
+        offer.chain,
+        offer?.transactions ?? [],
+        gasFeeAsset?.address,
+      );
+
+      dispatch({
+        type: ADD_EXCHANGE_GAS_FEE_INFO,
+        payload: {
+          data: {
+            ...payload,
+            feeInfo: {
+              ...feeInfo,
+              gasToken: feeInfo?.gasToken ?? gasFeeAsset,
+            },
+          },
+        },
+      });
+    } catch (e) {
+      onFailed();
+      dispatch({
+        type: ADD_EXCHANGE_GAS_FEE_INFO,
+        payload: {
+          data: {
+            ...payload,
+            errorMessage: t('toast.transactionFeeEstimationFailed'),
+          },
+        },
+      });
+    }
+  };
 };
