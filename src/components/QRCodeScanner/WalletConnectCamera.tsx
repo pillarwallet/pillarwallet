@@ -37,6 +37,7 @@ import type { Barcode, Point, Size } from 'react-native-camera';
 
 // Screen
 import ConnectedAppsFloatingButton from 'screens/WalletConnect/Home/components/ConnectedAppsFloatingButton';
+import { useDispatch } from 'react-redux';
 
 type BarcodeBounds = {
   size: Size;
@@ -74,6 +75,7 @@ export default function (props: Props) {
     onNavigateWallet,
     validator,
   } = props;
+  const dispatch = useDispatch();
 
   const colors = useThemeColors();
 

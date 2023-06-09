@@ -1347,6 +1347,8 @@
     "assetHasBeenHidden": "{{assetName}} ({{assetSymbol}}) removed.",
     "ensureBackup": "Please ensure you backup your wallet now.",
     "walletConnectUnsupportedApp": "This app is not supported. You may request support for this app.",
+    "walletConnectUnsupportedNetwork": "This app is not supported {{chainId}} chain.",
+    "walletConnectUnsupportedWalletNetwork": "This wallet is not supported {{chain}} chain.",
     "walletConnectConnectionsExpired": "Connections expired. Please connect again.",
     "cantReadQRCode": "Can't read this QR code. Try once again or use another image.",
     "incorrectQRCode": "QR code is incorrect.",

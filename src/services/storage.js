@@ -17,7 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import AsyncStorage from '@react-native-community/async-storage';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import get from 'lodash.get';
 import merge from 'lodash.merge';
 import { printLog, reportErrorLog, logBreadcrumb } from 'utils/common';
@@ -57,28 +58,26 @@ Storage.prototype.save = async function (id: string, data: Object, forceRewrite:
 
   this.activeDocs[key] = true;
 
-  return AsyncStorage
-    .setItem(key, JSON.stringify(newValue))
+  return AsyncStorage.setItem(key, JSON.stringify(newValue))
     .then(() => {
       this.activeDocs[key] = false;
     })
-    .catch(err => {
+    .catch((err) => {
       reportErrorLog('AsyncStorage Exception', { id, data, err });
       this.activeDocs[key] = false;
     });
 };
 
 Storage.prototype.getAllKeys = function () {
-  return AsyncStorage
-    .getAllKeys()
-    .then(keys => keys.filter(key => key.startsWith(this.prefix)))
+  return AsyncStorage.getAllKeys()
+    .then((keys) => keys.filter((key) => key.startsWith(this.prefix)))
     .catch(() => []);
 };
 
 Storage.prototype.getAll = function () {
   return this.getAllKeys()
-    .then(keys => AsyncStorage.multiGet(keys)) // [ ['user', 'userValue'], ['key', 'keyValue'] ]
-    .then(values => {
+    .then((keys) => AsyncStorage.multiGet(keys)) // [ ['user', 'userValue'], ['key', 'keyValue'] ]
+    .then((values) => {
       return values.reduce((memo, [_key, _value]) => {
         const key = _key.replace(this.prefix, '');
         return {
@@ -91,8 +90,7 @@ Storage.prototype.getAll = function () {
 };
 
 Storage.prototype.removeAll = async function () {
-  const keys = await this.getAllKeys()
-    .then(data => data.filter(key => key !== this.getKey(STORAGE_SETTINGS_KEY)));
+  const keys = await this.getAllKeys().then((data) => data.filter((key) => key !== this.getKey(STORAGE_SETTINGS_KEY)));
   return AsyncStorage.multiRemove(keys);
 };
 
@@ -103,25 +101,25 @@ Storage.prototype.migrateFromPouchDB = async function (storageData: Object) {
   try {
     printLog('Migrating data');
     const pouchDBStorage = PouchDBStorage.getInstance('db');
-    const pouchDocs = await pouchDBStorage.getAllDocs()
-      .then(({ rows }) => rows.map(({ doc }) => doc));
+    const pouchDocs = await pouchDBStorage.getAllDocs().then(({ rows }) => rows.map(({ doc }) => doc));
 
-    await Promise.all(pouchDocs.map((doc) => {
-      const {
-        _id,
-        _conflicts,
-        _rev,
-        ...rest
-      } = doc;
-      return this.save(_id, { ...rest });
-    }));
+    await Promise.all(
+      pouchDocs.map((doc) => {
+        const { _id, _conflicts, _rev, ...rest } = doc;
+        return this.save(_id, { ...rest });
+      }),
+    );
 
-    await this.save(STORAGE_SETTINGS_KEY, {
-      storageSettings: {
-        ...storageSettings,
-        pouchDBMigrated: true,
+    await this.save(
+      STORAGE_SETTINGS_KEY,
+      {
+        storageSettings: {
+          ...storageSettings,
+          pouchDBMigrated: true,
+        },
       },
-    }, true);
+      true,
+    );
   } catch (e) {
     reportErrorLog('DB migration to AsyncStorage failed', { error: e });
   }
