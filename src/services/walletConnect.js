@@ -58,7 +58,7 @@ const clientMeta = {
 
 export async function createWeb3Wallet() {
   core = new Core({
-    projectId: getEnv().PROJECT_ID,
+    projectId: getEnv().WALLETCONNECT_PROJECT_ID,
   });
 
   web3wallet = await Web3Wallet.init({
@@ -71,7 +71,7 @@ export async function createWeb3Wallet() {
 
 export async function web3WalletInit() {
   const newCore = new Core({
-    projectId: getEnv().PROJECT_ID,
+    projectId: getEnv().WALLETCONNECT_PROJECT_ID,
   });
 
   const wcInit = await Web3Wallet.init({

@@ -195,7 +195,9 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
           const chainName = chainFromChainId[Number(chainId)];
 
           if (!supportedChains.includes(chainName)) {
-            dispatch(setWalletConnectErrorAction(t('toast.wcUnsupportedWalletNetwork', { chain: chainName })));
+            dispatch(
+              setWalletConnectErrorAction(t('toast.walletConnectUnsupportedWalletNetwork', { chain: chainName })),
+            );
             isValid = false;
             return null;
           }

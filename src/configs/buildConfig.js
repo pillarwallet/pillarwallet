@@ -38,7 +38,7 @@ export const buildEnvironment = {
   STORYLY_TOKEN: '_storyly_token_',
   KOCHAVA_IOS_ID: '_kochava_ios_id_',
   KOCHAVA_ANDROID_ID: '_kochava_android_id_',
-  PROJECT_ID: '15fcfb7323fcce5aa1b58afe4dc6d847',
+  WALLETCONNECT_PROJECT_ID: '15fcfb7323fcce5aa1b58afe4dc6d847',
 };
 
 // Optional Developer variables are fixed for both environment contexts, undefined by default
