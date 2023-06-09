@@ -122,6 +122,7 @@ import AddTokensScreen from 'screens/Assets/AddTokens';
 import TokenWithToggles from 'screens/Assets/TokensWithToggles';
 import ManageTokenLists from 'screens/Assets/ManageTokenLists';
 import ReceiveTokensWarning from 'screens/Home/ReceiveTokensWarning';
+import PoolsActivityScreen from 'screens/Asset/PoolsActivity';
 
 // components
 import Toast from 'components/Toast';
@@ -141,6 +142,7 @@ import {
   MAIN_FLOW,
   ASSETS,
   ASSET,
+  POOLS_ACTIVITY,
   SERVICES_FLOW,
   EXCHANGE_CONFIRM,
   HOME,
@@ -331,6 +333,7 @@ const assetsFlow = createStackNavigator(
 const assetFlow = createStackNavigator(
   {
     [ASSET]: AssetScreen,
+    [POOLS_ACTIVITY]: PoolsActivityScreen,
   },
   StackNavigatorConfigDisableGesture,
 );

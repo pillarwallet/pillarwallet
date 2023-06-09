@@ -21,6 +21,7 @@ import React from 'react';
 import { FlatList } from 'react-native';
 import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
+import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 
 // Utils
 import { fontStyles } from 'utils/variables';
@@ -34,6 +35,10 @@ import { Spacing } from 'components/legacy/Layout';
 
 // Constants
 import { USD } from 'constants/assetsConstants';
+import { POOLS_ACTIVITY } from 'constants/navigationConstants';
+
+// Models
+import type { AssetDataNavigationParam } from 'models/Asset';
 
 // Local
 import { AllTimeLoader, TokenAnalyticsLoader } from './Loaders';
@@ -43,9 +48,12 @@ const TokenAnalyticsListItem = ({ tokenRate, tokenDetails, marketDetails }) => {
   const colors = useThemeColors();
   const currencySymbol = getCurrencySymbol(USD);
   const isDarkTheme = useIsDarkTheme();
+  const navigation = useNavigation();
+
+  const assetData: AssetDataNavigationParam = useNavigationParam('assetData');
 
   const { data, isLoading } = marketDetails;
-  const { data: tokenDetailsData } = tokenDetails;
+  const { data: tokenDetailsData, isLoading: tokenDetailsLoading } = tokenDetails;
 
   const analyticsList = [
     {
@@ -58,6 +66,7 @@ const TokenAnalyticsListItem = ({ tokenRate, tokenDetails, marketDetails }) => {
         ? `${currencySymbol + nFormatter(data.fullyDilutedValuation)}`
         : t('label.notApplicable'),
       icon: 'info',
+      iconPress: null,
     },
     {
       label: t('label.totalLiquidity'),
@@ -65,6 +74,7 @@ const TokenAnalyticsListItem = ({ tokenRate, tokenDetails, marketDetails }) => {
         ? `${currencySymbol + nFormatter(tokenDetailsData.liquidityUSD)}`
         : t('label.notApplicable'),
       icon: 'history',
+      iconPress: tokenDetailsLoading ? null : () => navigation.navigate(POOLS_ACTIVITY, { assetData, tokenDetails }),
     },
     { label: t('label.supply'), value: t('label.notApplicable') },
     { label: t('label.holders'), value: t('label.notApplicable') },
@@ -72,6 +82,7 @@ const TokenAnalyticsListItem = ({ tokenRate, tokenDetails, marketDetails }) => {
       label: t('label.trandingVol'),
       value: tokenDetailsData?.tradingVolume ? nFormatter(tokenDetailsData.tradingVolume) : t('label.notApplicable'),
       icon: 'history',
+      iconPress: null,
     },
   ];
 
@@ -102,7 +113,7 @@ const TokenAnalyticsListItem = ({ tokenRate, tokenDetails, marketDetails }) => {
         <RowContainer>
           <LabelText>{item.label}</LabelText>
           {!!item?.icon && (
-            <Button>
+            <Button onPress={item.iconPress}>
               <Icon name={item.icon} width={16} height={16} />
             </Button>
           )}

@@ -138,6 +138,8 @@ import PlrTransparentIcon from 'assets/icons/svg/tokens-48-plr-transparent.svg';
 import DashboardLiquidity from 'assets/icons/svg/24-dashboard-liquidity.svg';
 import BuyIcon from 'assets/icons/svg/24-card-in.svg';
 import SellIcon from 'assets/icons/svg/24-card-out.svg';
+import PlusIcon from 'assets/icons/svg/24-add.svg';
+import MinusIcon from 'assets/icons/svg/24-minus.svg';
 
 // Assets: services icons
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
@@ -295,6 +297,8 @@ const components = {
   'plr-transparent': PlrTransparentIcon,
   buy: BuyIcon,
   sell: SellIcon,
+  'green-plus': PlusIcon,
+  'red-minus': MinusIcon,
 
   // Service icons 38px
   binance38: IconBinance38,

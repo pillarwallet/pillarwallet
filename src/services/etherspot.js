@@ -746,6 +746,28 @@ export class EtherspotService {
     }
   }
 
+  async getPoolsActivity(token: AssetDataNavigationParam) {
+    const { chain, contractAddress } = token;
+
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      logBreadcrumb('getPoolsActivity', 'failed: no SDK for get pools activity', { chain });
+      return null;
+    }
+
+    try {
+      const poolsActivity = await sdk.getPoolsActivity({
+        tokenAddress: contractAddress,
+        chainId: mapChainToChainId(chain),
+        page: 1,
+      });
+      return poolsActivity;
+    } catch (error) {
+      reportErrorLog('getPoolsActivity -> pools activity failed', { token, error });
+      return null;
+    }
+  }
+
   async getTransactionExplorerLinkByBatch(chain: Chain, batchHash: string): Promise<?string> {
     const submittedBatch = await this.getSubmittedBatchByHash(chain, batchHash);
 
