@@ -18,9 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import t from 'translations/translate';
+import { getSdkError } from '@walletconnect/utils';
 
 // actions
-import { subscribeToWalletConnectConnectorEventsAction } from 'actions/walletConnectActions';
+import {
+  subscribeToWalletConnectConnectorEventsAction,
+  fetchV2ActiveSessionsAction,
+} from 'actions/walletConnectActions';
 import { logEventAction } from 'actions/analyticsActions';
 
 // components
@@ -30,6 +34,7 @@ import Toast from 'components/Toast';
 import {
   ADD_WALLETCONNECT_SESSION,
   REMOVE_WALLETCONNECT_SESSION,
+  REMOVE_WALLETCONNECT_V2_SESSION,
   SET_IS_INITIALIZING_WALLETCONNECT_SESSIONS,
   SET_WALLETCONNECT_SESSIONS_IMPORTED,
 } from 'constants/walletConnectSessionsConstants';
@@ -39,7 +44,7 @@ import {
 } from 'constants/walletConnectConstants';
 
 // services
-import { createConnector, loadLegacyWalletConnectSessions } from 'services/walletConnect';
+import { createConnector, loadLegacyWalletConnectSessions, web3WalletInit } from 'services/walletConnect';
 
 // selectors
 import { activeAccountSelector } from 'selectors';
@@ -53,7 +58,6 @@ import { isLogV2AppEvents } from 'utils/environment';
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
-
 export const setIsCreatingWalletConnectSessionsAction = (isInitializing: boolean) => ({
   type: SET_IS_INITIALIZING_WALLETCONNECT_SESSIONS,
   payload: isInitializing,
@@ -65,7 +69,9 @@ export const initWalletConnectSessionsAction = (resetExisting: boolean = false) 
       walletConnectSessions: { isImported, sessions, isInitializingSessions },
       walletConnect: { activeConnectors },
       wallet: { data: walletData },
-      session: { data: { isOnline } },
+      session: {
+        data: { isOnline },
+      },
     } = getState();
 
     if (!isOnline || isInitializingSessions) return;
@@ -78,16 +84,20 @@ export const initWalletConnectSessionsAction = (resetExisting: boolean = false) 
       dispatch(disconnectAllWalletConnectSessionsAction());
     }
 
+    dispatch(fetchV2ActiveSessionsAction());
+
     let storedSessions = [...sessions];
 
     // loads and imports sessions from deprecated sessions storage
     if (!isImported) {
       const legacySessions = await loadLegacyWalletConnectSessions();
       storedSessions = [...storedSessions, ...legacySessions];
-      legacySessions.forEach((session) => dispatch({
-        type: ADD_WALLETCONNECT_SESSION,
-        payload: { session },
-      }));
+      legacySessions.forEach((session) =>
+        dispatch({
+          type: ADD_WALLETCONNECT_SESSION,
+          payload: { session },
+        }),
+      );
       dispatch({ type: SET_WALLETCONNECT_SESSIONS_IMPORTED });
     }
 
@@ -95,11 +105,13 @@ export const initWalletConnectSessionsAction = (resetExisting: boolean = false) 
     if (resetExisting) {
       // closes failed websocket connection, but not killing session
       activeConnectors.forEach((connector) => connector?._transport?.close?.());
-      dispatch(({ type: RESET_WALLETCONNECT_ACTIVE_CONNECTORS }));
+      dispatch({ type: RESET_WALLETCONNECT_ACTIVE_CONNECTORS });
     }
 
     // select connectors after reset
-    const { walletConnect: { activeConnectors: currentActiveConnectors } } = getState();
+    const {
+      walletConnect: { activeConnectors: currentActiveConnectors },
+    } = getState();
 
     storedSessions.forEach((session) => {
       const activeConnectorExists = currentActiveConnectors.some((connector) => connector.peerId === session.peerId);
@@ -120,7 +132,9 @@ export const initWalletConnectSessionsAction = (resetExisting: boolean = false) 
 
 export const disconnectWalletConnectSessionByUrlAction = (url: string) => {
   return (dispatch: Dispatch, getState: GetState) => {
-    const { walletConnect: { activeConnectors } } = getState();
+    const {
+      walletConnect: { activeConnectors },
+    } = getState();
 
     const matchingConnector = activeConnectors.find(({ peerMeta }) => peerMeta?.url === url);
     if (!matchingConnector) return;
@@ -131,7 +145,9 @@ export const disconnectWalletConnectSessionByUrlAction = (url: string) => {
 
 export const disconnectWalletConnectSessionByPeerIdAction = (peerId: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { walletConnect: { activeConnectors } } = getState();
+    const {
+      walletConnect: { activeConnectors },
+    } = getState();
 
     const matchingConnector = activeConnectors.find((session) => session.peerId === peerId);
     if (!matchingConnector) return;
@@ -150,11 +166,44 @@ export const disconnectWalletConnectSessionByPeerIdAction = (peerId: string) => 
   };
 };
 
+export const disconnectWalletConnectV2SessionByTopicAction = (topic: string, id?: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      walletConnectSessions: { v2Sessions },
+    } = getState();
+
+    const matchingSession = v2Sessions?.find((session) => session.topic === topic);
+    if (!matchingSession) return;
+
+    if (!id) {
+      try {
+        const web3wallet = await web3WalletInit();
+        await web3wallet?.disconnectSession({
+          topic,
+          reason: getSdkError('USER_DISCONNECTED'),
+        });
+      } catch (error) {
+        reportErrorLog('disconnectWalletConnectV2SessionByTopicAction -> disconnectSession failed ', {
+          error,
+          matchingSession,
+        });
+      }
+    }
+
+    dispatch(logEventAction('walletconnect_session_disconnected'));
+    isLogV2AppEvents() && dispatch(logEventAction('v2_wallet_connect_dapp_disconnect'));
+    dispatch({ type: REMOVE_WALLETCONNECT_V2_SESSION, payload: { topic } });
+  };
+};
+
 const disconnectAllWalletConnectSessionsAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
-    const { walletConnectSessions: { sessions } } = getState();
+    const {
+      walletConnectSessions: { sessions, v2Sessions },
+    } = getState();
 
     sessions.forEach(({ peerId }) => dispatch(disconnectWalletConnectSessionByPeerIdAction(peerId)));
+    v2Sessions.forEach(({ topic }) => dispatch(disconnectWalletConnectV2SessionByTopicAction(topic)));
 
     Toast.show({
       message: t('toast.walletConnectConnectionsExpired'),
@@ -170,7 +219,9 @@ export const updateWalletConnectSessionsByActiveAccount = () => {
     const activeAccount = activeAccountSelector(getState());
     if (!activeAccount) return;
 
-    const { walletConnect: { activeConnectors } } = getState();
+    const {
+      walletConnect: { activeConnectors },
+    } = getState();
     const accountAddress = getAccountAddress(activeAccount);
 
     activeConnectors.forEach((connector) => {

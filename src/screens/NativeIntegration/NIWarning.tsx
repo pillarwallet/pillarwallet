@@ -56,7 +56,7 @@ function NIWarning() {
         <WarningText style={{ fontWeight: 'bold' }}>{t('paragraph.ownRisk')}</WarningText>
       </Wrapper>
 
-      <Button title={t('button.i_understood')} onPress={onContinue} />
+      <Button title={t('button.i_understand')} onPress={onContinue} />
     </Container>
   );
 }

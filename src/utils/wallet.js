@@ -20,7 +20,6 @@
 import { ethers, utils } from 'ethers';
 import isEmpty from 'lodash.isempty';
 import get from 'lodash.get';
-import { convertUtf8ToHex, isHexString } from '@walletconnect/utils';
 import { toBuffer, keccak256, bufferToHex } from 'ethereumjs-util';
 // eslint-disable-next-line camelcase
 import { TypedDataUtils, signTypedData_v4 } from 'eth-sig-util';
@@ -38,7 +37,6 @@ import Storage from 'services/storage';
 
 // types
 import type { Dispatch } from 'reducers/rootReducer';
-
 
 const storage = Storage.getInstance('db');
 
@@ -97,7 +95,7 @@ export function encodePersonalMessage(message: string): string {
   const data = toBuffer(convertUtf8ToHex(message));
 
   const buf = Buffer.concat([
-    Buffer.from("\x19Ethereum Signed Message:\n" + data.length.toString(), "utf8"), // eslint-disable-line
+    Buffer.from('\x19Ethereum Signed Message:\n' + data.length.toString(), 'utf8'), // eslint-disable-line
     data,
   ]);
 
@@ -114,10 +112,7 @@ export function hashPersonalMessage(message: string): string {
 }
 
 // handle eth_sign
-export function signMessage(
-  message: any,
-  wallet: Object,
-): string {
+export function signMessage(message: any, wallet: Object): string {
   const data = isHexString(message) ? ethers.utils.arrayify(message) : message;
 
   return wallet.signMessage(data);
@@ -137,7 +132,6 @@ export function signPersonalMessage(
 
   return wallet.signMessage(ethers.utils.arrayify(data));
 }
-
 
 export function encodeTypedDataMessage(message: string): string {
   const useV4 = true;
@@ -184,12 +178,13 @@ export async function getWalletFromStorage(storageData: Object, dispatch: Dispat
   // missing wallet timestamp causes 'welcome screen'
   let walletTimestamp = appSettings.wallet;
 
-  const reportToSentry = (message, data = {}) => reportLog(message, {
-    isWalletEmpty,
-    walletCreationTimestamp: appSettings.wallet,
-    isAppSettingsEmpty: isEmpty(appSettings),
-    ...data,
-  });
+  const reportToSentry = (message, data = {}) =>
+    reportLog(message, {
+      isWalletEmpty,
+      walletCreationTimestamp: appSettings.wallet,
+      isAppSettingsEmpty: isEmpty(appSettings),
+      ...data,
+    });
 
   // we can only set the new timestamp if the wallet is present
   if (!walletTimestamp && !isWalletEmpty) {
@@ -227,6 +222,55 @@ export async function getPrivateKeyFromPin(pin: string, deviceUniqueId: ?string)
   return wallet?.signingKey?.privateKey;
 }
 
+export function convertUtf8ToHex(utf8: string): string {
+  const arrayBuffer = convertUtf8ToArrayBuffer(utf8);
+  const hex = convertArrayBufferToHex(arrayBuffer);
+  return hex;
+}
+
+function isHexString(str, length) {
+  if (typeof str !== 'string' || !str.match(/^0x[0-9A-Fa-f]*$/)) {
+    return false;
+  }
+  if (length && str.length !== 2 + (2 * length)) {
+    return false;
+  }
+  return true;
+}
+
+export function convertArrayBufferToHex(arrayBuffer: ArrayBuffer): string {
+  const array: Uint8Array = new Uint8Array(arrayBuffer);
+  const HEX_CHARS: string = '0123456789abcdef';
+  const bytes: string[] = [];
+  for (let i = 0; i < array.length; i++) {
+    const byte = array[i];
+    // eslint-disable-next-line no-bitwise
+    bytes.push(HEX_CHARS[(byte & 0xf0) >> 4] + HEX_CHARS[byte & 0x0f]);
+  }
+  const hex: string = bytes.join('');
+  return hex;
+}
+
+export function convertUtf8ToArrayBuffer(utf8: string): ArrayBuffer {
+  const bytes: number[] = [];
+
+  let i = 0;
+  utf8 = encodeURI(utf8);
+  while (i < utf8.length) {
+    const byte: number = utf8.charCodeAt(i++);
+    if (byte === 37) {
+      bytes.push(parseInt(utf8.substr(i, 2), 16));
+      i += 2;
+    } else {
+      bytes.push(byte);
+    }
+  }
+
+  const array: Uint8Array = new Uint8Array(bytes);
+  const arrayBuffer: ArrayBuffer = array.buffer;
+  return arrayBuffer;
+}
+
 export async function getDecryptedWallet(
   pin: ?string,
   privateKey: ?string,
@@ -246,11 +290,7 @@ export async function getDecryptedWallet(
    */
   const keychainData = biometricsEnabled ? null : await getKeychainDataObject();
   if (keychainData?.pin) {
-    const {
-      pin: keychainPin,
-      privateKey: keychainPrivateKey,
-      mnemonic: keychainMnemonic,
-    } = keychainData;
+    const { pin: keychainPin, privateKey: keychainPrivateKey, mnemonic: keychainMnemonic } = keychainData;
 
     const mnemonicPhrase = typeof keychainMnemonic === 'string'
       ? keychainMnemonic
@@ -277,13 +317,10 @@ export async function getDecryptedWallet(
 }
 
 export function formatToRawPrivateKey(privateKey: string): string {
-  return privateKey.indexOf('0x') === 0
-    ? privateKey.slice(2)
-    : privateKey;
+  return privateKey.indexOf('0x') === 0 ? privateKey.slice(2) : privateKey;
 }
 
 export function getMatchingTokens(tokens: any[], query: string) {
   const matchingTokens = tokens.filter((item) => isAssetOptionMatchedByQuery(item, query));
   return defaultSortAssetOptions(matchingTokens);
 }
-

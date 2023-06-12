@@ -21,6 +21,8 @@
 import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
 import { useTranslation } from 'translations/translate';
+import { getSdkError } from '@walletconnect/utils';
+import { formatJsonRpcError } from '@json-rpc-tools/utils';
 
 // Components
 import BottomModal from 'components/layout/BottomModal';
@@ -58,7 +60,7 @@ function WalletConnectCallRequestModal({ request }: Props) {
 
   const ref = React.useRef();
 
-  const { rejectCallRequest } = useWalletConnect();
+  const { rejectCallRequest, rejectV2CallRequest } = useWalletConnect();
 
   const type = getWalletConnectCallRequestType(request);
   const chain = chainFromChainId[request.chainId];
@@ -102,7 +104,11 @@ function WalletConnectCallRequestModal({ request }: Props) {
     }
 
     ref.current?.close();
-    rejectCallRequest(request);
+    if (request?.topic) {
+      rejectV2CallRequest(request, formatJsonRpcError(request.callId, getSdkError('USER_REJECTED_METHODS').message));
+    } else {
+      rejectCallRequest(request);
+    }
   };
 
   return (

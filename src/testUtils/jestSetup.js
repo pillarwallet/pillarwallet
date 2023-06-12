@@ -81,7 +81,7 @@ Enzyme.configure({ adapter: new Adapter() });
 const storageCache = {};
 const MockAsyncStorage = new StorageMock(storageCache);
 
-jest.mock('@react-native-community/async-storage', () => MockAsyncStorage);
+jest.mock('@react-native-async-storage/async-storage', () => MockAsyncStorage);
 
 jest.mock('react-native-safe-area-view', () => ({ children }) => <>{children}</>);
 

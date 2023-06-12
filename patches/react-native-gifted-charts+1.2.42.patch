@@ -1,0 +1,43 @@
+diff --git a/node_modules/react-native-gifted-charts/src/LineChart/index.tsx b/node_modules/react-native-gifted-charts/src/LineChart/index.tsx
+index 8ef5ecc..56a0ac6 100644
+--- a/node_modules/react-native-gifted-charts/src/LineChart/index.tsx
++++ b/node_modules/react-native-gifted-charts/src/LineChart/index.tsx
+@@ -441,6 +441,7 @@ export const LineChart = (props: propTypes) => {
+   const [selectedIndex, setSelectedIndex] = useState(-1);
+   const containerHeight = props.height || 200;
+   const noOfSections = props.noOfSections || 10;
++
+   let data = useMemo(() => {
+     if (!props.data) {
+       return [];
+@@ -2952,6 +2953,8 @@ export const LineChart = (props: propTypes) => {
+               marginTop: pointerItemLocal.pointerShiftY || 0,
+               backgroundColor: pointerColorLocal,
+               borderRadius: pointerRadius || 0,
++              borderWidth: 1.6,
++              borderColor: '#1a1a1a'
+             }}
+           />
+         )}
+@@ -3091,7 +3094,7 @@ export const LineChart = (props: propTypes) => {
+                 width: pointerLabelWidth,
+               },
+             ]}>
+-            {pointerLabelComponent(pointerItemLocal)}
++            {pointerLabelComponent(pointerItemLocal, responderActive)}
+           </View>
+         )}
+       </View>
+diff --git a/node_modules/react-native-gifted-charts/src/LineChart/styles.tsx b/node_modules/react-native-gifted-charts/src/LineChart/styles.tsx
+index f6af90e..ba13ef7 100644
+--- a/node_modules/react-native-gifted-charts/src/LineChart/styles.tsx
++++ b/node_modules/react-native-gifted-charts/src/LineChart/styles.tsx
+@@ -4,7 +4,7 @@ export const styles = StyleSheet.create({
+   container: {
+     width: '100%',
+     marginBottom: 40,
+-    marginRight: 40,
++    // marginRight: 40,
+   },
+   horizBar: {
+     flexDirection: 'row',

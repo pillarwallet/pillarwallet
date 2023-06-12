@@ -147,3 +147,36 @@ export type AddTokensItem = {
 };
 
 export type AssetsPerChain = ChainRecord<Asset[]>;
+
+export type MarketDetails = {
+  id: string,
+  symbol: string,
+  name: string,
+  image?: string,
+  marketCap: number,
+  allTimeHigh?: number,
+  allTimeLow?: number,
+  fullyDilutedValuation: number,
+  priceChangePercentage1h: number,
+  priceChangePercentage24h: number,
+  priceChangePercentage7d: number,
+  priceChangePercentage1m: number,
+  priceChangePercentage1y?: number,
+};
+
+export type HistoricalTokenPrices = {
+  items: HistoricalTokenPrice[],
+};
+
+export type HistoricalTokenPrice = {
+  usdPrice: number,
+  tokenAddress: string,
+  timestamp: number,
+};
+
+export type TokenDetails = {
+  tokenAddress: string,
+  usdPrice: number,
+  liquidityUSD: number,
+  tradingVolume: number,
+};

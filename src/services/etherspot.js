@@ -72,7 +72,7 @@ import type {
   GatewayEstimatedBatch,
   EtherspotAccountTotalBalancesItem,
 } from 'utils/types/etherspot';
-import type { AssetCore, Asset, AssetOption } from 'models/Asset';
+import type { AssetCore, Asset, AssetOption, AssetDataNavigationParam } from 'models/Asset';
 import type { WalletAssetBalance } from 'models/Balances';
 import type { Chain, ChainRecord } from 'models/Chain';
 import type { ExchangeOffer } from 'models/Exchange';
@@ -678,6 +678,70 @@ export class EtherspotService {
       return listsOfHoldings;
     } catch (error) {
       reportErrorLog('getAccountInvestments -> Apps holdings failed', { address, chain, error });
+      return null;
+    }
+  }
+
+  async getTokenDetails(token: AssetDataNavigationParam) {
+    const { chain, contractAddress } = token;
+
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      logBreadcrumb('getTokenDetails', 'failed: no SDK for get token details', { chain });
+      return null;
+    }
+
+    try {
+      const tokenDetails = await sdk.getTokenDetails({
+        tokenAddress: contractAddress,
+        chainId: mapChainToChainId(chain),
+      });
+      return tokenDetails;
+    } catch (error) {
+      reportErrorLog('getTokenDetails -> token details failed', { token, error });
+      return null;
+    }
+  }
+
+  async getHistoricalTokenPrice(token: AssetDataNavigationParam, period: string) {
+    const { chain, contractAddress } = token;
+
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      logBreadcrumb('getHistoricalTokenPrice', 'failed: no SDK for get historical token price', { chain });
+      return null;
+    }
+
+    try {
+      const historicalTokenPrice = await sdk.getHistoricalTokenPrice({
+        tokenAddress: contractAddress,
+        chainId: mapChainToChainId(chain),
+        timePeriod: period,
+      });
+      return historicalTokenPrice;
+    } catch (error) {
+      reportErrorLog('getHistoricalTokenPrice -> historical token price failed', { token, error });
+      return null;
+    }
+  }
+
+  async getMarketDetails(token: AssetDataNavigationParam) {
+    const { chain, contractAddress } = token;
+
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      logBreadcrumb('getMarketDetails', 'failed: no SDK for get market details', { chain });
+      return null;
+    }
+
+    try {
+      const marketDetails = await sdk.getMarketDetails({
+        tokenAddress: contractAddress,
+        chainId: mapChainToChainId(chain),
+      });
+      return marketDetails;
+    } catch (error) {
+      reportErrorLog('getMarketDetails -> market details failed', { token, error });
       return null;
     }
   }

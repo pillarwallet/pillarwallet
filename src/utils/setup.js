@@ -19,6 +19,8 @@
 // $FlowIgnore
 /* eslint-disable */
 import { LogBox } from 'react-native';
+import BigIntegerPolyfill from 'big-integer';
+
 LogBox.ignoreLogs([
   'Class RCTCxxModule',
   'Module RNRandomBytes',
@@ -35,3 +37,8 @@ LogBox.ignoreLogs([
 import '@ethersproject/shims';
 import 'utils/shim';
 import 'crypto';
+
+// $FlowFixMe
+if (typeof BigInt === 'undefined') {
+  global.BigInt = BigIntegerPolyfill;
+}

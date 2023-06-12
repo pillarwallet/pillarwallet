@@ -27,17 +27,17 @@ import Modal from 'components/Modal';
 // Local
 import WalletConnectRequestModal from './Requests/WalletConnectConnectorRequestModal';
 
-
 function WalletConnectConnectorRequestScreen() {
   const navigation = useNavigation();
   const connector = navigation.getParam('connector');
   const chainId = navigation.getParam('chainId');
+  const isV2WC = navigation.getParam('isV2');
 
   React.useLayoutEffect(() => {
     navigation.goBack(null);
     if (!connector) return;
-    Modal.open(() => <WalletConnectRequestModal connector={connector} chainId={chainId} />);
-  }, [connector, navigation, chainId]);
+    Modal.open(() => <WalletConnectRequestModal isV2WC={isV2WC} connector={connector} chainId={chainId} />);
+  }, [connector, navigation, chainId, isV2WC]);
 
   return null;
 }
