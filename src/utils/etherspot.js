@@ -107,6 +107,15 @@ export function usePoolsActivityQuery(token: AssetDataNavigationParam) {
   });
 }
 
+export function useTradingHistoryQuery(token: AssetDataNavigationParam) {
+  const enabled = !!token;
+
+  return useQuery(['GetTradingHistory', token], () => etherspotService.getTradingHistory(token), {
+    enabled,
+    cacheTime: 0,
+  });
+}
+
 export function useHistoricalTokenPriceQuery(token: AssetDataNavigationParam, period: string) {
   const enabled = !!token && !!period;
 

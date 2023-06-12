@@ -23,6 +23,7 @@ export const APP_FLOW = 'APP_FLOW';
 export const MAIN_FLOW = 'MAIN_FLOW';
 export const ASSETS = 'ASSETS';
 export const POOLS_ACTIVITY = 'POOLS_ACTIVITY';
+export const TRADING_ACTIVITY = 'TRADING_ACTIVITY';
 export const ADD_TOKENS = 'ADD_TOKENS';
 export const TOKENS_WITH_TOGGLES = 'TOKENS_WITH_TOGGLES';
 export const MANAGE_TOKEN_LISTS = 'MANAGE_TOKEN_LISTS';
