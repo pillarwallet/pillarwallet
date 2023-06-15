@@ -35,7 +35,7 @@ import { Spacing } from 'components/legacy/Layout';
 
 // Constants
 import { USD } from 'constants/assetsConstants';
-import { POOLS_ACTIVITY } from 'constants/navigationConstants';
+import { POOLS_ACTIVITY, TRADING_ACTIVITY } from 'constants/navigationConstants';
 
 // Models
 import type { AssetDataNavigationParam } from 'models/Asset';
@@ -82,7 +82,7 @@ const TokenAnalyticsListItem = ({ tokenRate, tokenDetails, marketDetails }) => {
       label: t('label.trandingVol'),
       value: tokenDetailsData?.tradingVolume ? nFormatter(tokenDetailsData.tradingVolume) : t('label.notApplicable'),
       icon: 'history',
-      iconPress: null,
+      iconPress: tokenDetailsLoading ? null : () => navigation.navigate(TRADING_ACTIVITY, { assetData, tokenDetails }),
     },
   ];
 

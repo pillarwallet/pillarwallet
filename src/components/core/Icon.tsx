@@ -140,6 +140,8 @@ import BuyIcon from 'assets/icons/svg/24-card-in.svg';
 import SellIcon from 'assets/icons/svg/24-card-out.svg';
 import PlusIcon from 'assets/icons/svg/24-add.svg';
 import MinusIcon from 'assets/icons/svg/24-minus.svg';
+import GreenUpIcon from 'assets/icons/svg/icon-up-green.svg';
+import RedDownIcon from 'assets/icons/svg/icon-down-red.svg';
 
 // Assets: services icons
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
@@ -280,6 +282,8 @@ const components = {
   'radio-button-focus-icon': IconRadioButtonFocus,
   'radio-button-icon': IconRadioButton,
   'dashboard-liquidity': DashboardLiquidity,
+  'green-up': GreenUpIcon,
+  'red-down': RedDownIcon,
 
   // Service icons
   binance: IconBinance,

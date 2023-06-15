@@ -25,14 +25,13 @@ import styled from 'styled-components/native';
 // Components
 import { Container } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
-import PoolTokenIcon from 'components/display/PoolTokenIcon';
+import TokenIcon from 'components/display/TokenIcon';
 import { Spacing } from 'components/legacy/Layout';
 import Spinner from 'components/Spinner';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 // Utils
-import { useChainConfig } from 'utils/uiConfig';
-import { usePoolsActivityQuery } from 'utils/etherspot';
+import { useTradingHistoryQuery } from 'utils/etherspot';
 
 // models, types
 import type { AssetDataNavigationParam } from 'models/Asset';
@@ -40,19 +39,17 @@ import type { AssetDataNavigationParam } from 'models/Asset';
 // Local
 import AnimatedFloatingActions from './AnimatedFloatingActions';
 import ActivityHeaderContent from './components/ActivityHeaderContent';
-import PoolActivityList from './components/PoolActivityList';
+import TradingActivityList from './components/TradingActivityList';
 
-const PoolsActivityScreen = () => {
+const TradingActivityScreen = () => {
   const navigation = useNavigation();
 
   const assetData: AssetDataNavigationParam = useNavigationParam('assetData');
   const tokenDetails = useNavigationParam('tokenDetails');
-  const { chain, imageUrl, token } = assetData;
+  const { chain, imageUrl } = assetData;
 
-  const config = useChainConfig(chain);
-
-  const poolsActivityQuery = usePoolsActivityQuery(assetData);
-  const { data: poolsActivityData, isLoading } = poolsActivityQuery;
+  const tradingHistoryQuery = useTradingHistoryQuery(assetData);
+  const { data: tradingActivityData, isLoading } = tradingHistoryQuery;
 
   const renderEmptyState = () => {
     if (isLoading) return <Spinner />;
@@ -68,23 +65,23 @@ const PoolsActivityScreen = () => {
       <HeaderBlock
         centerItems={[
           {
-            custom: <PoolTokenIcon url={imageUrl} chain={chain} size={24} />,
+            custom: <TokenIcon url={imageUrl} chain={chain} size={24} />,
           },
-          { title: ` ${config.gasSymbol}-${token} ${t('label.pool_activity')}` },
+          { title: ` ${t('label.trading_activity')}` },
         ]}
         navigation={navigation}
         noPaddingTop
       />
       <Container style={{ alignItems: 'center' }}>
         <Spacing h={20} />
-        <ActivityHeaderContent isPoolActivity chain={chain} tokenDetails={tokenDetails} />
+        <ActivityHeaderContent chain={chain} tokenDetails={tokenDetails} />
 
         <Spacing h={36} />
 
         <List
-          data={poolsActivityData?.items}
+          data={tradingActivityData?.items}
           bounces={false}
-          renderItem={({ item }) => <PoolActivityList data={item} />}
+          renderItem={({ item }) => <TradingActivityList data={item} />}
           ListEmptyComponent={renderEmptyState}
           style={{ width: '100%' }}
           contentContainerStyle={{ paddingBottom: 120 }}
@@ -106,4 +103,4 @@ const EmptyStateWrapper = styled.View`
   align-items: center;
 `;
 
-export default PoolsActivityScreen;
+export default TradingActivityScreen;

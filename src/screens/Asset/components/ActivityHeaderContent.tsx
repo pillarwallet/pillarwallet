@@ -36,6 +36,7 @@ import type { Chain } from 'models/Chain';
 interface Props {
   tokenDetails: TokenDetailsProps;
   chain: Chain;
+  isPoolActivity?: boolean;
 }
 
 type TokenDetailsProps = {
@@ -43,22 +44,25 @@ type TokenDetailsProps = {
   isLoading: boolean;
 };
 
-const PoolActivityHeaderContent = ({ chain, tokenDetails }: Props) => {
+const ActivityHeaderContent = ({ chain, tokenDetails, isPoolActivity }: Props) => {
   const currency = useFiatCurrency();
   const ratesPerChain = useRatesPerChain();
 
   const { data: tokenDetailsData } = tokenDetails;
 
-  const tokenValue = tokenDetailsData?.liquidityUSD
+  const liquidityValue = tokenDetailsData?.liquidityUSD
     ? fiatTokenValue(tokenDetailsData?.liquidityUSD, ratesPerChain[chain], currency)
     : null;
 
+  const tradingvolume = tokenDetailsData?.tradingVolume ? fiatTokenValue(tokenDetailsData?.tradingVolume, ratesPerChain[chain], currency) : null;
+
   return (
     <>
-      {tokenValue && <Text variant="large">{tokenValue}</Text>}
+      {liquidityValue && isPoolActivity && <Text variant="large">{liquidityValue}</Text>}
+      {tradingvolume && !isPoolActivity && <Text variant="large">{tradingvolume}</Text>}
       <Spacing h={6} />
     </>
   );
 };
 
-export default PoolActivityHeaderContent;
+export default ActivityHeaderContent;

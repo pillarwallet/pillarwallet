@@ -285,6 +285,7 @@
     "transaction_submitted": "交易提交",
     "on_network": "上 {{network}}",
     "pool_activity": "泳池活动",
+    "trading_activity": "交易活动",
     "symbol_with_network": "{{symbol}} 上 {{network}}",
     "on_position": "{{position}} 位置",
     "of_stable": "{{percentage}}% 的马厩 - {{type}}",
