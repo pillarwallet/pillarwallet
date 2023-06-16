@@ -184,7 +184,7 @@ const AnimatedFloatingActions = ({ assetData }) => {
 
   return (
     <View style={style.cardWrapper}>
-      <Animated.View style={{ ...style.cardFront, ...flipToBackStyle }}>
+      <Animated.View style={[{ ...style.cardFront, ...flipToBackStyle }, disableFront && { zIndex: 111 }]}>
         <FloatingButtons items={exchangeButtons} />
       </Animated.View>
       <Animated.View style={{ ...style.cardBack, ...flipToFrontStyle }}>
@@ -198,15 +198,18 @@ const style = StyleSheet.create({
   cardWrapper: {
     width: '100%',
     alignSelf: 'center',
-    backgroundColor: 'blue',
+    position: 'absolute',
+    bottom: 0,
   },
   cardFront: {
+    minHeight: 100,
     backfaceVisibility: 'hidden',
-
     width: '100%',
   },
   cardBack: {
     backfaceVisibility: 'hidden',
+    minHeight: 100,
+    position: 'absolute',
     width: '100%',
   },
 });
