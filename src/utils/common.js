@@ -633,6 +633,13 @@ export const formatBigFiatAmount = (value: Value, fiatCurrency: string) => {
   return `${currencySymbol}${formatBigAmount(value)}`;
 };
 
+export const numberWithCommas = (value: ?string) => {
+  if (!value) return null;
+  const parts = value.toString().split('.');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return parts.join('.');
+};
+
 export const getEnsName = (username: string) => `${username}${getEnsPrefix()}`;
 
 export const extractUsernameFromEnsName = (ensName: string) => ensName.replace(getEnsPrefix(), '');
