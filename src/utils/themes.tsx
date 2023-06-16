@@ -50,6 +50,10 @@ const commonColors = {
   caribbeanGreen: '#00e097',
   metallicViolet: '#5c0cac',
   metallicVioletLight: '#5c0cac10',
+  darkPrimarySkalaton: 'rgba(31, 30, 30, 0.4)',
+  darkSecondarySkalaton: 'rgba(55, 55, 55, 1)',
+  lightPrimarySkalaton: 'rgba(235, 240, 246, 0.1)',
+  lightSecondarySkalaton: 'rgba(252, 253, 255, 0.1)',
 };
 
 export const semanticLightThemeColors = {
@@ -114,6 +118,8 @@ export const semanticLightThemeColors = {
   toastTextColor: lightThemeColors.basic090,
   bannerTextColor: baseColors.white,
   basic60: '#ebf0f6',
+  primarySkeleton: 'rgba(235, 240, 246, 0.1)',
+  secondarySkeleton: 'rgba(252, 253, 255, 0.1)',
 };
 
 export const semanticDarkThemeColors = {
@@ -178,6 +184,8 @@ export const semanticDarkThemeColors = {
   toastTextColor: darkThemeColors.basic010,
   bannerTextColor: baseColors.black,
   basic60: '#141414',
+  primarySkeleton: 'rgba(31, 30, 30, 0.4)',
+  secondarySkeleton: 'rgba(55, 55, 55, 1)',
 };
 
 export const themedColors = {

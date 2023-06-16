@@ -25,24 +25,17 @@ import ContentLoader from 'react-native-content-loader';
 import { Rect } from 'react-native-svg';
 
 // Utils
-import { useIsDarkTheme } from 'utils/themes';
+import { useThemeColors } from 'utils/themes';
 
 // Components
 import Icon from 'components/core/Icon';
 
-const DARK_PRIMARY_COLOR = 'rgba(31, 30, 30, 0.4)';
-const DARK_SECONDARY_COLOR = 'rgba(55, 55, 55, 1)';
-
-const LIGHT_PRIMARY_COLOR = 'rgba(235, 240, 246, 0.1)';
-const LIGHT_SECONDARY_COLOR = 'rgba(252, 253, 255, 0.1)';
-
 export const HeaderLoader = () => {
-  const isDarkTheme = useIsDarkTheme();
-
+  const colors = useThemeColors();
   return (
     <ContentLoader
-      primaryColor={isDarkTheme ? DARK_PRIMARY_COLOR : LIGHT_PRIMARY_COLOR}
-      secondaryColor={isDarkTheme ? DARK_SECONDARY_COLOR : LIGHT_SECONDARY_COLOR}
+      primaryColor={colors.primarySkeleton}
+      secondaryColor={colors.secondarySkeleton}
       duration={1000}
       width={179}
       height={100}
@@ -77,13 +70,13 @@ export const TokenAnalyticsLoader = () => (
 );
 
 export const BalanceLoader = () => {
-  const isDarkTheme = useIsDarkTheme();
+  const colors = useThemeColors();
 
   return (
     <RowContainer>
       <ContentLoader
-        primaryColor={isDarkTheme ? DARK_PRIMARY_COLOR : LIGHT_PRIMARY_COLOR}
-        secondaryColor={isDarkTheme ? DARK_SECONDARY_COLOR : LIGHT_SECONDARY_COLOR}
+        primaryColor={colors.primarySkeleton}
+        secondaryColor={colors.secondarySkeleton}
         duration={1000}
         width={99}
         height={50}
@@ -92,8 +85,8 @@ export const BalanceLoader = () => {
         <Rect x="0" y="32" rx="4" ry="4" width="98" height="13" />
       </ContentLoader>
       <ContentLoader
-        primaryColor={isDarkTheme ? DARK_PRIMARY_COLOR : LIGHT_PRIMARY_COLOR}
-        secondaryColor={isDarkTheme ? DARK_SECONDARY_COLOR : LIGHT_SECONDARY_COLOR}
+        primaryColor={colors.primarySkeleton}
+        secondaryColor={colors.secondarySkeleton}
         duration={1000}
         width={98}
         height={50}
@@ -106,12 +99,12 @@ export const BalanceLoader = () => {
 };
 
 export const AllTimeLoader = () => {
-  const isDarkTheme = useIsDarkTheme();
+  const colors = useThemeColors();
 
   return (
     <ContentLoader
-      primaryColor={isDarkTheme ? DARK_PRIMARY_COLOR : LIGHT_PRIMARY_COLOR}
-      secondaryColor={isDarkTheme ? DARK_SECONDARY_COLOR : LIGHT_SECONDARY_COLOR}
+      primaryColor={colors.primarySkeleton}
+      secondaryColor={colors.secondarySkeleton}
       duration={1000}
       width={52}
       height={13}

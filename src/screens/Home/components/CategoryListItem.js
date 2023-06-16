@@ -24,6 +24,10 @@ import styled from 'styled-components/native';
 // Components
 import Text from 'components/core/Text';
 import Icon from 'components/core/Icon';
+import { BalanceLoader } from 'components/SkeletonLoader/OnboardingLoaders';
+
+// Selectors
+import { useOnboardingFetchingSelector } from 'selectors';
 
 // Utils
 import { fontStyles, spacing } from 'utils/variables';
@@ -40,13 +44,19 @@ export type Props = {|
 |};
 
 function CategoryListItem({ title, iconName, visibleBalance, onPress, value }: Props) {
+  const isFetching = useOnboardingFetchingSelector();
+
   return (
     <Container onPress={onPress}>
       <ItemIcon name={iconName} />
 
       <Title>{title}</Title>
 
-      <ValueContainer>{!!value && <Value>{visibleBalance ? value : '***'}</Value>}</ValueContainer>
+      {isFetching ? (
+        <BalanceLoader />
+      ) : (
+        <ValueContainer>{!!value && <Value>{visibleBalance ? value : '***'}</Value>}</ValueContainer>
+      )}
     </Container>
   );
 }
