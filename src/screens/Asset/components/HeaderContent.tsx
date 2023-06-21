@@ -26,9 +26,10 @@ import { useThemeColors } from 'utils/themes';
 import { getGraphPeriod, getPriceChangePercentage } from 'utils/assets';
 import { getCurrencySymbol, nFormatter } from 'utils/common';
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
+import { fiatTokenValue } from 'utils/rates';
 
-// Constants
-import { USD } from 'constants/assetsConstants';
+// Selectors
+import { useRatesPerChain, useFiatCurrency } from 'selectors';
 
 // Components
 import Text from 'components/core/Text';
@@ -36,6 +37,7 @@ import { Spacing } from 'components/legacy/Layout';
 
 // Types
 import type { MarketDetails, TokenDetails } from 'models/Asset';
+import type { Chain } from 'models/Chain';
 
 // Local
 import { HeaderLoader } from './Loaders';
@@ -45,6 +47,7 @@ interface Props {
   tokenRate: number;
   marketDetails: MarketDetailsProps;
   tokenDetails: TokenDetailsProps;
+  chain: Chain;
 }
 
 type MarketDetailsProps = {
@@ -57,48 +60,49 @@ type TokenDetailsProps = {
   isLoading: boolean;
 };
 
-const HeaderContent = ({ period, tokenRate, marketDetails, tokenDetails }: Props) => {
+const HeaderContent = ({ period, chain, tokenRate, marketDetails, tokenDetails }: Props) => {
   const colors = useThemeColors();
   const { t } = useTranslation();
+  const ratesPerChain = useRatesPerChain();
+  const currency = useFiatCurrency();
 
-  const currencySymbol = getCurrencySymbol(USD);
+  const currencySymbol = getCurrencySymbol(currency);
 
   const { data: tokenDetailsData, isLoading } = tokenDetails;
   const { data: marketDetailsData, isLoading: marketDetailsLoading } = marketDetails;
 
   const periodInfo = getGraphPeriod(period);
-  const priceChangePercentage = getPriceChangePercentage(period, marketDetailsData);
+  const priceChangePercentage = getPriceChangePercentage(period, marketDetailsData, tokenDetailsData);
 
   const isPositive = priceChangePercentage === 0 || wrapBigNumberOrNil(priceChangePercentage).gt(0);
 
   const valueFromPercentage = useMemo(() => {
     const changedPriceValue = (tokenRate * priceChangePercentage) / 100;
-    if (!isPositive) {
-      return `${currencySymbol}${(changedPriceValue * -1)?.toFixed(changedPriceValue > 1 ? 2 : 5)}`;
-    }
-    return `${currencySymbol}${changedPriceValue?.toFixed(changedPriceValue > 1 ? 2 : 5)}`;
+    return fiatTokenValue(isPositive ? changedPriceValue : changedPriceValue * -1, ratesPerChain[chain], currency);
   }, [marketDetailsData, periodInfo]);
 
   const tokenVolume = useMemo(() => {
     if (!tokenDetailsData?.tradingVolume) return `${currencySymbol}0`;
     const { tradingVolume } = tokenDetailsData;
-    return `${currencySymbol + nFormatter(tradingVolume)}`;
+    return fiatTokenValue(tradingVolume, ratesPerChain[chain], currency, nFormatter);
   }, [tokenDetailsData]);
 
   if (isLoading || marketDetailsLoading) {
     return <HeaderLoader />;
   }
 
-  const tokenValue = `${currencySymbol + tokenRate}`;
+  const tokenValue = fiatTokenValue(tokenRate, ratesPerChain[chain], currency);
 
   return (
     <>
-      <Text variant="large">{tokenValue}</Text>
+      <Text variant="large" color={colors.basic000}>
+        {tokenValue}
+      </Text>
       <Spacing h={6} />
       {priceChangePercentage !== 0 && (
         <RowContainer>
           <Text variant="small" color={colors.tertiaryText}>
-            {periodInfo.label}
+            {periodInfo.balanceLabel}
           </Text>
           <Spacing w={4} />
           <Text variant="regular" color={isPositive ? colors.positive : colors.negative}>

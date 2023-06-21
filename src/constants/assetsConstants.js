@@ -174,6 +174,6 @@ export const ETHERSPOT_POPULAR_MULTICHAIN = 'EtherspotPopularMultichain';
 
 // Token analytics period types
 export const ONE_DAY = '1d';
-export const ONE_WEEK = '1week';
+export const ONE_WEEK = '1w';
 export const ONE_MONTH = '1m';
 export const ONE_YEAR = '1y';

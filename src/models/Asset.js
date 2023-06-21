@@ -179,4 +179,9 @@ export type TokenDetails = {
   usdPrice: number,
   liquidityUSD: number,
   tradingVolume: number,
+  tradingVolumeChangePercentage: number,
+  liquidityUSDChangePercentage24h: number,
+  holders: number,
+  supply: number,
+  priceChangePercentage24h: number,
 };
