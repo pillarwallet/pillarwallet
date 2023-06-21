@@ -34080,16 +34080,16 @@ exports[`Storyshots HeaderBlock edge cases 1`] = `
                 Array [
                   Object {
                     "alignItems": "center",
-                    "flexBasis": 0,
                     "flexDirection": "row",
-                    "flexGrow": 4,
-                    "flexShrink": 1,
                     "height": 40,
                     "justifyContent": "center",
                     "paddingBottom": 0,
                     "paddingLeft": 12,
                     "paddingRight": 12,
                     "paddingTop": 0,
+                  },
+                  Object {
+                    "flex": 4,
                   },
                 ]
               }
@@ -34384,16 +34384,16 @@ exports[`Storyshots HeaderBlock floating transparent 1`] = `
                 Array [
                   Object {
                     "alignItems": "center",
-                    "flexBasis": 0,
                     "flexDirection": "row",
-                    "flexGrow": 4,
-                    "flexShrink": 1,
                     "height": 40,
                     "justifyContent": "center",
                     "paddingBottom": 0,
                     "paddingLeft": 12,
                     "paddingRight": 12,
                     "paddingTop": 0,
+                  },
+                  Object {
+                    "flex": 4,
                   },
                 ]
               }
@@ -34658,16 +34658,16 @@ exports[`Storyshots HeaderBlock with close icon on the left 1`] = `
                 Array [
                   Object {
                     "alignItems": "center",
-                    "flexBasis": 0,
                     "flexDirection": "row",
-                    "flexGrow": 4,
-                    "flexShrink": 1,
                     "height": 40,
                     "justifyContent": "center",
                     "paddingBottom": 0,
                     "paddingLeft": 12,
                     "paddingRight": 12,
                     "paddingTop": 0,
+                  },
+                  Object {
+                    "flex": 4,
                   },
                 ]
               }
@@ -34811,16 +34811,16 @@ exports[`Storyshots HeaderBlock with close icon on the right 1`] = `
                 Array [
                   Object {
                     "alignItems": "center",
-                    "flexBasis": 0,
                     "flexDirection": "row",
-                    "flexGrow": 4,
-                    "flexShrink": 1,
                     "height": 40,
                     "justifyContent": "center",
                     "paddingBottom": 0,
                     "paddingLeft": 12,
                     "paddingRight": 12,
                     "paddingTop": 0,
+                  },
+                  Object {
+                    "flex": 4,
                   },
                 ]
               }
@@ -35083,16 +35083,16 @@ exports[`Storyshots HeaderBlock with hamburger 1`] = `
                 Array [
                   Object {
                     "alignItems": "center",
-                    "flexBasis": 0,
                     "flexDirection": "row",
-                    "flexGrow": 4,
-                    "flexShrink": 1,
                     "height": 40,
                     "justifyContent": "center",
                     "paddingBottom": 0,
                     "paddingLeft": 12,
                     "paddingRight": 12,
                     "paddingTop": 0,
+                  },
+                  Object {
+                    "flex": 4,
                   },
                 ]
               }
@@ -35282,16 +35282,16 @@ exports[`Storyshots HeaderBlock with items on all sides 1`] = `
                 Array [
                   Object {
                     "alignItems": "center",
-                    "flexBasis": 0,
                     "flexDirection": "row",
-                    "flexGrow": 4,
-                    "flexShrink": 1,
                     "height": 40,
                     "justifyContent": "center",
                     "paddingBottom": 0,
                     "paddingLeft": 12,
                     "paddingRight": 12,
                     "paddingTop": 0,
+                  },
+                  Object {
+                    "flex": 4,
                   },
                 ]
               }

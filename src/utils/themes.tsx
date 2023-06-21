@@ -114,6 +114,8 @@ export const semanticLightThemeColors = {
   toastTextColor: lightThemeColors.basic090,
   bannerTextColor: baseColors.white,
   basic60: '#ebf0f6',
+  purpleHeatPrimary: 'rgba(216, 171, 255, 0.33)',
+  purpleHeatSecondary: 'rgba(227, 200, 250, 0.4)',
 };
 
 export const semanticDarkThemeColors = {
@@ -178,6 +180,8 @@ export const semanticDarkThemeColors = {
   toastTextColor: darkThemeColors.basic010,
   bannerTextColor: baseColors.black,
   basic60: '#141414',
+  purpleHeatPrimary: 'rgba(59, 0, 110, 0.33)',
+  purpleHeatSecondary: 'rgba(74, 0, 138, 0.4)',
 };
 
 export const themedColors = {
