@@ -529,3 +529,34 @@ export const getChainsAssetsToAddress = async (supportedChains: Chain[], contrac
   );
   return assets ? assets.filter((asset) => !!asset) : [];
 };
+
+export const getUrlToSymbol = (
+  chain: Chain,
+  supportedChains: Chain[],
+  supportedChainAssets: AssetsPerChain,
+  symbol: string,
+) => {
+  const assetData = getAssetToSymbol(chain, supportedChainAssets, symbol);
+  if (assetData) return assetData.iconUrl;
+
+  const isWrappedToken = symbol.charAt(0) === 'W';
+  if (isWrappedToken) {
+    const wrappedAssetData = getAssetToSymbol(chain, supportedChainAssets, symbol.slice(1));
+    if (wrappedAssetData) return wrappedAssetData.iconUrl;
+  }
+
+  const assets = supportedChains?.map((supportedChain) =>
+    getAssetToSymbol(supportedChain, supportedChainAssets, symbol),
+  );
+
+  const assetDataPerChain = assets.find((asset) => !!asset);
+
+  if (assetDataPerChain) return assetDataPerChain.iconUrl;
+
+  return null;
+};
+
+const getAssetToSymbol = (chain: Chain, supportedChainAssets: AssetsPerChain, symbol: string) => {
+  const supportedAssets = supportedChainAssets[chain];
+  return supportedAssets?.find((asset: Asset) => asset.symbol === symbol);
+};

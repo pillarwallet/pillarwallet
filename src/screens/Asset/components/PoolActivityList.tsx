@@ -20,12 +20,13 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import { useNavigationParam } from 'react-navigation-hooks';
+import { isEmpty } from 'lodash';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
-import { getCurrencySymbol } from 'utils/common';
-import { poolsTokenValue, fiatTokenValue } from 'utils/rates';
-import { useChainConfig } from 'utils/uiConfig';
+import { numberWithCommas, convertDecimalNumber } from 'utils/common';
+import { fiatTokenValue } from 'utils/rates';
+import { getUrlToSymbol } from 'utils/assets';
 
 // Components
 import Text from 'components/core/Text';
@@ -34,7 +35,8 @@ import { Spacing } from 'components/legacy/Layout';
 import PoolTokenIcon from 'components/display/PoolTokenIcon';
 
 // Selectors
-import { useRatesPerChain, useFiatCurrency } from 'selectors';
+import { useRatesPerChain, useFiatCurrency, useSupportedAssetsPerChain } from 'selectors';
+import { useSupportedChains } from 'selectors/chains';
 
 // Models
 import type { AssetDataNavigationParam } from 'models/Asset';
@@ -65,60 +67,64 @@ type PoolsActivityTokensInOut = {
 const PoolActivityList = ({ data }: Props) => {
   const colors = useThemeColors();
   const currency = useFiatCurrency();
-
-  const currencySymbol = getCurrencySymbol(currency);
   const ratesPerChain = useRatesPerChain();
+  const supportedAssets = useSupportedAssetsPerChain();
+  const chains = useSupportedChains();
 
   const assetData: AssetDataNavigationParam = useNavigationParam('assetData');
 
-  const { chain, contractAddress, imageUrl, token } = assetData;
-
-  const chainConfig = useChainConfig(chain);
+  const { chain } = assetData;
 
   if (!data) {
     return null;
   }
 
-  const { tokensOut, tokensIn, timestamp } = data;
+  const { tokensOut, tokensIn, timestamp, amountUSD } = data;
 
   const poolActivityDate = new Date(timestamp * 1000);
   const currentDate = new Date();
 
-  const formattedDate = getDateDiff(poolActivityDate, currentDate);
+  const formattedTime = getDateDiff(poolActivityDate, currentDate);
 
-  const renderItem = (item, index, isPoolOut) => {
-    const fiatValue = fiatTokenValue(item?.priceUSD, ratesPerChain[chain], currency);
+  const renderItem = (tokens, isPoolOut) => {
+    const tokenA = tokens[0];
+    const tokenB = tokens[1];
 
-    const { nativeValue, tokenValue } = poolsTokenValue(chain, contractAddress, item.priceUSD, ratesPerChain);
+    const { amount: firstTokenAmount, symbol: firstTokenSymbol } = tokenA;
+    const { amount: secondTokenAmount, symbol: secondTokenSymbol } = tokenB;
+
+    const firstTokenImageURl = getUrlToSymbol(chain, chains, supportedAssets, firstTokenSymbol);
+    const secondTokenImageURl = getUrlToSymbol(chain, chains, supportedAssets, secondTokenSymbol);
+
+    const firstDecimalValue = convertDecimalNumber(firstTokenAmount);
+    const secondDecimalValue = convertDecimalNumber(secondTokenAmount);
+
+    const fiatValue = fiatTokenValue(amountUSD, ratesPerChain[chain], currency);
 
     return (
-      <ItemContainer key={index.toString()}>
+      <ItemContainer>
         <Icon name={isPoolOut ? 'red-minus' : 'green-plus'} width={16} height={16} />
 
         <Spacing w={20} />
 
-        <PoolTokenIcon url={imageUrl} chain={chain} size={26} />
+        <PoolTokenIcon firstTokenUrl={firstTokenImageURl} secondTokenUrl={secondTokenImageURl} size={26} />
 
         <Spacing w={24} />
 
         <SubContent>
           <RowContainer>
             <Text>{fiatValue}</Text>
-            {nativeValue && (
-              <Text variant="regular" color={isPoolOut ? colors.negative : colors.positive}>
-                {nativeValue} {chainConfig.gasSymbol}
-              </Text>
-            )}
+            <Text variant="regular" color={isPoolOut ? colors.negative : colors.positive}>
+              {numberWithCommas(firstDecimalValue)} {firstTokenSymbol}
+            </Text>
           </RowContainer>
           <RowContainer>
             <Text variant="small" color={colors.tertiaryText}>
-              {formattedDate}
+              {formattedTime}
             </Text>
-            {tokenValue && (
-              <Text variant="small" color={isPoolOut ? colors.negative : colors.positive}>
-                {tokenValue} {token}
-              </Text>
-            )}
+            <Text variant="small" color={isPoolOut ? colors.negative : colors.positive}>
+              {numberWithCommas(secondDecimalValue)} {secondTokenSymbol}
+            </Text>
           </RowContainer>
         </SubContent>
       </ItemContainer>
@@ -127,8 +133,8 @@ const PoolActivityList = ({ data }: Props) => {
 
   return (
     <>
-      {tokensOut?.map((item, index) => renderItem(item, index, true))}
-      {tokensIn?.map((item, index) => renderItem(item, index, false))}
+      {!isEmpty(tokensOut) && renderItem(tokensOut, true)}
+      {!isEmpty(tokensIn) && renderItem(tokensIn, false)}
     </>
   );
 };
@@ -136,6 +142,16 @@ const PoolActivityList = ({ data }: Props) => {
 export default PoolActivityList;
 
 function getDateDiff(startDate, endDate) {
+  // For min diff
+  const msInMinute = 60 * 1000;
+  const minDiff = Math.round(Math.abs(endDate - startDate) / msInMinute);
+  if (minDiff < 60) return minDiff + 'min.';
+
+  // For hour diff
+  const msInHour = 1000 * 60 * 60;
+  const hourDiff = Math.round(Math.abs(endDate.getTime() - startDate.getTime()) / msInHour);
+  if (hourDiff < 24) return hourDiff + 'h.';
+
   // For day diff
   const msInDay = 24 * 60 * 60 * 1000;
   const dayDiff = Math.round(Math.abs(endDate - startDate) / msInDay);

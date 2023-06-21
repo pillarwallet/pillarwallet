@@ -68,7 +68,7 @@ const PoolsActivityScreen = () => {
       <HeaderBlock
         centerItems={[
           {
-            custom: <PoolTokenIcon url={imageUrl} chain={chain} size={24} />,
+            custom: <PoolTokenIcon secondTokenUrl={imageUrl} chain={chain} size={24} />,
           },
           { title: ` ${config.gasSymbol}-${token} ${t('label.pool_activity')}` },
         ]}

@@ -34,45 +34,60 @@ import type { ViewStyleProp, ImageStyleProp } from 'utils/types/react-native';
 import type { Chain } from 'models/Chain';
 
 type Props = {
-  url: string;
+  firstTokenUrl?: string;
+  secondTokenUrl: string;
   chain?: Chain;
   size?: number;
   style?: ViewStyleProp;
   imageStyle?: ImageStyleProp;
 };
 
-function PoolTokenIcon({ url, size = 48, chain, style, imageStyle }: Props) {
+function PoolTokenIcon({ firstTokenUrl, secondTokenUrl, size = 48, chain, style, imageStyle }: Props) {
   const { genericToken } = useThemedImages();
   const colors = useThemeColors();
 
-  const source = url ? { uri: url } : genericToken;
+  const firstTokenSource = firstTokenUrl ? { uri: firstTokenUrl } : genericToken;
+  const secondTokenSource = secondTokenUrl ? { uri: secondTokenUrl } : genericToken;
+
   const imageSizeStyle = {
     borderRadius: size / 2,
   };
 
   const ChainIcon = chain ? IconComponentPerChain[chain] : undefined;
 
-  const iconSizeStyle = { borderColor: colors.card, borderWidth: 1 };
   const iconStyle = { height: size + 1, width: size + 1, backgroundColor: colors.basic050 };
 
   return (
     <Container style={[style, { width: size * 1.5 }]}>
       {!!ChainIcon && (
-        <ChainIconWrapper style={{ left: -size / 4 }}>
+        <LeftIconWrapper style={{ left: -size / 4 }}>
           <ChainIcon width={size} height={size} />
-        </ChainIconWrapper>
+        </LeftIconWrapper>
       )}
 
-      <IconContainer style={[iconSizeStyle, iconStyle, imageSizeStyle]}>
+      {!ChainIcon && (
+        <LeftIconWrapper style={[iconStyle, imageSizeStyle, { left: -size / 4 }]}>
+          <CollectibleImage
+            source={firstTokenSource}
+            resizeMode="cover"
+            width={size}
+            height={size}
+            style={[imageSizeStyle, imageStyle]}
+            fallbackSource={genericToken}
+          />
+        </LeftIconWrapper>
+      )}
+
+      <RightIconContainer style={[iconStyle, imageSizeStyle]}>
         <CollectibleImage
-          source={source}
+          source={secondTokenSource}
           resizeMode="cover"
           width={size}
           height={size}
           style={[imageSizeStyle, imageStyle]}
           fallbackSource={genericToken}
         />
-      </IconContainer>
+      </RightIconContainer>
     </Container>
   );
 }
@@ -83,8 +98,11 @@ const Container = styled.View`
   align-items: flex-end;
 `;
 
-const ChainIconWrapper = styled.View`
+const LeftIconWrapper = styled.View`
   position: absolute;
 `;
 
-const IconContainer = styled.View``;
+const RightIconContainer = styled.View`
+  border-color: ${({ theme }) => theme.colors.card};
+  border-width: 1px;
+`;
