@@ -39,7 +39,7 @@ import type { AssetDataNavigationParam } from 'models/Asset';
 // Local
 import AnimatedFloatingActions from './AnimatedFloatingActions';
 import ActivityHeaderContent from './components/ActivityHeaderContent';
-import TradingActivityList from './components/TradingActivityList';
+import TokenAnalyticsActivityList from './components/TokenAnalyticsActivityList';
 
 const TradingActivityScreen = () => {
   const navigation = useNavigation();
@@ -81,7 +81,7 @@ const TradingActivityScreen = () => {
         <List
           data={tradingActivityData?.items}
           bounces={false}
-          renderItem={({ item }) => <TradingActivityList data={item} />}
+          renderItem={({ item }) => <TokenAnalyticsActivityList isTreding data={item} />}
           ListEmptyComponent={renderEmptyState}
           style={{ width: '100%' }}
           contentContainerStyle={{ paddingBottom: 120 }}

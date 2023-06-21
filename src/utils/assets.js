@@ -545,6 +545,7 @@ export const getUrlToSymbol = (
   supportedChainAssets: AssetsPerChain,
   symbol: string,
 ) => {
+  if (!symbol) return null;
   const assetData = getAssetToSymbol(chain, supportedChainAssets, symbol);
   if (assetData) return assetData.iconUrl;
 

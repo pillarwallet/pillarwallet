@@ -32,7 +32,7 @@ import { getUrlToSymbol } from 'utils/assets';
 import Text from 'components/core/Text';
 import Icon from 'components/core/Icon';
 import { Spacing } from 'components/legacy/Layout';
-import PoolTokenIcon from 'components/display/PoolTokenIcon';
+import ActivityTokenIcon from 'components/display/ActivityTokenIcon';
 
 // Selectors
 import { useRatesPerChain, useFiatCurrency, useSupportedAssetsPerChain } from 'selectors';
@@ -40,31 +40,14 @@ import { useSupportedChains } from 'selectors/chains';
 
 // Models
 import type { AssetDataNavigationParam } from 'models/Asset';
+import type { TredingActivityData, PoolActivityData } from 'models/Exchange';
 
 interface Props {
-  data: PoolActivityData;
+  data: PoolActivityData | TredingActivityData;
+  isTreding?: boolean;
 }
 
-type PoolActivityData = {
-  amm: string;
-  amountUSD: number;
-  timestamp: number;
-  tokensIn: PoolsActivityTokensInOut[];
-  tokensOut: PoolsActivityTokensInOut[];
-  transactionAddress: string;
-  transactionType: string;
-};
-
-type PoolsActivityTokensInOut = {
-  amm: string;
-  amount: number;
-  network: string;
-  priceETH: number;
-  priceUSD: number;
-  symbol: string;
-};
-
-const PoolActivityList = ({ data }: Props) => {
+const TokenAnalyticsActivityList = ({ data, isTreding }: Props) => {
   const colors = useThemeColors();
   const currency = useFiatCurrency();
   const ratesPerChain = useRatesPerChain();
@@ -81,65 +64,76 @@ const PoolActivityList = ({ data }: Props) => {
 
   const { tokensOut, tokensIn, timestamp, amountUSD } = data;
 
+  if (isTreding && tokensIn?.[0].amm === 'meshswap') {
+    return null;
+  }
+
+  const isOut = isTreding ? data?.direction === 'out' : data?.transactionType === 'burn';
+
+  const fiatValue = fiatTokenValue(amountUSD, ratesPerChain[chain], currency);
+
   const poolActivityDate = new Date(timestamp * 1000);
   const currentDate = new Date();
 
   const formattedTime = getDateDiff(poolActivityDate, currentDate);
 
-  const renderItem = (tokens, isPoolOut) => {
-    const tokenA = tokens[0];
-    const tokenB = tokens[1];
+  const tokenA = isTreding ? tokensIn[0] : !isEmpty(tokensIn) ? tokensIn[0] : tokensOut[0];
+  const tokenB = isTreding ? tokensOut[0] : !isEmpty(tokensIn) ? tokensIn[1] : tokensOut[1];
 
-    const { amount: firstTokenAmount, symbol: firstTokenSymbol } = tokenA;
-    const { amount: secondTokenAmount, symbol: secondTokenSymbol } = tokenB;
+  const { amount: firstTokenAmount, symbol: firstTokenSymbol } = tokenA || '';
+  const { amount: secondTokenAmount, symbol: secondTokenSymbol } = tokenB || '';
 
-    const firstTokenImageURl = getUrlToSymbol(chain, chains, supportedAssets, firstTokenSymbol);
-    const secondTokenImageURl = getUrlToSymbol(chain, chains, supportedAssets, secondTokenSymbol);
+  const firstTokenImageURl = getUrlToSymbol(chain, chains, supportedAssets, firstTokenSymbol);
+  const secondTokenImageURl = getUrlToSymbol(chain, chains, supportedAssets, secondTokenSymbol);
 
-    const firstDecimalValue = convertDecimalNumber(firstTokenAmount);
-    const secondDecimalValue = convertDecimalNumber(secondTokenAmount);
+  const firstDecimalValue = convertDecimalNumber(firstTokenAmount ?? 0);
+  const secondDecimalValue = convertDecimalNumber(secondTokenAmount ?? 0);
 
-    const fiatValue = fiatTokenValue(amountUSD, ratesPerChain[chain], currency);
+  const tredingIconProps = isTreding
+    ? {
+        leftIconStyle: { top: 0, left: 0 },
+        style: { height: 26 * 1.5, justifyContent: 'flex-end' },
+      }
+    : {};
 
-    return (
-      <ItemContainer>
-        <Icon name={isPoolOut ? 'red-minus' : 'green-plus'} width={16} height={16} />
-
-        <Spacing w={20} />
-
-        <PoolTokenIcon firstTokenUrl={firstTokenImageURl} secondTokenUrl={secondTokenImageURl} size={26} />
-
-        <Spacing w={24} />
-
-        <SubContent>
-          <RowContainer>
-            <Text>{fiatValue}</Text>
-            <Text variant="regular" color={isPoolOut ? colors.negative : colors.positive}>
-              {numberWithCommas(firstDecimalValue)} {firstTokenSymbol}
-            </Text>
-          </RowContainer>
-          <RowContainer>
-            <Text variant="small" color={colors.tertiaryText}>
-              {formattedTime}
-            </Text>
-            <Text variant="small" color={isPoolOut ? colors.negative : colors.positive}>
-              {numberWithCommas(secondDecimalValue)} {secondTokenSymbol}
-            </Text>
-          </RowContainer>
-        </SubContent>
-      </ItemContainer>
-    );
-  };
+  const iconName = isTreding ? (isOut ? 'red-down' : 'green-up') : isOut ? 'red-minus' : 'green-plus';
 
   return (
-    <>
-      {!isEmpty(tokensOut) && renderItem(tokensOut, true)}
-      {!isEmpty(tokensIn) && renderItem(tokensIn, false)}
-    </>
+    <ItemContainer>
+      <Icon name={iconName} width={16} height={16} />
+
+      <Spacing w={20} />
+
+      <ActivityTokenIcon
+        firstTokenUrl={firstTokenImageURl}
+        secondTokenUrl={secondTokenImageURl}
+        size={26}
+        {...tredingIconProps}
+      />
+
+      <Spacing w={24} />
+
+      <SubContent>
+        <RowContainer>
+          <Text>{fiatValue}</Text>
+          <Text variant="regular" color={isOut ? colors.negative : colors.positive}>
+            {numberWithCommas(firstDecimalValue)} {firstTokenSymbol}
+          </Text>
+        </RowContainer>
+        <RowContainer>
+          <Text variant="small" color={colors.tertiaryText}>
+            {formattedTime}
+          </Text>
+          <Text variant="small" color={isOut ? colors.negative : colors.positive}>
+            {numberWithCommas(secondDecimalValue)} {secondTokenSymbol}
+          </Text>
+        </RowContainer>
+      </SubContent>
+    </ItemContainer>
   );
 };
 
-export default PoolActivityList;
+export default TokenAnalyticsActivityList;
 
 function getDateDiff(startDate, endDate) {
   // For min diff
