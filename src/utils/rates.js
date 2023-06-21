@@ -109,7 +109,7 @@ export const fiatInvestmentBalance = (balance: BigNumber, rates: RatesPerChain, 
   return fiatAmount?.toFixed(2);
 };
 
-export const fiatTokenValue = (tokenValue: number, rates: RatesPerChain, currency: Currency) => {
+export const fiatTokenValue = (tokenValue: number, rates: RatesPerChain, currency: Currency, formatter: any) => {
   if (isNaN(tokenValue)) return '';
   const nativeAssetRate = rates[nativeAssetPerChain[CHAIN.ETHEREUM].address];
   const currencySymbol = getCurrencySymbol(currency);
@@ -118,7 +118,7 @@ export const fiatTokenValue = (tokenValue: number, rates: RatesPerChain, currenc
 
   const decimalsFiatValue = fiatAmount?.toFixed(fiatAmount > 1 ? 2 : 4);
 
-  const formattedNumber = numberWithCommas(decimalsFiatValue) ?? 0;
+  const formattedNumber = formatter ? formatter(fiatAmount) : numberWithCommas(decimalsFiatValue) ?? 0;
 
   return `${currencySymbol + formattedNumber.toString()}`;
 };

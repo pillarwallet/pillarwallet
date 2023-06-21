@@ -22,6 +22,7 @@ import t from 'translations/translate';
 import { useNavigation } from 'react-navigation-hooks';
 import { Animated, StyleSheet, View } from 'react-native';
 import InAppBrowser from 'react-native-inappbrowser-reborn';
+import { useIsDarkTheme } from 'utils/themes';
 
 // Constants
 import { BRIDGE_TAB, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
@@ -46,6 +47,7 @@ import { getActiveAccount, isEtherspotAccount } from 'utils/accounts';
 
 const AnimatedFloatingActions = ({ assetData }) => {
   const navigation = useNavigation();
+  const isDarkTheme = useIsDarkTheme();
 
   const isExchangeAvailable = useIsExchangeAvailable();
   const [disableFront, setDisableFront] = useState(false);
@@ -138,7 +140,7 @@ const AnimatedFloatingActions = ({ assetData }) => {
   const buttons = [
     (isPelerinSupported || isRampSupported) && {
       title: t('label.buy'),
-      iconName: 'buy',
+      iconName: isDarkTheme ? 'buy' : 'buy-light',
       onPress: isPelerinSupported ? buyOnPelerin : buyOnRamp,
     },
     isExchangeAvailable && {
@@ -156,7 +158,7 @@ const AnimatedFloatingActions = ({ assetData }) => {
     },
     isPelerinSupported && {
       title: t('label.sell'),
-      iconName: 'sell',
+      iconName: isDarkTheme ? 'sell' : 'sell-light',
       onPress: sellOnPelerin,
     },
   ];

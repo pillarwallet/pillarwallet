@@ -691,10 +691,14 @@ export class EtherspotService {
       return null;
     }
 
+    const nativeAddress = nativeAssetPerChain[chain].address;
+
     try {
       const tokenDetails = await sdk.getTokenDetails({
         tokenAddress: contractAddress,
         chainId: mapChainToChainId(chain),
+        // eslint-disable-next-line i18next/no-literal-string
+        provider: nativeAddress && 'dex-guru',
       });
       return tokenDetails;
     } catch (error) {

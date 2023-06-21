@@ -10181,10 +10181,10 @@ ethers@^5.7.2:
     "@ethersproject/web" "5.7.1"
     "@ethersproject/wordlists" "5.7.0"
 
-etherspot@1.43.5:
-  version "1.43.5"
-  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.43.5.tgz#a6f09b1764406cfa0dac848da123eb43f39b712f"
-  integrity sha512-wO6jV5dR9Ep3o3zQGBRPrns5LMtHXYGrm9N1LgxnqD5wPtHb4b0B+phDi6q+Dnp9c56D1+9mO85O759sLC47sA==
+etherspot@1.43.7:
+  version "1.43.7"
+  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.43.7.tgz#aa96b87953f6e9970d4f1d09e677fb65d7387aff"
+  integrity sha512-52lF4hqPf4CQL2/huCLRcY8gquStsji5zLt2AzlX3PR5+gq1+jch2UN90EhhcaZriPwHQ06MDaV3EkpNK+CT0w==
   dependencies:
     "@apollo/client" "3.4.0"
     "@etherspot/contracts" "1.9.9"
@@ -17603,6 +17603,13 @@ react-native-gesture-handler@^1.9.0:
     invariant "^2.2.4"
     prop-types "^15.7.2"
 
+react-native-get-random-values@^1.9.0:
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/react-native-get-random-values/-/react-native-get-random-values-1.9.0.tgz#6cb30511c406922e75fe73833dc1812a85bfb37e"
+  integrity sha512-+29IR2oxzxNVeaRwCqGZ9ABadzMI8SLTBidrIDXPOkKnm5+kEmLt34QKM4JV+d2usPErvKyS85le0OmGTHnyWQ==
+  dependencies:
+    fast-base64-decode "^1.0.0"
+
 react-native-gifted-charts@^1.2.42:
   version "1.2.42"
   resolved "https://registry.yarnpkg.com/react-native-gifted-charts/-/react-native-gifted-charts-1.2.42.tgz#ab44cb6e9df0ff5e00424f983d696a63f0822adc"
@@ -17616,13 +17623,6 @@ react-native-gifted-charts@^1.2.42:
     react-native-linear-gradient "^2.5.6"
     react-native-svg "^13.6.0"
     typescript "^4.2.4"
-
-react-native-get-random-values@^1.9.0:
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/react-native-get-random-values/-/react-native-get-random-values-1.9.0.tgz#6cb30511c406922e75fe73833dc1812a85bfb37e"
-  integrity sha512-+29IR2oxzxNVeaRwCqGZ9ABadzMI8SLTBidrIDXPOkKnm5+kEmLt34QKM4JV+d2usPErvKyS85le0OmGTHnyWQ==
-  dependencies:
-    fast-base64-decode "^1.0.0"
 
 react-native-htmlview@^0.13.0:
   version "0.13.0"
