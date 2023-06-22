@@ -81,7 +81,7 @@ const TradingActivityScreen = () => {
         <List
           data={tradingActivityData?.items}
           bounces={false}
-          renderItem={({ item }) => <TokenAnalyticsActivityList isTreding data={item} />}
+          renderItem={({ item }) => <TokenAnalyticsActivityList isTrading data={item} />}
           ListEmptyComponent={renderEmptyState}
           style={{ width: '100%' }}
           contentContainerStyle={{ paddingBottom: 120 }}

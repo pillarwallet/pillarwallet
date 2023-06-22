@@ -60,7 +60,7 @@ const ActivityHeaderContent = ({ chain, tokenDetails, isPoolActivity }: Props) =
     ? tokenDetailsData?.liquidityUSDChangePercentage24h
     : tokenDetailsData?.tradingVolumeChangePercentage;
 
-  const isPositive = priceChangePercentage === 0 || wrapBigNumberOrNil(priceChangePercentage).gt(0);
+  const isPositive = priceChangePercentage === 0 || wrapBigNumberOrNil(priceChangePercentage)?.gt(0);
 
   const liquidityValue = tokenDetailsData?.liquidityUSD
     ? fiatTokenValue(tokenDetailsData?.liquidityUSD, ratesPerChain[chain], currency)
@@ -90,7 +90,7 @@ const ActivityHeaderContent = ({ chain, tokenDetails, isPoolActivity }: Props) =
       )}
       {tradingvolume && !isPoolActivity && <Text variant="large">{tradingvolume}</Text>}
       <Spacing h={6} />
-      {priceChangePercentage !== 0 && (
+      {priceChangePercentage && priceChangePercentage !== 0 && (
         <RowContainer>
           <Text variant="small" color={colors.tertiaryText}>
             {t('button.today')}

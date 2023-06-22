@@ -24,7 +24,7 @@ import { isEmpty } from 'lodash';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
-import { numberWithCommas, convertDecimalNumber } from 'utils/common';
+import { numberWithCommas, convertDecimalNumber, getDateDiff } from 'utils/common';
 import { fiatTokenValue } from 'utils/rates';
 import { getUrlToSymbol } from 'utils/assets';
 
@@ -40,14 +40,14 @@ import { useSupportedChains } from 'selectors/chains';
 
 // Models
 import type { AssetDataNavigationParam } from 'models/Asset';
-import type { TredingActivityData, PoolActivityData } from 'models/Exchange';
+import type { TradingActivityData, PoolActivityData } from 'models/Exchange';
 
-interface Props {
-  data: PoolActivityData | TredingActivityData;
-  isTreding?: boolean;
+interface TokenAnalyticsActivityListProps {
+  data: PoolActivityData | TradingActivityData;
+  isTrading?: boolean;
 }
 
-const TokenAnalyticsActivityList = ({ data, isTreding }: Props) => {
+const TokenAnalyticsActivityList = ({ data, isTrading }: TokenAnalyticsActivityListProps) => {
   const colors = useThemeColors();
   const currency = useFiatCurrency();
   const ratesPerChain = useRatesPerChain();
@@ -58,17 +58,20 @@ const TokenAnalyticsActivityList = ({ data, isTreding }: Props) => {
 
   const { chain } = assetData;
 
-  if (!data) {
+  if (isEmpty(data)) {
     return null;
   }
 
   const { tokensOut, tokensIn, timestamp, amountUSD } = data;
 
-  if (isTreding && tokensIn?.[0].amm === 'meshswap') {
+  const tokenA = isTrading ? tokensIn[0] : !isEmpty(tokensIn) ? tokensIn[0] : tokensOut[0];
+  const tokenB = isTrading ? tokensOut[0] : !isEmpty(tokensIn) ? tokensIn[1] : tokensOut[1];
+
+  if (!tokenA || !tokenB) {
     return null;
   }
 
-  const isOut = isTreding ? data?.direction === 'out' : data?.transactionType === 'burn';
+  const isOut = isTrading ? data?.direction === 'out' : data?.transactionType === 'burn';
 
   const fiatValue = fiatTokenValue(amountUSD, ratesPerChain[chain], currency);
 
@@ -76,9 +79,6 @@ const TokenAnalyticsActivityList = ({ data, isTreding }: Props) => {
   const currentDate = new Date();
 
   const formattedTime = getDateDiff(poolActivityDate, currentDate);
-
-  const tokenA = isTreding ? tokensIn[0] : !isEmpty(tokensIn) ? tokensIn[0] : tokensOut[0];
-  const tokenB = isTreding ? tokensOut[0] : !isEmpty(tokensIn) ? tokensIn[1] : tokensOut[1];
 
   const { amount: firstTokenAmount, symbol: firstTokenSymbol } = tokenA || '';
   const { amount: secondTokenAmount, symbol: secondTokenSymbol } = tokenB || '';
@@ -89,14 +89,14 @@ const TokenAnalyticsActivityList = ({ data, isTreding }: Props) => {
   const firstDecimalValue = convertDecimalNumber(firstTokenAmount ?? 0);
   const secondDecimalValue = convertDecimalNumber(secondTokenAmount ?? 0);
 
-  const tredingIconProps = isTreding
+  const tradingIconProps = isTrading
     ? {
         leftIconStyle: { top: 0, left: 0 },
         style: { height: 26 * 1.5, justifyContent: 'flex-end' },
       }
     : {};
 
-  const iconName = isTreding ? (isOut ? 'red-down' : 'green-up') : isOut ? 'red-minus' : 'green-plus';
+  const iconName = isTrading ? (isOut ? 'red-down' : 'green-up') : isOut ? 'red-minus' : 'green-plus';
 
   return (
     <ItemContainer>
@@ -108,7 +108,7 @@ const TokenAnalyticsActivityList = ({ data, isTreding }: Props) => {
         firstTokenUrl={firstTokenImageURl}
         secondTokenUrl={secondTokenImageURl}
         size={26}
-        {...tredingIconProps}
+        {...tradingIconProps}
       />
 
       <Spacing w={24} />
@@ -134,33 +134,6 @@ const TokenAnalyticsActivityList = ({ data, isTreding }: Props) => {
 };
 
 export default TokenAnalyticsActivityList;
-
-function getDateDiff(startDate, endDate) {
-  // For min diff
-  const msInMinute = 60 * 1000;
-  const minDiff = Math.round(Math.abs(endDate - startDate) / msInMinute);
-  if (minDiff < 60) return minDiff + 'min.';
-
-  // For hour diff
-  const msInHour = 1000 * 60 * 60;
-  const hourDiff = Math.round(Math.abs(endDate.getTime() - startDate.getTime()) / msInHour);
-  if (hourDiff < 24) return hourDiff + 'h.';
-
-  // For day diff
-  const msInDay = 24 * 60 * 60 * 1000;
-  const dayDiff = Math.round(Math.abs(endDate - startDate) / msInDay);
-  if (dayDiff < 7) return dayDiff + 'd.';
-
-  // For week diff
-  const msInWeek = 1000 * 60 * 60 * 24 * 7;
-  const weekDiff = Math.round(Math.abs(endDate - startDate) / msInWeek);
-  if (weekDiff < 4) return weekDiff + 'wk.';
-
-  // For month diff
-  const monthDiff = endDate.getMonth() - startDate.getMonth() + 12 * (endDate.getFullYear() - startDate.getFullYear());
-
-  return monthDiff + 'mo.';
-}
 
 const RowContainer = styled.View`
   flex-direction: row;

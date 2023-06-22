@@ -54,7 +54,7 @@ export type ExchangeFeeInfo = {
   errorMessage: string | null,
 };
 
-export type TredingActivityData = {
+export type TradingActivityData = {
   amm: string,
   amountUSD: number,
   timestamp: number,
