@@ -230,7 +230,9 @@ function Exchange({ fetchExchangeTitle }: Props) {
     setFromValue(null);
   };
 
-  const toValue = maxBy(offers, (offer: any) => offer.toAmount)?.toAmount.precision(6);
+  const toValue = isEmpty(selectedProvider)
+    ? maxBy(offers, (offer: any) => offer.toAmount)?.toAmount.precision(6)
+    : offers?.find((offer) => offer.provider === selectedProvider)?.toAmount.precision(6);
   const customTitle = !chain
     ? t('exchangeContent.title.initialExchange')
     : t('exchangeContent.title.exchange', { chain: chainConfig.titleShort });
@@ -436,7 +438,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
                 isVisible={hideAllOffers ? index === 0 : true}
                 offer={offer}
                 disabled={false}
-                isLoading={false}
+                isLoading={showLoading}
                 gasFeeAsset={gasFeeAsset}
                 onPress={() => handleOfferPress(offer)}
                 onFetchSortingOfferInfo={onChangeSortingOffers}
@@ -460,7 +462,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
             )}
             <Spacing h={30} />
             {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-            {!isEmpty(selectedProvider) && (
+            {!isEmpty(selectedProvider) && !showLoading && !loading && (
               <SwapButton
                 style={{ borderRadius: 14 }}
                 disabled={!!errorMessage || isEstimaing}
