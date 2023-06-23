@@ -106,6 +106,8 @@ const TokenAnalyticsListItem = ({ tokenRate, tokenDetails, marketDetails }) => {
 
   const renderItem = ({ item, index }) => {
     const loading = index === 1 || index === 0 ? isLoading : tokenDetailsLoading;
+    const isLargePercentage = !!item?.percentageDifference && item.percentageDifference?.toFixed(2)?.length > 9;
+
     return (
       <ItemContainer
         key={item.label}
@@ -124,7 +126,7 @@ const TokenAnalyticsListItem = ({ tokenRate, tokenDetails, marketDetails }) => {
             <Spacing w={4} />
             {!!item?.percentageDifference && (
               <Text
-                variant="small"
+                variant={isLargePercentage ? 'tiny' : 'small'}
                 color={item.percentageDifference < 0 ? colors.negative : colors.positive}
                 style={{ lineHeight: 22 }}
               >
@@ -248,6 +250,7 @@ const ItemContainer = styled.TouchableOpacity`
   margin-vertical: 6px;
   padding: 12px 10px 14px 12px;
   border-radius: 10px;
+  justify-content: space-between;
   background-color: ${({ theme, isDark }) => (isDark ? theme.colors.deepViolet : theme.colors.deepViolet + '10')};
 `;
 
