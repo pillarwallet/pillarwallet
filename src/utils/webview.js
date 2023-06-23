@@ -19,7 +19,8 @@
 */
 
 import { Platform } from 'react-native';
-import CookieManager from 'react-native-cookies';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import CookieManager from '@react-native-cookies/cookies';
 
 export const clearWebViewCookies = () => {
   if (Platform.OS === 'ios') {
