@@ -66,6 +66,8 @@ const PoolsActivityScreen = () => {
     );
   };
 
+  const getKeyExtractor = (item, index) => item.amm + index.toString();
+
   return (
     <Container>
       <HeaderBlock
@@ -83,14 +85,13 @@ const PoolsActivityScreen = () => {
         <Spacing h={20} />
         <ActivityHeaderContent isPoolActivity chain={chain} tokenDetails={tokenDetails} />
 
-        <Spacing h={36} />
-
         <List
           data={poolsActivityData?.items}
           bounces={false}
           renderItem={({ item }) => <TokenAnalyticsActivityList data={item} />}
           ListEmptyComponent={renderEmptyState}
           style={{ width: '100%' }}
+          keyExtractor={getKeyExtractor}
           contentContainerStyle={{ paddingBottom: 120 }}
         />
 

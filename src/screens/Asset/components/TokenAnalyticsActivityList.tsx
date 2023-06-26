@@ -71,7 +71,7 @@ const TokenAnalyticsActivityList = ({ data, isTrading }: TokenAnalyticsActivityL
     return null;
   }
 
-  const isOut = isTrading ? data?.direction === 'out' : data?.transactionType === 'burn';
+  const isOut = isTrading ? data?.direction === 'in' : data?.transactionType === 'mint';
 
   const fiatValue = fiatTokenValue(amountUSD, ratesPerChain[chain], currency);
 

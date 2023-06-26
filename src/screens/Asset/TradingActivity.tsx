@@ -60,6 +60,8 @@ const TradingActivityScreen = () => {
     );
   };
 
+  const getKeyExtractor = (item, index) => item.amm + index.toString();
+
   return (
     <Container>
       <HeaderBlock
@@ -73,10 +75,7 @@ const TradingActivityScreen = () => {
         noPaddingTop
       />
       <Container style={{ alignItems: 'center' }}>
-        <Spacing h={20} />
         <ActivityHeaderContent chain={chain} tokenDetails={tokenDetails} />
-
-        <Spacing h={36} />
 
         <List
           data={tradingActivityData?.items}
@@ -84,6 +83,7 @@ const TradingActivityScreen = () => {
           renderItem={({ item }) => <TokenAnalyticsActivityList isTrading data={item} />}
           ListEmptyComponent={renderEmptyState}
           style={{ width: '100%' }}
+          keyExtractor={getKeyExtractor}
           contentContainerStyle={{ paddingBottom: 120 }}
         />
 
