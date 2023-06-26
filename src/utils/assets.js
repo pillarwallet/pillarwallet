@@ -66,6 +66,7 @@ import type {
   AssetsPerChain,
   TokenData,
   MarketDetails,
+  TokenDetails,
 } from 'models/Asset';
 import type { GasToken } from 'models/Transaction';
 import type { WalletAssetBalance, WalletAssetsBalances } from 'models/Balances';
@@ -446,18 +447,22 @@ export const getGraphPeriod = (period?: string) => {
     {
       id: ONE_DAY,
       label: t('button.twentyfour_hour'),
+      balanceLabel: t('button.today'),
     },
     {
       id: ONE_WEEK,
       label: t('button.seven_day'),
+      balanceLabel: t('button.last_week'),
     },
     {
       id: ONE_MONTH,
       label: t('button.one_month'),
+      balanceLabel: t('button.last_month'),
     },
     {
       id: ONE_YEAR,
       label: t('button.one_year'),
+      balanceLabel: t('button.last_year'),
     },
   ];
 
@@ -465,11 +470,15 @@ export const getGraphPeriod = (period?: string) => {
   return durationList.find((periodInfo) => periodInfo.id === period);
 };
 
-export const getPriceChangePercentage = (period: string, marketData: MarketDetails) => {
+export const getPriceChangePercentage = (
+  period: string,
+  marketData: MarketDetails,
+  tokenDetailsData?: TokenDetails,
+) => {
   const zeroValue = 0;
 
   if (period === ONE_DAY) {
-    return marketData?.priceChangePercentage24h || zeroValue;
+    return marketData?.priceChangePercentage24h || tokenDetailsData?.priceChangePercentage24h || zeroValue;
   }
   if (period === ONE_WEEK) {
     return marketData?.priceChangePercentage7d || zeroValue;
@@ -528,4 +537,36 @@ export const getChainsAssetsToAddress = async (supportedChains: Chain[], contrac
     },
   );
   return assets ? assets.filter((asset) => !!asset) : [];
+};
+
+export const getUrlToSymbol = (
+  chain: Chain,
+  supportedChains: Chain[],
+  supportedChainAssets: AssetsPerChain,
+  symbol: string,
+) => {
+  if (!symbol) return null;
+  const assetData = getAssetToSymbol(chain, supportedChainAssets, symbol);
+  if (assetData) return assetData.iconUrl;
+
+  const isWrappedToken = symbol.charAt(0) === 'W';
+  if (isWrappedToken) {
+    const wrappedAssetData = getAssetToSymbol(chain, supportedChainAssets, symbol.slice(1));
+    if (wrappedAssetData) return wrappedAssetData.iconUrl;
+  }
+
+  const assets = supportedChains?.map((supportedChain) =>
+    getAssetToSymbol(supportedChain, supportedChainAssets, symbol),
+  );
+
+  const assetDataPerChain = assets.find((asset) => !!asset);
+
+  if (assetDataPerChain) return assetDataPerChain.iconUrl;
+
+  return null;
+};
+
+const getAssetToSymbol = (chain: Chain, supportedChainAssets: AssetsPerChain, symbol: string) => {
+  const supportedAssets = supportedChainAssets[chain];
+  return supportedAssets?.find((asset: Asset) => asset.symbol === symbol);
 };

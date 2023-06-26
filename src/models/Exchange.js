@@ -54,7 +54,7 @@ export type ExchangeFeeInfo = {
   errorMessage: string | null,
 };
 
-export type ActivityData = {
+export type TradingActivityData = {
   amm: string,
   amountUSD: number,
   timestamp: number,
@@ -71,4 +71,14 @@ export type ActivityTokensInOut = {
   priceETH: number,
   priceUSD: number,
   symbol: string,
+};
+
+export type PoolActivityData = {
+  amm: string,
+  amountUSD: number,
+  timestamp: number,
+  tokensIn: ActivityTokensInOut[],
+  tokensOut: ActivityTokensInOut[],
+  transactionAddress: string,
+  transactionType: string,
 };

@@ -691,10 +691,14 @@ export class EtherspotService {
       return null;
     }
 
+    const nativeAddress = nativeAssetPerChain[chain].address;
+
     try {
       const tokenDetails = await sdk.getTokenDetails({
         tokenAddress: contractAddress,
         chainId: mapChainToChainId(chain),
+        // eslint-disable-next-line i18next/no-literal-string
+        provider: nativeAddress && 'dex-guru',
       });
       return tokenDetails;
     } catch (error) {
@@ -1006,7 +1010,9 @@ export class EtherspotService {
         fromChainId: mapChainToChainId(chain),
       });
 
-      return offers.map((offer) => buildExchangeOffer(chain, fromAsset, toAsset, fromAmount, offer, captureFee));
+      return offers
+        .map((offer) => buildExchangeOffer(chain, fromAsset, toAsset, fromAmount, offer, captureFee))
+        .filter((offer) => !!offer.provider);
     } catch (error) {
       reportErrorLog('EtherspotService getExchangeOffers failed', { chain, error });
       return [];

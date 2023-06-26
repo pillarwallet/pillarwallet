@@ -17,10 +17,14 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React from 'react';
+import React, { useMemo } from 'react';
+import { useTranslation } from 'translations/translate';
+import styled from 'styled-components/native';
 
 // Utils
 import { fiatTokenValue } from 'utils/rates';
+import { wrapBigNumberOrNil } from 'utils/bigNumber';
+import { useThemeColors } from 'utils/themes';
 
 // Components
 import Text from 'components/core/Text';
@@ -46,23 +50,67 @@ type TokenDetailsProps = {
 
 const ActivityHeaderContent = ({ chain, tokenDetails, isPoolActivity }: Props) => {
   const currency = useFiatCurrency();
+  const colors = useThemeColors();
   const ratesPerChain = useRatesPerChain();
+  const { t } = useTranslation();
 
   const { data: tokenDetailsData } = tokenDetails;
+
+  const priceChangePercentage = isPoolActivity
+    ? tokenDetailsData?.liquidityUSDChangePercentage24h
+    : tokenDetailsData?.tradingVolumeChangePercentage;
+
+  const isPositive = priceChangePercentage === 0 || wrapBigNumberOrNil(priceChangePercentage)?.gt(0);
 
   const liquidityValue = tokenDetailsData?.liquidityUSD
     ? fiatTokenValue(tokenDetailsData?.liquidityUSD, ratesPerChain[chain], currency)
     : null;
 
-  const tradingvolume = tokenDetailsData?.tradingVolume ? fiatTokenValue(tokenDetailsData?.tradingVolume, ratesPerChain[chain], currency) : null;
+  const tradingvolume = tokenDetailsData?.tradingVolume
+    ? fiatTokenValue(tokenDetailsData?.tradingVolume, ratesPerChain[chain], currency)
+    : null;
+
+  const valueFromPercentage = useMemo(() => {
+    if (isPoolActivity && !tokenDetailsData?.liquidityUSD) return null;
+    if (!isPoolActivity && !tokenDetailsData?.tradingVolume) return null;
+
+    const tokenValue = isPoolActivity ? tokenDetailsData?.liquidityUSD : tokenDetailsData?.tradingVolume;
+
+    const changedPriceValue = (tokenValue * priceChangePercentage) / 100;
+
+    return fiatTokenValue(isPositive ? changedPriceValue : changedPriceValue * -1, ratesPerChain[chain], currency);
+  }, [priceChangePercentage]);
 
   return (
     <>
-      {liquidityValue && isPoolActivity && <Text variant="large">{liquidityValue}</Text>}
+      {liquidityValue && isPoolActivity && (
+        <Text variant="large" color={colors.basic000}>
+          {liquidityValue}
+        </Text>
+      )}
       {tradingvolume && !isPoolActivity && <Text variant="large">{tradingvolume}</Text>}
       <Spacing h={6} />
+      {priceChangePercentage && priceChangePercentage !== 0 && (
+        <RowContainer>
+          <Text variant="small" color={colors.tertiaryText}>
+            {t('button.today')}
+          </Text>
+          <Spacing w={4} />
+          <Text variant="regular" color={isPositive ? colors.positive : colors.negative}>
+            {isPositive && '+'}
+            {priceChangePercentage?.toFixed(2)}% {valueFromPercentage && `(${valueFromPercentage})`}
+          </Text>
+        </RowContainer>
+      )}
     </>
   );
 };
+
+const RowContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 90%;
+`;
 
 export default ActivityHeaderContent;

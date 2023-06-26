@@ -61,6 +61,7 @@ export type OwnProps = {|
   rightItems?: NavItem[],
   leftItems?: NavItem[],
   centerItems?: NavItem[],
+  centerItemsStyle?: Object,
   sideFlex?: number,
   navigation?: NavigationScreenProp<*>,
   background?: string,
@@ -119,7 +120,6 @@ const HeaderRow = styled.View`
 `;
 
 const CenterItems = styled.View`
-  flex: 4;
   padding: 0 ${spacing.medium}px;
   align-items: center;
   justify-content: center;
@@ -226,6 +226,7 @@ class HeaderBlock extends React.Component<Props> {
       theme,
       leftSideFlex,
       testIdTag,
+      centerItemsStyle,
     } = this.props;
     const colors = getThemeColors(theme);
 
@@ -249,7 +250,9 @@ class HeaderBlock extends React.Component<Props> {
           )}
         </LeftItems>
         {!!centerItems.length && (
-          <CenterItems>{centerItems.map((item) => this.renderSideItems(item, CENTER))}</CenterItems>
+          <CenterItems style={centerItemsStyle || { flex: 4 }}>
+            {centerItems.map((item) => this.renderSideItems(item, CENTER))}
+          </CenterItems>
         )}
         {(!!centerItems.length || !!rightItems.length) && (
           <RightItems sideFlex={sideFlex}>{rightItems.map((item) => this.renderSideItems(item, RIGHT))}</RightItems>

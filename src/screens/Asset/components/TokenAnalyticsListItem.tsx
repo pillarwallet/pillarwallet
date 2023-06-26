@@ -22,19 +22,23 @@ import { FlatList } from 'react-native';
 import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
+import moment from 'moment';
 
 // Utils
 import { fontStyles } from 'utils/variables';
 import { useThemeColors, useIsDarkTheme } from 'utils/themes';
-import { getCurrencySymbol, nFormatter, convertDecimalNumber } from 'utils/common';
+import { nFormatter, convertDecimalNumber } from 'utils/common';
+import { fiatTokenValue } from 'utils/rates';
 
 // Components
 import Text from 'components/core/Text';
 import Icon from 'components/core/Icon';
 import { Spacing } from 'components/legacy/Layout';
 
+// Selectors
+import { useRatesPerChain, useFiatCurrency } from 'selectors';
+
 // Constants
-import { USD } from 'constants/assetsConstants';
 import { POOLS_ACTIVITY, TRADING_ACTIVITY } from 'constants/navigationConstants';
 
 // Models
@@ -46,24 +50,28 @@ import { AllTimeLoader, TokenAnalyticsLoader } from './Loaders';
 const TokenAnalyticsListItem = ({ tokenRate, tokenDetails, marketDetails }) => {
   const { t } = useTranslation();
   const colors = useThemeColors();
-  const currencySymbol = getCurrencySymbol(USD);
   const isDarkTheme = useIsDarkTheme();
   const navigation = useNavigation();
+  const ratesPerChain = useRatesPerChain();
+  const currency = useFiatCurrency();
 
   const assetData: AssetDataNavigationParam = useNavigationParam('assetData');
 
   const { data, isLoading } = marketDetails;
   const { data: tokenDetailsData, isLoading: tokenDetailsLoading } = tokenDetails;
+  const { chain } = assetData;
 
   const analyticsList = [
     {
       label: t('label.marketCap'),
-      value: data?.marketCap ? `${currencySymbol + nFormatter(data.marketCap)}` : t('label.notApplicable'),
+      value: data?.marketCap
+        ? fiatTokenValue(data.marketCap, ratesPerChain[chain], currency, nFormatter)
+        : t('label.notApplicable'),
     },
     {
       label: t('label.fdv'),
       value: data?.fullyDilutedValuation
-        ? `${currencySymbol + nFormatter(data.fullyDilutedValuation)}`
+        ? fiatTokenValue(data.fullyDilutedValuation, ratesPerChain[chain], currency, nFormatter)
         : t('label.notApplicable'),
       icon: 'info',
       iconPress: null,
@@ -71,29 +79,44 @@ const TokenAnalyticsListItem = ({ tokenRate, tokenDetails, marketDetails }) => {
     {
       label: t('label.totalLiquidity'),
       value: tokenDetailsData?.liquidityUSD
-        ? `${currencySymbol + nFormatter(tokenDetailsData.liquidityUSD)}`
+        ? fiatTokenValue(tokenDetailsData.liquidityUSD, ratesPerChain[chain], currency, nFormatter)
         : t('label.notApplicable'),
       icon: 'history',
+      percentageDifference: tokenDetailsData?.liquidityUSD ? tokenDetailsData?.liquidityUSDChangePercentage24h : null,
       iconPress: tokenDetailsLoading ? null : () => navigation.navigate(POOLS_ACTIVITY, { assetData, tokenDetails }),
     },
-    { label: t('label.supply'), value: t('label.notApplicable') },
-    { label: t('label.holders'), value: t('label.notApplicable') },
+    {
+      label: t('label.supply'),
+      value: tokenDetailsData?.supply ? nFormatter(tokenDetailsData.supply) : t('label.notApplicable'),
+    },
+    {
+      label: t('label.holders'),
+      value: tokenDetailsData?.holders ? nFormatter(tokenDetailsData.holders) : t('label.notApplicable'),
+    },
     {
       label: t('label.trandingVol'),
-      value: tokenDetailsData?.tradingVolume ? nFormatter(tokenDetailsData.tradingVolume) : t('label.notApplicable'),
+      value: tokenDetailsData?.tradingVolume
+        ? fiatTokenValue(tokenDetailsData.tradingVolume, ratesPerChain[chain], currency, nFormatter)
+        : t('label.notApplicable'),
       icon: 'history',
+      percentageDifference: tokenDetailsData?.tradingVolume ? tokenDetailsData?.tradingVolumeChangePercentage : null,
       iconPress: tokenDetailsLoading ? null : () => navigation.navigate(TRADING_ACTIVITY, { assetData, tokenDetails }),
     },
   ];
 
   const renderItem = ({ item, index }) => {
+    const loading = index === 1 || index === 0 ? isLoading : tokenDetailsLoading;
+    const isLargePercentage = !!item?.percentageDifference && item.percentageDifference?.toFixed(2)?.length > 9;
+
     return (
       <ItemContainer
         key={item.label}
         isDark={isDarkTheme}
+        disabled={index !== 2 && index !== 5}
+        onPress={item?.iconPress}
         style={(index === 2 || index === 5) && [{ marginRight: 0, width: '39%' }]}
       >
-        {isLoading ? (
+        {loading ? (
           <TokenAnalyticsLoader />
         ) : (
           <RowContainer style={{ justifyContent: 'flex-start' }}>
@@ -101,9 +124,14 @@ const TokenAnalyticsListItem = ({ tokenRate, tokenDetails, marketDetails }) => {
               {item.value}
             </Text>
             <Spacing w={4} />
-            {item?.percentageDifference && (
-              <Text variant="small" color={index === 5 ? colors.negative : colors.positive} style={{ lineHeight: 22 }}>
-                {item.percentageDifference}
+            {!!item?.percentageDifference && (
+              <Text
+                variant={isLargePercentage ? 'tiny' : 'small'}
+                color={item.percentageDifference < 0 ? colors.negative : colors.positive}
+                style={{ lineHeight: 22 }}
+              >
+                {item.percentageDifference > 0 && '+'}
+                {item.percentageDifference?.toFixed(2)}%
               </Text>
             )}
           </RowContainer>
@@ -122,6 +150,13 @@ const TokenAnalyticsListItem = ({ tokenRate, tokenDetails, marketDetails }) => {
     );
   };
 
+  const allTimeHigh = data?.allTimeHigh
+    ? fiatTokenValue(data.allTimeHigh, ratesPerChain[chain], currency, convertDecimalNumber)
+    : t('label.notApplicable');
+  const allTimeLow = data?.allTimeLow
+    ? fiatTokenValue(data.allTimeLow, ratesPerChain[chain], currency, convertDecimalNumber)
+    : t('label.notApplicable');
+
   const allTimeHighPercentage =
     data?.allTimeHigh && !!tokenRate ? ((parseFloat(tokenRate) - data.allTimeHigh) * 100) / data.allTimeHigh : null;
   const allTimeLowPercentage =
@@ -139,51 +174,58 @@ const TokenAnalyticsListItem = ({ tokenRate, tokenDetails, marketDetails }) => {
       <Spacing h={18} />
       <RowContainer>
         <LabelText>{t('label.allTimeHigh')}</LabelText>
-        {isLoading ? (
-          <AllTimeLoader />
-        ) : (
-          <LabelText color={colors.basic000}>
-            {data?.allTimeHigh
-              ? `${currencySymbol + convertDecimalNumber(data.allTimeHigh)}`
-              : t('label.notApplicable')}
-          </LabelText>
-        )}
+        {isLoading ? <AllTimeLoader /> : <LabelText>{allTimeHigh}</LabelText>}
       </RowContainer>
-      {allTimeHighPercentage && (
+      {
         <RowContainer>
-          <LabelText />
           {isLoading ? (
             <AllTimeLoader />
           ) : (
-            <Text variant="tiny" color={data.allTimeHigh > tokenRate ? colors.negative : colors.positive}>
-              {allTimeHighPercentage?.toFixed(2)}%
-            </Text>
+            data?.allTimeHighTimestamp && (
+              <Text variant="tiny" color={colors.basic020}>
+                {moment(data.allTimeHighTimestamp).format('YYYY, MMM DD HH:mm')}
+              </Text>
+            )
+          )}
+          {isLoading ? (
+            <AllTimeLoader />
+          ) : (
+            allTimeHighPercentage && (
+              <Text variant="tiny" color={data.allTimeHigh > tokenRate ? colors.negative : colors.positive}>
+                {allTimeHighPercentage?.toFixed(2)}%
+              </Text>
+            )
           )}
         </RowContainer>
-      )}
+      }
       <Spacing h={10} />
       <RowContainer>
         <LabelText>{t('label.allTimeLow')}</LabelText>
-        {isLoading ? (
-          <AllTimeLoader />
-        ) : (
-          <LabelText color={colors.basic000}>
-            {data?.allTimeLow ? `${currencySymbol + convertDecimalNumber(data.allTimeLow)}` : t('label.notApplicable')}
-          </LabelText>
-        )}
+        {isLoading ? <AllTimeLoader /> : <LabelText>{allTimeLow}</LabelText>}
       </RowContainer>
-      {allTimeLowPercentage && (
+      {
         <RowContainer>
-          <LabelText />
           {isLoading ? (
             <AllTimeLoader />
           ) : (
-            <Text variant="tiny" color={data.allTimeLow < tokenRate ? colors.positive : colors.negative}>
-              +{allTimeLowPercentage?.toFixed(2)}%
-            </Text>
+            data?.allTimeLowTimestamp &&
+            !!data?.allTimeLow && (
+              <Text variant="tiny" color={colors.basic020}>
+                {moment(data.allTimeLowTimestamp).format('YYYY, MMM DD HH:mm')}
+              </Text>
+            )
+          )}
+          {isLoading ? (
+            <AllTimeLoader />
+          ) : (
+            allTimeLowPercentage && (
+              <Text variant="tiny" color={data.allTimeLow < tokenRate ? colors.positive : colors.negative}>
+                +{allTimeLowPercentage?.toFixed(2)}%
+              </Text>
+            )
           )}
         </RowContainer>
-      )}
+      }
       <Spacing h={4} />
     </>
   );
@@ -199,15 +241,16 @@ const RowContainer = styled.View`
 
 const LabelText = styled(Text)`
   ${fontStyles.small};
-  color: ${({ theme, color }) => (color ? color : theme.colors.basic010)};
+  color: ${({ theme, color }) => (color ? color : theme.colors.basic000)};
 `;
 
-const ItemContainer = styled.View`
+const ItemContainer = styled.TouchableOpacity`
   width: 27%;
   margin-right: 12px;
   margin-vertical: 6px;
   padding: 12px 10px 14px 12px;
   border-radius: 10px;
+  justify-content: space-between;
   background-color: ${({ theme, isDark }) => (isDark ? theme.colors.deepViolet : theme.colors.deepViolet + '10')};
 `;
 
