@@ -1010,7 +1010,9 @@ export class EtherspotService {
         fromChainId: mapChainToChainId(chain),
       });
 
-      return offers.map((offer) => buildExchangeOffer(chain, fromAsset, toAsset, fromAmount, offer, captureFee));
+      return offers
+        .map((offer) => buildExchangeOffer(chain, fromAsset, toAsset, fromAmount, offer, captureFee))
+        .filter((offer) => !!offer.provider);
     } catch (error) {
       reportErrorLog('EtherspotService getExchangeOffers failed', { chain, error });
       return [];

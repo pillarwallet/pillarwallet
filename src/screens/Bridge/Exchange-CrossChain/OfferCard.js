@@ -69,6 +69,7 @@ type Props = {
   onFeeInfo?: (feeInfo: ?TransactionFeeInfo) => void,
   onEstimating?: (estimating: boolean) => void,
   isVisible: boolean,
+  isLoading?: boolean,
 };
 
 function OfferCard({
@@ -83,6 +84,7 @@ function OfferCard({
   onFeeInfo,
   onEstimating,
   isVisible,
+  isLoading,
 }: Props) {
   const { t } = useTranslation();
   const config = useProviderConfig(offer.provider);
@@ -156,7 +158,7 @@ function OfferCard({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [feeInfo, estimationErrorMessage, isEstimating]);
 
-  if (estimationErrorMessage || !isVisible || (!isSelected && isEstimating)) {
+  if (estimationErrorMessage || !isVisible || (!isSelected && isEstimating) || isLoading) {
     return null;
   }
 
