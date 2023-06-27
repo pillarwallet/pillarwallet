@@ -34,6 +34,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 // Utils
 import { useChainConfig } from 'utils/uiConfig';
 import { usePoolsActivityQuery } from 'utils/etherspot';
+import { getActivityKeyExtractor } from 'utils/assets';
 
 // models, types
 import type { AssetDataNavigationParam } from 'models/Asset';
@@ -66,8 +67,6 @@ const PoolsActivityScreen = () => {
     );
   };
 
-  const getKeyExtractor = (item, index) => item.amm + index.toString();
-
   return (
     <Container>
       <HeaderBlock
@@ -91,7 +90,7 @@ const PoolsActivityScreen = () => {
           renderItem={({ item }) => <TokenAnalyticsActivityList data={item} />}
           ListEmptyComponent={renderEmptyState}
           style={{ width: '100%' }}
-          keyExtractor={getKeyExtractor}
+          keyExtractor={getActivityKeyExtractor}
           contentContainerStyle={{ paddingBottom: 120 }}
         />
 
