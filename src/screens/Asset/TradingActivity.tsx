@@ -32,6 +32,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 // Utils
 import { useTradingHistoryQuery } from 'utils/etherspot';
+import { getActivityKeyExtractor } from 'utils/assets';
 
 // models, types
 import type { AssetDataNavigationParam } from 'models/Asset';
@@ -73,10 +74,7 @@ const TradingActivityScreen = () => {
         noPaddingTop
       />
       <Container style={{ alignItems: 'center' }}>
-        <Spacing h={20} />
         <ActivityHeaderContent chain={chain} tokenDetails={tokenDetails} />
-
-        <Spacing h={36} />
 
         <List
           data={tradingActivityData?.items}
@@ -84,6 +82,7 @@ const TradingActivityScreen = () => {
           renderItem={({ item }) => <TokenAnalyticsActivityList isTrading data={item} />}
           ListEmptyComponent={renderEmptyState}
           style={{ width: '100%' }}
+          keyExtractor={getActivityKeyExtractor}
           contentContainerStyle={{ paddingBottom: 120 }}
         />
 

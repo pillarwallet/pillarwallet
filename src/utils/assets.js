@@ -570,3 +570,5 @@ const getAssetToSymbol = (chain: Chain, supportedChainAssets: AssetsPerChain, sy
   const supportedAssets = supportedChainAssets[chain];
   return supportedAssets?.find((asset: Asset) => asset.symbol === symbol);
 };
+
+export const getActivityKeyExtractor = (item: any, index: number) => item.amm + index.toString();

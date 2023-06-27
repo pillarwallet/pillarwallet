@@ -71,6 +71,7 @@ const ActivityHeaderContent = ({ chain, tokenDetails, isPoolActivity }: Props) =
     : null;
 
   const valueFromPercentage = useMemo(() => {
+    if (!priceChangePercentage) return null;
     if (isPoolActivity && !tokenDetailsData?.liquidityUSD) return null;
     if (!isPoolActivity && !tokenDetailsData?.tradingVolume) return null;
 
@@ -81,8 +82,12 @@ const ActivityHeaderContent = ({ chain, tokenDetails, isPoolActivity }: Props) =
     return fiatTokenValue(isPositive ? changedPriceValue : changedPriceValue * -1, ratesPerChain[chain], currency);
   }, [priceChangePercentage]);
 
+  const visibleLabel = (!!liquidityValue && !!isPoolActivity) || (!!tradingvolume && !isPoolActivity);
+  const visiblePercentage = !!visibleLabel && !!priceChangePercentage && priceChangePercentage !== 0;
+
   return (
     <>
+      {visibleLabel && <Spacing h={20} />}
       {liquidityValue && isPoolActivity && (
         <Text variant="large" color={colors.basic000}>
           {liquidityValue}
@@ -90,7 +95,7 @@ const ActivityHeaderContent = ({ chain, tokenDetails, isPoolActivity }: Props) =
       )}
       {tradingvolume && !isPoolActivity && <Text variant="large">{tradingvolume}</Text>}
       <Spacing h={6} />
-      {priceChangePercentage && priceChangePercentage !== 0 && (
+      {visiblePercentage && (
         <RowContainer>
           <Text variant="small" color={colors.tertiaryText}>
             {t('button.today')}
@@ -102,6 +107,7 @@ const ActivityHeaderContent = ({ chain, tokenDetails, isPoolActivity }: Props) =
           </Text>
         </RowContainer>
       )}
+      {visibleLabel && <Spacing h={visiblePercentage ? 36 : 18} />}
     </>
   );
 };
