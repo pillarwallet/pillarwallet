@@ -83,7 +83,9 @@ const FromAssetSelector = ({
 
   const handleUseMax = () => {
     Keyboard.dismiss();
-    onValueChange(truncateDecimalPlaces(balance, 15));
+    // eslint-disable-next-line no-nested-ternary
+    const maxDecimals = balance.decimalPlaces() === 6 ? 4 : 15;
+    onValueChange(truncateDecimalPlaces(balance, maxDecimals));
   };
 
   const disableUseMax = !editable || isNativeAsset(selectedAsset?.chain, selectedAsset?.address);
