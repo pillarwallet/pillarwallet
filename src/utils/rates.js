@@ -111,7 +111,7 @@ export const fiatInvestmentBalance = (balance: BigNumber, rates: RatesPerChain, 
 
 export const fiatTokenValue = (tokenValue: number, rates: RatesPerChain, currency: Currency, formatter: any) => {
   if (isNaN(tokenValue)) return '';
-  const nativeAssetRate = rates[nativeAssetPerChain[CHAIN.ETHEREUM].address];
+  const nativeAssetRate = rates?.[nativeAssetPerChain[CHAIN.ETHEREUM].address];
   const currencySymbol = getCurrencySymbol(currency);
 
   const fiatAmount = (tokenValue * nativeAssetRate?.[currency]) / nativeAssetRate?.[USD];
@@ -120,7 +120,7 @@ export const fiatTokenValue = (tokenValue: number, rates: RatesPerChain, currenc
 
   const formattedNumber = formatter ? formatter(fiatAmount) : numberWithCommas(decimalsFiatValue) ?? 0;
 
-  return `${currencySymbol + formattedNumber.toString()}`;
+  return `${currencySymbol + (isNaN(fiatAmount) ? '0' : formattedNumber.toString())}`;
 };
 
 export const poolsTokenValue = (
