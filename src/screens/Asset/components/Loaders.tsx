@@ -57,17 +57,20 @@ export const GraphLoader = () => {
   );
 };
 
-export const TokenAnalyticsLoader = () => (
-  <ContentLoader
-    primaryColor={'rgba(59, 0, 110, 0.33)'}
-    secondaryColor={'rgba(74, 0, 138, 0.4)'}
-    duration={1000}
-    width={66}
-    height={23}
-  >
-    <Rect x="0" y="0" rx="4" ry="4" width="66" height="15" />
-  </ContentLoader>
-);
+export const TokenAnalyticsLoader = () => {
+  const colors = useThemeColors();
+  return (
+    <ContentLoader
+      primaryColor={colors.purpleHeatPrimary}
+      secondaryColor={colors.purpleHeatSecondary}
+      duration={1000}
+      width={66}
+      height={23}
+    >
+      <Rect x="0" y="0" rx="4" ry="4" width="66" height="15" />
+    </ContentLoader>
+  );
+};
 
 export const BalanceLoader = () => {
   const colors = useThemeColors();

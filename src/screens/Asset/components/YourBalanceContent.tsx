@@ -24,12 +24,15 @@ import { useTranslation } from 'translations/translate';
 // Utils
 import { useThemeColors } from 'utils/themes';
 import { getGraphPeriod } from 'utils/assets';
-import { formatFiat, getCurrencySymbol } from 'utils/common';
+import { convertDecimalNumber } from 'utils/common';
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
+import { fiatTokenValue } from 'utils/rates';
 
 // Constants
 import { ONE_DAY } from 'constants/assetsConstants';
-import { USD } from 'constants/assetsConstants';
+
+// Selectors
+import { useRatesPerChain, useFiatCurrency } from 'selectors';
 
 // Components
 import Text from 'components/core/Text';
@@ -42,15 +45,16 @@ import { isEmpty } from 'lodash';
 const YourBalanceContent = ({ period, tokenRate, balance, marketDetails, assetData }) => {
   const colors = useThemeColors();
   const { t } = useTranslation();
-  const currencySymbol = getCurrencySymbol(USD);
+  const ratesPerChain = useRatesPerChain();
+  const currency = useFiatCurrency();
 
-  const { token } = assetData;
+  const { token, chain } = assetData;
 
   const { data: marketDetailsData, isLoading: marketDetailsLoading } = marketDetails;
 
   const isWalletEmpty = balance <= 0;
   const totalInFiat = isWalletEmpty ? 0 : balance * tokenRate;
-  const fiatAmount = formatFiat(totalInFiat, USD);
+  const fiatAmount = fiatTokenValue(totalInFiat, ratesPerChain[chain], currency, convertDecimalNumber);
 
   const periodInfo = getGraphPeriod(ONE_DAY);
 
@@ -69,13 +73,16 @@ const YourBalanceContent = ({ period, tokenRate, balance, marketDetails, assetDa
   const changedPercentageValue = useMemo(() => {
     const changedPriceValue = (totalInFiat * oneDayChangePercentage) / 100;
 
-    if (!isPositive) {
-      return `${currencySymbol}${(changedPriceValue * -1)?.toFixed(2)}`;
-    }
-    return `${currencySymbol}${changedPriceValue?.toFixed(2)}`;
+    return fiatTokenValue(
+      isPositive ? changedPriceValue : changedPriceValue * -1,
+      ratesPerChain[chain],
+      currency,
+      convertDecimalNumber,
+    );
   }, [marketDetailsData, period]);
 
   const changePercentage = `${oneDayChangePercentage?.toFixed(2)}%`;
+  const isZeroBalance = totalInFiat === 0;
 
   return (
     <Container>
@@ -83,9 +90,11 @@ const YourBalanceContent = ({ period, tokenRate, balance, marketDetails, assetDa
         <Text variant={'small'} color={colors.tertiaryText}>
           {t('label.your_balance')}
         </Text>
-        <Text variant={'small'} color={colors.tertiaryText}>
-          {periodInfo.label}
-        </Text>
+        {!isZeroBalance && (
+          <Text variant={'small'} color={colors.tertiaryText}>
+            {periodInfo.label}
+          </Text>
+        )}
       </RowContainer>
       <Spacing h={5} />
       {marketDetailsLoading ? (
@@ -96,18 +105,22 @@ const YourBalanceContent = ({ period, tokenRate, balance, marketDetails, assetDa
             <Text style={{ fontSize: 20 }} color={colors.basic000}>
               {fiatAmount}
             </Text>
-            <Text style={{ fontSize: 20 }} color={isPositive ? colors.positive : colors.negative}>
-              {changedPercentageValue}
-            </Text>
+            {!isZeroBalance && (
+              <Text style={{ fontSize: 20 }} color={isPositive ? colors.positive : colors.negative}>
+                {changedPercentageValue}
+              </Text>
+            )}
           </RowContainer>
           <RowContainer>
             <Text variant={'small'} color={colors.tertiaryText}>
               {t('tokenValue', { value: balance, token })}
             </Text>
-            <Text variant={'small'} color={isPositive ? colors.positive : colors.negative}>
-              {isPositive && '+'}
-              {changePercentage}
-            </Text>
+            {!isZeroBalance && (
+              <Text variant={'small'} color={isPositive ? colors.positive : colors.negative}>
+                {isPositive && '+'}
+                {changePercentage}
+              </Text>
+            )}
           </RowContainer>
         </>
       )}

@@ -369,8 +369,8 @@ PODS:
     - React-Core
   - react-native-camera/RN (3.44.3):
     - React-Core
-  - react-native-cookies (3.2.0):
-    - React
+  - react-native-cookies (6.2.1):
+    - React-Core
   - react-native-date-picker (3.4.3):
     - React-Core
   - react-native-get-random-values (1.9.0):
@@ -586,7 +586,7 @@ DEPENDENCIES:
   - react-native-appsflyer (from `../node_modules/react-native-appsflyer`)
   - react-native-background-timer (from `../node_modules/react-native-background-timer`)
   - react-native-camera (from `../node_modules/react-native-camera`)
-  - react-native-cookies (from `../node_modules/react-native-cookies/ios`)
+  - "react-native-cookies (from `../node_modules/@react-native-cookies/cookies`)"
   - react-native-date-picker (from `../node_modules/react-native-date-picker`)
   - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
   - react-native-kochava-tracker (from `../node_modules/react-native-kochava-tracker`)
@@ -727,7 +727,7 @@ EXTERNAL SOURCES:
   react-native-camera:
     :path: "../node_modules/react-native-camera"
   react-native-cookies:
-    :path: "../node_modules/react-native-cookies/ios"
+    :path: "../node_modules/@react-native-cookies/cookies"
   react-native-date-picker:
     :path: "../node_modules/react-native-date-picker"
   react-native-get-random-values:
@@ -896,7 +896,7 @@ SPEC CHECKSUMS:
   react-native-appsflyer: 3c466bf329ee1bb556ed774af2b2cc5685c7325a
   react-native-background-timer: 1b6e6b4e10f1b74c367a1fdc3c72b67c619b222b
   react-native-camera: b8cc03e2feec0c04403d0998e37cf519d8fd4c6f
-  react-native-cookies: 854d59c4135c70b92a02ca4930e68e4e2eb58150
+  react-native-cookies: f54fcded06bb0cda05c11d86788020b43528a26c
   react-native-date-picker: 201b481c94dcb7678f4712477ad026dd7793305b
   react-native-get-random-values: dee677497c6a740b71e5612e8dbd83e7539ed5bb
   react-native-kochava-tracker: cdc03ae934c09b5ceca2100a81af13ca263f1f6a

@@ -32,6 +32,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 // Utils
 import { useTradingHistoryQuery } from 'utils/etherspot';
+import { getActivityKeyExtractor } from 'utils/assets';
 
 // models, types
 import type { AssetDataNavigationParam } from 'models/Asset';
@@ -39,7 +40,7 @@ import type { AssetDataNavigationParam } from 'models/Asset';
 // Local
 import AnimatedFloatingActions from './AnimatedFloatingActions';
 import ActivityHeaderContent from './components/ActivityHeaderContent';
-import TradingActivityList from './components/TradingActivityList';
+import TokenAnalyticsActivityList from './components/TokenAnalyticsActivityList';
 
 const TradingActivityScreen = () => {
   const navigation = useNavigation();
@@ -73,17 +74,15 @@ const TradingActivityScreen = () => {
         noPaddingTop
       />
       <Container style={{ alignItems: 'center' }}>
-        <Spacing h={20} />
         <ActivityHeaderContent chain={chain} tokenDetails={tokenDetails} />
-
-        <Spacing h={36} />
 
         <List
           data={tradingActivityData?.items}
           bounces={false}
-          renderItem={({ item }) => <TradingActivityList data={item} />}
+          renderItem={({ item }) => <TokenAnalyticsActivityList isTrading data={item} />}
           ListEmptyComponent={renderEmptyState}
           style={{ width: '100%' }}
+          keyExtractor={getActivityKeyExtractor}
           contentContainerStyle={{ paddingBottom: 120 }}
         />
 

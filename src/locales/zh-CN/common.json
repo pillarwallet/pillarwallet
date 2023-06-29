@@ -457,6 +457,10 @@
     "seven_day": "7天",
     "one_month": "1米",
     "one_year": "1 岁",
+    "today": "今天",
+    "last_week": "上星期",
+    "last_month": "上个月",
+    "last_year": "去年",
     "token_analytics": "代币分析"
   },
   "paragraph": {

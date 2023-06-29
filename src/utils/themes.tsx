@@ -120,6 +120,8 @@ export const semanticLightThemeColors = {
   basic60: '#ebf0f6',
   primarySkeleton: 'rgba(235, 240, 246, 0.1)',
   secondarySkeleton: 'rgba(252, 253, 255, 0.1)',
+  purpleHeatPrimary: 'rgba(216, 171, 255, 0.33)',
+  purpleHeatSecondary: 'rgba(227, 200, 250, 0.4)',
 };
 
 export const semanticDarkThemeColors = {
@@ -186,6 +188,8 @@ export const semanticDarkThemeColors = {
   basic60: '#141414',
   primarySkeleton: 'rgba(31, 30, 30, 0.4)',
   secondarySkeleton: 'rgba(55, 55, 55, 1)',
+  purpleHeatPrimary: 'rgba(59, 0, 110, 0.33)',
+  purpleHeatSecondary: 'rgba(74, 0, 138, 0.4)',
 };
 
 export const themedColors = {

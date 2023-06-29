@@ -3049,6 +3049,13 @@
   resolved "https://registry.yarnpkg.com/@react-native-community/toolbar-android/-/toolbar-android-0.2.1.tgz#5d021da8f6aef9412c58d5c981a62b91191af3fe"
   integrity sha512-kq1jVuJTSnKvqiyFqHp0hNLfntZRdE16heQI2UbE7dUUI0pR7YIoBoRlnt8x5ivJJ/f6m1Dcidku9LkwtcUs6w==
 
+"@react-native-cookies/cookies@^6.2.1":
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/@react-native-cookies/cookies/-/cookies-6.2.1.tgz#54d50b9496400bbdc19e43c155f70f8f918999e3"
+  integrity sha512-D17wCA0DXJkGJIxkL74Qs9sZ3sA+c+kCoGmXVknW7bVw/W+Vv1m/7mWTNi9DLBZSRddhzYw8SU0aJapIaM/g5w==
+  dependencies:
+    invariant "^2.2.4"
+
 "@react-native-firebase/analytics@^13.0.1":
   version "13.1.1"
   resolved "https://registry.yarnpkg.com/@react-native-firebase/analytics/-/analytics-13.1.1.tgz#f0d2e943903e745b0ed0004c2588983ad5dc5543"
@@ -10181,10 +10188,10 @@ ethers@^5.7.2:
     "@ethersproject/web" "5.7.1"
     "@ethersproject/wordlists" "5.7.0"
 
-etherspot@1.43.5:
-  version "1.43.5"
-  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.43.5.tgz#a6f09b1764406cfa0dac848da123eb43f39b712f"
-  integrity sha512-wO6jV5dR9Ep3o3zQGBRPrns5LMtHXYGrm9N1LgxnqD5wPtHb4b0B+phDi6q+Dnp9c56D1+9mO85O759sLC47sA==
+etherspot@1.43.7:
+  version "1.43.7"
+  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.43.7.tgz#aa96b87953f6e9970d4f1d09e677fb65d7387aff"
+  integrity sha512-52lF4hqPf4CQL2/huCLRcY8gquStsji5zLt2AzlX3PR5+gq1+jch2UN90EhhcaZriPwHQ06MDaV3EkpNK+CT0w==
   dependencies:
     "@apollo/client" "3.4.0"
     "@etherspot/contracts" "1.9.9"
@@ -12230,7 +12237,7 @@ interpret@^2.0.0:
   resolved "https://registry.yarnpkg.com/interpret/-/interpret-2.2.0.tgz#1a78a0b5965c40a5416d007ad6f50ad27c417df9"
   integrity sha512-Ju0Bz/cEia55xDwUWEa8+olFpCiQoypjnQySseKtmjNrnps3P+xfpUmGr90T7yjlVJmOtybRvPXhKMbHr+fWnw==
 
-invariant@2.2.4, invariant@^2.1.0, invariant@^2.2.2, invariant@^2.2.3, invariant@^2.2.4:
+invariant@2.2.4, invariant@^2.2.2, invariant@^2.2.3, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
   integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==
@@ -17523,12 +17530,6 @@ react-native-content-loader@^0.1.6:
   dependencies:
     d3-interpolate "^1.1.5"
 
-"react-native-cookies@https://github.com/joeferraro/react-native-cookies.git":
-  version "3.3.0"
-  resolved "https://github.com/joeferraro/react-native-cookies.git#5ecc48e91f0865ba313a277c0df6b387597e775f"
-  dependencies:
-    invariant "^2.1.0"
-
 react-native-crypto@^2.1.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/react-native-crypto/-/react-native-crypto-2.2.0.tgz#c999ed7c96064f830e1f958687f53d0c44025770"
@@ -17603,6 +17604,13 @@ react-native-gesture-handler@^1.9.0:
     invariant "^2.2.4"
     prop-types "^15.7.2"
 
+react-native-get-random-values@^1.9.0:
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/react-native-get-random-values/-/react-native-get-random-values-1.9.0.tgz#6cb30511c406922e75fe73833dc1812a85bfb37e"
+  integrity sha512-+29IR2oxzxNVeaRwCqGZ9ABadzMI8SLTBidrIDXPOkKnm5+kEmLt34QKM4JV+d2usPErvKyS85le0OmGTHnyWQ==
+  dependencies:
+    fast-base64-decode "^1.0.0"
+
 react-native-gifted-charts@^1.2.42:
   version "1.2.42"
   resolved "https://registry.yarnpkg.com/react-native-gifted-charts/-/react-native-gifted-charts-1.2.42.tgz#ab44cb6e9df0ff5e00424f983d696a63f0822adc"
@@ -17616,13 +17624,6 @@ react-native-gifted-charts@^1.2.42:
     react-native-linear-gradient "^2.5.6"
     react-native-svg "^13.6.0"
     typescript "^4.2.4"
-
-react-native-get-random-values@^1.9.0:
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/react-native-get-random-values/-/react-native-get-random-values-1.9.0.tgz#6cb30511c406922e75fe73833dc1812a85bfb37e"
-  integrity sha512-+29IR2oxzxNVeaRwCqGZ9ABadzMI8SLTBidrIDXPOkKnm5+kEmLt34QKM4JV+d2usPErvKyS85le0OmGTHnyWQ==
-  dependencies:
-    fast-base64-decode "^1.0.0"
 
 react-native-htmlview@^0.13.0:
   version "0.13.0"

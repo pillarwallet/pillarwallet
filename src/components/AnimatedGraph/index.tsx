@@ -37,7 +37,7 @@ import { ONE_DAY } from 'constants/assetsConstants';
 import Icon from 'components/core/Icon';
 
 // Types
-import type { HistoricalTokenPrices, MarketDetails } from 'models/Asset';
+import type { HistoricalTokenPrices, MarketDetails, TokenDetails } from 'models/Asset';
 import PointerLevel from './PointerLevel';
 
 export const { width: SIZE } = Dimensions.get('window');
@@ -46,6 +46,7 @@ interface Props {
   period: string;
   marketData: MarketDetails;
   historicData: HistoricProps;
+  tokenDetailsData: TokenDetails;
   onChangePointer: (items: any, isActive: boolean) => void;
 }
 
@@ -55,7 +56,7 @@ interface HistoricProps {
   isLoading: boolean;
 }
 
-const AnimatedGraph = ({ period, marketData, historicData, onChangePointer }: Props) => {
+const AnimatedGraph = ({ period, marketData, historicData, onChangePointer, tokenDetailsData }: Props) => {
   const colors = useThemeColors();
 
   const { data, status, isLoading } = historicData;
@@ -75,7 +76,7 @@ const AnimatedGraph = ({ period, marketData, historicData, onChangePointer }: Pr
 
   const currentPricePercentage = useMemo(() => {
     if (isEmpty(marketData)) return 0;
-    const pricePercentage = getPriceChangePercentage(period, marketData);
+    const pricePercentage = getPriceChangePercentage(period, marketData, tokenDetailsData);
     return pricePercentage;
   }, [marketData, period]);
 
@@ -156,7 +157,6 @@ const AnimatedGraph = ({ period, marketData, historicData, onChangePointer }: Pr
           shiftPointerLabelX: -15,
           pointerVanishDelay: 0,
           activatePointersDelay: 0,
-          activatePointersOnLongPress: true,
           autoAdjustPointerLabelPosition: false,
           pointerLabelComponent: (items, isActive) => (
             <PointerLevel items={items} isActive={isActive} onChangePointer={onChangePointer} />

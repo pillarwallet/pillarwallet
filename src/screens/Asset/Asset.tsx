@@ -19,6 +19,7 @@
 */
 import React, { useMemo, useState } from 'react';
 import t from 'translations/translate';
+import { Dimensions } from 'react-native';
 import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 
 // Components
@@ -61,6 +62,8 @@ const AssetScreen = () => {
   const assetData: AssetDataNavigationParam = useNavigationParam('assetData');
   const { chain, imageUrl, contractAddress, token } = assetData;
 
+  const { width: screenWidth } = Dimensions.get('window');
+
   const chainRates = useChainRates(chain);
   const config = useChainConfig(chain);
 
@@ -80,7 +83,7 @@ const AssetScreen = () => {
   }
   if (marketDetailsQuery?.data) {
     const { symbol } = marketDetailsQuery?.data;
-    if (symbol !== token) {
+    if (symbol.toUpperCase() !== token) {
       marketDetailsQuery.data = null;
     }
   }
@@ -110,15 +113,22 @@ const AssetScreen = () => {
           {
             custom: <TokenIcon url={imageUrl} chain={chain} size={24} />,
           },
-          { title: ` ${assetData.name} ${t('label.on_network', { network: networkName })}` },
+          {
+            title: ` ${assetData.name} ${t('label.on_network', { network: networkName })}`,
+          },
+        ]}
+        centerItemsStyle={[
+          { maxWidth: screenWidth * 0.8 },
+          networkName.length > 10 && { marginLeft: screenWidth * 0.05 },
         ]}
         customOnBack={() => navigation.dismiss()}
         noPaddingTop
       />
-      <Content bounces={false} paddingHorizontal={0} paddingVertical={0}>
+      <Content scrollEnabled={!pointerVisible} bounces={false} paddingHorizontal={0} paddingVertical={0}>
         <Container style={{ alignItems: 'center' }}>
           <Spacing h={20} />
           <HeaderContent
+            chain={chain}
             period={selectedPeriod}
             tokenRate={pointerVisible ? convertDecimalNumber(pointerTokenValue) : tokenRateCMC || tokenRate}
             marketDetails={marketDetailsQuery}
@@ -128,6 +138,7 @@ const AssetScreen = () => {
 
           <AnimatedGraph
             period={selectedPeriod}
+            tokenDetailsData={tokenDetailsQuery.data}
             marketData={marketDetailsQuery.data}
             historicData={historicalTokenPricesQuery}
             onChangePointer={(item, isActive) => {

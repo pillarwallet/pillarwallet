@@ -19,13 +19,14 @@
 */
 import React from 'react';
 import t from 'translations/translate';
+import { Dimensions } from 'react-native';
 import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 
 // Components
 import { Container } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
-import PoolTokenIcon from 'components/display/PoolTokenIcon';
+import ActivityTokenIcon from 'components/display/ActivityTokenIcon';
 import { Spacing } from 'components/legacy/Layout';
 import Spinner from 'components/Spinner';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -33,6 +34,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 // Utils
 import { useChainConfig } from 'utils/uiConfig';
 import { usePoolsActivityQuery } from 'utils/etherspot';
+import { getActivityKeyExtractor } from 'utils/assets';
 
 // models, types
 import type { AssetDataNavigationParam } from 'models/Asset';
@@ -40,7 +42,7 @@ import type { AssetDataNavigationParam } from 'models/Asset';
 // Local
 import AnimatedFloatingActions from './AnimatedFloatingActions';
 import ActivityHeaderContent from './components/ActivityHeaderContent';
-import PoolActivityList from './components/PoolActivityList';
+import TokenAnalyticsActivityList from './components/TokenAnalyticsActivityList';
 
 const PoolsActivityScreen = () => {
   const navigation = useNavigation();
@@ -48,6 +50,8 @@ const PoolsActivityScreen = () => {
   const assetData: AssetDataNavigationParam = useNavigationParam('assetData');
   const tokenDetails = useNavigationParam('tokenDetails');
   const { chain, imageUrl, token } = assetData;
+
+  const { width: screenWidth } = Dimensions.get('window');
 
   const config = useChainConfig(chain);
 
@@ -68,25 +72,25 @@ const PoolsActivityScreen = () => {
       <HeaderBlock
         centerItems={[
           {
-            custom: <PoolTokenIcon url={imageUrl} chain={chain} size={24} />,
+            custom: <ActivityTokenIcon secondTokenUrl={imageUrl} chain={chain} size={24} />,
           },
           { title: ` ${config.gasSymbol}-${token} ${t('label.pool_activity')}` },
         ]}
         navigation={navigation}
+        centerItemsStyle={[{ maxWidth: screenWidth * 0.8, marginLeft: screenWidth * 0.05 }]}
         noPaddingTop
       />
       <Container style={{ alignItems: 'center' }}>
         <Spacing h={20} />
         <ActivityHeaderContent isPoolActivity chain={chain} tokenDetails={tokenDetails} />
 
-        <Spacing h={36} />
-
         <List
           data={poolsActivityData?.items}
           bounces={false}
-          renderItem={({ item }) => <PoolActivityList data={item} />}
+          renderItem={({ item }) => <TokenAnalyticsActivityList data={item} />}
           ListEmptyComponent={renderEmptyState}
           style={{ width: '100%' }}
+          keyExtractor={getActivityKeyExtractor}
           contentContainerStyle={{ paddingBottom: 120 }}
         />
 
