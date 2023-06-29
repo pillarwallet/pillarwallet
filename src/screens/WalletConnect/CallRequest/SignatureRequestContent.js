@@ -24,11 +24,14 @@ import styled from 'styled-components/native';
 
 // Components
 import Button from 'components/core/Button';
-import Image from 'components/Image';
 import Text from 'components/core/Text';
+import Image from 'components/Image';
+import TokenIcon from 'components/display/TokenIcon';
+import { Spacing } from 'components/legacy/Layout';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
+import { ETH_SIGN_TYPED_DATA, ETH_SIGN_TYPED_DATA_V4 } from 'constants/walletConnectConstants';
 
 // Utils
 import { chainFromChainId } from 'utils/chains';
@@ -37,6 +40,7 @@ import { spacing } from 'utils/variables';
 import { parsePeerName } from 'utils/walletConnect';
 import { isEtherspotAccountDeployed } from 'utils/etherspot';
 import { isArchanovaAccount, isEtherspotAccount, isKeyBasedAccount } from 'utils/accounts';
+import { useThemeColors } from 'utils/themes';
 
 // Selectors
 import { useActiveAccount, useRootSelector } from 'selectors';
@@ -55,10 +59,13 @@ function SignatureRequestContent({ request, onConfirm, onReject }: Props) {
   const { t } = useTranslation();
   const configs = useChainsConfig();
   const activeAccount = useActiveAccount();
+  const colors = useThemeColors();
   const isArchanovaAccountDeployed = useRootSelector(isArchanovaAccountDeployedSelector);
 
-  const { title, iconUrl, chain } = getViewData(request);
+  const { title, iconUrl, chain, method } = getViewData(request);
   const config = configs[chain];
+
+  const isSignTypedData = method === ETH_SIGN_TYPED_DATA || method === ETH_SIGN_TYPED_DATA_V4;
 
   /**
    * Archanova account needs to be deployed for all types call requests.
@@ -71,18 +78,54 @@ function SignatureRequestContent({ request, onConfirm, onReject }: Props) {
 
   return (
     <>
-      <Text color={config.color}>
-        {title} {t('label.dotSeparator')} {config.titleShort}
-      </Text>
+      {!isSignTypedData && (
+        <>
+          <Text color={config.color}>
+            {title} {t('label.dotSeparator')} {config.titleShort}
+          </Text>
+          <Image source={{ uri: iconUrl }} style={styles.icon} />
+        </>
+      )}
 
-      <Image source={{ uri: iconUrl }} style={styles.icon} />
+      {isSignTypedData && (
+        <>
+          <Spacing h={spacing.medium} />
+
+          <TokenIcon
+            url={iconUrl}
+            size={64}
+            chain={chain}
+            chainIconStyle={{ top: -10, right: -10 }}
+            imageStyle={{ borderRadius: 24 }}
+          />
+
+          <Spacing h={spacing.large} />
+
+          <Text variant="medium" color={colors.secondaryText}>
+            {t('walletConnect.requests.signMessageRequest')}
+          </Text>
+
+          <Spacing h={spacing.large} />
+
+          <MessageContainer>
+            <ScrollContainer>
+              <Text>
+                {t('walletConnect.requests.signMessageRequest')}
+                {'\n\n'}
+              </Text>
+            </ScrollContainer>
+          </MessageContainer>
+
+          <Spacing h={spacing.large} />
+        </>
+      )}
 
       {requiresDeployedAccount && (
         <ErrorMessage variant="small">{t('walletConnectContent.error.smartWalletNeedToBeActivated')}</ErrorMessage>
       )}
 
       <Button
-        title={t('button.confirm')}
+        title={isSignTypedData ? t('button.approve') : t('button.confirm')}
         onPress={onConfirm}
         disabled={requiresDeployedAccount}
         style={styles.button}
@@ -100,7 +143,7 @@ const getViewData = (request: WalletConnectCallRequest) => {
   const iconUrl: any = request.icon;
   const chain = chainFromChainId[request.chainId] ?? CHAIN.ETHEREUM;
 
-  return { title, iconUrl, chain };
+  return { title, iconUrl, chain, ...request };
 };
 
 const styles = {
@@ -120,3 +163,14 @@ const ErrorMessage = styled(Text)`
   text-align: center;
   color: ${({ theme }) => theme.colors.negative};
 `;
+
+const MessageContainer = styled.View`
+  background-color: ${({ theme }) => theme.colors.basic070};
+  max-height: 162px;
+  width: 100%;
+  padding: 10px 12px 8px;
+  border-radius: 14px;
+  border: solid 1px ${({ theme }) => theme.colors.basic080};
+`;
+
+const ScrollContainer = styled.ScrollView``;

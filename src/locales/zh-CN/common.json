@@ -748,7 +748,8 @@
       "messageRequest": "签名请求",
       "transactionRequest": "交易请求",
       "transactionRequestFormat": "{{chain}} 上的 {{app}}",
-      "unsupportedRequest": "不支持的请求"
+      "unsupportedRequest": "不支持的请求",
+      "signMessageRequest": "签署消息请求"
     },
     "connectedApps": {
       "title": "连接的 dapp",
