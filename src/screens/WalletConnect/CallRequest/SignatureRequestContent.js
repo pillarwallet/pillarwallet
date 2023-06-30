@@ -21,6 +21,7 @@
 import * as React from 'react';
 import { useTranslation } from 'translations/translate';
 import styled from 'styled-components/native';
+import { isEmpty } from 'lodash';
 
 // Components
 import Button from 'components/core/Button';
@@ -62,10 +63,49 @@ function SignatureRequestContent({ request, onConfirm, onReject }: Props) {
   const colors = useThemeColors();
   const isArchanovaAccountDeployed = useRootSelector(isArchanovaAccountDeployedSelector);
 
-  const { title, iconUrl, chain, method } = getViewData(request);
+  const { title, iconUrl, chain, method, params } = getViewData(request);
   const config = configs[chain];
 
   const isSignTypedData = method === ETH_SIGN_TYPED_DATA || method === ETH_SIGN_TYPED_DATA_V4;
+
+  const { message, primaryType } =
+    isSignTypedData && !isEmpty(params) ? JSON.parse(params[1]) : { message: null, primaryType: null };
+
+  const messageText = React.useMemo(() => {
+    if (isEmpty(message)) return [];
+
+    const values = Object.entries(message);
+    if (isEmpty(values)) return [];
+
+    return values.map((value) => {
+      const key = value?.[0];
+      const description = value?.[1];
+
+      if (!key) return '';
+
+      const label = key.charAt(0).toUpperCase() + key.slice(1);
+
+      // eslint-disable-next-line i18next/no-literal-string
+      if (!description) return `${label}\n\n`;
+
+      if (typeof description === 'object') {
+        const descObject = Object.entries(description);
+        // eslint-disable-next-line i18next/no-literal-string
+        if (isEmpty(descObject)) return `${label}\n\n`;
+
+        const descMap = descObject.map((descValues, index) => {
+          return `${index !== 0 ? '\n' : ''} ${descValues[0]}: ${JSON.stringify(descValues[1])}`;
+        });
+        // eslint-disable-next-line i18next/no-literal-string
+        return `${label}\n${descMap}\n\n`;
+      }
+      // eslint-disable-next-line i18next/no-literal-string
+      return `${label} ${JSON.stringify(description)}\n\n`;
+    });
+  }, [message]);
+
+  // eslint-disable-next-line i18next/no-literal-string
+  const messageTitle = primaryType ? `${primaryType}\n\n` : null;
 
   /**
    * Archanova account needs to be deployed for all types call requests.
@@ -107,14 +147,16 @@ function SignatureRequestContent({ request, onConfirm, onReject }: Props) {
 
           <Spacing h={spacing.large} />
 
-          <MessageContainer>
-            <ScrollContainer>
-              <Text>
-                {t('walletConnect.requests.signMessageRequest')}
-                {'\n\n'}
-              </Text>
-            </ScrollContainer>
-          </MessageContainer>
+          {(!isEmpty(messageText) || messageTitle) && (
+            <MessageContainer>
+              <ScrollContainer>
+                {messageTitle && <Text>{messageTitle}</Text>}
+                {messageText.map((text) => (
+                  <Text>{text}</Text>
+                ))}
+              </ScrollContainer>
+            </MessageContainer>
+          )}
 
           <Spacing h={spacing.large} />
         </>
