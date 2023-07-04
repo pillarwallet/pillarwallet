@@ -35,7 +35,6 @@ export const buildEnvironment = {
   RAMPNETWORK_API_KEY: '_rampnetwork_api_key_',
   INSTABUG_TOKEN: '_instabug_token_',
   PRISMIC_TOKEN: '_prismic_token_',
-  STORYLY_TOKEN: '_storyly_token_',
   KOCHAVA_IOS_ID: '_kochava_ios_id_',
   KOCHAVA_ANDROID_ID: '_kochava_android_id_',
   WALLETCONNECT_PROJECT_ID: '_wallet_connect_id_',

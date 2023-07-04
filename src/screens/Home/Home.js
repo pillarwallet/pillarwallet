@@ -36,7 +36,6 @@ import { Container, Content } from 'components/layout/Layout';
 import FloatingButtons from 'components/FloatingButtons';
 import HeaderBlock from 'components/HeaderBlock';
 import RefreshControl from 'components/RefreshControl';
-import Stories from 'components/Stories';
 import UserNameAndImage from 'components/UserNameAndImage';
 import WalletConnectRequests from 'screens/WalletConnect/Requests';
 import Tooltip from 'components/Tooltip';
@@ -257,8 +256,6 @@ function Home() {
             paddingHorizontal={0}
             refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
           >
-            <Stories />
-
             <BalanceSection balanceInFiat={totalBalance} showBalance={balanceVisible} onBalanceClick={onBalanceClick} />
 
             <WalletConnectRequests />
