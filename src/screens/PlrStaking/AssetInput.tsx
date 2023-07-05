@@ -50,6 +50,8 @@ interface IAssetInput extends React.ComponentPropsWithoutRef<Instance> {
   toFixedValue?: number;
   isToSelector?: boolean;
   onTokenPress?: () => void;
+  symbolOverride?: string;
+  to?: boolean;
 }
 
 const AssetInput = forwardRef<Instance, IAssetInput>(
@@ -68,6 +70,8 @@ const AssetInput = forwardRef<Instance, IAssetInput>(
       toFixedValue,
       isToSelector,
       onTokenPress,
+      symbolOverride,
+      to,
     },
     ref,
   ) => {
@@ -127,7 +131,7 @@ const AssetInput = forwardRef<Instance, IAssetInput>(
     return (
       <Container>
         <WalletTextWrapper disabled={disabled}>
-          <WalletText>{t('from')}</WalletText>
+          <WalletText>{to ? t('to') : t('from')}</WalletText>
           {/* @ts-ignore */}
           <Icon style={styles.walletIcon} name={mapWalletTypeToIcon(walletType)} />
           <WalletText>{mapWalletTypeToName(walletType)}</WalletText>
@@ -138,7 +142,7 @@ const AssetInput = forwardRef<Instance, IAssetInput>(
             <TokenInfo disabled={disabled || !onTokenPress}>
               <TokenIcon url={asset?.iconUrl} size={34} chain={chain} />
               <TokenContainer>
-                <TokenSymbol>{asset?.symbol}</TokenSymbol>
+                <TokenSymbol>{symbolOverride || asset?.symbol}</TokenSymbol>
                 <TokenNetwork>{t('on', { network: networkName })}</TokenNetwork>
               </TokenContainer>
             </TokenInfo>

@@ -113,6 +113,7 @@ export const semanticLightThemeColors = {
   plrStaking: '#31005c',
   plrStakingAlt: '#45196c',
   plrStakingHighlight: '#b866ff',
+  plrStakingAlert: '#e333e8',
 };
 
 export const semanticDarkThemeColors = {
@@ -180,6 +181,7 @@ export const semanticDarkThemeColors = {
   plrStaking: '#31005c',
   plrStakingAlt: '#45196c',
   plrStakingHighlight: '#b866ff',
+  plrStakingAlert: '#e333e8',
 };
 
 export const themedColors = {

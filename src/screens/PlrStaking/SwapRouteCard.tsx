@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 import { BigNumber } from 'bignumber.js';
@@ -61,6 +61,8 @@ interface ISwapRouteCard {
   setStkPlrAmount?: (value: BigNumber) => void;
   setOfferData?: (offer: any) => void;
   onFeeInfo?: (feeInfo: TransactionFeeInfo | null) => void;
+  stakeFeeInfo: any;
+  stakeGasFeeAsset: Asset | AssetOption;
 }
 
 const SwapRouteCard: FC<ISwapRouteCard> = ({
@@ -76,37 +78,22 @@ const SwapRouteCard: FC<ISwapRouteCard> = ({
   setOfferData,
   setStkPlrAmount,
   onFeeInfo,
+  stakeFeeInfo,
+  stakeGasFeeAsset,
 }) => {
   const { t } = useTranslation();
-  const activeAccount: any = useActiveAccount();
-  const fiatCurrency = useFiatCurrency();
-  const gasThresholds = useRootSelector(gasThresholdsSelector);
   const chainsConfig = useChainsConfig();
   const { titleShort: networkName } = chainsConfig[chain];
 
-  const rates = useChainRates(chain);
-  const currency = useFiatCurrency();
-  const rate = getAssetRateInFiat(rates, plrToken?.address, currency);
-
   const [selectedOfferProvider, setSelectedOfferProvider] = useState(null);
-  const [sortedOffersList, setSortedOfferList] = useState([]);
 
   const [showMore, setShowMore] = useState(false);
 
-  const {
-    feeInfo,
-    errorMessage: estimationErrorMessage,
-    isEstimating,
-  } = useTransactionsEstimate(chain, selectedOffer?.transactions, true, gasFeeAsset);
-
-  const highFee = isHighGasFee(
-    chain,
-    selectedOffer?.feeInfo?.fee,
-    selectedOffer?.feeInfo?.gasToken,
-    rates,
-    fiatCurrency,
-    gasThresholds,
-  );
+  useEffect(() => {
+    setOfferData(offers[0]);
+    setSelectedOfferProvider(offers[0].provider);
+    setStkPlrAmount(offers[0]?.toAmount || null);
+  }, []);
 
   const formattedToAmount =
     formatTokenValue(selectedOffer?.toAmount, selectedOffer?.toAsset.symbol, { decimalPlaces: 0 }) ?? '';
@@ -114,23 +101,18 @@ const SwapRouteCard: FC<ISwapRouteCard> = ({
   const formattedFromAmount =
     formatTokenValue(selectedOffer?.fromAmount, selectedOffer?.fromAsset.symbol, { decimalPlaces: 0 }) ?? '';
 
-  const config = useProviderConfig(selectedOffer?.provider);
-
   const onSelectOffer = (offer: any, feeInfo: TransactionFeeInfo | null) => {
     if (!offer?.provider || selectedOffer?.provider === offer.provider || !feeInfo) return;
 
     setOfferData?.(offer);
-    onFeeInfo?.(feeInfo);
+    onFeeInfo?.(offer?.feeInfo);
+    setSelectedOfferProvider(offer.provider);
   };
 
   if (!offers?.length) return null;
 
   return (
     <>
-      <Spacing h={16} />
-
-      <RouteText>Route</RouteText>
-
       {selectedOffer && (
         <>
           <Spacing h={8} />
@@ -142,32 +124,18 @@ const SwapRouteCard: FC<ISwapRouteCard> = ({
             formattedFromAmount={formattedFromAmount}
             formattedToAmount={formattedToAmount}
             networkName={networkName}
-            providerConfig={config}
-            feeInfo={feeInfo}
-            highFee={highFee}
+            stakeFeeInfo={stakeFeeInfo}
+            stakeGasFeeAsset={stakeGasFeeAsset}
+            provider={selectedOfferProvider}
+            gasFeeAsset={gasFeeAsset}
+            transactions={selectedOffer?.transactions}
           />
         </>
       )}
 
-      {(!selectedOffer || showMore) &&
+      {!disabled &&
+        (!selectedOffer || showMore) &&
         offers.map((offer, i) => {
-          const config = useProviderConfig(offer?.provider);
-
-          const {
-            feeInfo,
-            errorMessage: estimationErrorMessage,
-            isEstimating,
-          } = useTransactionsEstimate(chain, offer?.transactions, true, gasFeeAsset);
-
-          const highFee = isHighGasFee(
-            chain,
-            offer?.feeInfo?.fee,
-            offer?.feeInfo?.gasToken,
-            rates,
-            fiatCurrency,
-            gasThresholds,
-          );
-
           const formattedToAmount = formatTokenValue(offer.toAmount, offer.toAsset.symbol, { decimalPlaces: 0 }) ?? '';
 
           const formattedFromAmount =
@@ -175,7 +143,7 @@ const SwapRouteCard: FC<ISwapRouteCard> = ({
 
           if (!selectedOffer && !showMore && i !== 0) return null;
 
-          if (offer?.provider === selectedOfferProvider) return null;
+          if (!offer?.provider || offer.provider === selectedOfferProvider) return null;
           return (
             <>
               <Spacing h={8} />
@@ -188,20 +156,22 @@ const SwapRouteCard: FC<ISwapRouteCard> = ({
                 formattedFromAmount={formattedFromAmount}
                 formattedToAmount={formattedToAmount}
                 networkName={networkName}
-                providerConfig={config}
-                feeInfo={feeInfo}
-                highFee={highFee}
-                onSelectOffer={onSelectOffer}
+                provider={offer?.provider}
+                onSelectOffer={disabled ? onSelectOffer : undefined}
+                stakeFeeInfo={stakeFeeInfo}
+                stakeGasFeeAsset={stakeGasFeeAsset}
+                gasFeeAsset={gasFeeAsset}
+                transactions={offer?.transactions}
               />
             </>
           );
         })}
 
-      {offers?.length > 1 && (
+      {!disabled && offers?.length > 1 && (
         <>
           <Spacing h={16} />
 
-          <ShowMoreButton onPress={setShowMore((current) => !current)}>
+          <ShowMoreButton onPress={() => setShowMore((current) => !current)}>
             <ShowMoreText>{showMore ? 'Show less' : 'Show more'}</ShowMoreText>
           </ShowMoreButton>
         </>

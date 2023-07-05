@@ -69,7 +69,7 @@
     "dns.js": "^1.0.1",
     "eth-sig-util": "^3.0.0",
     "ethereumjs-util": "^7.0.8",
-    "ethers": "5.0.19",
+    "ethers": "5.1.4",
     "etherspot": "1.42.7",
     "events": "^1.0.0",
     "https-browserify": "~0.0.0",

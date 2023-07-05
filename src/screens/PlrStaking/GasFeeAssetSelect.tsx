@@ -39,15 +39,28 @@ interface IGasFeeSelect {
   chain: Chain;
   selectAsset: AssetOption | Asset;
   onSelectAsset: (res: Asset | AssetOption) => void;
+  disabled?: boolean;
 }
 
-const GasFeeAssetSelect: FC<IGasFeeSelect> = ({ assets, chain, selectAsset, onSelectAsset }) => {
+const GasFeeAssetSelect: FC<IGasFeeSelect> = ({ assets, chain, selectAsset, onSelectAsset, disabled = false }) => {
   const { t } = useTranslation();
   const [showAsset, setShowAsset] = React.useState(false);
 
   useEffect(() => {
     onSelectAsset(assets[0]);
   }, [chain]);
+
+  const onSelect = (asset: AssetOption) => {
+    if (disabled) return;
+
+    onSelectAsset(asset);
+  };
+
+  const onShow = () => {
+    if (disabled) setShowAsset(false);
+
+    setShowAsset(!showAsset);
+  };
 
   const renderItem = (item, index) => {
     const { iconUrl, symbol } = item;
@@ -57,7 +70,7 @@ const GasFeeAssetSelect: FC<IGasFeeSelect> = ({ assets, chain, selectAsset, onSe
         style={containerStyle}
         key={'asset__' + index.toString()}
         onPress={() => {
-          onSelectAsset(item);
+          onSelect(item);
         }}
       >
         <ItemContainer isSelected={selectAsset?.symbol === symbol}>
@@ -74,12 +87,7 @@ const GasFeeAssetSelect: FC<IGasFeeSelect> = ({ assets, chain, selectAsset, onSe
 
   return (
     <Container>
-      <RowTouchableContainer
-        style={{ justifyContent: 'space-between' }}
-        onPress={() => {
-          setShowAsset(!showAsset);
-        }}
-      >
+      <RowTouchableContainer style={{ justifyContent: 'space-between' }} onPress={onShow}>
         <Title>{t('exchangeContent.gas_fee_asset.title')}</Title>
         {selectAsset && (
           <>
@@ -110,12 +118,13 @@ const containerStyle = { marginTop: 3, width: '100%' };
 const left10 = { marginLeft: 10 };
 const flex = { flex: 1 };
 
-const Container = styled.View`
+const Container = styled.View<{ disabled?: boolean }>`
   background-color: ${({ theme, isSelected }) => theme.colors.basic050};
   margin: 0 ${spacing.layoutSides}px;
   padding: ${spacing.medium}px;
   justify-content: center;
   border-radius: ${borderRadiusSizes.small}px;
+  ${({ disabled }) => disabled && `opacity: 0.7;`};
 `;
 
 const ItemContainer = styled.View`

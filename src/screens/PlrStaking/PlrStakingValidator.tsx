@@ -4,12 +4,15 @@ import styled from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
 import { useDebounce } from 'use-debounce';
+import { BigNumber, ethers } from 'ethers';
 
 // Constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstantsTs';
 import { stkPlrToken } from 'constants/plrStakingConstants';
 import { TRANSACTION_TYPE } from 'constants/transactionsConstants';
+import { ADDRESS_ZERO } from 'constants/assetsConstants';
+import { HOME } from 'constants/navigationConstants';
 
 // Types
 import type { AssetOption } from 'models/Asset';
@@ -27,8 +30,20 @@ import {
 import { getPlrAddressForChain } from 'configs/assetsConfig';
 import { addressesEqual, isNativeAsset } from 'utils/assets';
 import { truncateDecimalPlaces } from 'utils/bigNumber';
-import { buildStakingTransactions, validatePlrStakeAmount } from 'utils/plrStakingHelper';
+import {
+  buildStakingTransactions,
+  estimateTransactions,
+  getBalanceForAddress,
+  getStakedToken,
+  getStakingContractInfo,
+  sendTransactions,
+  showBalancesReceivedToast,
+  showStakedTokensReceivedToast,
+  validatePlrStakeAmount,
+} from 'utils/plrStakingHelper';
 import { mapTransactionsToTransactionPayload, showTransactionRevertedToast } from 'utils/transactions';
+import { buildEtherspotTxFeeInfo } from 'utils/etherspot';
+import { fontStyles } from 'utils/variables';
 
 // Selectors
 import { useWalletAssetBalance } from 'selectors/balances';
@@ -51,6 +66,9 @@ import GasFeeAssetSelect from './GasFeeAssetSelect';
 import AssetInput from './AssetInput';
 import BridgeRouteCard from './BridgeRouteCard';
 import SwapRouteCard from './SwapRouteCard';
+import StakeRouteCard from './StakeRouteCard';
+import FeeCard from './FeeCard';
+import useInterval from 'hooks/useInterval';
 
 const PlrStakingValidator = () => {
   const navigation = useNavigation();
@@ -73,45 +91,56 @@ const PlrStakingValidator = () => {
   const [selectedWallet, setSelectedWallet] = useState(wallet);
 
   const [gasFeeAsset, setGasFeeAsset] = useState<AssetOption | null>(null);
+  const [bridgeGasFeeAsset, setBridgeGasFeeAsset] = useState<AssetOption | null>(null);
   const [value, setValue] = useState(null);
   const [debouncedValue] = useDebounce(value, 500);
 
+  // Form values
   const [stkPlrAmount, setStkPlrAmount] = useState(null);
+  const [debouncedStkPlrAmount] = useDebounce(stkPlrAmount, 500);
   const [offerData, setOfferData] = useState(null);
-  const [feeInfo, setFeeInfo] = useState(null);
+  const [swapFeeInfo, setSwapFeeInfo] = useState(null);
+  const [txFeeInfo, setTxFeeInfo] = useState(null);
   const [showFeeError, setShowFeeError] = useState(false);
+  const [calculatingGas, setCalculatingGas] = useState(false);
 
-  const gasFeeAssets = useGasFeeAssets(selectedChain);
-  const balance = useWalletAssetBalance(selectedToken?.chain, selectedToken?.address);
-  const toOptions = useToAssetsCrossChain(CHAIN.POLYGON); // Get Ethereum assets for PLR token
+  // Execute form
+  const [processing, setProcessing] = useState(false);
+  const [startingPlr, setStartingPlr] = useState(null);
+  const [lockedStakingAmount, setLockedStakingAmount] = useState(null);
+  const [stakeTxPayload, setStakeTxPayload] = useState<TransactionPayload>(null);
+  const [isBridging, setIsBridging] = useState(false);
+  const [isStaking, setIsStaking] = useState(false);
+  const [isStaked, setIsStaked] = useState(false);
+  const [stakingError, setStakingError] = useState<string>(null);
+  const [startingStkPlr, setStartingStkPlr] = useState<BigNumber>(null);
+
   const ethereumPlrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
+  const gasFeeAssets = useGasFeeAssets(selectedChain);
+  const ethereumGasFeeAssets = useGasFeeAssets(CHAIN.ETHEREUM);
+  const balance = useWalletAssetBalance(selectedToken?.chain, selectedToken?.address);
+  const plrBalance = useWalletAssetBalance(CHAIN.ETHEREUM, ethereumPlrAddress);
+  const toOptions = useToAssetsCrossChain(CHAIN.POLYGON); // Get Ethereum assets for PLR token
 
   const isBridgeTransaction = selectedToken?.chain !== CHAIN.ETHEREUM;
-  const isSwapTransaction = selectedToken?.chain === CHAIN.ETHEREUM && selectedToken?.address !== ethereumPlrAddress;
-  const isEthereumPlr = selectedToken?.chain === CHAIN.ETHEREUM && selectedToken?.address === ethereumPlrAddress;
+  const isSwapTransaction =
+    selectedToken?.chain === CHAIN.ETHEREUM && !addressesEqual(selectedToken?.address, ethereumPlrAddress);
+  const isEthereumPlr =
+    selectedToken?.chain === CHAIN.ETHEREUM && addressesEqual(selectedToken?.address, ethereumPlrAddress);
 
   // Get Bridge offers
   let buildTractionQuery;
-  if (isBridgeTransaction) {
-    buildTractionQuery = useCrossChainBuildTransactionQuery(selectedToken, plrToken, debouncedValue);
-  }
+  buildTractionQuery = useCrossChainBuildTransactionQuery(selectedToken, plrToken, debouncedValue, isBridgeTransaction);
   const buildTransactionData = buildTractionQuery?.data || null;
   const buildTransactionFetched = buildTractionQuery?.isFetched || false;
-  console.log('bridgeOffers', buildTransactionData);
 
   // Get Swap offers
   let offersQuery;
-  if (isSwapTransaction) {
-    console.log('start query');
-
-    offersQuery = useOffersQuery(chain, selectedToken, plrToken, debouncedValue);
-  }
+  offersQuery = useOffersQuery(selectedChain, selectedToken, plrToken, debouncedValue, isSwapTransaction);
   const swapOffers = sortOffers(offersQuery?.data);
-  console.log('isSwap', isSwapTransaction);
-  console.log('swapOffers', swapOffers);
 
-  const { errorMessage } = useTransactionFeeCheck(
-    chain || CHAIN.ETHEREUM,
+  const { errorMessage: feeErrorMessage } = useTransactionFeeCheck(
+    selectedChain || CHAIN.ETHEREUM,
     offerData?.feeInfo,
     selectedToken,
     offerData?.fromAmount,
@@ -123,11 +152,83 @@ const PlrStakingValidator = () => {
     if (!!asset) setPlrToken(asset);
   }, [toOptions]);
 
+  useEffect(() => {
+    const getFee = async () => {
+      try {
+        const { transactions, stakeTransactions } = await buildStakeTransactions();
+        const allTransactions = isBridgeTransaction ? [...stakeTransactions] : [...transactions, ...stakeTransactions];
+        await getFeeInfo(allTransactions);
+      } catch (e) {
+        console.log('calc fees error', e);
+      }
+    };
+
+    getFee();
+  }, [debouncedStkPlrAmount]);
+
+  useInterval(
+    async () => {
+      if (!isBridging) return;
+
+      const balance = await getBalanceForAddress(CHAIN.ETHEREUM, ethereumPlrAddress);
+
+      if (!balance) return;
+
+      const bnStartingPlr = ethers.utils.parseUnits(startingPlr.toString());
+      const balanceDiff = balance.sub(bnStartingPlr);
+      const bnStakingAmount = ethers.utils.parseUnits(stkPlrAmount.toString());
+
+      if (balanceDiff.mul(100).gte(bnStakingAmount.mul(90))) {
+        // checking if diff greater than 90% of PLR staked
+        console.log('received plr');
+        setIsBridging(false);
+        showBalancesReceivedToast(plrToken.symbol, bnStakingAmount);
+
+        submitStakingTransactions();
+      }
+    },
+    isBridging ? 5000 : null,
+  );
+
+  useInterval(
+    async () => {
+      if (!isStaking) return;
+
+      const stakedToken = await getStakedToken();
+
+      if (!stakedToken) return;
+
+      const startingBalance = startingStkPlr ?? BigNumber.from(0);
+
+      const balance = await getBalanceForAddress(CHAIN.ETHEREUM, stakedToken);
+      if (balance.gt(startingBalance)) {
+        console.log('received stkPlr');
+        setIsBridging(false);
+        setIsStaking(false);
+        setIsStaked(true);
+        showStakedTokensReceivedToast('stkPlr', ethers.utils.parseUnits(stkPlrAmount.toString()));
+      }
+    },
+    isStaking ? 5000 : null,
+  );
+
+  const resetExecuteParams = () => {
+    if (processing) setProcessing(false);
+    if (isBridging) setIsBridging(false);
+    if (isStaking) setIsStaking(false);
+    if (isStaked) setIsStaked(false);
+    if (stakeTxPayload) setStakeTxPayload(null);
+    if (startingPlr) setStartingPlr(null);
+    if (lockedStakingAmount) setLockedStakingAmount(null);
+  };
+
   const resetForm = (resetValue = false) => {
+    resetExecuteParams();
     if (resetValue && !!value) setValue(null);
     if (offerData) setOfferData(null);
     if (stkPlrAmount) setStkPlrAmount(null);
     if (showFeeError) setShowFeeError(false);
+    if (txFeeInfo) setTxFeeInfo(null);
   };
 
   const onValueChange = (newValue: string) => {
@@ -150,43 +251,142 @@ const PlrStakingValidator = () => {
     return validatePlrStakeAmount(stkPlrAmount);
   };
 
-  const onExecute = () => {
-    console.log('attempting execute...');
+  const buildStakeTransactions = async () => {
+    if (!isEthereumPlr && !offerData?.transactions) return;
 
-    if (!feeInfo) {
-      showTransactionRevertedToast();
+    let transactions = offerData?.transactions ? [...offerData.transactions] : [];
+
+    const stakeTransactions = await buildStakingTransactions(stkPlrAmount, plrToken);
+
+    if (!stakeTransactions?.transactions || !!stakeTransactions.errorMessage) {
       return;
     }
 
-    console.log('execute 1', offerData);
+    const allTransactions = [...transactions, ...stakeTransactions.transactions];
 
-    if (!isEthereumPlr && !offerData?.transactions) return;
+    return { transactions, stakeTransactions: stakeTransactions.transactions };
+  };
 
-    let transactions = [...offerData.transactions];
-    console.log('execute 2', transactions);
+  const getFeeInfo = async (transactions: any[]) => {
+    setCalculatingGas(true);
+    const estimate = await estimateTransactions(transactions, gasFeeAsset);
+    const feeInfo = await buildEtherspotTxFeeInfo(estimate.estimation);
+    if (feeInfo?.fee) setTxFeeInfo(feeInfo.fee);
+    else setTxFeeInfo(null);
+    setCalculatingGas(false);
 
-    const stakeTransactions = buildStakingTransactions(stkPlrAmount, plrToken);
-    console.log('execute 3', stakeTransactions);
+    return feeInfo;
+  };
 
-    let transactionPayload: TransactionPayload = mapTransactionsToTransactionPayload(chain, transactions);
-    transactionPayload = {
-      ...transactionPayload,
-      offer: !isEthereumPlr
-        ? {
-            ...offerData,
-            feeInfo,
-          }
-        : null,
-      type: TRANSACTION_TYPE.STAKEPLR,
-      gasToken: gasFeeAsset,
-    };
+  const submitStakingTransactions = async () => {
+    if (!stakeTxPayload) return;
 
-    navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
-      transactionPayload,
-      toAssetSymbol: plrToken.symbol,
-      goBackDismiss: true,
-      transactionType: TRANSACTION_TYPE.STAKEPLR,
-    });
+    setProcessing(false);
+    const tx = await sendTransactions(selectedChain, stakeTxPayload);
+
+    if (tx) {
+      const stakedToken = await getStakedToken();
+      const stkPlrBalance = await getBalanceForAddress(CHAIN.ETHEREUM, stakedToken);
+      setStartingStkPlr(stkPlrBalance);
+      setIsStaking(true);
+    }
+  };
+
+  const submitTransactions = async () => {
+    const { transactions, stakeTransactions } = await buildStakeTransactions();
+
+    if (!stakeTransactions?.length) return;
+
+    setProcessing(true);
+    setIsBridging(false);
+    setStartingPlr(plrBalance);
+    setLockedStakingAmount(stkPlrAmount);
+
+    let transactionPayload: TransactionPayload = null;
+    let transactionType;
+
+    if (isBridgeTransaction) {
+      // Separate bridge offer txs from staking txs
+      setIsBridging(true);
+
+      transactionType = TRANSACTION_TYPE.EXCHANGE;
+      transactionPayload = mapTransactionsToTransactionPayload(selectedChain, transactions);
+      transactionPayload = {
+        ...transactionPayload,
+        offer: {
+          ...offerData,
+          swapFeeInfo,
+        },
+        type: transactionType,
+        gasToken: gasFeeAsset,
+      };
+
+      let stakeTransactionPayload = mapTransactionsToTransactionPayload(CHAIN.ETHEREUM, stakeTransactions);
+      stakeTransactionPayload = {
+        ...stakeTransactionPayload,
+        offer: null,
+        type: TRANSACTION_TYPE.STAKEPLR,
+      };
+
+      setStakeTxPayload(stakeTransactionPayload);
+    } else {
+      try {
+        transactionType = TRANSACTION_TYPE.STAKEPLR;
+        const allTransactions = [...transactions, ...stakeTransactions];
+        transactionPayload = mapTransactionsToTransactionPayload(CHAIN.ETHEREUM, allTransactions);
+        transactionPayload = {
+          ...transactionPayload,
+          offer: null,
+          type: transactionType,
+        };
+      } catch (e) {
+        console.log('create staking payload error', e);
+      }
+    }
+
+    if (!transactionPayload) return;
+
+    const tx = await sendTransactions(selectedChain, transactionPayload);
+
+    if (!tx) {
+      showTransactionRevertedToast();
+      setIsBridging(false);
+      setIsStaking(false);
+      setProcessing(false);
+    }
+
+    if (tx && transactionType === TRANSACTION_TYPE.EXCHANGE) {
+      setIsBridging(true);
+    }
+
+    if (tx && transactionType === TRANSACTION_TYPE.STAKEPLR) {
+      const stakedToken = await getStakedToken();
+      const stkPlrBalance = await getBalanceForAddress(CHAIN.ETHEREUM, stakedToken);
+      setStartingStkPlr(stkPlrBalance);
+      setIsStaking(true);
+    }
+  };
+
+  const onExecute = async () => {
+    if (!processing && !isBridging && !isStaking && !validatePlr()) return;
+
+    submitTransactions();
+  };
+
+  const onDone = async () => {
+    await getStakingContractInfo();
+
+    navigation.navigate(HOME);
+  };
+
+  const formButtonText = () => {
+    if (processing) return 'Processing...';
+    else if (!value) return 'Enter staking amount';
+    else if (!validatePlr()) return 'Insufficient PLR amount';
+    else if (calculatingGas && !txFeeInfo) return 'Calculating fees...';
+    else if (value && isBridgeTransaction && !buildTransactionFetched) return 'Fetching routes...';
+    else if (value && isSwapTransaction && !swapOffers?.length) return 'Fetching offers...';
+    return 'Execute';
   };
 
   const showLoading =
@@ -195,6 +395,11 @@ const PlrStakingValidator = () => {
   const noOffers =
     (isBridgeTransaction && !buildTransactionData && buildTransactionFetched && !!value) ||
     (isSwapTransaction && !swapOffers?.length && !!value);
+
+  const showRoute =
+    (isEthereumPlr && stkPlrAmount && txFeeInfo) ||
+    (isBridgeTransaction && buildTransactionData && buildTransactionFetched && stkPlrAmount && txFeeInfo) ||
+    (isSwapTransaction && swapOffers?.length && !!stkPlrAmount && txFeeInfo);
 
   return (
     <Container>
@@ -218,6 +423,7 @@ const PlrStakingValidator = () => {
             referenceDisableMax={isNativeAsset(selectedToken?.chain, selectedToken?.address)}
             ref={inputRef}
             onTokenPress={onTokenPress}
+            disabled={processing || lockedStakingAmount}
           />
 
           <Spacing w={spacing.large} />
@@ -225,29 +431,43 @@ const PlrStakingValidator = () => {
           {stkPlrToken && (
             <AssetInput
               value={truncateDecimalPlaces(stkPlrAmount, 4)}
-              asset={stkPlrToken}
+              asset={plrToken}
               chain={stkPlrToken.chain}
+              symbolOverride={stkPlrToken.symbol}
               walletType={selectedWallet}
-              balance={balance}
-              maxValue={balance}
-              referenceValue={balance}
               referenceDisableMax={true}
               ref={stakeRef}
               disabled={true}
               editable={false}
+              to
             />
           )}
         </AssetInputWrapper>
 
-        {gasFeeAssets && value && (
+        {gasFeeAssets && isBridgeTransaction && value && (
           <>
             <Spacing h={spacing.large} />
 
             <GasFeeAssetSelect
               assets={gasFeeAssets}
               chain={chain}
+              selectAsset={bridgeGasFeeAsset}
+              onSelectAsset={setBridgeGasFeeAsset}
+              disabled={processing}
+            />
+          </>
+        )}
+
+        {ethereumGasFeeAssets && value && (
+          <>
+            <Spacing h={spacing.large} />
+
+            <GasFeeAssetSelect
+              assets={ethereumGasFeeAssets}
+              chain={CHAIN.ETHEREUM}
               selectAsset={gasFeeAsset}
               onSelectAsset={setGasFeeAsset}
+              disabled={processing}
             />
           </>
         )}
@@ -262,7 +482,7 @@ const PlrStakingValidator = () => {
           </>
         )}
 
-        {noOffers && !showLoading && (
+        {noOffers && !isEthereumPlr && !showLoading && (
           <>
             <Spacing h={30} />
 
@@ -276,20 +496,31 @@ const PlrStakingValidator = () => {
           </>
         )}
 
+        {showRoute && (
+          <>
+            <Spacing h={16} />
+
+            <RouteText>Route</RouteText>
+          </>
+        )}
+
         {isBridgeTransaction && buildTransactionData && buildTransactionFetched && (
           <BridgeRouteCard
             value={value}
             selectedToken={selectedToken}
-            gasFeeAsset={gasFeeAsset}
+            gasFeeAsset={bridgeGasFeeAsset}
             plrToken={stkPlrToken}
             buildTransactionData={buildTransactionData}
             buildTransactionFetched={buildTransactionFetched}
             setStkPlrAmount={setStkPlrAmount}
             setOfferData={setOfferData}
-            onFeeInfo={setFeeInfo}
+            onFeeInfo={setSwapFeeInfo}
             onEstimateFail={() => {
               setShowFeeError(true);
             }}
+            fromChain={selectedChain}
+            stakeFeeInfo={txFeeInfo}
+            stakeGasFeeAsset={gasFeeAsset}
           />
         )}
 
@@ -308,31 +539,47 @@ const PlrStakingValidator = () => {
             plrToken={plrToken}
             setOfferData={setOfferData}
             setStkPlrAmount={setStkPlrAmount}
-            onFeeInfo={setFeeInfo}
+            onFeeInfo={setSwapFeeInfo}
+            stakeFeeInfo={txFeeInfo}
+            stakeGasFeeAsset={gasFeeAsset}
           />
         )}
 
-        {!!offerData && (
+        {isEthereumPlr && !!txFeeInfo && (
+          <StakeRouteCard
+            plrToken={plrToken}
+            value={value}
+            chain={selectedChain}
+            stakeFeeInfo={txFeeInfo}
+            stakeGasFeeAsset={gasFeeAsset}
+          />
+        )}
+
+        <Spacing h={30} />
+        {stkPlrAmount && !validatePlr() ? (
           <>
-            <Spacing h={30} />
-            {!validatePlr() && (
-              <>
-                <LimitWarningText>
-                  {'You need to stake min 10,000 PLR.\nYou can stake up to max 250,000 PLR.'}
-                </LimitWarningText>
-                <Spacing h={8} />
-              </>
-            )}
-
-            {validatePlr() && errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-
-            <Button
-              title={'Execute'}
-              onPress={onExecute}
-              size="large"
-              disabled={!selectedWallet || !selectedChain || !validatePlr() || !!errorMessage}
-            />
+            <LimitWarningText>
+              {'You need to stake min 10,000 PLR.\nYou can stake up to max 250,000 PLR.'}
+            </LimitWarningText>
+            <Spacing h={8} />
           </>
+        ) : feeErrorMessage ? (
+          <ErrorMessage>{feeErrorMessage}</ErrorMessage>
+        ) : stakingError ? (
+          <ErrorMessage>{stakingError}</ErrorMessage>
+        ) : null}
+
+        {!isStaked ? (
+          <Button
+            title={formButtonText()}
+            onPress={onExecute}
+            size="large"
+            disabled={
+              !selectedWallet || !selectedChain || !validatePlr() || !!feeErrorMessage || !txFeeInfo || processing
+            }
+          />
+        ) : (
+          <Button title={'Done'} onPress={onDone} size="large" disabled={!isStaked || processing} />
         )}
       </Content>
 
@@ -370,4 +617,9 @@ const ErrorMessage = styled(Text)`
   margin-bottom: 15px;
   text-align: center;
   color: ${({ theme }) => theme.colors.negative};
+`;
+
+const RouteText = styled(Text)`
+  ${fontStyles.big};
+  color: ${({ theme }) => theme.colors.basic010};
 `;

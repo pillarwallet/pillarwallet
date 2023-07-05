@@ -19,6 +19,7 @@
 */
 
 import React, { FC, useState, useEffect } from 'react';
+import { Image } from 'react-native';
 import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
@@ -34,36 +35,74 @@ import { ASSET_CATEGORY } from 'constants/assetsConstants';
 
 // Utils
 import { formatFiatValue, formatFiatChangeExtended } from 'utils/format';
-import { useThemeColors } from 'utils/themes';
+import { useTheme, useThemeColors } from 'utils/themes';
 import { appFont, borderRadiusSizes, fontSizes, fontStyles, spacing } from 'utils/variables';
 import { isKeyBasedAccount } from 'utils/accounts';
 import { showServiceLaunchErrorToast } from 'utils/inAppBrowser';
 import { useAssetCategoriesConfig } from 'utils/uiConfig';
+import { images } from 'utils/images';
+
+// Services
+import etherspotService from 'services/etherspot';
 
 // Components
 import Text from 'components/core/Text';
 import TokenIcon from 'components/display/TokenIcon';
 import CategoryListItem from './components/CategoryListItem';
+import { Sdk } from 'etherspot';
+
+// Abi
+import plrStakingAbi from 'abi/plrStaking.json';
+import { getStakingContractAddress } from 'utils/plrStakingHelper';
 
 type IInvestmentsSection = {};
 
 const InvestmentsSection: FC<IInvestmentsSection> = () => {
   const { t, tRoot } = useTranslationWithPrefix('home.investments');
   const navigation = useNavigation();
+  const theme = useTheme();
 
   const category = ASSET_CATEGORY.INVESTMENTS;
   const categoriesConfig = useAssetCategoriesConfig();
   const categoryInfo = categoriesConfig[category];
 
+  const [stakingEnabled, setStakingEnabled] = useState(false);
+  const [stakingEndTime, setStakingEndTime] = useState(null);
+
   const onPlrStakingPress = () => {
+    // if (!stakingEnabled) return;
+
     navigation.navigate(PILLAR_STAKING_FLOW);
   };
+
+  const getContractDetails = async () => {
+    const sdk: Sdk = etherspotService.getSdkForChain(CHAIN.ETHEREUM);
+
+    if (!sdk) return;
+
+    try {
+      const contractAddress = getStakingContractAddress();
+      const stakingContract = sdk.registerContract<any>('PStaking', plrStakingAbi, contractAddress);
+
+      const enabled = await stakingContract.callGetContractState();
+      console.log('enabled', enabled);
+      setStakingEnabled(enabled === 1);
+    } catch (e) {
+      console.log('InvestSection error', e);
+    }
+  };
+
+  useEffect(() => {
+    getContractDetails();
+  }, []);
+
+  const { plrStakingBg } = images(theme);
 
   return (
     <>
       <Container>
         <SubContainer>
-          <CategoryListItem key={category} iconName={categoryInfo.iconName} title={categoryInfo.title} />
+          <CategoryListItem key={category} iconName={'home-investments'} title={categoryInfo.title} />
         </SubContainer>
 
         <PlrStakingButton onPress={onPlrStakingPress}>
@@ -74,6 +113,8 @@ const InvestmentsSection: FC<IInvestmentsSection> = () => {
             <PlrStakingTitle>{t('title')}</PlrStakingTitle>
             <PlrStakingText>{t('description')}</PlrStakingText>
           </PlrStakingDescColumn>
+
+          <BackgroundImage source={plrStakingBg} resizeMode="contain" />
         </PlrStakingButton>
       </Container>
     </>
@@ -98,6 +139,7 @@ const PlrStakingButton = styled.TouchableOpacity`
   background-color: ${({ theme }) => theme.colors.plrStaking};
   padding: ${spacing.mediumLarge}px;
   border-radius: ${borderRadiusSizes.defaultContainer}px;
+  overflow: hidden;
 `;
 
 const PlrTokenColumn = styled.View``;
@@ -117,4 +159,12 @@ const PlrStakingTitle = styled(Text)`
 const PlrStakingText = styled(Text)`
   ${fontStyles.regular};
   margin-top: ${spacing.small}px;
+`;
+
+const BackgroundImage = styled(Image)`
+  width: 200px;
+  height: 600px;
+  position: absolute;
+  top: -135px;
+  right: -50px;
 `;

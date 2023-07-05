@@ -169,6 +169,7 @@ import IconGnosis16 from 'assets/icons/svg/icon-16-gnosis.svg';
 import IconArbitrum16 from 'assets/icons/svg/icon-16-arbitrum.svg';
 
 // Assets: plr token icons
+import IconPlr24 from 'assets/icons/svg/icon-24-plr.svg';
 import IconPlr32 from 'assets/icons/svg/icon-32-plr.svg';
 import IconPlr48 from 'assets/icons/svg/icon-48-plr.svg';
 
@@ -285,7 +286,7 @@ const components = {
   'radio-button-focus-icon': IconRadioButtonFocus,
   'radio-button-icon': IconRadioButton,
   'home-investments': IconHomeInvestments,
-  'combined_shape': CombinedShape,
+  combined_shape: CombinedShape,
 
   // Service icons
   binance: IconBinance,
@@ -318,6 +319,7 @@ const components = {
   arbitrum16: IconArbitrum16,
 
   // PLR icons
+  plr24: IconPlr24,
   plr32: IconPlr32,
   plr48: IconPlr48,
 

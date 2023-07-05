@@ -356,7 +356,7 @@ PODS:
   - React-jsinspector (0.63.4)
   - react-native-appearance (0.3.4):
     - React
-  - react-native-appsflyer (6.10.2):
+  - react-native-appsflyer (6.10.3):
     - AppsFlyerFramework (= 6.10.1)
     - React
   - react-native-background-timer (2.1.1):
@@ -373,7 +373,7 @@ PODS:
     - React
   - react-native-date-picker (3.4.3):
     - React-Core
-  - react-native-kochava-tracker (2.2.0):
+  - react-native-kochava-tracker (2.3.0):
     - React
   - react-native-netinfo (5.9.10):
     - React-Core
@@ -888,12 +888,12 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 93bd528844ad21dc07aab1c67cb10abae6df6949
   React-jsinspector: 58aef7155bc9a9683f5b60b35eccea8722a4f53a
   react-native-appearance: 0f0e5fc2fcef70e03d48c8fe6b00b9158c2ba8aa
-  react-native-appsflyer: 3c466bf329ee1bb556ed774af2b2cc5685c7325a
+  react-native-appsflyer: 153e96b97ecc0c26b14fc79911675e51cfd35b36
   react-native-background-timer: 1b6e6b4e10f1b74c367a1fdc3c72b67c619b222b
   react-native-camera: b8cc03e2feec0c04403d0998e37cf519d8fd4c6f
   react-native-cookies: 854d59c4135c70b92a02ca4930e68e4e2eb58150
   react-native-date-picker: 201b481c94dcb7678f4712477ad026dd7793305b
-  react-native-kochava-tracker: cdc03ae934c09b5ceca2100a81af13ca263f1f6a
+  react-native-kochava-tracker: 92a1d6cead007fcdfaf2295f3ece9e724b6acf7a
   react-native-netinfo: 30fb89fa913c342be82a887b56e96be6d71201dd
   react-native-notifications: 66c59381a466cb561c4036028ef6401a6b1a8a71
   react-native-pager-view: da490aa1f902c9a5aeecf0909cc975ad0e92e53e

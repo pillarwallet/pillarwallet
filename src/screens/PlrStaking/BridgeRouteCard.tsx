@@ -19,20 +19,15 @@
 */
 
 import React, { FC, useEffect, useMemo } from 'react';
-import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 import { BigNumber } from 'bignumber.js';
 
 // Components
-import Text from 'components/core/Text';
 import { Spacing } from 'components/layout/Layout';
 
 // Utils
-import { useProviderConfig } from 'utils/exchange';
-import { formatTokenValue, formatFiatValue } from 'utils/format';
-import { fontStyles } from 'utils/variables';
+import { formatTokenValue } from 'utils/format';
 import { getAssetValueInFiat } from 'utils/rates';
-import { isHighGasFee } from 'utils/transactions';
 import { useChainsConfig } from 'utils/uiConfig';
 import { getSortingValue } from 'screens/Bridge/Exchange-CrossChain/utils'; // From Cross-chain screen
 
@@ -62,6 +57,12 @@ type IBridgeRouteCard = {
   onEstimateFail?: () => void;
   buildTransactionData?: any;
   buildTransactionFetched?: any;
+  fromChain: string;
+  stakeFeeInfo: any;
+  stakeGasFeeAsset: Asset | AssetOption;
+  isBridging?: boolean;
+  isStaking?: boolean;
+  stakingCompleted?: boolean;
 };
 
 const BridgeRouteCard: FC<IBridgeRouteCard> = ({
@@ -75,15 +76,13 @@ const BridgeRouteCard: FC<IBridgeRouteCard> = ({
   onFeeInfo,
   onEstimateFail,
   buildTransactionData,
-  buildTransactionFetched,
+  fromChain,
+  stakeFeeInfo,
+  stakeGasFeeAsset,
 }) => {
   const { t } = useTranslation();
-  const activeAccount: any = useActiveAccount();
   const fiatCurrency = useFiatCurrency();
-  const gasThresholds = useRootSelector(gasThresholdsSelector);
   const chainsConfig = useChainsConfig();
-
-  console.log('activeAccount', activeAccount);
 
   const txData = useMemo(() => {
     if (!buildTransactionData || !plrToken) return null;
@@ -106,7 +105,7 @@ const BridgeRouteCard: FC<IBridgeRouteCard> = ({
 
     return {
       provider: provider === 'lifi' ? 'Lifi' : provider,
-      chain,
+      fromChain,
       gasFeeAsset,
       toChain: plrToken.chain,
       transactions: txData,
@@ -118,32 +117,27 @@ const BridgeRouteCard: FC<IBridgeRouteCard> = ({
     };
   }, [buildTransactionData]);
 
-  const config = useProviderConfig(offer?.provider);
-
   useEffect(() => {
     setOfferData(offer || null);
     setStkPlrAmount(offer?.toAmount || null);
   }, [offer]);
 
-  const { chain, toChain, toAsset, toAmount } = offer;
+  const { toChain, toAsset, toAmount } = offer;
 
   const { titleShort: networkName } = chainsConfig[toChain];
 
-  const rates = useChainRates(toChain || chain);
+  const rates = useChainRates(toChain || fromChain);
   const currency = useFiatCurrency();
 
   const fiatValue = getAssetValueInFiat(toAmount, toAsset?.address, rates, currency) ?? null;
-  const formattedFiatValue = formatFiatValue(fiatValue, currency);
 
   const {
     feeInfo,
     errorMessage: estimationErrorMessage,
     isEstimating,
-  } = useTransactionsEstimate(chain, txData || offer?.transactions, true, gasFeeAsset);
+  } = useTransactionsEstimate(fromChain, txData || offer?.transactions, true, gasFeeAsset);
 
-  const chainRates = useChainRates(chain);
-
-  const highFee = isHighGasFee(chain, feeInfo?.fee, feeInfo?.gasToken, chainRates, fiatCurrency, gasThresholds);
+  const chainRates = useChainRates(fromChain);
 
   const formattedToAmount = formatTokenValue(offer.toAmount, offer.toAsset.symbol, { decimalPlaces: 0 }) ?? '';
 
@@ -161,24 +155,16 @@ const BridgeRouteCard: FC<IBridgeRouteCard> = ({
       onFetchSortingOfferInfo({
         ...offer,
         feeInfo,
-        sortingValue: getSortingValue(toChain || chain, feeInfo, chainRates, fiatCurrency, fiatValue),
+        sortingValue: getSortingValue(toChain || fromChain, feeInfo, chainRates, fiatCurrency, fiatValue),
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [feeInfo, estimationErrorMessage, isEstimating]);
-
-  // if (estimationErrorMessage) {
-  //   return null;
-  // }
 
   // Display route
   if (!offer) return null;
 
   return (
     <>
-      <Spacing h={16} />
-
-      <RouteText>Route</RouteText>
-
       <Spacing h={8} />
 
       <RouteCard
@@ -188,80 +174,14 @@ const BridgeRouteCard: FC<IBridgeRouteCard> = ({
         formattedFromAmount={formattedFromAmount}
         formattedToAmount={formattedToAmount}
         networkName={networkName}
-        providerConfig={config}
-        feeInfo={feeInfo}
-        highFee={highFee}
+        provider={offer?.provider}
+        stakeFeeInfo={stakeFeeInfo}
+        stakeGasFeeAsset={stakeGasFeeAsset}
+        gasFeeAsset={gasFeeAsset}
+        transactions={offer?.transactions}
       />
     </>
   );
 };
 
 export default BridgeRouteCard;
-
-const EmptyStateWrapper = styled.View`
-  justify-content: center;
-  align-items: center;
-`;
-
-const RouteText = styled(Text)`
-  ${fontStyles.big};
-  color: ${({ theme }) => theme.colors.basic010};
-`;
-
-// Routes
-const RouteWrapper = styled.View`
-  flex-direction: column;
-`;
-
-const RouteContainer = styled.View`
-  margin: 0 0 8px;
-  padding: 20px;
-  border-radius: 20px;
-  background-color: ${({ theme }) => theme.colors.basic050};
-
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-`;
-
-const IconWrapper = styled.View`
-  align-items: center;
-  justify-content: center;
-`;
-
-const RouteInfoWrapper = styled.View`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  padding-left: 16px;
-  justify-content: center;
-`;
-
-const RouteInfoRow = styled.View`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const MainText = styled(Text).attrs((props: { highlighted?: boolean }) => props)`
-  ${fontStyles.medium};
-
-  color: ${({ theme, highlighted }) => (highlighted ? theme.colors.plrStakingHighlight : theme.colors.basic000)};
-`;
-
-const SubText = styled(Text).attrs((props: { highlighted?: boolean }) => props)`
-  ${fontStyles.regular};
-
-  color: ${({ theme, highlighted }) => (highlighted ? theme.colors.plrStakingHighlight : theme.colors.basic000)};
-`;
-
-const RadioButtonWrapper = styled.View`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const HighlightText = styled(Text)`
-  color: ${({ theme }) => theme.colors.plrStakingHighlight};
-`;

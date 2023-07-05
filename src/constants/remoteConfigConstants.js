@@ -73,6 +73,8 @@ export const REMOTE_CONFIG = {
   PLR_STAKING_CONTRACT: 'app_plr_staking_contract',
   PLE_STAKING_TOKEN_ADDRESS: 'app_plr_staking_token_address',
   FEATURE_PLR_STAKING: 'feature_plr_staking',
+  PLR_STAKING_START_TIME: 'stakingStartTime',
+  PLR_STAKING_LOCKED_START_TIME: 'stakingLockedStartTime',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values
@@ -129,4 +131,6 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.PLR_STAKING_CONTRACT]: '',
   [REMOTE_CONFIG.PLE_STAKING_TOKEN_ADDRESS]: '',
   [REMOTE_CONFIG.FEATURE_PLR_STAKING]: false,
+  [REMOTE_CONFIG.PLR_STAKING_START_TIME]: 1688425200,
+  [REMOTE_CONFIG.PLR_STAKING_LOCKED_START_TIME]: 1689289200,
 };

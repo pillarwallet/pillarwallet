@@ -23,20 +23,30 @@ import styled from 'styled-components/native';
 
 // Constants
 import { OFFERS } from 'constants/exchangeConstants';
+import { CHAIN } from 'constants/chainConstantsTs';
 
 // Utils
 import { fontStyles } from 'utils/variables';
+import { useProviderConfig } from 'utils/exchange';
+import { getBalanceInFiat } from 'utils/assets';
+import { formatFiatValue } from 'utils/format';
+
+// Selectors
+import { useFiatCurrency, useChainRates } from 'selectors';
 
 // Types
-import type { AssetOption } from 'models/Asset';
+import type { Asset, AssetOption } from 'models/Asset';
 import type { Chain } from 'models/Chain';
 import type { TransactionFeeInfo } from 'models/Transaction';
 
+// Hooks
+import { useTransactionsEstimate } from 'hooks/transactions';
+
 // Components
 import TokenIcon from 'components/display/TokenIcon';
-import { TableFee } from 'components/legacy/Table';
 import RadioButton from 'components/RadioButton';
 import Text from 'components/core/Text';
+import { BigNumber, ethers } from 'ethers';
 
 interface IRouteCard {
   offer?: any;
@@ -46,11 +56,14 @@ interface IRouteCard {
   formattedToAmount?: string;
   formattedFromAmount?: string;
   networkName?: string;
-  providerConfig?: any;
-  feeInfo?: any;
+  provider?: any;
   highFee?: boolean;
   onSelectOffer?: (offer: any, feeInfo: TransactionFeeInfo | null) => void;
   disabled?: boolean;
+  stakeFeeInfo: any;
+  stakeGasFeeAsset: Asset | AssetOption;
+  transactions: any;
+  gasFeeAsset: Asset | AssetOption;
 }
 
 const RouteCard: FC<IRouteCard> = ({
@@ -61,63 +74,119 @@ const RouteCard: FC<IRouteCard> = ({
   formattedToAmount,
   formattedFromAmount,
   networkName,
-  providerConfig: config,
-  feeInfo,
-  highFee,
+  provider,
   onSelectOffer,
   disabled,
+  stakeFeeInfo,
+  stakeGasFeeAsset,
+  transactions,
+  gasFeeAsset,
 }) => {
+  const currency = useFiatCurrency();
+  const chainRates = useChainRates(chain);
+  const ethRates = useChainRates(CHAIN.ETHEREUM);
+
+  const config = useProviderConfig(provider);
+
+  const { feeInfo } = useTransactionsEstimate(chain, transactions, true, gasFeeAsset);
+
+  const feeEtherValueBn = feeInfo?.fee ? BigNumber.from(feeInfo.fee.toString()) : null;
+  const stakeFeeEtherValueBn = stakeFeeInfo ? BigNumber.from(stakeFeeInfo.toString()) : null;
+
+  const getFiatValue = (value: BigNumber, address: string, isEthereum?: boolean) => {
+    if (!value) return null;
+
+    const etherValue = ethers.utils.formatEther(value);
+    const valueInFiat = getBalanceInFiat(currency, etherValue, !!isEthereum ? ethRates : chainRates, address);
+    return valueInFiat;
+  };
+
+  const getTotalGasFees = () => {
+    let totalFiatValue = 0;
+    if (feeEtherValueBn) totalFiatValue += getFiatValue(feeEtherValueBn, gasFeeAsset.address) || 0;
+    if (stakeFeeEtherValueBn) totalFiatValue += getFiatValue(stakeFeeEtherValueBn, stakeGasFeeAsset.address, true) || 0;
+    return totalFiatValue;
+  };
+
   return (
     <RouteWrapper>
       <RouteContainer onPress={() => onSelectOffer?.(offer, feeInfo)} disabled={disabled || !onSelectOffer}>
         <IconWrapper>{plrToken && <TokenIcon url={plrToken?.iconUrl} size={48} chain={plrToken?.chain} />}</IconWrapper>
 
-        <RouteInfoWrapper>
+        <RouteInfoContainer>
           <RouteInfoRow>
             <MainText>{formattedToAmount}</MainText>
             <MainText highlighted>{`on ${networkName}`}</MainText>
           </RouteInfoRow>
 
           <RouteInfoRow>
-            <SubText>
-              <HighlightText>{'Est. fee: '}</HighlightText>
-              <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={chain} highFee={highFee} />
-            </SubText>
+            <GasPriceWrapper>
+              <SubText>
+                <HighlightText>{'Est. fee: '}</HighlightText>
+                {formatFiatValue(getTotalGasFees(), currency)}
+              </SubText>
+            </GasPriceWrapper>
             <SubText>
               <HighlightText>Est. time:</HighlightText>
               {` 2 mins`}
             </SubText>
           </RouteInfoRow>
-        </RouteInfoWrapper>
+        </RouteInfoContainer>
 
         <RadioButtonWrapper>
           <RadioButton type={OFFERS} visible={selected} style={{ marginRight: 0, marginLeft: 12 }} />
         </RadioButtonWrapper>
       </RouteContainer>
 
-      <RouteBreakdownContainer>
-        <IconWrapper>{config && <TokenIcon url={config.iconUrl} size={32} chain={plrToken?.chain} />}</IconWrapper>
+      <RouteBreakdownWrapper>
+        <Circle />
+        <RouteBreakdownContainer>
+          <IconWrapper>{config && <TokenIcon url={config.iconUrl} size={32} chain={plrToken?.chain} />}</IconWrapper>
 
-        <RouteInfoWrapper>
-          <RouteInfoRow>
-            <MainText>{`Swap via ${config?.title} on ${networkName}`}</MainText>
-          </RouteInfoRow>
+          <RouteInfoContainer>
+            <RouteInfoRow>
+              <MainText>{`Swap via ${config?.title} on ${networkName}`}</MainText>
+            </RouteInfoRow>
 
-          <RouteInfoRow>
-            <MainText>{`${formattedFromAmount} → ${formattedToAmount}`}</MainText>
-          </RouteInfoRow>
-        </RouteInfoWrapper>
-      </RouteBreakdownContainer>
+            <RouteInfoRow>
+              <MainText>{`${formattedFromAmount} → ${formattedToAmount}`}</MainText>
+            </RouteInfoRow>
 
-      <RouteBreakdownContainer>
-        <IconWrapper>{plrToken && <TokenIcon url={plrToken?.iconUrl} size={32} chain={plrToken?.chain} />}</IconWrapper>
+            <RouteInfoRow>
+              <GasPriceWrapper>
+                <SubText>
+                  <HighlightText>{'Est. fee: '}</HighlightText>
+                  {feeEtherValueBn && formatFiatValue(getFiatValue(feeEtherValueBn, gasFeeAsset.address), currency)}
+                </SubText>
+              </GasPriceWrapper>
+            </RouteInfoRow>
+          </RouteInfoContainer>
+        </RouteBreakdownContainer>
+      </RouteBreakdownWrapper>
 
-        <RouteInfoWrapper>
-          <RouteInfoRow>
-            <MainText>{`Stake ${formattedToAmount} on ${networkName}`}</MainText>
-          </RouteInfoRow>
-        </RouteInfoWrapper>
-      </RouteBreakdownContainer>
+      <RouteBreakdownWrapper>
+        <Circle />
+        <RouteBreakdownContainer>
+          <IconWrapper>
+            {plrToken && <TokenIcon url={plrToken?.iconUrl} size={32} chain={plrToken?.chain} />}
+          </IconWrapper>
+
+          <RouteInfoContainer>
+            <RouteInfoRow>
+              <MainText>{`Stake ${formattedToAmount} on ${networkName}`}</MainText>
+            </RouteInfoRow>
+            <RouteInfoRow>
+              <GasPriceWrapper>
+                <SubText>
+                  <HighlightText>{'Est. fee: '}</HighlightText>
+                  {stakeFeeEtherValueBn &&
+                    formatFiatValue(getFiatValue(stakeFeeEtherValueBn, stakeGasFeeAsset.address, true), currency)}
+                </SubText>
+              </GasPriceWrapper>
+            </RouteInfoRow>
+          </RouteInfoContainer>
+        </RouteBreakdownContainer>
+      </RouteBreakdownWrapper>
     </RouteWrapper>
   );
 };
@@ -139,12 +208,29 @@ const RouteContainer = styled.TouchableOpacity`
   justify-content: space-between;
 `;
 
-const RouteBreakdownContainer = styled.View`
+const RouteBreakdownWrapper = styled.View`
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
   margin: 0 0 8px;
+`;
+
+const Circle = styled.View<{ active?: boolean }>`
+  height: 10px;
+  width: 10px;
+  margin-right: 8px;
+  background-color: ${({ theme, active }) => (active ? theme.colors.positive : 'rgba(0,0,0,0)')};
+  border: 1px ${({ theme }) => theme.colors.basic080} solid;
+  border-radius: 10px;
+`;
+
+const RouteBreakdownContainer = styled.View`
   padding: 10px;
   border-radius: 20px;
   background-color: ${({ theme }) => theme.colors.basic050};
 
+  flex: 1;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -155,7 +241,7 @@ const IconWrapper = styled.View`
   justify-content: center;
 `;
 
-const RouteInfoWrapper = styled.View`
+const RouteInfoContainer = styled.View`
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -178,8 +264,13 @@ const MainText = styled(Text).attrs((props: { highlighted?: boolean }) => props)
 
 const SubText = styled(Text).attrs((props: { highlighted?: boolean }) => props)`
   ${fontStyles.regular};
-
   color: ${({ theme, highlighted }) => (highlighted ? theme.colors.plrStakingHighlight : theme.colors.basic000)};
+`;
+
+const GasPriceWrapper = styled.View`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 `;
 
 const RadioButtonWrapper = styled.View`

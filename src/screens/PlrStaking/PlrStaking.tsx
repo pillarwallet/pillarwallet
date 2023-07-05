@@ -1,18 +1,28 @@
 import React, { useState, useEffect } from 'react';
+import { Image } from 'react-native';
 import { useTranslationWithPrefix } from 'translations/translate';
 import styled from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
+import { BigNumber, ethers } from 'ethers';
+import { addDays, format, intervalToDuration } from 'date-fns';
 
 // Constants
 import { PLR_STAKING_VALIDATOR } from 'constants/navigationConstants';
-import { MIN_PLR_STAKE_AMOUNT, WalletType, plrSupportedChains } from 'constants/plrStakingConstants';
+import {
+  MIN_PLR_STAKE_AMOUNT,
+  STAKING_LOCKED_PERIOD,
+  STAKING_PERIOD,
+  WalletType,
+  plrSupportedChains,
+} from 'constants/plrStakingConstants';
 
 // Hooks
 import { useStableAssets, useNonStableAssets } from 'hooks/assets';
 
 // Utils
 import { fontStyles, spacing } from 'utils/variables';
+import { formatBigAmount } from 'utils/common';
 
 // Selectors
 import { useSupportedChains } from 'selectors/chains';
@@ -23,13 +33,16 @@ import { useChainsConfig } from 'utils/uiConfig';
 
 // Components
 import { Container, Content } from 'components/layout/Layout';
-import HeaderBlock from 'components/HeaderBlock';
 import Button from 'components/core/Button';
 import Text from 'components/core/Text';
 import Icon from 'components/core/Icon';
 import RadioButton from 'components/RadioButton';
 import { Spacing } from 'components/legacy/Layout';
 import AssetSelectorModal from 'components/Modals/AssetSelectorModal';
+
+// Local
+import PlrStakingHeaderBlock from './PlrStakingHeaderBlock';
+import { getStakingContractInfo, getStakingRemoteConfig } from 'utils/plrStakingHelper';
 
 const PlrStaking = () => {
   const navigation = useNavigation();
@@ -43,6 +56,19 @@ const PlrStaking = () => {
   const { tokens: nonStableTokens } = useNonStableAssets();
   const tokens = [...stableTokens, ...nonStableTokens];
 
+  // Contract data
+  const [stakingEnabled, setStakingEnabled] = useState(null);
+  const [stakedAmount, setStakedAmount] = useState(null);
+  const [stakedPercentage, setStakedPercentage] = useState(null);
+  const [stakers, setStakers] = useState(0);
+
+  // Remote Config
+  const [stakingEndTime, setStakingEndTime] = useState<Date>(null);
+  const [stakingLockedEndTime, setStakingLockedEndTime] = useState<Date>(null);
+
+  const [remainingStakingTime, setRemainingStakingTime] = useState<Duration>(null);
+  const [remainingLockedTime, setRemainingLockedTime] = useState<Duration>(null);
+
   const [balancesWithoutPlr, setBalancesWithoutPlr] = useState(null);
   const [plrBalances, setPlrBalances] = useState(null);
   const [hasEnoughPlr, setHasEnoughPlr] = useState(false);
@@ -52,17 +78,51 @@ const PlrStaking = () => {
 
   const [showModal, setShowModal] = useState(false);
 
+  const getRemainingTimes = () => {
+    if (stakingEndTime) {
+      const stakingDuration = intervalToDuration({ start: new Date(), end: stakingEndTime });
+      setRemainingStakingTime(stakingDuration);
+    }
+
+    if (stakingLockedEndTime) {
+      const lockedDuration = intervalToDuration({ start: new Date(), end: stakingLockedEndTime });
+      setRemainingLockedTime(lockedDuration);
+    }
+  };
+
   useEffect(() => {
+    const fetchStakingInfo = async () => {
+      const stakingRemoteConfig = getStakingRemoteConfig();
+      const startTime = new Date(stakingRemoteConfig.stakingStartTime * 1000);
+
+      const lockedStartTime = new Date(stakingRemoteConfig.stakingLockedStartTime * 1000);
+
+      const endTime = addDays(startTime, STAKING_PERIOD);
+      const lockedEndTime = addDays(lockedStartTime, STAKING_LOCKED_PERIOD);
+      setStakingEndTime(endTime);
+      setStakingLockedEndTime(lockedEndTime);
+
+      const stakingInfo = await getStakingContractInfo();
+      try {
+        setStakingEnabled(!!stakingInfo.contractState);
+
+        const stakingMaxTotal = BigNumber.from(stakingInfo.maxStakeTotal.toString());
+        const totalStaked = BigNumber.from(stakingInfo.totalStaked.toString());
+        const percentage = Number(totalStaked.mul(100).div(stakingMaxTotal)) / 100;
+
+        setStakedAmount(formatBigAmount(ethers.utils.formatEther(totalStaked)));
+        setStakedPercentage(percentage.toFixed(0).toString());
+        setStakers(0);
+      } catch (e) {
+        //
+      }
+    };
+
     const plrAddresses: string[] = [];
-    console.log('Chains', chains);
     chains.map((chain) => {
       const plrAddress = getPlrAddressForChain(chain);
       if (!!plrAddress) plrAddresses.push(plrAddress.toLowerCase());
     });
-
-    console.log('plrAddresses', plrAddresses);
-
-    console.log('tokens', tokens);
 
     const filteredWithoutPlr = tokens.filter(
       (token) =>
@@ -75,18 +135,27 @@ const PlrStaking = () => {
       .filter((token) => plrAddresses.includes(token?.address?.toLowerCase()))
       .sort((a, b) => b?.assetBalance - a?.assetBalance);
 
-    console.log('plrBalances', plrBalances);
-
     if (!filteredTokens?.length) {
       setHasEnoughPlr(false);
       return;
     }
+
+    fetchStakingInfo();
 
     setSelectedChain(filteredTokens[0].chain);
     setHasEnoughPlr(filteredTokens[0].assetBalance >= MIN_PLR_STAKE_AMOUNT);
     setPlrBalances(filteredTokens);
     setBalancesWithoutPlr(filteredWithoutPlr);
   }, []);
+
+  useEffect(() => {
+    if (!stakingEndTime) return;
+
+    console.log();
+
+    const timerCountdown = setInterval(getRemainingTimes, 1000);
+    return () => clearInterval(timerCountdown);
+  }, [stakingEndTime]);
 
   const getPlrTotal = () => {
     if (!plrBalances?.length) return 0;
@@ -123,7 +192,6 @@ const PlrStaking = () => {
   };
 
   const onSelectToken = (token) => {
-    console.log('selected token', token);
     setShowModal(false);
     navigation.navigate(PLR_STAKING_VALIDATOR, {
       token: token,
@@ -145,19 +213,51 @@ const PlrStaking = () => {
       token: token,
       chain: token.chain,
       wallet: selectedWallet,
-      balancesWithoutPlr: null,
+      balancesWithoutPlr: balancesWithoutPlr,
     });
+  };
+
+  const formatRemainingTime = (time: Duration) => {
+    let timeStr = '';
+    if (!time) return timeStr;
+
+    if (time.months) timeStr += ` ${time.months} months`;
+    if (time.days) timeStr += ` ${time.days} days`;
+    if (time.hours) timeStr += ` ${time.hours}h`;
+    if (time.minutes) timeStr += ` ${time.minutes}m`;
+    if (time.seconds) timeStr += ` ${time.seconds}s`;
+
+    return timeStr?.slice(1) || '';
   };
 
   return (
     <Container>
-      <HeaderBlock
+      <PlrStakingHeaderBlock
         centerItems={[{ title: t('title') }]}
         leftItems={[{ close: true }]}
         navigation={navigation}
         noPaddingTop
+        stakedAmount={stakedAmount}
+        stakedPercentage={stakedPercentage}
+        stakers={stakers}
       />
       <Content>
+        <IconRow>
+          <StakingAlertCircle />
+          <Spacing w={8} />
+          {stakingEnabled == null ? (
+            <InfoText>{`Staking info is loading...`}</InfoText>
+          ) : stakingEnabled ? (
+            <InfoText>
+              {`Staking will close in `} <InfoText bold>{formatRemainingTime(remainingStakingTime)}</InfoText>
+            </InfoText>
+          ) : (
+            <InfoText>{'Staking is currently closed'}</InfoText>
+          )}
+        </IconRow>
+
+        <Spacing h={spacing.mediumLarge} />
+
         <InfoText>{t('info')}</InfoText>
 
         {!!plrBalances?.length && (
@@ -194,18 +294,18 @@ const PlrStaking = () => {
               {plrBalances.map((bal) => {
                 const { titleShort } = chainsConfig[bal.chain];
 
-                const disabled = bal.assetBalance < MIN_PLR_STAKE_AMOUNT || true;
+                const disabled = bal?.assetBalance < MIN_PLR_STAKE_AMOUNT;
 
                 return (
                   <BalanceItem onClick={() => selectChain(bal.chain)} disabled={disabled}>
-                    <BalanceRightItem>
+                    <BalanceLeftItem>
                       <Spacing w={spacing.large} />
                       <RadioButton visible={bal.chain === selectedChain} disabled={disabled} />
                       <Spacing w={spacing.small} />
                       {/* @ts-ignore */}
                       <Icon name={bal.chain + 16} />
                       <BalanceTitle disabled={disabled}>{titleShort}</BalanceTitle>
-                    </BalanceRightItem>
+                    </BalanceLeftItem>
 
                     <BalanceRightItem>
                       <BalanceValueText disabled={disabled}>
@@ -230,7 +330,7 @@ const PlrStaking = () => {
               title={t('button.stake')}
               onPress={onStake}
               size="large"
-              disabled={!selectedWallet || !selectedChain}
+              disabled={!selectedWallet || !selectedChain || !stakingEnabled}
             />
           )}
 
@@ -249,10 +349,10 @@ const PlrStaking = () => {
   );
 };
 
-const InfoText = styled(Text)`
+const InfoText = styled(Text)<{ bold?: boolean }>`
   color: ${({ theme }) => theme.colors.basic010};
-  margin-top: ${spacing.mediumLarge}px;
   ${fontStyles.regular};
+  ${({ bold }) => bold && `font-weight: 500;`};
 `;
 
 const LimitWarningText = styled(Text)`
@@ -365,6 +465,20 @@ const BalanceValueText = styled(Text).attrs((props: { fiat?: boolean }) => props
   ${fontStyles.regular};
   color: ${({ theme, fiat }) => (!!fiat ? theme.colors.secondaryText : theme.colors.link)};
   margin-left: ${spacing.small}px;
+`;
+
+const IconRow = styled.View`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+`;
+
+const StakingAlertCircle = styled.View`
+  width: 12px;
+  height: 12px;
+  border-radius: 12px;
+  background-color: ${({ theme }) => theme.colors.plrStakingAlert};
 `;
 
 export default PlrStaking;
