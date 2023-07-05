@@ -1,4 +1,5 @@
 // @flow
+/* eslint-disable */
 /*
     Pillar Wallet: the personal data locker
     Copyright (C) 2019 Stiftung Pillar Project
@@ -485,26 +486,26 @@ class HeaderBlock extends React.Component<Props> {
               <StakeInfoWrapper>
                 <InfoRow>
                   <InfoItem small>
-                    <InfoTitle>{'Token'}</InfoTitle>
+                    <InfoTitle>Token</InfoTitle>
                     <IconRow>
                       <SvgIcon name="plr24" />
                       <Spacing w={8} />
-                      <InfoText>{'PLR'}</InfoText>
+                      <InfoText>PLR</InfoText>
                     </IconRow>
                   </InfoItem>
 
                   <InfoItem>
-                    <InfoTitle>{'Chain'}</InfoTitle>
+                    <InfoTitle>Chain</InfoTitle>
                     <IconRow>
                       <SvgIcon name="ethereum" />
                       <Spacing w={8} />
-                      <InfoText>{'Ethereum'}</InfoText>
+                      <InfoText>Ethereum</InfoText>
                     </IconRow>
                   </InfoItem>
 
                   <InfoItem>
-                    <InfoTitle>{'APY (Variable)'}</InfoTitle>
-                    <InfoText apy>{'7.34%'}</InfoText>
+                    <InfoTitle>APY (Variable)</InfoTitle>
+                    <InfoText apy>{`${7.34}%`}</InfoText>
                   </InfoItem>
                 </InfoRow>
 
@@ -512,17 +513,17 @@ class HeaderBlock extends React.Component<Props> {
 
                 <InfoRow>
                   <InfoItem small>
-                    <InfoTitle>{'Staked'}</InfoTitle>
+                    <InfoTitle>Staked</InfoTitle>
                     <InfoText>{stakedAmount || 0}</InfoText>
                   </InfoItem>
 
                   <InfoItem>
-                    <InfoTitle>{'Vault filling'}</InfoTitle>
+                    <InfoTitle>Vault filling</InfoTitle>
                     <InfoText>{`${stakedPercentage || 0}%`}</InfoText>
                   </InfoItem>
 
                   <InfoItem>
-                    <InfoTitle>{'Stakers'}</InfoTitle>
+                    <InfoTitle>Stakers</InfoTitle>
                     <InfoText>{stakers || 0}</InfoText>
                   </InfoItem>
                 </InfoRow>
