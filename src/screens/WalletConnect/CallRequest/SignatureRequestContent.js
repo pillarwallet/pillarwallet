@@ -69,7 +69,7 @@ function SignatureRequestContent({ request, onConfirm, onReject }: Props) {
   const isSignTypedData = method === ETH_SIGN_TYPED_DATA || method === ETH_SIGN_TYPED_DATA_V4;
 
   const { message, primaryType } =
-    isSignTypedData && !isEmpty(params) ? JSON.parse(params[1]) : { message: null, primaryType: null };
+    isSignTypedData && !isEmpty(params?.[1]) ? JSON.parse(params[1]) : { message: null, primaryType: null };
 
   const messageText = React.useMemo(() => {
     if (isEmpty(message)) return [];
@@ -83,7 +83,7 @@ function SignatureRequestContent({ request, onConfirm, onReject }: Props) {
 
       if (!key) return '';
 
-      const label = key.charAt(0).toUpperCase() + key.slice(1);
+      const label = `${key.charAt(0).toUpperCase()}${key.slice(1)}`;
 
       // eslint-disable-next-line i18next/no-literal-string
       if (!description) return `${label}\n\n`;
@@ -169,7 +169,7 @@ function SignatureRequestContent({ request, onConfirm, onReject }: Props) {
       <Button
         title={isSignTypedData ? t('button.approve') : t('button.confirm')}
         onPress={onConfirm}
-        disabled={requiresDeployedAccount}
+        disabled={requiresDeployedAccount || (isSignTypedData && isEmpty(params?.[1]))}
         style={styles.button}
       />
 
