@@ -1715,6 +1715,15 @@
     "limitWarning": "You need a minimum of 10,000 PLR tokens on Ethereum, swap more assets to PLR on Ethereum.",
     "plrAvailable": "You have PLR assets on {{chainAmount}} chain{{s}}",
     "pillar": "Pillar",
+    "etherspotWallet": "Etherspot Wallet",
+    "header": {
+      "token": "Token",
+      "chain": "Chain",
+      "apy": "APY (Variable)",
+      "staked": "Staked",
+      "vaultFilling": "Vault filling",
+      "stakers": "Stakers"
+    },
     "assetSelector": {
       "from": "From",
       "to": "To",
@@ -1724,9 +1733,19 @@
     },
     "button": {
       "chooseAsset": "Choose Asset",
-      "stake": "Stake"
+      "stake": "Stake",
+      "processing": "Processing...",
+      "enterAmount": "Enter staking amount",
+      "calculatingFees": "Calculating fees...",
+      "insufficientAmount": "Insufficient PLR amount",
+      "fetchingRoutes": "Fetching routes...",
+      "fetchingOffers": "Fetching offers...",
+      "execute": "Execute"
     },
-    "validator": { "title": "Staking Pillar Validator" },
+    "validator": {
+      "title": "Staking Pillar Validator",
+      "limitWarning": "You need to stake min 10,000 PLR.\nYou can stake up to max 250,000 PLR."
+    },
     "chooseAsset": "Choose asset"
   }
 }

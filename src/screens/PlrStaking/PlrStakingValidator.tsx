@@ -7,11 +7,9 @@ import { useDebounce } from 'use-debounce';
 import { BigNumber, ethers } from 'ethers';
 
 // Constants
-import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstantsTs';
 import { stkPlrToken } from 'constants/plrStakingConstants';
 import { TRANSACTION_TYPE } from 'constants/transactionsConstants';
-import { ADDRESS_ZERO } from 'constants/assetsConstants';
 import { HOME } from 'constants/navigationConstants';
 
 // Types
@@ -67,12 +65,10 @@ import AssetInput from './AssetInput';
 import BridgeRouteCard from './BridgeRouteCard';
 import SwapRouteCard from './SwapRouteCard';
 import StakeRouteCard from './StakeRouteCard';
-import FeeCard from './FeeCard';
 import useInterval from 'hooks/useInterval';
 
 const PlrStakingValidator = () => {
   const navigation = useNavigation();
-  const dispatch = useDispatch();
   const { t, tRoot } = useTranslationWithPrefix('plrStaking.validator');
   const { t: tMain } = useTranslationWithPrefix('plrStaking');
 
@@ -262,8 +258,6 @@ const PlrStakingValidator = () => {
       return;
     }
 
-    const allTransactions = [...transactions, ...stakeTransactions.transactions];
-
     return { transactions, stakeTransactions: stakeTransactions.transactions };
   };
 
@@ -380,13 +374,13 @@ const PlrStakingValidator = () => {
   };
 
   const formButtonText = () => {
-    if (processing) return 'Processing...';
-    else if (!value) return 'Enter staking amount';
-    else if (!validatePlr()) return 'Insufficient PLR amount';
-    else if (calculatingGas && !txFeeInfo) return 'Calculating fees...';
-    else if (value && isBridgeTransaction && !buildTransactionFetched) return 'Fetching routes...';
-    else if (value && isSwapTransaction && !swapOffers?.length) return 'Fetching offers...';
-    return 'Execute';
+    if (processing) return tMain('button.processing');
+    else if (!value) return tMain('button.enterAmount');
+    else if (!validatePlr()) return tMain('button.insufficientAmount');
+    else if (calculatingGas && !txFeeInfo) return tMain('button.calculatingFees');
+    else if (value && isBridgeTransaction && !buildTransactionFetched) return tMain('button.fetchingRoutes');
+    else if (value && isSwapTransaction && !swapOffers?.length) return tMain('button.fetchingOffers');
+    return tMain('button.execute');
   };
 
   const showLoading =
@@ -558,9 +552,7 @@ const PlrStakingValidator = () => {
         <Spacing h={30} />
         {stkPlrAmount && !validatePlr() ? (
           <>
-            <LimitWarningText>
-              {'You need to stake min 10,000 PLR.\nYou can stake up to max 250,000 PLR.'}
-            </LimitWarningText>
+            <LimitWarningText>{t('limitWarning')}</LimitWarningText>
             <Spacing h={8} />
           </>
         ) : feeErrorMessage ? (

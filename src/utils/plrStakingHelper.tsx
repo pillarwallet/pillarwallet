@@ -44,6 +44,7 @@ interface IStakingContractAbi {
   callTotalStaked: () => Promise<string>;
   callRewardToken: () => Promise<string>;
   callStakingToken: () => Promise<string>;
+  callGetStakedAccounts: () => Promise<string[]>;
 }
 
 interface IStakingContractInfo {
@@ -54,6 +55,7 @@ interface IStakingContractInfo {
   totalStaked: string;
   rewardToken: string;
   stakedToken: string;
+  stakedAccounts: string[];
 }
 
 interface IStakingRemoteConfig {
@@ -70,6 +72,7 @@ let minStakingAmount: BigNumber = ethers.utils.parseUnits(MIN_PLR_STAKE_AMOUNT.t
 let maxStakingAmount: BigNumber = ethers.utils.parseUnits(MAX_PLR_STAKE_AMOUNT.toString());
 let stakedToken: string = null;
 let rewardToken: string = null;
+let storedContractInfo: IStakingContractInfo = null;
 
 export const mapWalletTypeToIcon = (type: WalletType) => {
   switch (type) {
@@ -175,7 +178,9 @@ export const getStakedToken = async () => {
   return stakedToken;
 };
 
-export const getStakingContractInfo = async (): Promise<IStakingContractInfo> => {
+export const getStakingContractInfo = async (refresh?: boolean): Promise<IStakingContractInfo> => {
+  if (!!storedContractInfo && !refresh) return storedContractInfo;
+
   const sdk: Sdk = etherspotService.getSdkForChain(CHAIN.ETHEREUM);
 
   if (!sdk) return null;
@@ -193,17 +198,20 @@ export const getStakingContractInfo = async (): Promise<IStakingContractInfo> =>
     const totalStaked = await stakingContract.callTotalStaked();
     const contractRewardToken = await stakingContract.callRewardToken();
     const contractStakingToken = await stakingContract.callStakingToken();
+    const stakedAccounts = await stakingContract.callGetStakedAccounts();
+
     try {
       minStakingAmount = BigNumber.from(minStakeAmount);
       maxStakingAmount = BigNumber.from(maxStakeAmount);
-      stakingContractState = contractState;
-      stakedToken = contractStakingToken;
-      rewardToken = contractRewardToken;
     } catch {
       //
     }
 
-    return {
+    stakingContractState = contractState;
+    stakedToken = contractStakingToken;
+    rewardToken = contractRewardToken;
+
+    storedContractInfo = {
       contractState,
       minStakeAmount,
       maxStakeAmount,
@@ -211,7 +219,10 @@ export const getStakingContractInfo = async (): Promise<IStakingContractInfo> =>
       totalStaked,
       rewardToken,
       stakedToken,
+      stakedAccounts,
     };
+
+    return storedContractInfo;
   } catch (e) {
     return null;
   }

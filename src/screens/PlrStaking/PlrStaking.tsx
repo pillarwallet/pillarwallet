@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Image } from 'react-native';
 import { useTranslationWithPrefix } from 'translations/translate';
 import styled from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
 import { BigNumber, ethers } from 'ethers';
-import { addDays, format, intervalToDuration } from 'date-fns';
+import { addDays, intervalToDuration } from 'date-fns';
 
 // Constants
 import { PLR_STAKING_VALIDATOR } from 'constants/navigationConstants';
@@ -46,8 +45,7 @@ import { getStakingContractInfo, getStakingRemoteConfig } from 'utils/plrStaking
 
 const PlrStaking = () => {
   const navigation = useNavigation();
-  const dispatch = useDispatch();
-  const { t, tRoot } = useTranslationWithPrefix('plrStaking');
+  const { t } = useTranslationWithPrefix('plrStaking');
 
   const chains: string[] = useSupportedChains();
   const chainsConfig = useChainsConfig();
@@ -109,10 +107,11 @@ const PlrStaking = () => {
         const stakingMaxTotal = BigNumber.from(stakingInfo.maxStakeTotal.toString());
         const totalStaked = BigNumber.from(stakingInfo.totalStaked.toString());
         const percentage = Number(totalStaked.mul(100).div(stakingMaxTotal)) / 100;
+        const stakers = stakingInfo?.stakedAccounts?.length || 0;
 
         setStakedAmount(formatBigAmount(ethers.utils.formatEther(totalStaked)));
         setStakedPercentage(percentage.toFixed(0).toString());
-        setStakers(0);
+        setStakers(stakers);
       } catch (e) {
         //
       }
@@ -237,6 +236,14 @@ const PlrStaking = () => {
         leftItems={[{ close: true }]}
         navigation={navigation}
         noPaddingTop
+        headerTitles={{
+          token: t('header.token'),
+          chain: t('header.chain'),
+          apy: t('header.apy'),
+          staked: t('header.staked'),
+          vaultFilling: t('header.vaultFilling'),
+          stakers: t('header.stakers'),
+        }}
         stakedAmount={stakedAmount}
         stakedPercentage={stakedPercentage}
         stakers={stakers}
@@ -281,7 +288,7 @@ const PlrStaking = () => {
               <BalanceItem disabled>
                 <BalanceLeftItem>
                   <Icon name="etherspot16" />
-                  <BalanceTitle>Etherspot Wallet</BalanceTitle>
+                  <BalanceTitle>{t('etherspotWallet')}</BalanceTitle>
                   <Icon name="checkmark-green" />
                 </BalanceLeftItem>
 

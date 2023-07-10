@@ -45,6 +45,15 @@ import { images } from 'utils/images';
 import HeaderTitleText from 'components/HeaderBlock/HeaderTitleText';
 import HeaderActionButton from 'components/HeaderBlock/HeaderActionButton';
 
+type HeaderTitles = {
+  token: string,
+  chain: string,
+  apy: string,
+  staked: string,
+  vaultFilling: string,
+  stakers: string,
+};
+
 type NavItem = {|
   title?: string,
   icon?: string,
@@ -81,6 +90,7 @@ export type OwnProps = {|
   noHorizontalPadding?: boolean,
   forceInsetTop?: string,
   testIdTag?: string,
+  headerTitles?: HeaderTitles,
   stakedAmount?: string,
   stakedPercentage?: string,
   stakers?: string,
@@ -460,6 +470,7 @@ class HeaderBlock extends React.Component<Props> {
       stakedAmount,
       stakedPercentage,
       stakers,
+      headerTitles,
     } = this.props;
     const updatedColors = {};
     if (light) {
@@ -486,7 +497,7 @@ class HeaderBlock extends React.Component<Props> {
               <StakeInfoWrapper>
                 <InfoRow>
                   <InfoItem small>
-                    <InfoTitle>Token</InfoTitle>
+                    <InfoTitle>{headerTitles?.token}</InfoTitle>
                     <IconRow>
                       <SvgIcon name="plr24" />
                       <Spacing w={8} />
@@ -495,7 +506,7 @@ class HeaderBlock extends React.Component<Props> {
                   </InfoItem>
 
                   <InfoItem>
-                    <InfoTitle>Chain</InfoTitle>
+                    <InfoTitle>{headerTitles?.chain}</InfoTitle>
                     <IconRow>
                       <SvgIcon name="ethereum" />
                       <Spacing w={8} />
@@ -504,7 +515,7 @@ class HeaderBlock extends React.Component<Props> {
                   </InfoItem>
 
                   <InfoItem>
-                    <InfoTitle>APY (Variable)</InfoTitle>
+                    <InfoTitle>{headerTitles?.apy}</InfoTitle>
                     <InfoText apy>{`${7.34}%`}</InfoText>
                   </InfoItem>
                 </InfoRow>
@@ -513,17 +524,17 @@ class HeaderBlock extends React.Component<Props> {
 
                 <InfoRow>
                   <InfoItem small>
-                    <InfoTitle>Staked</InfoTitle>
+                    <InfoTitle>{headerTitles?.staked}</InfoTitle>
                     <InfoText>{stakedAmount || 0}</InfoText>
                   </InfoItem>
 
                   <InfoItem>
-                    <InfoTitle>Vault filling</InfoTitle>
+                    <InfoTitle>{headerTitles?.vaultFilling}</InfoTitle>
                     <InfoText>{`${stakedPercentage || 0}%`}</InfoText>
                   </InfoItem>
 
                   <InfoItem>
-                    <InfoTitle>Stakers</InfoTitle>
+                    <InfoTitle>{headerTitles?.stakers}</InfoTitle>
                     <InfoText>{stakers || 0}</InfoText>
                   </InfoItem>
                 </InfoRow>
