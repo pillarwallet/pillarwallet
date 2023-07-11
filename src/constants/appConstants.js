@@ -21,3 +21,4 @@
 export const IS_APP_VERSION_V3 = 'isAppVersionV3';
 export const API_REQUEST_TIMEOUT = 10000;
 export const DEFAULT_AXIOS_REQUEST_CONFIG = { timeout: API_REQUEST_TIMEOUT };
+export const EMAIL = 'support@pillarproject.io';

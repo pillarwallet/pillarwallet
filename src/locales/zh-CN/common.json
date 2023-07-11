@@ -631,7 +631,8 @@
     "failedToBuildTransaction": "建立交易失败",
     "failedToEstimateTransaction": "无法估计交易",
     "failedToSubmitTransaction": "提交交易失败",
-    "fetchTokenListFailed": "获取令牌列表失败。"
+    "fetchTokenListFailed": "获取令牌列表失败。",
+    "invalidEmailURL": "无法处理提供的 URL"
   },
   "home": {
     "balance": {
