@@ -1035,7 +1035,7 @@ export class EtherspotService {
         fromAmount: value,
       });
 
-      if (isEmpty(routes.items)) return null;
+      if (isEmpty(routes?.items)) return null;
 
       const bestRoute = routes.items.reduce((best: Route, route) => {
         if (!best?.toAmount || EthersBigNumber.from(best.toAmount).lt(route.toAmount)) return route;
@@ -1050,9 +1050,11 @@ export class EtherspotService {
 
       if (isEmpty(advanceRoutesTransactions)) return null;
 
+      const account = await sdk.computeContractAccount();
+
       let transactions = advanceRoutesTransactions.map((transaction) => {
         return {
-          from: sdk.state.accountAddress,
+          from: account.address,
           chainId: mapChainToChainId(fromAsset.chain),
           data: transaction.data,
           to: transaction.to,
@@ -1082,7 +1084,7 @@ export class EtherspotService {
           to: approvalTransactionRequest.to,
           data: approvalTransactionRequest.data,
           value: '0',
-          from: sdk.state.accountAddress,
+          from: account.address,
           chainId: mapChainToChainId(fromAsset.chain),
         };
 

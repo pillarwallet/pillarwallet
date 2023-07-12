@@ -100,13 +100,14 @@ export const getAssetValueFromFiat = (
 };
 
 export const fiatInvestmentBalance = (balance: BigNumber, rates: RatesPerChain, currency: Currency) => {
+  if (!balance) return 0;
   const nativeAssetRate = rates?.[nativeAssetPerChain[CHAIN.ETHEREUM].address];
 
   const assetBalance: string = utils.formatEther(balance);
 
   const fiatAmount = (parseFloat(assetBalance) * nativeAssetRate?.[currency]) / nativeAssetRate?.[USD];
 
-  return fiatAmount?.toFixed(2);
+  return isNaN(fiatAmount) ? 0 : fiatAmount?.toFixed(2);
 };
 
 export const fiatTokenValue = (
