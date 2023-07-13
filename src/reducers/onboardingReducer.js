@@ -36,6 +36,7 @@ import {
   SET_VIEWED_RECEIVE_TOKENS_WARNING,
   SET_FETCHING,
   SET_LOADING_MESSAGE,
+  SET_BIOMETIC_STATUS,
 } from 'constants/onboardingConstants';
 
 // Types
@@ -59,6 +60,7 @@ export type OnboardingReducerState = {
   viewedReceiveTokensWarning: boolean,
   isFetching: boolean,
   loaderMessage: string,
+  enableBiometrics: boolean,
 };
 
 export type OnboardingReducerAction = {
@@ -82,6 +84,7 @@ export const initialState = {
   viewedReceiveTokensWarning: false,
   isFetching: false,
   loaderMessage: '',
+  enableBiometrics: false,
 };
 
 export default function onboardingReducer(
@@ -172,6 +175,11 @@ export default function onboardingReducer(
       return {
         ...state,
         loaderMessage: action.payload,
+      };
+    case SET_BIOMETIC_STATUS:
+      return {
+        ...state,
+        enableBiometrics: action.payload,
       };
     case RESET_ONBOARDING:
       return { ...initialState };

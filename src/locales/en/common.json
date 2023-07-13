@@ -122,7 +122,8 @@
     "fetchingTokens": "Fetching Tokens",
     "fetchingPrices":"Fetching Prices",
     "loadingTxHistory": "Loading Tx History",
-    "ready": "Ready!"
+    "ready": "Ready!",
+    "noInternet": "No internet"
   },
 
   "title": {

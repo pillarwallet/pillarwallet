@@ -33,20 +33,31 @@ import { appFont, fontStyles } from 'utils/variables';
 
 // Actions
 import { SET_FETCHING, SET_LOADING_MESSAGE } from 'constants/onboardingConstants';
+import { walletSetupAction } from 'actions/onboardingActions';
 
 // Selectors
-import { useOnboardingFetchingSelector, useOnboardingLoaderMessageSelector } from 'selectors';
+import { useOnboardingFetchingSelector, useOnboardingLoaderMessageSelector, useRootSelector } from 'selectors';
 
 const onboardingLoader = require('assets/loaders/onboardingLoader.json');
 const onboardingIosloader = require('assets/loaders/onboardingLoader-ios.json');
 
 export default function ({}) {
   const dispatch = useDispatch();
+  const { isOnline } = useRootSelector(({ session }) => session.data);
+  const { enableBiometrics } = useRootSelector(({ onboarding }) => onboarding);
 
   const isIos = Platform.OS === 'ios';
 
   const isFetching = useOnboardingFetchingSelector();
   const loaderMessage = useOnboardingLoaderMessageSelector();
+
+  useEffect(() => {
+    if (!isOnline) dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.noInternet') });
+    if (isOnline && loaderMessage === t('onboardingLoaders.noInternet') && !isIos) {
+      dispatch({ type: SET_LOADING_MESSAGE, payload: '' });
+      dispatch(walletSetupAction(enableBiometrics));
+    }
+  }, [isFetching, loaderMessage, isOnline]);
 
   useEffect(() => {
     if (loaderMessage === t('onboardingLoaders.ready'))
@@ -61,7 +72,7 @@ export default function ({}) {
       {!!loaderMessage && (
         <Animation
           source={isIos ? onboardingIosloader : onboardingLoader}
-          loop
+          loop={isOnline}
           speed={1}
           style={{ width: 150, height: 150 }}
         />

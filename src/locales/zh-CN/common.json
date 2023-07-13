@@ -105,7 +105,8 @@
     "fetchingTokens": "获取代币",
     "fetchingPrices":"获取价格",
     "loadingTxHistory": "加载交易历史",
-    "ready": "准备好！"
+    "ready": "准备好！",
+    "noInternet": "没有互联网"
   },
 
   "assetCategoriesShort": {

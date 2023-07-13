@@ -42,6 +42,7 @@ import {
   SET_VIEWED_RECEIVE_TOKENS_WARNING,
   SET_FETCHING,
   SET_LOADING_MESSAGE,
+  SET_BIOMETIC_STATUS,
 } from 'constants/onboardingConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -285,6 +286,8 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
       },
     } = getState();
 
+    dispatch({ type: SET_BIOMETIC_STATUS, payload: enableBiometrics });
+
     const storage = Storage.getInstance('db');
 
     const viewedReceiveTokensWarningDb = storage.get('viewed_receive_tokens_warning');
@@ -419,10 +422,10 @@ export const setupAppServicesAction = (privateKey: ?string) => {
 
     // all the calls below require user to be online
     if (!isOnline) {
-      dispatch({ type: SET_FETCHING, payload: false });
-      dispatch({ type: SET_LOADING_MESSAGE, payload: '' });
       return;
     }
+
+    dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.initEtherspot') });
 
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching updateFcmTokenAction');
     await dispatch(updateFcmTokenAction());
