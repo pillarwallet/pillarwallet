@@ -30,6 +30,9 @@ import { useRootSelector } from 'selectors';
 // Utils
 import { getSupportedBiometryType } from 'utils/keychain';
 
+// Constants
+import { SET_FETCHING } from 'constants/onboardingConstants';
+
 // Actions
 import { walletSetupAction } from 'actions/onboardingActions';
 import { logEventAction } from 'actions/analyticsActions';
@@ -74,23 +77,22 @@ export function useBioMetricsPopup() {
   };
 
   React.useEffect(() => {
-    setTimeout(() => {
-      if (!wallet) {
-        getSupportedBiometryType((biometryType) => {
-          if (biometryType) {
-            Alert.alert(t('biometricLogin.title', { biometryType: biometryType }), t('biometricLogin.description'), [
-              { text: t('biometricLogin.button.cancel'), onPress: () => proceedToBeginOnboarding() },
-              {
-                text: t('biometricLogin.button.enable'),
-                onPress: () => faceIDPermission(biometryType),
-              },
-            ]);
-          } else {
-            proceedToBeginOnboarding();
-          }
-        });
-      }
-    }, 1000);
+    if (!wallet) {
+      dispatch({ type: SET_FETCHING, payload: true });
+      getSupportedBiometryType((biometryType) => {
+        if (biometryType) {
+          Alert.alert(t('biometricLogin.title', { biometryType: biometryType }), t('biometricLogin.description'), [
+            { text: t('biometricLogin.button.cancel'), onPress: () => proceedToBeginOnboarding() },
+            {
+              text: t('biometricLogin.button.enable'),
+              onPress: () => faceIDPermission(biometryType),
+            },
+          ]);
+        } else {
+          proceedToBeginOnboarding();
+        }
+      });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

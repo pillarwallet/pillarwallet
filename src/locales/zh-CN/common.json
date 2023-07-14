@@ -95,6 +95,20 @@
     "apps":"应用",
     "collectibles": "NFT"
   },
+
+  "onboardingLoaders":{
+    "initEtherspot": "初始化 Etherspot",
+    "loadingWallet": "加载钱包",
+    "creatingAccounts": "创建帐户",
+    "encryptingKeys": "加密密钥",
+    "deployingGnosis":"部署 Gnosis",
+    "fetchingTokens": "获取代币",
+    "fetchingPrices":"获取价格",
+    "loadingTxHistory": "加载交易历史",
+    "ready": "准备好！",
+    "noInternet": "没有网络，请重试..."
+  },
+
   "assetCategoriesShort": {
     "wallet": "钱包",
     "deposits": "存款",

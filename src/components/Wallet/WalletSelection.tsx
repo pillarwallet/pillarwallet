@@ -31,6 +31,7 @@ import { Spacing } from 'components/legacy/Layout';
 import TokenListItem from 'components/lists/TokenListItem';
 import Icon from 'components/core/Icon';
 import HorizontalProgressBar from 'components/Progress/HorizontalProgressBar';
+import { TokenLoader } from 'components/SkeletonLoader/OnboardingLoaders';
 
 // Constants
 import { TOKENS, STABLES } from 'constants/walletConstants';
@@ -41,6 +42,9 @@ import { useThemeColors } from 'utils/themes';
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
 import { buildAssetDataNavigationParam } from 'screens/Assets/utils';
 
+// Selectors
+import { useOnboardingFetchingSelector } from 'selectors';
+
 // Types
 import type { AssetOption } from 'models/Asset';
 
@@ -49,6 +53,7 @@ export default function () {
   const navigation = useNavigation();
   const colors = useThemeColors();
   const { tokens: nonStableTokens, percentage } = useNonStableAssets();
+  const isFetching = useOnboardingFetchingSelector();
 
   const items = [
     { key: TOKENS, title: TOKENS, color: colors.darkViolet },
@@ -60,6 +65,9 @@ export default function () {
   let listOfAssets = selectedTabNm === TOKENS ? nonStableTokens : tokens;
 
   const renderItem = (item: AssetOption, index: number) => {
+    if (isFetching) {
+      return <TokenLoader />;
+    }
     return (
       <TokenListItem
         key={item.address + '__' + index}

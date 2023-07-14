@@ -111,6 +111,19 @@
     "collectibles": "NFTs"
   },
 
+  "onboardingLoaders":{
+    "initEtherspot": "Initializing Etherspot",
+    "loadingWallet": "Loading Wallets",
+    "creatingAccounts": "Creating Accounts",
+    "encryptingKeys": "Encrypting Keys",
+    "deployingGnosis":"Deploying Gnosis",
+    "fetchingTokens": "Fetching Tokens",
+    "fetchingPrices":"Fetching Prices",
+    "loadingTxHistory": "Loading Tx History",
+    "ready": "Ready!",
+    "noInternet": "No internet, retrying..."
+  },
+
   "title": {
     "accounts": "Switch account",
     "addFundsToWallet": "Add funds to Pillar",

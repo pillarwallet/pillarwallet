@@ -30,7 +30,13 @@ import { useNavigation } from 'react-navigation-hooks';
 import { RECEIVE_TOKENS_WARNING } from 'constants/navigationConstants';
 
 // Selectors
-import { useActiveAccount, useRootSelector, useFiatCurrency, viewedReceiveTokensWarningSelector } from 'selectors';
+import {
+  useActiveAccount,
+  useRootSelector,
+  useOnboardingFetchingSelector,
+  useFiatCurrency,
+  viewedReceiveTokensWarningSelector,
+} from 'selectors';
 
 // Utils
 import { formatFiatValue, formatFiatChangeExtended } from 'utils/format';
@@ -46,6 +52,7 @@ import { useAppHoldings } from 'hooks/apps';
 import Text from 'components/core/Text';
 import AddCashModal from 'screens/AddCash/modal/AddCashModal';
 import Modal from 'components/Modal';
+import { BalanceSelectionLoader } from 'components/SkeletonLoader/OnboardingLoaders';
 
 // Local
 import SpecialButton from './components/SpecialButton';
@@ -65,6 +72,8 @@ const BalanceSection: FC<IBalanceSection> = ({ balanceInFiat, changeInFiat, show
   const fiatCurrency = useFiatCurrency();
   const activeAccount = useActiveAccount();
   const { totalBalanceOfHoldings } = useAppHoldings();
+
+  const isFetching = useOnboardingFetchingSelector();
 
   const initialBalance = changeInFiat ? balanceInFiat.minus(changeInFiat) : null;
   const formattedChange = formatFiatChangeExtended(changeInFiat, initialBalance, fiatCurrency);
@@ -115,11 +124,15 @@ const BalanceSection: FC<IBalanceSection> = ({ balanceInFiat, changeInFiat, show
     <>
       <Container>
         <FirstColumn>
-          <TouchableContainer onPress={onBalanceClick}>
-            <BalanceText numberOfLines={1} adjustsFontSizeToFit>
-              {showBalance ? formatFiatValue(balanceInFiat, fiatCurrency) : '***'}
-            </BalanceText>
-          </TouchableContainer>
+          {isFetching ? (
+            <BalanceSelectionLoader />
+          ) : (
+            <TouchableContainer onPress={onBalanceClick}>
+              <BalanceText numberOfLines={1} adjustsFontSizeToFit>
+                {showBalance ? formatFiatValue(balanceInFiat, fiatCurrency) : '***'}
+              </BalanceText>
+            </TouchableContainer>
+          )}
           {!!formattedChange && (
             <ProfitContainer>
               <ProfitLabel color={colors.secondaryText}>{t('lastWeek')}</ProfitLabel>

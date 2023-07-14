@@ -65,6 +65,8 @@ export const useTransactionNotification = () => useRootSelector((root) => root.t
 export const useGasInfoPerChain = () => useRootSelector((root) => root.history.gasInfo);
 export const useChainGasInfo = (chain: Chain) => useGasInfoPerChain()[chain];
 export const useNftFlag = () => useRootSelector((root) => root.nftFlag.visible);
+export const useOnboardingFetchingSelector = () => useRootSelector(onboardingFetchingSelector);
+export const useOnboardingLoaderMessageSelector = () => useRootSelector(onboardingLoaderMessageSelector);
 
 //
 // Global selectors here
@@ -74,6 +76,9 @@ export const fiatCurrencySelector = (root: RootReducerState) =>
   root.appSettings.data.baseFiatCurrency ?? defaultFiatCurrency;
 
 export const historySelector = ({ history }: RootReducerState) => history.data;
+
+export const onboardingFetchingSelector = ({ onboarding }: RootReducerState) => onboarding.isFetching;
+export const onboardingLoaderMessageSelector = ({ onboarding }: RootReducerState) => onboarding.loaderMessage;
 
 export const appsHoldingsSelector = ({ appsHoldings }: RootReducerState) => appsHoldings;
 

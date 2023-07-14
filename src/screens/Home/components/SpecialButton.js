@@ -25,6 +25,9 @@ import styled from 'styled-components/native';
 import Icon from 'components/core/Icon';
 import Text from 'components/core/Text';
 
+// Selectors
+import { useOnboardingFetchingSelector } from 'selectors';
+
 // Utils
 import { spacing } from 'utils/variables';
 
@@ -38,9 +41,11 @@ export type Props = {|
 |};
 
 function SpecialButton({ title, iconName, onPress }: Props) {
+  const isFetching = useOnboardingFetchingSelector();
+
   return (
     <ButtonContainer onPress={onPress}>
-      <ItemView>
+      <ItemView isFetching={isFetching}>
         <ItemIconWrapper>
           <Icon name={iconName} />
         </ItemIconWrapper>
@@ -67,6 +72,7 @@ const ButtonContainer = styled.TouchableOpacity`
 const ItemView = styled.View`
   align-items: center;
   padding: ${spacing.mediumLarge}px ${spacing.mediumLarge}px ${spacing.medium}px;
+  opacity: ${({ isFetching }) => (isFetching ? 0.5 : 1)};
 `;
 
 const ItemIconWrapper = styled.View`
