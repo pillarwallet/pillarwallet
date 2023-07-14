@@ -12277,11 +12277,6 @@ inquirer@^7.0.0:
     strip-ansi "^6.0.0"
     through "^2.3.6"
 
-instabug-reactnative@^10.4.0:
-  version "10.13.0"
-  resolved "https://registry.yarnpkg.com/instabug-reactnative/-/instabug-reactnative-10.13.0.tgz#3fcc26bae29eb30ed75905277ae0ba8eae7c9d15"
-  integrity sha512-YkdZLca7kCtuVdtbhHn9occMHKG67V79Onm9YIbNrnyN7lqyJm0Y2Bw6KOQjODNIKUE8RoAQYqVPFFpJ3Y7+5Q==
-
 internal-slot@^1.0.3, internal-slot@^1.0.4, internal-slot@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/internal-slot/-/internal-slot-1.0.5.tgz#f2a2ee21f668f8627a4667f309dc0f4fb6674986"
@@ -17623,6 +17618,11 @@ react-native-easy-grid@0.2.2:
   integrity sha512-MlYrNIldnEMKn6TVatQN1P64GoVlwGIuz+8ncdfJ0Wq/xtzUkQwlil8Uksyp7MhKfENE09MQnGNcba6Mx3oSAA==
   dependencies:
     lodash "^4.17.15"
+
+react-native-email-link@^1.14.6:
+  version "1.14.6"
+  resolved "https://registry.yarnpkg.com/react-native-email-link/-/react-native-email-link-1.14.6.tgz#f681a48a611d50b25a9b01c2154cc186c6e246b8"
+  integrity sha512-XsWgdSMgxutKrm6WJRLKd1DxQpFt2x6xLuIhmAE5CdMMjNKadsUM5Evub9+otTBhlphSerePAwzSaNoBXpisLg==
 
 react-native-emoji@^1.6.0:
   version "1.8.0"

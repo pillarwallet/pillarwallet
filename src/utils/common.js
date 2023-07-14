@@ -609,7 +609,7 @@ export const formatBigAmount = (value: Value) => {
   return _value.toFixed(2);
 };
 
-export function nFormatter(num: ?number) {
+export function nFormatter(num: ?number, decimals?: number) {
   if (!num) return 0;
   if (num >= 1000000000) {
     // eslint-disable-next-line prefer-template
@@ -623,7 +623,7 @@ export function nFormatter(num: ?number) {
     // eslint-disable-next-line prefer-template
     return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
   }
-  return num?.toFixed(2);
+  return num?.toFixed(decimals ?? 2);
 }
 
 export const convertDecimalNumber = (value: number) => value?.toFixed(value < 1 ? 4 : 2) || 0;

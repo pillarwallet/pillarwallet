@@ -19,7 +19,6 @@
 */
 import * as React from 'react';
 import { FlatList } from 'react-native';
-import Instabug from 'instabug-reactnative';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
@@ -30,23 +29,19 @@ import { ListCard } from 'components/legacy/ListItem/ListCard';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 
 // constants
-import {
-  LIQUIDITY_POOLS,
-} from 'constants/navigationConstants';
+import { LIQUIDITY_POOLS } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
 import { spacing } from 'utils/variables';
-import {
-  getActiveAccount,
-  isArchanovaAccount,
-} from 'utils/accounts';
+import { getActiveAccount, isArchanovaAccount } from 'utils/accounts';
 
 // selectors
 import { isArchanovaAccountDeployedSelector } from 'selectors/archanova';
 
 // services
 import { firebaseRemoteConfig } from 'services/firebase';
+import { emailSupport } from 'services/emailSupport';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -123,6 +118,11 @@ class ServicesScreen extends React.Component<Props> {
     return services;
   };
 
+  support = async () => {
+    const { accounts } = this.props;
+
+    await emailSupport(accounts);
+  };
 
   renderServicesItem = ({ item }) => {
     const { title, body, action, disabled, label, hidden = false } = item;
@@ -140,7 +140,7 @@ class ServicesScreen extends React.Component<Props> {
       <ContainerWithHeader
         headerProps={{
           centerItems: [{ title: t('servicesContent.title.servicesScreen') }],
-          rightItems: [{ link: t('button.support'), onPress: () => Instabug.show() }],
+          rightItems: [{ link: t('button.support'), onPress: this.support }],
           sideFlex: 5,
         }}
         inset={{ bottom: 'never' }}

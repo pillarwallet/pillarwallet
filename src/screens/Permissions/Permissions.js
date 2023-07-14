@@ -174,14 +174,6 @@ const Permissions = ({ navigation, theme }: Props) => {
           }),
         },
         {
-          key: 'INSTABUG',
-          title: t('auth:permissions.title.instabug'),
-          paragraph: t('auth:permissions.withLink.instabug', {
-            linkedText: 'https://instabug.com/privacy',
-            onPress: () => handleUrlPress('https://instabug.com/privacy'),
-          }),
-        },
-        {
           key: 'SENTRY',
           title: t('auth:permissions.title.sentry'),
           paragraph: t('auth:permissions.withLink.sentry', {
