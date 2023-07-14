@@ -21,7 +21,6 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useTranslationWithPrefix } from 'translations/translate';
 import styled from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
-import { useDispatch } from 'react-redux';
 import { useDebounce } from 'use-debounce';
 import { BigNumber, ethers } from 'ethers';
 
@@ -196,7 +195,6 @@ const PlrStakingValidator = () => {
 
       if (balanceDiff.mul(100).gte(bnStakingAmount.mul(90))) {
         // checking if diff greater than 90% of PLR staked
-        console.log('received plr');
         setIsBridging(false);
         showBalancesReceivedToast(plrToken.symbol, bnStakingAmount);
 
@@ -218,7 +216,6 @@ const PlrStakingValidator = () => {
 
       const balance = await getBalanceForAddress(CHAIN.ETHEREUM, stakedToken);
       if (balance.gt(startingBalance)) {
-        console.log('received stkPlr');
         setIsBridging(false);
         setIsStaking(false);
         setIsStaked(true);
@@ -594,7 +591,7 @@ const PlrStakingValidator = () => {
             }
           />
         ) : (
-          <Button title={tRoot('button.done')} onPress={onDone} size="large" disabled={!isStaked || processing} />
+          <Button title={tMain('button.done')} onPress={onDone} size="large" disabled={!isStaked || processing} />
         )}
       </Content>
 
