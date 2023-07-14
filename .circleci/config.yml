@@ -192,28 +192,6 @@ aliases:
       name: Install coureutils
       command: |
         brew install coreutils
-  - &generate_appcenter_instabug_sourcemap_android_and_ios
-    run:
-      name: Generate and upload sourcemap for Android and iOS on AppCenter
-      command: |
-        if [ "$CIRCLE_BRANCH" = "develop" ]; then
-          env
-          echo "Get package version and append CircleCI build number"
-          export buildNumber=$(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
-          echo "Version is: " $buildNumber
-          yarn android:sourcemap & yarn ios:sourcemap
-          curl -X POST 'https://api.instabug.com/api/sdk/v3/symbols_files' -F "app_version={\"code\": ${CIRCLE_BUILD_NUM} ,\"name\": \"${buildNumber}\" }" -F "symbols_file=@/home/circleci/pillarwallet/android-sourcemap.json" -F "application_token=${INSTABUG_APPCENTER_TOKEN}" -F "platform=react_native" -F "os=android" && curl -X POST 'https://api.instabug.com/api/sdk/v3/symbols_files' -F "app_version={\"code\": ${CIRCLE_BUILD_NUM} ,\"name\": \"${buildNumber}\" }" -F "symbols_file=@/home/circleci/pillarwallet/ios-sourcemap.json" -F "application_token=${INSTABUG_APPCENTER_TOKEN}" -F "platform=react_native" -F "os=ios"
-        elif [ "$CIRCLE_BRANCH" = "master" ]; then
-          env
-          echo "Get latest tag and extract version"
-          TAG_VERSION=$(git describe --tags `git rev-list --tags --max-count=1`)
-          APP_VERSION=${TAG_VERSION#?}
-          echo "Version is: " $APP_VERSION
-          yarn android:sourcemap & yarn ios:sourcemap
-          curl -X POST 'https://api.instabug.com/api/sdk/v3/symbols_files' -F "app_version={\"code\": ${CIRCLE_BUILD_NUM} ,\"name\": \"${APP_VERSION}\" }" -F "symbols_file=@/home/circleci/pillarwallet/android-sourcemap.json" -F "application_token=${INSTABUG_PROD_TOKEN}" -F "platform=react_native" -F "os=android" && curl -X POST 'https://api.instabug.com/api/sdk/v3/symbols_files' -F "app_version={\"code\": ${CIRCLE_BUILD_NUM} ,\"name\": \"${APP_VERSION}\" }" -F "symbols_file=@/home/circleci/pillarwallet/ios-sourcemap.json" -F "application_token=${INSTABUG_PROD_TOKEN}" -F "platform=react_native" -F "os=ios"
-        else
-          echo "Skipping... branch is not develop/master"
-        fi
 jobs:
 
   build-and-test:
@@ -239,7 +217,6 @@ jobs:
       - *yarn_install
       - *yarn_save_cache
       - *node_save_cache
-      - *generate_appcenter_instabug_sourcemap_android_and_ios
       - run:
           name: Run validation
           command: yarn validate
@@ -312,7 +289,6 @@ jobs:
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_staging_rampnetwork_api_key_/$STAGING_RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
-            sed -i.bak "s/_instabug_token_/$INSTABUG_APPCENTER_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_prismic_token_/$PRISMIC_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_kochava_ios_id_/$KOCHAVA_IOS_ID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_kochava_android_id_/$KOCHAVA_ANDROID_ID/g" ./src/configs/buildConfig.js
@@ -431,7 +407,6 @@ jobs:
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_staging_rampnetwork_api_key_/$STAGING_RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
-            sed -i.bak "s/_instabug_token_/$INSTABUG_APPCENTER_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_prismic_token_/$PRISMIC_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_kochava_ios_id_/$KOCHAVA_IOS_ID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_kochava_android_id_/$KOCHAVA_ANDROID_ID/g" ./src/configs/buildConfig.js
@@ -441,9 +416,6 @@ jobs:
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
-            export INSTABUG_APP_VERSION_NAME=$(cat ~/pillarwallet/buildNumber.txt)
-            export INSTABUG_APP_VERSION_CODE=$(cat ~/pillarwallet/buildNumber.txt)
-            export INSTABUG_APP_TOKEN=$INSTABUG_APPCENTER_TOKEN
             cd android && ./gradlew clean app:assembleStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
 
       - *gradle_save_cache
@@ -559,7 +531,6 @@ jobs:
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_rampnetwork_api_key_/$RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
-            sed -i.bak "s/_instabug_token_/$INSTABUG_PROD_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_prismic_token_/$PRISMIC_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_kochava_ios_id_/$KOCHAVA_IOS_ID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_kochava_android_id_/$KOCHAVA_ANDROID_ID/g" ./src/configs/buildConfig.js
@@ -680,7 +651,6 @@ jobs:
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_rampnetwork_api_key_/$RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
-            sed -i.bak "s/_instabug_token_/$INSTABUG_PROD_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_prismic_token_/$PRISMIC_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_kochava_ios_id_/$KOCHAVA_IOS_ID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_kochava_android_id_/$KOCHAVA_ANDROID_ID/g" ./src/configs/buildConfig.js

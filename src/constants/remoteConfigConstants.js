@@ -83,6 +83,7 @@ export const REMOTE_CONFIG = {
   APP_NFTS: 'app_nfts',
   APP_TOKENLISTS: 'app_tokenlists',
   MT_PELERIN_SUPPORTED_ASSETS: 'app_mt_pelerin_supported_assets',
+  APP_SUPPORT_EMAIL: 'app_support_email',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values
@@ -131,4 +132,5 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.APP_NFTS]: false,
   [REMOTE_CONFIG.APP_TOKENLISTS]: '',
   [REMOTE_CONFIG.MT_PELERIN_SUPPORTED_ASSETS]: JSON.stringify(pelerinSupportedAssets),
+  [REMOTE_CONFIG.APP_SUPPORT_EMAIL]: 'support@pillarproject.io',
 };

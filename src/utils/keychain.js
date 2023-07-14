@@ -23,7 +23,6 @@ import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 import { getEnv } from 'configs/envConfig';
-import { BugReporting } from 'instabug-reactnative';
 import RNExitApp from 'react-native-exit-app';
 
 // constants
@@ -32,6 +31,7 @@ import { CHAIN } from 'constants/chainConstants';
 
 // services
 import etherspotService from 'services/etherspot';
+import { emailSupport } from 'services/emailSupport';
 
 // utils
 import { getThemeColors } from 'utils/themes';
@@ -62,9 +62,7 @@ export const handleCatch = (accountAddress: ?string, error: ?any[]) => {
     if (accountAddress) {
       buttons.push({
         text: t('error.failedKeychain.supportButtonText'),
-        onPress: () => {
-          BugReporting.showWithOptions(BugReporting.reportType.feedback, [BugReporting.option.emailFieldOptional]);
-        },
+        onPress: emailSupport([accountAddress]),
       });
     }
 

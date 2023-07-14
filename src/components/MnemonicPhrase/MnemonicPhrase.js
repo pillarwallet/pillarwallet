@@ -19,7 +19,6 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { excludeFromMonitoring } from 'utils/monitoring';
 
 // Components
 import Text from 'components/core/Text';
@@ -42,7 +41,7 @@ const MnemonicPhrase = (props: Props) => {
   const colors = useThemeColors();
 
   return (
-    <MnemonicPhraseWrapper ref={excludeFromMonitoring}>
+    <MnemonicPhraseWrapper>
       <List
         data={mnemonicList}
         bounces={false}

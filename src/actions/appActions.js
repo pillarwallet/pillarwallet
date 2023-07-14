@@ -22,7 +22,6 @@ import { NavigationActions } from 'react-navigation';
 import * as Sentry from '@sentry/react-native';
 import get from 'lodash.get';
 import SplashScreen from 'react-native-splash-screen';
-import Instabug from 'instabug-reactnative';
 
 // services
 import Storage from 'services/storage';
@@ -293,18 +292,7 @@ export const setupLoggingServicesAction = () => {
       },
     });
 
-    /* eslint-disable i18next/no-literal-string */
-    Instabug.setUserAttribute('keyWalletAddress', keyWalletAddress ?? '');
-    Instabug.setUserAttribute('activeAccountAddress', activeAccountAddress ?? '');
-    Instabug.setUserAttribute('etherspotAccountAddress', etherspotAccountAddress ?? '');
-    Instabug.setUserAttribute(IS_APP_VERSION_V3, 'true');
-
-    // archanova account may not be present so do not bother with empty values if it doesn't exist
-    if (archanovaAccount) Instabug.setUserAttribute('archanovaAccountAddress', archanovaAccountAddress ?? '');
-    /* eslint-enable i18next/no-literal-string */
-
     if (username) {
-      Instabug.setUserAttribute('ENS', username);
       firebaseCrashlytics.setUserId(username);
     }
   };
