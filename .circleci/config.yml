@@ -314,7 +314,6 @@ jobs:
             sed -i.bak "s/_staging_rampnetwork_api_key_/$STAGING_RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_instabug_token_/$INSTABUG_APPCENTER_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_prismic_token_/$PRISMIC_TOKEN/g" ./src/configs/buildConfig.js
-            sed -i.bak "s/_storyly_token_/$STORYLY_TOKEN_IOS/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_kochava_ios_id_/$KOCHAVA_IOS_ID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_kochava_android_id_/$KOCHAVA_ANDROID_ID/g" ./src/configs/buildConfig.js
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
@@ -434,7 +433,6 @@ jobs:
             sed -i.bak "s/_staging_rampnetwork_api_key_/$STAGING_RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_instabug_token_/$INSTABUG_APPCENTER_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_prismic_token_/$PRISMIC_TOKEN/g" ./src/configs/buildConfig.js
-            sed -i.bak "s/_storyly_token_/$STORYLY_TOKEN_ANDROID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_kochava_ios_id_/$KOCHAVA_IOS_ID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_kochava_android_id_/$KOCHAVA_ANDROID_ID/g" ./src/configs/buildConfig.js
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
@@ -563,7 +561,6 @@ jobs:
             sed -i.bak "s/_rampnetwork_api_key_/$RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_instabug_token_/$INSTABUG_PROD_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_prismic_token_/$PRISMIC_TOKEN/g" ./src/configs/buildConfig.js
-            sed -i.bak "s/_storyly_token_/$STORYLY_TOKEN_IOS/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_kochava_ios_id_/$KOCHAVA_IOS_ID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_kochava_android_id_/$KOCHAVA_ANDROID_ID/g" ./src/configs/buildConfig.js
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
@@ -685,7 +682,6 @@ jobs:
             sed -i.bak "s/_rampnetwork_api_key_/$RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_instabug_token_/$INSTABUG_PROD_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_prismic_token_/$PRISMIC_TOKEN/g" ./src/configs/buildConfig.js
-            sed -i.bak "s/_storyly_token_/$STORYLY_TOKEN_ANDROID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_kochava_ios_id_/$KOCHAVA_IOS_ID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_kochava_android_id_/$KOCHAVA_ANDROID_ID/g" ./src/configs/buildConfig.js
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt

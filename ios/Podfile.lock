@@ -545,11 +545,6 @@ PODS:
   - Sentry (6.1.4):
     - Sentry/Core (= 6.1.4)
   - Sentry/Core (6.1.4)
-  - Storyly (1.11.1):
-    - SDWebImage (= 5.10.0)
-  - storyly-react-native (1.11.1):
-    - React
-    - Storyly (= 1.11.1)
   - SwiftyGif (5.4.4)
   - TcpSockets (3.3.2):
     - CocoaAsyncSocket
@@ -639,7 +634,6 @@ DEPENDENCIES:
   - RNShare (from `../node_modules/react-native-share`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
-  - storyly-react-native (from `../node_modules/storyly-react-native`)
   - SwiftyGif (from `https://github.com/kirualex/SwiftyGif`)
   - TcpSockets (from `../node_modules/react-native-tcp`)
   - "toolbar-android (from `../node_modules/@react-native-community/toolbar-android`)"
@@ -673,7 +667,6 @@ SPEC REPOS:
     - SDWebImage
     - SDWebImageWebPCoder
     - Sentry
-    - Storyly
 
 EXTERNAL SOURCES:
   BVLinearGradient:
@@ -832,8 +825,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-svg"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
-  storyly-react-native:
-    :path: "../node_modules/storyly-react-native"
   SwiftyGif:
     :git: https://github.com/kirualex/SwiftyGif
   TcpSockets:
@@ -953,8 +944,6 @@ SPEC CHECKSUMS:
   SDWebImage: 9169792e9eec3e45bba2a0c02f74bf8bd922d1ee
   SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
   Sentry: 9d055e2de30a77685e86b219acf02e59b82091fc
-  Storyly: f606e22e194f14b3bb49c5b2d7cee8549a36d14c
-  storyly-react-native: 729e7332d67fef06c44b6ec8fd6168f44e656cf0
   SwiftyGif: 93a1cc87bf3a51916001cf8f3d63835fb64c819f
   TcpSockets: bd31674146c0931a064fc254a59812dfd1a73ae0
   toolbar-android: 2a73856e98b750d7e71ce4644d3f41cc98211719
