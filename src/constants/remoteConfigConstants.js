@@ -88,6 +88,7 @@ export const REMOTE_CONFIG = {
   PLR_STAKING_START_TIME: 'stakingStartTime',
   PLR_STAKING_LOCKED_START_TIME: 'stakingLockedStartTime',
   MT_PELERIN_SUPPORTED_ASSETS: 'app_mt_pelerin_supported_assets',
+  APP_SUPPORT_EMAIL: 'app_support_email',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values
@@ -141,4 +142,5 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.PLR_STAKING_START_TIME]: 1688425200,
   [REMOTE_CONFIG.PLR_STAKING_LOCKED_START_TIME]: 1689289200,
   [REMOTE_CONFIG.MT_PELERIN_SUPPORTED_ASSETS]: JSON.stringify(pelerinSupportedAssets),
+  [REMOTE_CONFIG.APP_SUPPORT_EMAIL]: 'support@pillarproject.io',
 };

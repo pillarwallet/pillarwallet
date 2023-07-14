@@ -40,7 +40,6 @@ import Toast from 'components/Toast';
 import Text from 'components/core/Text';
 
 // Utils
-import { excludeFromMonitoring } from 'utils/monitoring';
 import { appFont, spacing, fontSizes } from 'utils/variables';
 
 // Types
@@ -135,7 +134,7 @@ class RevealBackupPhrase extends React.Component<Props, State> {
         <NonScrollableContent>
           <Content>
             <Logo source={walletBackupImage} />
-            <PrivateKeyWrapper ref={excludeFromMonitoring}>{privateKey}</PrivateKeyWrapper>
+            <PrivateKeyWrapper>{privateKey}</PrivateKeyWrapper>
           </Content>
           <Button
             title={t('button.copyToClipboard')}
