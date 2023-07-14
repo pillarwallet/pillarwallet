@@ -129,10 +129,11 @@ const RouteCard: FC<IRouteCard> = ({
                 {formatFiatValue(getTotalGasFees(), currency)}
               </SubText>
             </GasPriceWrapper>
-            <SubText>
+            {/* Commented out as we currently don't know where to pull the estimated time from */}
+            {/* <SubText> 
               <HighlightText>{t('estTime')}</HighlightText>
               {` 2 mins`}
-            </SubText>
+            </SubText> */}
           </RouteInfoRow>
         </RouteInfoContainer>
 
