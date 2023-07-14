@@ -69,7 +69,6 @@
     "binance": "Binance Smart Chain",
     "xdai": "Gnosis",
     "polygon": "Polygon",
-    "avalanche": "Avalanche",
     "optimism": "Optimism",
     "optimism_kovan": "Optimism Kovan",
     "gorli": "Ethereum Görli",
@@ -86,7 +85,6 @@
     "binance": "BSC",
     "xdai": "Gnosis",
     "polygon": "Polygon",
-    "avalanche": "Avalanche",
     "optimism": "Optimism",
     "optimism_kovan": "Optimism Kovan",
     "arbitrum": "Arbitrum"
@@ -1238,7 +1236,7 @@
             "recommended": "Recommended",
             "highGasPrice": "High gas price 🔥",
             "ethereum": "Ethereum",
-            "chainName": "Polygon, BSC, xDai, Avalanche"
+            "chainName": "Polygon, BSC, xDai"
           },
           "warningMessage": "Your smart wallet is not deployed on Ethereum.\n{{deploymentCost}} smart wallet deployment cost will be added to this transaction. No action required."
         },
