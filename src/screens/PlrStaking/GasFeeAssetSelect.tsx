@@ -15,7 +15,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect } from 'react';
 import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 
@@ -95,7 +95,7 @@ const GasFeeAssetSelect: FC<IGasFeeSelect> = ({ assets, chain, selectAsset, onSe
             <Title style={flex}>
               {selectAsset.symbol +
                 (selectAsset?.formattedBalanceInFiat
-                  ? '  •  ' + selectAsset.formattedBalanceInFiat + ' ' + t('exchangeContent.gas_fee_asset.left')
+                  ? ` • ${selectAsset.formattedBalanceInFiat} ${t('exchangeContent.gas_fee_asset.left')}`
                   : '')}
             </Title>
           </>

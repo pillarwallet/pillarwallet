@@ -1716,6 +1716,9 @@
     "plrAvailable": "You have PLR assets on {{chainAmount}} chain{{s}}",
     "pillar": "Pillar",
     "etherspotWallet": "Etherspot Wallet",
+    "stakingInfoLoading": "Staking info is loading...",
+    "stakingClosingIn": "Staking will close in ",
+    "stakingClosed": "Staking is currently closed",
     "header": {
       "token": "Token",
       "chain": "Chain",
@@ -1740,11 +1743,21 @@
       "insufficientAmount": "Insufficient PLR amount",
       "fetchingRoutes": "Fetching routes...",
       "fetchingOffers": "Fetching offers...",
-      "execute": "Execute"
+      "execute": "Execute",
+      "done": "Done"
     },
     "validator": {
       "title": "Staking Pillar Validator",
-      "limitWarning": "You need to stake min 10,000 PLR.\nYou can stake up to max 250,000 PLR."
+      "limitWarning": "You need to stake min 10,000 PLR.\nYou can stake up to max 250,000 PLR.",
+      "stakingFeeError": "There was an error calculating the staking fees. This could be because you don't have enough balance to pay for the gas, or there was a network error.",
+      "stakingBuildError": "There was an error forming the staking payload, please try again later.",
+      "estFee": "Est. fee:",
+      "estTime": "Est. time:",
+      "swapVia": "Swap via {{title}} on {{networkName}}",
+      "stakeOn": "Stake {{formattedAmount}} on {{networkName}}",
+      "on": "on",
+      "showLess": "Show less",
+      "showMore": "Show more"
     },
     "chooseAsset": "Choose asset"
   }

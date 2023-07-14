@@ -20,6 +20,7 @@
 
 import React, { FC } from 'react';
 import styled from 'styled-components/native';
+import { useTranslationWithPrefix } from 'translations/translate';
 
 // Constants
 import { OFFERS } from 'constants/exchangeConstants';
@@ -82,6 +83,8 @@ const RouteCard: FC<IRouteCard> = ({
   transactions,
   gasFeeAsset,
 }) => {
+  const { t, tRoot } = useTranslationWithPrefix('plrStaking.validator');
+
   const currency = useFiatCurrency();
   const chainRates = useChainRates(chain);
   const ethRates = useChainRates(CHAIN.ETHEREUM);
@@ -116,18 +119,18 @@ const RouteCard: FC<IRouteCard> = ({
         <RouteInfoContainer>
           <RouteInfoRow>
             <MainText>{formattedToAmount}</MainText>
-            <MainText highlighted>{`on ${networkName}`}</MainText>
+            <MainText highlighted>{`${t('on')} ${networkName}`}</MainText>
           </RouteInfoRow>
 
           <RouteInfoRow>
             <GasPriceWrapper>
               <SubText>
-                <HighlightText>{'Est. fee: '}</HighlightText>
+                <HighlightText>{`${t('estFee')} `}</HighlightText>
                 {formatFiatValue(getTotalGasFees(), currency)}
               </SubText>
             </GasPriceWrapper>
             <SubText>
-              <HighlightText>Est. time:</HighlightText>
+              <HighlightText>{t('estTime')}</HighlightText>
               {` 2 mins`}
             </SubText>
           </RouteInfoRow>
@@ -145,7 +148,7 @@ const RouteCard: FC<IRouteCard> = ({
 
           <RouteInfoContainer>
             <RouteInfoRow>
-              <MainText>{`Swap via ${config?.title} on ${networkName}`}</MainText>
+              <MainText>{t('swapVia', { title: config?.title, networkName })}</MainText>
             </RouteInfoRow>
 
             <RouteInfoRow>
@@ -155,7 +158,7 @@ const RouteCard: FC<IRouteCard> = ({
             <RouteInfoRow>
               <GasPriceWrapper>
                 <SubText>
-                  <HighlightText>{'Est. fee: '}</HighlightText>
+                  <HighlightText>{`${t('estFee')} `}</HighlightText>
                   {feeEtherValueBn && formatFiatValue(getFiatValue(feeEtherValueBn, gasFeeAsset.address), currency)}
                 </SubText>
               </GasPriceWrapper>
@@ -173,12 +176,12 @@ const RouteCard: FC<IRouteCard> = ({
 
           <RouteInfoContainer>
             <RouteInfoRow>
-              <MainText>{`Stake ${formattedToAmount} on ${networkName}`}</MainText>
+              <MainText>{t('stakeOn', { formattedAmount: formattedToAmount, networkName })}</MainText>
             </RouteInfoRow>
             <RouteInfoRow>
               <GasPriceWrapper>
                 <SubText>
-                  <HighlightText>{'Est. fee: '}</HighlightText>
+                  <HighlightText>{`${t('estFee')} `}</HighlightText>
                   {stakeFeeEtherValueBn &&
                     formatFiatValue(getFiatValue(stakeFeeEtherValueBn, stakeGasFeeAsset.address, true), currency)}
                 </SubText>

@@ -1,3 +1,22 @@
+/*
+    Pillar Wallet: the personal data locker
+    Copyright (C) 2021 Stiftung Pillar Project
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
 import React, { useState, useEffect } from 'react';
 import { useTranslationWithPrefix } from 'translations/translate';
 import styled from 'styled-components/native';
@@ -21,7 +40,7 @@ import { useStableAssets, useNonStableAssets } from 'hooks/assets';
 
 // Utils
 import { fontStyles, spacing } from 'utils/variables';
-import { formatBigAmount } from 'utils/common';
+import { formatBigAmount, reportErrorLog, logBreadcrumb } from 'utils/common';
 
 // Selectors
 import { useSupportedChains } from 'selectors/chains';
@@ -113,7 +132,7 @@ const PlrStaking = () => {
         setStakedPercentage(percentage.toFixed(0).toString());
         setStakers(stakers);
       } catch (e) {
-        //
+        reportErrorLog('PlrStaking - fetchStakingInfo error', e);
       }
     };
 
@@ -149,8 +168,6 @@ const PlrStaking = () => {
 
   useEffect(() => {
     if (!stakingEndTime) return;
-
-    console.log();
 
     const timerCountdown = setInterval(getRemainingTimes, 1000);
     return () => clearInterval(timerCountdown);
@@ -253,13 +270,13 @@ const PlrStaking = () => {
           <StakingAlertCircle />
           <Spacing w={8} />
           {stakingEnabled == null ? (
-            <InfoText>{`Staking info is loading...`}</InfoText>
+            <InfoText>{t('stakingInfoLoading')}</InfoText>
           ) : stakingEnabled ? (
             <InfoText>
-              {`Staking will close in `} <InfoText bold>{formatRemainingTime(remainingStakingTime)}</InfoText>
+              {t('stakingClosedIn')} <InfoText bold>{formatRemainingTime(remainingStakingTime)}</InfoText>
             </InfoText>
           ) : (
-            <InfoText>{'Staking is currently closed'}</InfoText>
+            <InfoText>{t('stakingClosed')}</InfoText>
           )}
         </IconRow>
 

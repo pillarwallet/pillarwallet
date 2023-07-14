@@ -1,9 +1,33 @@
+/*
+    Pillar Wallet: the personal data locker
+    Copyright (C) 2021 Stiftung Pillar Project
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
 import { ContractNames, getContractAbi } from '@etherspot/contracts';
 import { ERC20TokenContract, Sdk, addressesEqual } from 'etherspot';
 import { BigNumber, ethers } from 'ethers';
 
 // Constants
-import { MAX_PLR_STAKE_AMOUNT, MIN_PLR_STAKE_AMOUNT, WalletType } from 'constants/plrStakingConstants';
+import {
+  BuildStakingError,
+  MAX_PLR_STAKE_AMOUNT,
+  MIN_PLR_STAKE_AMOUNT,
+  WalletType,
+} from 'constants/plrStakingConstants';
 import { CHAIN } from 'constants/chainConstantsTs';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
@@ -16,9 +40,9 @@ import etherspotService from 'services/etherspot';
 import { firebaseRemoteConfig as remoteConfig } from 'services/firebase';
 
 // Utils
-import { isProdEnv } from 'utils/environment';
-import { mapChainToChainId, chainFromChainId } from 'utils/chains';
+import { mapChainToChainId } from 'utils/chains';
 import { TRANSACTION_STATUS } from 'constants/transactionDispatcherConstants';
+import { reportErrorLog } from 'utils/common';
 
 // Abi
 import plrStakingAbi from 'abi/plrStaking.json';
@@ -247,7 +271,7 @@ export const buildStakingTransactions = async (stkAmount: string, plrToken: Asse
     const erc20Contract = sdk.registerContract<ERC20TokenContract>('erc20Contract', abi, plrToken?.address);
     const approvalTransactionRequest = erc20Contract?.encodeApprove?.(contractAddress, valueInWei);
     if (!approvalTransactionRequest || !approvalTransactionRequest.to) {
-      return { errorMessage: 'Failed to build PLR DAO stake approval transaction!' };
+      return { errorMessage: BuildStakingError.DAO_APPROVAL_ERROR };
     }
 
     const approvalTransaction = {
@@ -260,7 +284,7 @@ export const buildStakingTransactions = async (stkAmount: string, plrToken: Asse
     };
     transactions = [approvalTransaction];
   } catch (e) {
-    return { errorMessage: 'Failed to build approval transaction!' };
+    return { errorMessage: BuildStakingError.APPROVAL_ERROR };
   }
 
   // staking
@@ -273,7 +297,7 @@ export const buildStakingTransactions = async (stkAmount: string, plrToken: Asse
     const stakeTransactionRequest = await stakingContract.encodeStake?.(valueInWeiString);
 
     if (!stakeTransactionRequest) {
-      return { errorMessage: 'Failed build staking transaction!' };
+      return { errorMessage: BuildStakingError.STAKING_ERROR };
     }
 
     const stakingTransaction = {
@@ -287,9 +311,7 @@ export const buildStakingTransactions = async (stkAmount: string, plrToken: Asse
 
     transactions = [...transactions, stakingTransaction];
   } catch (e) {
-    console.log('staking error', e);
-
-    return { errorMessage: 'Failed build transfer transaction!' };
+    return { errorMessage: BuildStakingError.TRANSFER_ERROR };
   }
 
   return { transactions };
@@ -303,7 +325,7 @@ export const estimateTransactions = async (transactions: EthereumTransaction[], 
     const estimation = await etherspotService.estimateTransactionsBatch(CHAIN.ETHEREUM, feeToken?.address);
     return { estimation };
   } catch (e) {
-    return { errorMessage: 'Could not estimate transaction fees.' };
+    return { errorMessage: BuildStakingError.ESTIMATION_ERROR };
   }
 };
 
@@ -316,7 +338,7 @@ export const sendTransactions = async (chain: string, transactionPayload: Transa
     const tx = await etherspotService.sendTransaction(transactionPayload, accountAddress, chain, false);
     return tx;
   } catch (e) {
-    console.log('sendTransactionsError', e);
+    reportErrorLog('plrStakingHelper sendTransaction', e);
   }
 
   return null;

@@ -31,3 +31,11 @@ export const stkPlrToken = {
   decimals: 18,
   iconUrl: PLR_ICON_URL,
 };
+
+export enum BuildStakingError {
+  DAO_APPROVAL_ERROR = 'DAO_APPROVAL_ERROR',
+  APPROVAL_ERROR = 'APPROVAL_ERROR',
+  STAKING_ERROR = 'STAKING_ERROR',
+  TRANSFER_ERROR = 'TRANSFER_ERROR',
+  ESTIMATION_ERROR = 'ESTIMATION_ERROR',
+}

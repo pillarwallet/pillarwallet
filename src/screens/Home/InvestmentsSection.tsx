@@ -41,6 +41,7 @@ import { isKeyBasedAccount } from 'utils/accounts';
 import { showServiceLaunchErrorToast } from 'utils/inAppBrowser';
 import { useAssetCategoriesConfig } from 'utils/uiConfig';
 import { images } from 'utils/images';
+import { reportErrorLog } from 'utils/common';
 
 // Services
 import etherspotService from 'services/etherspot';
@@ -85,10 +86,9 @@ const InvestmentsSection: FC<IInvestmentsSection> = () => {
       const stakingContract = sdk.registerContract<any>('PStaking', plrStakingAbi, contractAddress);
 
       const enabled = await stakingContract.callGetContractState();
-      console.log('enabled', enabled);
       setStakingEnabled(enabled === 1);
     } catch (e) {
-      console.log('InvestSection error', e);
+      reportErrorLog('InvestSection error', e);
     }
   };
 

@@ -1,3 +1,22 @@
+/*
+    Pillar Wallet: the personal data locker
+    Copyright (C) 2021 Stiftung Pillar Project
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useTranslationWithPrefix } from 'translations/translate';
 import styled from 'styled-components/native';
@@ -42,6 +61,7 @@ import {
 import { mapTransactionsToTransactionPayload, showTransactionRevertedToast } from 'utils/transactions';
 import { buildEtherspotTxFeeInfo } from 'utils/etherspot';
 import { fontStyles } from 'utils/variables';
+import { reportErrorLog } from 'utils/common';
 
 // Selectors
 import { useWalletAssetBalance } from 'selectors/balances';
@@ -155,7 +175,7 @@ const PlrStakingValidator = () => {
         const allTransactions = isBridgeTransaction ? [...stakeTransactions] : [...transactions, ...stakeTransactions];
         await getFeeInfo(allTransactions);
       } catch (e) {
-        console.log('calc fees error', e);
+        setStakingError(t('stakingFeeError'));
       }
     };
 
@@ -225,6 +245,7 @@ const PlrStakingValidator = () => {
     if (stkPlrAmount) setStkPlrAmount(null);
     if (showFeeError) setShowFeeError(false);
     if (txFeeInfo) setTxFeeInfo(null);
+    if (stakingError) setStakingError(null);
   };
 
   const onValueChange = (newValue: string) => {
@@ -264,12 +285,13 @@ const PlrStakingValidator = () => {
   const getFeeInfo = async (transactions: any[]) => {
     setCalculatingGas(true);
     const estimate = await estimateTransactions(transactions, gasFeeAsset);
-    const feeInfo = await buildEtherspotTxFeeInfo(estimate.estimation);
-    if (feeInfo?.fee) setTxFeeInfo(feeInfo.fee);
-    else setTxFeeInfo(null);
-    setCalculatingGas(false);
 
-    return feeInfo;
+    if (!estimate?.errorMessage) {
+      const feeInfo = await buildEtherspotTxFeeInfo(estimate.estimation);
+      if (feeInfo?.fee) setTxFeeInfo(feeInfo.fee);
+    } else setTxFeeInfo(null);
+
+    setCalculatingGas(false);
   };
 
   const submitStakingTransactions = async () => {
@@ -334,7 +356,8 @@ const PlrStakingValidator = () => {
           type: transactionType,
         };
       } catch (e) {
-        console.log('create staking payload error', e);
+        reportErrorLog('PlrStakingValidator error', e);
+        setStakingError(t('stakingBuildError'));
       }
     }
 
@@ -571,7 +594,7 @@ const PlrStakingValidator = () => {
             }
           />
         ) : (
-          <Button title={'Done'} onPress={onDone} size="large" disabled={!isStaked || processing} />
+          <Button title={tRoot('button.done')} onPress={onDone} size="large" disabled={!isStaked || processing} />
         )}
       </Content>
 

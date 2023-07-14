@@ -20,28 +20,18 @@
 
 import React, { FC, useState, useEffect } from 'react';
 import styled from 'styled-components/native';
-import { useTranslation } from 'translations/translate';
 import { BigNumber } from 'bignumber.js';
+import { useTranslationWithPrefix } from 'translations/translate';
 
 // Utils
-import { useProviderConfig } from 'utils/exchange';
 import { formatTokenValue } from 'utils/format';
 import { fontStyles } from 'utils/variables';
-import { isHighGasFee } from 'utils/transactions';
 import { useChainsConfig } from 'utils/uiConfig';
-import { getAssetRateInFiat } from 'utils/rates';
 
 // Types
 import type { Asset, AssetOption } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Chain } from 'models/Chain';
-
-// Selectors
-import { useRootSelector, useFiatCurrency, useChainRates, useActiveAccount } from 'selectors';
-import { gasThresholdsSelector } from 'redux/selectors/gas-threshold-selector';
-
-// Hooks
-import { useTransactionsEstimate } from 'hooks/transactions';
 
 // Components
 import Text from 'components/core/Text';
@@ -81,7 +71,8 @@ const SwapRouteCard: FC<ISwapRouteCard> = ({
   stakeFeeInfo,
   stakeGasFeeAsset,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslationWithPrefix('plrStaking.validator');
+
   const chainsConfig = useChainsConfig();
   const { titleShort: networkName } = chainsConfig[chain];
 
@@ -172,7 +163,7 @@ const SwapRouteCard: FC<ISwapRouteCard> = ({
           <Spacing h={16} />
 
           <ShowMoreButton onPress={() => setShowMore((current) => !current)}>
-            <ShowMoreText>{showMore ? 'Show less' : 'Show more'}</ShowMoreText>
+            <ShowMoreText>{showMore ? t('showLess') : t('showMore')}</ShowMoreText>
           </ShowMoreButton>
         </>
       )}
