@@ -46,6 +46,10 @@ const commonColors = {
   darkViolet: '#9D2BFF',
   dodgerBlue: '#198DFF',
   preciousPersimmon: '#FD7344',
+  deepViolet: '#31005c',
+  caribbeanGreen: '#00e097',
+  metallicViolet: '#5c0cac',
+  metallicVioletLight: '#5c0cac10',
 };
 
 export const semanticLightThemeColors = {
@@ -114,6 +118,8 @@ export const semanticLightThemeColors = {
   plrStakingAlt: '#45196c',
   plrStakingHighlight: '#b866ff',
   plrStakingAlert: '#e333e8',
+  purpleHeatPrimary: 'rgba(216, 171, 255, 0.33)',
+  purpleHeatSecondary: 'rgba(227, 200, 250, 0.4)',
 };
 
 export const semanticDarkThemeColors = {
@@ -182,6 +188,8 @@ export const semanticDarkThemeColors = {
   plrStakingAlt: '#45196c',
   plrStakingHighlight: '#b866ff',
   plrStakingAlert: '#e333e8',
+  purpleHeatPrimary: 'rgba(59, 0, 110, 0.33)',
+  purpleHeatSecondary: 'rgba(74, 0, 138, 0.4)',
 };
 
 export const themedColors = {

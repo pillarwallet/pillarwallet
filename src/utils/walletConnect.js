@@ -53,7 +53,6 @@ import type { TransactionPayload } from 'models/Transaction';
 import type { AssetByAddress, AssetsPerChain } from 'models/Asset';
 import type { ChainRecord } from 'models/Chain';
 
-
 // urls of dapps that don't support smart accounts
 // or that we don't want to support for any reason
 // TODO: still unsupported?
@@ -73,11 +72,12 @@ export const hasKeyBasedWalletConnectSession = (
 
 export const isSupportedDappUrl = (url: string): boolean => !UNSUPPORTED_APPS_URLS.includes(url);
 
-const isTokenTransfer = (data) => typeof data === 'string'
-  && data.toLowerCase() !== '0x'
-  && data.toLowerCase().startsWith(TOKEN_TRANSFER);
+const isTokenTransfer = (data) =>
+  typeof data === 'string' && data.toLowerCase() !== '0x' && data.toLowerCase().startsWith(TOKEN_TRANSFER);
 
-export const parseMessageSignParamsFromCallRequest = (callRequest: WalletConnectCallRequest): {
+export const parseMessageSignParamsFromCallRequest = (
+  callRequest: WalletConnectCallRequest,
+): {
   address: string,
   message: string,
   displayMessage: string,
@@ -101,12 +101,12 @@ export const parseMessageSignParamsFromCallRequest = (callRequest: WalletConnect
         message,
         callRequest,
       });
-      ([, displayMessage] = callRequestParams);
+      [, displayMessage] = callRequestParams;
     }
   } else if (method === ETH_SIGN_TYPED_DATA) {
     displayMessage = t('transactions.paragraph.typedDataMessage');
   } else {
-    ([, displayMessage] = callRequestParams);
+    [, displayMessage] = callRequestParams;
   }
 
   return { address, message, displayMessage };
@@ -126,9 +126,7 @@ export const mapCallRequestToTransactionPayload = (
   const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
 
   // to address can be either token contract (transfer data) or other kind of contract
-  const assetData = isTokenTransfer(data) && to
-    ? findAssetByAddress(chainSupportedAssets, to)
-    : null;
+  const assetData = isTokenTransfer(data) && to ? findAssetByAddress(chainSupportedAssets, to) : null;
 
   let amount;
   if (!assetData) {
@@ -137,10 +135,7 @@ export const mapCallRequestToTransactionPayload = (
     const erc20Interface = new Interface(ERC20_CONTRACT_ABI);
     const parsedTransaction = erc20Interface.parseTransaction({ data, value }) || {};
     const {
-      args: [
-        methodToAddress,
-        methodValue = 0,
-      ],
+      args: [methodToAddress, methodValue = 0],
     } = parsedTransaction; // get method value and address input
 
     // do not parse amount as number, last decimal numbers might change after converting
@@ -237,7 +232,7 @@ export const parsePeerName = (name: ?string): string => {
  * We try to pick PNG icons with highest pixel value by sorting them first by URL length (desc), then by name (desc).
  * Otherwise just pick whatever is there. See test file for sample cases.
  */
-export function pickPeerIcon(icons: ?string[]): ?string {
+export function pickPeerIcon(icons: ?(string[])): ?string {
   if (!icons?.length) return null;
   if (icons?.length === 1) return icons[0];
 

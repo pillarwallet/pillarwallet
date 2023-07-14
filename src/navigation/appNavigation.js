@@ -124,6 +124,8 @@ import ManageTokenLists from 'screens/Assets/ManageTokenLists';
 import ReceiveTokensWarning from 'screens/Home/ReceiveTokensWarning';
 import PlrStaking from 'screens/PlrStaking/PlrStaking';
 import PlrStakingValidator from 'screens/PlrStaking/PlrStakingValidator';
+import PoolsActivityScreen from 'screens/Asset/PoolsActivity';
+import TradingActivityScreen from 'screens/Asset/TradingActivity';
 
 // components
 import Toast from 'components/Toast';
@@ -143,6 +145,8 @@ import {
   MAIN_FLOW,
   ASSETS,
   ASSET,
+  POOLS_ACTIVITY,
+  TRADING_ACTIVITY,
   SERVICES_FLOW,
   EXCHANGE_CONFIRM,
   HOME,
@@ -325,13 +329,21 @@ const StackNavigatorConfigDisableGesture = {
 const assetsFlow = createStackNavigator(
   {
     [ASSETS]: AssetsScreen,
-    [ASSET]: AssetScreen,
     [COLLECTIBLE]: CollectibleScreen,
     [ADD_TOKENS]: AddTokensScreen,
     [TOKENS_WITH_TOGGLES]: TokenWithToggles,
     [MANAGE_TOKEN_LISTS]: ManageTokenLists,
   },
   StackNavigatorConfig,
+);
+
+const assetFlow = createStackNavigator(
+  {
+    [ASSET]: AssetScreen,
+    [POOLS_ACTIVITY]: PoolsActivityScreen,
+    [TRADING_ACTIVITY]: TradingActivityScreen,
+  },
+  StackNavigatorConfigDisableGesture,
 );
 
 const exchangeFlow = createStackNavigator(
@@ -649,6 +661,7 @@ const AppFlowNavigation = createStackNavigator(
     [TANK_FUND_FLOW]: tankFundFlow,
     [TANK_WITHDRAWAL_FLOW]: tankWithdrawalFlow,
     [WALLETCONNECT_FLOW]: walletConnectFlow,
+    [ASSET]: assetFlow,
     [PILLAR_NETWORK_INTRO]: PillarNetworkIntro,
     [LOGOUT_PENDING]: LogoutPendingScreen,
     [MENU_FLOW]: menuFlow,

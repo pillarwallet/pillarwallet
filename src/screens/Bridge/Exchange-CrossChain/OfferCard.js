@@ -35,7 +35,7 @@ import { BaseText } from 'components/legacy/Typography';
 import { OFFERS } from 'constants/exchangeConstants';
 
 // Utils
-import { useProviderConfig } from 'utils/exchange';
+import { useProviderConfig, getFeeInfoFromList } from 'utils/exchange';
 import { formatTokenValue, formatFiatValue } from 'utils/format';
 import { spacing, fontStyles } from 'utils/variables';
 import { getAssetValueInFiat } from 'utils/rates';
@@ -48,7 +48,7 @@ import type { Asset, AssetOption } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
 
 // Selectors
-import { useRootSelector, useFiatCurrency, useChainRates, useActiveAccount } from 'selectors';
+import { useRootSelector, useFiatCurrency, useChainRates, useActiveAccount, useExchangeGasFee } from 'selectors';
 import { gasThresholdsSelector } from 'redux/selectors/gas-threshold-selector';
 
 // Hooks
@@ -67,6 +67,9 @@ type Props = {
   onFetchSortingOfferInfo?: (offerInfo: ExchangeOffer) => void,
   isSelected?: ?boolean,
   onFeeInfo?: (feeInfo: ?TransactionFeeInfo) => void,
+  onEstimating?: (estimating: boolean) => void,
+  isVisible: boolean,
+  isLoading?: boolean,
 };
 
 function OfferCard({
@@ -79,12 +82,16 @@ function OfferCard({
   onFetchSortingOfferInfo,
   isSelected,
   onFeeInfo,
+  onEstimating,
+  isVisible,
+  isLoading,
 }: Props) {
   const { t } = useTranslation();
   const config = useProviderConfig(offer.provider);
   const activeAccount: any = useActiveAccount();
   const fiatCurrency = useFiatCurrency();
   const gasThresholds = useRootSelector(gasThresholdsSelector);
+  const gasFeeList = useExchangeGasFee();
 
   const [offerInfo, setOfferInfo] = React.useState(null);
 
@@ -99,6 +106,8 @@ function OfferCard({
 
   const { chain, toChain, toAsset, toAmount } = offer;
 
+  const gasFeeInfo = getFeeInfoFromList(gasFeeList, offer, gasFeeAsset);
+
   const rates = useChainRates(toChain || chain);
   const currency = useFiatCurrency();
 
@@ -106,10 +115,14 @@ function OfferCard({
   const formattedFiatValue = formatFiatValue(fiatValue, currency);
 
   const {
-    feeInfo,
-    errorMessage: estimationErrorMessage,
-    isEstimating,
+    feeInfo: offerFeeInfo,
+    errorMessage,
+    isEstimating: isOfferEstimating,
   } = useTransactionsEstimate(chain, crossChainTxs || offerInfo?.transactions, true, gasFeeAsset);
+
+  const feeInfo = gasFeeInfo ? gasFeeInfo?.feeInfo : offerFeeInfo;
+  const estimationErrorMessage = gasFeeInfo ? gasFeeInfo?.errorMessage : errorMessage;
+  const isEstimating = gasFeeInfo ? gasFeeInfo?.isEstimating : isOfferEstimating;
 
   const chainRates = useChainRates(chain);
 
@@ -128,6 +141,13 @@ function OfferCard({
   }, [estimationErrorMessage]);
 
   React.useEffect(() => {
+    if (isSelected) return;
+    if (typeof onEstimating === 'function') onEstimating(isEstimating);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEstimating]);
+
+  React.useEffect(() => {
+    if (isSelected && (isEstimating || !feeInfo)) return;
     onFeeInfo && onFeeInfo(feeInfo);
     onFetchSortingOfferInfo &&
       onFetchSortingOfferInfo({
@@ -138,7 +158,7 @@ function OfferCard({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [feeInfo, estimationErrorMessage, isEstimating]);
 
-  if (estimationErrorMessage) {
+  if (estimationErrorMessage || !isVisible || (!isSelected && isEstimating) || isLoading) {
     return null;
   }
 
@@ -193,7 +213,7 @@ export default OfferCard;
 const TouchableContainer = styled.TouchableOpacity`
   margin-bottom: ${spacing.mediumLarge}px;
   padding: 0 ${spacing.mediumLarge}px;
-  background-color: ${({ theme }) => theme.colors.basic080};
+  background-color: ${({ theme }) => theme.colors.basic050};
   border-radius: 20px;
 `;
 

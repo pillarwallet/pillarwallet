@@ -303,6 +303,8 @@
     "ensMigrate": "Migrate ENS to Etherspot",
     "transaction_submitted": "Transaction submitted",
     "on_network": "on {{network}}",
+    "pool_activity": "Pool Activity",
+    "trading_activity": "Trading Activity",
     "symbol_with_network": "{{symbol}} on {{network}}",
     "on_position": "{{position}} position",
     "of_stable": "{{percentage}}% of stables - {{type}}",
@@ -329,7 +331,17 @@
     "best_offer": "Best offer",
     "see_other_offers": "See other offers",
     "see_less_offers": "See less offers",
-    "half_min": "30s"
+    "half_min": "30s",
+    "marketCap": "Market Cap",
+    "fdv": "FDV",
+    "totalLiquidity": "Tot. Liquidity",
+    "supply": "Supply",
+    "holders": "Holders",
+    "trandingVol": "Trading Vol.",
+    "allTimeHigh": "All-Time High",
+    "allTimeLow": "All-Time Low",
+    "your_balance": "Your Balance",
+    "volume_24": "Volume 24h"
   },
 
   "button": {
@@ -449,7 +461,17 @@
     "savedPrivateKey": "I have saved my private key",
     "openInBrowser": "Open in browser",
     "ok": "OK",
-    "i_understood": "I understand"
+    "i_understand": "I understand",
+    "one_hour": "1 H",
+    "twentyfour_hour": "24 H",
+    "seven_day": "7 D",
+    "one_month": "1 M",
+    "one_year": "1 Y",
+    "today": "Today",
+    "last_week": "Last Week",
+    "last_month": "Last Month",
+    "last_year": "Last Year",
+    "token_analytics": "Token Analytics"
   },
 
   "paragraph": {
@@ -789,7 +811,8 @@
       "messageRequest": "Signature request",
       "transactionRequest": "Transaction request",
       "transactionRequestFormat": "{{app}} on {{chain}}",
-      "unsupportedRequest": "Unsupported request"
+      "unsupportedRequest": "Unsupported request",
+      "signMessageRequest": "Sign Message Request"
     },
     "connectedApps": {
       "title": "Connected dapps",
@@ -1335,6 +1358,8 @@
     "assetHasBeenHidden": "{{assetName}} ({{assetSymbol}}) removed.",
     "ensureBackup": "Please ensure you backup your wallet now.",
     "walletConnectUnsupportedApp": "This app is not supported. You may request support for this app.",
+    "walletConnectUnsupportedNetwork": "This app is not supported {{chainId}} chain.",
+    "walletConnectUnsupportedWalletNetwork": "This wallet is not supported {{chain}} chain.",
     "walletConnectConnectionsExpired": "Connections expired. Please connect again.",
     "cantReadQRCode": "Can't read this QR code. Try once again or use another image.",
     "incorrectQRCode": "QR code is incorrect.",

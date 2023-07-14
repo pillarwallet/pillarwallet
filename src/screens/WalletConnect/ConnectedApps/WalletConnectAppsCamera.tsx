@@ -24,14 +24,30 @@ import SlideModal from 'components/Modals/SlideModal';
 // Utils
 import { spacing } from 'utils/variables';
 
+// Selectors
+import { useRootSelector } from 'selectors';
+
 // Local
 import AppListItem from './AppListItem';
 import { type AppItem, useConnectedAppItems } from './selectors';
+import { isEmpty } from 'lodash';
 
 export default function () {
   const { t } = useTranslationWithPrefix('walletConnect.connectedApps');
+  const v2Sessions = useRootSelector((root) => root.walletConnectSessions.v2Sessions);
+
+  const v2ActiveSessions = React.useMemo(() => {
+    if (isEmpty(v2Sessions)) return [];
+    return v2Sessions.map((session) => {
+      const { peer, topic, pairingTopic } = session;
+      const { name, icons } = peer?.metadata;
+      return { key: `${topic}-${pairingTopic}`, title: name, iconUrl: icons[0], connector: null, v2Session: session };
+    });
+  }, [v2Sessions]);
 
   const items = useConnectedAppItems();
+
+  const sessions = v2ActiveSessions.concat(items);
 
   const renderItem = (item: AppItem) => {
     return <AppListItem {...item} />;
@@ -40,7 +56,7 @@ export default function () {
   return (
     <SlideModal noPadding noClose showHeader centerTitle title={t('title')}>
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
-        <InfoView>{items?.map((item) => renderItem(item))}</InfoView>
+        <InfoView>{sessions?.map((item) => renderItem(item))}</InfoView>
       </ContentWrapper>
     </SlideModal>
   );

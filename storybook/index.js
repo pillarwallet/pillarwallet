@@ -19,7 +19,8 @@
 */
 import React from 'react';
 import { getStorybookUI, configure, addDecorator } from '@storybook/react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { withI18next } from 'storybook-addon-i18next';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
@@ -28,15 +29,14 @@ import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { loadStories } from './storyLoader';
 import './rn-addons';
 
-
-i18n
-  .use(initReactI18next)
-  .init();
+i18n.use(initReactI18next).init();
 
 configure(loadStories, module);
-addDecorator(withI18next({
-  i18n,
-}));
+addDecorator(
+  withI18next({
+    i18n,
+  }),
+);
 
 const StorybookUIRoot = () => {
   const StorybookComponent = getStorybookUI({

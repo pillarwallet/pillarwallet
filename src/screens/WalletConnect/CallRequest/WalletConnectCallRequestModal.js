@@ -21,6 +21,8 @@
 import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
 import { useTranslation } from 'translations/translate';
+import { getSdkError } from '@walletconnect/utils';
+import { formatJsonRpcError } from '@json-rpc-tools/utils';
 
 // Components
 import BottomModal from 'components/layout/BottomModal';
@@ -28,7 +30,7 @@ import Toast from 'components/Toast';
 
 // Constants
 import { WALLETCONNECT_PIN_CONFIRM_SCREEN } from 'constants/navigationConstants';
-import { REQUEST_TYPE } from 'constants/walletConnectConstants';
+import { REQUEST_TYPE, ETH_SIGN_TYPED_DATA, ETH_SIGN_TYPED_DATA_V4 } from 'constants/walletConnectConstants';
 
 // Hooks
 import useWalletConnect from 'hooks/useWalletConnect';
@@ -58,7 +60,7 @@ function WalletConnectCallRequestModal({ request }: Props) {
 
   const ref = React.useRef();
 
-  const { rejectCallRequest } = useWalletConnect();
+  const { rejectCallRequest, rejectV2CallRequest } = useWalletConnect();
 
   const type = getWalletConnectCallRequestType(request);
   const chain = chainFromChainId[request.chainId];
@@ -69,7 +71,9 @@ function WalletConnectCallRequestModal({ request }: Props) {
   const appName = parsePeerName(request.name);
 
   const title =
-    type === REQUEST_TYPE.TRANSACTION
+    type === REQUEST_TYPE.TRANSACTION ||
+    request.method === ETH_SIGN_TYPED_DATA ||
+    request.method === ETH_SIGN_TYPED_DATA_V4
       ? t('walletConnect.requests.transactionRequestFormat', { app: appName, chain: chainName })
       : formatRequestType(type);
 
@@ -102,7 +106,11 @@ function WalletConnectCallRequestModal({ request }: Props) {
     }
 
     ref.current?.close();
-    rejectCallRequest(request);
+    if (request?.topic) {
+      rejectV2CallRequest(request, formatJsonRpcError(request.callId, getSdkError('USER_REJECTED_METHODS').message));
+    } else {
+      rejectCallRequest(request);
+    }
   };
 
   return (

@@ -42,3 +42,43 @@ export type ExchangeOffer = {
   sortingValue?: number,
   feeInfo?: ?TransactionFeeInfo,
 };
+
+export type ExchangeFeeInfo = {
+  provider: string,
+  chain: Chain,
+  fromAddress: string,
+  toAddress: string,
+  isEstimating: boolean,
+  gasFeeAsset: AssetOption | Asset,
+  feeInfo: TransactionFeeInfo,
+  errorMessage: string | null,
+};
+
+export type TradingActivityData = {
+  amm: string,
+  amountUSD: number,
+  timestamp: number,
+  tokensIn: ActivityTokensInOut[],
+  tokensOut: ActivityTokensInOut[],
+  transactionAddress: string,
+  transactionType: string,
+};
+
+export type ActivityTokensInOut = {
+  amm: string,
+  amount: number,
+  network: string,
+  priceETH: number,
+  priceUSD: number,
+  symbol: string,
+};
+
+export type PoolActivityData = {
+  amm: string,
+  amountUSD: number,
+  timestamp: number,
+  tokensIn: ActivityTokensInOut[],
+  tokensOut: ActivityTokensInOut[],
+  transactionAddress: string,
+  transactionType: string,
+};
