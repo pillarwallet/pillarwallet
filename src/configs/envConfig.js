@@ -20,7 +20,8 @@
 /* eslint-disable i18next/no-literal-string */
 
 import { Alert } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Storage from 'services/storage';
 import isEmpty from 'lodash.isempty';
 import RNRestart from 'react-native-restart';

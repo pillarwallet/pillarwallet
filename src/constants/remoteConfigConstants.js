@@ -18,6 +18,24 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+const pelerinSupportedAssets = {
+  supportedAssets: [
+    'BNB',
+    'BTCB',
+    'BUSD',
+    'DAI',
+    'ETH',
+    'FRAX',
+    'LUSD',
+    'MATIC',
+    'USDC',
+    'USDT',
+    'WBTC',
+    'WETH',
+    'XDAI',
+  ],
+};
+
 // Feature flags for Services screen items and other constants fetched from
 // Firebase Remote Config
 export const REMOTE_CONFIG = {
@@ -38,12 +56,6 @@ export const REMOTE_CONFIG = {
   WALLET_MIGRATION_ARCHANOVA_ENABLED: 'feature_archanova_migrator_tool',
   ENS_MIGRATOR_ENABLED: 'ens_migrator_enabled',
   KNOWLEDGEBASE_URL: 'knowledgebase_url',
-  FEATURE_STORIES_ANDROID_HEIGHT: 'feature_stories_android_height',
-  FEATURE_STORIES_ANDROID_WIDTH: 'feature_stories_android_width',
-  FEATURE_STORIES_ANDROID_CORNER_RADIUS: 'feature_stories_android_corner_radius',
-  FEATURE_STORIES_IOS_HEIGHT: 'feature_stories_ios_height',
-  FEATURE_STORIES_IOS_WIDTH: 'feature_stories_ios_width',
-  FEATURE_STORIES_IOS_CORNER_RADIUS: 'feature_stories_ios_corner_radius',
 
   PRISMIC_PRIVACY_POLICY_DOCUMENT_ID: 'prismic_privacy_policy_document_id',
   PRISMIC_TERMS_OF_POLICY_DOCUMENT_ID: 'prismic_terms_of_policy_document_id',
@@ -75,6 +87,7 @@ export const REMOTE_CONFIG = {
   FEATURE_PLR_STAKING: 'feature_plr_staking',
   PLR_STAKING_START_TIME: 'stakingStartTime',
   PLR_STAKING_LOCKED_START_TIME: 'stakingLockedStartTime',
+  MT_PELERIN_SUPPORTED_ASSETS: 'app_mt_pelerin_supported_assets',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values
@@ -96,12 +109,6 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.WALLET_MIGRATION_ARCHANOVA_ENABLED]: true,
   [REMOTE_CONFIG.ENS_MIGRATOR_ENABLED]: false,
   [REMOTE_CONFIG.KNOWLEDGEBASE_URL]: 'https://help.pillarproject.io/',
-  [REMOTE_CONFIG.FEATURE_STORIES_ANDROID_HEIGHT]: '200',
-  [REMOTE_CONFIG.FEATURE_STORIES_ANDROID_WIDTH]: '200',
-  [REMOTE_CONFIG.FEATURE_STORIES_ANDROID_CORNER_RADIUS]: '40',
-  [REMOTE_CONFIG.FEATURE_STORIES_IOS_HEIGHT]: '100',
-  [REMOTE_CONFIG.FEATURE_STORIES_IOS_WIDTH]: '100',
-  [REMOTE_CONFIG.FEATURE_STORIES_IOS_CORNER_RADIUS]: '20',
   [REMOTE_CONFIG.PRISMIC_PRIVACY_POLICY_DOCUMENT_ID]: 'YNGoWxIAACMAsjF2',
   [REMOTE_CONFIG.PRISMIC_TERMS_OF_POLICY_DOCUMENT_ID]: 'YNGo8hIAACMAsjRR',
   [REMOTE_CONFIG.PRISMIC_INTERJECTION_DOCUMENT_ID]: 'YNsHjxIAACIAw0ca',
@@ -133,4 +140,5 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.FEATURE_PLR_STAKING]: false,
   [REMOTE_CONFIG.PLR_STAKING_START_TIME]: 1688425200,
   [REMOTE_CONFIG.PLR_STAKING_LOCKED_START_TIME]: 1689289200,
+  [REMOTE_CONFIG.MT_PELERIN_SUPPORTED_ASSETS]: JSON.stringify(pelerinSupportedAssets),
 };

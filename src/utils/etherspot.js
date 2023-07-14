@@ -29,6 +29,7 @@ import {
   AccountDashboardProtocols as EtherspotAccountDashboardProtocols,
 } from 'etherspot';
 import { isEmpty } from 'lodash';
+import { useQuery } from 'react-query';
 
 // constants
 import { TX_CONFIRMED_STATUS, TX_FAILED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
@@ -44,6 +45,9 @@ import { chainFromChainId, nativeAssetPerChain } from 'utils/chains';
 import { buildHistoryTransaction } from 'utils/history';
 import { isCaseInsensitiveMatch } from 'utils/common';
 
+// Services
+import etherspotService from 'services/etherspot';
+
 // types
 import type {
   TokenListToken,
@@ -51,7 +55,7 @@ import type {
   GatewayEstimatedBatch,
 } from 'utils/types/etherspot';
 import type { Transaction, TransactionFeeInfo } from 'models/Transaction';
-import type { Asset, AssetCore, AssetOption } from 'models/Asset';
+import type { Asset, AssetCore, AssetOption, AssetDataNavigationParam } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Chain } from 'models/Chain';
 import type { ExchangeProvider, ExchangeOffer } from 'models/Exchange';
@@ -75,6 +79,55 @@ export const isEtherspotAccountDeployed = (account: ?Account, chain: Chain) => {
   const etherspotAccount: ?EtherspotAccount = account.extra?.[chain];
   return etherspotAccount?.state === AccountStates.Deployed;
 };
+
+export function useTokenDetailsQuery(token: AssetDataNavigationParam) {
+  const enabled = !!token;
+
+  return useQuery(['GetTokenDetails', token], () => etherspotService.getTokenDetails(token), {
+    enabled,
+    cacheTime: 0,
+  });
+}
+
+export function useMarketDetailsQuery(token: AssetDataNavigationParam) {
+  const enabled = !!token;
+
+  return useQuery(['GetMarketDetails', token], () => etherspotService.getMarketDetails(token), {
+    enabled,
+    cacheTime: 0,
+  });
+}
+
+export function usePoolsActivityQuery(token: AssetDataNavigationParam) {
+  const enabled = !!token;
+
+  return useQuery(['GetPoolsActivity', token], () => etherspotService.getPoolsActivity(token), {
+    enabled,
+    cacheTime: 0,
+  });
+}
+
+export function useTradingHistoryQuery(token: AssetDataNavigationParam) {
+  const enabled = !!token;
+
+  return useQuery(['GetTradingHistory', token], () => etherspotService.getTradingHistory(token), {
+    enabled,
+    cacheTime: 0,
+  });
+}
+
+export function useHistoricalTokenPriceQuery(token: AssetDataNavigationParam, period: string) {
+  const enabled = !!token && !!period;
+
+  return useQuery(
+    ['HistoricalTokenPrices', token, period],
+    () => etherspotService.getHistoricalTokenPrice(token, period),
+    {
+      enabled,
+      cacheTime: 0,
+    },
+  );
+}
 
 export const parseEtherspotTransactions = (
   chain: Chain,

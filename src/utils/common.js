@@ -609,10 +609,68 @@ export const formatBigAmount = (value: Value) => {
   return _value.toFixed(2);
 };
 
+export function nFormatter(num: ?number) {
+  if (!num) return 0;
+  if (num >= 1000000000) {
+    // eslint-disable-next-line prefer-template
+    return (num / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B';
+  }
+  if (num >= 1000000) {
+    // eslint-disable-next-line prefer-template
+    return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+  }
+  if (num >= 1000) {
+    // eslint-disable-next-line prefer-template
+    return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+  }
+  return num?.toFixed(2);
+}
+
+export const convertDecimalNumber = (value: number) => value?.toFixed(value < 1 ? 4 : 2) || 0;
+
 export const formatBigFiatAmount = (value: Value, fiatCurrency: string) => {
   const currencySymbol = getCurrencySymbol(fiatCurrency);
   return `${currencySymbol}${formatBigAmount(value)}`;
 };
+
+export const numberWithCommas = (value: ?string) => {
+  if (!value) return null;
+  const parts = value.toString().split('.');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return parts.join('.');
+};
+
+export function getDateDiff(startDate: Object, endDate: Object) {
+  // For min diff
+  const msInMinute = 60 * 1000;
+  const minDiff = Math.round(Math.abs(endDate - startDate) / msInMinute);
+  // eslint-disable-next-line prefer-template, i18next/no-literal-string
+  if (minDiff < 60) return minDiff + 'min.';
+
+  // For hour diff
+  const msInHour = 1000 * 60 * 60;
+  const hourDiff = Math.round(Math.abs(endDate.getTime() - startDate.getTime()) / msInHour);
+  // eslint-disable-next-line prefer-template, i18next/no-literal-string
+  if (hourDiff < 24) return hourDiff + 'h.';
+
+  // For day diff
+  const msInDay = 24 * 60 * 60 * 1000;
+  const dayDiff = Math.round(Math.abs(endDate - startDate) / msInDay);
+  // eslint-disable-next-line prefer-template, i18next/no-literal-string
+  if (dayDiff < 7) return dayDiff + 'd.';
+
+  // For week diff
+  const msInWeek = 1000 * 60 * 60 * 24 * 7;
+  const weekDiff = Math.round(Math.abs(endDate - startDate) / msInWeek);
+  // eslint-disable-next-line prefer-template, i18next/no-literal-string
+  if (weekDiff < 4) return weekDiff + 'wk.';
+
+  // For month diff
+  // eslint-disable-next-line no-mixed-operators
+  const monthDiff = endDate.getMonth() - startDate.getMonth() + 12 * (endDate.getFullYear() - startDate.getFullYear());
+  // eslint-disable-next-line prefer-template, i18next/no-literal-string
+  return monthDiff + 'mo.';
+}
 
 export const getEnsName = (username: string) => `${username}${getEnsPrefix()}`;
 

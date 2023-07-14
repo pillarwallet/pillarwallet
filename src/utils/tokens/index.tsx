@@ -20,7 +20,6 @@
 
 // Utils
 import { nativeAssetPerChain } from 'utils/chains';
-import { reportErrorLog } from 'utils/common';
 
 // Assets
 const aave = require('assets/tokens/aave.png');
@@ -100,10 +99,7 @@ export const defaultTokensIcon = (name: string) => {
 };
 
 export const isChainIcon = (nameOrUrl: string): boolean => {
-  if (!nameOrUrl) {
-    reportErrorLog('isChainIcon: Icon url or name not found', { nameOrUrl });
-    return false;
-  }
+  if (!nameOrUrl) return false;
 
   const chainInfo = nativeAssetPerChain[nameOrUrl];
   if (!chainInfo) return false;

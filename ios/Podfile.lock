@@ -3,8 +3,8 @@ PODS:
     - AppsFlyerFramework/Main (= 6.10.1)
   - AppsFlyerFramework/Main (6.10.1)
   - boost-for-react-native (1.63.0)
-  - BVLinearGradient (2.5.4):
-    - React
+  - BVLinearGradient (2.6.2):
+    - React-Core
   - CocoaAsyncSocket (7.6.5)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.63.4)
@@ -369,11 +369,13 @@ PODS:
     - React-Core
   - react-native-camera/RN (3.44.3):
     - React-Core
-  - react-native-cookies (3.2.0):
-    - React
+  - react-native-cookies (6.2.1):
+    - React-Core
   - react-native-date-picker (3.4.3):
     - React-Core
-  - react-native-kochava-tracker (2.3.0):
+  - react-native-get-random-values (1.9.0):
+    - React-Core
+  - react-native-kochava-tracker (2.2.0):
     - React
   - react-native-netinfo (5.9.10):
     - React-Core
@@ -456,8 +458,8 @@ PODS:
     - React-jsi (= 0.63.4)
   - rn-fetch-blob (0.12.0):
     - React-Core
-  - RNCAsyncStorage (1.8.1):
-    - React
+  - RNCAsyncStorage (1.18.1):
+    - React-Core
   - RNCClipboard (1.5.1):
     - React-Core
   - RNCMaskedView (0.1.11):
@@ -529,7 +531,7 @@ PODS:
     - Sentry (= 6.1.4)
   - RNShare (1.2.1):
     - React
-  - RNSVG (12.5.1):
+  - RNSVG (13.9.0):
     - React-Core
   - RNVectorIcons (6.7.0):
     - React
@@ -543,11 +545,6 @@ PODS:
   - Sentry (6.1.4):
     - Sentry/Core (= 6.1.4)
   - Sentry/Core (6.1.4)
-  - Storyly (1.11.1):
-    - SDWebImage (= 5.10.0)
-  - storyly-react-native (1.11.1):
-    - React
-    - Storyly (= 1.11.1)
   - SwiftyGif (5.4.4)
   - TcpSockets (3.3.2):
     - CocoaAsyncSocket
@@ -584,8 +581,9 @@ DEPENDENCIES:
   - react-native-appsflyer (from `../node_modules/react-native-appsflyer`)
   - react-native-background-timer (from `../node_modules/react-native-background-timer`)
   - react-native-camera (from `../node_modules/react-native-camera`)
-  - react-native-cookies (from `../node_modules/react-native-cookies/ios`)
+  - "react-native-cookies (from `../node_modules/@react-native-cookies/cookies`)"
   - react-native-date-picker (from `../node_modules/react-native-date-picker`)
+  - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
   - react-native-kochava-tracker (from `../node_modules/react-native-kochava-tracker`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-notifications (from `../node_modules/react-native-notifications`)
@@ -607,7 +605,7 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
-  - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
+  - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCClipboard (from `../node_modules/@react-native-community/clipboard`)"
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - RNColorMatrixImageFilters (from `../node_modules/react-native-color-matrix-image-filters`)
@@ -636,7 +634,6 @@ DEPENDENCIES:
   - RNShare (from `../node_modules/react-native-share`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
-  - storyly-react-native (from `../node_modules/storyly-react-native`)
   - SwiftyGif (from `https://github.com/kirualex/SwiftyGif`)
   - TcpSockets (from `../node_modules/react-native-tcp`)
   - "toolbar-android (from `../node_modules/@react-native-community/toolbar-android`)"
@@ -670,7 +667,6 @@ SPEC REPOS:
     - SDWebImage
     - SDWebImageWebPCoder
     - Sentry
-    - Storyly
 
 EXTERNAL SOURCES:
   BVLinearGradient:
@@ -724,9 +720,11 @@ EXTERNAL SOURCES:
   react-native-camera:
     :path: "../node_modules/react-native-camera"
   react-native-cookies:
-    :path: "../node_modules/react-native-cookies/ios"
+    :path: "../node_modules/@react-native-cookies/cookies"
   react-native-date-picker:
     :path: "../node_modules/react-native-date-picker"
+  react-native-get-random-values:
+    :path: "../node_modules/react-native-get-random-values"
   react-native-kochava-tracker:
     :path: "../node_modules/react-native-kochava-tracker"
   react-native-netinfo:
@@ -770,7 +768,7 @@ EXTERNAL SOURCES:
   rn-fetch-blob:
     :path: "../node_modules/rn-fetch-blob"
   RNCAsyncStorage:
-    :path: "../node_modules/@react-native-community/async-storage"
+    :path: "../node_modules/@react-native-async-storage/async-storage"
   RNCClipboard:
     :path: "../node_modules/@react-native-community/clipboard"
   RNCMaskedView:
@@ -827,8 +825,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-svg"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
-  storyly-react-native:
-    :path: "../node_modules/storyly-react-native"
   SwiftyGif:
     :git: https://github.com/kirualex/SwiftyGif
   TcpSockets:
@@ -846,7 +842,7 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   AppsFlyerFramework: 88a6eed37ad52bcee4ad74232efa8e22809d06c9
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
-  BVLinearGradient: 8cbc5155c978f2e43098818c91d206d07aae6d30
+  BVLinearGradient: 34a999fda29036898a09c6a6b728b0b4189e1a44
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DoubleConversion: cde416483dac037923206447da6e1454df403714
   FBLazyVector: 3bb422f41b18121b71783a905c10e58606f7dc3e
@@ -891,9 +887,10 @@ SPEC CHECKSUMS:
   react-native-appsflyer: 153e96b97ecc0c26b14fc79911675e51cfd35b36
   react-native-background-timer: 1b6e6b4e10f1b74c367a1fdc3c72b67c619b222b
   react-native-camera: b8cc03e2feec0c04403d0998e37cf519d8fd4c6f
-  react-native-cookies: 854d59c4135c70b92a02ca4930e68e4e2eb58150
+  react-native-cookies: f54fcded06bb0cda05c11d86788020b43528a26c
   react-native-date-picker: 201b481c94dcb7678f4712477ad026dd7793305b
-  react-native-kochava-tracker: 92a1d6cead007fcdfaf2295f3ece9e724b6acf7a
+  react-native-get-random-values: dee677497c6a740b71e5612e8dbd83e7539ed5bb
+  react-native-kochava-tracker: cdc03ae934c09b5ceca2100a81af13ca263f1f6a
   react-native-netinfo: 30fb89fa913c342be82a887b56e96be6d71201dd
   react-native-notifications: 66c59381a466cb561c4036028ef6401a6b1a8a71
   react-native-pager-view: da490aa1f902c9a5aeecf0909cc975ad0e92e53e
@@ -914,7 +911,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: ae4f914cfe8de7d4de95ae1ea6cc8f6315d73d9d
   ReactCommon: 73d79c7039f473b76db6ff7c6b159c478acbbb3b
   rn-fetch-blob: f065bb7ab7fb48dd002629f8bdcb0336602d3cba
-  RNCAsyncStorage: e0dd7c8a36543b4ef84969acd9f8aceba3a92dc2
+  RNCAsyncStorage: b90b71f45b8b97be43bc4284e71a6af48ac9f547
   RNCClipboard: 41d8d918092ae8e676f18adada19104fa3e68495
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNColorMatrixImageFilters: 9b6a80ef1337e327d8b9a1c27d50e753bdcc252f
@@ -941,14 +938,12 @@ SPEC CHECKSUMS:
   RNScrypt: 95fdef077b482e9fdf8a761120cb69d129ef4016
   RNSentry: 6f8f9ee7e4c939dcd35e5633b94d0e3782888e46
   RNShare: 48cf88cadf9ca2143cdaa557c1ec7f8808040ffc
-  RNSVG: d7d7bc8229af3842c9cfc3a723c815a52cdd1105
+  RNSVG: 53c661b76829783cdaf9b7a57258f3d3b4c28315
   RNVectorIcons: 368d6d8b8301224e5ffb6254191f4f8876c2be0d
   RSKImageCropper: 90dfe482402fb8a40cabd5fea65186d9102cc425
   SDWebImage: 9169792e9eec3e45bba2a0c02f74bf8bd922d1ee
   SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
   Sentry: 9d055e2de30a77685e86b219acf02e59b82091fc
-  Storyly: f606e22e194f14b3bb49c5b2d7cee8549a36d14c
-  storyly-react-native: 729e7332d67fef06c44b6ec8fd6168f44e656cf0
   SwiftyGif: 93a1cc87bf3a51916001cf8f3d63835fb64c819f
   TcpSockets: bd31674146c0931a064fc254a59812dfd1a73ae0
   toolbar-android: 2a73856e98b750d7e71ce4644d3f41cc98211719
@@ -956,4 +951,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 9c66e94900b997268a39f6560cad896ff3791b27
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.11.3

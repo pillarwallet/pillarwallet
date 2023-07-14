@@ -72,7 +72,7 @@ import type {
   GatewayEstimatedBatch,
   EtherspotAccountTotalBalancesItem,
 } from 'utils/types/etherspot';
-import type { AssetCore, Asset, AssetOption } from 'models/Asset';
+import type { AssetCore, Asset, AssetOption, AssetDataNavigationParam } from 'models/Asset';
 import type { WalletAssetBalance } from 'models/Balances';
 import type { Chain, ChainRecord } from 'models/Chain';
 import type { ExchangeOffer } from 'models/Exchange';
@@ -682,6 +682,118 @@ export class EtherspotService {
     }
   }
 
+  async getTokenDetails(token: AssetDataNavigationParam) {
+    const { chain, contractAddress } = token;
+
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      logBreadcrumb('getTokenDetails', 'failed: no SDK for get token details', { chain });
+      return null;
+    }
+
+    const nativeAddress = nativeAssetPerChain[chain].address;
+
+    try {
+      const tokenDetails = await sdk.getTokenDetails({
+        tokenAddress: contractAddress,
+        chainId: mapChainToChainId(chain),
+        // eslint-disable-next-line i18next/no-literal-string
+        provider: nativeAddress && 'dex-guru',
+      });
+      return tokenDetails;
+    } catch (error) {
+      reportErrorLog('getTokenDetails -> token details failed', { token, error });
+      return null;
+    }
+  }
+
+  async getHistoricalTokenPrice(token: AssetDataNavigationParam, period: string) {
+    const { chain, contractAddress } = token;
+
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      logBreadcrumb('getHistoricalTokenPrice', 'failed: no SDK for get historical token price', { chain });
+      return null;
+    }
+
+    try {
+      const historicalTokenPrice = await sdk.getHistoricalTokenPrice({
+        tokenAddress: contractAddress,
+        chainId: mapChainToChainId(chain),
+        timePeriod: period,
+      });
+      return historicalTokenPrice;
+    } catch (error) {
+      reportErrorLog('getHistoricalTokenPrice -> historical token price failed', { token, error });
+      return null;
+    }
+  }
+
+  async getMarketDetails(token: AssetDataNavigationParam) {
+    const { chain, contractAddress } = token;
+
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      logBreadcrumb('getMarketDetails', 'failed: no SDK for get market details', { chain });
+      return null;
+    }
+
+    try {
+      const marketDetails = await sdk.getMarketDetails({
+        tokenAddress: contractAddress,
+        chainId: mapChainToChainId(chain),
+      });
+      return marketDetails;
+    } catch (error) {
+      reportErrorLog('getMarketDetails -> market details failed', { token, error });
+      return null;
+    }
+  }
+
+  async getPoolsActivity(token: AssetDataNavigationParam) {
+    const { chain, contractAddress } = token;
+
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      logBreadcrumb('getPoolsActivity', 'failed: no SDK for get pools activity', { chain });
+      return null;
+    }
+
+    try {
+      const poolsActivity = await sdk.getPoolsActivity({
+        tokenAddress: contractAddress,
+        chainId: mapChainToChainId(chain),
+        page: 1,
+      });
+      return poolsActivity;
+    } catch (error) {
+      reportErrorLog('getPoolsActivity -> pools activity failed', { token, error });
+      return null;
+    }
+  }
+
+  async getTradingHistory(token: AssetDataNavigationParam) {
+    const { chain, contractAddress } = token;
+
+    const sdk = this.getSdkForChain(chain);
+    if (!sdk) {
+      logBreadcrumb('getTradingHistory', 'failed: no SDK for get trading history', { chain });
+      return null;
+    }
+
+    try {
+      const poolsActivity = await sdk.getTradingHistory({
+        tokenAddress: contractAddress,
+        chainId: mapChainToChainId(chain),
+        page: 1,
+      });
+      return poolsActivity;
+    } catch (error) {
+      reportErrorLog('getTradingHistory -> trading history failed', { token, error });
+      return null;
+    }
+  }
+
   async getTransactionExplorerLinkByBatch(chain: Chain, batchHash: string): Promise<?string> {
     const submittedBatch = await this.getSubmittedBatchByHash(chain, batchHash);
 
@@ -898,7 +1010,9 @@ export class EtherspotService {
         fromChainId: mapChainToChainId(chain),
       });
 
-      return offers.map((offer) => buildExchangeOffer(chain, fromAsset, toAsset, fromAmount, offer, captureFee));
+      return offers
+        .map((offer) => buildExchangeOffer(chain, fromAsset, toAsset, fromAmount, offer, captureFee))
+        .filter((offer) => !!offer.provider);
     } catch (error) {
       reportErrorLog('EtherspotService getExchangeOffers failed', { chain, error });
       return [];

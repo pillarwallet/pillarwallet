@@ -34080,16 +34080,16 @@ exports[`Storyshots HeaderBlock edge cases 1`] = `
                 Array [
                   Object {
                     "alignItems": "center",
-                    "flexBasis": 0,
                     "flexDirection": "row",
-                    "flexGrow": 4,
-                    "flexShrink": 1,
                     "height": 40,
                     "justifyContent": "center",
                     "paddingBottom": 0,
                     "paddingLeft": 12,
                     "paddingRight": 12,
                     "paddingTop": 0,
+                  },
+                  Object {
+                    "flex": 4,
                   },
                 ]
               }
@@ -34384,16 +34384,16 @@ exports[`Storyshots HeaderBlock floating transparent 1`] = `
                 Array [
                   Object {
                     "alignItems": "center",
-                    "flexBasis": 0,
                     "flexDirection": "row",
-                    "flexGrow": 4,
-                    "flexShrink": 1,
                     "height": 40,
                     "justifyContent": "center",
                     "paddingBottom": 0,
                     "paddingLeft": 12,
                     "paddingRight": 12,
                     "paddingTop": 0,
+                  },
+                  Object {
+                    "flex": 4,
                   },
                 ]
               }
@@ -34658,16 +34658,16 @@ exports[`Storyshots HeaderBlock with close icon on the left 1`] = `
                 Array [
                   Object {
                     "alignItems": "center",
-                    "flexBasis": 0,
                     "flexDirection": "row",
-                    "flexGrow": 4,
-                    "flexShrink": 1,
                     "height": 40,
                     "justifyContent": "center",
                     "paddingBottom": 0,
                     "paddingLeft": 12,
                     "paddingRight": 12,
                     "paddingTop": 0,
+                  },
+                  Object {
+                    "flex": 4,
                   },
                 ]
               }
@@ -34811,16 +34811,16 @@ exports[`Storyshots HeaderBlock with close icon on the right 1`] = `
                 Array [
                   Object {
                     "alignItems": "center",
-                    "flexBasis": 0,
                     "flexDirection": "row",
-                    "flexGrow": 4,
-                    "flexShrink": 1,
                     "height": 40,
                     "justifyContent": "center",
                     "paddingBottom": 0,
                     "paddingLeft": 12,
                     "paddingRight": 12,
                     "paddingTop": 0,
+                  },
+                  Object {
+                    "flex": 4,
                   },
                 ]
               }
@@ -35083,16 +35083,16 @@ exports[`Storyshots HeaderBlock with hamburger 1`] = `
                 Array [
                   Object {
                     "alignItems": "center",
-                    "flexBasis": 0,
                     "flexDirection": "row",
-                    "flexGrow": 4,
-                    "flexShrink": 1,
                     "height": 40,
                     "justifyContent": "center",
                     "paddingBottom": 0,
                     "paddingLeft": 12,
                     "paddingRight": 12,
                     "paddingTop": 0,
+                  },
+                  Object {
+                    "flex": 4,
                   },
                 ]
               }
@@ -35282,16 +35282,16 @@ exports[`Storyshots HeaderBlock with items on all sides 1`] = `
                 Array [
                   Object {
                     "alignItems": "center",
-                    "flexBasis": 0,
                     "flexDirection": "row",
-                    "flexGrow": 4,
-                    "flexShrink": 1,
                     "height": 40,
                     "justifyContent": "center",
                     "paddingBottom": 0,
                     "paddingLeft": 12,
                     "paddingRight": 12,
                     "paddingTop": 0,
+                  },
+                  Object {
+                    "flex": 4,
                   },
                 ]
               }
@@ -46223,8 +46223,8 @@ exports[`Storyshots ValueOverTimeGraph default 1`] = `
         >
           <RNSVGSvgView
             align="none"
-            bbHeight={200}
-            bbWidth={750}
+            bbHeight="200"
+            bbWidth="750"
             focusable={false}
             height={200}
             meetOrSlice={0}
@@ -46247,12 +46247,25 @@ exports[`Storyshots ValueOverTimeGraph default 1`] = `
             vbWidth={750}
             width={750}
           >
-            <RNSVGGroup>
+            <RNSVGGroup
+              fill={
+                Object {
+                  "payload": 4278190080,
+                  "type": 0,
+                }
+              }
+            >
               <RNSVGForeignObject
-                height={200}
-                width={750}
-                x={20}
-                y={0}
+                fill={
+                  Object {
+                    "payload": 4278190080,
+                    "type": 0,
+                  }
+                }
+                height="200"
+                width="750"
+                x="20"
+                y="0"
               >
                 <View
                   style={
@@ -46331,10 +46344,16 @@ exports[`Storyshots ValueOverTimeGraph default 1`] = `
                 </View>
               </RNSVGForeignObject>
               <RNSVGForeignObject
+                fill={
+                  Object {
+                    "payload": 4278190080,
+                    "type": 0,
+                  }
+                }
                 height="100%"
                 width="100%"
                 x="0%"
-                y={188}
+                y="188"
               >
                 <View
                   style={
@@ -46551,15 +46570,25 @@ exports[`Storyshots ValueOverTimeGraph default 1`] = `
                     "strokeLinejoin",
                   ]
                 }
-                stroke={4289283583}
+                stroke={
+                  Object {
+                    "payload": 4289283583,
+                    "type": 0,
+                  }
+                }
                 strokeLinecap={1}
                 strokeLinejoin={1}
                 strokeWidth="2.5"
               />
               <RNSVGCircle
-                cx={730}
-                cy={179.79930373305535}
-                fill={4289283583}
+                cx="730"
+                cy="179.79930373305535"
+                fill={
+                  Object {
+                    "payload": 4289283583,
+                    "type": 0,
+                  }
+                }
                 propList={
                   Array [
                     "fill",
@@ -46568,7 +46597,12 @@ exports[`Storyshots ValueOverTimeGraph default 1`] = `
                   ]
                 }
                 r="3.5"
-                stroke={4294638330}
+                stroke={
+                  Object {
+                    "payload": 4294638330,
+                    "type": 0,
+                  }
+                }
                 strokeWidth="2"
               />
               <RNSVGPath
@@ -46587,7 +46621,12 @@ exports[`Storyshots ValueOverTimeGraph default 1`] = `
             l 5, 7
             z
         "
-                fill={4289283583}
+                fill={
+                  Object {
+                    "payload": 4289283583,
+                    "type": 0,
+                  }
+                }
                 propList={
                   Array [
                     "fill",
@@ -46595,10 +46634,16 @@ exports[`Storyshots ValueOverTimeGraph default 1`] = `
                 }
               />
               <RNSVGForeignObject
+                fill={
+                  Object {
+                    "payload": 4278190080,
+                    "type": 0,
+                  }
+                }
                 height="100%"
-                width={80}
-                x={690}
-                y={122.79930373305535}
+                width="80"
+                x="690"
+                y="122.79930373305535"
               >
                 <View
                   style={

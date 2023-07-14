@@ -188,6 +188,10 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   handleAppStateChange = (nextAppState: string) => {
     const { lastAppState } = this.state;
+
+    if (nextAppState === ACTIVE_APP_STATE) {
+      this.handleLocking();
+    }
     if (nextAppState === ACTIVE_APP_STATE && lastAppState === BACKGROUND_APP_STATE && !this.errorMessage) {
       this.triggerAuthentication();
     }

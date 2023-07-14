@@ -307,12 +307,12 @@ jobs:
             sed -i.bak "s/_infura_project_id_/$STAGING_INFURA_PROJECT_ID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
+            sed -i.bak “s/_wallet_connect_id_/$WALLETCONNECT_PROJECT_ID/g” ./src/configs/buildConfig.js
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_staging_rampnetwork_api_key_/$STAGING_RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_instabug_token_/$INSTABUG_APPCENTER_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_prismic_token_/$PRISMIC_TOKEN/g" ./src/configs/buildConfig.js
-            sed -i.bak "s/_storyly_token_/$STORYLY_TOKEN_IOS/g" ./src/configs/buildConfig.js
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - run:
           name: Fetch App Store Connect API key
@@ -423,12 +423,12 @@ jobs:
             sed -i.bak "s/_infura_project_id_/$STAGING_INFURA_PROJECT_ID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
+            sed -i.bak “s/_wallet_connect_id_/$WALLETCONNECT_PROJECT_ID/g” ./src/configs/buildConfig.js
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_staging_rampnetwork_api_key_/$STAGING_RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_instabug_token_/$INSTABUG_APPCENTER_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_prismic_token_/$PRISMIC_TOKEN/g" ./src/configs/buildConfig.js
-            sed -i.bak "s/_storyly_token_/$STORYLY_TOKEN_ANDROID/g" ./src/configs/buildConfig.js
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - run:
           name: Initial build
@@ -548,12 +548,12 @@ jobs:
             sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
+            sed -i.bak “s/_wallet_connect_id_/$WALLETCONNECT_PROJECT_ID/g” ./src/configs/buildConfig.js
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_rampnetwork_api_key_/$RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_instabug_token_/$INSTABUG_PROD_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_prismic_token_/$PRISMIC_TOKEN/g" ./src/configs/buildConfig.js
-            sed -i.bak "s/_storyly_token_/$STORYLY_TOKEN_IOS/g" ./src/configs/buildConfig.js
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
 
       - restore_cache:
@@ -674,12 +674,12 @@ jobs:
             sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
+            sed -i.bak “s/_wallet_connect_id_/$WALLETCONNECT_PROJECT_ID/g” ./src/configs/buildConfig.js
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_rampnetwork_api_key_/$RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_instabug_token_/$INSTABUG_PROD_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_prismic_token_/$PRISMIC_TOKEN/g" ./src/configs/buildConfig.js
-            sed -i.bak "s/_storyly_token_/$STORYLY_TOKEN_ANDROID/g" ./src/configs/buildConfig.js
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
 
       - restore_cache:

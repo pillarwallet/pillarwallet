@@ -284,6 +284,8 @@
     "filterByName": "按名称过滤",
     "transaction_submitted": "交易提交",
     "on_network": "上 {{network}}",
+    "pool_activity": "泳池活动",
+    "trading_activity": "交易活动",
     "symbol_with_network": "{{symbol}} 上 {{network}}",
     "on_position": "{{position}} 位置",
     "of_stable": "{{percentage}}% 的马厩 - {{type}}",
@@ -309,7 +311,17 @@
     "best_offer": "最好的报价",
     "see_other_offers": "查看其他优惠",
     "see_less_offers": "少看优惠",
-    "half_min": "30多岁"
+    "half_min": "30多岁",
+    "marketCap": "市值",
+    "fdv": "FDV",
+    "totalLiquidity": "托特。流动性",
+    "supply": "供应",
+    "holders": "持有人",
+    "trandingVol": "交易量",
+    "allTimeHigh": "历来最高",
+    "allTimeLow": "历来最低点",
+    "your_balance": "您的余额",
+    "volume_24": "24小时成交量"
   },
   "button": {
     "activate": "启用",
@@ -426,7 +438,17 @@
     "savedPhrase": "我已经保存了我的 12 个字",
     "savedPrivateKey": "我已经保存了我的私钥",
     "ok": "确认",
-    "i_understood": "我明白"
+    "i_understand": "我明白",
+    "one_hour": "1小时",
+    "twentyfour_hour": "24小时",
+    "seven_day": "7天",
+    "one_month": "1米",
+    "one_year": "1 岁",
+    "today": "今天",
+    "last_week": "上星期",
+    "last_month": "上个月",
+    "last_year": "去年",
+    "token_analytics": "代币分析"
   },
   "paragraph": {
     "addressCopiedToClipboard": "地址已复制到剪贴板。",
@@ -726,7 +748,8 @@
       "messageRequest": "签名请求",
       "transactionRequest": "交易请求",
       "transactionRequestFormat": "{{chain}} 上的 {{app}}",
-      "unsupportedRequest": "不支持的请求"
+      "unsupportedRequest": "不支持的请求",
+      "signMessageRequest": "签署消息请求"
     },
     "connectedApps": {
       "title": "连接的 dapp",
@@ -1200,6 +1223,8 @@
     "assetHasBeenHidden": "{{assetName}} ({{assetSymbol}}) 已移除。",
     "ensureBackup": "请确保您现在备份您的钱包。",
     "walletConnectUnsupportedApp": "不支持此应用程序。您可以请求对此应用程序的支持。",
+    "walletConnectUnsupportedNetwork": "此应用不支持 {{chainId}} 链。",
+    "walletConnectUnsupportedWalletNetwork": "此钱包不支持 {{chain}} 链。",
     "walletConnectConnectionsExpired": "连接已过期。请重新连接。",
     "cantReadQRCode": "无法读取此二维码。再试一次或使用其他图像。",
     "incorrectQRCode": "二维码不正确。",

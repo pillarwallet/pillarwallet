@@ -136,6 +136,16 @@ import IconRadioButtonFocus from 'assets/icons/svg/radio-button-focus.svg';
 import IconRadioButton from 'assets/icons/svg/radio-button.svg';
 import IconHomeInvestments from 'assets/icons/svg/icon-24-investments.svg';
 import CombinedShape from 'assets/icons/svg/combined_shape.svg';
+import PlrTransparentIcon from 'assets/icons/svg/tokens-48-plr-transparent.svg';
+import DashboardLiquidity from 'assets/icons/svg/24-dashboard-liquidity.svg';
+import BuyIcon from 'assets/icons/svg/24-card-in.svg';
+import SellIcon from 'assets/icons/svg/24-card-out.svg';
+import BuyIconLight from 'assets/icons/svg/24-card-in-light.svg';
+import SellIconLight from 'assets/icons/svg/24-card-out-light.svg';
+import PlusIcon from 'assets/icons/svg/24-add.svg';
+import MinusIcon from 'assets/icons/svg/24-minus.svg';
+import GreenUpIcon from 'assets/icons/svg/icon-up-green.svg';
+import RedDownIcon from 'assets/icons/svg/icon-down-red.svg';
 
 // Assets: services icons
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
@@ -287,6 +297,9 @@ const components = {
   'radio-button-icon': IconRadioButton,
   'home-investments': IconHomeInvestments,
   combined_shape: CombinedShape,
+  'dashboard-liquidity': DashboardLiquidity,
+  'green-up': GreenUpIcon,
+  'red-down': RedDownIcon,
 
   // Service icons
   binance: IconBinance,
@@ -301,6 +314,13 @@ const components = {
   'all-networks-light': IconAllNetworksLight,
   'ramp-network': IconRampNetwork,
   pelerin: IconPelerin,
+  'plr-transparent': PlrTransparentIcon,
+  buy: BuyIcon,
+  sell: SellIcon,
+  'buy-light': BuyIconLight,
+  'sell-light': SellIconLight,
+  'green-plus': PlusIcon,
+  'red-minus': MinusIcon,
 
   // Service icons 38px
   binance38: IconBinance38,
