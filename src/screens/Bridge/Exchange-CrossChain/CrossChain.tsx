@@ -43,7 +43,7 @@ import { useChainConfig } from 'utils/uiConfig';
 import { nativeAssetPerChain } from 'utils/chains';
 import { addressesEqual } from 'utils/assets';
 import { getActiveScreenName } from 'utils/navigation';
-import { getAssetRateInFiat } from 'utils/rates';
+import { getAssetRateInFiat, fiatTokenValue } from 'utils/rates';
 import { mapTransactionsToTransactionPayload, showTransactionRevertedToast } from 'utils/transactions';
 import { currentDate, currentTime } from 'utils/date';
 import { isLogV2AppEvents } from 'utils/environment';
@@ -148,25 +148,20 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
 
   const txData = React.useMemo(() => {
     if (!buildTransactionData) return null;
-    const { approvalTransactionData, transactionData } = buildTransactionData;
-    if (!approvalTransactionData) return [transactionData];
-    return [approvalTransactionData, transactionData];
+    const { transactions } = buildTransactionData;
+    return transactions;
   }, [buildTransactionData]);
 
   const offer = React.useMemo(() => {
     if (!buildTransactionData) return null;
-    const {
-      provider,
-      estimate: { data, toAmount },
-    } = buildTransactionData.quote;
-    const { fromToken, toToken } = data;
+    const { toAmount, fromToken, toToken, gasCostUSD } = buildTransactionData.route;
 
     const decimalValue: any = `10e${toToken?.decimals - 1}`;
 
     const amount: any = parseInt(toAmount) / (decimalValue ?? 1);
 
     return {
-      provider: provider === 'lifi' ? 'Lifi' : provider,
+      provider: 'Lifi',
       chain,
       gasFeeAsset,
       toChain: toAddressChain,
@@ -176,6 +171,7 @@ function CrossChain({ fetchCrossChainTitle }: Props) {
       fromAmount: fromValue,
       toAmount: new BigNumber(amount),
       exchangeRate: amount,
+      gasCost: fiatTokenValue(Number(gasCostUSD), rates, currency, null, 2),
     };
   }, [buildTransactionData]);
 
