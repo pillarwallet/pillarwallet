@@ -35,7 +35,6 @@ import { NavigationActions } from 'react-navigation';
 import remoteConfig from '@react-native-firebase/remote-config';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import Instabug from 'instabug-reactnative';
 import appsFlyer from 'react-native-appsflyer';
 import { PlayInstallReferrer } from 'react-native-play-install-referrer';
 import { KochavaTracker } from 'react-native-kochava-tracker';
@@ -75,7 +74,6 @@ import Modal from 'components/Modal';
 import { getThemeByType, defaultTheme } from 'utils/themes';
 import { getActiveRouteName } from 'utils/navigation';
 import { log } from 'utils/logger';
-import { initInstabug, setInstabugTheme } from 'utils/monitoring';
 import { logBreadcrumb, reportOrWarn, reportLog } from 'utils/common';
 
 // services
@@ -153,7 +151,6 @@ class App extends React.Component<Props, any> {
       env: null,
     };
 
-    initInstabug();
   }
 
   // https://reactjs.org/blog/2018/03/27/update-on-async-rendering.html#gradual-migration-path
@@ -302,8 +299,6 @@ class App extends React.Component<Props, any> {
       } else {
         StatusBar.setBarStyle('dark-content');
       }
-
-      setInstabugTheme(themeType);
     }
   }
 
@@ -354,8 +349,6 @@ class App extends React.Component<Props, any> {
     if (!!nextRouteName && nextRouteName !== previousRouteName) {
       this.props.logScreenView(nextRouteName);
     }
-
-    Instabug.onNavigationStateChange(prevState, nextState, action);
   };
 
   render() {

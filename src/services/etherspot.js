@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { utils as EthersUtils, Wallet as EthersWallet } from 'ethers';
+import { BigNumber as EthersBigNumber, utils as EthersUtils, Wallet as EthersWallet } from 'ethers';
 import {
   Sdk as EtherspotSdk,
   NetworkNames,
@@ -42,6 +42,7 @@ import type { Subscription } from 'rxjs';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 import { isValidAddress, toChecksumAddress } from 'ethereumjs-util';
+import { isEmpty } from 'lodash';
 
 // abi
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
@@ -75,7 +76,7 @@ import type {
 import type { AssetCore, Asset, AssetOption, AssetDataNavigationParam } from 'models/Asset';
 import type { WalletAssetBalance } from 'models/Balances';
 import type { Chain, ChainRecord } from 'models/Chain';
-import type { ExchangeOffer } from 'models/Exchange';
+import type { ExchangeOffer, Route } from 'models/Exchange';
 import type {
   EthereumTransaction,
   TransactionPayload,
@@ -1020,7 +1021,7 @@ export class EtherspotService {
     const value = EthersUtils.parseUnits(fromValue.toString(), fromAsset.decimals);
 
     try {
-      const quotes = await sdk.getCrossChainQuotes({
+      const routes = await sdk.getAdvanceRoutesLiFi({
         fromTokenAddress: fromAsset.address,
         fromChainId: mapChainToChainId(fromAsset.chain),
         toTokenAddress: toAsset.address,
@@ -1028,29 +1029,63 @@ export class EtherspotService {
         fromAmount: value,
       });
 
-      const quote: any = quotes.items[0];
+      if (isEmpty(routes?.items)) return null;
 
-      logBreadcrumb('buildCrossChainBridgeTransaction!', 'cross chain bridge quotes', { quotes });
+      const bestRoute = routes.items.reduce((best: Route, route) => {
+        if (!best?.toAmount || EthersBigNumber.from(best.toAmount).lt(route.toAmount)) return route;
+        return best;
+      });
 
-      if (!quote) return null;
+      logBreadcrumb('buildCrossChainBridgeTransaction!', 'cross chain bridge routes', { routes });
 
-      if (!quote?.approvalData) return { transactionData: quote.transaction, quote };
+      if (!bestRoute) return null;
 
-      const tokenAddres = quote.estimate.data.fromToken.address;
-      const { approvalAddress, amount } = quote.approvalData;
+      const { items: advanceRoutesTransactions } = await sdk.getStepTransaction({ route: bestRoute });
 
-      const erc20Contract: any = this.getContract<?EtherspotErc20Interface>(
-        fromAsset.chain,
-        ERC20_CONTRACT_ABI,
-        tokenAddres,
-      );
+      if (isEmpty(advanceRoutesTransactions)) return null;
 
-      if (!erc20Contract) return { transactionData: quote.transaction, quote };
+      const account = await sdk.computeContractAccount();
 
-      const approvalTransactionData = erc20Contract.encodeApprove(approvalAddress, amount);
-      approvalTransactionData.value = '0';
+      let transactions = advanceRoutesTransactions.map((transaction) => {
+        return {
+          from: account.address,
+          chainId: mapChainToChainId(fromAsset.chain),
+          data: transaction.data,
+          to: transaction.to,
+          value: transaction.value,
+        };
+      });
 
-      return { approvalTransactionData, transactionData: quote.transaction, quote };
+      if (
+        EthersUtils.isAddress(bestRoute.fromToken.address) &&
+        !addressesEqual(bestRoute.fromToken.address, nativeAssetPerChain[fromAsset.chain].address) &&
+        transactions.length === 1 &&
+        bestRoute.fromAmount
+      ) {
+        const erc20Contract: any = this.getContract<?EtherspotErc20Interface>(
+          fromAsset.chain,
+          ERC20_CONTRACT_ABI,
+          bestRoute.fromToken.address,
+        );
+        if (!erc20Contract) return { transactions, route: bestRoute };
+
+        const approvalTransactionRequest = erc20Contract?.encodeApprove?.(transactions[0].to, bestRoute.fromAmount);
+        if (!approvalTransactionRequest || !approvalTransactionRequest.to) {
+          return { transactions, route: bestRoute };
+        }
+
+        const approvalTransaction = {
+          to: approvalTransactionRequest.to,
+          data: approvalTransactionRequest.data,
+          value: '0',
+          from: account.address,
+          chainId: mapChainToChainId(fromAsset.chain),
+        };
+
+        transactions = [approvalTransaction, ...transactions];
+      }
+
+      return { transactions, route: bestRoute };
     } catch (e) {
       logBreadcrumb('buildCrossChainBridgeTransaction failed!', 'failed cross chain bridge routes', { e });
       return null;
