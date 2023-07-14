@@ -122,8 +122,6 @@ const ReceiveModal: FC<IReceiveModal> = ({ address, onModalHide, theme }) => {
         <DeployInfoWrapper>
           <ChainIconRow>
             {chains?.map((chain) => {
-              if (chain === 'avalanche') return;
-
               return (
                 <ChainIconWrapper>
                   <ChainViewIcon width={38} style={IconContainer} name={chain + '38'} />

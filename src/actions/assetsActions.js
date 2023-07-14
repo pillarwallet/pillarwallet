@@ -89,8 +89,6 @@ import MumbaiTokens from 'utils/tokens/mumbai-tokens';
 import EthereumTokens from 'utils/tokens/ethereum-tokens';
 import EthereumGoerliTokens from 'utils/tokens/ethereum-goerli-tokens.json';
 import BinanceTestnetTokens from 'utils/tokens/binance-testnet-tokens.json';
-import FujiTokens from 'utils/tokens/fuji-tokens.json';
-import AvalancheTokens from 'utils/tokens/avalanche-tokens';
 import BinanceTokens from 'utils/tokens/binance-tokens';
 import OptimismGoerliTokens from 'utils/tokens/optimism-goerli-tokens.json';
 import OptimismTokens from 'utils/tokens/optimism-tokens';
@@ -771,9 +769,6 @@ export const localAssets = (chain: Chain) => {
   }
   if (chain === CHAIN.XDAI) {
     return XdaiTokens;
-  }
-  if (chain === CHAIN.AVALANCHE) {
-    return isMainnet ? AvalancheTokens : FujiTokens;
   }
   if (chain === CHAIN.OPTIMISM) {
     return isMainnet ? OptimismTokens : OptimismGoerliTokens;

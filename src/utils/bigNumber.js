@@ -21,12 +21,6 @@
 import { BigNumber } from 'bignumber.js';
 import { BigNumber as EthersBigNumber, utils } from 'ethers';
 
-// Constants
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
-
-// Services
-import { firebaseRemoteConfig } from 'services/firebase';
-
 // Utils
 import { recordValues } from 'utils/object';
 
@@ -92,11 +86,6 @@ export function sumOrNull(values: (?BigNumber)[]): BigNumber | null {
 }
 
 export function sumRecord(valuesRecord: ?Record<BigNumber>) {
-  const visibleAvalanche = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_CHAIN_SWITCH_43114);
-  if (!visibleAvalanche) {
-    delete valuesRecord?.avalanche;
-  }
-
   const values = recordValues(valuesRecord ?? {});
   return sum(values);
 }
