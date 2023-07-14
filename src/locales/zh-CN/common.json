@@ -106,7 +106,7 @@
     "fetchingPrices":"获取价格",
     "loadingTxHistory": "加载交易历史",
     "ready": "准备好！",
-    "noInternet": "没有互联网"
+    "noInternet": "没有网络，请重试..."
   },
 
   "assetCategoriesShort": {

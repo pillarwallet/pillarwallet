@@ -123,7 +123,7 @@
     "fetchingPrices":"Fetching Prices",
     "loadingTxHistory": "Loading Tx History",
     "ready": "Ready!",
-    "noInternet": "No internet"
+    "noInternet": "No internet, retrying..."
   },
 
   "title": {
