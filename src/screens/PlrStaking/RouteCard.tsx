@@ -21,6 +21,7 @@
 import React, { FC } from 'react';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
+import { BigNumber, ethers } from 'ethers';
 
 // Constants
 import { OFFERS } from 'constants/exchangeConstants';
@@ -47,7 +48,6 @@ import { useTransactionsEstimate } from 'hooks/transactions';
 import TokenIcon from 'components/display/TokenIcon';
 import RadioButton from 'components/RadioButton';
 import Text from 'components/core/Text';
-import { BigNumber, ethers } from 'ethers';
 
 interface IRouteCard {
   offer?: any;
@@ -99,7 +99,7 @@ const RouteCard: FC<IRouteCard> = ({
   const getFiatValue = (value: BigNumber, address: string, isEthereum?: boolean) => {
     if (!value) return null;
 
-    const etherValue = ethers.utils.formatEther(value);
+    const etherValue = ethers.utils.formatEther(value.toString());
     const valueInFiat = getBalanceInFiat(currency, etherValue, !!isEthereum ? ethRates : chainRates, address);
     return valueInFiat;
   };
