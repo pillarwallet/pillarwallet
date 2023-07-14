@@ -100,23 +100,30 @@ export const getAssetValueFromFiat = (
 };
 
 export const fiatInvestmentBalance = (balance: BigNumber, rates: RatesPerChain, currency: Currency) => {
-  const nativeAssetRate = rates[nativeAssetPerChain[CHAIN.ETHEREUM].address];
+  if (!balance) return 0;
+  const nativeAssetRate = rates?.[nativeAssetPerChain[CHAIN.ETHEREUM].address];
 
   const assetBalance: string = utils.formatEther(balance);
 
   const fiatAmount = (parseFloat(assetBalance) * nativeAssetRate?.[currency]) / nativeAssetRate?.[USD];
 
-  return fiatAmount?.toFixed(2);
+  return isNaN(fiatAmount) ? 0 : fiatAmount?.toFixed(2);
 };
 
-export const fiatTokenValue = (tokenValue: number, rates: RatesPerChain, currency: Currency, formatter: any) => {
-  if (isNaN(tokenValue)) return '';
+export const fiatTokenValue = (
+  tokenValueInUSD: number,
+  rates: RatesPerChain,
+  currency: Currency,
+  formatter?: any,
+  decimals?: number,
+) => {
+  if (isNaN(tokenValueInUSD)) return '';
   const nativeAssetRate = rates?.[nativeAssetPerChain[CHAIN.ETHEREUM].address];
   const currencySymbol = getCurrencySymbol(currency);
 
-  const fiatAmount = (tokenValue * nativeAssetRate?.[currency]) / nativeAssetRate?.[USD];
+  const fiatAmount = (tokenValueInUSD * nativeAssetRate?.[currency]) / nativeAssetRate?.[USD];
 
-  const decimalsFiatValue = fiatAmount?.toFixed(fiatAmount > 1 ? 2 : 4);
+  const decimalsFiatValue = fiatAmount?.toFixed(decimals ?? (fiatAmount > 1 ? 2 : 4));
 
   const formattedNumber = formatter ? formatter(fiatAmount) : numberWithCommas(decimalsFiatValue) ?? 0;
 

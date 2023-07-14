@@ -807,7 +807,8 @@
       "messageRequest": "Signature request",
       "transactionRequest": "Transaction request",
       "transactionRequestFormat": "{{app}} on {{chain}}",
-      "unsupportedRequest": "Unsupported request"
+      "unsupportedRequest": "Unsupported request",
+      "signMessageRequest": "Sign Message Request"
     },
     "connectedApps": {
       "title": "Connected dapps",
