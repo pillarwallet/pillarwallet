@@ -26,10 +26,13 @@ import { openComposer } from 'react-native-email-link';
 import Toast from 'components/Toast';
 
 // Constants
-import { EMAIL } from 'constants/appConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Utils
-import { BigNumber, getEnsName, parseTokenAmount, reportErrorLog, logBreadcrumb } from 'utils/common';
+import { reportErrorLog } from 'utils/common';
+
+// Services
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // Configs
 import { getEnv } from 'configs/envConfig';
@@ -42,6 +45,8 @@ export const emailSupport = async (accounts?: Account[]) => {
   const buildNumber = getEnv().BUILD_NUMBER;
   const osVersion = await DeviceInfo.getSystemVersion();
   const deviceName = await DeviceInfo.getDeviceName();
+
+  const email = firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_SUPPORT_EMAIL);
 
   const subject = `Pillar Support - ${Platform.OS} ${osVersion} (${buildNumber})`;
 
@@ -56,7 +61,7 @@ export const emailSupport = async (accounts?: Account[]) => {
     \n\nDevice Name: ${deviceName}` + (accountsWithId ? `\n\nAccounts:\n${accountsWithId.join('\n')}` : ``);
 
   return openComposer({
-    to: EMAIL,
+    to: email,
     subject,
     body,
   }).catch((error) => {

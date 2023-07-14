@@ -79,14 +79,6 @@
 		<string>SpaceGrotesk-Medium.ttf</string>
 		<string>PillarIcons.ttf</string>
 	</array>
-  <key>LSApplicationQueriesSchemes</key>
-  <array>
-      <string>mailto</string>
-      <string>airmail</string>
-      <string>ms-outlook</string>
-      <string>googlegmail</string>
-      <string>ymail</string>
-  </array>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
