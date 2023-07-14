@@ -69,7 +69,6 @@
     "binance": "Binance Smart Chain",
     "xdai": "Gnosis",
     "polygon": "Polygon",
-    "avalanche": "Avalanche",
     "optimism": "Optimism",
     "optimism_kovan": "Optimism Kovan",
     "gorli": "Ethereum Görli",
@@ -86,7 +85,6 @@
     "binance": "BSC",
     "xdai": "Gnosis",
     "polygon": "Polygon",
-    "avalanche": "Avalanche",
     "optimism": "Optimism",
     "optimism_kovan": "Optimism Kovan",
     "arbitrum": "Arbitrum"
@@ -673,6 +671,7 @@
     "failedToEstimateTransaction": "Failed to estimate transaction",
     "failedToSubmitTransaction": "Failed to submit transaction",
     "fetchTokenListFailed": "Fetching token list failed.",
+    "invalidEmailURL": "Provided URL can not be handled",
     "failedKeychain": {
       "title": "Your device is not supported",
       "nonEtherspotMessage": "Due to security concerns, we don’t support devices with disabled keychain access.",
@@ -1251,7 +1250,7 @@
             "recommended": "Recommended",
             "highGasPrice": "High gas price 🔥",
             "ethereum": "Ethereum",
-            "chainName": "Polygon, BSC, xDai, Avalanche"
+            "chainName": "Polygon, BSC, xDai"
           },
           "warningMessage": "Your smart wallet is not deployed on Ethereum.\n{{deploymentCost}} smart wallet deployment cost will be added to this transaction. No action required."
         },

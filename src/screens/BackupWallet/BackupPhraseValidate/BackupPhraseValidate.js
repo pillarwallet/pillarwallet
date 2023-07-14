@@ -39,7 +39,6 @@ import Text from 'components/core/Text';
 import { backupWalletAction } from 'actions/walletActions';
 
 // Utils
-import { excludeFromMonitoring } from 'utils/monitoring';
 import { appFont, spacing, fontSizes } from 'utils/variables';
 
 // Types
@@ -87,7 +86,7 @@ const BackupPhraseValidate = ({ navigation, backupWallet }: Props) => {
         {mnemonicPhrase ? (
           <MnemonicPhrase phrase={mnemonicPhrase} />
         ) : (
-          <PrivateKeyWrapper ref={excludeFromMonitoring}>{walletPrivateKey}</PrivateKeyWrapper>
+          <PrivateKeyWrapper>{walletPrivateKey}</PrivateKeyWrapper>
         )}
         <Button
           title={mnemonicPhrase ? t('button.savedPhrase') : t('button.savedPrivateKey')}
@@ -95,9 +94,7 @@ const BackupPhraseValidate = ({ navigation, backupWallet }: Props) => {
           onPress={handlePassedValidation}
           size="large"
         />
-        {mnemonicPhrase ? (
-          null
-        ) : (
+        {mnemonicPhrase ? null : (
           <Button
             title={t('button.copyToClipboard')}
             variant="text"

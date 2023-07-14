@@ -179,7 +179,6 @@ android {
         missingDimensionStrategy 'react-native-camera', 'general' // react-native-camera
         vectorDrawables.useSupportLibrary = true  // react-native-image-crop-picker
 
-        resValue "string", "instabug_token", "32deec0471648f969b7ec913a7b0a1d0"
     }
 
     splits {
@@ -203,15 +202,10 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             zipAlignEnabled true
-            matchingFallbacks = ['release']
-            // set Instabug token for staging
-            resValue "string", "instabug_token", System.getenv("INSTABUG_APPCENTER_TOKEN") ? System.getenv("INSTABUG_APPCENTER_TOKEN") : ""
+            matchingFallbacks = ['release']            
         }
         release {
-            buildConfigField "String", "CODEPUSH_KEY", '"com.pillarproject.wallet"'
-
-            // set Instabug token for production
-            resValue "string", "instabug_token", System.getenv("INSTABUG_PROD_TOKEN") ? System.getenv("INSTABUG_PROD_TOKEN") : ""
+            buildConfigField "String", "CODEPUSH_KEY", '"com.pillarproject.wallet"'          
 
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

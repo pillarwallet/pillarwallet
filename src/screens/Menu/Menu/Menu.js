@@ -18,11 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Linking } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
-import { Replies, BugReporting } from 'instabug-reactnative';
 import { useTranslationWithPrefix } from 'translations/translate';
 import { switchEnvironments } from 'configs/envConfig';
 
@@ -42,18 +41,15 @@ import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
 import { useIsWalletBackedUp } from 'selectors/wallets';
-import { useRootSelector } from 'selectors';
-import { accountAssetsBalancesSelector } from 'selectors/balances';
-import { useSupportedChains } from 'selectors/chains';
+import { useAccounts } from 'selectors';
 
 // Services
 import { firebaseRemoteConfig } from 'services/firebase';
+import { emailSupport } from 'services/emailSupport';
 
 // Utils
 import { useIsDarkTheme, useThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
-import { getWalletPlrBalance } from 'utils/balances';
-import { sum } from 'utils/bigNumber';
 
 // Assets
 import PillarLogo from 'assets/images/pillar-logo-small.svg';
@@ -70,31 +66,19 @@ const Menu = () => {
   const navigation = useNavigation();
   const colors = useThemeColors();
   const isBackedUp = useIsWalletBackedUp();
-  const accountBalances = useRootSelector(accountAssetsBalancesSelector);
-  const chains = useSupportedChains();
-  const plrbalance = getWalletPlrBalance(accountBalances, chains);
-  const enoughPlrBalance = sum(plrbalance).gt(9999);
+
   const screenName = navigation.state.routeName;
+  const accounts = useAccounts();
 
   const knowledgebaseUrl = firebaseRemoteConfig.getString(REMOTE_CONFIG.KNOWLEDGEBASE_URL);
-
-  const [repliesFlag, setRepliesFlag] = useState(false);
-
-  Replies.hasChats((previousChat) => {
-    if (previousChat) {
-      setRepliesFlag(true);
-    }
-  });
 
   const goToSettings = () => navigation.navigate(MENU_SETTINGS);
   const goToInviteFriends = () => navigation.navigate(CONTACTS_FLOW);
   const goToStorybook = () => navigation.navigate(STORYBOOK);
   const goToManageTokenLists = () => navigation.navigate(ADD_TOKENS);
 
-  const goToSupportConversations = () => Replies.show();
   const goToKnowledgebase = () => Linking.openURL(knowledgebaseUrl);
-  const goToEmailSupport = () =>
-    BugReporting.showWithOptions(BugReporting.reportType.question, [BugReporting.option.emailFieldOptional]);
+  const goToEmailSupport = () => emailSupport(accounts);
 
   let clickCount = 0;
   const handleSecretClick = () => {
@@ -129,24 +113,13 @@ const Menu = () => {
         <MenuItem title={t('item.tokens')} icon="tokens" onPress={goToManageTokenLists} />
         <MenuItem title={t('item.addressBook')} icon="contacts" onPress={goToInviteFriends} />
         <MenuItem
-          title={enoughPlrBalance ? t('item.liveChatSupport') : t('item.emailSupport')}
-          subtitle={!enoughPlrBalance ? t('item.liveChatActivate') : ''}
+          title={t('item.emailSupport')}
           icon="message"
           onPress={goToEmailSupport}
           testID={`${TAG}-button-email_support`}
           // eslint-disable-next-line i18next/no-literal-string
           accessibilityLabel={`${TAG}-button-email_support`}
         />
-        {repliesFlag && enoughPlrBalance ? (
-          <MenuItem
-            title={t('item.supportConversations')}
-            icon="message"
-            onPress={goToSupportConversations}
-            testID={`${TAG}-button-support_conversations`}
-            // eslint-disable-next-line i18next/no-literal-string
-            accessibilityLabel={`${TAG}-button-support_conversations`}
-          />
-        ) : null}
         <MenuItem
           title={t('item.knowledgebase')}
           icon="info"

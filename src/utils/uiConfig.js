@@ -21,7 +21,7 @@
 import { useTranslation } from 'translations/translate';
 
 // Constants
-import { ETH, MATIC, BNB, XDAI, AVAX, ASSET_CATEGORY } from 'constants/assetsConstants';
+import { ETH, MATIC, BNB, XDAI, ASSET_CATEGORY } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // Utils
@@ -82,15 +82,6 @@ export function useChainsConfig(): { [key: Chain]: ChainConfig } {
       color: colors.ethereum,
       gasSymbol: ETH,
       iconUrl: 'https://tokens.1inch.exchange/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png',
-    },
-    [CHAIN.AVALANCHE]: {
-      title: t('chains.avalanche'),
-      titleShort: t('chainsShort.avalanche'),
-      iconName: 'avalanche',
-      color: colors.ethereum,
-      gasSymbol: AVAX,
-      iconUrl:
-        'https://images.prismic.io/pillar-app/4c8def2b-a244-4134-b871-3d5784c4b130_Avalanche_AVAX_RedWhite.png?auto=compress,format',
     },
     [CHAIN.OPTIMISM]: {
       title: isProdEnv() ? t('chains.optimism') : t('chains.optimism_gorli'),

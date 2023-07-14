@@ -26,7 +26,6 @@ import {
   PLR_ADDRESS_ETHEREUM_MAINNET,
   PLR_ADDRESS_POLYGON,
   PLR_ADDRESS_XDAI,
-  PLR_ADDRESS_AVALANCHE,
 } from 'constants/assetsConstants';
 import { CHAIN } from 'constants/chainConstants';
 
@@ -35,7 +34,6 @@ import { isProdEnv } from 'utils/environment';
 
 // types
 import type { Chain } from 'models/Chain';
-
 
 export default {
   ICX: {
@@ -59,11 +57,8 @@ export const getPlrAddressForChain = (chain: Chain): string => {
   if (chain === CHAIN.BINANCE) return PLR_ADDRESS_BSC;
   if (chain === CHAIN.POLYGON) return PLR_ADDRESS_POLYGON;
   if (chain === CHAIN.XDAI) return PLR_ADDRESS_XDAI;
-  if (chain === CHAIN.AVALANCHE) return PLR_ADDRESS_AVALANCHE;
 
   // Ethereum
-  return isProdEnv()
-    ? PLR_ADDRESS_ETHEREUM_MAINNET
-    : PLR_ADDRESS_ETHEREUM_KOVAN_TESTNET;
+  return isProdEnv() ? PLR_ADDRESS_ETHEREUM_MAINNET : PLR_ADDRESS_ETHEREUM_KOVAN_TESTNET;
 };
 /* eslint-enable i18next/no-literal-string */

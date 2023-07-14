@@ -510,8 +510,6 @@ PODS:
     - RSKImageCropper
   - RNInAppBrowser (3.4.0):
     - React
-  - RNInstabug (10.13.0):
-    - React
   - RNKeychain (8.1.1):
     - React-Core
   - RNLocalize (1.4.3):
@@ -622,7 +620,6 @@ DEPENDENCIES:
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - RNInAppBrowser (from `../node_modules/react-native-inappbrowser-reborn`)
-  - RNInstabug (from `../node_modules/instabug-reactnative`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNLocalize (from `../node_modules/react-native-localize`)
   - RNOS (from `../node_modules/react-native-os`)
@@ -801,8 +798,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-image-crop-picker"
   RNInAppBrowser:
     :path: "../node_modules/react-native-inappbrowser-reborn"
-  RNInstabug:
-    :path: "../node_modules/instabug-reactnative"
   RNKeychain:
     :path: "../node_modules/react-native-keychain"
   RNLocalize:
@@ -928,7 +923,6 @@ SPEC CHECKSUMS:
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNImageCropPicker: 9d1a7eea4f8368fc479cbd2bf26459bd3c74d9aa
   RNInAppBrowser: c1a0dad2734458d79bcb6c8f4297ba8658a1da9f
-  RNInstabug: 8a9fce2082e67d94ddbc62267b209a8fe1ce200f
   RNKeychain: ff836453cba46938e0e9e4c22e43d43fa2c90333
   RNLocalize: 7c7aeda16c01db7a0918981c14875c0a53be9b79
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
