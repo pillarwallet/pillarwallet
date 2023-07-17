@@ -22,12 +22,8 @@
 import { isProdEnv } from 'utils/environment';
 
 // Constants
-import { ETH, MATIC, BNB, AVAX, XDAI, ADDRESS_ZERO } from 'constants/assetsConstants';
+import { ETH, MATIC, BNB, XDAI, ADDRESS_ZERO } from 'constants/assetsConstants';
 import { CHAIN, CHAIN_ID, CHAIN_NAMES } from 'constants/chainConstants';
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
-
-// Services
-import { firebaseRemoteConfig } from 'services/firebase';
 
 // Utils
 import { isEtherspotAccount } from 'utils/accounts';
@@ -118,7 +114,6 @@ export const mapChainNameToChain = (chain: string): Chain => {
   if (chain === CHAIN_NAMES.POLYGON) return CHAIN.POLYGON;
   if (chain === CHAIN_NAMES.BINANCE) return CHAIN.BINANCE;
   if (chain === CHAIN_NAMES.XDAI) return CHAIN.XDAI;
-  if (chain === CHAIN_NAMES.AVALANCHE) return CHAIN.AVALANCHE;
   if (chain === CHAIN_NAMES.OPTIMISM) return CHAIN.OPTIMISM;
   if (chain === CHAIN_NAMES.ARBITRUM) return CHAIN.ARBITRUM;
 

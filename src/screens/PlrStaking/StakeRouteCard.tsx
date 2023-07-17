@@ -20,6 +20,7 @@
 
 import React, { FC } from 'react';
 import styled from 'styled-components/native';
+import { useTranslationWithPrefix } from 'translations/translate';
 
 // Constants
 import { OFFERS } from 'constants/exchangeConstants';
@@ -28,12 +29,10 @@ import { CHAIN } from 'constants/chainConstantsTs';
 // Utils
 import { fontStyles } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
-import { formatTokenValue, formatFiatValue } from 'utils/format';
+import { formatTokenValue } from 'utils/format';
 
 // Types
 import type { Asset, AssetOption } from 'models/Asset';
-import type { Chain } from 'models/Chain';
-import type { TransactionFeeInfo } from 'models/Transaction';
 
 // Components
 import TokenIcon from 'components/display/TokenIcon';
@@ -51,6 +50,7 @@ interface IStakeRouteCard {
 const StakeRouteCard: FC<IStakeRouteCard> = ({ plrToken, value, chain, stakeFeeInfo, stakeGasFeeAsset }) => {
   const chainsConfig = useChainsConfig();
   const { titleShort: networkName } = chainsConfig[chain];
+  const { t, tRoot } = useTranslationWithPrefix('plrStaking.validator');
 
   const formattedToAmount = formatTokenValue(value, plrToken.symbol, { decimalPlaces: 0 }) ?? '';
 
@@ -61,12 +61,12 @@ const StakeRouteCard: FC<IStakeRouteCard> = ({ plrToken, value, chain, stakeFeeI
 
         <RouteInfoContainer>
           <RouteInfoRow>
-            <MainText>{`Stake ${formattedToAmount} on ${networkName}`}</MainText>
+            <MainText>{t('stakeOn', { formattedAmount: formattedToAmount, networkName })}</MainText>
           </RouteInfoRow>
           <RouteInfoRow>
             <GasPriceWrapper>
               <SubText>
-                <HighlightText>{'Est. fee: '}</HighlightText>
+                <HighlightText>{t('estFee')}</HighlightText>
               </SubText>
               <FeeCard
                 value={stakeFeeInfo}
