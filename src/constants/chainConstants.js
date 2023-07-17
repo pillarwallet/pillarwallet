@@ -23,7 +23,6 @@ export const CHAIN = {
   POLYGON: ('polygon': 'polygon'),
   BINANCE: ('binance': 'binance'),
   XDAI: ('xdai': 'xdai'),
-  AVALANCHE: ('avalanche': 'avalanche'),
   OPTIMISM: ('optimism': 'optimism'),
   ARBITRUM: ('arbitrum', 'arbitrum'),
 };
@@ -33,7 +32,6 @@ export const CHAIN_NAMES = {
   POLYGON: 'polygon',
   BINANCE: 'binance',
   XDAI: 'xdai',
-  AVALANCHE: 'avalanche',
   OPTIMISM: 'optimism',
   ARBITRUM: 'arbitrum',
 };
@@ -43,7 +41,6 @@ export const CHAIN_SHORT = {
   POLYGON: 'Polygon',
   BINANCE: 'BSC',
   XDAI: 'xDai',
-  AVALANCHE: 'AVAX',
   OPTIMISM: 'optimism',
   ARBITRUM: 'Arbitrum',
 };
@@ -57,8 +54,6 @@ export const CHAIN_ID = {
   BINANCE_TESTNET: 97,
   XDAI: 100,
   SOKOL: 77,
-  AVALANCHE: 43114,
-  FUJI: 43113,
   MUMBAI: 80001,
   OPTIMISM: 10,
   OPTIMISM_KOVAN: 69,

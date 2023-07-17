@@ -151,7 +151,6 @@ import RedDownIcon from 'assets/icons/svg/icon-down-red.svg';
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
 import IconBinance from 'assets/icons/svg/icon-24-binance.svg';
 import IconPolygon from 'assets/icons/svg/icon-24-polygon.svg';
-import IconAvalanche from 'assets/icons/svg/icon-24-avalanche.svg';
 import IconWalletConnect from 'assets/icons/svg/icon-24-wallet-connect.svg';
 import IconAllNetworks from 'assets/icons/svg/services-48-circle-pillar-exchange.svg';
 import IconAllNetworksLight from 'assets/icons/svg/services-48-circle-pillar-exchange-light.svg';
@@ -306,7 +305,6 @@ const components = {
   ethereum: IconEthereum,
   polygon: IconPolygon,
   xdai: IconGnosis,
-  avalanche: IconAvalanche,
   optimism: IconOptimism,
   arbitrum: IconArbitrum,
   'wallet-connect': IconWalletConnect,
@@ -386,7 +384,6 @@ export const IconComponentPerChain = {
   polygon: IconPolygon,
   binance: IconBinance,
   xdai: IconGnosis,
-  avalanche: IconAvalanche,
   optimism: IconOptimism,
   arbitrum: IconArbitrum,
 };

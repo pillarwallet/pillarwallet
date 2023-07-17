@@ -69,7 +69,6 @@
     "binance": "Binance Smart Chain",
     "xdai": "Gnosis",
     "polygon": "Polygon",
-    "avalanche": "Avalanche",
     "optimism": "Optimism",
     "optimism_kovan": "Optimism Kovan",
     "gorli": "Ethereum Görli",
@@ -86,7 +85,6 @@
     "binance": "BSC",
     "xdai": "Gnosis",
     "polygon": "Polygon",
-    "avalanche": "Avalanche",
     "optimism": "Optimism",
     "optimism_kovan": "Optimism Kovan",
     "arbitrum": "Arbitrum"
@@ -111,6 +109,19 @@
     "rewards": "Rewards",
     "datasets": "Datasets",
     "collectibles": "NFTs"
+  },
+
+  "onboardingLoaders":{
+    "initEtherspot": "Initializing Etherspot",
+    "loadingWallet": "Loading Wallets",
+    "creatingAccounts": "Creating Accounts",
+    "encryptingKeys": "Encrypting Keys",
+    "deployingGnosis":"Deploying Gnosis",
+    "fetchingTokens": "Fetching Tokens",
+    "fetchingPrices":"Fetching Prices",
+    "loadingTxHistory": "Loading Tx History",
+    "ready": "Ready!",
+    "noInternet": "No internet, retrying..."
   },
 
   "title": {
@@ -1244,7 +1255,7 @@
             "recommended": "Recommended",
             "highGasPrice": "High gas price 🔥",
             "ethereum": "Ethereum",
-            "chainName": "Polygon, BSC, xDai, Avalanche"
+            "chainName": "Polygon, BSC, xDai"
           },
           "warningMessage": "Your smart wallet is not deployed on Ethereum.\n{{deploymentCost}} smart wallet deployment cost will be added to this transaction. No action required."
         },

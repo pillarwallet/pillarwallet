@@ -108,7 +108,6 @@ export class EtherspotService {
       isMainnet ? NetworkNames.Bsc : NetworkNames.BscTest,
       isMainnet ? NetworkNames.Matic : NetworkNames.Mumbai,
       isMainnet ? NetworkNames.Xdai : NetworkNames.Sokol,
-      isMainnet ? NetworkNames.Avalanche : NetworkNames.Fuji,
       isMainnet ? NetworkNames.Optimism : NetworkNames.OptimismGoerli,
       isMainnet ? NetworkNames.Arbitrum : NetworkNames.ArbitrumNitro,
     ];
@@ -123,7 +122,6 @@ export class EtherspotService {
       this.supportedNetworks.map(async (networkName) => {
         const env =
           networkName !== NetworkNames.Goerli &&
-          networkName !== NetworkNames.Fuji &&
           networkName !== NetworkNames.Mumbai &&
           networkName !== NetworkNames.Sokol &&
           networkName !== NetworkNames.BscTest &&
@@ -233,7 +231,6 @@ export class EtherspotService {
   }
 
   async getAccountPerChains(): Promise<ChainRecord<?EtherspotAccount>> {
-    const avalanche = await this.getAccount(CHAIN.AVALANCHE);
     const ethereum = await this.getAccount(CHAIN.ETHEREUM);
     const binance = await this.getAccount(CHAIN.BINANCE);
     const polygon = await this.getAccount(CHAIN.POLYGON);
@@ -241,7 +238,7 @@ export class EtherspotService {
     const optimism = await this.getAccount(CHAIN.OPTIMISM);
     const arbitrum = await this.getAccount(CHAIN.ARBITRUM);
 
-    return { ethereum, binance, polygon, xdai, avalanche, optimism, arbitrum };
+    return { ethereum, binance, polygon, xdai, optimism, arbitrum };
   }
 
   getAccounts(): Promise<?(EtherspotAccount[])> {
@@ -320,7 +317,7 @@ export class EtherspotService {
       .map(({ address }) => address);
 
     let balancesRequestPayload = {
-      account: chain === CHAIN.AVALANCHE ? sdk.state.accountAddress : accountAddress,
+      account: accountAddress,
     };
 
     if (assetAddresses.length) {
@@ -817,9 +814,6 @@ export class EtherspotService {
       case CHAIN.BINANCE:
         blockchainExplorerUrl = getEnv().TX_DETAILS_URL_BINANCE;
         break;
-      case CHAIN.AVALANCHE:
-        blockchainExplorerUrl = getEnv().TX_DETAILS_URL_AVALANCHE;
-        break;
       case CHAIN.OPTIMISM:
         blockchainExplorerUrl = getEnv().TX_DETAILS_URL_OPTIMISM;
         break;
@@ -1223,8 +1217,6 @@ function networkNameFromChain(chain: Chain): ?string {
       return isProdEnv() ? NetworkNames.Matic : NetworkNames.Mumbai;
     case CHAIN.XDAI:
       return isProdEnv() ? NetworkNames.Xdai : NetworkNames.Sokol;
-    case CHAIN.AVALANCHE:
-      return isProdEnv() ? NetworkNames.Avalanche : NetworkNames.Fuji;
     case CHAIN.OPTIMISM:
       return isProdEnv() ? NetworkNames.Optimism : NetworkNames.OptimismGoerli;
     case CHAIN.ARBITRUM:
@@ -1248,9 +1240,6 @@ function chainFromNetworkName(networkName: string): ?Chain {
     case NetworkNames.Xdai:
     case NetworkNames.Sokol:
       return CHAIN.XDAI;
-    case NetworkNames.Avalanche:
-    case NetworkNames.Fuji:
-      return CHAIN.AVALANCHE;
     case NetworkNames.Optimism:
     case NetworkNames.OptimismGoerli:
       return CHAIN.OPTIMISM;

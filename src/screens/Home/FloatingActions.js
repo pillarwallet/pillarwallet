@@ -47,6 +47,7 @@ import {
   useActiveAccount,
   useIsExchangeAvailable,
   viewedReceiveTokensWarningSelector,
+  useOnboardingFetchingSelector,
 } from 'selectors';
 import { accountWalletBalancePerChainSelector } from 'selectors/totalBalances';
 import { useArchanovaWalletStatus } from 'selectors/archanova';
@@ -54,6 +55,7 @@ import { useArchanovaWalletStatus } from 'selectors/archanova';
 function FloatingActions() {
   const { t } = useTranslationWithPrefix('home.actions');
   const navigation = useNavigation();
+  const isFetching = useOnboardingFetchingSelector();
 
   const address = useRootSelector(activeAccountAddressSelector);
   const viewedReceiveTokensWarning = useRootSelector(viewedReceiveTokensWarningSelector);
@@ -80,24 +82,25 @@ function FloatingActions() {
       title: t('receive'),
       iconName: 'qrcode',
       onPress: onReceivePress,
-      disabled: !address,
+      disabled: !address || isFetching,
     },
     isExchangeAvailable && {
       title: t('swap'),
       iconName: 'exchange',
       onPress: () => navigation.navigate(BRIDGE_FLOW),
-      disabled: !isExchangeEnabled,
+      disabled: !isExchangeEnabled || isFetching,
     },
     {
       title: t('send'),
       iconName: 'send',
       onPress: () => navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW),
-      disabled: !isSendEnabled,
+      disabled: !isSendEnabled || isFetching,
     },
     {
       title: t('connect'),
       iconName: 'wallet-connect',
       onPress: () => onPressButton(),
+      disabled: isFetching,
     },
   ];
 

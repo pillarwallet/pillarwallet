@@ -48,7 +48,7 @@ import { MENU, HOME_HISTORY, REGISTER_ENS, CONNECT_FLOW } from 'constants/naviga
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
-import { useRootSelector, useAccounts, activeAccountAddressSelector } from 'selectors';
+import { useRootSelector, useAccounts, activeAccountAddressSelector, useOnboardingFetchingSelector } from 'selectors';
 import { accountTotalBalancesSelector } from 'selectors/totalBalances';
 import { useUser } from 'selectors/user';
 import { etherspotAccountSelector } from 'selectors/accounts';
@@ -79,6 +79,7 @@ import InvestmentsSection from './InvestmentsSection';
 import { useAccountCollectibleCounts } from './utils';
 import AppsButton from './AppsButton';
 import TransactionNotification from './components/TransactionNotification';
+import OnboardingLoader from './components/OnboardingLoader';
 
 // Redux
 import { fetchNativeIntegration } from '../../redux/actions/native-integration-actions';
@@ -95,6 +96,7 @@ function Home() {
   const colors = useThemeColors();
   const { t } = useTranslation();
   const swiperRef = React.useRef(null);
+  const isFetching = useOnboardingFetchingSelector();
 
   useBioMetricsPopup();
 
@@ -196,7 +198,14 @@ function Home() {
   };
 
   return (
-    <Swiper ref={swiperRef} loop={false} showsPagination={false} index={1} onIndexChanged={setCurrentSwiperIndex}>
+    <Swiper
+      scrollEnabled={!isFetching}
+      ref={swiperRef}
+      loop={false}
+      showsPagination={false}
+      index={1}
+      onIndexChanged={setCurrentSwiperIndex}
+    >
       {/* Left Scanner Content */}
       <WalletConnectCamera
         visibleCamera={currentSwiperIndex === 0}
@@ -285,6 +294,7 @@ function Home() {
           </Content>
 
           <FloatingActions />
+          {isFetching && <OnboardingLoader />}
         </Container>
       </>
 
