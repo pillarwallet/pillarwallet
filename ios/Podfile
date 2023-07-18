@@ -28,7 +28,7 @@ target 'pillarwallet' do
 
 end
 
-dynamic_frameworks = ['Storyly', 'SDWebImage']
+dynamic_frameworks = ['SDWebImage']
 pre_install do |installer|
   installer.pod_targets.each do |pod|
     if dynamic_frameworks.include?(pod.name)
