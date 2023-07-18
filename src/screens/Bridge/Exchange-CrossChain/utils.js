@@ -193,8 +193,9 @@ export function useOffersQuery(
   fromAsset: ?AssetOption,
   toAsset: ?AssetOption,
   fromAmount: string,
+  active: boolean = true,
 ): QueryResult<ExchangeOffer[]> {
-  const enabled = shouldTriggerSearch(fromAsset, toAsset, fromAmount);
+  const enabled = shouldTriggerSearch(fromAsset, toAsset, fromAmount, active);
 
   return useQuery(
     ['ExchangeOffers', fromAsset, toAsset, fromAmount],
@@ -203,8 +204,13 @@ export function useOffersQuery(
   );
 }
 
-export function useCrossChainBuildTransactionQuery(fromAsset: AssetOption, toAsset: AssetOption, fromValue: BigNumber) {
-  const enabled = !!fromAsset && !!toAsset && !!fromValue;
+export function useCrossChainBuildTransactionQuery(
+  fromAsset: AssetOption,
+  toAsset: AssetOption,
+  fromValue: BigNumber,
+  active: boolean = true,
+) {
+  const enabled = !!fromAsset && !!toAsset && !!fromValue && active;
 
   return useQuery(
     ['buildCrossChainBridgeTransaction', fromAsset, toAsset, fromValue],
@@ -227,6 +233,7 @@ export const shouldTriggerSearch = (
   fromAsset: ?AssetOption,
   toAsset: ?AssetOption,
   fromAmount: string,
+  active: boolean = true,
 ): boolean %checks => {
   return (
     !!fromAsset &&
@@ -235,7 +242,8 @@ export const shouldTriggerSearch = (
     fromAmount[fromAmount.length - 1] !== '.' &&
     !addressesEqual(fromAsset.address, toAsset.address) &&
     fromAsset.chain === toAsset.chain &&
-    isEnoughAssetBalance(fromAsset.assetBalance, fromAmount)
+    isEnoughAssetBalance(fromAsset.assetBalance, fromAmount) &&
+    active
   );
 };
 
