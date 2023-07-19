@@ -40,9 +40,11 @@ import { useStableAssets, useNonStableAssets } from 'hooks/assets';
 
 // Utils
 import { fontStyles, spacing } from 'utils/variables';
-import { formatBigAmount, reportErrorLog, logBreadcrumb } from 'utils/common';
+import { formatBigAmount, reportErrorLog } from 'utils/common';
+import { isArchanovaAccount, isKeyBasedAccount } from 'utils/accounts';
 
 // Selectors
+import { activeAccountAddressSelector, useActiveAccount } from 'selectors';
 import { useSupportedChains } from 'selectors/chains';
 
 // Configs
@@ -60,7 +62,8 @@ import AssetSelectorModal from 'components/Modals/AssetSelectorModal';
 
 // Local
 import PlrStakingHeaderBlock from './PlrStakingHeaderBlock';
-import { getStakingContractInfo, getStakingRemoteConfig } from 'utils/plrStakingHelper';
+import { getBalanceForAddress, getStakingContractInfo, getStakingRemoteConfig } from 'utils/plrStakingHelper';
+import { CHAIN } from 'constants/chainConstantsTs';
 
 const PlrStaking = () => {
   const navigation = useNavigation();
@@ -68,6 +71,7 @@ const PlrStaking = () => {
 
   const chains: string[] = useSupportedChains();
   const chainsConfig = useChainsConfig();
+  const activeAccount = useActiveAccount();
 
   const { tokens: stableTokens } = useStableAssets();
   const { tokens: nonStableTokens } = useNonStableAssets();
@@ -134,7 +138,13 @@ const PlrStaking = () => {
       } catch (e) {
         reportErrorLog('PlrStaking - fetchStakingInfo error', e);
       }
+
+      const ethereumPlrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
+      const balance = await getBalanceForAddress(CHAIN.ETHEREUM, ethereumPlrAddress);
+      console.log('plrBalance', balance?.toString());
     };
+
+    fetchStakingInfo();
 
     const plrAddresses: string[] = [];
     chains.map((chain) => {
@@ -157,8 +167,6 @@ const PlrStaking = () => {
       setHasEnoughPlr(false);
       return;
     }
-
-    fetchStakingInfo();
 
     setSelectedChain(filteredTokens[0].chain);
     setHasEnoughPlr(filteredTokens[0].assetBalance >= MIN_PLR_STAKE_AMOUNT);
@@ -195,6 +203,8 @@ const PlrStaking = () => {
       if (!symbol) symbol = bal?.formattedBalanceInFiat?.substring(0, 1) || '';
       total += parseFloat(bal?.balance?.balanceInFiat || 0);
     });
+
+    if (!total) return 0;
 
     return symbol + total.toFixed(2);
   };
@@ -302,10 +312,24 @@ const PlrStaking = () => {
             </AvailablePlrBox>
 
             <BalanceSelectWrapper>
-              <BalanceItem disabled>
+              <BalanceItem disabled={!getPlrTotal()}>
                 <BalanceLeftItem>
-                  <Icon name="etherspot16" />
-                  <BalanceTitle>{t('etherspotWallet')}</BalanceTitle>
+                  {isArchanovaAccount(activeAccount) ? (
+                    <>
+                      <Icon name="pillar16" />
+                      <BalanceTitle>{`${t('archanova')} ${t('wallet')}`}</BalanceTitle>
+                    </>
+                  ) : isKeyBasedAccount(activeAccount) ? (
+                    <>
+                      <Icon name="wallet16" />
+                      <BalanceTitle>{`${t('keybased')} ${t('wallet')}`}</BalanceTitle>
+                    </>
+                  ) : (
+                    <>
+                      <Icon name="etherspot16" />
+                      <BalanceTitle>{`${t('etherspot')} ${t('wallet')}`}</BalanceTitle>
+                    </>
+                  )}
                   <Icon name="checkmark-green" />
                 </BalanceLeftItem>
 
