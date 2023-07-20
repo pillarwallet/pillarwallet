@@ -97,11 +97,14 @@ function OfferCard({
   const [offerInfo, setOfferInfo] = React.useState(null);
 
   React.useEffect(() => {
-    async function call() {
+    let mounted = true;
+    (async () => {
       const addTxsOffer = await appendFeeCaptureTransactionIfNeeded(offer, getAccountAddress(activeAccount));
-      setOfferInfo(addTxsOffer);
-    }
-    call();
+      if (mounted) setOfferInfo(addTxsOffer);
+    })();
+    return () => {
+      mounted = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [offer]);
 

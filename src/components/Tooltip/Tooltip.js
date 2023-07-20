@@ -82,16 +82,23 @@ const Tooltip = (props: Props) => {
 
   const opacityAnim = React.useRef<Animated.Value>(new Animated.Value(0)).current;
   React.useEffect(() => {
-    if (tooltipLayout.height) {
+    let mounted = true;
+    if (tooltipLayout.height && mounted) {
       Animated.timing(opacityAnim, {
         toValue: isVisible ? 1 : 0,
         duration: 200,
         useNativeDriver: true,
-      }).start(() => { if (!isVisible) setVisibilityState(false); });
+      }).start(() => {
+        if (!isVisible) setVisibilityState(false);
+      });
     }
-    if (isVisible) {
+    if (isVisible && mounted) {
       setVisibilityState(true);
     }
+
+    return () => {
+      mounted = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isVisible, tooltipLayout]);
 

@@ -19,10 +19,7 @@
 */
 import React from 'react';
 import styled from 'styled-components/native';
-
-// eslint-disable-next-line import/no-extraneous-dependencies
-import ContentLoader from 'react-native-content-loader';
-import { Rect } from 'react-native-svg';
+import ContentLoader, { Rect } from 'react-content-loader/native';
 
 // Components
 import { Spacing } from 'components/legacy/Layout';
@@ -40,9 +37,11 @@ export const SingleSkeletonLoader = ({ width, height, radius }: Props) => {
   const colors = useThemeColors();
   return (
     <ContentLoader
-      primaryColor={colors.primarySkeleton}
-      secondaryColor={colors.secondarySkeleton}
-      duration={1000}
+      foregroundColor={colors.secondarySkeleton}
+      backgroundColor={colors.primarySkeleton}
+      speed={1}
+      interval={0}
+      viewBox={`0 0 ${width * 1.05} ${height * 1.05}`}
       width={width * 1.05}
       height={height * 1.05}
     >
@@ -69,9 +68,11 @@ export const HorizontalTitleLoader = () => {
 
   return (
     <ContentLoader
-      primaryColor={colors.primarySkeleton}
-      secondaryColor={colors.secondarySkeleton}
-      duration={1000}
+      foregroundColor={colors.secondarySkeleton}
+      backgroundColor={colors.primarySkeleton}
+      speed={1}
+      interval={0}
+      viewBox="0 0 190 50"
       width={190}
       height={50}
     >
@@ -86,9 +87,11 @@ export const HorizontalBalanceLoader = () => {
 
   return (
     <ContentLoader
-      primaryColor={colors.primarySkeleton}
-      secondaryColor={colors.secondarySkeleton}
-      duration={1000}
+      foregroundColor={colors.secondarySkeleton}
+      backgroundColor={colors.primarySkeleton}
+      speed={1}
+      interval={0}
+      viewBox="0 0 77 50"
       width={77}
       height={50}
     >

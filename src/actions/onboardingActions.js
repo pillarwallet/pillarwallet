@@ -373,7 +373,7 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
 
     dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.deployingGnosis') });
     logBreadcrumb('onboarding', 'walletSetupAction: dispatching deployAccounts');
-    dispatch(deployAccounts());
+    if (!__DEV__) dispatch(deployAccounts());
 
     logBreadcrumb('onboarding', 'walletSetupAction: completed, dispatching SET_FINISHING_ONBOARDING');
     isLogV2AppEvents() && dispatch(logEventAction('v2_account_sign_up_completed'));

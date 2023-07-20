@@ -203,7 +203,11 @@ function Home() {
       loop={false}
       showsPagination={false}
       index={1}
-      onIndexChanged={setCurrentSwiperIndex}
+      onIndexChanged={(newIndex) => {
+        setTimeout(() => {
+          setCurrentSwiperIndex(newIndex);
+        }, 1);
+      }}
     >
       {/* Left Scanner Content */}
       <WalletConnectCamera
