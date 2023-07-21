@@ -88,6 +88,9 @@ function WalletConnectHome() {
   const { numberOfColumns, columnWidth } = useColumnDimensions();
   const { data: sections, isFetching } = useSectionData(activeChain, numberOfColumns);
 
+  const isLight = isLightTheme();
+
+
   const showDeployBanner = !isKeyBasedAccount(activeAccount) && activeChain != null && !isDeployedOnChain[activeChain];
 
   const updateActiveChain = (chain?) => {
@@ -125,7 +128,7 @@ function WalletConnectHome() {
               <ChainViewIcon
                 size={24}
                 style={IconContainer}
-                name={key ?? isLightTheme() ? 'all-networks-light' : 'all-networks'}
+                name={key || (isLight ? 'all-networks-light' : 'all-networks')}
               />
               <Title>{title}</Title>
               <ChainViewIcon name="chevron-down" />

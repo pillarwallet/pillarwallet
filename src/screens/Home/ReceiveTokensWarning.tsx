@@ -167,7 +167,7 @@ const ReceiveTokensWarning: FC<IReceiveTokensWarning> = ({ theme }) => {
             const { titleShort } = chainsConfig[chain];
 
             return (
-              <DeployRow>
+              <DeployRow key={'ordered_' + chain}>
                 <ChainIcon name={chain + '16'} style={{ marginRight: spacing.small }} />
                 <DeployText>{titleShort}</DeployText>
                 {!isDeployedOnChain?.[chain] && !deploymentFee(chain)?.fiatValue ? (
