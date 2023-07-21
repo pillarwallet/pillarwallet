@@ -94,7 +94,7 @@ const PlrStaking = () => {
   const [plrBalances, setPlrBalances] = useState(null);
   const [hasEnoughPlr, setHasEnoughPlr] = useState(false);
 
-  const [selectedWallet, setSelectedWallet] = useState(WalletType.ETHERSPOT);
+  const [accountType, setAccountType] = useState(WalletType.ETHERSPOT);
   const [selectedChain, setSelectedChain] = useState(null);
 
   const [showModal, setShowModal] = useState(false);
@@ -175,6 +175,13 @@ const PlrStaking = () => {
   }, []);
 
   useEffect(() => {
+    let accountType = WalletType.ETHERSPOT;
+    if (isArchanovaAccount(activeAccount)) accountType = WalletType.ARCHANOVA;
+    else if (isKeyBasedAccount(activeAccount)) accountType = WalletType.KEYBASED;
+    setAccountType(accountType);
+  }, [activeAccount]);
+
+  useEffect(() => {
     if (!stakingEndTime) return;
 
     const timerCountdown = setInterval(getRemainingTimes, 1000);
@@ -222,7 +229,7 @@ const PlrStaking = () => {
     navigation.navigate(PLR_STAKING_VALIDATOR, {
       token: token,
       chain: token.chain,
-      wallet: selectedWallet,
+      wallet: accountType,
       balancesWithoutPlr: balancesWithoutPlr,
     });
   };
@@ -238,7 +245,7 @@ const PlrStaking = () => {
     navigation.navigate(PLR_STAKING_VALIDATOR, {
       token: token,
       chain: token.chain,
-      wallet: selectedWallet,
+      wallet: accountType,
       balancesWithoutPlr: balancesWithoutPlr,
     });
   };
@@ -283,7 +290,7 @@ const PlrStaking = () => {
             <InfoText>{t('stakingInfoLoading')}</InfoText>
           ) : stakingEnabled ? (
             <InfoText>
-              {t('stakingClosedIn')} <InfoText bold>{formatRemainingTime(remainingStakingTime)}</InfoText>
+              {t('stakingClosingIn')} <InfoText bold>{formatRemainingTime(remainingStakingTime)}</InfoText>
             </InfoText>
           ) : (
             <InfoText>{t('stakingClosed')}</InfoText>
@@ -314,12 +321,12 @@ const PlrStaking = () => {
             <BalanceSelectWrapper>
               <BalanceItem disabled={!getPlrTotal()}>
                 <BalanceLeftItem>
-                  {isArchanovaAccount(activeAccount) ? (
+                  {accountType === WalletType.ARCHANOVA ? (
                     <>
                       <Icon name="pillar16" />
                       <BalanceTitle>{`${t('archanova')} ${t('wallet')}`}</BalanceTitle>
                     </>
-                  ) : isKeyBasedAccount(activeAccount) ? (
+                  ) : accountType === WalletType.KEYBASED ? (
                     <>
                       <Icon name="wallet16" />
                       <BalanceTitle>{`${t('keybased')} ${t('wallet')}`}</BalanceTitle>
@@ -378,7 +385,7 @@ const PlrStaking = () => {
               title={t('button.stake')}
               onPress={onStake}
               size="large"
-              disabled={!selectedWallet || !selectedChain || !stakingEnabled}
+              disabled={!accountType || !selectedChain || !stakingEnabled}
             />
           )}
 

@@ -1798,7 +1798,8 @@
       "stakeOn": "Stake {{formattedAmount}} on {{networkName}}",
       "on": "on",
       "showLess": "Show less",
-      "showMore": "Show more"
+      "showMore": "Show more",
+      "bridgeFrom": "Bridge via {{providerName}} from {{sourceNetworkName}} to {{destinationNetworkName}}"
     },
     "chooseAsset": "Choose asset"
   }
