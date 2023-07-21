@@ -80,6 +80,11 @@ export const REMOTE_CONFIG = {
   APP_IPFS_SERVICE_URL: 'app_ipfs_service_url',
   APP_NFTS: 'app_nfts',
   APP_TOKENLISTS: 'app_tokenlists',
+  PLR_STAKING_CONTRACT: 'app_plr_staking_contract',
+  PLE_STAKING_TOKEN_ADDRESS: 'app_plr_staking_token_address',
+  FEATURE_PLR_STAKING: 'feature_plr_staking',
+  PLR_STAKING_START_TIME: 'stakingStartTime',
+  PLR_STAKING_LOCKED_START_TIME: 'stakingLockedStartTime',
   MT_PELERIN_SUPPORTED_ASSETS: 'app_mt_pelerin_supported_assets',
   APP_SUPPORT_EMAIL: 'app_support_email',
 };
@@ -127,6 +132,11 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.APP_IPFS_SERVICE_URL]: 'https://ipfs.io/ipfs',
   [REMOTE_CONFIG.APP_NFTS]: false,
   [REMOTE_CONFIG.APP_TOKENLISTS]: '',
+  [REMOTE_CONFIG.PLR_STAKING_CONTRACT]: '',
+  [REMOTE_CONFIG.PLE_STAKING_TOKEN_ADDRESS]: '',
+  [REMOTE_CONFIG.FEATURE_PLR_STAKING]: false,
+  [REMOTE_CONFIG.PLR_STAKING_START_TIME]: 1688425200,
+  [REMOTE_CONFIG.PLR_STAKING_LOCKED_START_TIME]: 1689289200,
   [REMOTE_CONFIG.MT_PELERIN_SUPPORTED_ASSETS]: JSON.stringify(pelerinSupportedAssets),
   [REMOTE_CONFIG.APP_SUPPORT_EMAIL]: 'support@pillarproject.io',
 };

@@ -710,6 +710,11 @@
       "pillarDeployment2": "Gnosis for you.",
       "checkAddress": "Before sending your assets to your address, check the current deployment costs:",
       "understood": "Got it. Don’t show this message again."
+    },
+    "investments": {
+      "title": "PLR Staking",
+      "description": "Earn ETH by staking your PLR tokens.\n80% PLR of the vault staked.",
+      "closeTime": "Subscription will close in {{closeTime}}"
     }
   },
 
@@ -1739,5 +1744,58 @@
     "for": "for",
     "gas": "Gas",
     "time": "Time"
+  },
+
+  "plrStaking": {
+    "title": "Pillar Staking",
+    "info": "Stake PLR to earn ETH on Ethereum without running a validator. Rewards are distributed quarterly after ETH validator withdrawals are live. Proportional distribution based on staked percentage of PLR pool. Staked tokens (stkPLR) are 1:1 issued, and PLR tokens are locked for 52 weeks.",
+    "limitWarning": "You need a minimum of 10,000 PLR tokens on Ethereum, swap more assets to PLR on Ethereum.",
+    "plrAvailable": "You have PLR assets on {{chainAmount}} chain{{s}}",
+    "pillar": "Pillar",
+    "etherspotWallet": "Etherspot Wallet",
+    "stakingInfoLoading": "Staking info is loading...",
+    "stakingClosingIn": "Staking will close in ",
+    "stakingClosed": "Staking is currently closed",
+    "header": {
+      "token": "Token",
+      "chain": "Chain",
+      "apy": "APY (Variable)",
+      "staked": "Staked",
+      "vaultFilling": "Vault filling",
+      "stakers": "Stakers"
+    },
+    "assetSelector": {
+      "from": "From",
+      "to": "To",
+      "on": "on {{network}}",
+      "max": "Max",
+      "balance": "Balance {{balance}}"
+    },
+    "button": {
+      "chooseAsset": "Choose Asset",
+      "stake": "Stake",
+      "processing": "Processing...",
+      "enterAmount": "Enter staking amount",
+      "calculatingFees": "Calculating fees...",
+      "insufficientAmount": "Insufficient PLR amount",
+      "fetchingRoutes": "Fetching routes...",
+      "fetchingOffers": "Fetching offers...",
+      "execute": "Execute",
+      "done": "Done"
+    },
+    "validator": {
+      "title": "Staking Pillar Validator",
+      "limitWarning": "You need to stake min 10,000 PLR.\nYou can stake up to max 250,000 PLR.",
+      "stakingFeeError": "There was an error calculating the staking fees. This could be because you don't have enough balance to pay for the gas, or there was a network error.",
+      "stakingBuildError": "There was an error forming the staking payload, please try again later.",
+      "estFee": "Est. fee:",
+      "estTime": "Est. time:",
+      "swapVia": "Swap via {{title}} on {{networkName}}",
+      "stakeOn": "Stake {{formattedAmount}} on {{networkName}}",
+      "on": "on",
+      "showLess": "Show less",
+      "showMore": "Show more"
+    },
+    "chooseAsset": "Choose asset"
   }
 }
