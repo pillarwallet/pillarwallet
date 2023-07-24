@@ -141,7 +141,6 @@ const PlrStaking = () => {
 
       const ethereumPlrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
       const balance = await getBalanceForAddress(CHAIN.ETHEREUM, ethereumPlrAddress);
-      console.log('plrBalance', balance?.toString());
     };
 
     fetchStakingInfo();

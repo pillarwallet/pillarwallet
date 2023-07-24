@@ -82,7 +82,7 @@ const RouteCard: FC<IRouteCard> = ({
   networkName,
   provider,
   onSelectOffer,
-  disabled,
+  disabled = false,
   stakeFeeInfo,
   stakeGasFeeAsset,
   transactions,
@@ -126,7 +126,7 @@ const RouteCard: FC<IRouteCard> = ({
         <RouteInfoContainer>
           <RouteInfoRow>
             <MainText>{formattedToAmount}</MainText>
-            <MainText highlighted>{`${t('on')} ${networkName}`}</MainText>
+            <MainText highlighted>{` ${t('on')} ${networkName}`}</MainText>
           </RouteInfoRow>
 
           <RouteInfoRow>
@@ -204,8 +204,8 @@ const RouteCard: FC<IRouteCard> = ({
                     includedStepAction.toToken.decimals,
                   );
 
-                  const sourceChain = chainFromChainId(includedStepAction.fromChainId);
-                  const destinationChain = chainFromChainId(includedStepAction.toChainId);
+                  const sourceChain = chainFromChainId[includedStepAction.fromChainId];
+                  const destinationChain = chainFromChainId[includedStepAction.toChainId];
 
                   const { titleShort: sourceNetworkName } = chainsConfig[sourceChain];
                   const { titleShort: destinationNetworkName } = chainsConfig[destinationChain];
@@ -214,7 +214,7 @@ const RouteCard: FC<IRouteCard> = ({
                     return (
                       <RouteInfoRow>
                         <IconWrapper>
-                          <TokenIcon url={step.toolDetails.logoURI} size={32} chain={chain} />
+                          <TokenIcon url={step.toolDetails.logoURI} size={32} chain={sourceChain} />
                         </IconWrapper>
                         <Spacing w={spacing.mediumLarge} />
                         <RouteInfoCol>
@@ -233,7 +233,7 @@ const RouteCard: FC<IRouteCard> = ({
                     return (
                       <RouteInfoRow>
                         <IconWrapper>
-                          <TokenIcon url={step.toolDetails.logoURI} size={32} chain={chain} />
+                          <TokenIcon url={step.toolDetails.logoURI} size={32} />
                         </IconWrapper>
                         <Spacing w={spacing.mediumLarge} />
                         <RouteInfoCol>
@@ -243,6 +243,10 @@ const RouteCard: FC<IRouteCard> = ({
                               sourceNetworkName,
                               destinationChain,
                             })}
+                          </SubText>
+                          <SubText>
+                            <HighlightText>{`${t('estFee')} `}</HighlightText>
+                            {`$${bridgeRoute?.gasCostUSD}`}
                           </SubText>
                         </RouteInfoCol>
                       </RouteInfoRow>
@@ -315,7 +319,7 @@ const Circle = styled.View<{ active?: boolean }>`
   border-radius: 10px;
 `;
 
-const RouteBreakdownContainer = styled.View((props: { col?: boolean }) => props)`
+const RouteBreakdownContainer = styled.View`
   padding: 10px;
   border-radius: 20px;
   background-color: ${({ theme }) => theme.colors.basic050};
@@ -326,7 +330,7 @@ const RouteBreakdownContainer = styled.View((props: { col?: boolean }) => props)
   justify-content: space-between;
 `;
 
-const BridgeRouteContainer = styled.View((props: { col?: boolean }) => props)`
+const BridgeRouteContainer = styled.View`
   padding: 10px;
   border-radius: 20px;
   background-color: ${({ theme }) => theme.colors.basic050};
@@ -352,7 +356,6 @@ const RouteInfoContainer = styled.View`
 const RouteInfoRow = styled.View`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   align-items: center;
 `;
 

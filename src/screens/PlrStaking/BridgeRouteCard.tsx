@@ -136,7 +136,7 @@ const BridgeRouteCard: FC<IBridgeRouteCard> = ({
 
   const chainRates = useChainRates(fromChain);
 
-  const formattedToAmount = formatTokenValue(offer.toAmount, offer.toAsset.symbol, { decimalPlaces: 0 }) ?? '';
+  const formattedToAmount = formatTokenValue(offer.toAmount, 'stkPLR', { decimalPlaces: 0 }) ?? '';
 
   const formattedFromAmount = formatTokenValue(offer.fromAmount, offer.fromAsset.symbol, { decimalPlaces: 0 }) ?? '';
 
