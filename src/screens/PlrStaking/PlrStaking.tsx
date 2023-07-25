@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
 import { useDispatch } from 'react-redux';
 import { BigNumber, ethers } from 'ethers';
-import { addDays, intervalToDuration } from 'date-fns';
+import { addDays, intervalToDuration, isAfter } from 'date-fns';
 
 // Constants
 import { PLR_STAKING_VALIDATOR } from 'constants/navigationConstants';
@@ -125,7 +125,8 @@ const PlrStaking = () => {
 
       const stakingInfo = await getStakingContractInfo();
       try {
-        setStakingEnabled(!!stakingInfo.contractState);
+        let stakingEnded = isAfter(new Date(), endTime);
+        setStakingEnabled(!!stakingInfo.contractState && !stakingEnded);
 
         const stakingMaxTotal = BigNumber.from(stakingInfo.maxStakeTotal.toString());
         const totalStaked = BigNumber.from(stakingInfo.totalStaked.toString());
