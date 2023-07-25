@@ -54,9 +54,9 @@ export const toEthersBigNumber = (value: BigNumber, decimals: number): EthersBig
 
 export const truncateDecimalPlaces = (value: BigNumber, decimals: ?number): BigNumber => {
   if (decimals == null) return value;
-  if (decimals >= value.decimalPlaces()) return value;
+  if (decimals >= value?.decimalPlaces()) return value;
 
-  return value.decimalPlaces(decimals, BigNumber.ROUND_DOWN);
+  return value?.decimalPlaces(decimals, BigNumber.ROUND_DOWN);
 };
 
 /**

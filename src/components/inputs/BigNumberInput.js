@@ -44,6 +44,7 @@ type Props = {|
   onValueChange?: (value: ?BigNumber) => mixed,
   decimals?: number,
   maxValue?: ?BigNumber,
+  maxFontSize?: number,
 |};
 
 type Instance = typeof RNTextInput;
@@ -58,7 +59,16 @@ type Instance = typeof RNTextInput;
  * to allow user to input all allowed numbers.
  */
 const BigNumberInput = React.forwardRef<Props, Instance>((props, ref) => {
-  const { value, onValueChange, decimals, placeholder = '0', maxValue, style, ...passthroughProps } = props;
+  const {
+    value,
+    onValueChange,
+    decimals,
+    maxFontSize,
+    placeholder = '0',
+    maxValue,
+    style,
+    ...passthroughProps
+  } = props;
 
   const colors = useThemeColors();
 
@@ -101,6 +111,7 @@ const BigNumberInput = React.forwardRef<Props, Instance>((props, ref) => {
       placeholder={placeholder}
       keyboardType="decimal-pad"
       style={[baseStyle, style, { color }]}
+      maxFontSize={maxFontSize}
     />
   );
 });

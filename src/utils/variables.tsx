@@ -225,6 +225,7 @@ export const spacing = {
   rhythm: 20,
   extraSmall: 4,
   small: 8,
+  mediumSmall: 10,
   medium: 12,
   mediumLarge: 16,
   large: 20,
@@ -258,6 +259,7 @@ export const appFont = {
 };
 
 export const borderRadiusSizes = {
+  extraSmall: 8,
   defaultContainer: 22.5,
   defaultButton: 14,
   small: 16,
