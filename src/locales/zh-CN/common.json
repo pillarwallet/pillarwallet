@@ -95,6 +95,20 @@
     "apps":"应用",
     "collectibles": "NFT"
   },
+
+  "onboardingLoaders":{
+    "initEtherspot": "初始化 Etherspot",
+    "loadingWallet": "加载钱包",
+    "creatingAccounts": "创建帐户",
+    "encryptingKeys": "加密密钥",
+    "deployingGnosis":"部署 Gnosis",
+    "fetchingTokens": "获取代币",
+    "fetchingPrices":"获取价格",
+    "loadingTxHistory": "加载交易历史",
+    "ready": "准备好！",
+    "noInternet": "没有网络，请重试..."
+  },
+
   "assetCategoriesShort": {
     "wallet": "钱包",
     "deposits": "存款",
@@ -631,7 +645,8 @@
     "failedToBuildTransaction": "建立交易失败",
     "failedToEstimateTransaction": "无法估计交易",
     "failedToSubmitTransaction": "提交交易失败",
-    "fetchTokenListFailed": "获取令牌列表失败。"
+    "fetchTokenListFailed": "获取令牌列表失败。",
+    "invalidEmailURL": "无法处理提供的 URL"
   },
   "home": {
     "balance": {
@@ -748,7 +763,8 @@
       "messageRequest": "签名请求",
       "transactionRequest": "交易请求",
       "transactionRequestFormat": "{{chain}} 上的 {{app}}",
-      "unsupportedRequest": "不支持的请求"
+      "unsupportedRequest": "不支持的请求",
+      "signMessageRequest": "签署消息请求"
     },
     "connectedApps": {
       "title": "连接的 dapp",

@@ -34,9 +34,11 @@ const mockWallet: EthereumWallet = {
   mnemonic: undefined,
 };
 
+const mockDate = new Date();
+
 const mockFailedAttempts = {
   numberOfFailedAttempts: 0,
-  date: new Date(),
+  date: mockDate,
 };
 
 const mockBackupStatus: BackupStatus = {

@@ -34,6 +34,9 @@ import {
   SET_BANNER_DATA,
   SET_NEW_USER,
   SET_VIEWED_RECEIVE_TOKENS_WARNING,
+  SET_FETCHING,
+  SET_LOADING_MESSAGE,
+  SET_BIOMETIC_STATUS,
 } from 'constants/onboardingConstants';
 
 // Types
@@ -55,6 +58,9 @@ export type OnboardingReducerState = {
   bannerData: ?CmsBannerDocument,
   isNewUser: boolean,
   viewedReceiveTokensWarning: boolean,
+  isFetching: boolean,
+  loaderMessage: string,
+  enableBiometrics: boolean,
 };
 
 export type OnboardingReducerAction = {
@@ -76,6 +82,9 @@ export const initialState = {
   bannerData: null,
   isNewUser: false,
   viewedReceiveTokensWarning: false,
+  isFetching: false,
+  loaderMessage: '',
+  enableBiometrics: false,
 };
 
 export default function onboardingReducer(
@@ -156,6 +165,21 @@ export default function onboardingReducer(
       return {
         ...state,
         viewedReceiveTokensWarning: action.payload,
+      };
+    case SET_FETCHING:
+      return {
+        ...state,
+        isFetching: action.payload,
+      };
+    case SET_LOADING_MESSAGE:
+      return {
+        ...state,
+        loaderMessage: action.payload,
+      };
+    case SET_BIOMETIC_STATUS:
+      return {
+        ...state,
+        enableBiometrics: action.payload,
       };
     case RESET_ONBOARDING:
       return { ...initialState };

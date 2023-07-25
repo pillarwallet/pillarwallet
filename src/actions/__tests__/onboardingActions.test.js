@@ -87,6 +87,8 @@ const mockOnboarding: Object = {
   pinCode: '123456',
   user: { username: mockUser.username },
   isNewUser: false,
+  isFetching: false,
+  loaderMessage: '',
 };
 
 const mockBackupStatus: Object = {

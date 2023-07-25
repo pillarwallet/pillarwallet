@@ -26,7 +26,6 @@ import { KEYPAD_BUTTON_FORGOT } from 'constants/keyPadButtonsConstants';
 import type { Theme } from 'models/Theme';
 import { LIGHT_THEME } from 'constants/appSettingsConstants';
 import { getThemeColors } from 'utils/themes';
-import { excludeFromMonitoring } from 'utils/monitoring';
 import keyPadTypes from './keyPadTypes';
 
 const { height } = Dimensions.get('window');
@@ -184,7 +183,7 @@ class KeyPad extends React.Component<Props> {
     const buttons = customButtons || (keyPadTypes[type] ? keyPadTypes[type](options) : keyPadTypes.numeric());
 
     return (
-      <KeyPadWrapper style={style} ref={excludeFromMonitoring}>
+      <KeyPadWrapper style={style}>
         <KeyPadInner>{this.renderKeys(buttons)}</KeyPadInner>
       </KeyPadWrapper>
     );

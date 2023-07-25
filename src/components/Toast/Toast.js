@@ -21,11 +21,15 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components/native';
 import { StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
-import Instabug from 'instabug-reactnative';
 import t from 'translations/translate';
 
+// Utils
 import { noop } from 'utils/common';
 
+// Services
+import { emailSupport } from 'services/emailSupport';
+
+// Local
 import ToastCard from './ToastCard';
 import AnimatedToastList from './AnimatedToastList';
 
@@ -61,7 +65,7 @@ type Instance = {
 type ListUpdate = ToastItem[] | ((prev: ToastItem[]) => ToastItem[]);
 
 const AUTOCLOSE_DELAY = 2000;
-const goToSupport = () => Instabug.show();
+const goToSupport = () => emailSupport();
 
 export default class Toast {
   static _toastInstances: Instance[] = [];

@@ -22,12 +22,8 @@
 import { isProdEnv } from 'utils/environment';
 
 // Constants
-import { ETH, MATIC, BNB, AVAX, XDAI, ADDRESS_ZERO } from 'constants/assetsConstants';
-import { CHAIN, CHAIN_ID } from 'constants/chainConstants';
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
-
-// Services
-import { firebaseRemoteConfig } from 'services/firebase';
+import { ETH, MATIC, BNB, XDAI, ADDRESS_ZERO } from 'constants/assetsConstants';
+import { CHAIN, CHAIN_ID, CHAIN_NAMES } from 'constants/chainConstants';
 
 // Utils
 import { isEtherspotAccount } from 'utils/accounts';
@@ -46,8 +42,6 @@ export const chainFromChainId: { [number]: Chain } = {
   [CHAIN_ID.SOKOL]: CHAIN.XDAI,
   [CHAIN_ID.POLYGON]: CHAIN.POLYGON,
   [CHAIN_ID.MUMBAI]: CHAIN.POLYGON,
-  [CHAIN_ID.AVALANCHE]: CHAIN.AVALANCHE,
-  [CHAIN_ID.FUJI]: CHAIN.AVALANCHE,
   [CHAIN_ID.OPTIMISM]: CHAIN.OPTIMISM,
   [CHAIN_ID.OPTIMISM_GOERLI]: CHAIN.OPTIMISM,
   [CHAIN_ID.ARBITRUM]: CHAIN.ARBITRUM,
@@ -73,18 +67,10 @@ const mainnetChainIds = [
 ];
 
 export const isTestnetChainId = (chainId: number) => {
-  const visibleAvalanche = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_CHAIN_SWITCH_43114);
-  if (visibleAvalanche) {
-    testnetChainIds.push(CHAIN_ID.FUJI);
-  }
   return testnetChainIds.some((id) => chainId === id);
 };
 
 export const isMainnetChainId = (chainId: number) => {
-  const visibleAvalanche = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_CHAIN_SWITCH_43114);
-  if (visibleAvalanche) {
-    mainnetChainIds.push(CHAIN_ID.AVALANCHE);
-  }
   return mainnetChainIds.some((id) => chainId === id);
 };
 
@@ -96,7 +82,6 @@ export function mapChainToChainId(chain: Chain): number {
   if (chain === CHAIN.POLYGON) return isProdEnv() ? CHAIN_ID.POLYGON : CHAIN_ID.MUMBAI;
   if (chain === CHAIN.BINANCE) return isProdEnv() ? CHAIN_ID.BINANCE : CHAIN_ID.BINANCE_TESTNET;
   if (chain === CHAIN.XDAI) return isProdEnv() ? CHAIN_ID.XDAI : CHAIN_ID.SOKOL;
-  if (chain === CHAIN.AVALANCHE) return isProdEnv() ? CHAIN_ID.AVALANCHE : CHAIN_ID.FUJI;
   if (chain === CHAIN.OPTIMISM) return isProdEnv() ? CHAIN_ID.OPTIMISM : CHAIN_ID.OPTIMISM_GOERLI;
   if (chain === CHAIN.ARBITRUM) return isProdEnv() ? CHAIN_ID.ARBITRUM : CHAIN_ID.ARBITRUM_NITRO;
 
@@ -109,7 +94,6 @@ export function mapProdChainId(chain: Chain): number {
   if (chain === CHAIN.POLYGON) return CHAIN_ID.POLYGON;
   if (chain === CHAIN.BINANCE) return CHAIN_ID.BINANCE;
   if (chain === CHAIN.XDAI) return CHAIN_ID.XDAI;
-  if (chain === CHAIN.AVALANCHE) return CHAIN_ID.AVALANCHE;
   if (chain === CHAIN.OPTIMISM) return CHAIN_ID.OPTIMISM;
   if (chain === CHAIN.ARBITRUM) return CHAIN_ID.ARBITRUM;
 
@@ -121,14 +105,21 @@ export function getSupportedChains(account: ?Account): Chain[] {
   if (!isEtherspotAccount(account)) {
     return [CHAIN.ETHEREUM];
   }
-  const visibleAvalanche = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_CHAIN_SWITCH_43114);
 
-  if (!visibleAvalanche) {
-    return [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM, CHAIN.OPTIMISM, CHAIN.ARBITRUM];
-  }
-
-  return [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM, CHAIN.AVALANCHE, CHAIN.OPTIMISM, CHAIN.ARBITRUM];
+  return [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM, CHAIN.OPTIMISM, CHAIN.ARBITRUM];
 }
+
+export const mapChainNameToChain = (chain: string): Chain => {
+  if (chain === CHAIN_NAMES.ETHEREUM) return CHAIN.ETHEREUM;
+  if (chain === CHAIN_NAMES.POLYGON) return CHAIN.POLYGON;
+  if (chain === CHAIN_NAMES.BINANCE) return CHAIN.BINANCE;
+  if (chain === CHAIN_NAMES.XDAI) return CHAIN.XDAI;
+  if (chain === CHAIN_NAMES.OPTIMISM) return CHAIN.OPTIMISM;
+  if (chain === CHAIN_NAMES.ARBITRUM) return CHAIN.ARBITRUM;
+
+  // Default to Ethereum, should not happen as above check is exhaustive.
+  return CHAIN.ETHEREUM;
+};
 
 /* eslint-disable i18next/no-literal-string */
 export const nativeAssetPerChain = {
@@ -163,14 +154,6 @@ export const nativeAssetPerChain = {
     symbol: XDAI,
     decimals: 18,
     iconUrl: 'xdai',
-  },
-  avalanche: {
-    chain: CHAIN.AVALANCHE,
-    address: ADDRESS_ZERO,
-    name: 'Avalanche',
-    symbol: AVAX,
-    decimals: 18,
-    iconUrl: 'avalanche',
   },
   optimism: {
     chain: CHAIN.OPTIMISM,

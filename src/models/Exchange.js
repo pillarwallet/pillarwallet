@@ -41,6 +41,7 @@ export type ExchangeOffer = {
   gasFeeAsset?: AssetOption | Asset,
   sortingValue?: number,
   feeInfo?: ?TransactionFeeInfo,
+  gasCost?: string,
 };
 
 export type ExchangeFeeInfo = {
@@ -82,3 +83,31 @@ export type PoolActivityData = {
   transactionAddress: string,
   transactionType: string,
 };
+
+export interface Route {
+  id: string;
+  fromChainId: number;
+  fromAmountUSD: string;
+  fromAmount: string;
+  fromToken: Token;
+  fromAddress?: string;
+  toChainId: number;
+  toAmountUSD: string;
+  toAmount: string;
+  toAmountMin: string;
+  toToken: Token;
+  toAddress?: string;
+  gasCostUSD?: string;
+  containsSwitchChain?: boolean;
+  infiniteApproval?: boolean;
+}
+
+export interface Token {
+  address: string;
+  symbol: string;
+  decimals: number;
+  chainId: number;
+  name: string;
+  priceUSD?: string;
+  logoURI?: string;
+}

@@ -460,7 +460,6 @@ export const mockEtherspotAccountExtra: Etherspot.Account = {
   polygon: null,
 };
 
-jest.setMock('instabug-reactnative', {});
 jest.setMock('react-native-appsflyer', {});
 
 const mockEtherspotGetBalances = (chain, address, assets) => {

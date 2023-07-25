@@ -134,6 +134,8 @@ import IconTokens from 'assets/icons/svg/icon-24-tokens.svg';
 import IconCheckmarkCircleGreen from 'assets/icons/svg/icon-18-checkmark-circle.svg';
 import IconRadioButtonFocus from 'assets/icons/svg/radio-button-focus.svg';
 import IconRadioButton from 'assets/icons/svg/radio-button.svg';
+import IconHomeInvestments from 'assets/icons/svg/icon-24-investments.svg';
+import CombinedShape from 'assets/icons/svg/combined_shape.svg';
 import PlrTransparentIcon from 'assets/icons/svg/tokens-48-plr-transparent.svg';
 import DashboardLiquidity from 'assets/icons/svg/24-dashboard-liquidity.svg';
 import BuyIcon from 'assets/icons/svg/24-card-in.svg';
@@ -149,7 +151,6 @@ import RedDownIcon from 'assets/icons/svg/icon-down-red.svg';
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
 import IconBinance from 'assets/icons/svg/icon-24-binance.svg';
 import IconPolygon from 'assets/icons/svg/icon-24-polygon.svg';
-import IconAvalanche from 'assets/icons/svg/icon-24-avalanche.svg';
 import IconWalletConnect from 'assets/icons/svg/icon-24-wallet-connect.svg';
 import IconAllNetworks from 'assets/icons/svg/services-48-circle-pillar-exchange.svg';
 import IconAllNetworksLight from 'assets/icons/svg/services-48-circle-pillar-exchange-light.svg';
@@ -175,6 +176,16 @@ import IconPolygon16 from 'assets/icons/svg/icon-16-polygon.svg';
 import IconOptimism16 from 'assets/icons/svg/icon-16-optimism.svg';
 import IconGnosis16 from 'assets/icons/svg/icon-16-gnosis.svg';
 import IconArbitrum16 from 'assets/icons/svg/icon-16-arbitrum.svg';
+
+// Assets: plr token icons
+import IconPlr24 from 'assets/icons/svg/icon-24-plr.svg';
+import IconPlr32 from 'assets/icons/svg/icon-32-plr.svg';
+import IconPlr48 from 'assets/icons/svg/icon-48-plr.svg';
+
+// Assets: wallet icons
+import IconEtherspot16 from 'assets/icons/svg/icon-16-etherspot.svg';
+import IconPillar16 from 'assets/icons/svg/icon-16-pillar.svg';
+import IconWallet16 from 'assets/icons/svg/icon-16-wallet.svg';
 
 const components = {
   // Generic icons
@@ -283,6 +294,8 @@ const components = {
   'checkmark-circle-green': IconCheckmarkCircleGreen,
   'radio-button-focus-icon': IconRadioButtonFocus,
   'radio-button-icon': IconRadioButton,
+  'home-investments': IconHomeInvestments,
+  combined_shape: CombinedShape,
   'dashboard-liquidity': DashboardLiquidity,
   'green-up': GreenUpIcon,
   'red-down': RedDownIcon,
@@ -292,7 +305,6 @@ const components = {
   ethereum: IconEthereum,
   polygon: IconPolygon,
   xdai: IconGnosis,
-  avalanche: IconAvalanche,
   optimism: IconOptimism,
   arbitrum: IconArbitrum,
   'wallet-connect': IconWalletConnect,
@@ -323,6 +335,16 @@ const components = {
   xdai16: IconGnosis16,
   optimism16: IconOptimism16,
   arbitrum16: IconArbitrum16,
+
+  // PLR icons
+  plr24: IconPlr24,
+  plr32: IconPlr32,
+  plr48: IconPlr48,
+
+  // Etherspot icons
+  etherspot16: IconEtherspot16,
+  pillar16: IconPillar16,
+  wallet16: IconWallet16,
 };
 
 export type IconName = keyof typeof components;
@@ -362,7 +384,6 @@ export const IconComponentPerChain = {
   polygon: IconPolygon,
   binance: IconBinance,
   xdai: IconGnosis,
-  avalanche: IconAvalanche,
   optimism: IconOptimism,
   arbitrum: IconArbitrum,
 };

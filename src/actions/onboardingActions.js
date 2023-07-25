@@ -40,6 +40,9 @@ import {
   SET_REGISTERING_USER,
   SET_NEW_USER,
   SET_VIEWED_RECEIVE_TOKENS_WARNING,
+  SET_FETCHING,
+  SET_LOADING_MESSAGE,
+  SET_BIOMETIC_STATUS,
 } from 'constants/onboardingConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -87,6 +90,7 @@ import {
   fetchSupportedAssetsAction,
   fetchOfflineLocalAssets,
   fetchAllAccountsTotalBalancesAction,
+  fetchAllAccountsAssetsBalancesAction,
 } from 'actions/assetsActions';
 import { fetchTutorialDataIfNeededAction, bannerDataAction } from 'actions/cmsActions';
 import { initialDeepLinkExecutedAction } from 'actions/appSettingsActions';
@@ -282,6 +286,8 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
       },
     } = getState();
 
+    dispatch({ type: SET_BIOMETIC_STATUS, payload: enableBiometrics });
+
     const storage = Storage.getInstance('db');
 
     const viewedReceiveTokensWarningDb = storage.get('viewed_receive_tokens_warning');
@@ -295,14 +301,20 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
       dispatch(setViewedReceiveTokensWarning(viewedReceiveTokensWarningDb.viewedReceiveTokensWarning));
     }
 
+    dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.initEtherspot') });
     const isNewUserDb = await storage.get('is_new_user');
     const isNewUser = !!isNewUserDb?.isNewUser ?? !!isNewUserState;
 
     logBreadcrumb('onboarding', 'walletSetupAction: checking for pinCode');
     if (!pinCode) {
       logBreadcrumb('onboarding', 'walletSetupAction failed: no pinCode');
+      dispatch({ type: SET_FETCHING, payload: false });
+      dispatch({ type: SET_LOADING_MESSAGE, payload: '' });
       return;
     }
+
+    dispatch({ type: SET_FETCHING, payload: true });
+    dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.initEtherspot') });
 
     const isImported = !!importedWallet;
 
@@ -335,6 +347,7 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
     logBreadcrumb('onboarding', 'walletSetupAction: dispatching UPDATE_WALLET_BACKUP_STATUS');
     dispatch({ type: UPDATE_WALLET_BACKUP_STATUS, payload: backupStatus });
 
+    dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.encryptingKeys') });
     // encrypt and store
     logBreadcrumb('onboarding', 'walletSetupAction: dispatching encryptAndSaveWalletAction');
     await dispatch(encryptAndSaveWalletAction(pinCode, ethersWallet, backupStatus, enableBiometrics));
@@ -342,6 +355,7 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
     logBreadcrumb('onboarding', 'walletSetupAction: dispatching saveDbAction for saving app settings');
     dispatch(saveDbAction('app_settings', { appSettings: { wallet: +new Date() } }));
 
+    dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.initEtherspot') });
     if (onboardingUsername) {
       await dispatch(setupUserAction(onboardingUsername?.username));
     } else {
@@ -357,12 +371,20 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
 
     dispatch(bannerDataAction());
 
+    dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.deployingGnosis') });
     logBreadcrumb('onboarding', 'walletSetupAction: dispatching deployAccounts');
     dispatch(deployAccounts());
 
     logBreadcrumb('onboarding', 'walletSetupAction: completed, dispatching SET_FINISHING_ONBOARDING');
     isLogV2AppEvents() && dispatch(logEventAction('v2_account_sign_up_completed'));
     dispatch({ type: SET_FINISHING_ONBOARDING, payload: false });
+
+    dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.ready') });
+
+    setTimeout(() => {
+      dispatch({ type: SET_FETCHING, payload: false });
+      dispatch({ type: SET_LOADING_MESSAGE, payload: '' });
+    }, 0);
   };
 };
 
@@ -399,7 +421,11 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     logBreadcrumb('onboarding', 'onboardingAction.js: checking user is online or not');
 
     // all the calls below require user to be online
-    if (!isOnline) return;
+    if (!isOnline) {
+      return;
+    }
+
+    dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.initEtherspot') });
 
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching updateFcmTokenAction');
     await dispatch(updateFcmTokenAction());
@@ -409,8 +435,10 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     await dispatch(initEtherspotServiceAction(privateKey));
 
     // user might not be registered at this point
+    dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.fetchingTokens') });
     await dispatch(fetchSupportedAssetsAction());
 
+    dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.creatingAccounts') });
     // create Archanova accounts if needed
     if (!isNewUser) {
       logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching importArchanovaAccountsIfNeededAction');
@@ -429,16 +457,24 @@ export const setupAppServicesAction = (privateKey: ?string) => {
       logBreadcrumb('onboarding', 'setupAppServicesAction: cannot find key based address');
     }
 
+    if (!isNewUser) {
+      dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.loadingWallet') });
+      await dispatch(fetchAllAccountsAssetsBalancesAction());
+    }
+
     // by default fetch default tokens
+    dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.fetchingPrices') });
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching fetchDefaultTokensRates');
     dispatch(fetchDefaultTokensRates());
 
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching fetchAllAccountsTotalBalancesAction');
     dispatch(fetchAllAccountsTotalBalancesAction());
 
+    dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.loadingTxHistory') });
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching fetchTransactionsHistoryAction');
     dispatch(fetchTransactionsHistoryAction());
 
+    dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.fetchingPrices') });
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching rates action: fetchAssetsRatesAction');
     await dispatch(fetchAssetsRatesAction());
 

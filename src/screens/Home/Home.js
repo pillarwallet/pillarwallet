@@ -36,7 +36,6 @@ import { Container, Content } from 'components/layout/Layout';
 import FloatingButtons from 'components/FloatingButtons';
 import HeaderBlock from 'components/HeaderBlock';
 import RefreshControl from 'components/RefreshControl';
-import Stories from 'components/Stories';
 import UserNameAndImage from 'components/UserNameAndImage';
 import WalletConnectRequests from 'screens/WalletConnect/Requests';
 import Tooltip from 'components/Tooltip';
@@ -49,7 +48,7 @@ import { MENU, HOME_HISTORY, REGISTER_ENS, CONNECT_FLOW } from 'constants/naviga
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
-import { useRootSelector, useAccounts, activeAccountAddressSelector } from 'selectors';
+import { useRootSelector, useAccounts, activeAccountAddressSelector, useOnboardingFetchingSelector } from 'selectors';
 import { accountTotalBalancesSelector } from 'selectors/totalBalances';
 import { useUser } from 'selectors/user';
 import { etherspotAccountSelector } from 'selectors/accounts';
@@ -76,9 +75,11 @@ import { useBioMetricsPopup } from 'hooks/biometrics';
 import BalanceSection from './BalanceSection';
 import AssetsSection from './AssetsSection';
 import FloatingActions from './FloatingActions';
+import InvestmentsSection from './InvestmentsSection';
 import { useAccountCollectibleCounts } from './utils';
 import AppsButton from './AppsButton';
 import TransactionNotification from './components/TransactionNotification';
+import OnboardingLoader from './components/OnboardingLoader';
 
 // Redux
 import { fetchNativeIntegration } from '../../redux/actions/native-integration-actions';
@@ -95,6 +96,7 @@ function Home() {
   const colors = useThemeColors();
   const { t } = useTranslation();
   const swiperRef = React.useRef(null);
+  const isFetching = useOnboardingFetchingSelector();
 
   useBioMetricsPopup();
 
@@ -196,7 +198,14 @@ function Home() {
   };
 
   return (
-    <Swiper ref={swiperRef} loop={false} showsPagination={false} index={1} onIndexChanged={setCurrentSwiperIndex}>
+    <Swiper
+      scrollEnabled={!isFetching}
+      ref={swiperRef}
+      loop={false}
+      showsPagination={false}
+      index={1}
+      onIndexChanged={setCurrentSwiperIndex}
+    >
       {/* Left Scanner Content */}
       <WalletConnectCamera
         visibleCamera={currentSwiperIndex === 0}
@@ -257,8 +266,6 @@ function Home() {
             paddingHorizontal={0}
             refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
           >
-            <Stories />
-
             <BalanceSection balanceInFiat={totalBalance} showBalance={balanceVisible} onBalanceClick={onBalanceClick} />
 
             <WalletConnectRequests />
@@ -279,12 +286,15 @@ function Home() {
               accountCollectibleCounts={accountCollectibleCounts}
             />
 
+            <InvestmentsSection />
+
             <Banner screenName={screenName} bottomPosition />
 
             <AppsButton response={nativeIntegrationResponse} navigation={navigation} isShowLabel />
           </Content>
 
           <FloatingActions />
+          {isFetching && <OnboardingLoader />}
         </Container>
       </>
 

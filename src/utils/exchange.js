@@ -92,6 +92,7 @@ type ProviderConfig = {|
   iconVertical: ImageSource,
   iconHorizontal: ImageSource,
   iconMonochrome: ImageSource,
+  iconUrl: string,
 |};
 
 /**
@@ -101,48 +102,63 @@ export function useProvidersConfig(): { [key: ExchangeProvider]: ProviderConfig 
   const { t } = useTranslation();
   const isDarkTheme = useIsDarkTheme();
 
+  // iconUrl should ideally be directed to our CMS
   return {
     [PROVIDER.UNISWAP]: {
       title: t('exchangeContent.providers.uniswap'),
       iconVertical: isDarkTheme ? uniswapDarkVertical : uniswapLightVertical,
       iconHorizontal: isDarkTheme ? uniswapDarkHorizontal : uniswapLightHorizontal,
       iconMonochrome: isDarkTheme ? uniswapDarkMonochrome : uniswapLightMonochrome,
+      iconUrl:
+        'https://firebasestorage.googleapis.com/v0/b/pillar-project-1506420699556.appspot.com/o/app%2Fdefi%2Funiswap.png?alt=media&token=f10234af-de36-4448-9333-f303f56978ae',
     },
     [PROVIDER.ONE_INCH]: {
       title: t('exchangeContent.providers.oneInch'),
       iconVertical: isDarkTheme ? oneInchDarkVertical : oneInchLightVertical,
       iconHorizontal: isDarkTheme ? oneInchDarkHorizontal : oneInchLightHorizontal,
       iconMonochrome: isDarkTheme ? oneInchDarkMonochrome : oneInchLightMonochrome,
+      iconUrl:
+        'https://firebasestorage.googleapis.com/v0/b/pillar-project-1506420699556.appspot.com/o/app%2Fdefi%2F1inch.png?alt=media&token=04ce9d14-6261-4738-bcf7-dc1382281abf',
     },
     [PROVIDER.SYNTHETIX]: {
       title: t('exchangeContent.providers.synthetix'),
       iconVertical: isDarkTheme ? synthetixDarkVertical : synthetixLightVertical,
       iconHorizontal: isDarkTheme ? synthetixDarkHorizontal : synthetixLightHorizontal,
       iconMonochrome: isDarkTheme ? synthetixDarkMonochrome : synthetixLightMonochrome,
+      iconUrl:
+        'https://console.firebase.google.com/u/2/project/pillar-project-1506420699556/storage/pillar-project-1506420699556.appspot.com/files/~2Fapp~2Fdefi',
     },
     [PROVIDER.SUSHISWAP]: {
       title: t('exchangeContent.providers.sushiswap'),
       iconVertical: isDarkTheme ? sushiswapDarkVertical : sushiswapLightVertical,
       iconHorizontal: isDarkTheme ? sushiswapDarkHorizontal : sushiswapLightHorizontal,
       iconMonochrome: isDarkTheme ? sushiswapDarkMonochrome : sushiswapLightMonochrome,
+      iconUrl:
+        'https://firebasestorage.googleapis.com/v0/b/pillar-project-1506420699556.appspot.com/o/app%2Fdefi%2Fsushiswap.png?alt=media&token=6a34ad5a-c277-401c-9870-d941d8187f88',
     },
     [PROVIDER.HONEYSWAP]: {
       title: t('exchangeContent.providers.honeyswap'),
       iconVertical: isDarkTheme ? honeyswapDarkVertical : honeyswapLightVertical,
       iconHorizontal: isDarkTheme ? honeyswapDarkHorizontal : honeyswapLightHorizontal,
       iconMonochrome: isDarkTheme ? honeyswapDarkMonochrome : honeyswapLightMonochrome,
+      iconUrl:
+        'https://firebasestorage.googleapis.com/v0/b/pillar-project-1506420699556.appspot.com/o/app%2Fdefi%2Fhoneyswap.webp?alt=media&token=efe8d311-76eb-48bb-9486-65ebffab98a0',
     },
     [PROVIDER.PARASWAP]: {
       title: t('exchangeContent.providers.paraswap'),
       iconVertical: isDarkTheme ? paraswapDarkVertical : paraswapLightVertical,
       iconHorizontal: isDarkTheme ? paraswapDarkHorizontal : paraswapLightHorizontal,
       iconMonochrome: isDarkTheme ? paraswapDarkMonochrome : paraswapLightMonochrome,
+      iconUrl:
+        'https://firebasestorage.googleapis.com/v0/b/pillar-project-1506420699556.appspot.com/o/app%2Fdefi%2Fparaswap.jpeg?alt=media&token=588d8826-2b8f-4603-bb44-f5e59fcfb66d',
     },
     [PROVIDER.LIFI]: {
       title: t('exchangeContent.providers.lifi'),
       iconVertical: isDarkTheme ? lifiDarkVertical : lifiLightVertical,
       iconHorizontal: isDarkTheme ? lifiDarkHorizontal : lifiLightHorizontal,
       iconMonochrome: isDarkTheme ? lifiDarkMonochrome : lifiLightMonochrome,
+      iconUrl:
+        'https://firebasestorage.googleapis.com/v0/b/pillar-project-1506420699556.appspot.com/o/app%2Fdefi%2Flifi.png?alt=media&token=f7a19f8e-49cf-49a7-b21a-5dcc87db72c0',
     },
   };
 }
@@ -176,10 +192,6 @@ export const getCaptureFeeDestinationAddress = (chain: Chain): ?string => {
 
   if (chain === CHAIN.BINANCE) {
     return firebaseRemoteConfig.getString(REMOTE_CONFIG.EXCHANGE_FEE_BSC_CAPTURE_ADDRESS);
-  }
-
-  if (chain === CHAIN.AVALANCHE) {
-    return firebaseRemoteConfig.getString(REMOTE_CONFIG.EXCHANGE_FEE_AVAX_CAPTURE_ADDRESS);
   }
 
   if (chain === CHAIN.OPTIMISM) {

@@ -356,7 +356,7 @@ PODS:
   - React-jsinspector (0.63.4)
   - react-native-appearance (0.3.4):
     - React
-  - react-native-appsflyer (6.10.2):
+  - react-native-appsflyer (6.10.3):
     - AppsFlyerFramework (= 6.10.1)
     - React
   - react-native-background-timer (2.1.1):
@@ -510,8 +510,6 @@ PODS:
     - RSKImageCropper
   - RNInAppBrowser (3.4.0):
     - React
-  - RNInstabug (10.13.0):
-    - React
   - RNKeychain (8.1.1):
     - React-Core
   - RNLocalize (1.4.3):
@@ -545,11 +543,6 @@ PODS:
   - Sentry (6.1.4):
     - Sentry/Core (= 6.1.4)
   - Sentry/Core (6.1.4)
-  - Storyly (1.11.1):
-    - SDWebImage (= 5.10.0)
-  - storyly-react-native (1.11.1):
-    - React
-    - Storyly (= 1.11.1)
   - SwiftyGif (5.4.4)
   - TcpSockets (3.3.2):
     - CocoaAsyncSocket
@@ -627,7 +620,6 @@ DEPENDENCIES:
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - RNInAppBrowser (from `../node_modules/react-native-inappbrowser-reborn`)
-  - RNInstabug (from `../node_modules/instabug-reactnative`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNLocalize (from `../node_modules/react-native-localize`)
   - RNOS (from `../node_modules/react-native-os`)
@@ -639,7 +631,6 @@ DEPENDENCIES:
   - RNShare (from `../node_modules/react-native-share`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
-  - storyly-react-native (from `../node_modules/storyly-react-native`)
   - SwiftyGif (from `https://github.com/kirualex/SwiftyGif`)
   - TcpSockets (from `../node_modules/react-native-tcp`)
   - "toolbar-android (from `../node_modules/@react-native-community/toolbar-android`)"
@@ -673,7 +664,6 @@ SPEC REPOS:
     - SDWebImage
     - SDWebImageWebPCoder
     - Sentry
-    - Storyly
 
 EXTERNAL SOURCES:
   BVLinearGradient:
@@ -808,8 +798,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-image-crop-picker"
   RNInAppBrowser:
     :path: "../node_modules/react-native-inappbrowser-reborn"
-  RNInstabug:
-    :path: "../node_modules/instabug-reactnative"
   RNKeychain:
     :path: "../node_modules/react-native-keychain"
   RNLocalize:
@@ -832,8 +820,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-svg"
   RNVectorIcons:
     :path: "../node_modules/react-native-vector-icons"
-  storyly-react-native:
-    :path: "../node_modules/storyly-react-native"
   SwiftyGif:
     :git: https://github.com/kirualex/SwiftyGif
   TcpSockets:
@@ -893,7 +879,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 93bd528844ad21dc07aab1c67cb10abae6df6949
   React-jsinspector: 58aef7155bc9a9683f5b60b35eccea8722a4f53a
   react-native-appearance: 0f0e5fc2fcef70e03d48c8fe6b00b9158c2ba8aa
-  react-native-appsflyer: 3c466bf329ee1bb556ed774af2b2cc5685c7325a
+  react-native-appsflyer: 153e96b97ecc0c26b14fc79911675e51cfd35b36
   react-native-background-timer: 1b6e6b4e10f1b74c367a1fdc3c72b67c619b222b
   react-native-camera: b8cc03e2feec0c04403d0998e37cf519d8fd4c6f
   react-native-cookies: f54fcded06bb0cda05c11d86788020b43528a26c
@@ -937,7 +923,6 @@ SPEC CHECKSUMS:
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNImageCropPicker: 9d1a7eea4f8368fc479cbd2bf26459bd3c74d9aa
   RNInAppBrowser: c1a0dad2734458d79bcb6c8f4297ba8658a1da9f
-  RNInstabug: 8a9fce2082e67d94ddbc62267b209a8fe1ce200f
   RNKeychain: ff836453cba46938e0e9e4c22e43d43fa2c90333
   RNLocalize: 7c7aeda16c01db7a0918981c14875c0a53be9b79
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
@@ -953,8 +938,6 @@ SPEC CHECKSUMS:
   SDWebImage: 9169792e9eec3e45bba2a0c02f74bf8bd922d1ee
   SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
   Sentry: 9d055e2de30a77685e86b219acf02e59b82091fc
-  Storyly: f606e22e194f14b3bb49c5b2d7cee8549a36d14c
-  storyly-react-native: 729e7332d67fef06c44b6ec8fd6168f44e656cf0
   SwiftyGif: 93a1cc87bf3a51916001cf8f3d63835fb64c819f
   TcpSockets: bd31674146c0931a064fc254a59812dfd1a73ae0
   toolbar-android: 2a73856e98b750d7e71ce4644d3f41cc98211719

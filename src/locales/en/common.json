@@ -69,7 +69,6 @@
     "binance": "Binance Smart Chain",
     "xdai": "Gnosis",
     "polygon": "Polygon",
-    "avalanche": "Avalanche",
     "optimism": "Optimism",
     "optimism_kovan": "Optimism Kovan",
     "gorli": "Ethereum Görli",
@@ -86,7 +85,6 @@
     "binance": "BSC",
     "xdai": "Gnosis",
     "polygon": "Polygon",
-    "avalanche": "Avalanche",
     "optimism": "Optimism",
     "optimism_kovan": "Optimism Kovan",
     "arbitrum": "Arbitrum"
@@ -111,6 +109,19 @@
     "rewards": "Rewards",
     "datasets": "Datasets",
     "collectibles": "NFTs"
+  },
+
+  "onboardingLoaders": {
+    "initEtherspot": "Initializing Etherspot",
+    "loadingWallet": "Loading Wallets",
+    "creatingAccounts": "Creating Accounts",
+    "encryptingKeys": "Encrypting Keys",
+    "deployingGnosis": "Deploying Gnosis",
+    "fetchingTokens": "Fetching Tokens",
+    "fetchingPrices": "Fetching Prices",
+    "loadingTxHistory": "Loading Tx History",
+    "ready": "Ready!",
+    "noInternet": "No internet, retrying..."
   },
 
   "title": {
@@ -660,6 +671,7 @@
     "failedToEstimateTransaction": "Failed to estimate transaction",
     "failedToSubmitTransaction": "Failed to submit transaction",
     "fetchTokenListFailed": "Fetching token list failed.",
+    "invalidEmailURL": "Provided URL can not be handled",
     "failedKeychain": {
       "title": "Your device is not supported",
       "nonEtherspotMessage": "Due to security concerns, we don’t support devices with disabled keychain access.",
@@ -698,6 +710,11 @@
       "pillarDeployment2": "Gnosis for you.",
       "checkAddress": "Before sending your assets to your address, check the current deployment costs:",
       "understood": "Got it. Don’t show this message again."
+    },
+    "investments": {
+      "title": "PLR Staking",
+      "description": "Earn ETH by staking your PLR tokens.\n80% PLR of the vault staked.",
+      "closeTime": "Subscription will close in {{closeTime}}"
     }
   },
 
@@ -806,7 +823,8 @@
       "messageRequest": "Signature request",
       "transactionRequest": "Transaction request",
       "transactionRequestFormat": "{{app}} on {{chain}}",
-      "unsupportedRequest": "Unsupported request"
+      "unsupportedRequest": "Unsupported request",
+      "signMessageRequest": "Sign Message Request"
     },
     "connectedApps": {
       "title": "Connected dapps",
@@ -1237,7 +1255,7 @@
             "recommended": "Recommended",
             "highGasPrice": "High gas price 🔥",
             "ethereum": "Ethereum",
-            "chainName": "Polygon, BSC, xDai, Avalanche"
+            "chainName": "Polygon, BSC, xDai"
           },
           "warningMessage": "Your smart wallet is not deployed on Ethereum.\n{{deploymentCost}} smart wallet deployment cost will be added to this transaction. No action required."
         },
@@ -1726,5 +1744,63 @@
     "for": "for",
     "gas": "Gas",
     "time": "Time"
+  },
+
+  "plrStaking": {
+    "title": "Pillar Staking",
+    "info": "Stake PLR to earn ETH on Ethereum without running a validator. Rewards are distributed quarterly after ETH validator withdrawals are live. Proportional distribution based on staked percentage of PLR pool. Staked tokens (stkPLR) are 1:1 issued, and PLR tokens are locked for 52 weeks.",
+    "limitWarning": "You need a minimum of 10,000 PLR tokens on Ethereum, swap more assets to PLR on Ethereum.",
+    "plrAvailable": "You have PLR assets on {{chainAmount}} chain{{s}}",
+    "pillar": "Pillar",
+    "etherspotWallet": "Etherspot Wallet",
+    "stakingInfoLoading": "Staking info is loading...",
+    "stakingClosingIn": "Staking will close in ",
+    "stakingClosed": "Staking is currently closed",
+    "etherspot": "Etherspot",
+    "keybased": "Keybased",
+    "archanova": "Pillar v1",
+    "wallet": "Wallet",
+    "header": {
+      "token": "Token",
+      "chain": "Chain",
+      "apy": "APY (Variable)",
+      "staked": "Staked",
+      "vaultFilling": "Vault filling",
+      "stakers": "Stakers"
+    },
+    "assetSelector": {
+      "from": "From",
+      "to": "To",
+      "on": "on {{network}}",
+      "max": "Max",
+      "balance": "Balance {{balance}}"
+    },
+    "button": {
+      "chooseAsset": "Choose Asset",
+      "stake": "Stake",
+      "processing": "Processing...",
+      "enterAmount": "Enter staking amount",
+      "calculatingFees": "Calculating fees...",
+      "insufficientAmount": "Insufficient PLR amount",
+      "fetchingRoutes": "Fetching routes...",
+      "fetchingOffers": "Fetching offers...",
+      "execute": "Execute",
+      "done": "Done"
+    },
+    "validator": {
+      "title": "Staking Pillar Validator",
+      "limitWarning": "You need to stake min 10,000 PLR.\nYou can stake up to max 250,000 PLR.",
+      "stakingFeeError": "There was an error calculating the staking fees. This could be because you don't have enough balance to pay for the gas, or there was a network error.",
+      "stakingBuildError": "There was an error forming the staking payload, please try again later.",
+      "estFee": "Est. fee:",
+      "estTime": "Est. time:",
+      "swapVia": "Swap via {{title}} on {{networkName}}",
+      "stakeOn": "Stake {{formattedAmount}} on {{networkName}}",
+      "on": "on",
+      "showLess": "Show less",
+      "showMore": "Show more",
+      "bridgeFrom": "Bridge via {{providerName}} from {{sourceNetworkName}} to {{destinationNetworkName}}"
+    },
+    "chooseAsset": "Choose asset"
   }
 }

@@ -41,6 +41,7 @@ import { spacing, fontStyles } from 'utils/variables';
 import { getAssetValueInFiat } from 'utils/rates';
 import { getAccountAddress } from 'utils/accounts';
 import { isHighGasFee } from 'utils/transactions';
+import { nFormatter } from 'utils/common';
 
 // Types
 import type { ExchangeOffer } from 'models/Exchange';
@@ -128,10 +129,16 @@ function OfferCard({
 
   const highFee = isHighGasFee(chain, feeInfo?.fee, feeInfo?.gasToken, chainRates, fiatCurrency, gasThresholds);
 
-  const buttonTitle = formatTokenValue(offer.toAmount, offer.toAsset.symbol) ?? '';
-
-  // eslint-disable-next-line i18next/no-literal-string
-  const title = `${buttonTitle}  •  ${formattedFiatValue || ''}`;
+  const title = React.useMemo(() => {
+    if (crossChainTxs) {
+      const crossChainButtonTitle = `${nFormatter(Number(offer.toAmount), 4)} ${offer.toAsset.symbol}` ?? '';
+      // eslint-disable-next-line i18next/no-literal-string
+      return `${crossChainButtonTitle}  •  ${formattedFiatValue || ''}`;
+    }
+    const buttonTitle = formatTokenValue(offer.toAmount, offer.toAsset.symbol) ?? '';
+    // eslint-disable-next-line i18next/no-literal-string
+    return `${buttonTitle}  •  ${formattedFiatValue || ''}`;
+  }, [formattedFiatValue, crossChainTxs, offer]);
 
   React.useEffect(() => {
     if (estimationErrorMessage) {
@@ -162,6 +169,8 @@ function OfferCard({
     return null;
   }
 
+  const crossChainTxsGasFee = offer?.gasCost ?? null;
+
   return (
     <TouchableContainer disabled={disabled || isEstimating} onPress={onPress}>
       <Row>
@@ -181,6 +190,14 @@ function OfferCard({
       </Row>
 
       <Row topSeparator>
+        {!!crossChainTxsGasFee && (
+          <LeftColumn>
+            <>
+              <Label>{t('transactionNotification.gas')}</Label>
+              <Text>{crossChainTxsGasFee}</Text>
+            </>
+          </LeftColumn>
+        )}
         <LeftColumn>
           {isEstimating ? (
             <EmptyStateWrapper>
@@ -188,7 +205,9 @@ function OfferCard({
             </EmptyStateWrapper>
           ) : (
             <>
-              <Label>{t('exchangeContent.label.estFee')}</Label>
+              <Label>
+                {crossChainTxs ? t('smartWalletContent.confirm.fees.header') : t('exchangeContent.label.estFee')}
+              </Label>
               <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} chain={chain} highFee={highFee} />
             </>
           )}
