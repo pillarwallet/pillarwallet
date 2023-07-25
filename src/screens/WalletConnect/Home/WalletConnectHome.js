@@ -89,8 +89,6 @@ function WalletConnectHome() {
   const { data: sections, isFetching } = useSectionData(activeChain, numberOfColumns);
 
   const isLight = isLightTheme();
-
-
   const showDeployBanner = !isKeyBasedAccount(activeAccount) && activeChain != null && !isDeployedOnChain[activeChain];
 
   const updateActiveChain = (chain?) => {
