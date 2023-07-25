@@ -37,8 +37,7 @@ import type { Asset, AssetOption } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
 
 // Selectors
-import { useRootSelector, useFiatCurrency, useChainRates, useActiveAccount } from 'selectors';
-import { gasThresholdsSelector } from 'redux/selectors/gas-threshold-selector';
+import { useFiatCurrency, useChainRates, useActiveAccount } from 'selectors';
 
 // Hooks
 import { useTransactionsEstimate } from 'hooks/transactions';
@@ -93,18 +92,14 @@ const BridgeRouteCard: FC<IBridgeRouteCard> = ({
 
   const offer = useMemo(() => {
     if (!buildTransactionData || !plrToken) return null;
-    const {
-      provider,
-      estimate: { data, toAmount },
-    } = buildTransactionData.quote;
-    const { fromToken, toToken } = data;
+    const { toAmount, fromToken, toToken, gasCostUSD } = buildTransactionData.route;
 
     const decimalValue: any = `10e${toToken?.decimals - 1}`;
 
     const amount: any = parseInt(toAmount) / (decimalValue ?? 1);
 
     return {
-      provider: provider === 'lifi' ? 'Lifi' : provider,
+      provider: 'Lifi', // provider is always Lifi
       fromChain,
       gasFeeAsset,
       toChain: plrToken.chain,
@@ -114,6 +109,8 @@ const BridgeRouteCard: FC<IBridgeRouteCard> = ({
       fromAmount: value,
       toAmount: new BigNumber(amount),
       exchangeRate: amount,
+      route: buildTransactionData.route,
+      gasCostUsd: gasCostUSD,
     };
   }, [buildTransactionData]);
 
@@ -139,7 +136,7 @@ const BridgeRouteCard: FC<IBridgeRouteCard> = ({
 
   const chainRates = useChainRates(fromChain);
 
-  const formattedToAmount = formatTokenValue(offer.toAmount, offer.toAsset.symbol, { decimalPlaces: 0 }) ?? '';
+  const formattedToAmount = formatTokenValue(offer.toAmount, 'stkPLR', { decimalPlaces: 0 }) ?? '';
 
   const formattedFromAmount = formatTokenValue(offer.fromAmount, offer.fromAsset.symbol, { decimalPlaces: 0 }) ?? '';
 
@@ -179,6 +176,7 @@ const BridgeRouteCard: FC<IBridgeRouteCard> = ({
         stakeGasFeeAsset={stakeGasFeeAsset}
         gasFeeAsset={gasFeeAsset}
         transactions={offer?.transactions}
+        bridgeRoute={offer?.route}
       />
     </>
   );

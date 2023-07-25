@@ -111,14 +111,14 @@
     "collectibles": "NFTs"
   },
 
-  "onboardingLoaders":{
+  "onboardingLoaders": {
     "initEtherspot": "Initializing Etherspot",
     "loadingWallet": "Loading Wallets",
     "creatingAccounts": "Creating Accounts",
     "encryptingKeys": "Encrypting Keys",
-    "deployingGnosis":"Deploying Gnosis",
+    "deployingGnosis": "Deploying Gnosis",
     "fetchingTokens": "Fetching Tokens",
-    "fetchingPrices":"Fetching Prices",
+    "fetchingPrices": "Fetching Prices",
     "loadingTxHistory": "Loading Tx History",
     "ready": "Ready!",
     "noInternet": "No internet, retrying..."
@@ -1756,6 +1756,10 @@
     "stakingInfoLoading": "Staking info is loading...",
     "stakingClosingIn": "Staking will close in ",
     "stakingClosed": "Staking is currently closed",
+    "etherspot": "Etherspot",
+    "keybased": "Keybased",
+    "archanova": "Pillar v1",
+    "wallet": "Wallet",
     "header": {
       "token": "Token",
       "chain": "Chain",
@@ -1794,7 +1798,8 @@
       "stakeOn": "Stake {{formattedAmount}} on {{networkName}}",
       "on": "on",
       "showLess": "Show less",
-      "showMore": "Show more"
+      "showMore": "Show more",
+      "bridgeFrom": "Bridge via {{providerName}} from {{sourceNetworkName}} to {{destinationNetworkName}}"
     },
     "chooseAsset": "Choose asset"
   }

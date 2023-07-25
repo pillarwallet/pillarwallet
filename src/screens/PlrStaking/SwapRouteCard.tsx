@@ -86,8 +86,7 @@ const SwapRouteCard: FC<ISwapRouteCard> = ({
     setStkPlrAmount(offers[0]?.toAmount || null);
   }, []);
 
-  const formattedToAmount =
-    formatTokenValue(selectedOffer?.toAmount, selectedOffer?.toAsset.symbol, { decimalPlaces: 0 }) ?? '';
+  const formattedToAmount = formatTokenValue(selectedOffer?.toAmount, 'stkPLR', { decimalPlaces: 0 }) ?? '';
 
   const formattedFromAmount =
     formatTokenValue(selectedOffer?.fromAmount, selectedOffer?.fromAsset.symbol, { decimalPlaces: 0 }) ?? '';
@@ -127,13 +126,12 @@ const SwapRouteCard: FC<ISwapRouteCard> = ({
       {!disabled &&
         (!selectedOffer || showMore) &&
         offers.map((offer, i) => {
-          const formattedToAmount = formatTokenValue(offer.toAmount, offer.toAsset.symbol, { decimalPlaces: 0 }) ?? '';
+          const formattedToAmount = formatTokenValue(offer.toAmount, 'stkPLR', { decimalPlaces: 0 }) ?? '';
 
           const formattedFromAmount =
             formatTokenValue(offer.fromAmount, offer.fromAsset.symbol, { decimalPlaces: 0 }) ?? '';
 
           if (!selectedOffer && !showMore && i !== 0) return null;
-
           if (!offer?.provider || offer.provider === selectedOfferProvider) return null;
           return (
             <>
@@ -148,7 +146,7 @@ const SwapRouteCard: FC<ISwapRouteCard> = ({
                 formattedToAmount={formattedToAmount}
                 networkName={networkName}
                 provider={offer?.provider}
-                onSelectOffer={disabled ? onSelectOffer : undefined}
+                onSelectOffer={onSelectOffer}
                 stakeFeeInfo={stakeFeeInfo}
                 stakeGasFeeAsset={stakeGasFeeAsset}
                 gasFeeAsset={gasFeeAsset}
