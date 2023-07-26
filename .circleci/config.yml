@@ -817,7 +817,8 @@ workflows:
                 - /.*(u|U)(i|I)\/.*/
 
       - appcenter_ios:
-          context: oidc-wallet-nonprod
+          context: 
+            - oidc-wallet-nonprod
           requires:
             - build-and-test
           filters:
@@ -867,7 +868,8 @@ workflows:
               only:
                 - master
       - prod_ios:
-          context: oidc-wallet-prod
+          context: 
+            - oidc-wallet-prod
           requires:
             - build-and-test
             - get-latest-tag

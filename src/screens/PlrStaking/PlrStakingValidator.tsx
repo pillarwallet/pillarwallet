@@ -26,13 +26,16 @@ import { BigNumber, ethers } from 'ethers';
 
 // Constants
 import { CHAIN } from 'constants/chainConstantsTs';
-import { stkPlrToken } from 'constants/plrStakingConstants';
+import { WalletType, stkPlrToken } from 'constants/plrStakingConstants';
 import { TRANSACTION_TYPE } from 'constants/transactionsConstants';
 import { HOME } from 'constants/navigationConstants';
 
 // Types
 import type { AssetOption } from 'models/Asset';
 import type { TransactionPayload } from 'models/Transaction';
+
+// Selectors
+import { activeAccountAddressSelector, useActiveAccount } from 'selectors';
 
 // Utils
 import { spacing } from 'utils/variables';
@@ -61,6 +64,7 @@ import { mapTransactionsToTransactionPayload, showTransactionRevertedToast } fro
 import { buildEtherspotTxFeeInfo } from 'utils/etherspot';
 import { fontStyles } from 'utils/variables';
 import { reportErrorLog } from 'utils/common';
+import { isArchanovaAccount, isKeyBasedAccount } from 'utils/accounts';
 
 // Selectors
 import { useWalletAssetBalance } from 'selectors/balances';
@@ -86,6 +90,8 @@ import SwapRouteCard from './SwapRouteCard';
 import StakeRouteCard from './StakeRouteCard';
 import useInterval from 'hooks/useInterval';
 
+const BALANCE_CHECK_INTERVAL = 5000;
+
 const PlrStakingValidator = () => {
   const navigation = useNavigation();
   const { t, tRoot } = useTranslationWithPrefix('plrStaking.validator');
@@ -96,6 +102,8 @@ const PlrStakingValidator = () => {
   const wallet = navigation.getParam('wallet');
   const balancesWithoutPlr = navigation.getParam('balancesWithoutPlr');
 
+  const activeAccount = useActiveAccount();
+
   const inputRef: any = useRef();
   const stakeRef: any = useRef();
 
@@ -104,6 +112,7 @@ const PlrStakingValidator = () => {
   const [selectedToken, setSelectedToken] = useState(token);
   const [selectedChain, setSelectedChain] = useState(chain);
   const [selectedWallet, setSelectedWallet] = useState(wallet);
+  const [accountType, setAccountType] = useState<WalletType>(null);
 
   const [gasFeeAsset, setGasFeeAsset] = useState<AssetOption | null>(null);
   const [bridgeGasFeeAsset, setBridgeGasFeeAsset] = useState<AssetOption | null>(null);
@@ -119,14 +128,20 @@ const PlrStakingValidator = () => {
   const [showFeeError, setShowFeeError] = useState(false);
   const [calculatingGas, setCalculatingGas] = useState(false);
 
-  // Execute form
+  // Form steps
   const [processing, setProcessing] = useState(false);
-  const [startingPlr, setStartingPlr] = useState(null);
-  const [lockedStakingAmount, setLockedStakingAmount] = useState(null);
-  const [stakeTxPayload, setStakeTxPayload] = useState<TransactionPayload>(null);
+  const [isSending, setIsSending] = useState(false);
+  const [isSent, setIsSent] = useState(false);
   const [isBridging, setIsBridging] = useState(false);
+  const [isBridged, setIsBridged] = useState(false);
   const [isStaking, setIsStaking] = useState(false);
   const [isStaked, setIsStaked] = useState(false);
+
+  // Form values
+  const [startingPlr, setStartingPlr] = useState(null);
+  const [lockedStakingAmount, setLockedStakingAmount] = useState(null);
+  const [bridgeTxPayload, setBridgeTxPayload] = useState<TransactionPayload>(null);
+  const [stakeTxPayload, setStakeTxPayload] = useState<TransactionPayload>(null);
   const [stakingError, setStakingError] = useState<string>(null);
   const [startingStkPlr, setStartingStkPlr] = useState<BigNumber>(null);
 
@@ -160,6 +175,13 @@ const PlrStakingValidator = () => {
     selectedToken,
     offerData?.fromAmount,
   );
+
+  useEffect(() => {
+    let accountType = WalletType.ETHERSPOT;
+    if (isArchanovaAccount(activeAccount)) accountType = WalletType.ARCHANOVA;
+    else if (isKeyBasedAccount(activeAccount)) accountType = WalletType.KEYBASED;
+    setAccountType(accountType);
+  }, [activeAccount]);
 
   useEffect(() => {
     if (!!plrToken || !toOptions) return;
@@ -196,12 +218,13 @@ const PlrStakingValidator = () => {
       if (balanceDiff.mul(100).gte(bnStakingAmount.mul(90))) {
         // checking if diff greater than 90% of PLR staked
         setIsBridging(false);
+        setIsBridged(true);
         showBalancesReceivedToast(plrToken.symbol, bnStakingAmount);
 
         submitStakingTransactions();
       }
     },
-    isBridging ? 5000 : null,
+    isBridging ? BALANCE_CHECK_INTERVAL : null,
   );
 
   useInterval(
@@ -222,12 +245,15 @@ const PlrStakingValidator = () => {
         showStakedTokensReceivedToast('stkPlr', ethers.utils.parseUnits(stkPlrAmount.toString()));
       }
     },
-    isStaking ? 5000 : null,
+    isStaking ? BALANCE_CHECK_INTERVAL : null,
   );
 
   const resetExecuteParams = () => {
     if (processing) setProcessing(false);
+    if (isSending) setIsSending(false);
+    if (isSent) setIsSent(false);
     if (isBridging) setIsBridging(false);
+    if (isBridged) setIsBridged(false);
     if (isStaking) setIsStaking(false);
     if (isStaked) setIsStaked(false);
     if (stakeTxPayload) setStakeTxPayload(null);
@@ -310,8 +336,8 @@ const PlrStakingValidator = () => {
 
     if (!stakeTransactions?.length) return;
 
+    resetExecuteParams();
     setProcessing(true);
-    setIsBridging(false);
     setStartingPlr(plrBalance);
     setLockedStakingAmount(stkPlrAmount);
 

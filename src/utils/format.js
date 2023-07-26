@@ -278,3 +278,33 @@ export function formatLiquidityPoolShare(value: ?BigNumber | string) {
 
   return formatPercentValue(value, { decimalPlaces: 4, stripTrailingZeros: true });
 }
+
+export const formatAmountDisplay = (
+  amountRaw: string | number,
+  leftSymbol?: string,
+  minimumFractionDigits?: number,
+): string => {
+  const amount = typeof amountRaw === 'number' ? `${amountRaw}` : amountRaw;
+
+  // check string to avoid underflow
+  if ((amount !== '0.01' && amount.startsWith('0.01')) || amount.startsWith('0.00')) {
+    const [, fraction] = amount.split('.');
+    let smallAmount = `~${leftSymbol ?? ''}0.`;
+
+    [...fraction].every((digitString) => {
+      if (digitString === '0') {
+        smallAmount = `${smallAmount}0`;
+        return true;
+      }
+      smallAmount = `${smallAmount}${digitString}`;
+      return false;
+    });
+
+    return smallAmount;
+  }
+
+  return `${leftSymbol ?? ''}${new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: 2,
+    minimumFractionDigits,
+  }).format(+amount)}`;
+};

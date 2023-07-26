@@ -273,7 +273,7 @@
     "mocktract": "matryx/mocktract-ethers.js",
     "npm-run-all": "^4.1.5",
     "react-dom": "16.8.3",
-    "react-native-gesture-handler": "^2.12.0",
+    "react-native-gesture-handler": "2.9.0",
     "react-native-storybook-loader": "^1.8.1",
     "react-native-svg-transformer": "^0.14.3",
     "react-test-renderer": "16.13.1",
@@ -347,30 +347,30 @@
     "tls": false
   },
   "browser": {
-    "zlib": "browserify-zlib",
+    "_stream_duplex": "readable-stream/duplex",
+    "_stream_passthrough": "readable-stream/passthrough",
+    "_stream_readable": "readable-stream/readable",
+    "_stream_transform": "readable-stream/transform",
+    "_stream_writable": "readable-stream/writable",
     "console": "console-browserify",
     "constants": "constants-browserify",
     "crypto": "react-native-crypto",
+    "dgram": "react-native-udp",
     "dns": "dns.js",
-    "net": "react-native-tcp",
     "domain": "domain-browser",
+    "fs": "react-native-level-fs",
     "http": "@tradle/react-native-http",
     "https": "https-browserify",
+    "net": "react-native-tcp",
     "os": "react-native-os",
     "path": "path-browserify",
     "querystring": "querystring-es3",
-    "fs": "react-native-level-fs",
-    "_stream_transform": "readable-stream/transform",
-    "_stream_readable": "readable-stream/readable",
-    "_stream_writable": "readable-stream/writable",
-    "_stream_duplex": "readable-stream/duplex",
-    "_stream_passthrough": "readable-stream/passthrough",
-    "dgram": "react-native-udp",
     "stream": "stream-browserify",
     "timers": "timers-browserify",
+    "tls": false,
     "tty": "tty-browserify",
     "vm": "vm-browserify",
-    "tls": false
+    "zlib": "browserify-zlib"
   },
   "config": {
     "react-native-storybook-loader": {
@@ -381,5 +381,6 @@
       "pattern": "**/*.stories.js",
       "outputFile": "./storybook/storyLoader.js"
     }
-  }
+  },
+  "packageManager": "yarn@1.22.19"
 }

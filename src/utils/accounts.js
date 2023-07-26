@@ -106,9 +106,6 @@ export const isAccountType = (account: ?Account, type: AccountTypes): boolean %c
   // Note: null checks has to be done separately or flow predicate function is not working correctly.
   account != null && account.type === type;
 
-export const isKeyBasedAccount = (account: ?Account): boolean %checks =>
-  isAccountType(account, ACCOUNT_TYPES.KEY_BASED);
-
 export const getUserTitle = (accounts: Account[], address: ?string): ?string => {
   const type = getActiveAccountType(accounts);
   if (type === ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET) {
@@ -130,6 +127,9 @@ export const getENSUserTitle = (accounts: Account[], user: ?string): ?string => 
   }
   return user;
 };
+
+export const isKeyBasedAccount = (account: ?Account): boolean %checks =>
+  isAccountType(account, ACCOUNT_TYPES.KEY_BASED);
 
 export const isArchanovaAccount = (account: ?Account): boolean %checks =>
   isAccountType(account, ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET);

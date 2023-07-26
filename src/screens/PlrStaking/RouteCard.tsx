@@ -22,16 +22,19 @@ import React, { FC } from 'react';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 import { BigNumber, ethers } from 'ethers';
+import { Route } from '@lifi/sdk';
 
 // Constants
 import { OFFERS } from 'constants/exchangeConstants';
 import { CHAIN } from 'constants/chainConstantsTs';
 
 // Utils
-import { fontStyles } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 import { useProviderConfig } from 'utils/exchange';
 import { getBalanceInFiat } from 'utils/assets';
-import { formatFiatValue } from 'utils/format';
+import { formatFiatValue, formatAmountDisplay } from 'utils/format';
+import { useChainsConfig } from 'utils/uiConfig';
+import { chainFromChainId } from 'utils/chains';
 
 // Selectors
 import { useFiatCurrency, useChainRates } from 'selectors';
@@ -48,6 +51,7 @@ import { useTransactionsEstimate } from 'hooks/transactions';
 import TokenIcon from 'components/display/TokenIcon';
 import RadioButton from 'components/RadioButton';
 import Text from 'components/core/Text';
+import { Spacing } from 'components/legacy/Layout';
 
 interface IRouteCard {
   offer?: any;
@@ -65,6 +69,7 @@ interface IRouteCard {
   stakeGasFeeAsset: Asset | AssetOption;
   transactions: any;
   gasFeeAsset: Asset | AssetOption;
+  bridgeRoute?: Route;
 }
 
 const RouteCard: FC<IRouteCard> = ({
@@ -77,17 +82,19 @@ const RouteCard: FC<IRouteCard> = ({
   networkName,
   provider,
   onSelectOffer,
-  disabled,
+  disabled = false,
   stakeFeeInfo,
   stakeGasFeeAsset,
   transactions,
   gasFeeAsset,
+  bridgeRoute,
 }) => {
   const { t, tRoot } = useTranslationWithPrefix('plrStaking.validator');
 
   const currency = useFiatCurrency();
   const chainRates = useChainRates(chain);
   const ethRates = useChainRates(CHAIN.ETHEREUM);
+  const chainsConfig = useChainsConfig();
 
   const config = useProviderConfig(provider);
 
@@ -119,7 +126,7 @@ const RouteCard: FC<IRouteCard> = ({
         <RouteInfoContainer>
           <RouteInfoRow>
             <MainText>{formattedToAmount}</MainText>
-            <MainText highlighted>{`${t('on')} ${networkName}`}</MainText>
+            <MainText highlighted>{` ${t('on')} ${networkName}`}</MainText>
           </RouteInfoRow>
 
           <RouteInfoRow>
@@ -142,31 +149,114 @@ const RouteCard: FC<IRouteCard> = ({
         </RadioButtonWrapper>
       </RouteContainer>
 
-      <RouteBreakdownWrapper>
-        <Circle />
-        <RouteBreakdownContainer>
-          <IconWrapper>{config && <TokenIcon url={config.iconUrl} size={32} chain={plrToken?.chain} />}</IconWrapper>
+      {!bridgeRoute && (
+        <RouteBreakdownWrapper>
+          <Circle />
+          <RouteBreakdownContainer>
+            <IconWrapper>{config && <TokenIcon url={config.iconUrl} size={32} chain={plrToken?.chain} />}</IconWrapper>
 
-          <RouteInfoContainer>
-            <RouteInfoRow>
-              <MainText>{t('swapVia', { title: config?.title, networkName })}</MainText>
-            </RouteInfoRow>
+            <RouteInfoContainer>
+              <RouteInfoRow>
+                <MainText>{t('swapVia', { title: config?.title, networkName })}</MainText>
+              </RouteInfoRow>
 
-            <RouteInfoRow>
-              <MainText>{`${formattedFromAmount} → ${formattedToAmount}`}</MainText>
-            </RouteInfoRow>
+              <RouteInfoRow>
+                <MainText>{`${formattedFromAmount} → ${formattedToAmount}`}</MainText>
+              </RouteInfoRow>
 
-            <RouteInfoRow>
-              <GasPriceWrapper>
-                <SubText>
-                  <HighlightText>{`${t('estFee')} `}</HighlightText>
-                  {feeEtherValueBn && formatFiatValue(getFiatValue(feeEtherValueBn, gasFeeAsset.address), currency)}
-                </SubText>
-              </GasPriceWrapper>
-            </RouteInfoRow>
-          </RouteInfoContainer>
-        </RouteBreakdownContainer>
-      </RouteBreakdownWrapper>
+              <RouteInfoRow>
+                <GasPriceWrapper>
+                  <SubText>
+                    <HighlightText>{`${t('estFee')} `}</HighlightText>
+                    {feeEtherValueBn && formatFiatValue(getFiatValue(feeEtherValueBn, gasFeeAsset.address), currency)}
+                  </SubText>
+                </GasPriceWrapper>
+              </RouteInfoRow>
+            </RouteInfoContainer>
+          </RouteBreakdownContainer>
+        </RouteBreakdownWrapper>
+      )}
+
+      {bridgeRoute?.steps?.length &&
+        bridgeRoute.steps.map((step, i) => {
+          if (i > 0) return null;
+
+          // Etherspot SDK typing fails
+          // @ts-ignore
+          const [{ toolDetails: firstStepViaService }] = step?.includedSteps ?? [];
+          const twoDetailsRows = !!(bridgeRoute?.gasCostUSD || step?.estimate?.executionDuration);
+          return (
+            <RouteBreakdownWrapper>
+              <Circle />
+
+              <BridgeRouteContainer>
+                {/* Etherspot SDK typing fails */}
+                {/* @ts-ignore */}
+                {step?.includedSteps?.map((includedStep) => {
+                  const { action: includedStepAction, toolDetails: includedToolDetails } = includedStep;
+
+                  const fromAssetAmount = ethers.utils.formatUnits(
+                    includedStep.estimate.fromAmount,
+                    includedStepAction.fromToken.decimals,
+                  );
+                  const toAssetAmount = ethers.utils.formatUnits(
+                    includedStep.estimate.toAmount,
+                    includedStepAction.toToken.decimals,
+                  );
+
+                  const sourceChain = chainFromChainId[includedStepAction.fromChainId];
+                  const destinationChain = chainFromChainId[includedStepAction.toChainId];
+
+                  const { titleShort: sourceNetworkName } = chainsConfig[sourceChain];
+                  const { titleShort: destinationNetworkName } = chainsConfig[destinationChain];
+
+                  if (includedStep.type === 'swap') {
+                    return (
+                      <RouteInfoRow>
+                        <IconWrapper>
+                          <TokenIcon url={step.toolDetails.logoURI} size={32} chain={sourceChain} />
+                        </IconWrapper>
+                        <Spacing w={spacing.mediumLarge} />
+                        <RouteInfoCol>
+                          <SubText>{t('swapVia', { title: includedToolDetails.name, sourceNetworkName })}</SubText>
+                          <SubText>
+                            {`${formatAmountDisplay(fromAssetAmount)} ${
+                              includedStepAction.fromToken.symbol
+                            } → ${formatAmountDisplay(toAssetAmount)} ${includedStepAction.toToken.symbol}`}
+                          </SubText>
+                        </RouteInfoCol>
+                      </RouteInfoRow>
+                    );
+                  }
+
+                  if (includedStep.type === 'cross') {
+                    return (
+                      <RouteInfoRow>
+                        <IconWrapper>
+                          <TokenIcon url={step.toolDetails.logoURI} size={32} />
+                        </IconWrapper>
+                        <Spacing w={spacing.mediumLarge} />
+                        <RouteInfoCol>
+                          <SubText>
+                            {t('bridgeFrom', {
+                              providerTitle: includedToolDetails.name,
+                              sourceNetworkName,
+                              destinationChain,
+                            })}
+                          </SubText>
+                          <SubText>
+                            <HighlightText>{`${t('estFee')} `}</HighlightText>
+                            {`$${bridgeRoute?.gasCostUSD}`}
+                          </SubText>
+                        </RouteInfoCol>
+                      </RouteInfoRow>
+                    );
+                  }
+                })}
+              </BridgeRouteContainer>
+            </RouteBreakdownWrapper>
+          );
+        })}
 
       <RouteBreakdownWrapper>
         <Circle />
@@ -240,6 +330,16 @@ const RouteBreakdownContainer = styled.View`
   justify-content: space-between;
 `;
 
+const BridgeRouteContainer = styled.View`
+  padding: 10px;
+  border-radius: 20px;
+  background-color: ${({ theme }) => theme.colors.basic050};
+
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+`;
+
 const IconWrapper = styled.View`
   align-items: center;
   justify-content: center;
@@ -256,8 +356,12 @@ const RouteInfoContainer = styled.View`
 const RouteInfoRow = styled.View`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   align-items: center;
+`;
+
+const RouteInfoCol = styled.View`
+  display: flex;
+  flex-direction: column;
 `;
 
 const MainText = styled(Text).attrs((props: { highlighted?: boolean }) => props)`

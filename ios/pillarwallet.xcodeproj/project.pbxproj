@@ -190,7 +190,6 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				696129E12418405F000DE513 /* Start Packager */,
 				C2A20220DADB4443B9646675 /* Upload Debug Symbols to Sentry */,
-				F87216EB6B56AD528BCB7A6E /* Upload Sourcemap */,
 				21463A80EB48C98914805B0E /* [CP] Embed Pods Frameworks */,
 				8938C8FAE812ECF5A8B3F323 /* [CP] Copy Pods Resources */,
 				10B1B018FA7F35A3949892D4 /* [CP-User] [RNFB] Core Configuration */,
@@ -400,24 +399,6 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "export SENTRY_PROPERTIES=sentry.properties\n\n# Setup nvm and set node\n[ -z \"$NVM_DIR\" ] && export NVM_DIR=\"$HOME/.nvm\"\n\nif [[ -s \"$HOME/.nvm/nvm.sh\" ]]; then\n. \"$HOME/.nvm/nvm.sh\"\nelif [[ -x \"$(command -v brew)\" && -s \"$(brew --prefix nvm)/nvm.sh\" ]]; then\n. \"$(brew --prefix nvm)/nvm.sh\"\nfi\n\n[ -z \"$NODE_BINARY\" ] && export NODE_BINARY=\"node\"\n\n$NODE_BINARY ../node_modules/@sentry/cli/bin/sentry-cli upload-dsym\n";
-		};
-		F87216EB6B56AD528BCB7A6E /* Upload Sourcemap */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Upload Sourcemap";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-			shellPath = /bin/sh;
-			shellScript = "bash \"../node_modules/instabug-reactnative/ios/upload_sourcemap.sh\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
