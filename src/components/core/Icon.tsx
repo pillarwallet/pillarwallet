@@ -146,6 +146,14 @@ import PlusIcon from 'assets/icons/svg/24-add.svg';
 import MinusIcon from 'assets/icons/svg/24-minus.svg';
 import GreenUpIcon from 'assets/icons/svg/icon-up-green.svg';
 import RedDownIcon from 'assets/icons/svg/icon-down-red.svg';
+import AppleIconButton from 'assets/icons/svg/apple.svg';
+import PillarLogo from 'assets/icons/svg/pillar-logo.svg';
+import ButtonBorderIcon from 'assets/icons/svg/button-color.svg';
+import DiscordIconButton from 'assets/icons/svg/discord.svg';
+import EmailIconButton from 'assets/icons/svg/email.svg';
+import FacebookIconButton from 'assets/icons/svg/facebook.svg';
+import GoogleIconButton from 'assets/icons/svg/google.svg';
+import TwitchIconButton from 'assets/icons/svg/twitch.svg';
 
 // Assets: services icons
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
@@ -299,6 +307,14 @@ const components = {
   'dashboard-liquidity': DashboardLiquidity,
   'green-up': GreenUpIcon,
   'red-down': RedDownIcon,
+  'google-button': GoogleIconButton,
+  'apple-button': AppleIconButton,
+  'button-border-color': ButtonBorderIcon,
+  'discord-button': DiscordIconButton,
+  'email-button': EmailIconButton,
+  'facebook-button': FacebookIconButton,
+  'pillar-logo': PillarLogo,
+  'twitch-button': TwitchIconButton,
 
   // Service icons
   binance: IconBinance,
