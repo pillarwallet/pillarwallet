@@ -139,9 +139,6 @@ const PlrStaking = () => {
       } catch (e) {
         reportErrorLog('PlrStaking - fetchStakingInfo error', e);
       }
-
-      const ethereumPlrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
-      const balance = await getBalanceForAddress(CHAIN.ETHEREUM, ethereumPlrAddress);
     };
 
     fetchStakingInfo();
@@ -229,7 +226,6 @@ const PlrStaking = () => {
     navigation.navigate(PLR_STAKING_VALIDATOR, {
       token: token,
       chain: token.chain,
-      wallet: accountType,
       balancesWithoutPlr: balancesWithoutPlr,
     });
   };
@@ -245,7 +241,6 @@ const PlrStaking = () => {
     navigation.navigate(PLR_STAKING_VALIDATOR, {
       token: token,
       chain: token.chain,
-      wallet: accountType,
       balancesWithoutPlr: balancesWithoutPlr,
     });
   };
@@ -385,7 +380,7 @@ const PlrStaking = () => {
               title={t('button.stake')}
               onPress={onStake}
               size="large"
-              disabled={!accountType || !selectedChain || !stakingEnabled}
+              disabled={!accountType || !selectedChain}
             />
           )}
 

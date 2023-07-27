@@ -37,6 +37,7 @@ import type { EthereumTransaction, TransactionPayload } from 'models/Transaction
 
 // Services
 import etherspotService from 'services/etherspot';
+import archanovaService from 'services/archanova';
 import { firebaseRemoteConfig as remoteConfig } from 'services/firebase';
 
 // Utils
@@ -83,7 +84,7 @@ interface IStakingContractInfo {
 }
 
 interface IStakingRemoteConfig {
-  stakingContract: string;
+  stakingContractAddress: string;
   stakedToken: string;
   featureStaking: boolean;
   stakingStartTime: number;
@@ -143,8 +144,8 @@ export const showStakedTokensReceivedToast = (symbol: string, amount: BigNumber)
 };
 
 export const getStakingContractAddress = () => {
-  const stakingContract = remoteConfig.getString(REMOTE_CONFIG.PLR_STAKING_CONTRACT);
-  return stakingContract;
+  const stakingContractAddress = remoteConfig.getString(REMOTE_CONFIG.PLR_STAKING_CONTRACT);
+  return stakingContractAddress;
 };
 
 export const validatePlrStakeAmount = (plrAmount: BigNumber) => {
@@ -158,24 +159,24 @@ export const validatePlrStakeAmount = (plrAmount: BigNumber) => {
 };
 
 export const getStakingRemoteConfig = (): IStakingRemoteConfig => {
-  const stakingContract = remoteConfig.getString(REMOTE_CONFIG.PLR_STAKING_CONTRACT);
+  const stakingContractAddress = remoteConfig.getString(REMOTE_CONFIG.PLR_STAKING_CONTRACT);
   const stakedToken = remoteConfig.getString(REMOTE_CONFIG.PLE_STAKING_TOKEN_ADDRESS);
   const featureStaking = remoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_PLR_STAKING);
   const stakingStartTime = remoteConfig.getNumber(REMOTE_CONFIG.PLR_STAKING_START_TIME);
   const stakingLockedStartTime = remoteConfig.getNumber(REMOTE_CONFIG.PLR_STAKING_LOCKED_START_TIME);
 
-  return { stakingContract, stakedToken, featureStaking, stakingStartTime, stakingLockedStartTime };
+  return { stakingContractAddress, stakedToken, featureStaking, stakingStartTime, stakingLockedStartTime };
 };
 
 export const getStakingContract = () => {
+  if (stakingContract) return stakingContract;
+
   const sdk: Sdk = etherspotService.getSdkForChain(CHAIN.ETHEREUM);
 
   if (!sdk) return null;
 
-  if (!stakingContract) {
-    const contractAddress = getStakingContractAddress();
-    stakingContract = sdk.registerContract<IStakingContractAbi>('PStaking', plrStakingAbi, contractAddress);
-  }
+  const contractAddress = getStakingContractAddress();
+  stakingContract = sdk.registerContract<IStakingContractAbi>('PStaking', plrStakingAbi, contractAddress);
 
   return stakingContract;
 };
@@ -210,8 +211,7 @@ export const getStakingContractInfo = async (refresh?: boolean): Promise<IStakin
   if (!sdk) return null;
 
   if (!stakingContract) {
-    const contractAddress = getStakingContractAddress();
-    stakingContract = sdk.registerContract<IStakingContractAbi>('PStaking', plrStakingAbi, contractAddress);
+    stakingContract = getStakingContract();
   }
 
   try {
@@ -344,13 +344,14 @@ export const sendTransactions = async (chain: string, transactionPayload: Transa
   return null;
 };
 
-export const getBalanceForAddress = async (chain: string, address: string) => {
+export const getBalanceForAddress = async (chain: string, address: string, account?: string) => {
   const sdk: Sdk = etherspotService.getSdkForChain(chain);
 
   if (!sdk) return null;
 
   try {
     const { items } = await sdk.getAccountBalances({
+      account,
       tokens: [address],
     });
 
@@ -364,4 +365,19 @@ export const getBalanceForAddress = async (chain: string, address: string) => {
   }
 
   return null;
+};
+
+export const sendArchanovaTransaction = async (transaction: TransactionPayload, address: string) => {
+  try {
+    const tx = await archanovaService.sendTransaction(transaction, address);
+    if (tx) return tx;
+  } catch (e) {
+    reportErrorLog('sendArchanovaTransaction error', e);
+  }
+
+  return null;
+};
+
+export const bridgeServiceIdToDetails: { [id: string]: { title: string; iconUrl: string } } = {
+  lifi: { title: 'LiFi', iconUrl: 'https://li.fi/logo192.png' },
 };

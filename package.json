@@ -187,7 +187,7 @@
     "react-navigation": "^4.4.3",
     "react-navigation-hooks": "^1.1.0",
     "react-navigation-redux-helpers": "2.0.1",
-    "react-navigation-stack": "^2.10.2",
+    "react-navigation-stack": "^2.10.4",
     "react-navigation-tabs": "^2.10.1",
     "react-query": "^3.9.7",
     "react-redux": "^7.1",
