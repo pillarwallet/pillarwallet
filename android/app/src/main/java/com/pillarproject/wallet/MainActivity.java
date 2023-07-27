@@ -7,7 +7,6 @@ import android.os.Bundle;
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
-import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
 
 import org.devio.rn.splashscreen.SplashScreen;
 
@@ -22,20 +21,10 @@ public class MainActivity extends ReactActivity {
     /**
      * Returns the name of the main component registered from JavaScript. This is used to schedule
      * rendering of the component.
+     * @note https://docs.swmansion.com/react-native-gesture-handler/docs/guides/migrating-off-rnghenabledroot/
      */
     @Override
     protected String getMainComponentName() {
         return "pillarwallet";
-    }
-
-    // react-native-gesture-handler
-    @Override
-    protected ReactActivityDelegate createReactActivityDelegate() {
-        return new ReactActivityDelegate(this, getMainComponentName()) {
-            @Override
-            protected ReactRootView createRootView() {
-                return new RNGestureHandlerEnabledRootView(MainActivity.this);
-            }
-        };
     }
 }
