@@ -288,7 +288,6 @@ jobs:
             sed -i.bak "s/_wallet_connect_id_/$WALLETCONNECT_PROJECT_ID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
-            sed -i.bak "s/_staging_rampnetwork_api_key_/$STAGING_RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_prismic_token_/$PRISMIC_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_kochava_ios_id_/$KOCHAVA_IOS_ID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_kochava_android_id_/$KOCHAVA_ANDROID_ID/g" ./src/configs/buildConfig.js
@@ -406,7 +405,6 @@ jobs:
             sed -i.bak "s/_wallet_connect_id_/$WALLETCONNECT_PROJECT_ID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
-            sed -i.bak "s/_staging_rampnetwork_api_key_/$STAGING_RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_prismic_token_/$PRISMIC_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_kochava_ios_id_/$KOCHAVA_IOS_ID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_kochava_android_id_/$KOCHAVA_ANDROID_ID/g" ./src/configs/buildConfig.js
