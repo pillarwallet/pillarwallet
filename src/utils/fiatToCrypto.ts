@@ -27,18 +27,19 @@ import { firebaseRemoteConfig } from 'services/firebase';
 // Constants
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { CHAIN_ID, CHAIN } from 'constants/chainConstants';
-import { MATIC } from 'constants/assetsConstants';
+import { ETHEREUM, ETH } from 'constants/assetsConstants';
 
 // Config
 import { getEnv } from 'configs/envConfig';
-import { ARCHANOVA_RAMP_CURRENCY_TOKENS, ETHERSPOT_RAMP_CURRENCY_TOKENS } from 'configs/rampConfig';
+import { ONRAMPERSUPPORTEDCHAIN } from 'configs/rampConfig';
 import { CONTAINER_ID, ORIGIN } from 'configs/wertConfig';
 
 // Services
 import etherspotService from 'services/etherspot';
 
 // Utils
-import { chainFromChainId } from 'utils/chains';
+import { chainFromChainId, getSupportedChains } from 'utils/chains';
+import { isEtherspotAccount } from 'utils/accounts';
 
 // Types
 import type { Chain } from 'models/Chain';
@@ -54,23 +55,42 @@ export const buildUrlOptions = (options: { [key: string]: string }): string => {
   return optionStr;
 };
 
-// RAMP
-export const rampWidgetUrl = (
-  address: string,
-  fiatCurrency: string = '',
-  fiatValue: string = '',
-  isEtherspotAccount: boolean = true,
-) => {
+// On Ramper
+export const onRamperWidgetUrl = (account, supportedAssets) => {
+  const supportedChain = getSupportedChains(account);
+
+  let listOfTokens = [ETH];
+  supportedChain.forEach((chain) => {
+    if (chain === CHAIN.OPTIMISM) return;
+    const chainSupportedAssets = supportedAssets?.[chain];
+    const chainAssets = chainSupportedAssets?.map((asset) => {
+      if (chain === CHAIN.XDAI) return asset.symbol + '_GNOSIS';
+      if (chain === CHAIN.BINANCE) return asset.symbol + '_BSC';
+      return asset.symbol + '_' + asset.chain.toUpperCase();
+    });
+    listOfTokens.push(...chainAssets);
+  });
+
   const params = {
-    hostAppName: PILLAR,
-    hostApiKey: getEnv().RAMPNETWORK_API_KEY,
-    userAddress: address,
-    fiatCurrency,
-    fiatValue,
-    swapAsset: isEtherspotAccount ? ETHERSPOT_RAMP_CURRENCY_TOKENS.join(',') : ARCHANOVA_RAMP_CURRENCY_TOKENS,
+    apiKey: getEnv().ONRAMPER_API_KEY,
+    onlyCryptoNetworks: isEtherspotAccount(account) ? ONRAMPERSUPPORTEDCHAIN.join(',') : ETHEREUM,
+    defaultCrypto: 'ETH_ARBITRUM',
+    wallets: `ETH_ARBITRUM:${account.id}`,
+    onlyCryptos: isEtherspotAccount(account) ? listOfTokens?.join(',') : ETH,
+
+    // Widget style properties
+    themeName: 'dark',
+    primaryColor: 'ffffffff',
+    secondaryColor: '3f3f43',
+    primaryTextColor: 'ffffff',
+    secondaryTextColor: 'ffffff',
+    containerColor: '141416',
+    cardColor: '272727',
+    borderRadius: '0.5rem',
+    widgetBorderRadius: '1rem',
   };
 
-  const url = `${getEnv().RAMPNETWORK_WIDGET_URL}/${buildUrlOptions(params)}`;
+  const url = `${getEnv().ON_RAMPER_WIDGET_URL}${buildUrlOptions(params)}`;
   return url;
 };
 
@@ -89,7 +109,6 @@ export const wertWidgetUrl = (address: string, fiatValue: string) => {
 
   return wertWidget.getEmbedUrl();
 };
-
 
 // Pelerin
 export const buildMtPelerinOptions = (

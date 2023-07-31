@@ -47,8 +47,9 @@ const envVars = {
     NETWORK_PROVIDER: 'kovan',
     COLLECTIBLES_NETWORK: 'rinkeby',
     OPEN_SEA_API: 'https://rinkeby-api.opensea.io/api/v1',
-    RAMPNETWORK_WIDGET_URL: 'https://ri-widget-staging-kovan.firebaseapp.com/',
-    NEWSLETTER_SUBSCRIBE_URL: 'https://pillarproject.us14.list-manage.com/subscribe/post-json?u=0056162978ccced9e0e2e2939&amp;id=637ab55cf8',
+    ON_RAMPER_WIDGET_URL: 'https://ri-widget-staging-kovan.firebaseapp.com/',
+    NEWSLETTER_SUBSCRIBE_URL:
+      'https://pillarproject.us14.list-manage.com/subscribe/post-json?u=0056162978ccced9e0e2e2939&amp;id=637ab55cf8',
     SABLIER_CONTRACT_ADDRESS: '0xc04Ad234E01327b24a831e3718DBFcbE245904CC',
     SABLIER_SUBGRAPH_NAME: 'sablierhq/sablier-kovan',
     RARI_SUBGRAPH_NAME: 'graszka22/rari-transactions',
@@ -89,7 +90,6 @@ const switchEnvironments = () => ({});
 const getEnv = () => envVars[storedEnv];
 
 const getRariPoolsEnv = (rariPool: RariPool) => rariPoolsEnv[storedEnv][rariPool];
-
 
 export default {
   getEnv,
