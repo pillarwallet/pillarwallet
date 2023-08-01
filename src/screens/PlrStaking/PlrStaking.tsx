@@ -139,9 +139,6 @@ const PlrStaking = () => {
       } catch (e) {
         reportErrorLog('PlrStaking - fetchStakingInfo error', e);
       }
-
-      const ethereumPlrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
-      const balance = await getBalanceForAddress(CHAIN.ETHEREUM, ethereumPlrAddress);
     };
 
     fetchStakingInfo();
@@ -229,7 +226,6 @@ const PlrStaking = () => {
     navigation.navigate(PLR_STAKING_VALIDATOR, {
       token: token,
       chain: token.chain,
-      wallet: accountType,
       balancesWithoutPlr: balancesWithoutPlr,
     });
   };
@@ -245,7 +241,6 @@ const PlrStaking = () => {
     navigation.navigate(PLR_STAKING_VALIDATOR, {
       token: token,
       chain: token.chain,
-      wallet: accountType,
       balancesWithoutPlr: balancesWithoutPlr,
     });
   };
@@ -349,7 +344,7 @@ const PlrStaking = () => {
               {plrBalances.map((bal) => {
                 const { titleShort } = chainsConfig[bal.chain];
 
-                const disabled = bal?.assetBalance < MIN_PLR_STAKE_AMOUNT;
+                const disabled = bal?.assetBalance < MIN_PLR_STAKE_AMOUNT || !isNaN(bal.assetBalance);
 
                 return (
                   <BalanceItem onClick={() => selectChain(bal.chain)} disabled={disabled}>
@@ -364,7 +359,7 @@ const PlrStaking = () => {
 
                     <BalanceRightItem>
                       <BalanceValueText disabled={disabled}>
-                        {`${parseFloat(bal.assetBalance).toFixed(2)} ${bal.symbol}`}
+                        {`${!isNaN(bal.assetBalance) ? parseFloat(bal.assetBalance).toFixed(2) : '0'} ${bal.symbol}`}
                       </BalanceValueText>
                       <BalanceValueText fiat disabled={disabled}>
                         {bal.formattedBalanceInFiat}
