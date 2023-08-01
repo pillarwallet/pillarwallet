@@ -38,46 +38,95 @@ import type { Asset, AssetOption } from 'models/Asset';
 import TokenIcon from 'components/display/TokenIcon';
 import Text from 'components/core/Text';
 import FeeCard from './FeeCard';
+import { ISendData, IStakingSteps } from './RouteCard';
 
 interface IStakeRouteCard {
   plrToken?: AssetOption;
   value?: string;
   chain?: string;
+  formattedFromAmount?: string;
   stakeFeeInfo: any;
   stakeGasFeeAsset: Asset | AssetOption;
+  stakingSteps?: IStakingSteps;
+  sendData?: ISendData;
 }
 
-const StakeRouteCard: FC<IStakeRouteCard> = ({ plrToken, value, chain, stakeFeeInfo, stakeGasFeeAsset }) => {
+const StakeRouteCard: FC<IStakeRouteCard> = ({
+  plrToken,
+  value,
+  chain,
+  formattedFromAmount,
+  stakeFeeInfo,
+  stakeGasFeeAsset,
+  stakingSteps,
+  sendData,
+}) => {
   const chainsConfig = useChainsConfig();
   const { titleShort: networkName } = chainsConfig[chain];
   const { t, tRoot } = useTranslationWithPrefix('plrStaking.validator');
+  const { t: tMain } = useTranslationWithPrefix('plrStaking');
 
   const formattedToAmount = formatTokenValue(value, plrToken.symbol, { decimalPlaces: 0 }) ?? '';
 
   return (
     <RouteWrapper>
-      <RouteBreakdownContainer>
-        <IconWrapper>{plrToken && <TokenIcon url={plrToken?.iconUrl} size={32} chain={plrToken?.chain} />}</IconWrapper>
+      {!!sendData && (
+        <RouteBreakdownWrapper>
+          <Circle active={stakingSteps?.isSent} />
 
-        <RouteInfoContainer>
-          <RouteInfoRow>
-            <MainText>{t('stakeOn', { formattedAmount: formattedToAmount, networkName })}</MainText>
-          </RouteInfoRow>
-          <RouteInfoRow>
-            <GasPriceWrapper>
-              <SubText>
-                <HighlightText>{t('estFee')}</HighlightText>
-              </SubText>
-              <FeeCard
-                value={stakeFeeInfo}
-                chain={CHAIN.ETHEREUM}
-                symbol={stakeGasFeeAsset.symbol}
-                address={stakeGasFeeAsset.address}
-              />
-            </GasPriceWrapper>
-          </RouteInfoRow>
-        </RouteInfoContainer>
-      </RouteBreakdownContainer>
+          <RouteBreakdownContainer processing={stakingSteps?.processing} active={stakingSteps?.isSending}>
+            <IconWrapper>
+              {sendData.asset && <TokenIcon url={sendData.asset.iconUrl} size={32} chain={chain} />}
+            </IconWrapper>
+
+            <RouteInfoContainer>
+              <RouteInfoRow>
+                <MainText>
+                  {t('sendFrom', {
+                    formattedValue: formattedFromAmount,
+                    receiverWallet: tMain('etherspot'),
+                  })}
+                </MainText>
+              </RouteInfoRow>
+
+              <RouteInfoRow>
+                <SubText>
+                  <HighlightText>{`${t('estFee')} `}</HighlightText>
+                </SubText>
+              </RouteInfoRow>
+            </RouteInfoContainer>
+          </RouteBreakdownContainer>
+        </RouteBreakdownWrapper>
+      )}
+
+      <RouteBreakdownWrapper>
+        <Circle active={stakingSteps?.isStaked} />
+
+        <RouteBreakdownContainer processing={stakingSteps?.processing} active={stakingSteps?.isStaking}>
+          <IconWrapper>
+            {plrToken && <TokenIcon url={plrToken?.iconUrl} size={32} chain={plrToken?.chain} />}
+          </IconWrapper>
+
+          <RouteInfoContainer>
+            <RouteInfoRow>
+              <MainText>{t('stakeOn', { formattedAmount: formattedToAmount, networkName })}</MainText>
+            </RouteInfoRow>
+            <RouteInfoRow>
+              <GasPriceWrapper>
+                <SubText>
+                  <HighlightText>{t('estFee')}</HighlightText>
+                </SubText>
+                <FeeCard
+                  value={stakeFeeInfo}
+                  chain={CHAIN.ETHEREUM}
+                  symbol={stakeGasFeeAsset.symbol}
+                  address={stakeGasFeeAsset.address}
+                />
+              </GasPriceWrapper>
+            </RouteInfoRow>
+          </RouteInfoContainer>
+        </RouteBreakdownContainer>
+      </RouteBreakdownWrapper>
     </RouteWrapper>
   );
 };

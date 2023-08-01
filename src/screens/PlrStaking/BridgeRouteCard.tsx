@@ -41,7 +41,7 @@ import { useFiatCurrency, useChainRates, useActiveAccount } from 'selectors';
 
 // Hooks
 import { useTransactionsEstimate } from 'hooks/transactions';
-import RouteCard from './RouteCard';
+import RouteCard, { ISendData, IStakingSteps } from './RouteCard';
 
 type IBridgeRouteCard = {
   value?: BigNumber | null;
@@ -58,10 +58,8 @@ type IBridgeRouteCard = {
   buildTransactionFetched?: any;
   fromChain: string;
   stakeFeeInfo: any;
-  stakeGasFeeAsset: Asset | AssetOption;
-  isBridging?: boolean;
-  isStaking?: boolean;
-  stakingCompleted?: boolean;
+  stakingSteps?: IStakingSteps;
+  sendData?: ISendData;
 };
 
 const BridgeRouteCard: FC<IBridgeRouteCard> = ({
@@ -77,7 +75,8 @@ const BridgeRouteCard: FC<IBridgeRouteCard> = ({
   buildTransactionData,
   fromChain,
   stakeFeeInfo,
-  stakeGasFeeAsset,
+  stakingSteps,
+  sendData,
 }) => {
   const { t } = useTranslation();
   const fiatCurrency = useFiatCurrency();
@@ -173,10 +172,11 @@ const BridgeRouteCard: FC<IBridgeRouteCard> = ({
         networkName={networkName}
         provider={offer?.provider}
         stakeFeeInfo={stakeFeeInfo}
-        stakeGasFeeAsset={stakeGasFeeAsset}
         gasFeeAsset={gasFeeAsset}
         transactions={offer?.transactions}
         bridgeRoute={offer?.route}
+        stakingSteps={stakingSteps}
+        sendData={sendData}
       />
     </>
   );
