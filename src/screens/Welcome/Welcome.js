@@ -33,6 +33,7 @@ import { Wrapper } from 'components/legacy/Layout';
 import Image from 'components/Image';
 import Button from 'components/legacy/Button';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
+import Icon from 'components/core/Icon';
 
 // utils
 import { spacing } from 'utils/variables';
@@ -72,18 +73,19 @@ const Welcome = () => {
     }).start();
   }, []);
 
-  const { pillarLogo, landingPattern } = images(darkTheme);
+  const { plrLogo, landingPattern } = images(darkTheme);
 
   return (
     <ThemeProvider theme={darkTheme}>
       <Background>
-        <AnimatedLogoWrapper style={{ transform: [{ translateY }] }}>
-          <PillarLogo source={pillarLogo} />
-        </AnimatedLogoWrapper>
         <Pattern source={landingPattern} />
         <ContainerWithHeader backgroundColor="transparent" statusbarColor={{ [LIGHT_THEME]: LIGHT_CONTENT }}>
           <Wrapper fullScreen>
-            <Spacer onPress={handleSecretClick} />
+            {/* <Spacer onPress={handleSecretClick} /> */}
+
+            <ShadowImage>
+              {/* <PillarLogo source={plrLogo} /> */}
+            </ShadowImage>
 
             <ButtonsWrapper>
               <Button
@@ -107,7 +109,7 @@ const Welcome = () => {
 export default Welcome;
 
 const Background = styled.View`
-  background-color: #1a1a1a;
+  background-color: ${({ theme }) => theme.colors.basic070};
   width: 100%;
   height: 100%;
   position: relative;
@@ -119,8 +121,21 @@ const Pattern = styled(Image)`
 `;
 
 const PillarLogo = styled(Image)`
-  height: ${LOGO_HEIGHT}px;
-  width: 192px;
+  border-radius: 77px
+  height: 15px;
+  width: 15px;
+`;
+
+const ShadowImage = styled.View`
+  height: 45px;
+  width: 45px;
+  background-color: ${({ theme }) => theme.colors.basic070};
+  border-radius: 24px;
+  shadow-color: ${({ theme }) => theme.colors.positive};
+  shadow-opacity: 0.58;
+  shadow-radius: 24;
+  elevation: 56;
+  margin-left: 50;
 `;
 
 const LogoWrapper = styled.View`

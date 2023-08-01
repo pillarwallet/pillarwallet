@@ -36,7 +36,7 @@ import { handleUrlPress } from 'utils/common';
 import { getThemeColors, themedColors } from 'utils/themes';
 
 // constants
-import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
+import { WELCOME } from 'constants/navigationConstants';
 
 // types
 import type { Theme } from 'models/Theme';
@@ -207,7 +207,7 @@ const Permissions = ({ navigation, theme }: Props) => {
 
   const handleAgree = () => {
     const username = navigation.getParam('username');
-    navigation.navigate(SET_WALLET_PIN_CODE, { username });
+    navigation.navigate(WELCOME, { username });
   };
 
   const colors = getThemeColors(theme);
