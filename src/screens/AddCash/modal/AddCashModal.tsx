@@ -113,11 +113,11 @@ const AddCashModal: FC<IAddCashModal> = ({ setAddCashUrl }) => {
               <TitleContainer>
                 <RowContainer>
                   <Icon name="on-ramper" />
-                  <Title style={isOnRamper && styles.titleStyle}>{t('options.rampTitle')}</Title>
+                  <Title style={isOnRamper && styles.titleStyle}>{t('options.onRamperTitle')}</Title>
                 </RowContainer>
-                <CountryText>{t('options.rampCountry')}</CountryText>
+                <CountryText>{t('options.onRamperCountry')}</CountryText>
               </TitleContainer>
-              <DescriptionText>{t('options.rampDescription')}</DescriptionText>
+              <DescriptionText>{t('options.onRamperDescription')}</DescriptionText>
               <RowContainer style={styles.rowStyle}>
                 <FeeText>{`${tRoot('transactions.label.fees')}: 2-4%`}</FeeText>
                 <Text color={colors.positive} variant="small" style={{ marginTop: spacing.small }}>
