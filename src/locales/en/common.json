@@ -713,7 +713,7 @@
     },
     "investments": {
       "title": "PLR Staking",
-      "description": "Earn ETH by staking your PLR tokens.\n80% PLR of the vault staked.",
+      "description": "Earn ETH by staking your PLR tokens.\n{{stakedPercentage}}% PLR of the vault staked.",
       "closeTime": "Subscription will close in {{closeTime}}"
     }
   },
@@ -1239,9 +1239,9 @@
           "highDeploymentFees": "Warning: High deployment fees if buying on Ethereum Mainnet",
           "deploying": "Deploying...",
           "options": {
-            "rampTitle": "RAMP Network",
-            "rampCountry": "US & Europe",
-            "rampDescription": "Buy with USD, EUR or GBP with Apple & Google Pay or Debit card. Cashing out from crypto available.",
+            "onRamperTitle": "Onramper",
+            "onRamperCountry": "Global",
+            "onRamperDescription": "Get the best rate from 18 supported Onramp providers with every preferred payment method and currency.",
             "pelerinTitle": "Mt Pelerin",
             "pelerinCountry": "Europe",
             "pelerinDescription": "Buy with EUR and CHF with a Debit card. Cashing out from crypto available."
@@ -1799,7 +1799,8 @@
       "on": "on",
       "showLess": "Show less",
       "showMore": "Show more",
-      "bridgeFrom": "Bridge via {{providerName}} from {{sourceNetworkName}} to {{destinationNetworkName}}"
+      "bridgeFrom": "Bridge via {{title}} from {{sourceNetworkName}} to {{destinationNetworkName}}",
+      "sendFrom": "Send {{formattedValue}} to {{receiverWallet}}"
     },
     "chooseAsset": "Choose asset"
   }

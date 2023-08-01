@@ -32,7 +32,7 @@ export const buildEnvironment = {
   WERT_ID: '_wert_id_',
   OPEN_SEA_API_KEY: '_open_sea_api_key_',
   INFURA_PROJECT_ID: '_infura_project_id_',
-  RAMPNETWORK_API_KEY: '_rampnetwork_api_key_',
+  ONRAMPER_API_KEY: '_onramper_api_key_',
   PRISMIC_TOKEN: '_prismic_token_',
   KOCHAVA_IOS_ID: '_kochava_ios_id_',
   KOCHAVA_ANDROID_ID: '_kochava_android_id_',
