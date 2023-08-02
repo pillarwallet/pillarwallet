@@ -19,7 +19,7 @@
 */
 
 import React, { useEffect } from 'react';
-import { Image, Keyboard } from 'react-native';
+import { Keyboard } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
@@ -29,6 +29,8 @@ import { Container, Content } from 'components/layout/Layout';
 import Button from 'components/core/Button';
 import Text from 'components/core/Text';
 import HeaderBlock from 'components/HeaderBlock';
+import Image from 'components/Image';
+import Icon from 'components/core/Icon';
 
 // Utils
 import { appFont, spacing, fontStyles } from 'utils/variables';
@@ -40,6 +42,7 @@ import { hasFCMPermission } from 'actions/notificationsActions';
 
 // Assets
 const smartWalletImage = require('assets/images/logo-get-notifications.png');
+const logoBackgroundGif = require('assets/images/glow.gif');
 
 function GetNotifincations() {
   const { t, tRoot } = useTranslationWithPrefix('getNotifications');
@@ -64,9 +67,10 @@ function GetNotifincations() {
     <Container>
       <HeaderBlock leftItems={[{ close: false }]} navigation={navigation} noPaddingTop />
       <Content>
-        <LogoContainer>
-          <Logo source={smartWalletImage} resizeMode="contain" />
-        </LogoContainer>
+        <SubContainer>
+          <Image source={logoBackgroundGif} style={{ width: 140, height: 140 }} />
+          <Icon name="plr-white-logo" style={{ position: 'absolute' }} height={64} />
+        </SubContainer>
         <Title>{t('title')}</Title>
         <Body>{t('description')}</Body>
         <Button title={tRoot('button.enable')} onPress={onNotificationRequest} style={styles.button} size="large" />
@@ -83,6 +87,13 @@ const styles = {
     marginBottom: spacing.small,
   },
 };
+
+const SubContainer = styled.View`
+  width: 100%;
+  padding: 9px ${spacing.layoutSides}px;
+  align-items: center;
+  justify-content: center;
+`;
 
 const LogoContainer = styled.View`
   justify-content: center;

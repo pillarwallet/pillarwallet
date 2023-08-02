@@ -35,6 +35,7 @@ import ForgotPinScreen from 'screens/ForgotPin';
 import PermissionScreen from 'screens/Permissions';
 import MenuSelectAppearanceScreen from 'screens/AppAppearence';
 import LegalScreen from 'screens/LegalScreen/LegalScreen';
+import GetNotificationsScreen from 'screens/Notification/GetNotifications';
 
 // Utils
 import { modalTransition } from 'utils/common';
@@ -50,6 +51,7 @@ import {
   SET_WALLET_PIN_CODE,
   WELCOME_BACK,
   WELCOME,
+  GET_NOTIFICATIONS,
   IMPORT_WALLET,
   PIN_CODE_CONFIRMATION,
   PIN_CODE_UNLOCK,
@@ -80,6 +82,7 @@ const onBoardingFlow = createStackNavigator(
   {
     [PERMISSIONS]: PermissionScreen,
     [WELCOME]: WelcomeScreen,
+    [GET_NOTIFICATIONS]: GetNotificationsScreen,
     [IMPORT_WALLET]: ImportWalletScreen,
     [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
     [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,

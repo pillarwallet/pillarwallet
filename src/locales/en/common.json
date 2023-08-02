@@ -352,7 +352,8 @@
     "allTimeHigh": "All-Time High",
     "allTimeLow": "All-Time Low",
     "your_balance": "Your Balance",
-    "volume_24": "Volume 24h"
+    "volume_24": "Volume 24h",
+    "or":"or"
   },
 
   "button": {
