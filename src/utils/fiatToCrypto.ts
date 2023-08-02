@@ -31,7 +31,7 @@ import { ETHEREUM, ETH } from 'constants/assetsConstants';
 
 // Config
 import { getEnv } from 'configs/envConfig';
-import { ONRAMPERSUPPORTEDCHAIN } from 'configs/rampConfig';
+import { ONRAMPERSUPPORTEDCHAINS } from 'configs/rampConfig';
 import { CONTAINER_ID, ORIGIN } from 'configs/wertConfig';
 
 // Services
@@ -73,7 +73,7 @@ export const onRamperWidgetUrl = (account, supportedAssets) => {
 
   const params = {
     apiKey: getEnv().ONRAMPER_API_KEY,
-    onlyCryptoNetworks: isEtherspotAccount(account) ? ONRAMPERSUPPORTEDCHAIN.join(',') : ETHEREUM,
+    onlyCryptoNetworks: isEtherspotAccount(account) ? ONRAMPERSUPPORTEDCHAINS.join(',') : ETHEREUM,
     defaultCrypto: 'ETH_ARBITRUM',
     wallets: `ETH_ARBITRUM:${account.id}`,
     onlyCryptos: isEtherspotAccount(account) ? listOfTokens?.join(',') : ETH,
