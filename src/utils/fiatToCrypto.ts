@@ -80,7 +80,7 @@ export const onRamperWidgetUrl = (account, supportedAssets) => {
 
     // Widget style properties
     themeName: 'dark',
-    primaryColor: 'ffffffff',
+    primaryColor: '808080ff',
     secondaryColor: '3f3f43',
     primaryTextColor: 'ffffff',
     secondaryTextColor: 'ffffff',
