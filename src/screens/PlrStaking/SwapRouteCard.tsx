@@ -36,7 +36,7 @@ import type { Chain } from 'models/Chain';
 // Components
 import Text from 'components/core/Text';
 import { Spacing } from 'components/layout/Layout';
-import RouteCard, { ISendData, IStakingSteps } from './RouteCard';
+import RouteCard, { ISendData, IStakingSteps, ISwapData } from './RouteCard';
 
 interface ISwapRouteCard {
   value?: BigNumber;
@@ -51,6 +51,7 @@ interface ISwapRouteCard {
   setStkPlrAmount?: (value: BigNumber) => void;
   setOfferData?: (offer: any) => void;
   onFeeInfo?: (feeInfo: TransactionFeeInfo | null) => void;
+  stakingTransactions?: any[];
   stakeFeeInfo: any;
   stakingSteps?: IStakingSteps;
   sendData?: ISendData;
@@ -69,6 +70,7 @@ const SwapRouteCard: FC<ISwapRouteCard> = ({
   setOfferData,
   setStkPlrAmount,
   onFeeInfo,
+  stakingTransactions,
   stakeFeeInfo,
   stakingSteps,
   sendData,
@@ -99,9 +101,15 @@ const SwapRouteCard: FC<ISwapRouteCard> = ({
     setOfferData?.(offer);
     onFeeInfo?.(offer?.feeInfo);
     setSelectedOfferProvider(offer.provider);
+    setShowMore(false);
   };
 
   if (!offers?.length) return null;
+
+  const swapData: ISwapData = {
+    swapTransactions: selectedOffer?.transactions ?? [],
+    stakeTransactions: stakingTransactions ?? [],
+  };
 
   return (
     <>
@@ -122,6 +130,7 @@ const SwapRouteCard: FC<ISwapRouteCard> = ({
             transactions={selectedOffer?.transactions}
             stakingSteps={stakingSteps}
             sendData={sendData}
+            swapData={swapData}
           />
         </>
       )}
@@ -137,6 +146,11 @@ const SwapRouteCard: FC<ISwapRouteCard> = ({
 
           if (!selectedOffer && !showMore && i !== 0) return null;
           if (!offer?.provider || offer.provider === selectedOfferProvider) return null;
+
+          const swapData: ISwapData = {
+            swapTransactions: offer?.transactions,
+            stakeTransactions: stakingTransactions,
+          };
           return (
             <>
               <Spacing h={8} />
@@ -155,6 +169,7 @@ const SwapRouteCard: FC<ISwapRouteCard> = ({
                 gasFeeAsset={gasFeeAsset}
                 transactions={offer?.transactions}
                 sendData={sendData}
+                swapData={swapData}
               />
             </>
           );

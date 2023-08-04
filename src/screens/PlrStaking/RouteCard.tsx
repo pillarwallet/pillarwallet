@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 import { BigNumber, ethers } from 'ethers';
@@ -54,6 +54,7 @@ import TokenIcon from 'components/display/TokenIcon';
 import RadioButton from 'components/RadioButton';
 import Text from 'components/core/Text';
 import { Spacing } from 'components/legacy/Layout';
+import Spinner from 'components/Spinner';
 
 export interface IStakingSteps {
   processing: boolean;
@@ -74,6 +75,11 @@ export interface ISendData {
   feeInfo?: any;
 }
 
+export interface ISwapData {
+  swapTransactions: any[];
+  stakeTransactions: any[];
+}
+
 interface IRouteCard {
   offer?: any;
   selected?: boolean;
@@ -90,9 +96,10 @@ interface IRouteCard {
   stakeFeeInfo: any;
   transactions: any;
   gasFeeAsset: Asset | AssetOption;
-  bridgeRoute?: Route;
   stakingSteps?: IStakingSteps;
+  bridgeRoute?: Route;
   sendData?: ISendData;
+  swapData?: ISwapData;
 }
 
 const RouteCard: FC<IRouteCard> = ({
@@ -112,8 +119,9 @@ const RouteCard: FC<IRouteCard> = ({
   bridgeRoute,
   stakingSteps,
   sendData,
+  swapData,
 }) => {
-  const { t, tRoot } = useTranslationWithPrefix('plrStaking.validator');
+  const { t } = useTranslationWithPrefix('plrStaking.validator');
   const { t: tMain } = useTranslationWithPrefix('plrStaking');
 
   const currency = useFiatCurrency();
@@ -123,10 +131,25 @@ const RouteCard: FC<IRouteCard> = ({
 
   const config = useProviderConfig(provider);
 
-  const { feeInfo } = useTransactionsEstimate(chain, transactions, true, gasFeeAsset);
+  const transactionsToEstimate = useMemo(() => {
+    if (swapData?.swapTransactions) {
+      return [...swapData.swapTransactions, ...(swapData?.stakeTransactions ?? [])];
+    }
+
+    return transactions;
+  }, [transactions, swapData, bridgeRoute]);
+
+  const { feeInfo } = useTransactionsEstimate(chain, transactionsToEstimate, true, gasFeeAsset);
 
   const feeEtherValueBn = feeInfo?.fee ? BigNumber.from(feeInfo.fee.toString()) : null;
   const stakeFeeEtherValueBn = stakeFeeInfo ? BigNumber.from(stakeFeeInfo.toString()) : null;
+
+  const loadingStakingFee = useMemo(() => {
+    if (swapData && feeInfo?.fee) return false;
+    else if (!swapData && stakeFeeInfo) return false;
+
+    return true;
+  }, [feeInfo, stakeFeeInfo, swapData]);
 
   const getFiatValue = (value: BigNumber, address: string, isEthereum?: boolean) => {
     if (!value) return null;
@@ -139,7 +162,8 @@ const RouteCard: FC<IRouteCard> = ({
   const getTotalGasFees = () => {
     let totalFiatValue = 0;
     if (feeEtherValueBn) totalFiatValue += getFiatValue(feeEtherValueBn, gasFeeAsset.address) || 0;
-    if (stakeFeeEtherValueBn) totalFiatValue += getFiatValue(stakeFeeEtherValueBn, ADDRESS_ZERO, true) || 0;
+    if (!swapData && stakeFeeEtherValueBn)
+      totalFiatValue += getFiatValue(stakeFeeEtherValueBn, ADDRESS_ZERO, true) || 0;
     return totalFiatValue;
   };
 
@@ -158,7 +182,13 @@ const RouteCard: FC<IRouteCard> = ({
             <GasPriceWrapper>
               <SubText>
                 <HighlightText>{`${t('estFee')} `}</HighlightText>
-                {formatFiatValue(getTotalGasFees(), currency)}
+                {!loadingStakingFee ? (
+                  formatFiatValue(getTotalGasFees(), currency)
+                ) : (
+                  <EmptyStateWrapper>
+                    <Spinner size={10} trackWidth={1} />
+                  </EmptyStateWrapper>
+                )}
               </SubText>
             </GasPriceWrapper>
             {/* Commented out as we currently don't know where to pull the estimated time from */}
@@ -202,7 +232,7 @@ const RouteCard: FC<IRouteCard> = ({
         </RouteBreakdownWrapper>
       )}
 
-      {!bridgeRoute && (
+      {!bridgeRoute && swapData && (
         <RouteBreakdownWrapper>
           <Circle active={stakingSteps?.isSwapped} />
 
@@ -216,15 +246,6 @@ const RouteCard: FC<IRouteCard> = ({
 
               <RouteInfoRow>
                 <MainText>{`${formattedFromAmount} → ${formattedToAmount}`}</MainText>
-              </RouteInfoRow>
-
-              <RouteInfoRow>
-                <GasPriceWrapper>
-                  <SubText>
-                    <HighlightText>{`${t('estFee')} `}</HighlightText>
-                    {feeEtherValueBn && formatFiatValue(getFiatValue(feeEtherValueBn, gasFeeAsset.address), currency)}
-                  </SubText>
-                </GasPriceWrapper>
               </RouteInfoRow>
             </RouteInfoContainer>
           </RouteBreakdownContainer>
@@ -262,7 +283,6 @@ const RouteCard: FC<IRouteCard> = ({
                   const destinationChain = chainFromChainId[includedStepAction.toChainId];
 
                   const { titleShort: sourceNetworkName } = chainsConfig[sourceChain];
-                  const { titleShort: destinationNetworkName } = chainsConfig[destinationChain];
 
                   if (includedStep.type === 'swap') {
                     return (
@@ -300,7 +320,13 @@ const RouteCard: FC<IRouteCard> = ({
                           </SubText>
                           <SubText>
                             <HighlightText>{`${t('estFee')} `}</HighlightText>
-                            {`$${bridgeRoute?.gasCostUSD}`}
+                            {feeEtherValueBn ? (
+                              formatFiatValue(getFiatValue(feeEtherValueBn, ADDRESS_ZERO, true), currency)
+                            ) : (
+                              <EmptyStateWrapper>
+                                <Spinner size={10} trackWidth={1} />
+                              </EmptyStateWrapper>
+                            )}
                           </SubText>
                         </RouteInfoCol>
                       </RouteInfoRow>
@@ -326,11 +352,29 @@ const RouteCard: FC<IRouteCard> = ({
             </RouteInfoRow>
             <RouteInfoRow>
               <GasPriceWrapper>
-                <SubText>
-                  <HighlightText>{`${t('estFee')} `}</HighlightText>
-                  {stakeFeeEtherValueBn &&
-                    formatFiatValue(getFiatValue(stakeFeeEtherValueBn, ADDRESS_ZERO, true), currency)}
-                </SubText>
+                {swapData ? (
+                  <SubText>
+                    <HighlightText>{`${t('estFee')} `}</HighlightText>
+                    {!loadingStakingFee ? (
+                      formatFiatValue(getTotalGasFees(), currency)
+                    ) : (
+                      <EmptyStateWrapper>
+                        <Spinner size={10} trackWidth={1} />
+                      </EmptyStateWrapper>
+                    )}
+                  </SubText>
+                ) : (
+                  <SubText>
+                    <HighlightText>{`${t('estFee')} `}</HighlightText>
+                    {!loadingStakingFee ? (
+                      formatFiatValue(getFiatValue(stakeFeeEtherValueBn, ADDRESS_ZERO, true), currency)
+                    ) : (
+                      <EmptyStateWrapper>
+                        <Spinner size={10} trackWidth={1} />
+                      </EmptyStateWrapper>
+                    )}
+                  </SubText>
+                )}
               </GasPriceWrapper>
             </RouteInfoRow>
           </RouteInfoContainer>
@@ -448,4 +492,9 @@ const RadioButtonWrapper = styled.View`
 
 const HighlightText = styled(Text)`
   color: ${({ theme }) => theme.colors.plrStakingHighlight};
+`;
+
+const EmptyStateWrapper = styled.View`
+  justify-content: center;
+  align-items: center;
 `;
