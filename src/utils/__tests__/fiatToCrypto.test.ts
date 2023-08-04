@@ -19,29 +19,52 @@
 */
 import querystring from 'querystring';
 
-import { rampWidgetUrl } from 'utils/fiatToCrypto';
+import { onRamperWidgetUrl } from 'utils/fiatToCrypto';
+import { mockEtherspotAccount, mockSupportedAssets } from 'src/testUtils/jestSetup';
 
 describe('The fiatToCrypto.js utility module', () => {
-  describe('The rampWidgetUrl function', () => {
+  describe('The onRamperWidgetUrl function', () => {
     const rampStagingUrl = 'https://ri-widget-staging-kovan.firebaseapp.com/';
     const PILLAR = 'Pillar';
 
-    it('successfully returns a RAMP url for Etherspot account', () => {
-      const fakeEthAddress = '0x123';
-      const fakeFiatCurrency = '$';
-      const fakeFiatValue = '0.1';
-
-      const generatedUrl = rampWidgetUrl(fakeEthAddress, fakeFiatCurrency, fakeFiatValue, true);
+    it('successfully returns a ONRAMPER url for Etherspot account', () => {
+      const generatedUrl = onRamperWidgetUrl(mockEtherspotAccount, { ethereum: mockSupportedAssets });
 
       const expectedParams = {
         hostAppName: PILLAR,
-        fiatCurrency: fakeFiatCurrency,
-        fiatValue: fakeFiatValue,
-        hostApiKey: null,
-        userAddress: fakeEthAddress,
-        swapAsset: ['ETH', 'DAI', 'PLR', 'USDC', 'USDT', 'MATIC', 'MATIC_DAI', 'MATIC_USDC', 'xDAI', 'BSC_BNB'].join(
-          ',',
-        ),
+        apiKey: null,
+        defaultCrypto: 'ETH_ARBITRUM',
+        onlyCryptos: [
+          'ETH',
+          'DAI_ARBITRUM',
+          'DAI_ETHEREUM',
+          'DAI_GNOSIS',
+          'DAI_POLYGON',
+          'DAI_BSC',
+          'USDC_ARBITRUM',
+          'USDC_BSC',
+          'USDC_ETHEREUM',
+          'USDC_GNOSIS',
+          'USDC_POLYGON',
+          'USDT_ARBITRUM',
+          'USDT_ETHEREUM',
+          'USDT_GNOSIS',
+          'USDT_BSC',
+          'USDT_GNOSIS',
+          'MATIC_POLYGON',
+          'XDAI_GNOSIS',
+          'BNB_BSC',
+          'ETH_ARBITRUM',
+        ].join(','),
+        themeName: 'dark',
+        primaryColor: 'ffffffff',
+        secondaryColor: '3f3f43',
+        primaryTextColor: 'ffffff',
+        secondaryTextColor: 'ffffff',
+        containerColor: '141416',
+        cardColor: '272727',
+        borderRadius: '0.5rem',
+        widgetBorderRadius: '1rem',
       };
       const expectedUrl = `${rampStagingUrl}?${querystring.stringify(expectedParams)}`;
 
@@ -49,19 +72,22 @@ describe('The fiatToCrypto.js utility module', () => {
     });
 
     it('successfully returns a RAMP url for Archanova account', () => {
-      const fakeEthAddress = '0x123';
-      const fakeFiatCurrency = '$';
-      const fakeFiatValue = '0.1';
-
-      const generatedUrl = rampWidgetUrl(fakeEthAddress, fakeFiatCurrency, fakeFiatValue, false);
+      const generatedUrl = onRamperWidgetUrl(mockEtherspotAccount, { ethereum: mockSupportedAssets });
 
       const expectedParams = {
         hostAppName: PILLAR,
-        fiatCurrency: fakeFiatCurrency,
-        fiatValue: fakeFiatValue,
-        hostApiKey: null,
-        userAddress: fakeEthAddress,
-        swapAsset: 'ETH',
+        apiKey: null,
+        defaultCrypto: 'ETH',
+        onlyCryptos: 'ETH',
+        themeName: 'dark',
+        primaryColor: 'ffffffff',
+        secondaryColor: '3f3f43',
+        primaryTextColor: 'ffffff',
+        secondaryTextColor: 'ffffff',
+        containerColor: '141416',
+        cardColor: '272727',
+        borderRadius: '0.5rem',
+        widgetBorderRadius: '1rem',
       };
       const expectedUrl = `${rampStagingUrl}?${querystring.stringify(expectedParams)}`;
 

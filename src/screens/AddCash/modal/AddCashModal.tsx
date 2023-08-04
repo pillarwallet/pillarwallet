@@ -26,11 +26,12 @@ import { CHAIN_ID } from 'constants/chainConstants';
 
 // Utils
 import { fontStyles, spacing, borderRadiusSizes, appFont } from 'utils/variables';
-import { rampWidgetUrl, pelerinWidgetUrl } from 'utils/fiatToCrypto';
-import { chainFromChainId } from 'utils/chains';
+import { onRamperWidgetUrl, pelerinWidgetUrl } from 'utils/fiatToCrypto';
+import { useThemeColors } from 'utils/themes';
+import { getActiveAccount } from 'utils/accounts';
 
-// Services
-import etherspotService from 'services/etherspot';
+// Selectors
+import { useRootSelector, accountsSelector, useSupportedAssetsPerChain } from 'selectors';
 
 // Components
 import SlideModal from 'components/Modals/SlideModal';
@@ -38,6 +39,7 @@ import Text from 'components/core/Text';
 import Button from 'components/core/Button';
 import RadioButton from 'components/RadioButton';
 import Icon from 'components/core/Icon';
+import { Spacing } from 'components/legacy/Layout';
 
 interface IAddCashModal {
   setAddCashUrl?: (url: string) => void;
@@ -45,11 +47,18 @@ interface IAddCashModal {
 
 const AddCashModal: FC<IAddCashModal> = ({ setAddCashUrl }) => {
   const modalRef = useRef(null);
+  const colors = useThemeColors();
+  const supportedAssets = useSupportedAssetsPerChain();
+
+  const accounts = useRootSelector(accountsSelector);
+  const activeAccount = getActiveAccount(accounts);
+
   const { t, tRoot } = useTranslationWithPrefix('servicesContent.ramp.addCash.selectResidentModal');
   const { t: tPelerin } = useTranslationWithPrefix('servicesContent.ramp.addCash.pelerinWidget');
 
-  const [usResident, setUsResident] = useState(true);
-  const [nonUsResident, setNonUsResident] = useState(false);
+  const [isOnRamper, setIsOnRamper] = useState(true);
+  const [isPelerin, setIsPelerin] = useState(false);
+
   const [deployingAccount, setDeployingAccount] = useState(false);
   const [deployError, setDeployError] = useState('');
 
@@ -66,28 +75,26 @@ const AddCashModal: FC<IAddCashModal> = ({ setAddCashUrl }) => {
   };
 
   const openRamp = () => {
-    const chain = chainFromChainId[CHAIN_ID.XDAI];
-    const cryptoAddress = etherspotService.getAccountAddress(chain);
-    if (cryptoAddress === null) return;
+    if (activeAccount === null) return;
 
-    const url = rampWidgetUrl(cryptoAddress);
+    const url = onRamperWidgetUrl(activeAccount, supportedAssets);
     setAddCashUrl?.(url);
   };
 
-  const selectUsResident = () => {
-    setUsResident(true);
-    setNonUsResident(false);
+  const selectOnRamper = () => {
+    setIsOnRamper(true);
+    setIsPelerin(false);
   };
 
-  const selectNonUsResident = () => {
-    setNonUsResident(true);
-    setUsResident(false);
+  const selectMtPelerin = () => {
+    setIsPelerin(true);
+    setIsOnRamper(false);
   };
 
   const onSubmit = async () => {
     modalRef.current?.close();
-    if (usResident) openRamp();
-    else openPelerin();
+    if (isOnRamper) openRamp();
+    if (isPelerin) openPelerin();
   };
 
   return (
@@ -96,34 +103,41 @@ const AddCashModal: FC<IAddCashModal> = ({ setAddCashUrl }) => {
 
       {!!deployError && <WarningText>{deployError}</WarningText>}
 
-      <Container onPress={selectUsResident}>
-        <ContainerView isSelected={usResident}>
+      <Spacing h={spacing.small} />
+
+      <Container onPress={selectOnRamper}>
+        <ContainerView isSelected={isOnRamper}>
           <RowContainer>
-            <RadioButton visible={usResident} />
+            <RadioButton visible={isOnRamper} />
             <InfoContainer>
               <TitleContainer>
                 <RowContainer>
-                  <Icon name="ramp-network" />
-                  <Title style={usResident && styles.titleStyle}>{t('options.rampTitle')}</Title>
+                  <Icon name="on-ramper" />
+                  <Title style={isOnRamper && styles.titleStyle}>{t('options.onRamperTitle')}</Title>
                 </RowContainer>
-                <CountryText>{t('options.rampCountry')}</CountryText>
+                <CountryText>{t('options.onRamperCountry')}</CountryText>
               </TitleContainer>
-              <DescriptionText>{t('options.rampDescription')}</DescriptionText>
-              <FeeText>{`${tRoot('transactions.label.fees')}: 2.90%`}</FeeText>
+              <DescriptionText>{t('options.onRamperDescription')}</DescriptionText>
+              <RowContainer style={styles.rowStyle}>
+                <FeeText>{`${tRoot('transactions.label.fees')}: 2-4%`}</FeeText>
+                <Text color={colors.positive} variant="small" style={{ marginTop: spacing.small }}>
+                  {tRoot('servicesContent.ramp.addCash.selectNetworkModal.options.recommended')}
+                </Text>
+              </RowContainer>
             </InfoContainer>
           </RowContainer>
         </ContainerView>
       </Container>
 
-      <Container onPress={selectNonUsResident}>
-        <ContainerView isSelected={nonUsResident}>
+      <Container onPress={selectMtPelerin}>
+        <ContainerView isSelected={isPelerin}>
           <RowContainer>
-            <RadioButton visible={nonUsResident} />
+            <RadioButton visible={isPelerin} />
             <InfoContainer>
               <TitleContainer>
                 <RowContainer>
                   <Icon name="pelerin" />
-                  <Title style={nonUsResident && styles.titleStyle}>{t('options.pelerinTitle')}</Title>
+                  <Title style={isPelerin && styles.titleStyle}>{t('options.pelerinTitle')}</Title>
                 </RowContainer>
                 <CountryText>{t('options.pelerinCountry')}</CountryText>
               </TitleContainer>
@@ -155,6 +169,7 @@ const styles = {
   titleStyle: {
     fontFamily: appFont.medium,
   },
+  rowStyle: { justifyContent: 'space-between', width: '100%' },
 };
 
 const TouchableContainer = styled.TouchableOpacity`
@@ -170,7 +185,7 @@ const Container = styled(TouchableContainer)`
 `;
 
 const ContainerView = styled.View`
-  background-color: ${({ theme, isSelected }) => (isSelected ? theme.colors.basic60 : theme.colors.basic050)};
+  background-color: ${({ theme, isSelected }) => (isSelected ? theme.colors.basic070 : theme.colors.basic050)};
   padding: ${spacing.large}px;
   border-radius: ${borderRadiusSizes.medium}px;
   flex-direction: column;

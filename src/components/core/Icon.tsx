@@ -146,6 +146,7 @@ import PlusIcon from 'assets/icons/svg/24-add.svg';
 import MinusIcon from 'assets/icons/svg/24-minus.svg';
 import GreenUpIcon from 'assets/icons/svg/icon-up-green.svg';
 import RedDownIcon from 'assets/icons/svg/icon-down-red.svg';
+import OnRamper from 'assets/icons/svg/onramper.svg';
 
 // Assets: services icons
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
@@ -299,6 +300,7 @@ const components = {
   'dashboard-liquidity': DashboardLiquidity,
   'green-up': GreenUpIcon,
   'red-down': RedDownIcon,
+  'on-ramper': OnRamper,
 
   // Service icons
   binance: IconBinance,
