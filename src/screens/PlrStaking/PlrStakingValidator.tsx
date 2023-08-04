@@ -202,7 +202,6 @@ const PlrStakingValidator = () => {
 
   // Get Staking Fees
   const { feeInfo: stakingFeeInfo } = useTransactionsEstimate(CHAIN.ETHEREUM, stakingTransactions, true, null);
-  if (stakingFeeInfo) console.log('stakingFeeInfo', stakingFeeInfo);
 
   useEffect(() => {
     if (!stakingTransactions) return;
@@ -224,7 +223,6 @@ const PlrStakingValidator = () => {
         setStakingTransactions(stakeTransactions);
       } catch (e) {
         setCalculatingGas(false);
-        console.log('gettingGasFeeError', e);
         setStakingError(t('stakingFeeError'));
       }
     };
@@ -242,7 +240,6 @@ const PlrStakingValidator = () => {
       setSendData(data);
     };
 
-    console.log('refreshingData');
     resetExecuteParams();
     resetGeneratedData();
     getStakingFee();
