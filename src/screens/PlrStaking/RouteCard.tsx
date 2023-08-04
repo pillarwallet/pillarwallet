@@ -232,7 +232,7 @@ const RouteCard: FC<IRouteCard> = ({
         </RouteBreakdownWrapper>
       )}
 
-      {!bridgeRoute && (
+      {!bridgeRoute && swapData && (
         <RouteBreakdownWrapper>
           <Circle active={stakingSteps?.isSwapped} />
 
@@ -247,15 +247,6 @@ const RouteCard: FC<IRouteCard> = ({
               <RouteInfoRow>
                 <MainText>{`${formattedFromAmount} → ${formattedToAmount}`}</MainText>
               </RouteInfoRow>
-
-              {/* <RouteInfoRow>
-                <GasPriceWrapper>
-                  <SubText>
-                    <HighlightText>{`${t('estFee')} `}</HighlightText>
-                    {feeEtherValueBn && formatFiatValue(getFiatValue(feeEtherValueBn, gasFeeAsset.address), currency)}
-                  </SubText>
-                </GasPriceWrapper>
-              </RouteInfoRow> */}
             </RouteInfoContainer>
           </RouteBreakdownContainer>
         </RouteBreakdownWrapper>
