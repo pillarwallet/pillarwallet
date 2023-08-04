@@ -344,7 +344,7 @@ const PlrStaking = () => {
               {plrBalances.map((bal) => {
                 const { titleShort } = chainsConfig[bal.chain];
 
-                const disabled = bal?.assetBalance < MIN_PLR_STAKE_AMOUNT || !isNaN(bal.assetBalance);
+                const disabled = bal?.assetBalance < MIN_PLR_STAKE_AMOUNT || isNaN(bal.assetBalance);
 
                 return (
                   <BalanceItem onClick={() => selectChain(bal.chain)} disabled={disabled}>
@@ -380,7 +380,7 @@ const PlrStaking = () => {
               title={t('button.stake')}
               onPress={onStake}
               size="large"
-              disabled={!accountType || !selectedChain || !stakingEnabled}
+              disabled={!accountType || !selectedChain}
             />
           )}
 

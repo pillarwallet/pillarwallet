@@ -37,6 +37,7 @@ import type { TransactionPayload } from 'models/Transaction';
 // Selectors
 import { useAccounts, useActiveAccount } from 'selectors';
 import { useWalletAssetBalance } from 'selectors/balances';
+import etherspotService from 'services/etherspot';
 
 // Utils
 import { spacing } from 'utils/variables';
@@ -52,7 +53,6 @@ import { addressesEqual, isNativeAsset } from 'utils/assets';
 import { truncateDecimalPlaces } from 'utils/bigNumber';
 import {
   buildStakingTransactions,
-  estimateTransactions,
   getBalanceForAddress,
   getStakedToken,
   getStakingContractInfo,
@@ -63,7 +63,6 @@ import {
   validatePlrStakeAmount,
 } from 'utils/plrStakingHelper';
 import { mapTransactionsToTransactionPayload, showTransactionRevertedToast } from 'utils/transactions';
-import { buildEtherspotTxFeeInfo } from 'utils/etherspot';
 import { fontStyles } from 'utils/variables';
 import { truncateAmount, reportErrorLog } from 'utils/common';
 import {
@@ -71,13 +70,13 @@ import {
   isKeyBasedAccount,
   getActiveAccountAddress,
   getEtherspotAccountAddress,
-  findKeyBasedAccount,
-  findFirstArchanovaAccount,
-  getAccountAddress,
 } from 'utils/accounts';
+import { formatTokenValue } from 'utils/format';
 
 // Hooks
 import { useTransactionFeeCheck } from 'hooks/transactions';
+import { useTransactionsEstimate } from 'hooks/transactions';
+import useInterval from 'hooks/useInterval';
 
 // Components
 import { Container, Content } from 'components/layout/Layout';
@@ -95,7 +94,6 @@ import AssetInput from './AssetInput';
 import BridgeRouteCard from './BridgeRouteCard';
 import SwapRouteCard from './SwapRouteCard';
 import StakeRouteCard from './StakeRouteCard';
-import useInterval from 'hooks/useInterval';
 import { ISendData, IStakingSteps } from './RouteCard';
 
 const BALANCE_CHECK_INTERVAL = 5000;
@@ -145,11 +143,12 @@ const PlrStakingValidator = () => {
   const [isStaking, setIsStaking] = useState(false);
   const [isStaked, setIsStaked] = useState(false);
 
-  // Form values
+  // Execute values
   const [startingPlr, setStartingPlr] = useState(null);
   const [lockedStakingAmount, setLockedStakingAmount] = useState(null);
   const [sendTxPayload, setSendTxPayload] = useState<TransactionPayload>(null);
   const [bridgeTxPayload, setBridgeTxPayload] = useState<TransactionPayload>(null);
+  const [stakingTransactions, setStakingTransactions] = useState<any[]>(null);
   const [stakeTxPayload, setStakeTxPayload] = useState<TransactionPayload>(null);
   const [stakingError, setStakingError] = useState<string>(null);
   const [startingStkPlr, setStartingStkPlr] = useState<BigNumber>(null);
@@ -201,13 +200,29 @@ const PlrStakingValidator = () => {
     if (!!asset) setPlrToken(asset);
   }, [toOptions]);
 
+  // Get Staking Fees
+  const { feeInfo: stakingFeeInfo } = useTransactionsEstimate(CHAIN.ETHEREUM, stakingTransactions, true, null);
+
   useEffect(() => {
-    const getFee = async () => {
+    if (!stakingTransactions) return;
+    setCalculatingGas(false);
+
+    if (stakingFeeInfo?.fee) {
+      setTxFeeInfo(stakingFeeInfo.fee.toString());
+      setStakingError(null);
+    } else {
+      setStakingError(t('stakingFeeError'));
+    }
+  }, [stakingFeeInfo]);
+
+  useEffect(() => {
+    const getStakingFee = async () => {
       try {
-        const { transactions, stakeTransactions } = await buildStakeTransactions();
-        const allTransactions = isBridgeTransaction ? [...stakeTransactions] : [...transactions, ...stakeTransactions];
-        await getFeeInfo(allTransactions);
+        setCalculatingGas(true);
+        const { stakeTransactions } = await buildStakeTransactions();
+        setStakingTransactions(stakeTransactions);
       } catch (e) {
+        setCalculatingGas(false);
         setStakingError(t('stakingFeeError'));
       }
     };
@@ -225,9 +240,11 @@ const PlrStakingValidator = () => {
       setSendData(data);
     };
 
-    getFee();
+    resetExecuteParams();
+    resetGeneratedData();
+    getStakingFee();
     getSendData();
-  }, [debouncedStkPlrAmount]);
+  }, [debouncedStkPlrAmount, selectedToken, offerData]);
 
   // Check if PLR balances have been received
   useInterval(
@@ -310,15 +327,20 @@ const PlrStakingValidator = () => {
     if (lockedStakingAmount) setLockedStakingAmount(null);
   };
 
+  const resetGeneratedData = () => {
+    if (stakingTransactions) setStakingTransactions(null);
+    if (showFeeError) setShowFeeError(false);
+    if (stakingError) setStakingError(null);
+    if (txFeeInfo) setTxFeeInfo(null);
+    if (sendData) setSendData(null);
+  };
+
   const resetForm = (resetValue = false) => {
     resetExecuteParams();
+    resetGeneratedData();
     if (resetValue && !!value) setValue(null);
     if (offerData) setOfferData(null);
     if (stkPlrAmount) setStkPlrAmount(null);
-    if (showFeeError) setShowFeeError(false);
-    if (txFeeInfo) setTxFeeInfo(null);
-    if (stakingError) setStakingError(null);
-    if (sendData) setSendData(null);
   };
 
   const onValueChange = (newValue: string) => {
@@ -355,21 +377,6 @@ const PlrStakingValidator = () => {
     return { transactions, stakeTransactions: stakeTransactions.transactions };
   };
 
-  const getFeeInfo = async (transactions: any[]) => {
-    setCalculatingGas(true);
-    const estimate = await estimateTransactions(transactions, gasFeeAsset);
-
-    if (!estimate?.errorMessage) {
-      const feeInfo = await buildEtherspotTxFeeInfo(estimate.estimation);
-      if (feeInfo?.fee) setTxFeeInfo(feeInfo.fee);
-    } else {
-      setTxFeeInfo(null);
-      setStakingError(t('stakingFeeError'));
-    }
-
-    setCalculatingGas(false);
-  };
-
   const submitStakingTransactions = async () => {
     if (!stakeTxPayload) return;
 
@@ -394,6 +401,7 @@ const PlrStakingValidator = () => {
 
   const submitTransactions = async () => {
     const { transactions, stakeTransactions } = await buildStakeTransactions();
+    setStakingTransactions(stakingTransactions);
 
     if (!stakeTransactions?.length) return;
 
@@ -543,6 +551,8 @@ const PlrStakingValidator = () => {
     isStaked,
   };
 
+  const formattedFromAmount = formatTokenValue(value ?? 0, selectedToken?.symbol ?? '', { decimalPlaces: 0 }) ?? '';
+
   return (
     <Container>
       <HeaderBlock
@@ -576,7 +586,7 @@ const PlrStakingValidator = () => {
               asset={plrToken}
               chain={stkPlrToken.chain}
               symbolOverride={stkPlrToken.symbol}
-              walletType={accountType}
+              walletType={accountType === WalletType.KEYBASED ? WalletType.KEYBASED : WalletType.ETHERSPOT}
               referenceDisableMax={true}
               ref={stakeRef}
               disabled={true}
@@ -601,7 +611,7 @@ const PlrStakingValidator = () => {
 
         {showLoading && (
           <>
-            <Spacing h={48} />
+            <Spacing h={30} />
             <EmptyStateWrapper>
               <Spinner size={20} />
             </EmptyStateWrapper>
@@ -665,6 +675,7 @@ const PlrStakingValidator = () => {
             setOfferData={setOfferData}
             setStkPlrAmount={setStkPlrAmount}
             onFeeInfo={setSwapFeeInfo}
+            stakingTransactions={stakingTransactions}
             stakeFeeInfo={txFeeInfo}
             stakingSteps={stakingSteps}
             sendData={sendData}
@@ -676,6 +687,7 @@ const PlrStakingValidator = () => {
             plrToken={plrToken}
             value={value}
             chain={selectedChain}
+            formattedFromAmount={formattedFromAmount}
             stakeFeeInfo={txFeeInfo}
             stakeGasFeeAsset={gasFeeAsset}
             stakingSteps={stakingSteps}

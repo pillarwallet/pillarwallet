@@ -78,15 +78,13 @@ const BridgeRouteCard: FC<IBridgeRouteCard> = ({
   stakingSteps,
   sendData,
 }) => {
-  const { t } = useTranslation();
   const fiatCurrency = useFiatCurrency();
   const chainsConfig = useChainsConfig();
 
   const txData = useMemo(() => {
     if (!buildTransactionData || !plrToken) return null;
-    const { approvalTransactionData, transactionData } = buildTransactionData;
-    if (!approvalTransactionData) return [transactionData];
-    return [approvalTransactionData, transactionData];
+    const { transactions } = buildTransactionData;
+    return transactions ?? [];
   }, [buildTransactionData]);
 
   const offer = useMemo(() => {
