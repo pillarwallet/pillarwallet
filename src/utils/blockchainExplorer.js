@@ -49,7 +49,6 @@ type ViewableTransaction = {
 
 export async function viewTransactionOnBlockchain(chain: Chain, transaction: ViewableTransaction) {
   const { hash, batchHash, fromAccount } = transaction;
-  
   if (!hash && !batchHash) {
     Toast.show({
       message: t('toast.cannotFindTransactionHash'),
@@ -85,7 +84,7 @@ export async function viewTransactionOnBlockchain(chain: Chain, transaction: Vie
       routeName: WALLETCONNECT_BROWSER,
       params: {
         url: explorerLink,
-        title: t('title.chain_explorer', { title: ((chain === CHAIN.XDAI)) ? "Gnosis" : upperFirst(chain)}),
+        title: t('title.chain_explorer', { title: ((chain === CHAIN.XDAI)) ? 'Gnosis' : upperFirst(chain) }),
         isBlockchainExplorer: true,
       },
     }),
