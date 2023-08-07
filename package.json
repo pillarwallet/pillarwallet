@@ -77,7 +77,7 @@
     "dns.js": "^1.0.1",
     "eth-sig-util": "^3.0.0",
     "ethereumjs-util": "^7.0.8",
-    "ethers": "5.1.4",
+    "ethers": "5.7.2",
     "etherspot": "1.43.7",
     "events": "^1.0.0",
     "fast-text-encoding": "^1.0.6",
