@@ -287,6 +287,7 @@ const RouteCard: FC<IRouteCard> = ({
                   const destinationChain = chainFromChainId[includedStepAction.toChainId];
 
                   const { titleShort: sourceNetworkName } = chainsConfig[sourceChain];
+                  const { titleShort: destinationNetworkName } = chainsConfig[destinationChain];
 
                   if (includedStep.type === 'swap') {
                     return (
@@ -321,7 +322,7 @@ const RouteCard: FC<IRouteCard> = ({
                             {t('bridgeFrom', {
                               title: includedToolDetails.name,
                               networkName: sourceNetworkName,
-                              destinationNetworkName: destinationChain,
+                              destinationNetworkName,
                             })}
                           </SubText>
                           <SubText>
@@ -470,6 +471,7 @@ const RouteInfoRow = styled.View`
 
 const RouteInfoCol = styled.View`
   display: flex;
+  flex: 1;
   flex-direction: column;
 `;
 
