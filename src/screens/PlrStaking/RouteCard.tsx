@@ -27,7 +27,7 @@ import { Route } from '@lifi/sdk';
 // Constants
 import { OFFERS } from 'constants/exchangeConstants';
 import { CHAIN } from 'constants/chainConstantsTs';
-import { WalletType } from 'constants/plrStakingConstants';
+import { WalletType, stkPlrToken } from 'constants/plrStakingConstants';
 import { ADDRESS_ZERO } from 'constants/assetsConstants';
 
 // Utils
@@ -167,6 +167,12 @@ const RouteCard: FC<IRouteCard> = ({
     return totalFiatValue;
   };
 
+  const appendPlrSymbol = (value: string) => {
+    console.log('appendPlrSymbol', plrToken?.symbol);
+
+    return `${value} ${plrToken?.symbol}`;
+  };
+
   return (
     <RouteWrapper>
       <RouteContainer onPress={() => onSelectOffer?.(offer, feeInfo)} disabled={disabled || !onSelectOffer}>
@@ -174,7 +180,7 @@ const RouteCard: FC<IRouteCard> = ({
 
         <RouteInfoContainer>
           <RouteInfoRow>
-            <MainText>{formattedToAmount}</MainText>
+            <MainText>{`${formattedToAmount} ${stkPlrToken.symbol}`}</MainText>
             <MainText highlighted>{` ${t('on')} ${networkName}`}</MainText>
           </RouteInfoRow>
 
@@ -245,7 +251,7 @@ const RouteCard: FC<IRouteCard> = ({
               </RouteInfoRow>
 
               <RouteInfoRow>
-                <MainText>{`${formattedFromAmount} → ${formattedToAmount}`}</MainText>
+                <MainText>{`${formattedFromAmount} → ${appendPlrSymbol(formattedToAmount)}`}</MainText>
               </RouteInfoRow>
             </RouteInfoContainer>
           </RouteBreakdownContainer>
@@ -292,7 +298,9 @@ const RouteCard: FC<IRouteCard> = ({
                         </IconWrapper>
                         <Spacing w={spacing.mediumLarge} />
                         <RouteInfoCol>
-                          <SubText>{t('swapVia', { title: includedToolDetails.name, sourceNetworkName })}</SubText>
+                          <SubText>
+                            {t('swapVia', { title: includedToolDetails.name, networkName: sourceNetworkName })}
+                          </SubText>
                           <SubText>
                             {`${formatAmountDisplay(fromAssetAmount)} ${
                               includedStepAction.fromToken.symbol
@@ -314,8 +322,8 @@ const RouteCard: FC<IRouteCard> = ({
                           <SubText>
                             {t('bridgeFrom', {
                               title: includedToolDetails.name,
-                              sourceNetworkName,
-                              destinationChain,
+                              networkName: sourceNetworkName,
+                              destinationNetworkName: destinationChain,
                             })}
                           </SubText>
                           <SubText>
@@ -348,7 +356,7 @@ const RouteCard: FC<IRouteCard> = ({
 
           <RouteInfoContainer>
             <RouteInfoRow>
-              <MainText>{t('stakeOn', { formattedAmount: formattedToAmount, networkName })}</MainText>
+              <MainText>{t('stakeOn', { formattedAmount: appendPlrSymbol(formattedToAmount), networkName })}</MainText>
             </RouteInfoRow>
             <RouteInfoRow>
               <GasPriceWrapper>

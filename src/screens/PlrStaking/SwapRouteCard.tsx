@@ -24,7 +24,7 @@ import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Utils
-import { formatTokenValue } from 'utils/format';
+import { formatTokenValue, formatTokenValueWithoutSymbol } from 'utils/format';
 import { fontStyles } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
 
@@ -90,7 +90,7 @@ const SwapRouteCard: FC<ISwapRouteCard> = ({
     setStkPlrAmount(offers[0]?.toAmount || null);
   }, []);
 
-  const formattedToAmount = formatTokenValue(selectedOffer?.toAmount, 'stkPLR', { decimalPlaces: 0 }) ?? '';
+  const formattedToAmount = formatTokenValueWithoutSymbol(selectedOffer?.toAmount, null, { decimalPlaces: 0 }) ?? '';
 
   const formattedFromAmount =
     formatTokenValue(selectedOffer?.fromAmount, selectedOffer?.fromAsset.symbol, { decimalPlaces: 0 }) ?? '';
@@ -139,7 +139,7 @@ const SwapRouteCard: FC<ISwapRouteCard> = ({
         !stakingSteps?.processing &&
         (!selectedOffer || showMore) &&
         offers.map((offer, i) => {
-          const formattedToAmount = formatTokenValue(offer.toAmount, 'stkPLR', { decimalPlaces: 0 }) ?? '';
+          const formattedToAmount = formatTokenValueWithoutSymbol(offer.toAmount, null, { decimalPlaces: 0 }) ?? '';
 
           const formattedFromAmount =
             formatTokenValue(offer.fromAmount, offer.fromAsset.symbol, { decimalPlaces: 0 }) ?? '';
