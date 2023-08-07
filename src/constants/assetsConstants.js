@@ -74,6 +74,12 @@ const OBTC = 'OBTC';
 const wBTC = 'wBTC'; // testnet
 const testBTC = 'testBTC'; // testnet
 
+export const ETHEREUM = 'ETHEREUM';
+export const POLYGON = 'POLYGON';
+export const ARBITRUM = 'ARBITRUM';
+export const GNOSIS = 'GNOSIS';
+export const BSC = 'BSC';
+
 export const ASSET_TYPES = {
   TOKEN: ('TOKENS': 'TOKENS'),
   COLLECTIBLE: ('COLLECTIBLES': 'COLLECTIBLES'),

@@ -29,7 +29,7 @@ import { BRIDGE_TAB, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationCons
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
-import { useIsExchangeAvailable, useFiatCurrency, accountsSelector, useRootSelector } from 'selectors';
+import { useIsExchangeAvailable, accountsSelector, useRootSelector, useSupportedAssetsPerChain } from 'selectors';
 
 // Components
 import FloatingButtons from 'components/FloatingButtons';
@@ -41,9 +41,9 @@ import { firebaseRemoteConfig } from 'services/firebase';
 import { ETHERSPOT_RAMP_CURRENCY_TOKENS } from 'configs/rampConfig';
 
 // Utils
-import { rampWidgetUrl, pelerinWidgetUrl } from 'utils/fiatToCrypto';
+import { onRamperWidgetUrl, pelerinWidgetUrl } from 'utils/fiatToCrypto';
 import { showServiceLaunchErrorToast } from 'utils/inAppBrowser';
-import { getActiveAccount, isEtherspotAccount } from 'utils/accounts';
+import { getActiveAccount } from 'utils/accounts';
 
 const AnimatedFloatingActions = ({ assetData }) => {
   const navigation = useNavigation();
@@ -54,9 +54,9 @@ const AnimatedFloatingActions = ({ assetData }) => {
 
   const { contractAddress, token, chain } = assetData;
 
-  const fiatCurrency = useFiatCurrency();
   const accounts = useRootSelector(accountsSelector);
   const activeAccount = getActiveAccount(accounts);
+  const supportedAssets = useSupportedAssetsPerChain();
 
   const flipAnimation = useRef(new Animated.Value(0)).current;
   let flipRotation = 0;
@@ -113,7 +113,7 @@ const AnimatedFloatingActions = ({ assetData }) => {
   };
 
   const buyOnRamp = async () => {
-    const url = rampWidgetUrl(contractAddress, fiatCurrency, null, isEtherspotAccount(activeAccount));
+    const url = onRamperWidgetUrl(activeAccount, supportedAssets);
     await openInAppBrowser(url);
   };
 

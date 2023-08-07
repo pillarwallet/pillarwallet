@@ -54,7 +54,7 @@ const envVars = {
     NETWORK_PROVIDER: 'homestead',
     COLLECTIBLES_NETWORK: 'homestead',
     OPEN_SEA_API: 'https://api.opensea.io/api/v1',
-    RAMPNETWORK_WIDGET_URL: 'https://buy.ramp.network/',
+    ON_RAMPER_WIDGET_URL: 'https://buy.onramper.com/',
     PELERIN_WIDGET_URL: 'https://buy.mtpelerin.com/',
     NEWSLETTER_SUBSCRIBE_URL:
       'https://pillarproject.us14.list-manage.com/subscribe/post-json?u=0056162978ccced9e0e2e2939&amp;id=637ab55cf8',
@@ -87,7 +87,7 @@ const envVars = {
     NETWORK_PROVIDER: 'kovan',
     COLLECTIBLES_NETWORK: 'rinkeby',
     OPEN_SEA_API: 'https://rinkeby-api.opensea.io/api/v1',
-    RAMPNETWORK_WIDGET_URL: 'https://ri-widget-staging-kovan.firebaseapp.com/',
+    ON_RAMPER_WIDGET_URL: 'https://ri-widget-staging-kovan.firebaseapp.com/',
     PELERIN_WIDGET_URL: 'https://buy.mtpelerin.com/',
     NEWSLETTER_SUBSCRIBE_URL:
       'https://pillarproject.us14.list-manage.com/subscribe/post-json?u=0056162978ccced9e0e2e2939&amp;id=637ab55cf8',

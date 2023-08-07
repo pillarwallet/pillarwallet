@@ -44,7 +44,7 @@ const RadioButton = ({ visible, style, type }) => {
   return (
     <>
       {visible && <RadioIcon name={isLightTheme() ? 'selected-radio-button' : 'checked-radio'} />}
-      {!visible && <RadioIcon name={isLightTheme() ? 'radio-button' : 'unchecked-radio'} />}
+      {!visible && <RadioIcon name={isLightTheme() ? 'radio-button' : 'radio-button-icon'} />}
     </>
   );
 };
