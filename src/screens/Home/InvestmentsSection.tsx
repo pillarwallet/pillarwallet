@@ -93,7 +93,7 @@ const InvestmentsSection: FC<IInvestmentsSection> = () => {
 
   const { plrStakingBg } = images(theme);
 
-  if (!stakingEnabled || true) return null;
+  if (!stakingEnabled) return null;
 
   return (
     <>
