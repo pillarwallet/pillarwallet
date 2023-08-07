@@ -39,6 +39,7 @@ import { WALLETCONNECT_BROWSER } from 'constants/navigationConstants';
 // Types
 import type { Account } from 'models/Account';
 import type { Chain } from 'models/Chain';
+import { CHAIN } from 'constants/chainConstants';
 
 type ViewableTransaction = {
   hash: ?string,
@@ -48,7 +49,7 @@ type ViewableTransaction = {
 
 export async function viewTransactionOnBlockchain(chain: Chain, transaction: ViewableTransaction) {
   const { hash, batchHash, fromAccount } = transaction;
-
+  
   if (!hash && !batchHash) {
     Toast.show({
       message: t('toast.cannotFindTransactionHash'),
@@ -84,7 +85,7 @@ export async function viewTransactionOnBlockchain(chain: Chain, transaction: Vie
       routeName: WALLETCONNECT_BROWSER,
       params: {
         url: explorerLink,
-        title: t('title.chain_explorer', { title: upperFirst(chain) }),
+        title: t('title.chain_explorer', { title: ((chain === CHAIN.XDAI)) ? "Gnosis" : upperFirst(chain)}),
         isBlockchainExplorer: true,
       },
     }),
