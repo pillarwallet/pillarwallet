@@ -24,7 +24,7 @@ import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Utils
-import { formatTokenValue } from 'utils/format';
+import { formatTokenValue, formatTokenValueWithoutSymbol } from 'utils/format';
 import { fontStyles } from 'utils/variables';
 import { useChainsConfig } from 'utils/uiConfig';
 
@@ -36,7 +36,7 @@ import type { Chain } from 'models/Chain';
 // Components
 import Text from 'components/core/Text';
 import { Spacing } from 'components/layout/Layout';
-import RouteCard from './RouteCard';
+import RouteCard, { ISendData, IStakingSteps, ISwapData } from './RouteCard';
 
 interface ISwapRouteCard {
   value?: BigNumber;
@@ -51,8 +51,10 @@ interface ISwapRouteCard {
   setStkPlrAmount?: (value: BigNumber) => void;
   setOfferData?: (offer: any) => void;
   onFeeInfo?: (feeInfo: TransactionFeeInfo | null) => void;
+  stakingTransactions?: any[];
   stakeFeeInfo: any;
-  stakeGasFeeAsset: Asset | AssetOption;
+  stakingSteps?: IStakingSteps;
+  sendData?: ISendData;
 }
 
 const SwapRouteCard: FC<ISwapRouteCard> = ({
@@ -68,8 +70,10 @@ const SwapRouteCard: FC<ISwapRouteCard> = ({
   setOfferData,
   setStkPlrAmount,
   onFeeInfo,
+  stakingTransactions,
   stakeFeeInfo,
-  stakeGasFeeAsset,
+  stakingSteps,
+  sendData,
 }) => {
   const { t } = useTranslationWithPrefix('plrStaking.validator');
 
@@ -86,7 +90,7 @@ const SwapRouteCard: FC<ISwapRouteCard> = ({
     setStkPlrAmount(offers[0]?.toAmount || null);
   }, []);
 
-  const formattedToAmount = formatTokenValue(selectedOffer?.toAmount, 'stkPLR', { decimalPlaces: 0 }) ?? '';
+  const formattedToAmount = formatTokenValueWithoutSymbol(selectedOffer?.toAmount, null, { decimalPlaces: 0 }) ?? '';
 
   const formattedFromAmount =
     formatTokenValue(selectedOffer?.fromAmount, selectedOffer?.fromAsset.symbol, { decimalPlaces: 0 }) ?? '';
@@ -97,9 +101,15 @@ const SwapRouteCard: FC<ISwapRouteCard> = ({
     setOfferData?.(offer);
     onFeeInfo?.(offer?.feeInfo);
     setSelectedOfferProvider(offer.provider);
+    setShowMore(false);
   };
 
   if (!offers?.length) return null;
+
+  const swapData: ISwapData = {
+    swapTransactions: selectedOffer?.transactions ?? [],
+    stakeTransactions: stakingTransactions ?? [],
+  };
 
   return (
     <>
@@ -115,24 +125,32 @@ const SwapRouteCard: FC<ISwapRouteCard> = ({
             formattedToAmount={formattedToAmount}
             networkName={networkName}
             stakeFeeInfo={stakeFeeInfo}
-            stakeGasFeeAsset={stakeGasFeeAsset}
             provider={selectedOfferProvider}
             gasFeeAsset={gasFeeAsset}
             transactions={selectedOffer?.transactions}
+            stakingSteps={stakingSteps}
+            sendData={sendData}
+            swapData={swapData}
           />
         </>
       )}
 
       {!disabled &&
+        !stakingSteps?.processing &&
         (!selectedOffer || showMore) &&
         offers.map((offer, i) => {
-          const formattedToAmount = formatTokenValue(offer.toAmount, 'stkPLR', { decimalPlaces: 0 }) ?? '';
+          const formattedToAmount = formatTokenValueWithoutSymbol(offer.toAmount, null, { decimalPlaces: 0 }) ?? '';
 
           const formattedFromAmount =
             formatTokenValue(offer.fromAmount, offer.fromAsset.symbol, { decimalPlaces: 0 }) ?? '';
 
           if (!selectedOffer && !showMore && i !== 0) return null;
           if (!offer?.provider || offer.provider === selectedOfferProvider) return null;
+
+          const swapData: ISwapData = {
+            swapTransactions: offer?.transactions,
+            stakeTransactions: stakingTransactions,
+          };
           return (
             <>
               <Spacing h={8} />
@@ -148,9 +166,10 @@ const SwapRouteCard: FC<ISwapRouteCard> = ({
                 provider={offer?.provider}
                 onSelectOffer={onSelectOffer}
                 stakeFeeInfo={stakeFeeInfo}
-                stakeGasFeeAsset={stakeGasFeeAsset}
                 gasFeeAsset={gasFeeAsset}
                 transactions={offer?.transactions}
+                sendData={sendData}
+                swapData={swapData}
               />
             </>
           );
@@ -170,74 +189,6 @@ const SwapRouteCard: FC<ISwapRouteCard> = ({
 };
 
 export default SwapRouteCard;
-
-const EmptyStateWrapper = styled.View`
-  justify-content: center;
-  align-items: center;
-`;
-
-const RouteText = styled(Text)`
-  ${fontStyles.big};
-  color: ${({ theme }) => theme.colors.basic010};
-`;
-
-// Routes
-const RouteWrapper = styled.View`
-  flex-direction: column;
-`;
-
-const RouteContainer = styled.View`
-  margin: 0 0 8px;
-  padding: 20px;
-  border-radius: 20px;
-  background-color: ${({ theme }) => theme.colors.basic050};
-
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-`;
-
-const IconWrapper = styled.View`
-  align-items: center;
-  justify-content: center;
-`;
-
-const RouteInfoWrapper = styled.View`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  padding-left: 16px;
-  justify-content: center;
-`;
-
-const RouteInfoRow = styled.View`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const MainText = styled(Text).attrs((props: { highlighted?: boolean }) => props)`
-  ${fontStyles.medium};
-
-  color: ${({ theme, highlighted }) => (highlighted ? theme.colors.plrStakingHighlight : theme.colors.basic000)};
-`;
-
-const SubText = styled(Text).attrs((props: { highlighted?: boolean }) => props)`
-  ${fontStyles.regular};
-
-  color: ${({ theme, highlighted }) => (highlighted ? theme.colors.plrStakingHighlight : theme.colors.basic000)};
-`;
-
-const RadioButtonWrapper = styled.View`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const HighlightText = styled(Text)`
-  color: ${({ theme }) => theme.colors.plrStakingHighlight};
-`;
 
 const ShowMoreButton = styled.TouchableOpacity`
   display: flex;

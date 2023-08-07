@@ -24,6 +24,7 @@ import isEmpty from 'lodash.isempty';
 // constants
 import { ETH } from 'constants/assetsConstants';
 import { ERC721_TRANSFER_METHODS, ERROR_TYPE } from 'constants/transactionsConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // utils
 import { getEthereumProvider, parseTokenBigNumberAmount, logBreadcrumb, addressAsKey } from 'utils/common';
@@ -38,11 +39,13 @@ import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
 
 // services
 import { getExchangeTokenPrices } from 'services/rates';
+import etherspotService from 'services/etherspot';
 
 // types
 import type { Asset } from 'models/Asset';
 import type { Erc721TransferMethod } from 'models/Transaction';
 import type { RatesByAssetAddress } from 'models/Rates';
+import type { Chain } from 'models/Chain';
 
 type Address = string;
 
@@ -83,9 +86,15 @@ type ETHTransferOptions = {
   data?: string,
 };
 
-export const encodeContractMethod = (contractAbi: string | Object[], method: string, params: any): string => {
-  const contractInterface = new ethers.utils.Interface(contractAbi);
-  return contractInterface.encodeFunctionData(method, params);
+export const encodeContractMethod = (
+  contractAbi: Object[],
+  method: string,
+  params: any,
+  contractAddress: string,
+  chain?: Chain,
+): string => {
+  const contract: any = etherspotService.getContract(chain ?? CHAIN.ETHEREUM, contractAbi, contractAddress);
+  return contract?.interface.encodeFunctionData(method, params);
 };
 
 function contractHasMethod(contractCode: string, encodedMethodName: string): boolean {
@@ -110,7 +119,7 @@ export async function transferERC20(options: ERC20TransferOptions) {
 
   if (!data) {
     try {
-      data = encodeContractMethod(ERC20_CONTRACT_ABI, 'transfer', [to, contractAmount]);
+      data = encodeContractMethod(ERC20_CONTRACT_ABI, 'transfer', [to, contractAmount], to);
     } catch (e) {
       //
     }
@@ -221,7 +230,7 @@ export const buildERC721TransactionData = async (
   }
 
   // $FlowFixMe – asks for contractAbi to be surely initialized
-  return encodeContractMethod(contractAbi, contractTransferMethod, params);
+  return encodeContractMethod(contractAbi, contractTransferMethod, params, contractAddress);
 };
 
 export async function transferERC721(options: ERC721TransferOptions) {
@@ -339,7 +348,7 @@ export async function calculateGasEstimate(transaction: Object) {
        * so want to check if it's also not ETH send flow
        */
       const contractAmount = parseTokenBigNumberAmount(amount, defaultDecimals);
-      data = encodeContractMethod(ERC20_CONTRACT_ABI, 'transfer', [to, contractAmount]);
+      data = encodeContractMethod(ERC20_CONTRACT_ABI, 'transfer', [to, contractAmount], to);
       to = contractAddress;
     }
   } catch (e) {
@@ -359,5 +368,5 @@ export async function calculateGasEstimate(transaction: Object) {
 
 export const buildERC20ApproveTransactionData = (spenderAddress: string, amount: string, decimals: number): string => {
   const contractAmount = parseTokenBigNumberAmount(amount, decimals);
-  return encodeContractMethod(ERC20_CONTRACT_ABI, 'approve', [spenderAddress, contractAmount]);
+  return encodeContractMethod(ERC20_CONTRACT_ABI, 'approve', [spenderAddress, contractAmount], spenderAddress);
 };

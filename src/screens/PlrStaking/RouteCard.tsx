@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 import { BigNumber, ethers } from 'ethers';
@@ -27,6 +27,8 @@ import { Route } from '@lifi/sdk';
 // Constants
 import { OFFERS } from 'constants/exchangeConstants';
 import { CHAIN } from 'constants/chainConstantsTs';
+import { WalletType, stkPlrToken } from 'constants/plrStakingConstants';
+import { ADDRESS_ZERO } from 'constants/assetsConstants';
 
 // Utils
 import { fontStyles, spacing } from 'utils/variables';
@@ -52,12 +54,38 @@ import TokenIcon from 'components/display/TokenIcon';
 import RadioButton from 'components/RadioButton';
 import Text from 'components/core/Text';
 import { Spacing } from 'components/legacy/Layout';
+import Spinner from 'components/Spinner';
+
+export interface IStakingSteps {
+  processing: boolean;
+  isSending: boolean;
+  isSent: boolean;
+  isBridging: boolean;
+  isBridged: boolean;
+  isSwapping: boolean;
+  isSwapped: boolean;
+  isStaking: boolean;
+  isStaked: boolean;
+}
+
+export interface ISendData {
+  sourceWallet: WalletType;
+  formattedValue: string;
+  asset: Asset | AssetOption;
+  feeInfo?: any;
+}
+
+export interface ISwapData {
+  swapTransactions: any[];
+  stakeTransactions: any[];
+}
 
 interface IRouteCard {
   offer?: any;
   selected?: boolean;
   chain?: Chain;
   plrToken?: AssetOption;
+  sourceWallet?: WalletType;
   formattedToAmount?: string;
   formattedFromAmount?: string;
   networkName?: string;
@@ -66,10 +94,12 @@ interface IRouteCard {
   onSelectOffer?: (offer: any, feeInfo: TransactionFeeInfo | null) => void;
   disabled?: boolean;
   stakeFeeInfo: any;
-  stakeGasFeeAsset: Asset | AssetOption;
   transactions: any;
   gasFeeAsset: Asset | AssetOption;
+  stakingSteps?: IStakingSteps;
   bridgeRoute?: Route;
+  sendData?: ISendData;
+  swapData?: ISwapData;
 }
 
 const RouteCard: FC<IRouteCard> = ({
@@ -84,12 +114,15 @@ const RouteCard: FC<IRouteCard> = ({
   onSelectOffer,
   disabled = false,
   stakeFeeInfo,
-  stakeGasFeeAsset,
   transactions,
   gasFeeAsset,
   bridgeRoute,
+  stakingSteps,
+  sendData,
+  swapData,
 }) => {
-  const { t, tRoot } = useTranslationWithPrefix('plrStaking.validator');
+  const { t } = useTranslationWithPrefix('plrStaking.validator');
+  const { t: tMain } = useTranslationWithPrefix('plrStaking');
 
   const currency = useFiatCurrency();
   const chainRates = useChainRates(chain);
@@ -98,10 +131,25 @@ const RouteCard: FC<IRouteCard> = ({
 
   const config = useProviderConfig(provider);
 
-  const { feeInfo } = useTransactionsEstimate(chain, transactions, true, gasFeeAsset);
+  const transactionsToEstimate = useMemo(() => {
+    if (swapData?.swapTransactions) {
+      return [...swapData.swapTransactions, ...(swapData?.stakeTransactions ?? [])];
+    }
+
+    return transactions;
+  }, [transactions, swapData, bridgeRoute]);
+
+  const { feeInfo } = useTransactionsEstimate(chain, transactionsToEstimate, true, gasFeeAsset);
 
   const feeEtherValueBn = feeInfo?.fee ? BigNumber.from(feeInfo.fee.toString()) : null;
   const stakeFeeEtherValueBn = stakeFeeInfo ? BigNumber.from(stakeFeeInfo.toString()) : null;
+
+  const loadingStakingFee = useMemo(() => {
+    if (swapData && feeInfo?.fee) return false;
+    else if (!swapData && stakeFeeInfo) return false;
+
+    return true;
+  }, [feeInfo, stakeFeeInfo, swapData]);
 
   const getFiatValue = (value: BigNumber, address: string, isEthereum?: boolean) => {
     if (!value) return null;
@@ -114,8 +162,13 @@ const RouteCard: FC<IRouteCard> = ({
   const getTotalGasFees = () => {
     let totalFiatValue = 0;
     if (feeEtherValueBn) totalFiatValue += getFiatValue(feeEtherValueBn, gasFeeAsset.address) || 0;
-    if (stakeFeeEtherValueBn) totalFiatValue += getFiatValue(stakeFeeEtherValueBn, stakeGasFeeAsset.address, true) || 0;
+    if (!swapData && stakeFeeEtherValueBn)
+      totalFiatValue += getFiatValue(stakeFeeEtherValueBn, ADDRESS_ZERO, true) || 0;
     return totalFiatValue;
+  };
+
+  const appendPlrSymbol = (value: string) => {
+    return `${value} ${plrToken?.symbol}`;
   };
 
   return (
@@ -125,7 +178,7 @@ const RouteCard: FC<IRouteCard> = ({
 
         <RouteInfoContainer>
           <RouteInfoRow>
-            <MainText>{formattedToAmount}</MainText>
+            <MainText>{`${formattedToAmount} ${stkPlrToken.symbol}`}</MainText>
             <MainText highlighted>{` ${t('on')} ${networkName}`}</MainText>
           </RouteInfoRow>
 
@@ -133,7 +186,13 @@ const RouteCard: FC<IRouteCard> = ({
             <GasPriceWrapper>
               <SubText>
                 <HighlightText>{`${t('estFee')} `}</HighlightText>
-                {formatFiatValue(getTotalGasFees(), currency)}
+                {!loadingStakingFee ? (
+                  formatFiatValue(getTotalGasFees(), currency)
+                ) : (
+                  <EmptyStateWrapper>
+                    <Spinner size={10} trackWidth={1} />
+                  </EmptyStateWrapper>
+                )}
               </SubText>
             </GasPriceWrapper>
             {/* Commented out as we currently don't know where to pull the estimated time from */}
@@ -149,10 +208,39 @@ const RouteCard: FC<IRouteCard> = ({
         </RadioButtonWrapper>
       </RouteContainer>
 
-      {!bridgeRoute && (
+      {!!sendData && (
         <RouteBreakdownWrapper>
-          <Circle />
-          <RouteBreakdownContainer>
+          <Circle active={stakingSteps?.isSent} />
+          <RouteBreakdownContainer processing={stakingSteps?.processing} active={stakingSteps?.isSending}>
+            <IconWrapper>
+              {sendData.asset && <TokenIcon url={sendData.asset.iconUrl} size={32} chain={chain} />}
+            </IconWrapper>
+
+            <RouteInfoContainer>
+              <RouteInfoRow>
+                <MainText>
+                  {t('sendFrom', {
+                    formattedValue: formattedFromAmount,
+                    receiverWallet: tMain('etherspot'),
+                  })}
+                </MainText>
+              </RouteInfoRow>
+
+              <RouteInfoRow>
+                <SubText>
+                  <HighlightText>{`${t('estFee')} `}</HighlightText>
+                </SubText>
+              </RouteInfoRow>
+            </RouteInfoContainer>
+          </RouteBreakdownContainer>
+        </RouteBreakdownWrapper>
+      )}
+
+      {!bridgeRoute && swapData && (
+        <RouteBreakdownWrapper>
+          <Circle active={stakingSteps?.isSwapped} />
+
+          <RouteBreakdownContainer processing={stakingSteps?.processing} active={stakingSteps?.isSwapping}>
             <IconWrapper>{config && <TokenIcon url={config.iconUrl} size={32} chain={plrToken?.chain} />}</IconWrapper>
 
             <RouteInfoContainer>
@@ -161,16 +249,7 @@ const RouteCard: FC<IRouteCard> = ({
               </RouteInfoRow>
 
               <RouteInfoRow>
-                <MainText>{`${formattedFromAmount} → ${formattedToAmount}`}</MainText>
-              </RouteInfoRow>
-
-              <RouteInfoRow>
-                <GasPriceWrapper>
-                  <SubText>
-                    <HighlightText>{`${t('estFee')} `}</HighlightText>
-                    {feeEtherValueBn && formatFiatValue(getFiatValue(feeEtherValueBn, gasFeeAsset.address), currency)}
-                  </SubText>
-                </GasPriceWrapper>
+                <MainText>{`${formattedFromAmount} → ${appendPlrSymbol(formattedToAmount)}`}</MainText>
               </RouteInfoRow>
             </RouteInfoContainer>
           </RouteBreakdownContainer>
@@ -187,9 +266,9 @@ const RouteCard: FC<IRouteCard> = ({
           const twoDetailsRows = !!(bridgeRoute?.gasCostUSD || step?.estimate?.executionDuration);
           return (
             <RouteBreakdownWrapper>
-              <Circle />
+              <Circle active={stakingSteps?.isBridged} />
 
-              <BridgeRouteContainer>
+              <BridgeRouteContainer processing={stakingSteps?.processing} active={stakingSteps?.isBridging}>
                 {/* Etherspot SDK typing fails */}
                 {/* @ts-ignore */}
                 {step?.includedSteps?.map((includedStep) => {
@@ -218,7 +297,9 @@ const RouteCard: FC<IRouteCard> = ({
                         </IconWrapper>
                         <Spacing w={spacing.mediumLarge} />
                         <RouteInfoCol>
-                          <SubText>{t('swapVia', { title: includedToolDetails.name, sourceNetworkName })}</SubText>
+                          <SubText>
+                            {t('swapVia', { title: includedToolDetails.name, networkName: sourceNetworkName })}
+                          </SubText>
                           <SubText>
                             {`${formatAmountDisplay(fromAssetAmount)} ${
                               includedStepAction.fromToken.symbol
@@ -239,14 +320,20 @@ const RouteCard: FC<IRouteCard> = ({
                         <RouteInfoCol>
                           <SubText>
                             {t('bridgeFrom', {
-                              providerTitle: includedToolDetails.name,
-                              sourceNetworkName,
-                              destinationChain,
+                              title: includedToolDetails.name,
+                              networkName: sourceNetworkName,
+                              destinationNetworkName,
                             })}
                           </SubText>
                           <SubText>
                             <HighlightText>{`${t('estFee')} `}</HighlightText>
-                            {`$${bridgeRoute?.gasCostUSD}`}
+                            {feeEtherValueBn ? (
+                              formatFiatValue(getFiatValue(feeEtherValueBn, ADDRESS_ZERO, true), currency)
+                            ) : (
+                              <EmptyStateWrapper>
+                                <Spinner size={10} trackWidth={1} />
+                              </EmptyStateWrapper>
+                            )}
                           </SubText>
                         </RouteInfoCol>
                       </RouteInfoRow>
@@ -259,23 +346,42 @@ const RouteCard: FC<IRouteCard> = ({
         })}
 
       <RouteBreakdownWrapper>
-        <Circle />
-        <RouteBreakdownContainer>
+        <Circle active={stakingSteps?.isStaked} />
+
+        <RouteBreakdownContainer processing={stakingSteps?.processing} active={stakingSteps?.isStaking}>
           <IconWrapper>
             {plrToken && <TokenIcon url={plrToken?.iconUrl} size={32} chain={plrToken?.chain} />}
           </IconWrapper>
 
           <RouteInfoContainer>
             <RouteInfoRow>
-              <MainText>{t('stakeOn', { formattedAmount: formattedToAmount, networkName })}</MainText>
+              <MainText>{t('stakeOn', { formattedAmount: appendPlrSymbol(formattedToAmount), networkName })}</MainText>
             </RouteInfoRow>
             <RouteInfoRow>
               <GasPriceWrapper>
-                <SubText>
-                  <HighlightText>{`${t('estFee')} `}</HighlightText>
-                  {stakeFeeEtherValueBn &&
-                    formatFiatValue(getFiatValue(stakeFeeEtherValueBn, stakeGasFeeAsset.address, true), currency)}
-                </SubText>
+                {swapData ? (
+                  <SubText>
+                    <HighlightText>{`${t('estFee')} `}</HighlightText>
+                    {!loadingStakingFee ? (
+                      formatFiatValue(getTotalGasFees(), currency)
+                    ) : (
+                      <EmptyStateWrapper>
+                        <Spinner size={10} trackWidth={1} />
+                      </EmptyStateWrapper>
+                    )}
+                  </SubText>
+                ) : (
+                  <SubText>
+                    <HighlightText>{`${t('estFee')} `}</HighlightText>
+                    {!loadingStakingFee ? (
+                      formatFiatValue(getFiatValue(stakeFeeEtherValueBn, ADDRESS_ZERO, true), currency)
+                    ) : (
+                      <EmptyStateWrapper>
+                        <Spinner size={10} trackWidth={1} />
+                      </EmptyStateWrapper>
+                    )}
+                  </SubText>
+                )}
               </GasPriceWrapper>
             </RouteInfoRow>
           </RouteInfoContainer>
@@ -302,14 +408,6 @@ const RouteContainer = styled.TouchableOpacity`
   justify-content: space-between;
 `;
 
-const RouteBreakdownWrapper = styled.View`
-  display: flex;
-  flex: 1;
-  flex-direction: row;
-  align-items: center;
-  margin: 0 0 8px;
-`;
-
 const Circle = styled.View<{ active?: boolean }>`
   height: 10px;
   width: 10px;
@@ -319,7 +417,7 @@ const Circle = styled.View<{ active?: boolean }>`
   border-radius: 10px;
 `;
 
-const RouteBreakdownContainer = styled.View`
+const RouteBreakdownContainer = styled.View<{ active?: boolean; processing?: boolean }>`
   padding: 10px;
   border-radius: 20px;
   background-color: ${({ theme }) => theme.colors.basic050};
@@ -328,9 +426,19 @@ const RouteBreakdownContainer = styled.View`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+
+  ${({ active, processing }) => processing && `opacity: ${active ? 1 : 0.7};`};
 `;
 
-const BridgeRouteContainer = styled.View`
+const RouteBreakdownWrapper = styled.View`
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+  margin: 0 0 8px;
+`;
+
+const BridgeRouteContainer = styled.View<{ active?: boolean; processing?: boolean }>`
   padding: 10px;
   border-radius: 20px;
   background-color: ${({ theme }) => theme.colors.basic050};
@@ -338,6 +446,8 @@ const BridgeRouteContainer = styled.View`
   flex: 1;
   display: flex;
   flex-direction: column;
+
+  ${({ active, processing }) => processing && `opacity: ${active ? 1 : 0.7};`};
 `;
 
 const IconWrapper = styled.View`
@@ -361,6 +471,7 @@ const RouteInfoRow = styled.View`
 
 const RouteInfoCol = styled.View`
   display: flex;
+  flex: 1;
   flex-direction: column;
 `;
 
@@ -389,4 +500,9 @@ const RadioButtonWrapper = styled.View`
 
 const HighlightText = styled(Text)`
   color: ${({ theme }) => theme.colors.plrStakingHighlight};
+`;
+
+const EmptyStateWrapper = styled.View`
+  justify-content: center;
+  align-items: center;
 `;
