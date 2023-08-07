@@ -168,8 +168,6 @@ const RouteCard: FC<IRouteCard> = ({
   };
 
   const appendPlrSymbol = (value: string) => {
-    console.log('appendPlrSymbol', plrToken?.symbol);
-
     return `${value} ${plrToken?.symbol}`;
   };
 
