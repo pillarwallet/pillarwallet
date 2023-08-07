@@ -26,7 +26,7 @@ import { BigNumber } from 'bignumber.js';
 import { Spacing } from 'components/layout/Layout';
 
 // Utils
-import { formatTokenValue } from 'utils/format';
+import { formatTokenValue, formatTokenValueWithoutSymbol } from 'utils/format';
 import { getAssetValueInFiat } from 'utils/rates';
 import { useChainsConfig } from 'utils/uiConfig';
 import { getSortingValue } from 'screens/Bridge/Exchange-CrossChain/utils'; // From Cross-chain screen
@@ -133,7 +133,7 @@ const BridgeRouteCard: FC<IBridgeRouteCard> = ({
 
   const chainRates = useChainRates(fromChain);
 
-  const formattedToAmount = formatTokenValue(offer.toAmount, 'stkPLR', { decimalPlaces: 0 }) ?? '';
+  const formattedToAmount = formatTokenValueWithoutSymbol(offer.toAmount, null, { decimalPlaces: 0 }) ?? '';
 
   const formattedFromAmount = formatTokenValue(offer.fromAmount, offer.fromAsset.symbol, { decimalPlaces: 0 }) ?? '';
 

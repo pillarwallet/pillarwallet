@@ -1799,7 +1799,7 @@
       "on": "on",
       "showLess": "Show less",
       "showMore": "Show more",
-      "bridgeFrom": "Bridge via {{title}} from {{sourceNetworkName}} to {{destinationNetworkName}}",
+      "bridgeFrom": "Bridge via {{title}} from {{networkName}} to {{destinationNetworkName}}",
       "sendFrom": "Send {{formattedValue}} to {{receiverWallet}}"
     },
     "chooseAsset": "Choose asset"
