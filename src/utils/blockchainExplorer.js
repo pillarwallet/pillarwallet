@@ -35,11 +35,12 @@ import { navigate } from 'services/navigation';
 
 // Constants
 import { WALLETCONNECT_BROWSER } from 'constants/navigationConstants';
+import { CHAIN } from 'constants/chainConstants';
 
 // Types
 import type { Account } from 'models/Account';
 import type { Chain } from 'models/Chain';
-import { CHAIN } from 'constants/chainConstants';
+
 
 type ViewableTransaction = {
   hash: ?string,
