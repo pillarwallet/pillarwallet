@@ -93,9 +93,7 @@ export const getStakeTransactions = async (
 ): Promise<Object[]> => {
   const tokenAmountBN = parseTokenBigNumberAmount(amount, token.decimals);
 
-  const stakeTransactionData = encodeContractMethod(UNIPOOL_CONTRACT, 'stake', [
-    tokenAmountBN,
-  ]);
+  const stakeTransactionData = encodeContractMethod(UNIPOOL_CONTRACT, 'stake', [tokenAmountBN], token.address);
 
   let stakeTransactions = [{
     from: sender,
@@ -141,9 +139,7 @@ export const getUnstakeTransaction = (
   amount: string,
 ) => {
   const tokenAmountBN = parseTokenBigNumberAmount(amount, 18);
-  const unstakeTransactionData = encodeContractMethod(UNIPOOL_CONTRACT, 'withdraw', [
-    tokenAmountBN,
-  ]);
+  const unstakeTransactionData = encodeContractMethod(UNIPOOL_CONTRACT, 'withdraw', [tokenAmountBN], unipoolAddress);
 
   return {
     from: sender,
@@ -158,7 +154,7 @@ export const getClaimRewardsTransaction = (
   unipoolAddress: string,
   sender: string,
 ) => {
-  const getRewardTransactionData = encodeContractMethod(UNIPOOL_CONTRACT, 'getReward', []);
+  const getRewardTransactionData = encodeContractMethod(UNIPOOL_CONTRACT, 'getReward', [], unipoolAddress);
 
   return {
     from: sender,
