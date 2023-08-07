@@ -259,7 +259,7 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
     dispatch(fetchAllAccountsAssetsBalancesAction());
     dispatch(fetchAllCollectiblesDataAction());
     dispatch(fetchAppsHoldingsAction());
-    dispatch(deployAccounts());
+    if (!__DEV__) dispatch(deployAccounts());
   };
 };
 

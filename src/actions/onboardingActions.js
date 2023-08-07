@@ -373,7 +373,7 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
 
     dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.deployingGnosis') });
     logBreadcrumb('onboarding', 'walletSetupAction: dispatching deployAccounts');
-    dispatch(deployAccounts());
+    if (!__DEV__) dispatch(deployAccounts());
 
     logBreadcrumb('onboarding', 'walletSetupAction: completed, dispatching SET_FINISHING_ONBOARDING');
     isLogV2AppEvents() && dispatch(logEventAction('v2_account_sign_up_completed'));
@@ -702,11 +702,11 @@ export const resetUsernameCheckAction = (resetOfflineToast?: boolean) => {
 
 export const resetOnboardingAction = () => ({ type: RESET_ONBOARDING });
 
-export const resetOnboardingAndNavigateAction = (routeName: string) => {
+export const resetOnboardingAndNavigateAction = (routeName: string, nextRouteName: string) => {
   return (dispatch: Dispatch) => {
     logBreadcrumb('onboarding', 'resetOnboardingAndNavigateAction: dispatching resetOnboardingAction');
     dispatch(resetOnboardingAction());
-    navigate(NavigationActions.navigate({ routeName }));
+    navigate(NavigationActions.navigate({ routeName, params: { nextRouteName } }));
   };
 };
 

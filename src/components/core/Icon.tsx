@@ -155,6 +155,7 @@ import FacebookIconButton from 'assets/icons/svg/facebook.svg';
 import GoogleIconButton from 'assets/icons/svg/google.svg';
 import TwitchIconButton from 'assets/icons/svg/twitch.svg';
 import PillarWhiteLogo from 'assets/icons/svg/plr-white-logo.svg';
+import FaceIdLogo from 'assets/icons/svg/face-id.svg';
 
 // Assets: services icons
 import IconEthereum from 'assets/icons/svg/icon-24-ethereum.svg';
@@ -317,6 +318,7 @@ const components = {
   'pillar-logo': PillarLogo,
   'twitch-button': TwitchIconButton,
   'plr-white-logo': PillarWhiteLogo,
+  'face-id': FaceIdLogo,
 
   // Service icons
   binance: IconBinance,

@@ -1572,7 +1572,7 @@
     "transactionSentConfirmed": "{{tokenValue}} sent.",
     "receivedCollectible": "You received an NFT.",
     "collectibleSentAndReceived": "Your NFT has been received.",
-    "notification_enable": "Notifications enabled"
+    "notification_enable": "Let's be in touch"
   },
 
   "graph": {
@@ -1713,10 +1713,11 @@
 
   "biometricLogin": {
     "title": "Sign in with {{biometryType}}",
-    "description": "Enable biometric login instead of typing PIN every time?",
+    "description": "Enable biometric login instead of typing PIN every time",
+    "enableBiometric": "Enable Biometrics\nfor easy access",
     "button": {
       "enable": "Enable",
-      "cancel": "Cancel"
+      "cancel": "Skip"
     }
   },
 
@@ -1730,8 +1731,10 @@
   },
 
   "getNotifications": {
-    "title": "Get notifications",
-    "description": "Pillar will notify on your transactions status and requests from dapps. Never spam, always on point."
+    "title": "Enable Push Notifications",
+    "description": "Pillar will notify on your transactions status and requests from dapps. Never spam, always on point.",
+    "pillarReceiveMessage": "Receive notifications when you receive crypto.",
+    "latestUpdateMessage": "Get the latest updates on DeFi opportunities."
   },
 
   "transactionNotification": {

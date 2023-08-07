@@ -18,13 +18,14 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React, { useState } from 'react';
+import { Dimensions } from 'react-native';
 import { connect, useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
 // Actions
-import { beginOnboardingAction, setOnboardingPinCodeAction } from 'actions/onboardingActions';
+import { beginOnboardingAction, walletSetupAction, setOnboardingPinCodeAction } from 'actions/onboardingActions';
 import { logEventAction } from 'actions/analyticsActions';
 
 // Components
@@ -32,9 +33,12 @@ import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import PinCode from 'components/PinCode';
 import ErrorMessage from 'components/ErrorMessage';
 import { MediumText } from 'components/legacy/Typography';
+import IconWithBackgroundGif from 'components/Gif/IconWithBackgroundGif';
+import { Spacing } from 'components/legacy/Layout';
 
 // Constants
-import { HOME } from 'constants/navigationConstants';
+import { HOME, ENALBE_BIOMETRICS_SCREEN } from 'constants/navigationConstants';
+import { SET_FETCHING } from 'constants/onboardingConstants';
 
 // Selectors
 import { useRootSelector } from 'selectors';
@@ -42,7 +46,8 @@ import { maxPinCodeLengthSelector } from 'selectors/appSettings';
 
 // Utils
 import { validatePinWithConfirmation } from 'utils/validators';
-import { fontStyles, spacing } from 'utils/variables';
+import { spacing } from 'utils/variables';
+import { getSupportedBiometryType } from 'utils/keychain';
 
 // Types
 import type { Dispatch } from 'reducers/rootReducer';
@@ -54,10 +59,13 @@ type Props = {
   wallet: Object,
 };
 
+const { height } = Dimensions.get('window');
+
 const PinCodeConfirmation = ({ setOnboardingPinCode, navigation }) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const dispatch = useDispatch();
 
+  const wallet = useRootSelector((root) => root.wallet.data);
   const maxPinCodeLength = useRootSelector(maxPinCodeLengthSelector);
 
   const previousPinCode = navigation.getParam('pinCode');
@@ -73,14 +81,30 @@ const PinCodeConfirmation = ({ setOnboardingPinCode, navigation }) => {
     dispatch(logEventAction('confirm_pin', { pinCode }));
 
     setOnboardingPinCode(pinCode);
-    navigation.navigate(HOME);
+
+    getSupportedBiometryType((biometryType) => {
+      if (biometryType) {
+        navigation.navigate(ENALBE_BIOMETRICS_SCREEN);
+      } else {
+        if (!wallet) {
+          dispatch({ type: SET_FETCHING, payload: true });
+          dispatch(walletSetupAction(false));
+        }
+        navigation.navigate(HOME);
+      }
+    });
   };
 
   return (
-    <ContainerWithHeader headerProps={{ centerItems: [{ title: t('auth:title.confirmPin') }] }}>
-      {!!errorMessage && <ErrorMessage wrapperStyle={{ marginTop: 0 }}>{errorMessage}</ErrorMessage>}
+    <ContainerWithHeader headerProps={{ noBack: false }}>
       <ContentWrapper contentContainerStyle={{ padding: spacing.large, flexGrow: 1 }}>
-        <HeaderText>{t('auth:label.reenterToConfirm')}</HeaderText>
+        <IconWithBackgroundGif />
+        <Spacing h={height * 0.05} />
+
+        <MediumText fontSize={24} center>
+          {t('auth:label.reenterToConfirm')}
+        </MediumText>
+        {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         <PinCode
           onPinEntered={handlePinSubmit}
           onPinChanged={() => setErrorMessage(null)}
@@ -103,12 +127,6 @@ export default connect(null, mapDispatchToProps)(PinCodeConfirmation);
 
 const ContentWrapper = styled.ScrollView`
   flex: 1;
-`;
-
-const HeaderText = styled(MediumText)`
-  ${fontStyles.large};
-  text-align: center;
-  margin: ${spacing.large}px 0;
 `;
 
 const TAG = 'PinCodeConfirmation';

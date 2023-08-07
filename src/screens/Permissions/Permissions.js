@@ -35,8 +35,11 @@ import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { handleUrlPress } from 'utils/common';
 import { getThemeColors, themedColors } from 'utils/themes';
 
+// Selectors
+import { useRootSelector } from 'selectors';
+
 // constants
-import { WELCOME } from 'constants/navigationConstants';
+import { WELCOME, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 
 // types
 import type { Theme } from 'models/Theme';
@@ -98,6 +101,8 @@ const FooterWrapper = styled.View`
 `;
 
 const Permissions = ({ navigation, theme }: Props) => {
+  const wallet = useRootSelector((root) => root.onboarding.wallet);
+
   const [openCollapseKey, setOpenCollapseKey] = useState(null);
   const [openInnerCollapseKey, setOpenInnerCollapseKey] = useState(null);
   const [hasAgreedToTerms, setHasAgreedToTerms] = useState(false);
@@ -207,7 +212,7 @@ const Permissions = ({ navigation, theme }: Props) => {
 
   const handleAgree = () => {
     const username = navigation.getParam('username');
-    navigation.navigate(WELCOME, { username });
+    navigation.navigate(wallet ? SET_WALLET_PIN_CODE : WELCOME, { username });
   };
 
   const colors = getThemeColors(theme);

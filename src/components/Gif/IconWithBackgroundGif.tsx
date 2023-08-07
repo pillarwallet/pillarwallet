@@ -18,48 +18,33 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { useEffect } from 'react';
-import { Keyboard } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
+import React from 'react';
 import styled from 'styled-components/native';
-import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
-import Text from 'components/core/Text';
-import HeaderBlock from 'components/HeaderBlock';
 import Image from 'components/Image';
-import Icon from 'components/core/Icon';
-
-// Utils
-import { appFont, spacing, fontStyles } from 'utils/variables';
-import { useDispatch } from 'react-redux';
-import { setNotificationsVisibleStatus } from 'utils/getNotification';
-
-// Actions
-import { hasFCMPermission } from 'actions/notificationsActions';
+import Icon, { type IconName } from 'components/core/Icon';
 
 // Assets
-const smartWalletImage = require('assets/images/logo-get-notifications.png');
 const logoBackgroundGif = require('assets/images/glow.gif');
 
 interface Props {
   size?: number;
+  iconName?: IconName;
 }
 
-const LogoBackgroundGif = ({ size = 154 }: Props) => {
-  const navigation = useNavigation();
-
+const IconWithBackgroundGif = ({ size = 56, iconName }: Props) => {
   const imageSize = size * 2.1;
 
   return (
     <Container>
       <Image source={logoBackgroundGif} style={{ width: imageSize, height: imageSize }} />
-      <Icon name="plr-white-logo" style={{ position: 'absolute' }} height={size} />
+      <Icon name={iconName ?? 'plr-white-logo'} style={{ position: 'absolute' }} height={size} width={size} />
     </Container>
   );
 };
 
-export default LogoBackgroundGif;
+export default IconWithBackgroundGif;
 
 const Container = styled.View`
   width: 100%;

@@ -29,22 +29,21 @@ import { resetOnboardingAndNavigateAction } from 'actions/onboardingActions';
 
 // components
 import { Spacing } from 'components/legacy/Layout';
-import Image from 'components/Image';
 import Button from 'components/legacy/Button';
 import Icon from 'components/core/Icon';
 import Text from 'components/core/Text';
+import IconWithBackgroundGif from 'components/Gif/IconWithBackgroundGif';
+import { MediumText } from 'components/legacy/Typography';
 
 // utils
 import { spacing } from 'utils/variables';
 import { getThemeByType, useThemeColors } from 'utils/themes';
+import { getNotificationsVisibleStatus } from 'utils/getNotification';
 
 // constants
-import { IMPORT_WALLET_LEGALS, GET_NOTIFICATIONS } from 'constants/navigationConstants';
+import { NEW_IMPORT_WALLET, GET_NOTIFICATIONS, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 import LinearGradient from 'react-native-linear-gradient';
-
-// Assets
-const logoBackgroundGif = require('assets/images/glow.gif');
 
 const SOCIAL_AUTH_LIST = [
   { name: 'google', icon: 'google-button' },
@@ -57,26 +56,28 @@ const SOCIAL_AUTH_LIST = [
 
 const Welcome = () => {
   const darkTheme = getThemeByType(DARK_THEME);
-  const { width } = Dimensions.get('window');
+  const { width, height } = Dimensions.get('window');
 
   const dispatch = useDispatch();
   const colors = useThemeColors();
+
+  const onNavigate = async (nextRoutePath) => {
+    const status = await getNotificationsVisibleStatus();
+    dispatch(resetOnboardingAndNavigateAction(status === undefined ? GET_NOTIFICATIONS : nextRoutePath, nextRoutePath));
+  };
 
   return (
     <ThemeProvider theme={darkTheme}>
       <Background>
         <ScrollView>
-          <Spacing h={30} />
-          <SubContainer>
-            <Image source={logoBackgroundGif} style={{ width: 280, height: 280 }} />
-            <Icon name="plr-white-logo" style={{ position: 'absolute' }} />
-          </SubContainer>
+          <Spacing h={height * 0.04} />
+          <IconWithBackgroundGif size={width * 0.3} />
 
-          <Text variant="large" style={{ textAlign: 'center' }}>
+          <MediumText fontSize={24} style={{ textAlign: 'center' }}>
             {t('auth:title.welcomeToPillarGetStarted')}
-          </Text>
+          </MediumText>
 
-          <Spacing h={60} />
+          <Spacing h={height * 0.07} />
 
           <ListView
             numColumns={3}
@@ -98,7 +99,7 @@ const Welcome = () => {
               colors={['rgba(208, 104, 255, 0.73)', 'rgba(201, 55, 255, 0.5)']}
               style={{ width: '36%', height: 1 }}
             />
-            <Text variant="medium" color={colors.purpleHeat} style={{ padding: 20 }}>
+            <Text variant="medium" color={colors.purpleHeat} style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
               {t('label.or')}
             </Text>
             <LinearGradient
@@ -114,7 +115,9 @@ const Welcome = () => {
             <Button
               title={t('auth:button.newWallet')}
               style={{ width: width * 0.9 }}
-              onPress={() => dispatch(resetOnboardingAndNavigateAction(GET_NOTIFICATIONS))}
+              onPress={async () => {
+                await onNavigate(SET_WALLET_PIN_CODE);
+              }}
               transparent
             />
           </SubContainer>
@@ -124,7 +127,9 @@ const Welcome = () => {
             <Button
               title={t('auth:button.recoverWallet')}
               style={{ width: width * 0.9 }}
-              onPress={() => dispatch(resetOnboardingAndNavigateAction(IMPORT_WALLET_LEGALS))}
+              onPress={async () => {
+                await onNavigate(NEW_IMPORT_WALLET);
+              }}
               transparent
             />
           </SubContainer>

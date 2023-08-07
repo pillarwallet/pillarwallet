@@ -69,7 +69,6 @@ import { getActiveScreenName } from 'utils/navigation';
 
 // Hooks
 import useWalletConnect from 'hooks/useWalletConnect';
-import { useBioMetricsPopup } from 'hooks/biometrics';
 
 // Local
 import BalanceSection from './BalanceSection';
@@ -97,8 +96,6 @@ function Home() {
   const { t } = useTranslation();
   const swiperRef = React.useRef(null);
   const isFetching = useOnboardingFetchingSelector();
-
-  useBioMetricsPopup();
 
   const accountTotalBalances = useRootSelector(accountTotalBalancesSelector);
   const accountCollectibleCounts = useAccountCollectibleCounts();
