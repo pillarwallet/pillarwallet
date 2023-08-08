@@ -357,7 +357,7 @@ const PlrStaking = () => {
                 const disabled = bal?.assetBalance < MIN_PLR_STAKE_AMOUNT || isNaN(bal.assetBalance);
 
                 return (
-                  <BalanceItem onClick={() => selectChain(bal.chain)} disabled={disabled}>
+                  <BalanceItem onPress={() => selectChain(bal.chain)} disabled={disabled}>
                     <BalanceLeftItem>
                       <Spacing w={spacing.large} />
                       <RadioButton visible={bal.chain === selectedChain} disabled={disabled} />
