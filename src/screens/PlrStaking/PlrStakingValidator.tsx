@@ -211,6 +211,7 @@ const PlrStakingValidator = () => {
       setTxFeeInfo(stakingFeeInfo.fee.toString());
       setStakingError(null);
     } else {
+      setCalculatingGas(false);
       setStakingError(t('stakingFeeError'));
     }
   }, [stakingFeeInfo]);
@@ -643,7 +644,7 @@ const PlrStakingValidator = () => {
             value={value}
             selectedToken={selectedToken}
             gasFeeAsset={gasFeeAsset}
-            plrToken={stkPlrToken}
+            plrToken={plrToken}
             buildTransactionData={buildTransactionData}
             buildTransactionFetched={buildTransactionFetched}
             setStkPlrAmount={setStkPlrAmount}

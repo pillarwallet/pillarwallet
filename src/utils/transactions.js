@@ -106,13 +106,25 @@ export const buildEthereumTransaction = async (
     const chainNativeSymbol = nativeAssetPerChain[chain].symbol;
     value = utils.parseUnits(amount, decimals);
     if (symbol !== chainNativeSymbol && !data && contractAddress) {
-      data = encodeContractMethod(ERC20_CONTRACT_ABI, 'transfer', [to, value.toString()]);
+      data = encodeContractMethod(ERC20_CONTRACT_ABI, 'transfer', [to, value.toString()], contractAddress, chain);
       to = contractAddress;
       value = EthersBigNumber.from(0); // value is in encoded transfer method as data
     }
   } else if (contractAddress && tokenId) {
-    const approveData = encodeContractMethod(ERC1155_CONTRACT_ABI, 'setApprovalForAll', [contractAddress, true]);
-    data = encodeContractMethod(ERC1155_CONTRACT_ABI, 'safeTransferFrom', [from, to, tokenId, 1, approveData]);
+    const approveData = encodeContractMethod(
+      ERC1155_CONTRACT_ABI,
+      'setApprovalForAll',
+      [contractAddress, true],
+      contractAddress,
+      chain,
+    );
+    data = encodeContractMethod(
+      ERC1155_CONTRACT_ABI,
+      'safeTransferFrom',
+      [from, to, tokenId, 1, approveData],
+      contractAddress,
+      chain,
+    );
     to = contractAddress;
     value = EthersBigNumber.from(0);
 

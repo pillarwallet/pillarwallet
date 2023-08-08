@@ -204,14 +204,12 @@ export const getAddLiquidityTransactions = async (
 
     const erc20TokenAmountBN = parseTokenBigNumberAmount(erc20TokenAmount, erc20TokenData.decimals);
 
-    const addLiquidityTransactionData = encodeContractMethod(UNISWAP_ROUTER_ABI, 'addLiquidityETH', [
+    const addLiquidityTransactionData = encodeContractMethod(
+      UNISWAP_ROUTER_ABI,
+      'addLiquidityETH',
+      [erc20TokenData.address, erc20TokenAmountBN, 0, 0, sender, deadline],
       erc20TokenData.address,
-      erc20TokenAmountBN,
-      0,
-      0,
-      sender,
-      deadline,
-    ]);
+    );
 
     addLiquidityTransactions = [{
       from: sender,
@@ -223,16 +221,12 @@ export const getAddLiquidityTransactions = async (
     await addApproveTransaction(erc20TokenAmount, erc20TokenAmountBN, erc20TokenData);
   } else {
     const tokenAmountsBN = tokensAssets.map((token, i) => parseTokenBigNumberAmount(tokenAmounts[i], token.decimals));
-    const addLiquidityTransactionData = encodeContractMethod(UNISWAP_ROUTER_ABI, 'addLiquidity', [
+    const addLiquidityTransactionData = encodeContractMethod(
+      UNISWAP_ROUTER_ABI,
+      'addLiquidity',
+      [tokensAssets[0].address, tokensAssets[1].address, tokenAmountsBN[0], tokenAmountsBN[1], 0, 0, sender, deadline],
       tokensAssets[0].address,
-      tokensAssets[1].address,
-      tokenAmountsBN[0],
-      tokenAmountsBN[1],
-      0,
-      0,
-      sender,
-      deadline,
-    ]);
+    );
     addLiquidityTransactions = [{
       from: sender,
       to: UNISWAP_ROUTER_ADDRESS,
@@ -275,24 +269,19 @@ export const getRemoveLiquidityTransactions = async (
   if (tokensAssets.find(({ symbol }) => symbol === ETH)) {
     const erc20TokenIndex = tokensAssets.findIndex(({ symbol }) => symbol !== ETH);
     const erc20TokenData = tokensAssets[erc20TokenIndex];
-    removeLiquidityTransactionData = encodeContractMethod(UNISWAP_ROUTER_ABI, 'removeLiquidityETH', [
+    removeLiquidityTransactionData = encodeContractMethod(
+      UNISWAP_ROUTER_ABI,
+      'removeLiquidityETH',
+      [erc20TokenData.address, poolTokenAmountBN, 0, 0, sender, deadline],
       erc20TokenData.address,
-      poolTokenAmountBN,
-      0,
-      0,
-      sender,
-      deadline,
-    ]);
+    );
   } else {
-    removeLiquidityTransactionData = encodeContractMethod(UNISWAP_ROUTER_ABI, 'removeLiquidity', [
+    removeLiquidityTransactionData = encodeContractMethod(
+      UNISWAP_ROUTER_ABI,
+      'removeLiquidity',
+      [tokensAssets[0].address, tokensAssets[1].address, poolTokenAmountBN, 0, 0, sender, deadline],
       tokensAssets[0].address,
-      tokensAssets[1].address,
-      poolTokenAmountBN,
-      0,
-      0,
-      sender,
-      deadline,
-    ]);
+    );
   }
 
   let removeLiquidityTransactions = [{

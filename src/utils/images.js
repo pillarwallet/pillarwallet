@@ -66,6 +66,7 @@ const copyIconLight = require('assets/icons/icon_copy.png');
 const copyIconDark = require('assets/icons/icon_copy_dark.png');
 const pillarIcon = require('assets/icons/pillar_icon.png');
 const plrStakingBg = require('assets/images/plr-staking-bg.png');
+const plrLogo = require('assets/images/logo.png');
 
 // Patterns
 const landingPattern = require('assets/images/patterns/onboarding_pattern_top.png');
@@ -148,6 +149,10 @@ export const images = (theme: Theme) => {
     plrStakingBg: getImageByTheme(currentTheme, {
       lightTheme: plrStakingBg,
       darkTheme: plrStakingBg,
+    }),
+    plrLogo: getImageByTheme(currentTheme, {
+      lightTheme: plrLogo,
+      darkTheme: plrLogo,
     }),
   };
 };

@@ -335,7 +335,8 @@
     "allTimeHigh": "历来最高",
     "allTimeLow": "历来最低点",
     "your_balance": "您的余额",
-    "volume_24": "24小时成交量"
+    "volume_24": "24小时成交量",
+    "or": "或者"
   },
   "button": {
     "activate": "启用",
@@ -1433,7 +1434,7 @@
     "transactionSentConfirmed": "{{tokenValue}} 已发送。",
     "receivedCollectible": "您收到了 NFT。",
     "collectibleSentAndReceived": "您的 NFT 已收到。",
-    "notification_enable": "启用通知"
+    "notification_enable": "让我们保持联系"
   },
   "graph": {
     "timeRangeButtons": {
@@ -1555,6 +1556,15 @@
       "live": "居住"
     }
   },
+  "biometricLogin": {
+    "title": "使用 {{biometryType}} 登录",
+    "description": "启用生物识别登录，而不必每次都输入 PIN",
+    "enableBiometric": "启用生物识别以方便访问",
+    "button": {
+      "enable": "使能够",
+      "cancel": "跳过"
+    }
+  },
   "backupWallet": {
     "intro": {
       "title": "备份你的钱包",
@@ -1564,8 +1574,10 @@
     }
   },
    "getNotifications":{
-    "title": "得到通知",
-    "description": "Pillar 将通知您的交易状态和来自 dapp 的请求。从不垃圾邮件，永远在点。"
+    "title": "启用推送通知",
+    "description": "Pillar 将通知您的交易状态和来自 dapp 的请求。从不垃圾邮件，永远在点。",
+    "pillarReceiveMessage": "当您收到加密货币时收到通知。",
+    "latestUpdateMessage": "获取有关 DeFi 机会的最新动态。"
   },
 
   "transactionNotification":{

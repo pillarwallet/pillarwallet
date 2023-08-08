@@ -35,10 +35,17 @@ const Wrapper = styled.View`
 const Dot = styled.View`
   width: 16px;
   height: 16px;
-  background-color: ${({ active, theme }) => active
-    ? theme.colors.primaryAccent130
-    : css`${getColorByTheme({ lightKey: 'basic005', darkKey: 'basic030' })}`};
+  background-color: ${({ active, theme }) =>
+    active
+      ? theme.colors.basic000
+      : css`
+          ${getColorByTheme({ lightKey: 'basic005', darkKey: 'basic030' })}
+        `};
   border-radius: 8px;
+  shadow-color: ${({ active, theme }) => (active ? theme.colors.basic000 : theme.colors.basic070)};
+  shadow-opacity: 1;
+  shadow-radius: 8;
+  elevation: 16;
 `;
 
 type Props = {
@@ -47,33 +54,24 @@ type Props = {
   wrapperWidth?: number,
   wrapperVerticalMargin?: number,
   dotStyle?: Object,
-}
+};
 
 const HorizontalDots = (props: Props) => {
-  const {
-    numAllDots,
-    numActiveDots,
-    dotStyle,
-    wrapperWidth,
-    wrapperVerticalMargin,
-  } = props;
-  const dotsArray = Array(numAllDots).fill('')
+  const { numAllDots, numActiveDots, dotStyle, wrapperWidth, wrapperVerticalMargin } = props;
+  const dotsArray = Array(numAllDots)
+    .fill('')
     .map((el, i) => ({
       key: i,
-      active: numActiveDots && numActiveDots >= (i + 1),
+      active: numActiveDots && numActiveDots >= i + 1,
     }));
 
   return (
-    <Wrapper
-      wrapperWidth={wrapperWidth}
-      wrapperVerticalMargin={wrapperVerticalMargin}
-    >
+    <Wrapper wrapperWidth={wrapperWidth} wrapperVerticalMargin={wrapperVerticalMargin}>
       {dotsArray.map(({ key, active }) => (
         <Dot style={dotStyle} key={key} active={active} />
       ))}
     </Wrapper>
   );
 };
-
 
 export default HorizontalDots;
