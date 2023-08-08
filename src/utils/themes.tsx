@@ -54,6 +54,7 @@ const commonColors = {
   darkSecondarySkalaton: 'rgba(55, 55, 55, 1)',
   lightPrimarySkalaton: 'rgba(235, 240, 246, 0.1)',
   lightSecondarySkalaton: 'rgba(252, 253, 255, 0.1)',
+  purpleHeat: '#6f34a1',
 };
 
 export const semanticLightThemeColors = {
