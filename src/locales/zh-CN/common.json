@@ -1434,7 +1434,8 @@
     "transactionSentConfirmed": "{{tokenValue}} 已发送。",
     "receivedCollectible": "您收到了 NFT。",
     "collectibleSentAndReceived": "您的 NFT 已收到。",
-    "notification_enable": "让我们保持联系"
+    "notification_enable": "让我们保持联系",
+    "notification_error": "请从设置中启用通知。"
   },
   "graph": {
     "timeRangeButtons": {

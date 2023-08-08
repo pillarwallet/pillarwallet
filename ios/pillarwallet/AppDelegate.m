@@ -53,10 +53,6 @@
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-  [application registerUserNotificationSettings:
-   [UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeBadge | UIUserNotificationTypeSound | UIUserNotificationTypeAlert)
-                                     categories:nil]];
-  [application registerForRemoteNotifications];
 }
 
 @end
