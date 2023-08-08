@@ -74,13 +74,10 @@ const SetWalletPinCode = ({ navigation }: Props) => {
     navigation.navigate(PIN_CODE_CONFIRMATION, { pinCode: submittedPinCode });
   };
 
-  // used to block navigation back in web recovery portal flow
-  const noBack = navigation.getParam('noBack');
-
   return (
     <ContainerWithHeader
       headerProps={{
-        noBack: !!noBack,
+        noBack: false,
       }}
     >
       <ContentWrapper contentContainerStyle={{ padding: spacing.large, flexGrow: 1 }}>
@@ -102,7 +99,6 @@ const SetWalletPinCode = ({ navigation }: Props) => {
     </ContainerWithHeader>
   );
 };
-
 
 export default SetWalletPinCode;
 

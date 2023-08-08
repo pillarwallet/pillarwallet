@@ -353,7 +353,7 @@
     "allTimeLow": "All-Time Low",
     "your_balance": "Your Balance",
     "volume_24": "Volume 24h",
-    "or":"or"
+    "or": "or"
   },
 
   "button": {
@@ -715,7 +715,8 @@
     "investments": {
       "title": "PLR Staking",
       "description": "Earn ETH by staking your PLR tokens.\n{{stakedPercentage}}% PLR of the vault staked.",
-      "closeTime": "Subscription will close in {{closeTime}}"
+      "closeTime": "Subscription will close in {{closeTime}}",
+      "apy": "APY:"
     }
   },
 
@@ -1572,7 +1573,8 @@
     "transactionSentConfirmed": "{{tokenValue}} sent.",
     "receivedCollectible": "You received an NFT.",
     "collectibleSentAndReceived": "Your NFT has been received.",
-    "notification_enable": "Let's be in touch"
+    "notification_enable": "Let's be in touch",
+    "notification_error": "Please enable Notifications from the settings."
   },
 
   "graph": {

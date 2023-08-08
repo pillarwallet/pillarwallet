@@ -15,6 +15,8 @@ export const STAKED_TOKEN_ADDRESS = '0x58F4CC4C150E5Ee5d39C77D72f712da69a5d8A21'
 export const PLR_ICON_URL =
   'https://images.prismic.io/pillar-app/83dcf8ff-6459-41d4-8d43-7ec143814b2d_pillar-logo-5.png?auto=compress,format';
 
+export const STAKING_APY_ENDPOINT = 'https://beacon-chain-analytics.pillar-project.workers.dev/';
+
 export enum WalletType {
   ETHERSPOT = 'ETHERSPOT',
   KEYBASED = 'KEYBASED',
