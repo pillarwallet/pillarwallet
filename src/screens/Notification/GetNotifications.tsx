@@ -23,6 +23,7 @@ import { Keyboard, Dimensions } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
+import messaging from '@react-native-firebase/messaging';
 
 // Components
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
@@ -31,6 +32,7 @@ import Text from 'components/core/Text';
 import IconWithBackgroundGif from 'components/Gif/IconWithBackgroundGif';
 import { Spacing } from 'components/legacy/Layout';
 import { MediumText } from 'components/legacy/Typography';
+import Toast from 'components/Toast';
 
 // Utils
 import { spacing, fontStyles } from 'utils/variables';
@@ -58,11 +60,24 @@ function GetNotifincations() {
   };
 
   const onNotificationRequest = async () => {
-    if (await hasFCMPermission()) {
-      await setNotificationsVisibleStatus(dispatch, true);
-      navigation.navigate(nextRoute);
+    const authorizationStatus = await messaging().requestPermission();
+    if (authorizationStatus) {
+      if (await hasFCMPermission()) {
+        await setNotificationsVisibleStatus(dispatch, true);
+        navigation.navigate(nextRoute);
+      } else {
+        errorToast();
+      }
+    } else {
+      errorToast();
     }
   };
+
+  const errorToast = () =>
+    Toast.show({
+      message: tRoot('notification.notification_error'),
+      emoji: 'hushed',
+    });
 
   return (
     <ContainerWithHeader headerProps={{ noBack: true }}>
