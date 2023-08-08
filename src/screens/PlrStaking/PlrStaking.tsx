@@ -62,7 +62,12 @@ import AssetSelectorModal from 'components/Modals/AssetSelectorModal';
 
 // Local
 import PlrStakingHeaderBlock from './PlrStakingHeaderBlock';
-import { getBalanceForAddress, getStakingContractInfo, getStakingRemoteConfig } from 'utils/plrStakingHelper';
+import {
+  getBalanceForAddress,
+  getStakingApy,
+  getStakingContractInfo,
+  getStakingRemoteConfig,
+} from 'utils/plrStakingHelper';
 import { CHAIN } from 'constants/chainConstantsTs';
 
 const PlrStaking = () => {
@@ -82,6 +87,7 @@ const PlrStaking = () => {
   const [stakedAmount, setStakedAmount] = useState(null);
   const [stakedPercentage, setStakedPercentage] = useState(null);
   const [stakers, setStakers] = useState(0);
+  const [stakingApy, setStakingApy] = useState<string>(null);
 
   // Remote Config
   const [stakingEndTime, setStakingEndTime] = useState<Date>(null);
@@ -113,6 +119,9 @@ const PlrStaking = () => {
 
   useEffect(() => {
     const fetchStakingInfo = async () => {
+      const apy = await getStakingApy();
+      setStakingApy(apy);
+
       const stakingRemoteConfig = getStakingRemoteConfig();
       const startTime = new Date(stakingRemoteConfig.stakingStartTime * 1000);
 
@@ -276,6 +285,7 @@ const PlrStaking = () => {
         stakedAmount={stakedAmount}
         stakedPercentage={stakedPercentage}
         stakers={stakers}
+        apy={stakingApy}
       />
       <Content>
         <IconRow>
