@@ -37,7 +37,7 @@ import { appFont, borderRadiusSizes, fontStyles, spacing } from 'utils/variables
 import { useAssetCategoriesConfig } from 'utils/uiConfig';
 import { images } from 'utils/images';
 import { reportErrorLog } from 'utils/common';
-import { getStakingContractInfo, getStakingRemoteConfig } from 'utils/plrStakingHelper';
+import { getStakingApy, getStakingContractInfo, getStakingRemoteConfig } from 'utils/plrStakingHelper';
 
 // Services
 import { useAccounts } from 'selectors';
@@ -62,6 +62,7 @@ const InvestmentsSection: FC<IInvestmentsSection> = () => {
   const [stakingEnabled, setStakingEnabled] = useState(false);
   const [stakingEndTime, setStakingEndTime] = useState(null);
   const [stakedPercentage, setStakedPercentage] = useState(null);
+  const [stakingApy, setStakingApy] = useState<string>(null);
 
   const onPlrStakingPress = () => {
     if (!stakingEnabled) return;
@@ -70,6 +71,9 @@ const InvestmentsSection: FC<IInvestmentsSection> = () => {
   };
 
   const getContractDetails = async () => {
+    const apy = await getStakingApy();
+    setStakingApy(apy);
+
     try {
       const remoteInfo = getStakingRemoteConfig();
       const stakingInfo = await getStakingContractInfo();
@@ -107,7 +111,10 @@ const InvestmentsSection: FC<IInvestmentsSection> = () => {
             <TokenIcon url={PLR_ICON_URL} size={48} chain={CHAIN.ETHEREUM} />
           </PlrTokenColumn>
           <PlrStakingDescColumn>
-            <PlrStakingTitle>{t('title')}</PlrStakingTitle>
+            <TitleRow>
+              <PlrStakingTitle>{t('title')}</PlrStakingTitle>
+              <PlrStakingTitle>{`${t('apy')} ${stakingApy || '0%'}`}</PlrStakingTitle>
+            </TitleRow>
             <PlrStakingText>{t('description', { stakedPercentage: stakedPercentage || '0' })}</PlrStakingText>
           </PlrStakingDescColumn>
 
@@ -164,4 +171,11 @@ const BackgroundImage = styled(Image)`
   position: absolute;
   top: -135px;
   right: -50px;
+`;
+
+const TitleRow = styled.View`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 `;

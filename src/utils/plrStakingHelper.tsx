@@ -26,6 +26,7 @@ import {
   BuildStakingError,
   MAX_PLR_STAKE_AMOUNT,
   MIN_PLR_STAKE_AMOUNT,
+  STAKING_APY_ENDPOINT,
   WalletType,
 } from 'constants/plrStakingConstants';
 import { CHAIN } from 'constants/chainConstantsTs';
@@ -91,6 +92,11 @@ interface IStakingRemoteConfig {
   stakingLockedStartTime: number;
 }
 
+interface IStakingApyResponse {
+  staked_ether?: string;
+  apr?: string;
+}
+
 let stakingContract: Partial<IStakingContractAbi> = null;
 let stakingContractState: number = null;
 let minStakingAmount: BigNumber = ethers.utils.parseUnits(MIN_PLR_STAKE_AMOUNT.toString());
@@ -98,6 +104,7 @@ let maxStakingAmount: BigNumber = ethers.utils.parseUnits(MAX_PLR_STAKE_AMOUNT.t
 let stakedToken: string = null;
 let rewardToken: string = null;
 let storedContractInfo: IStakingContractInfo = null;
+let stakingApy: string = null;
 
 export const mapWalletTypeToIcon = (type: WalletType) => {
   switch (type) {
@@ -166,6 +173,21 @@ export const getStakingRemoteConfig = (): IStakingRemoteConfig => {
   const stakingLockedStartTime = remoteConfig.getNumber(REMOTE_CONFIG.PLR_STAKING_LOCKED_START_TIME);
 
   return { stakingContractAddress, stakedToken, featureStaking, stakingStartTime, stakingLockedStartTime };
+};
+
+export const getStakingApy = async (): Promise<string> => {
+  if (stakingApy) return stakingApy;
+
+  const response = await fetch(STAKING_APY_ENDPOINT);
+  console.log('stakingResponse', response);
+  const data: IStakingApyResponse = await response.json();
+  console.log('stakingData', data);
+  if (data?.apr) {
+    stakingApy = data?.apr;
+    return stakingApy;
+  }
+
+  return null;
 };
 
 export const getStakingContract = () => {
