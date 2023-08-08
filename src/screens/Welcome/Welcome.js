@@ -19,7 +19,7 @@
 */
 
 import React from 'react';
-import { Dimensions, FlatList, ScrollView } from 'react-native';
+import { Dimensions, ScrollView } from 'react-native';
 import { useDispatch } from 'react-redux';
 import styled, { ThemeProvider } from 'styled-components/native';
 import t from 'translations/translate';
@@ -31,35 +31,33 @@ import { resetOnboardingAndNavigateAction } from 'actions/onboardingActions';
 import { Spacing } from 'components/legacy/Layout';
 import Button from 'components/legacy/Button';
 import Icon from 'components/core/Icon';
-import Text from 'components/core/Text';
 import IconWithBackgroundGif from 'components/Gif/IconWithBackgroundGif';
 import { MediumText } from 'components/legacy/Typography';
 
 // utils
 import { spacing } from 'utils/variables';
-import { getThemeByType, useThemeColors } from 'utils/themes';
+import { getThemeByType } from 'utils/themes';
 import { getNotificationsVisibleStatus } from 'utils/getNotification';
 
 // constants
 import { NEW_IMPORT_WALLET, GET_NOTIFICATIONS, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
-import LinearGradient from 'react-native-linear-gradient';
 
-const SOCIAL_AUTH_LIST = [
-  { name: 'google', icon: 'google-button' },
-  { name: 'facebook', icon: 'facebook-button' },
-  { name: 'apple', icon: 'apple-button' },
-  { name: 'discord', icon: 'discord-button' },
-  { name: 'twitch', icon: 'twitch-button' },
-  { name: 'email', icon: 'email-button' },
-];
+
+// const SOCIAL_AUTH_LIST = [
+//   { name: 'google', icon: 'google-button' },
+//   { name: 'facebook', icon: 'facebook-button' },
+//   { name: 'apple', icon: 'apple-button' },
+//   { name: 'discord', icon: 'discord-button' },
+//   { name: 'twitch', icon: 'twitch-button' },
+//   { name: 'email', icon: 'email-button' },
+// ];
 
 const Welcome = () => {
   const darkTheme = getThemeByType(DARK_THEME);
   const { width, height } = Dimensions.get('window');
 
   const dispatch = useDispatch();
-  const colors = useThemeColors();
 
   const onNavigate = async (nextRoutePath) => {
     const status = await getNotificationsVisibleStatus();
@@ -77,9 +75,10 @@ const Welcome = () => {
             {t('auth:title.welcomeToPillarGetStarted')}
           </MediumText>
 
-          <Spacing h={height * 0.07} />
+          <Spacing h={height * 0.2} />
 
-          <ListView
+          {/* Note: Disable social buttons until web3Auth does not implement  */}
+          {/* <ListView
             numColumns={3}
             data={SOCIAL_AUTH_LIST}
             scrollEnabled={false}
@@ -90,9 +89,8 @@ const Welcome = () => {
                 <Icon name={item.icon} width={width * 0.27} />
               </Touchable>
             )}
-          />
-
-          <RowWrapper>
+          /> */}
+          {/* <RowWrapper>
             <LinearGradient
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
@@ -108,7 +106,7 @@ const Welcome = () => {
               colors={['rgba(165, 104, 255, 0.73)', 'rgba(55, 128, 255, 0.5)']}
               style={{ width: '36%', height: 1 }}
             />
-          </RowWrapper>
+          </RowWrapper> */}
 
           <SubContainer>
             <Icon name="button-border-color" style={{ position: 'absolute' }} width={width * 0.9} />
@@ -150,11 +148,11 @@ const Background = styled.View`
   position: relative;
 `;
 
-const Touchable = styled.TouchableOpacity`
-  align-items: center;
-  justify-content: center;
-  margin: 9px 7.5px;
-`;
+// const Touchable = styled.TouchableOpacity`
+//   align-items: center;
+//   justify-content: center;
+//   margin: 9px 7.5px;
+// `;
 
 const SubContainer = styled.View`
   width: 100%;
@@ -163,11 +161,11 @@ const SubContainer = styled.View`
   justify-content: center;
 `;
 
-const RowWrapper = styled.View`
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-  flex-direction: row;
-`;
+// const RowWrapper = styled.View`
+//   width: 100%;
+//   align-items: center;
+//   justify-content: center;
+//   flex-direction: row;
+// `;
 
-const ListView = styled(FlatList)``;
+// const ListView = styled(FlatList)``;
