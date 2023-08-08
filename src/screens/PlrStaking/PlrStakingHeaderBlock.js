@@ -94,6 +94,7 @@ export type OwnProps = {|
   stakedAmount?: string,
   stakedPercentage?: string,
   stakers?: string,
+  apy?: string,
 |};
 
 type Props = {|
@@ -471,6 +472,7 @@ class HeaderBlock extends React.Component<Props> {
       stakedPercentage,
       stakers,
       headerTitles,
+      apy,
     } = this.props;
     const updatedColors = {};
     if (light) {
@@ -516,7 +518,7 @@ class HeaderBlock extends React.Component<Props> {
 
                   <InfoItem>
                     <InfoTitle>{headerTitles?.apy}</InfoTitle>
-                    <InfoText apy>{`${7.34}%`}</InfoText>
+                    <InfoText apy>{`${apy || `0%`}`}</InfoText>
                   </InfoItem>
                 </InfoRow>
 
