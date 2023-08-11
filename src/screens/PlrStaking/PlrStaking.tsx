@@ -21,7 +21,6 @@ import React, { useState, useEffect } from 'react';
 import { useTranslationWithPrefix } from 'translations/translate';
 import styled from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
-import { useDispatch } from 'react-redux';
 import { BigNumber, ethers } from 'ethers';
 import { addDays, intervalToDuration, isAfter } from 'date-fns';
 
@@ -44,7 +43,7 @@ import { formatBigAmount, reportErrorLog } from 'utils/common';
 import { isArchanovaAccount, isKeyBasedAccount } from 'utils/accounts';
 
 // Selectors
-import { activeAccountAddressSelector, useActiveAccount } from 'selectors';
+import { useActiveAccount } from 'selectors';
 import { useSupportedChains } from 'selectors/chains';
 
 // Configs
@@ -63,12 +62,11 @@ import AssetSelectorModal from 'components/Modals/AssetSelectorModal';
 // Local
 import PlrStakingHeaderBlock from './PlrStakingHeaderBlock';
 import {
-  getBalanceForAddress,
+  formatRemainingTime,
   getStakingApy,
   getStakingContractInfo,
   getStakingRemoteConfig,
 } from 'utils/plrStakingHelper';
-import { CHAIN } from 'constants/chainConstantsTs';
 
 const PlrStaking = () => {
   const navigation = useNavigation();
@@ -124,9 +122,7 @@ const PlrStaking = () => {
 
       const stakingRemoteConfig = getStakingRemoteConfig();
       const startTime = new Date(stakingRemoteConfig.stakingStartTime * 1000);
-
       const lockedStartTime = new Date(stakingRemoteConfig.stakingLockedStartTime * 1000);
-
       const endTime = addDays(startTime, STAKING_PERIOD);
       const lockedEndTime = addDays(lockedStartTime, STAKING_LOCKED_PERIOD);
       setStakingEndTime(endTime);
@@ -254,19 +250,6 @@ const PlrStaking = () => {
     });
   };
 
-  const formatRemainingTime = (time: Duration) => {
-    let timeStr = '';
-    if (!time) return timeStr;
-
-    if (time.months) timeStr += ` ${time.months} months`;
-    if (time.days) timeStr += ` ${time.days} days`;
-    if (time.hours) timeStr += ` ${time.hours}h`;
-    if (time.minutes) timeStr += ` ${time.minutes}m`;
-    if (time.seconds) timeStr += ` ${time.seconds}s`;
-
-    return timeStr?.slice(1) || '';
-  };
-
   return (
     <Container>
       <PlrStakingHeaderBlock
@@ -295,7 +278,8 @@ const PlrStaking = () => {
             <InfoText>{t('stakingInfoLoading')}</InfoText>
           ) : stakingEnabled ? (
             <InfoText>
-              {t('stakingClosingIn')} <InfoText bold>{formatRemainingTime(remainingStakingTime)}</InfoText>
+              {`${t('stakingClosingIn')} `}
+              <InfoText bold>{formatRemainingTime(remainingStakingTime)}</InfoText>
             </InfoText>
           ) : (
             <InfoText>{t('stakingClosed')}</InfoText>

@@ -23,27 +23,18 @@ import { Image } from 'react-native';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 import { useNavigation } from 'react-navigation-hooks';
-import { BigNumber } from 'ethers';
 import { addDays, intervalToDuration } from 'date-fns';
 
 // Constants
 import { PILLAR_STAKING_FLOW } from 'constants/navigationConstants';
 import { PLR_ICON_URL, STAKING_LOCKED_PERIOD, STAKING_PERIOD } from 'constants/plrStakingConstants';
-import { CHAIN } from 'constants/chainConstantsTs';
-import { ASSET_CATEGORY } from 'constants/assetsConstants';
 
 // Utils
 import { useTheme } from 'utils/themes';
-import { appFont, borderRadiusSizes, fontStyles, spacing } from 'utils/variables';
-import { useAssetCategoriesConfig } from 'utils/uiConfig';
+import { borderRadiusSizes, fontStyles, spacing } from 'utils/variables';
 import { images } from 'utils/images';
 import { reportErrorLog } from 'utils/common';
-import {
-  formatRemainingTime,
-  getStakingApy,
-  getStakingContractInfo,
-  getStakingRemoteConfig,
-} from 'utils/plrStakingHelper';
+import { formatRemainingTime, getStakingContractInfo, getStakingRemoteConfig } from 'utils/plrStakingHelper';
 
 // Services
 import { useAccounts } from 'selectors';
@@ -51,21 +42,19 @@ import { useAccounts } from 'selectors';
 // Components
 import Text from 'components/core/Text';
 import TokenIcon from 'components/display/TokenIcon';
-import CategoryListItem from './components/CategoryListItem';
+import { Spacing } from 'components/legacy/Layout';
+import Icon from 'components/core/Icon';
 
-type IInvestmentsSection = {};
+type IPlrStakingBanner = {};
 
-const InvestmentsSection: FC<IInvestmentsSection> = () => {
+const PlrStakingBanner: FC<IPlrStakingBanner> = () => {
   const { t } = useTranslationWithPrefix('home.investments');
-  const { t: tStaking } = useTranslationWithPrefix('plrStaking');
 
   const navigation = useNavigation();
   const theme = useTheme();
   const accounts = useAccounts();
 
-  const category = ASSET_CATEGORY.INVESTMENTS;
-  const categoriesConfig = useAssetCategoriesConfig();
-  const categoryInfo = categoriesConfig[category];
+  const [showBanner, setShowBanner] = useState(true);
 
   const [stakingEndTime, setStakingEndTime] = useState(null);
   const [stakingLockedEndTime, setStakingLockedEndTime] = useState<Date>(null);
@@ -73,8 +62,6 @@ const InvestmentsSection: FC<IInvestmentsSection> = () => {
   const [remainingLockedTime, setRemainingLockedTime] = useState<Duration>(null);
 
   const [stakingEnabled, setStakingEnabled] = useState(false);
-  const [stakedPercentage, setStakedPercentage] = useState(null);
-  const [stakingApy, setStakingApy] = useState<string>(null);
 
   useEffect(() => {
     if (!stakingEndTime) return;
@@ -102,9 +89,6 @@ const InvestmentsSection: FC<IInvestmentsSection> = () => {
   };
 
   const getContractDetails = async () => {
-    const apy = await getStakingApy();
-    setStakingApy(apy);
-
     try {
       const remoteInfo = getStakingRemoteConfig();
       const stakingInfo = await getStakingContractInfo();
@@ -118,11 +102,7 @@ const InvestmentsSection: FC<IInvestmentsSection> = () => {
       setStakingLockedEndTime(lockedEndTime);
 
       const enabled = stakingInfo?.contractState === 1 && remoteInfo?.featureStaking;
-      const stakingMaxTotal = BigNumber.from(stakingInfo.maxStakeTotal.toString());
-      const totalStaked = BigNumber.from(stakingInfo.totalStaked.toString());
-      const percentage = Number(totalStaked.mul(100).div(stakingMaxTotal)) / 100;
 
-      setStakedPercentage(percentage);
       setStakingEnabled(enabled);
     } catch (e) {
       reportErrorLog('InvestSection error', e);
@@ -133,58 +113,48 @@ const InvestmentsSection: FC<IInvestmentsSection> = () => {
     getContractDetails();
   }, [accounts]);
 
+  const hideBanner = () => {
+    setShowBanner(false);
+  };
+
   const { plrStakingBg } = images(theme);
 
-  if (!stakingEnabled) return null;
+  if (!showBanner) return null;
 
   return (
     <>
-      <Container>
-        <SubContainer>
-          <CategoryListItem key={category} iconName={'home-investments'} title={categoryInfo.title} />
-        </SubContainer>
+      <Spacing h={spacing.large} />
 
+      <Container>
         <PlrStakingButton onPress={onPlrStakingPress}>
           <PlrTokenColumn>
-            <TokenIcon url={PLR_ICON_URL} size={48} chain={CHAIN.ETHEREUM} />
+            <TokenIcon url={PLR_ICON_URL} size={48} />
           </PlrTokenColumn>
 
           <PlrStakingDescColumn>
-            <TitleRow>
-              <PlrStakingTitle>{t('title')}</PlrStakingTitle>
-              <PlrStakingTitle>{`${t('apy')} ${stakingApy || '0%'}`}</PlrStakingTitle>
-            </TitleRow>
-
             <TextRow>
-              <PlrStakingText>{t('description', { stakedPercentage: stakedPercentage || '0' })}</PlrStakingText>
-            </TextRow>
-
-            {stakingEndTime && (
-              <TextRow>
-                <StakingAlertCircle />
-
-                <PlrStakingText>{`${tStaking('stakingClosingIn')} `}</PlrStakingText>
+              <PlrStakingText>
+                {`${t('stakingCloseTime')} `}
                 <PlrStakingText bold>{formatRemainingTime(remainingStakingTime)}</PlrStakingText>
-              </TextRow>
-            )}
+              </PlrStakingText>
+            </TextRow>
           </PlrStakingDescColumn>
 
           <BackgroundImage source={plrStakingBg} resizeMode="contain" />
+          <CloseButton onPress={hideBanner}>
+            <Icon name="close" />
+          </CloseButton>
         </PlrStakingButton>
       </Container>
     </>
   );
 };
 
-export default InvestmentsSection;
+export default PlrStakingBanner;
 
 const Container = styled.View`
   flex-direction: column;
   padding: 0 ${spacing.layoutSides}px;
-`;
-
-const SubContainer = styled.View`
-  padding: 0 4px;
 `;
 
 // PLR Staking
@@ -193,6 +163,7 @@ const PlrStakingButton = styled.TouchableOpacity`
   flex-direction: row;
   background-color: ${({ theme }) => theme.colors.plrStaking};
   padding: ${spacing.mediumLarge}px;
+  padding-right: 40px;
   border-radius: ${borderRadiusSizes.defaultContainer}px;
   overflow: hidden;
 `;
@@ -200,17 +171,10 @@ const PlrStakingButton = styled.TouchableOpacity`
 const PlrTokenColumn = styled.View``;
 
 const PlrStakingDescColumn = styled.View`
-  display: flex;
   flex: 1;
+  display: flex;
   flex-direction: column;
   padding-left: ${spacing.small}px;
-`;
-
-const TitleRow = styled.View`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
 `;
 
 const TextRow = styled.View`
@@ -218,23 +182,6 @@ const TextRow = styled.View`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-top: ${spacing.small}px;
-`;
-
-const StakingAlertCircle = styled.View`
-  width: 12px;
-  height: 12px;
-  border-radius: 12px;
-  background-color: ${({ theme }) => theme.colors.plrStakingAlert};
-
-  position: absolute;
-  left: -${spacing.small + 12}px;
-`;
-
-const PlrStakingTitle = styled(Text)`
-  ${fontStyles.big};
-  font-family: ${appFont.medium};
-  color: ${({ theme }) => theme.colors.basic000};
 `;
 
 const PlrStakingText = styled(Text)<{ bold?: boolean }>`
@@ -247,6 +194,13 @@ const BackgroundImage = styled(Image)`
   width: 200px;
   height: 600px;
   position: absolute;
-  top: -135px;
+  top: -200px;
   right: -50px;
+`;
+
+const CloseButton = styled.TouchableOpacity`
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 12px;
 `;

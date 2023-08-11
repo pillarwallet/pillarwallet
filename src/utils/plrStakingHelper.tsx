@@ -179,9 +179,7 @@ export const getStakingApy = async (): Promise<string> => {
   if (stakingApy) return stakingApy;
 
   const response = await fetch(STAKING_APY_ENDPOINT);
-  console.log('stakingResponse', response);
   const data: IStakingApyResponse = await response.json();
-  console.log('stakingData', data);
   if (data?.apr) {
     stakingApy = data?.apr;
     return stakingApy;
@@ -402,4 +400,20 @@ export const sendArchanovaTransaction = async (transaction: TransactionPayload, 
 
 export const bridgeServiceIdToDetails: { [id: string]: { title: string; iconUrl: string } } = {
   lifi: { title: 'LiFi', iconUrl: 'https://li.fi/logo192.png' },
+};
+
+export const formatRemainingTime = (time: Duration, fullDuration: boolean = false) => {
+  let timeStr = '';
+  if (!time) return timeStr;
+
+  if (time.months) timeStr += ` ${time.months} months`;
+  if (time.days) timeStr += ` ${time.days} days`;
+
+  if (timeStr && !fullDuration) return timeStr.slice(1);
+
+  if (time.hours) timeStr += ` ${time.hours}h`;
+  if (time.minutes) timeStr += ` ${time.minutes}m`;
+  if (time.seconds) timeStr += ` ${time.seconds}s`;
+
+  return timeStr?.slice(1) || '';
 };

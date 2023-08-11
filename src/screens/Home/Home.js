@@ -89,6 +89,7 @@ import visibleBalanceSession from '../../services/visibleBalance';
 // Actions
 import { saveDbAction } from '../../actions/dbActions';
 import Assets from '../Assets/Assets';
+import PlrStakingBanner from './PlrStakingBanner';
 
 function Home() {
   const navigation = useNavigation();
@@ -264,6 +265,8 @@ function Home() {
             refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
           >
             <BalanceSection balanceInFiat={totalBalance} showBalance={balanceVisible} onBalanceClick={onBalanceClick} />
+
+            <PlrStakingBanner />
 
             <WalletConnectRequests />
 
