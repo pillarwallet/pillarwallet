@@ -62,7 +62,12 @@ import AssetSelectorModal from 'components/Modals/AssetSelectorModal';
 
 // Local
 import PlrStakingHeaderBlock from './PlrStakingHeaderBlock';
-import { getBalanceForAddress, getStakingContractInfo, getStakingRemoteConfig } from 'utils/plrStakingHelper';
+import {
+  getBalanceForAddress,
+  getStakingApy,
+  getStakingContractInfo,
+  getStakingRemoteConfig,
+} from 'utils/plrStakingHelper';
 import { CHAIN } from 'constants/chainConstantsTs';
 
 const PlrStaking = () => {
@@ -82,6 +87,7 @@ const PlrStaking = () => {
   const [stakedAmount, setStakedAmount] = useState(null);
   const [stakedPercentage, setStakedPercentage] = useState(null);
   const [stakers, setStakers] = useState(0);
+  const [stakingApy, setStakingApy] = useState<string>(null);
 
   // Remote Config
   const [stakingEndTime, setStakingEndTime] = useState<Date>(null);
@@ -113,6 +119,9 @@ const PlrStaking = () => {
 
   useEffect(() => {
     const fetchStakingInfo = async () => {
+      const apy = await getStakingApy();
+      setStakingApy(apy);
+
       const stakingRemoteConfig = getStakingRemoteConfig();
       const startTime = new Date(stakingRemoteConfig.stakingStartTime * 1000);
 
@@ -139,9 +148,6 @@ const PlrStaking = () => {
       } catch (e) {
         reportErrorLog('PlrStaking - fetchStakingInfo error', e);
       }
-
-      const ethereumPlrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
-      const balance = await getBalanceForAddress(CHAIN.ETHEREUM, ethereumPlrAddress);
     };
 
     fetchStakingInfo();
@@ -229,7 +235,6 @@ const PlrStaking = () => {
     navigation.navigate(PLR_STAKING_VALIDATOR, {
       token: token,
       chain: token.chain,
-      wallet: accountType,
       balancesWithoutPlr: balancesWithoutPlr,
     });
   };
@@ -245,7 +250,6 @@ const PlrStaking = () => {
     navigation.navigate(PLR_STAKING_VALIDATOR, {
       token: token,
       chain: token.chain,
-      wallet: accountType,
       balancesWithoutPlr: balancesWithoutPlr,
     });
   };
@@ -281,6 +285,7 @@ const PlrStaking = () => {
         stakedAmount={stakedAmount}
         stakedPercentage={stakedPercentage}
         stakers={stakers}
+        apy={stakingApy}
       />
       <Content>
         <IconRow>
@@ -349,10 +354,10 @@ const PlrStaking = () => {
               {plrBalances.map((bal) => {
                 const { titleShort } = chainsConfig[bal.chain];
 
-                const disabled = bal?.assetBalance < MIN_PLR_STAKE_AMOUNT;
+                const disabled = bal?.assetBalance < MIN_PLR_STAKE_AMOUNT || isNaN(bal.assetBalance);
 
                 return (
-                  <BalanceItem onClick={() => selectChain(bal.chain)} disabled={disabled}>
+                  <BalanceItem onPress={() => selectChain(bal.chain)} disabled={disabled}>
                     <BalanceLeftItem>
                       <Spacing w={spacing.large} />
                       <RadioButton visible={bal.chain === selectedChain} disabled={disabled} />
@@ -364,7 +369,7 @@ const PlrStaking = () => {
 
                     <BalanceRightItem>
                       <BalanceValueText disabled={disabled}>
-                        {`${parseFloat(bal.assetBalance).toFixed(2)} ${bal.symbol}`}
+                        {`${!isNaN(bal.assetBalance) ? parseFloat(bal.assetBalance).toFixed(2) : '0'} ${bal.symbol}`}
                       </BalanceValueText>
                       <BalanceValueText fiat disabled={disabled}>
                         {bal.formattedBalanceInFiat}
@@ -385,7 +390,7 @@ const PlrStaking = () => {
               title={t('button.stake')}
               onPress={onStake}
               size="large"
-              disabled={!accountType || !selectedChain || !stakingEnabled}
+              disabled={!accountType || !selectedChain}
             />
           )}
 

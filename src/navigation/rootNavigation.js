@@ -25,7 +25,9 @@ import { createStackNavigator } from 'react-navigation-stack';
 
 // Screens
 import WelcomeBackScreen from 'screens/WelcomeBack';
+import WelcomeScreen from 'screens/Welcome';
 import ImportWalletScreen from 'screens/ImportWallet';
+import NewImportWalletScreen from 'screens/ImportWallet/NewImportWallet';
 import ImportWalletLegalsScreen from 'screens/ImportWallet/ImportWalletLegals';
 import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
 import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
@@ -34,6 +36,8 @@ import ForgotPinScreen from 'screens/ForgotPin';
 import PermissionScreen from 'screens/Permissions';
 import MenuSelectAppearanceScreen from 'screens/AppAppearence';
 import LegalScreen from 'screens/LegalScreen/LegalScreen';
+import GetNotificationsScreen from 'screens/Notification/GetNotifications';
+import EnableBiometricsScreen from 'screens/BiometricsPrompt/EnableBiometricsScreen';
 
 // Utils
 import { modalTransition } from 'utils/common';
@@ -48,6 +52,8 @@ import {
   AUTH_FLOW,
   SET_WALLET_PIN_CODE,
   WELCOME_BACK,
+  WELCOME,
+  GET_NOTIFICATIONS,
   IMPORT_WALLET,
   PIN_CODE_CONFIRMATION,
   PIN_CODE_UNLOCK,
@@ -56,6 +62,8 @@ import {
   PERMISSIONS,
   MENU_SELECT_APPEARANCE,
   ONBOARDING_LEGAL_SCREEN,
+  ENALBE_BIOMETRICS_SCREEN,
+  NEW_IMPORT_WALLET,
 } from 'constants/navigationConstants';
 
 import type { NavigationNavigator } from 'react-navigation';
@@ -71,15 +79,19 @@ const StackNavigatorConfig = {
     headerShown: false,
     gestureEnabled: false,
   },
-  initialRouteName: Platform.OS === 'android' ? PERMISSIONS : SET_WALLET_PIN_CODE,
+  initialRouteName: Platform.OS === 'android' ? PERMISSIONS : WELCOME,
 };
 
 const onBoardingFlow = createStackNavigator(
   {
     [PERMISSIONS]: PermissionScreen,
+    [WELCOME]: WelcomeScreen,
+    [GET_NOTIFICATIONS]: GetNotificationsScreen,
     [IMPORT_WALLET]: ImportWalletScreen,
+    [NEW_IMPORT_WALLET]: NewImportWalletScreen,
     [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
     [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
+    [ENALBE_BIOMETRICS_SCREEN]: EnableBiometricsScreen,
     [WELCOME_BACK]: WelcomeBackScreen,
     [IMPORT_WALLET_LEGALS]: ImportWalletLegalsScreen,
     [ONBOARDING_LEGAL_SCREEN]: LegalScreen,

@@ -19,60 +19,91 @@
 */
 
 import React, { useEffect } from 'react';
-import { Image, Keyboard } from 'react-native';
+import { Keyboard, Dimensions } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
+import messaging from '@react-native-firebase/messaging';
 
 // Components
-import { Container, Content } from 'components/layout/Layout';
+import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import Button from 'components/core/Button';
 import Text from 'components/core/Text';
-import HeaderBlock from 'components/HeaderBlock';
+import IconWithBackgroundGif from 'components/Gif/IconWithBackgroundGif';
+import { Spacing } from 'components/legacy/Layout';
+import { MediumText } from 'components/legacy/Typography';
+import Toast from 'components/Toast';
 
 // Utils
-import { appFont, spacing, fontStyles } from 'utils/variables';
+import { spacing, fontStyles } from 'utils/variables';
 import { useDispatch } from 'react-redux';
 import { setNotificationsVisibleStatus } from 'utils/getNotification';
 
 // Actions
 import { hasFCMPermission } from 'actions/notificationsActions';
 
-// Assets
-const smartWalletImage = require('assets/images/logo-get-notifications.png');
+const { height } = Dimensions.get('window');
 
 function GetNotifincations() {
   const { t, tRoot } = useTranslationWithPrefix('getNotifications');
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const nextRoute = navigation.getParam('nextRouteName');
 
   useEffect(() => {
     Keyboard.dismiss();
   }, [navigation]);
 
-  const close = async () => {
-    await setNotificationsVisibleStatus(dispatch, navigation, false);
+  const skip = async () => {
+    await setNotificationsVisibleStatus(dispatch, false);
+    navigation.navigate(nextRoute);
   };
 
   const onNotificationRequest = async () => {
-    if (await hasFCMPermission()) {
-      await setNotificationsVisibleStatus(dispatch, navigation, true);
+    const authorizationStatus = await messaging().requestPermission();
+    if (authorizationStatus) {
+      if (await hasFCMPermission()) {
+        await setNotificationsVisibleStatus(dispatch, true);
+        navigation.navigate(nextRoute);
+      } else {
+        errorToast();
+      }
+    } else {
+      errorToast();
     }
   };
 
+  const errorToast = () =>
+    Toast.show({
+      message: tRoot('notification.notification_error'),
+      emoji: 'hushed',
+    });
+
   return (
-    <Container>
-      <HeaderBlock leftItems={[{ close: false }]} navigation={navigation} noPaddingTop />
-      <Content>
-        <LogoContainer>
-          <Logo source={smartWalletImage} resizeMode="contain" />
-        </LogoContainer>
-        <Title>{t('title')}</Title>
-        <Body>{t('description')}</Body>
+    <ContainerWithHeader headerProps={{ noBack: true }}>
+      <ContentWrapper contentContainerStyle={{ padding: spacing.large, flexGrow: 1 }}>
+        <IconWithBackgroundGif />
+        <Spacing h={height * 0.05} />
+        <MediumText fontSize={24} style={{ textAlign: 'center' }}>
+          {t('title')}
+        </MediumText>
+        <Spacing h={60} />
+        <RowContainer>
+          <Text variant="big">💎</Text>
+          <Body>{t('pillarReceiveMessage')}</Body>
+        </RowContainer>
+        <Spacing h={20} />
+        <RowContainer>
+          <Text variant="big">💬</Text>
+          <Body>{t('latestUpdateMessage')}</Body>
+        </RowContainer>
+
+        <Spacing h={60} />
+
         <Button title={tRoot('button.enable')} onPress={onNotificationRequest} style={styles.button} size="large" />
-        <Button title={tRoot('button.cancel')} variant="text" onPress={close} size="large" />
-      </Content>
-    </Container>
+        <Button title={tRoot('button.skip')} variant="text" onPress={skip} size="large" />
+      </ContentWrapper>
+    </ContainerWithHeader>
   );
 }
 
@@ -84,28 +115,19 @@ const styles = {
   },
 };
 
-const LogoContainer = styled.View`
-  justify-content: center;
-  align-items: center;
-  margin-top: 59px;
+const RowContainer = styled.View`
+  padding: 9px ${spacing.layoutSides}px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: row;
 `;
 
-const Logo = styled(Image)`
-  align-self: center;
-  width: 75%;
-  height: 245px;
-`;
-
-const Title = styled(Text)`
-  margin: 62px 0 8px 0;
-  font-family: ${appFont.medium};
-  ${fontStyles.large};
-  text-align: center;
+const ContentWrapper = styled.ScrollView`
+  flex: 1;
 `;
 
 const Body = styled(Text)`
-  margin: ${spacing.small}px 33px ${spacing.largePlus}px 33px;
+  margin-left: ${spacing.largePlus}px;
   color: ${({ theme }) => theme.colors.tertiaryText};
   ${fontStyles.medium};
-  text-align: center;
 `;

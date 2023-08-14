@@ -21,11 +21,9 @@
 import React, { FC, useState, useEffect } from 'react';
 import { Image } from 'react-native';
 import styled from 'styled-components/native';
-import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
-import { Platform } from 'react-native';
-import InAppBrowser from 'react-native-inappbrowser-reborn';
 import { useNavigation } from 'react-navigation-hooks';
+import { BigNumber } from 'ethers';
 
 // Constants
 import { PILLAR_STAKING_FLOW } from 'constants/navigationConstants';
@@ -34,27 +32,20 @@ import { CHAIN } from 'constants/chainConstantsTs';
 import { ASSET_CATEGORY } from 'constants/assetsConstants';
 
 // Utils
-import { formatFiatValue, formatFiatChangeExtended } from 'utils/format';
-import { useTheme, useThemeColors } from 'utils/themes';
-import { appFont, borderRadiusSizes, fontSizes, fontStyles, spacing } from 'utils/variables';
-import { isKeyBasedAccount } from 'utils/accounts';
-import { showServiceLaunchErrorToast } from 'utils/inAppBrowser';
+import { useTheme } from 'utils/themes';
+import { appFont, borderRadiusSizes, fontStyles, spacing } from 'utils/variables';
 import { useAssetCategoriesConfig } from 'utils/uiConfig';
 import { images } from 'utils/images';
 import { reportErrorLog } from 'utils/common';
+import { getStakingApy, getStakingContractInfo, getStakingRemoteConfig } from 'utils/plrStakingHelper';
 
 // Services
-import etherspotService from 'services/etherspot';
+import { useAccounts } from 'selectors';
 
 // Components
 import Text from 'components/core/Text';
 import TokenIcon from 'components/display/TokenIcon';
 import CategoryListItem from './components/CategoryListItem';
-import { Sdk } from 'etherspot';
-
-// Abi
-import plrStakingAbi from 'abi/plrStaking.json';
-import { getStakingContractAddress } from 'utils/plrStakingHelper';
 
 type IInvestmentsSection = {};
 
@@ -62,6 +53,7 @@ const InvestmentsSection: FC<IInvestmentsSection> = () => {
   const { t, tRoot } = useTranslationWithPrefix('home.investments');
   const navigation = useNavigation();
   const theme = useTheme();
+  const accounts = useAccounts();
 
   const category = ASSET_CATEGORY.INVESTMENTS;
   const categoriesConfig = useAssetCategoriesConfig();
@@ -69,24 +61,31 @@ const InvestmentsSection: FC<IInvestmentsSection> = () => {
 
   const [stakingEnabled, setStakingEnabled] = useState(false);
   const [stakingEndTime, setStakingEndTime] = useState(null);
+  const [stakedPercentage, setStakedPercentage] = useState(null);
+  const [stakingApy, setStakingApy] = useState<string>(null);
 
   const onPlrStakingPress = () => {
-    // if (!stakingEnabled) return;
+    if (!stakingEnabled) return;
 
     navigation.navigate(PILLAR_STAKING_FLOW);
   };
 
   const getContractDetails = async () => {
-    const sdk: Sdk = etherspotService.getSdkForChain(CHAIN.ETHEREUM);
-
-    if (!sdk) return;
+    const apy = await getStakingApy();
+    setStakingApy(apy);
 
     try {
-      const contractAddress = getStakingContractAddress();
-      const stakingContract = sdk.registerContract<any>('PStaking', plrStakingAbi, contractAddress);
+      const remoteInfo = getStakingRemoteConfig();
+      const stakingInfo = await getStakingContractInfo();
+      if (!stakingInfo && !remoteInfo) return;
 
-      const enabled = await stakingContract.callGetContractState();
-      setStakingEnabled(enabled === 1);
+      const enabled = stakingInfo?.contractState === 1 && remoteInfo?.featureStaking;
+      const stakingMaxTotal = BigNumber.from(stakingInfo.maxStakeTotal.toString());
+      const totalStaked = BigNumber.from(stakingInfo.totalStaked.toString());
+      const percentage = Number(totalStaked.mul(100).div(stakingMaxTotal)) / 100;
+
+      setStakedPercentage(percentage);
+      setStakingEnabled(enabled);
     } catch (e) {
       reportErrorLog('InvestSection error', e);
     }
@@ -94,9 +93,11 @@ const InvestmentsSection: FC<IInvestmentsSection> = () => {
 
   useEffect(() => {
     getContractDetails();
-  }, []);
+  }, [accounts]);
 
   const { plrStakingBg } = images(theme);
+
+  if (!stakingEnabled) return null;
 
   return (
     <>
@@ -110,8 +111,11 @@ const InvestmentsSection: FC<IInvestmentsSection> = () => {
             <TokenIcon url={PLR_ICON_URL} size={48} chain={CHAIN.ETHEREUM} />
           </PlrTokenColumn>
           <PlrStakingDescColumn>
-            <PlrStakingTitle>{t('title')}</PlrStakingTitle>
-            <PlrStakingText>{t('description')}</PlrStakingText>
+            <TitleRow>
+              <PlrStakingTitle>{t('title')}</PlrStakingTitle>
+              <PlrStakingTitle>{`${t('apy')} ${stakingApy || '0%'}`}</PlrStakingTitle>
+            </TitleRow>
+            <PlrStakingText>{t('description', { stakedPercentage: stakedPercentage || '0' })}</PlrStakingText>
           </PlrStakingDescColumn>
 
           <BackgroundImage source={plrStakingBg} resizeMode="contain" />
@@ -167,4 +171,11 @@ const BackgroundImage = styled(Image)`
   position: absolute;
   top: -135px;
   right: -50px;
+`;
+
+const TitleRow = styled.View`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 `;

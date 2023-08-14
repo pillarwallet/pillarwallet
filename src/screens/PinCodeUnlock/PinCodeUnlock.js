@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { AppState } from 'react-native';
+import { AppState, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
@@ -41,6 +41,7 @@ import { Container } from 'components/legacy/Layout';
 import Header from 'components/Header';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
+import { Spacing } from 'components/layout/Layout';
 
 // utils
 import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
@@ -82,8 +83,10 @@ type State = {
   biometricsShown: boolean,
   lastAppState: ?string,
   showPin: boolean,
+  showErrorMessage: boolean,
 };
 
+const { height } = Dimensions.get('window');
 class PinCodeUnlock extends React.Component<Props, State> {
   errorMessage: string;
   onLoginSuccess: ?OnValidPinCallback;
@@ -94,6 +97,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
     biometricsShown: false,
     lastAppState: AppState.currentState,
     showPin: false,
+    showErrorMessage: false,
   };
 
   constructor(props) {
@@ -269,6 +273,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
       defaultAction: () => loginWithPin(pin, this.onLoginSuccess),
     });
     this.timeout = setTimeout(() => {
+      this.setState({ showErrorMessage: true });
       this.handleLocking();
     }, 1200);
   };
@@ -288,19 +293,26 @@ class PinCodeUnlock extends React.Component<Props, State> {
       wallet: { errorMessage: walletErrorMessage },
       isAuthorizing,
     } = this.props;
+    const { showErrorMessage } = this.state;
     const { waitingTime, showPin } = this.state;
     const pinError = walletErrorMessage || this.errorMessage || null;
-    const showError = pinError ? (
-      // eslint-disable-next-line i18next/no-literal-string
-      <ErrorMessage testID={`${TAG}-error-pin_error`} accessibilityLabel={`${TAG}-error-pin_error`}>
-        {pinError}
-      </ErrorMessage>
-    ) : null;
+    const showError =
+      pinError && showErrorMessage ? (
+        <ErrorMessage
+          textStyle={{ fontSize: 24 }}
+          testID={`${TAG}-error-pin_error`}
+          // eslint-disable-next-line i18next/no-literal-string
+          accessibilityLabel={`${TAG}-error-pin_error`}
+        >
+          {pinError}
+        </ErrorMessage>
+      ) : null;
 
     if (showPin) {
       return (
         <Container>
           <Header centerTitle title={t('auth:enterPincode')} />
+          <Spacing h={height * 0.1} />
           {showError}
           {waitingTime > 0 && (
             // eslint-disable-next-line i18next/no-literal-string
@@ -312,9 +324,11 @@ class PinCodeUnlock extends React.Component<Props, State> {
             <PinCode
               onPinEntered={this.handlePinSubmit}
               onForgotPin={this.handleForgotPasscode}
-              pinError={!!pinError}
+              onPinChanged={() => this.setState({ showErrorMessage: false })}
+              pinError={!!pinError && showErrorMessage}
               isLoading={isAuthorizing}
               testIdTag={TAG}
+              customStyle={{ flexGrow: 0.5 }}
             />
           )}
         </Container>

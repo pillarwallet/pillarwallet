@@ -22,22 +22,25 @@ import * as React from 'react';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
+import InAppBrowser from 'react-native-inappbrowser-reborn';
 
 // Components
 import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
+import AddCashModal from 'screens/AddCash/modal/AddCashModal';
 
 // Screens
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 
 // Constants
-import { BRIDGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW, ADD_CASH } from 'constants/navigationConstants';
+import { BRIDGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';
 
 // Selectors
 import { useRootSelector, useIsExchangeAvailable, useActiveAccount, activeAccountAddressSelector } from 'selectors';
 
 // Utils
 import { isKeyBasedAccount } from 'utils/accounts';
+import { showServiceLaunchErrorToast } from 'utils/inAppBrowser';
 
 // Local
 import WalletTabScrollContent from './WalletTabScrollContent';
@@ -56,9 +59,35 @@ function WalletTab({ isNavigateToHome }: Props) {
   const isExchangeAvailable = useIsExchangeAvailable();
 
   const [hasPositiveBalance, setHasPositiveBalance] = React.useState(true);
+  const [addCashUrl, setAddCashUrl] = React.useState(null);
 
   const showReceiveModal = () => {
     Modal.open(() => <ReceiveModal address={accountAddress} />);
+  };
+
+  React.useEffect(() => {
+    if (!addCashUrl) return;
+
+    // Delay open Add Cash URL so that it doesn't close with the modal
+    setTimeout(() => openBrowser(addCashUrl), 500);
+  }, [addCashUrl]);
+
+  const openBrowser = async (url: string) => {
+    const isAvailable = await InAppBrowser.isAvailable();
+
+    if (url && isAvailable) {
+      InAppBrowser.open(url, {
+        // iOS Properties
+        // eslint-disable-next-line i18next/no-literal-string
+        dismissButtonStyle: 'close',
+        // Android Properties
+        showTitle: true,
+        enableUrlBarHiding: true,
+        enableDefaultShare: true,
+      });
+    } else showServiceLaunchErrorToast();
+
+    setAddCashUrl(null);
   };
 
   const buttons = [
@@ -68,7 +97,7 @@ function WalletTab({ isNavigateToHome }: Props) {
       onPress: showReceiveModal,
     },
     isExchangeAvailable &&
-    hasPositiveBalance && {
+      hasPositiveBalance && {
       title: tRoot('button.swap'),
       iconName: 'exchange',
       onPress: () => navigation.navigate(BRIDGE_FLOW),
@@ -79,12 +108,16 @@ function WalletTab({ isNavigateToHome }: Props) {
       onPress: () => navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW),
     },
     !isKeyBasedAccount(activeAccount) &&
-    !hasPositiveBalance && {
+      !hasPositiveBalance && {
       title: tRoot('button.addCash'),
       iconName: 'plus',
-      onPress: () => navigation.navigate(ADD_CASH),
+      onPress: () => openAddCashModal(),
     },
   ];
+
+  const openAddCashModal = () => {
+    Modal.open(() => <AddCashModal setAddCashUrl={setAddCashUrl} />);
+  };
 
   return (
     <Container>

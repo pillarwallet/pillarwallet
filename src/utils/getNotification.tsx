@@ -36,16 +36,15 @@ export async function getNotificationsVisibleStatus() {
   return status?.visible;
 }
 
-export async function setNotificationsVisibleStatus(dispatch: any, navigation: any, status: boolean) {
+export async function setNotificationsVisibleStatus(dispatch: any, status: boolean) {
   await dispatch(saveDbAction('get_notifications', { visible: status }));
-  navigation.goBack();
   if (status) {
     setTimeout(() => {
       dispatch(startListeningNotificationsAction());
     }, 4000);
     Toast.show({
       message: t('notification.notification_enable'),
-      emoji: 'white_check_mark',
+      emoji: 'call_me_hand',
     });
   }
 }

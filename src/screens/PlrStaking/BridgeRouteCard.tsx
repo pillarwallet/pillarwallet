@@ -26,7 +26,7 @@ import { BigNumber } from 'bignumber.js';
 import { Spacing } from 'components/layout/Layout';
 
 // Utils
-import { formatTokenValue } from 'utils/format';
+import { formatTokenValue, formatTokenValueWithoutSymbol } from 'utils/format';
 import { getAssetValueInFiat } from 'utils/rates';
 import { useChainsConfig } from 'utils/uiConfig';
 import { getSortingValue } from 'screens/Bridge/Exchange-CrossChain/utils'; // From Cross-chain screen
@@ -41,7 +41,7 @@ import { useFiatCurrency, useChainRates, useActiveAccount } from 'selectors';
 
 // Hooks
 import { useTransactionsEstimate } from 'hooks/transactions';
-import RouteCard from './RouteCard';
+import RouteCard, { ISendData, IStakingSteps } from './RouteCard';
 
 type IBridgeRouteCard = {
   value?: BigNumber | null;
@@ -58,10 +58,8 @@ type IBridgeRouteCard = {
   buildTransactionFetched?: any;
   fromChain: string;
   stakeFeeInfo: any;
-  stakeGasFeeAsset: Asset | AssetOption;
-  isBridging?: boolean;
-  isStaking?: boolean;
-  stakingCompleted?: boolean;
+  stakingSteps?: IStakingSteps;
+  sendData?: ISendData;
 };
 
 const BridgeRouteCard: FC<IBridgeRouteCard> = ({
@@ -77,17 +75,16 @@ const BridgeRouteCard: FC<IBridgeRouteCard> = ({
   buildTransactionData,
   fromChain,
   stakeFeeInfo,
-  stakeGasFeeAsset,
+  stakingSteps,
+  sendData,
 }) => {
-  const { t } = useTranslation();
   const fiatCurrency = useFiatCurrency();
   const chainsConfig = useChainsConfig();
 
   const txData = useMemo(() => {
     if (!buildTransactionData || !plrToken) return null;
-    const { approvalTransactionData, transactionData } = buildTransactionData;
-    if (!approvalTransactionData) return [transactionData];
-    return [approvalTransactionData, transactionData];
+    const { transactions } = buildTransactionData;
+    return transactions ?? [];
   }, [buildTransactionData]);
 
   const offer = useMemo(() => {
@@ -136,7 +133,7 @@ const BridgeRouteCard: FC<IBridgeRouteCard> = ({
 
   const chainRates = useChainRates(fromChain);
 
-  const formattedToAmount = formatTokenValue(offer.toAmount, 'stkPLR', { decimalPlaces: 0 }) ?? '';
+  const formattedToAmount = formatTokenValueWithoutSymbol(offer.toAmount, null, { decimalPlaces: 0 }) ?? '';
 
   const formattedFromAmount = formatTokenValue(offer.fromAmount, offer.fromAsset.symbol, { decimalPlaces: 0 }) ?? '';
 
@@ -173,10 +170,11 @@ const BridgeRouteCard: FC<IBridgeRouteCard> = ({
         networkName={networkName}
         provider={offer?.provider}
         stakeFeeInfo={stakeFeeInfo}
-        stakeGasFeeAsset={stakeGasFeeAsset}
         gasFeeAsset={gasFeeAsset}
         transactions={offer?.transactions}
         bridgeRoute={offer?.route}
+        stakingSteps={stakingSteps}
+        sendData={sendData}
       />
     </>
   );

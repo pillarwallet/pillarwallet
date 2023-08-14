@@ -702,11 +702,11 @@ export const resetUsernameCheckAction = (resetOfflineToast?: boolean) => {
 
 export const resetOnboardingAction = () => ({ type: RESET_ONBOARDING });
 
-export const resetOnboardingAndNavigateAction = (routeName: string) => {
+export const resetOnboardingAndNavigateAction = (routeName: string, nextRouteName: string) => {
   return (dispatch: Dispatch) => {
     logBreadcrumb('onboarding', 'resetOnboardingAndNavigateAction: dispatching resetOnboardingAction');
     dispatch(resetOnboardingAction());
-    navigate(NavigationActions.navigate({ routeName }));
+    navigate(NavigationActions.navigate({ routeName, params: { nextRouteName } }));
   };
 };
 

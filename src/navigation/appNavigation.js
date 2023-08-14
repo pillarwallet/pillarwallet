@@ -100,8 +100,6 @@ import LiquidityPoolsScreen from 'screens/LiquidityPools/LiquidityPools';
 import LiquidityPoolsInfoScreen from 'screens/LiquidityPools/LiquidityPoolsInfo';
 import TutorialScreen from 'screens/Tutorial';
 import EnsMigrationConfirmScreen from 'screens/EnsMigrationConfirm';
-import AddCashScreen from 'screens/AddCash/AddCash';
-import AddCashBrowser from 'screens/AddCash/AddCashBrowser';
 import LegalScreen from 'screens/LegalScreen/LegalScreen';
 import BackupWalletIntro from 'screens/BackupWallet/Intro';
 import BackupPhraseValidateScreen from 'screens/BackupWallet/BackupPhraseValidate';
@@ -117,7 +115,6 @@ import NIInputService from 'screens/NativeIntegration/NIInputService';
 import NIViewService from 'screens/NativeIntegration/NIViewService';
 import NITransactionSubmitted from 'screens/NativeIntegration/NITransactionSubmitted';
 import NIWarningScreen from 'screens/NativeIntegration/NIWarning';
-import GetNotificationsScreen from 'screens/Notification/GetNotifications';
 import AddTokensScreen from 'screens/Assets/AddTokens';
 import TokenWithToggles from 'screens/Assets/TokensWithToggles';
 import ManageTokenLists from 'screens/Assets/ManageTokenLists';
@@ -246,9 +243,6 @@ import {
   ENS_MIGRATION_CONFIRM,
   WEB_VIEW,
   ENS_MIGRATION_FLOW,
-  ADD_CASH,
-  ADD_CASH_BROWSER,
-  GET_NOTIFICATIONS,
   LEGAL_SCREEN,
   SET_WALLET_PIN_CODE,
   WELCOME_BACK,
@@ -359,16 +353,6 @@ const exchangeFlow = createStackNavigator(
 const servicesFlow = createStackNavigator(
   {
     [SERVICES]: ServicesScreen,
-  },
-  StackNavigatorConfig,
-);
-
-// ADD CASH FLOW
-const addCashFlow = createStackNavigator(
-  {
-    [ADD_CASH_BROWSER]: AddCashBrowser,
-    [ADD_CASH]: AddCashScreen,
-    [GET_NOTIFICATIONS]: GetNotificationsScreen,
   },
   StackNavigatorConfig,
 );
@@ -680,7 +664,6 @@ const AppFlowNavigation = createStackNavigator(
     [WALLETCONNECT_CALL_REQUEST_FLOW]: walletConnectCallRequestFlow,
     [ETHERSPOT_DEPLOYMENT_INTERJECTION]: EtherspotDeploymentInterjection,
     [ENS_MIGRATION_FLOW]: ensMigrationFlow,
-    [ADD_CASH]: addCashFlow,
     [WEB_VIEW]: WebViewScreen,
     [LEGAL_SCREEN]: LegalScreen,
     [IMPORT_FLOW_FROM_SETTINGS]: ImportFlowFromSettings,

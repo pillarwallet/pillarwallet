@@ -35,6 +35,9 @@ import Spinner from 'components/Spinner';
 import { useRootSelector } from 'selectors';
 import { maxPinCodeLengthSelector } from 'selectors/appSettings';
 
+// Utils
+import { useThemeColors } from 'utils/themes';
+
 // types
 import type { ViewStyleProp } from 'utils/types/react-native';
 
@@ -77,6 +80,7 @@ const PinCode = ({
   maxPinCodeLength: defaultMaxPinCodeLength,
   testIdTag,
 }: Props) => {
+  const colors = useThemeColors();
   const [pinCode, setPinCode] = useState([]);
   const maxPinCodeLength = defaultMaxPinCodeLength ?? useRootSelector(maxPinCodeLengthSelector);
 
@@ -140,6 +144,8 @@ const PinCode = ({
         {!!isLoading && <Spinner size={30} />}
         {!isLoading && (
           <HorizontalDots
+            pinError={pinError}
+            dotStyle={[pinError && { backgroundColor: colors.negative }]}
             wrapperWidth={156}
             wrapperVerticalMargin={20}
             numAllDots={maxPinCodeLength}

@@ -352,7 +352,8 @@
     "allTimeHigh": "All-Time High",
     "allTimeLow": "All-Time Low",
     "your_balance": "Your Balance",
-    "volume_24": "Volume 24h"
+    "volume_24": "Volume 24h",
+    "or": "or"
   },
 
   "button": {
@@ -713,8 +714,9 @@
     },
     "investments": {
       "title": "PLR Staking",
-      "description": "Earn ETH by staking your PLR tokens.\n80% PLR of the vault staked.",
-      "closeTime": "Subscription will close in {{closeTime}}"
+      "description": "Earn ETH by staking your PLR tokens.\n{{stakedPercentage}}% PLR of the vault staked.",
+      "closeTime": "Subscription will close in {{closeTime}}",
+      "apy": "APY:"
     }
   },
 
@@ -1239,9 +1241,9 @@
           "highDeploymentFees": "Warning: High deployment fees if buying on Ethereum Mainnet",
           "deploying": "Deploying...",
           "options": {
-            "rampTitle": "RAMP Network",
-            "rampCountry": "US & Europe",
-            "rampDescription": "Buy with USD, EUR or GBP with Apple & Google Pay or Debit card. Cashing out from crypto available.",
+            "onRamperTitle": "Onramper",
+            "onRamperCountry": "Global",
+            "onRamperDescription": "Get the best rate from 18 supported Onramp providers with every preferred payment method and currency.",
             "pelerinTitle": "Mt Pelerin",
             "pelerinCountry": "Europe",
             "pelerinDescription": "Buy with EUR and CHF with a Debit card. Cashing out from crypto available."
@@ -1571,7 +1573,8 @@
     "transactionSentConfirmed": "{{tokenValue}} sent.",
     "receivedCollectible": "You received an NFT.",
     "collectibleSentAndReceived": "Your NFT has been received.",
-    "notification_enable": "Notifications enabled"
+    "notification_enable": "Let's be in touch",
+    "notification_error": "Please enable Notifications from the settings."
   },
 
   "graph": {
@@ -1712,10 +1715,11 @@
 
   "biometricLogin": {
     "title": "Sign in with {{biometryType}}",
-    "description": "Enable biometric login instead of typing PIN every time?",
+    "description": "Enable biometric login instead of typing PIN every time",
+    "enableBiometric": "Enable Biometrics\nfor easy access",
     "button": {
       "enable": "Enable",
-      "cancel": "Cancel"
+      "cancel": "Skip"
     }
   },
 
@@ -1729,8 +1733,10 @@
   },
 
   "getNotifications": {
-    "title": "Get notifications",
-    "description": "Pillar will notify on your transactions status and requests from dapps. Never spam, always on point."
+    "title": "Enable Push Notifications",
+    "description": "Pillar will notify on your transactions status and requests from dapps. Never spam, always on point.",
+    "pillarReceiveMessage": "Receive notifications when you receive crypto.",
+    "latestUpdateMessage": "Get the latest updates on DeFi opportunities."
   },
 
   "transactionNotification": {
@@ -1799,7 +1805,8 @@
       "on": "on",
       "showLess": "Show less",
       "showMore": "Show more",
-      "bridgeFrom": "Bridge via {{providerName}} from {{sourceNetworkName}} to {{destinationNetworkName}}"
+      "bridgeFrom": "Bridge via {{title}} from {{networkName}} to {{destinationNetworkName}}",
+      "sendFrom": "Send {{formattedValue}} to {{receiverWallet}}"
     },
     "chooseAsset": "Choose asset"
   }

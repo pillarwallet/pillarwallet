@@ -45,7 +45,6 @@ import { constructWalletFromMnemonic } from 'utils/wallet';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { OnValidPinCallback } from 'models/Wallet';
 
-
 type HeaderProps = {
   title?: String,
   centerTitle?: boolean,
@@ -81,7 +80,6 @@ type State = {
   showPin: boolean,
 };
 
-
 const CheckAuthWrapper = styled(Container)`
   margin-top: auto;
   height: 100%;
@@ -105,9 +103,7 @@ class CheckAuth extends React.Component<Props, State> {
 
   componentDidMount() {
     addAppStateChangeListener(this.handleAppStateChange);
-    const {
-      useBiometrics, revealMnemonic, enforcePin, modalProps,
-    } = this.props;
+    const { useBiometrics, revealMnemonic, enforcePin, modalProps } = this.props;
     const { lastAppState } = this.state;
 
     this._isMounted = true;
@@ -115,17 +111,16 @@ class CheckAuth extends React.Component<Props, State> {
     // do nothing if auth isn't supposed to be checked
     if (modalProps && !get(modalProps, 'isVisible')) return;
 
-    if (useBiometrics
-      && !revealMnemonic
-      && lastAppState !== BACKGROUND_APP_STATE
-    ) {
+    if (useBiometrics && !revealMnemonic && lastAppState !== BACKGROUND_APP_STATE) {
       this.showBiometricLogin();
     } else if (lastAppState !== BACKGROUND_APP_STATE && !enforcePin) {
       this.checkPrivateKey();
     }
   }
 
-  componentWillUnmount() { this._isMounted = false; }
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
 
   // special case for modals
   componentDidUpdate(prevProps: Props) {
@@ -146,9 +141,7 @@ class CheckAuth extends React.Component<Props, State> {
   };
 
   checkPrivateKey = async (errorHandler?: Function) => {
-    const {
-      onPinValid, checkPrivateKey, modalProps, revealMnemonic, enforcePin,
-    } = this.props;
+    const { onPinValid, checkPrivateKey, modalProps, revealMnemonic, enforcePin } = this.props;
     if (enforcePin) {
       this.setState({ showPin: true });
     } else {
@@ -156,9 +149,8 @@ class CheckAuth extends React.Component<Props, State> {
       if (keychainData) {
         const { privateKey, mnemonic } = keychainData;
         removeAppStateChangeListener(this.handleAppStateChange);
-        checkPrivateKey(
-          privateKey,
-          (_, wallet) => onPinValid(_, (revealMnemonic && mnemonic) ? constructWalletFromMnemonic(mnemonic) : wallet),
+        checkPrivateKey(privateKey, (_, wallet) =>
+          onPinValid(_, revealMnemonic && mnemonic ? constructWalletFromMnemonic(mnemonic) : wallet),
         );
         this.hideModal(modalProps);
       } else {
@@ -171,9 +163,7 @@ class CheckAuth extends React.Component<Props, State> {
   handleAppStateChange = (nextAppState: string) => {
     const { useBiometrics, revealMnemonic } = this.props;
     const { lastAppState } = this.state;
-    if (nextAppState === ACTIVE_APP_STATE
-      && lastAppState === BACKGROUND_APP_STATE
-      && !revealMnemonic) {
+    if (nextAppState === ACTIVE_APP_STATE && lastAppState === BACKGROUND_APP_STATE && !revealMnemonic) {
       if (useBiometrics) {
         this.showBiometricLogin();
       } else {
@@ -210,14 +200,8 @@ class CheckAuth extends React.Component<Props, State> {
 
     const { onModalHide, isVisible } = modalProps;
     return (
-      <CheckAuthWrapperModal
-        title={title}
-        onModalHide={onModalHide}
-        isVisible={!!isVisible}
-      >
-        <Wrapper flex={1}>
-          {this.renderPinCode()}
-        </Wrapper>
+      <CheckAuthWrapperModal title={title} onModalHide={onModalHide} isVisible={!!isVisible}>
+        <Wrapper flex={1}>{this.renderPinCode()}</Wrapper>
       </CheckAuthWrapperModal>
     );
   };
@@ -236,15 +220,13 @@ class CheckAuth extends React.Component<Props, State> {
   };
 
   renderPinCode = () => {
-    const { wallet: { errorMessage } } = this.props;
+    const {
+      wallet: { errorMessage },
+    } = this.props;
     return (
       <CheckAuthWrapper>
         {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-        <PinCode
-          onPinEntered={this.handlePinSubmit}
-          showForgotButton={false}
-          pinError={!!errorMessage}
-        />
+        <PinCode onPinEntered={this.handlePinSubmit} showForgotButton={false} pinError={!!errorMessage} />
       </CheckAuthWrapper>
     );
   };
@@ -280,22 +262,19 @@ class CheckAuth extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   wallet,
-  appSettings: { data: { useBiometrics } },
+  appSettings: {
+    data: { useBiometrics },
+  },
 }: RootReducerState): $Shape<Props> => ({
   wallet,
   useBiometrics,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  checkPin: (
-    pin: string,
-    onValidPin: ?OnValidPinCallback,
-    withMnemonic: boolean,
-  ) => dispatch(checkAuthAction(pin, null, onValidPin, withMnemonic)),
-  checkPrivateKey: (
-    privateKey: ?string,
-    onValidPin: ?OnValidPinCallback,
-  ) => dispatch(checkAuthAction(null, privateKey, onValidPin)),
+  checkPin: (pin: string, onValidPin: ?OnValidPinCallback, withMnemonic: boolean) =>
+    dispatch(checkAuthAction(pin, null, onValidPin, withMnemonic)),
+  checkPrivateKey: (privateKey: ?string, onValidPin: ?OnValidPinCallback) =>
+    dispatch(checkAuthAction(null, privateKey, onValidPin)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(CheckAuth);

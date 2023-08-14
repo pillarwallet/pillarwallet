@@ -23,6 +23,7 @@ import { useDispatch } from 'react-redux';
 import t from 'translations/translate';
 import * as Keychain from 'react-native-keychain';
 import { PERMISSIONS, RESULTS, request as requestPermission } from 'react-native-permissions';
+import type { NavigationScreenProp } from 'react-navigation';
 
 // Selectors
 import { useRootSelector } from 'selectors';
@@ -32,6 +33,7 @@ import { getSupportedBiometryType } from 'utils/keychain';
 
 // Constants
 import { SET_FETCHING } from 'constants/onboardingConstants';
+import { HOME } from 'constants/navigationConstants';
 
 // Actions
 import { walletSetupAction } from 'actions/onboardingActions';
@@ -55,7 +57,7 @@ const showFaceIDFailed = () => {
   });
 };
 
-export function useBioMetricsPopup() {
+export function useBioMetricsPopup(navigation: NavigationScreenProp<any>) {
   const dispatch = useDispatch();
   const wallet = useRootSelector((root) => root.wallet.data);
 
@@ -64,6 +66,7 @@ export function useBioMetricsPopup() {
     else dispatch(logEventAction(isiOS ? 'cancel_face_id' : 'cancel_biometric_id'));
 
     dispatch(walletSetupAction(setBiometrics));
+    navigation.navigate(HOME);
   };
 
   const faceIDPermission = (biometryType) => {

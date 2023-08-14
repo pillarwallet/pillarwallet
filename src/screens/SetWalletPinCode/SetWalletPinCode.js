@@ -18,14 +18,17 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React, { useEffect, useState } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { Dimensions } from 'react-native';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
 // Components
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import PinCode from 'components/PinCode';
-import { MediumText, Paragraph } from 'components/legacy/Typography';
+import { MediumText } from 'components/legacy/Typography';
+import IconWithBackgroundGif from 'components/Gif/IconWithBackgroundGif';
+import { Spacing } from 'components/legacy/Layout';
 
 // Constants
 import { PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
@@ -36,21 +39,21 @@ import { maxPinCodeLengthSelector } from 'selectors/appSettings';
 
 // Utils
 import { validatePin } from 'utils/validators';
-import { fontStyles, spacing } from 'utils/variables';
+import { spacing } from 'utils/variables';
 
 // Actions
 import { logEventAction } from 'actions/analyticsActions';
 
 // Types
-import type { RootReducerState } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  wallet: ?Object,
 };
 
-const SetWalletPinCode = ({ navigation, wallet }: Props) => {
+const { height } = Dimensions.get('window');
+
+const SetWalletPinCode = ({ navigation }: Props) => {
   const [pinCode, setPinCode] = useState(null);
   const dispatch = useDispatch();
   const [errorMessage, setErrorMessage] = useState(null);
@@ -71,23 +74,19 @@ const SetWalletPinCode = ({ navigation, wallet }: Props) => {
     navigation.navigate(PIN_CODE_CONFIRMATION, { pinCode: submittedPinCode });
   };
 
-  // used to block navigation back in web recovery portal flow
-  const noBack = navigation.getParam('noBack');
-
-  const username = navigation.getParam('username');
-  let welcomeText = t('auth:title.welcomeToPillar');
-  if (username) welcomeText = t('auth:title.welcomeToPillarUser', { user: username });
-
   return (
     <ContainerWithHeader
       headerProps={{
-        centerItems: [{ title: t('auth:title.createPin') }],
-        noBack: !!noBack,
+        noBack: false,
       }}
     >
       <ContentWrapper contentContainerStyle={{ padding: spacing.large, flexGrow: 1 }}>
-        {!wallet && <HeaderText>{welcomeText}</HeaderText>}
-        <Paragraph center>{t('auth:paragraph.createPin')}</Paragraph>
+        <IconWithBackgroundGif />
+        <Spacing h={height * 0.05} />
+
+        <MediumText fontSize={24} center>
+          {t('auth:paragraph.letsCreatePin')}
+        </MediumText>
         <PinCode
           onPinEntered={handlePinSubmit}
           onPinChanged={setPinCode}
@@ -101,21 +100,10 @@ const SetWalletPinCode = ({ navigation, wallet }: Props) => {
   );
 };
 
-const mapStateToProps = ({ onboarding: { wallet } }: RootReducerState): $Shape<Props> => ({
-  wallet,
-});
-
-export default connect(mapStateToProps)(SetWalletPinCode);
+export default SetWalletPinCode;
 
 const ContentWrapper = styled.ScrollView`
   flex: 1;
-`;
-
-const HeaderText = styled(MediumText)`
-  ${fontStyles.large};
-  text-align: center;
-  margin-top: ${spacing.large}px;
-  margin-bottom: 9px;
 `;
 
 const TAG = 'SetWalletPinCode';
