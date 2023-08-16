@@ -91,6 +91,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
   errorMessage: string;
   onLoginSuccess: ?OnValidPinCallback;
   interval: IntervalID;
+  timeout: any;
   state = {
     waitingTime: 0,
     biometricsShown: false,
@@ -106,6 +107,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
     this.onLoginSuccess = navigation.getParam('onLoginSuccess', null);
     const forcePinParam = navigation.getParam('forcePin');
     const omitPinParam = navigation.getParam('omitPin');
+    this.timeout = null;
 
     if ((!useBiometrics || forcePinParam) && !omitPinParam) {
       this.state.showPin = true;
@@ -145,6 +147,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   componentWillUnmount() {
     removeAppStateChangeListener(this.handleAppStateChange);
+    if (this.timeout) clearTimeout(this.timeout);
     if (this.interval) {
       clearInterval(this.interval);
     }
@@ -269,7 +272,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
       pin,
       defaultAction: () => loginWithPin(pin, this.onLoginSuccess),
     });
-    setTimeout(() => {
+    this.timeout = setTimeout(() => {
       this.setState({ showErrorMessage: true });
       this.handleLocking();
     }, 1200);

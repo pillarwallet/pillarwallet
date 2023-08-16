@@ -19,10 +19,7 @@
 */
 import React from 'react';
 import styled from 'styled-components/native';
-
-// eslint-disable-next-line import/no-extraneous-dependencies
-import ContentLoader from 'react-native-content-loader';
-import { Rect } from 'react-native-svg';
+import ContentLoader, { Rect } from 'react-content-loader/native';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
@@ -34,9 +31,11 @@ export const HeaderLoader = () => {
   const colors = useThemeColors();
   return (
     <ContentLoader
-      primaryColor={colors.primarySkeleton}
-      secondaryColor={colors.secondarySkeleton}
-      duration={1000}
+      foregroundColor={colors.secondarySkeleton}
+      backgroundColor={colors.primarySkeleton}
+      speed={1}
+      interval={0}
+      viewBox="0 0 179 100"
       width={179}
       height={100}
     >
@@ -61,9 +60,11 @@ export const TokenAnalyticsLoader = () => {
   const colors = useThemeColors();
   return (
     <ContentLoader
-      primaryColor={colors.purpleHeatPrimary}
-      secondaryColor={colors.purpleHeatSecondary}
-      duration={1000}
+      foregroundColor={colors.purpleHeatSecondary}
+      backgroundColor={colors.purpleHeatPrimary}
+      speed={1}
+      interval={0}
+      viewBox="0 0 66 23"
       width={66}
       height={23}
     >
@@ -78,9 +79,11 @@ export const BalanceLoader = () => {
   return (
     <RowContainer>
       <ContentLoader
-        primaryColor={colors.primarySkeleton}
-        secondaryColor={colors.secondarySkeleton}
-        duration={1000}
+        foregroundColor={colors.secondarySkeleton}
+        backgroundColor={colors.primarySkeleton}
+        speed={1}
+        interval={0}
+        viewBox="0 0 99 50"
         width={99}
         height={50}
       >
@@ -88,10 +91,12 @@ export const BalanceLoader = () => {
         <Rect x="0" y="32" rx="4" ry="4" width="98" height="13" />
       </ContentLoader>
       <ContentLoader
-        primaryColor={colors.primarySkeleton}
-        secondaryColor={colors.secondarySkeleton}
-        duration={1000}
-        width={98}
+        foregroundColor={colors.secondarySkeleton}
+        backgroundColor={colors.primarySkeleton}
+        speed={1}
+        interval={0}
+        viewBox="0 0 99 50"
+        width={99}
         height={50}
       >
         <Rect x="0" y="5" rx="4" ry="4" width="98" height="22" />
@@ -106,9 +111,11 @@ export const AllTimeLoader = () => {
 
   return (
     <ContentLoader
-      primaryColor={colors.primarySkeleton}
-      secondaryColor={colors.secondarySkeleton}
-      duration={1000}
+      foregroundColor={colors.secondarySkeleton}
+      backgroundColor={colors.primarySkeleton}
+      speed={1}
+      interval={0}
+      viewBox="0 0 52 13"
       width={52}
       height={13}
     >
