@@ -62,6 +62,7 @@ const PlrStakingBanner: FC<IPlrStakingBanner> = () => {
   const [remainingLockedTime, setRemainingLockedTime] = useState<Duration>(null);
 
   const [stakingEnabled, setStakingEnabled] = useState(false);
+  const [infoLoaded, setInfoLoaded] = useState(false);
 
   useEffect(() => {
     if (!stakingEndTime) return;
@@ -83,8 +84,6 @@ const PlrStakingBanner: FC<IPlrStakingBanner> = () => {
   };
 
   const onPlrStakingPress = () => {
-    if (!stakingEnabled) return;
-
     navigation.navigate(PILLAR_STAKING_FLOW);
   };
 
@@ -104,8 +103,9 @@ const PlrStakingBanner: FC<IPlrStakingBanner> = () => {
       const enabled = stakingInfo?.contractState === 1 && remoteInfo?.featureStaking;
 
       setStakingEnabled(enabled);
+      setInfoLoaded(stakingInfo?.contractState != null && remoteInfo?.featureStaking);
     } catch (e) {
-      reportErrorLog('InvestSection error', e);
+      reportErrorLog('PlrStakingBanner error', e);
     }
   };
 
@@ -118,6 +118,8 @@ const PlrStakingBanner: FC<IPlrStakingBanner> = () => {
   };
 
   const { plrStakingBg } = images(theme);
+
+  if (!infoLoaded) return null;
 
   if (!showBanner) return null;
 

@@ -69,7 +69,7 @@ interface IStakingContractAbi {
   callMaxTotalStake: () => Promise<string>;
   callTotalStaked: () => Promise<string>;
   callRewardToken: () => Promise<string>;
-  callStakingToken: () => Promise<string>;
+  callStakedToken: () => Promise<string>;
   callGetStakedAccounts: () => Promise<string[]>;
 }
 
@@ -217,7 +217,7 @@ export const getStakedToken = async () => {
     const stakingContract = getStakingContract();
     if (!stakingContract) return null;
 
-    stakedToken = await stakingContract.callStakingToken();
+    stakedToken = await stakingContract.callStakedToken();
   }
 
   return stakedToken;
@@ -241,7 +241,7 @@ export const getStakingContractInfo = async (refresh?: boolean): Promise<IStakin
     const maxStakeTotal = await stakingContract.callMaxTotalStake();
     const totalStaked = await stakingContract.callTotalStaked();
     const contractRewardToken = await stakingContract.callRewardToken();
-    const contractStakingToken = await stakingContract.callStakingToken();
+    const contractStakedToken = await stakingContract.callStakedToken();
     const stakedAccounts = await stakingContract.callGetStakedAccounts();
 
     try {
@@ -252,7 +252,7 @@ export const getStakingContractInfo = async (refresh?: boolean): Promise<IStakin
     }
 
     stakingContractState = contractState;
-    stakedToken = contractStakingToken;
+    stakedToken = contractStakedToken;
     rewardToken = contractRewardToken;
 
     storedContractInfo = {
@@ -416,4 +416,10 @@ export const formatRemainingTime = (time: Duration, fullDuration: boolean = fals
   if (time.seconds) timeStr += ` ${time.seconds}s`;
 
   return timeStr?.slice(1) || '';
+};
+
+export const getRewardAmount = (value: number) => {
+  const apy = stakingApy ? parseFloat(stakingApy) : 0;
+
+  return value * (apy / 100);
 };

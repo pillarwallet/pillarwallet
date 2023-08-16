@@ -1772,7 +1772,10 @@
       "apy": "APY (Variable)",
       "staked": "Staked",
       "vaultFilling": "Vault filling",
-      "stakers": "Stakers"
+      "stakers": "Stakers",
+      "pillarStaking": "Pillar Staking",
+      "onEthereum": "On Ethereum",
+      "rewards": "Rewards"
     },
     "assetSelector": {
       "from": "From",
