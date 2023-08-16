@@ -501,7 +501,7 @@ PODS:
     - Firebase/RemoteConfig (= 8.10.0)
     - React-Core
     - RNFBApp
-  - RNGestureHandler (2.12.0):
+  - RNGestureHandler (2.9.0):
     - React-Core
   - RNImageCropPicker (0.26.2):
     - QBImagePickerController
@@ -549,6 +549,10 @@ PODS:
     - React
   - toolbar-android (0.2.1):
     - React
+  - Web3Auth (3.3.0)
+  - web3auth-react-native-sdk (2.2.0):
+    - React-Core
+    - Web3Auth (= 3.3.0)
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -634,6 +638,7 @@ DEPENDENCIES:
   - SwiftyGif (from `https://github.com/kirualex/SwiftyGif`)
   - TcpSockets (from `../node_modules/react-native-tcp`)
   - "toolbar-android (from `../node_modules/@react-native-community/toolbar-android`)"
+  - "web3auth-react-native-sdk (from `../node_modules/@web3auth/react-native-sdk`)"
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -664,6 +669,7 @@ SPEC REPOS:
     - SDWebImage
     - SDWebImageWebPCoder
     - Sentry
+    - Web3Auth
 
 EXTERNAL SOURCES:
   BVLinearGradient:
@@ -826,6 +832,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-tcp"
   toolbar-android:
     :path: "../node_modules/@react-native-community/toolbar-android"
+  web3auth-react-native-sdk:
+    :path: "../node_modules/@web3auth/react-native-sdk"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -920,7 +928,7 @@ SPEC CHECKSUMS:
   RNFBMessaging: eb8d1b08795c8718706007ed0743732d00e1acc4
   RNFBPerf: 6b2468912af04481db2c3b4e13a1a121425b29f0
   RNFBRemoteConfig: 95812cc586fbe7a20dadd7eb4cd0a0f1b8e34ce2
-  RNGestureHandler: dec4645026e7401a0899f2846d864403478ff6a5
+  RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39
   RNImageCropPicker: 9d1a7eea4f8368fc479cbd2bf26459bd3c74d9aa
   RNInAppBrowser: c1a0dad2734458d79bcb6c8f4297ba8658a1da9f
   RNKeychain: ff836453cba46938e0e9e4c22e43d43fa2c90333
@@ -941,8 +949,10 @@ SPEC CHECKSUMS:
   SwiftyGif: 93a1cc87bf3a51916001cf8f3d63835fb64c819f
   TcpSockets: bd31674146c0931a064fc254a59812dfd1a73ae0
   toolbar-android: 2a73856e98b750d7e71ce4644d3f41cc98211719
+  Web3Auth: 83062b2ccc9b5882f44c02fa3464283f833c169f
+  web3auth-react-native-sdk: f3bf00cde3cc93e30895a03499dbcb26739307a2
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6
 
-PODFILE CHECKSUM: 9c66e94900b997268a39f6560cad896ff3791b27
+PODFILE CHECKSUM: 83a49c75f95ef8ab38dce778342c3ba6af89ba27
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.11.3

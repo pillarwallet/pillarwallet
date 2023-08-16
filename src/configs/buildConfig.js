@@ -37,6 +37,10 @@ export const buildEnvironment = {
   KOCHAVA_IOS_ID: '_kochava_ios_id_',
   KOCHAVA_ANDROID_ID: '_kochava_android_id_',
   WALLETCONNECT_PROJECT_ID: '_wallet_connect_id_',
+  // eslint-disable-next-line i18next/no-literal-string
+  WEB3_AUTH_CLIENT_ID: '_web3_auth_client_id_',
+  // eslint-disable-next-line i18next/no-literal-string
+  WEB3_AUTH_TESTNET_CLIENT_ID: '_web3_auth_testnet_client_id_',
 };
 
 // Optional Developer variables are fixed for both environment contexts, undefined by default
