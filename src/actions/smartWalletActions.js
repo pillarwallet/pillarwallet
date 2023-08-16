@@ -1503,8 +1503,8 @@ export const estimateSmartWalletDeploymentAction = () => {
 export const checkArchanovaSessionIfNeededAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     // skip check if no archanova account
-    const archanovaAccountExists = !!findFirstArchanovaAccount(accountsSelector(getState()));
-    if (!archanovaAccountExists) return;
+    // const archanovaAccountExists = !!findFirstArchanovaAccount(accountsSelector(getState()));
+    // if (!archanovaAccountExists) return;
 
     const { isCheckingSmartWalletSession } = getState().smartWallet;
 
@@ -1548,7 +1548,7 @@ export const checkArchanovaSessionIfNeededAction = () => {
       await dispatch(initOnLoginArchanovaAccountAction(rawPrivateKey));
     };
 
-    dispatch(lockScreenAction(onLoginSuccess, t('paragraph.sessionExpiredReEnterPin')));
+    dispatch(lockScreenAction(onLoginSuccess));
   };
 };
 
