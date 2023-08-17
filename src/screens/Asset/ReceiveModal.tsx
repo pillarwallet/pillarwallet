@@ -38,12 +38,14 @@ import { spacing, fontStyles, fontSizes, appFont, borderRadiusSizes, lineHeights
 import { getThemeColors } from 'utils/themes';
 import { useChainsConfig } from 'utils/uiConfig';
 import { getDeviceHeight } from 'utils/common';
+import { isArchanovaAccount, isKeyBasedAccount } from 'utils/accounts';
 
 // Types
 import type { Theme } from 'models/Theme';
 
 // Selectors
 import { useSupportedChains } from 'selectors/chains';
+import { useActiveAccount } from 'selectors';
 
 // Hooks
 import { useDeploymentStatus } from 'hooks/deploymentStatus';
@@ -64,6 +66,8 @@ const ReceiveModal: FC<IReceiveModal> = ({ address, onModalHide, theme }) => {
   const { isDeployedOnChain } = useDeploymentStatus();
   const chains = useSupportedChains();
   const chainsConfig = useChainsConfig();
+  const activeAccount = useActiveAccount();
+  const isArchanovaOrKeyBasedWallet = isKeyBasedAccount(activeAccount) || isArchanovaAccount(activeAccount);
 
   const handleCopyToClipboard = (addressName: string) => {
     Clipboard.setString(addressName);
@@ -103,10 +107,10 @@ const ReceiveModal: FC<IReceiveModal> = ({ address, onModalHide, theme }) => {
       }
     >
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
-        <ReceiveTitle>{t('receiveModal.etherspotTitle')}</ReceiveTitle>
+        {!isArchanovaOrKeyBasedWallet && <ReceiveTitle>{t('receiveModal.etherspotTitle')}</ReceiveTitle>}
 
         <InfoView>
-          <AddressWrapper>
+          <AddressWrapper isArchanovaOrKeyBasedWallet={isArchanovaOrKeyBasedWallet}>
             <TextWithCopy
               toastText={t('toast.addressCopiedToClipboard')}
               textToCopy={address}
@@ -123,7 +127,7 @@ const ReceiveModal: FC<IReceiveModal> = ({ address, onModalHide, theme }) => {
           <ChainIconRow>
             {chains?.map((chain) => {
               return (
-                <ChainIconWrapper>
+                <ChainIconWrapper isArchanovaOrKeyBasedWallet={isArchanovaOrKeyBasedWallet}>
                   <ChainViewIcon width={38} style={IconContainer} name={chain + '38'} />
                   {isDeployedOnChain[chain] && (
                     <ChainDeployedIcon
@@ -138,13 +142,17 @@ const ReceiveModal: FC<IReceiveModal> = ({ address, onModalHide, theme }) => {
             })}
           </ChainIconRow>
 
-          <InfoText style={styles.singleAddressInfo}>
-            {t('receiveModal.deployedOn', { deployed: buildDeployedList() })}
-          </InfoText>
+          {!isKeyBasedAccount(activeAccount) && (
+            <InfoText style={styles.singleAddressInfo}>
+              {t('receiveModal.deployedOn', { deployed: buildDeployedList() })}
+            </InfoText>
+          )}
 
-          <InfoText color={colors.secondaryAccent} style={styles.singleAddressInfo}>
-            {t('receiveModal.checkDeploymentStatus')}
-          </InfoText>
+          {!isKeyBasedAccount(activeAccount) && (
+            <InfoText color={colors.secondaryAccent} style={styles.singleAddressInfo}>
+              {t('receiveModal.checkDeploymentStatus')}
+            </InfoText>
+          )}
         </DeployInfoWrapper>
 
         <ButtonRow>
@@ -192,8 +200,10 @@ const ContentWrapper = styled(SafeAreaView)`
   align-items: center;
 `;
 
-const AddressWrapper = styled.View`
+const AddressWrapper = styled.View<{ isArchanovaOrKeyBasedWallet?: boolean }>`
   padding: 0 ${spacing.extraPlusLarge}px;
+  ${({ isArchanovaOrKeyBasedWallet }) =>
+    isArchanovaOrKeyBasedWallet && `margin: ${spacing.large}px ${spacing.large}px ${spacing.mediumLarge}px`};
 `;
 
 const ButtonRow = styled.View`
@@ -255,7 +265,7 @@ const ChainIconRow = styled.View`
   justify-content: space-between;
 `;
 
-const ChainIconWrapper = styled.View`
+const ChainIconWrapper = styled.View<{ isArchanovaOrKeyBasedWallet?: boolean }>`
   position: relative;
   width: 38px;
   height: 38px;
@@ -264,6 +274,7 @@ const ChainIconWrapper = styled.View`
   display: flex;
   align-items: center;
   justify-content: center;
+  ${({ isArchanovaOrKeyBasedWallet }) => isArchanovaOrKeyBasedWallet && 'margin: 0 auto'}
 `;
 
 const ChainViewIcon = styled(Icon)`
