@@ -1,5 +1,5 @@
 diff --git a/node_modules/react-native-gifted-charts/src/LineChart/index.tsx b/node_modules/react-native-gifted-charts/src/LineChart/index.tsx
-index 8ef5ecc..4d11a61 100644
+index 8ef5ecc..04b4c96 100644
 --- a/node_modules/react-native-gifted-charts/src/LineChart/index.tsx
 +++ b/node_modules/react-native-gifted-charts/src/LineChart/index.tsx
 @@ -441,6 +441,7 @@ export const LineChart = (props: propTypes) => {
@@ -10,7 +10,48 @@ index 8ef5ecc..4d11a61 100644
    let data = useMemo(() => {
      if (!props.data) {
        return [];
-@@ -2952,6 +2953,8 @@ export const LineChart = (props: propTypes) => {
+@@ -820,30 +821,36 @@ export const LineChart = (props: propTypes) => {
+     // console.log('comes here............')
+     decreaseWidth();
+     labelsAppear();
+-    setTimeout(
++    const timeoutFirst = setTimeout(
+       () => {
+         decreaseWidth2();
+       },
+       animateTogether ? 0 : animationDuration,
+     );
+-    setTimeout(
++    const timeoutSecond = setTimeout(
+       () => {
+         decreaseWidth3();
+       },
+       animateTogether ? 0 : animationDuration * 2,
+     );
+-    setTimeout(
++    const timeoutThird =setTimeout(
+       () => {
+         decreaseWidth4();
+       },
+       animateTogether ? 0 : animationDuration * 3,
+     );
+-    setTimeout(
++    const timeoutFourth =setTimeout(
+       () => {
+         decreaseWidth5();
+       },
+       animateTogether ? 0 : animationDuration * 4,
+     );
++    return () => {
++      clearTimeout(timeoutFirst);
++      clearTimeout(timeoutSecond);
++      clearTimeout(timeoutThird);
++      clearTimeout(timeoutFourth);
++    };
+   }, [
+     animateTogether,
+     animationDuration,
+@@ -2952,6 +2959,8 @@ export const LineChart = (props: propTypes) => {
                marginTop: pointerItemLocal.pointerShiftY || 0,
                backgroundColor: pointerColorLocal,
                borderRadius: pointerRadius || 0,
@@ -19,7 +60,7 @@ index 8ef5ecc..4d11a61 100644
              }}
            />
          )}
-@@ -3091,7 +3094,7 @@ export const LineChart = (props: propTypes) => {
+@@ -3091,7 +3100,7 @@ export const LineChart = (props: propTypes) => {
                  width: pointerLabelWidth,
                },
              ]}>
@@ -28,7 +69,7 @@ index 8ef5ecc..4d11a61 100644
            </View>
          )}
        </View>
-@@ -3516,7 +3519,7 @@ export const LineChart = (props: propTypes) => {
+@@ -3516,7 +3525,7 @@ export const LineChart = (props: propTypes) => {
          onMoveShouldSetResponder={evt => (pointerConfig ? true : false)}
          onResponderGrant={evt => {
            if (!pointerConfig) return;
@@ -37,7 +78,7 @@ index 8ef5ecc..4d11a61 100644
            if (activatePointersOnLongPress) {
              return;
            }
-@@ -3546,6 +3549,7 @@ export const LineChart = (props: propTypes) => {
+@@ -3546,6 +3555,7 @@ export const LineChart = (props: propTypes) => {
              10;
            setPointerY(y);
            setPointerItem(item);
@@ -45,7 +86,7 @@ index 8ef5ecc..4d11a61 100644
            if (data2 && data2.length) {
              item = data2[factor];
              if (item) {
-@@ -3688,7 +3692,7 @@ export const LineChart = (props: propTypes) => {
+@@ -3688,7 +3698,7 @@ export const LineChart = (props: propTypes) => {
            setResponderStartTime(0);
            setPointerIndex(-1);
            setResponderActive(false);
@@ -54,7 +95,7 @@ index 8ef5ecc..4d11a61 100644
          }}
          onResponderTerminationRequest={evt => false}
          // onResponderTerminate={evt => {
-@@ -4029,7 +4033,7 @@ export const LineChart = (props: propTypes) => {
+@@ -4029,7 +4039,7 @@ export const LineChart = (props: propTypes) => {
                height:
                  containerHeight + 10 + horizSectionsBelow.length * stepHeight,
                bottom: 60 + labelsExtraHeight,
