@@ -53,7 +53,7 @@ function BiometricLoginSetting({ pin, wallet }: Props) {
   const { t, tRoot } = useTranslationWithPrefix('menu.settings');
   const dispatch = useDispatch();
 
-  const supportedBiometryType = useSupportedBiometryType();
+  const supportedBiometryType = useSupportedBiometryType(wallet);
   const useBiometrics = useBiometricsSelector();
 
   const showFaceIdFailedMessage = () => {
@@ -112,14 +112,15 @@ function BiometricLoginSetting({ pin, wallet }: Props) {
 
 export default BiometricLoginSetting;
 
-function useSupportedBiometryType() {
+function useSupportedBiometryType(wallet) {
   const [supportedBiometryType, setSupportedBiometryType] = React.useState(null);
 
   React.useEffect(() => {
+    if (!wallet) return;
     // returns null, if the device haven't enrolled into fingerprint/FaceId. Even though it has hardware for it
     // and getBiometryType has default string value
     getSupportedBiometryType((biometryType) => setSupportedBiometryType(biometryType));
-  }, []);
+  }, [wallet]);
 
   return supportedBiometryType;
 }

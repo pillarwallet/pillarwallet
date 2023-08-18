@@ -284,7 +284,8 @@ const SLEEP_TIMEOUT = 20000;
 const SMART_WALLET_SESSION_CHECK_INTERVAL = 30 * 60000; // 30 min
 const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
-const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
+const INACTIVE_APP_STATE = 'inactive';
+const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE, INACTIVE_APP_STATE];
 
 const StackNavigatorModalConfig = {
   defaultNavigationOptions: {

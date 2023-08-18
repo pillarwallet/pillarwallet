@@ -109,6 +109,8 @@ export default function () {
 
       <FlatList
         key={query ? 'tokens_search_list' : 'tokens_with_toggles'}
+        scrollEventThrottle={1}
+        maxToRenderPerBatch={30}
         removeClippedSubviews
         data={query ? searchItems : tokensAccordingToChain}
         renderItem={memoizedValue}

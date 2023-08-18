@@ -54,6 +54,7 @@ import { gasThresholdsSelector } from 'redux/selectors/gas-threshold-selector';
 
 // Hooks
 import { useTransactionsEstimate } from 'hooks/transactions';
+import useIsMounted from 'hooks/useMounted';
 
 // Local
 import { getSortingValue, appendFeeCaptureTransactionIfNeeded } from './utils';
@@ -94,14 +95,17 @@ function OfferCard({
   const gasThresholds = useRootSelector(gasThresholdsSelector);
   const gasFeeList = useExchangeGasFee();
 
+  const isMounted = useIsMounted();
+
   const [offerInfo, setOfferInfo] = React.useState(null);
 
   React.useEffect(() => {
-    async function call() {
+    const call = async () => {
       const addTxsOffer = await appendFeeCaptureTransactionIfNeeded(offer, getAccountAddress(activeAccount));
-      setOfferInfo(addTxsOffer);
-    }
+      if (isMounted && addTxsOffer) setOfferInfo(addTxsOffer);
+    };
     call();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [offer]);
 
