@@ -77,10 +77,11 @@ const PlrStakedInfo: React.FC<IPlrStakedInfo> = ({
           <ValueText sub>{formattedFiatAmount}</ValueText>
         </InfoRow>
 
-        <InfoRow>
+        {/* Hiding row until we can pull down staking rewards */}
+        {/* <InfoRow>
           <SubText>{titles.rewards}</SubText>
           <ValueText success>{formattedRewardsAmount}</ValueText>
-        </InfoRow>
+        </InfoRow> */}
       </InfoCol>
     </Container>
   );

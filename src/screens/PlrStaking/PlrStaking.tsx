@@ -199,7 +199,6 @@ const PlrStaking = () => {
         const balance = await getBalanceForAddress(CHAIN.ETHEREUM, stakedTokenAddress, accountAddress);
         if (balance && !balance.isZero()) totalStkPlr.add(balance);
       }
-      console.log({ totalStkPlr });
 
       setStkPlrBal(totalStkPlr);
     };
@@ -291,6 +290,29 @@ const PlrStaking = () => {
 
   const stakedPlrFiat = getFiatValue(stkPlrBal, getPlrAddressForChain(CHAIN.ETHEREUM), true) || 0;
 
+  const renderStakedInfo = () => {
+    if (!stkPlrBal || stkPlrBal.isZero()) return null;
+
+    return (
+      <PlrStakedInfo
+        titles={{
+          pillarStaking: t('header.pillarStaking'),
+          onEthereum: t('header.onEthereum'),
+          rewards: t('header.rewards'),
+        }}
+        formattedStakedAmount={formatTokenValue(
+          convertToBigNumberJs(utils.formatEther(stkPlrBal)),
+          stkPlrToken.symbol,
+          {
+            decimalPlaces: 0,
+          },
+        )}
+        formattedFiatAmount={formatFiatValue(stakedPlrFiat, currency)}
+        formattedRewardsAmount={formatFiatValue(getRewardAmount(stakedPlrFiat), currency)}
+      />
+    );
+  };
+
   return (
     <Container>
       <PlrStakingHeaderBlock
@@ -310,28 +332,7 @@ const PlrStaking = () => {
         stakedPercentage={stakedPercentage}
         stakers={stakers}
         apy={stakingApy}
-        renderStakedInfo={() => {
-          if (!stkPlrBal || stkPlrBal.isZero()) return null;
-
-          return (
-            <PlrStakedInfo
-              titles={{
-                pillarStaking: t('header.pillarStaking'),
-                onEthereum: t('header.onEthereum'),
-                rewards: t('header.rewards'),
-              }}
-              formattedStakedAmount={formatTokenValue(
-                convertToBigNumberJs(utils.formatEther(stkPlrBal)),
-                stkPlrToken.symbol,
-                {
-                  decimalPlaces: 0,
-                },
-              )}
-              formattedFiatAmount={formatFiatValue(stakedPlrFiat, currency)}
-              formattedRewardsAmount={formatFiatValue(getRewardAmount(stakedPlrFiat), currency)}
-            />
-          );
-        }}
+        renderStakedInfo={renderStakedInfo}
       />
       <Content>
         <IconRow>
