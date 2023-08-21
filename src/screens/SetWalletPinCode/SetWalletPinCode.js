@@ -40,6 +40,7 @@ import { maxPinCodeLengthSelector } from 'selectors/appSettings';
 // Utils
 import { validatePin } from 'utils/validators';
 import { spacing } from 'utils/variables';
+import { useThemeColors } from 'utils/themes';
 
 // Actions
 import { logEventAction } from 'actions/analyticsActions';
@@ -56,6 +57,7 @@ const { height } = Dimensions.get('window');
 const SetWalletPinCode = ({ navigation }: Props) => {
   const [pinCode, setPinCode] = useState(null);
   const dispatch = useDispatch();
+  const colors = useThemeColors();
   const [errorMessage, setErrorMessage] = useState(null);
   const maxPinCodeLength = useRootSelector(maxPinCodeLengthSelector);
 
@@ -84,7 +86,7 @@ const SetWalletPinCode = ({ navigation }: Props) => {
         <IconWithBackgroundGif />
         <Spacing h={height * 0.05} />
 
-        <MediumText fontSize={24} center>
+        <MediumText color={colors.basic000} fontSize={24} center>
           {t('auth:paragraph.letsCreatePin')}
         </MediumText>
         <PinCode

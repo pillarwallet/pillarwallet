@@ -24,9 +24,8 @@ import styled from 'styled-components/native';
 import { isEmpty } from 'lodash';
 
 // Components
-import Button from 'components/core/Button';
+import Button from 'components/legacy/Button';
 import Text from 'components/core/Text';
-import Image from 'components/Image';
 import TokenIcon from 'components/display/TokenIcon';
 import { Spacing } from 'components/legacy/Layout';
 
@@ -36,7 +35,6 @@ import { ETH_SIGN_TYPED_DATA, ETH_SIGN_TYPED_DATA_V4 } from 'constants/walletCon
 
 // Utils
 import { chainFromChainId } from 'utils/chains';
-import { useChainsConfig } from 'utils/uiConfig';
 import { spacing } from 'utils/variables';
 import { parsePeerName } from 'utils/walletConnect';
 import { isEtherspotAccountDeployed } from 'utils/etherspot';
@@ -58,13 +56,11 @@ type Props = {|
 
 function SignatureRequestContent({ request, onConfirm, onReject }: Props) {
   const { t } = useTranslation();
-  const configs = useChainsConfig();
   const activeAccount = useActiveAccount();
   const colors = useThemeColors();
   const isArchanovaAccountDeployed = useRootSelector(isArchanovaAccountDeployedSelector);
 
   const { title, iconUrl, chain, method, params } = getViewData(request);
-  const config = configs[chain];
 
   const isSignTypedData = method === ETH_SIGN_TYPED_DATA || method === ETH_SIGN_TYPED_DATA_V4;
 
@@ -72,6 +68,8 @@ function SignatureRequestContent({ request, onConfirm, onReject }: Props) {
     isSignTypedData && !isEmpty(params?.[1]) ? JSON.parse(params[1]) : { message: null, primaryType: null };
 
   const messageText = React.useMemo(() => {
+    if (!isSignTypedData) return params;
+
     if (isEmpty(message)) return [];
 
     const values = Object.entries(message);
@@ -102,7 +100,7 @@ function SignatureRequestContent({ request, onConfirm, onReject }: Props) {
       // eslint-disable-next-line i18next/no-literal-string
       return `${label} ${JSON.stringify(description)}\n\n`;
     });
-  }, [message]);
+  }, [isSignTypedData, message, params]);
 
   // eslint-disable-next-line i18next/no-literal-string
   const messageTitle = primaryType ? `${primaryType}\n\n` : null;
@@ -118,62 +116,53 @@ function SignatureRequestContent({ request, onConfirm, onReject }: Props) {
 
   return (
     <>
-      {!isSignTypedData && (
-        <>
-          <Text color={config.color}>
-            {title} {t('label.dotSeparator')} {config.titleShort}
-          </Text>
-          <Image source={{ uri: iconUrl }} style={styles.icon} />
-        </>
+      <Spacing h={spacing.medium} />
+
+      <TokenIcon
+        url={iconUrl}
+        size={64}
+        chain={chain}
+        chainIconStyle={{ top: -10, right: -10 }}
+        imageStyle={{ borderRadius: 24 }}
+      />
+
+      <Spacing h={spacing.large} />
+
+      <Text variant="medium" color={colors.secondaryText}>
+        {t('walletConnect.requests.signMessageRequest')}
+      </Text>
+
+      <Spacing h={spacing.large} />
+
+      {!isEmpty(messageText) && (
+        <MessageContainer>
+          <ScrollContainer>
+            <Text>
+              {t('transactions.label.message')}:{'\n'}
+              {messageTitle || title}
+              {'\n'}
+            </Text>
+            {messageText.map((text) => (
+              <Text>{text}</Text>
+            ))}
+          </ScrollContainer>
+        </MessageContainer>
       )}
 
-      {isSignTypedData && (
-        <>
-          <Spacing h={spacing.medium} />
-
-          <TokenIcon
-            url={iconUrl}
-            size={64}
-            chain={chain}
-            chainIconStyle={{ top: -10, right: -10 }}
-            imageStyle={{ borderRadius: 24 }}
-          />
-
-          <Spacing h={spacing.large} />
-
-          <Text variant="medium" color={colors.secondaryText}>
-            {t('walletConnect.requests.signMessageRequest')}
-          </Text>
-
-          <Spacing h={spacing.large} />
-
-          {(!isEmpty(messageText) || messageTitle) && (
-            <MessageContainer>
-              <ScrollContainer>
-                {messageTitle && <Text>{messageTitle}</Text>}
-                {messageText.map((text) => (
-                  <Text>{text}</Text>
-                ))}
-              </ScrollContainer>
-            </MessageContainer>
-          )}
-
-          <Spacing h={spacing.large} />
-        </>
-      )}
+      <Spacing h={spacing.large} />
 
       {requiresDeployedAccount && (
         <ErrorMessage variant="small">{t('walletConnectContent.error.smartWalletNeedToBeActivated')}</ErrorMessage>
       )}
 
       <Button
-        title={isSignTypedData ? t('button.approve') : t('button.confirm')}
+        title={t('button.approve')}
         onPress={onConfirm}
-        disabled={requiresDeployedAccount || (isSignTypedData && isEmpty(params?.[1]))}
+        disabled={requiresDeployedAccount || isEmpty(params?.[1])}
         style={styles.button}
       />
 
-      <Button title={t('button.reject')} onPress={onReject} variant="destructive" style={styles.button} />
+      <Button title={t('button.reject')} onPress={onReject} style={styles.button} transparent />
     </>
   );
 }
@@ -197,6 +186,7 @@ const styles = {
   },
   button: {
     marginVertical: spacing.small / 2,
+    borderRadius: 14,
   },
 };
 

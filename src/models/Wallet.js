@@ -23,6 +23,7 @@ export type EthereumWallet = {
   mnemonic: ?string,
   address: string,
   privateKey: ?string,
+  encrypt?: ?Function,
 };
 
 export type WalletObject = {
