@@ -63,7 +63,7 @@ const PlrStakingBanner: FC<IPlrStakingBanner> = () => {
 
   const [stakingEnabled, setStakingEnabled] = useState(false);
   const [infoLoaded, setInfoLoaded] = useState(false);
-
+  //
   useEffect(() => {
     if (!stakingEndTime) return;
 
