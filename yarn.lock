@@ -8140,7 +8140,7 @@ d3-format@1:
   resolved "https://registry.yarnpkg.com/d3-format/-/d3-format-1.4.5.tgz#374f2ba1320e3717eb74a9356c67daee17a7edb4"
   integrity sha512-J0piedu6Z8iB6TbIGfZgDzfXxUFN3qQRMofy2oPdXzQibYGqPB/9iMcxr/TGalU+2RsyDO+U4f33id8tbnSRMQ==
 
-d3-interpolate@1, d3-interpolate@^1.1.1, d3-interpolate@^1.1.5:
+d3-interpolate@1, d3-interpolate@^1.1.1:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/d3-interpolate/-/d3-interpolate-1.4.0.tgz#526e79e2d80daa383f9e0c1c1c7dcc0f0583e987"
   integrity sha512-V9znK0zc3jOPV4VD2zZn0sDhZU3WAE2bmlxdIwwQPPzPjvyLkd8B3JUVdS1IDUFDkWZ72c9qnv1GK2ZagTZ8EA==
@@ -16900,6 +16900,11 @@ react-clientside-effect@^1.2.6:
   dependencies:
     "@babel/runtime" "^7.12.13"
 
+react-content-loader@^6.2.1:
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/react-content-loader/-/react-content-loader-6.2.1.tgz#8feb733c2d2495002e1b216f13707f2b5f2a8ead"
+  integrity sha512-6ONbFX+Hi3SHuP66JB8CPvJn372pj+qwltJV0J8z/8MFrq98I1cbFdZuhDWeQXu3CFxiiDTXJn7DFxx2ZvrO7g==
+
 react-dev-utils@^9.0.0:
   version "9.1.0"
   resolved "https://registry.yarnpkg.com/react-dev-utils/-/react-dev-utils-9.1.0.tgz#3ad2bb8848a32319d760d0a84c56c14bdaae5e81"
@@ -17105,13 +17110,6 @@ react-native-color-matrix-image-filters@^5.1.4:
     concat-color-matrices "^1.0.0"
     rn-color-matrices "^4.1.0"
     ts-tiny-invariant "^1.0.5"
-
-react-native-content-loader@^0.1.6:
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/react-native-content-loader/-/react-native-content-loader-0.1.6.tgz#4e75cd81351abc3f4aa2245d0fc5a1f71404db9b"
-  integrity sha512-+gIlzNOkhwTdsc0AO6JtQ4N8OriLuDs9bX0I91UJpdRRcjCQbhafCJTO5ZnoOnLMI4hSVtbS0V3AjNSGf6iC8w==
-  dependencies:
-    d3-interpolate "^1.1.5"
 
 react-native-crypto@^2.1.0:
   version "2.2.0"

@@ -354,7 +354,6 @@ export const lockScreenAction = (onLoginSuccess: ?OnValidPinCallback, errorMessa
           params: {
             onLoginSuccess,
             errorMessage,
-            forcePin: true,
           },
         }),
       }),
