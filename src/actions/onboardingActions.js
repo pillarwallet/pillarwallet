@@ -22,10 +22,11 @@
 import { ethers } from 'ethers';
 import { NavigationActions } from 'react-navigation';
 import t from 'translations/translate';
+import { isEmpty } from 'lodash';
 
 // constants
 import { SET_WALLET, UPDATE_WALLET_BACKUP_STATUS } from 'constants/walletConstants';
-import { APP_FLOW, TUTORIAL_FLOW, HOME, WELCOME_BACK } from 'constants/navigationConstants';
+import { APP_FLOW, TUTORIAL_FLOW, HOME, WELCOME_BACK, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 import { SET_USER } from 'constants/userConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import {
@@ -43,6 +44,7 @@ import {
   SET_FETCHING,
   SET_LOADING_MESSAGE,
   SET_BIOMETIC_STATUS,
+  SET_SOCIAL_LOGIN_STATUS,
 } from 'constants/onboardingConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -54,7 +56,13 @@ import Toast from 'components/Toast';
 
 // utils
 import { generateMnemonicPhrase } from 'utils/wallet';
-import { reportErrorLog, logBreadcrumb, getEnsPrefix, extractUsernameFromEnsName } from 'utils/common';
+import {
+  reportErrorLog,
+  logBreadcrumb,
+  getEnsPrefix,
+  extractUsernameFromEnsName,
+  getEthereumProvider,
+} from 'utils/common';
 import { getAccountEnsName, findFirstEtherspotAccount } from 'utils/accounts';
 import { isLogV2AppEvents } from 'utils/environment';
 
@@ -103,6 +111,9 @@ import {
 
 // Selectors
 import { accountsSelector } from 'selectors';
+
+// Config
+import { getEnv } from 'configs/envConfig';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -283,6 +294,7 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
         wallet: importedWallet, // wallet was already added in import step
         user: onboardingUsername,
         isNewUser: isNewUserState,
+        isSocialLogin,
       },
     } = getState();
 
@@ -325,12 +337,15 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
       dispatch(saveDbAction('is_new_user', { isNewUser: true }));
     } else logBreadcrumb('onboarding', 'walletSetupAction: importing wallet');
 
+    const isSocialLoginWallet = isImported && isSocialLogin;
+
     logBreadcrumb('onboarding', 'walletSetupAction: creating new mnemonic if importedWallet is not present');
     // will return new mnemonic if importedWallet is not present
-    const mnemonic = importedWallet?.mnemonic || generateMnemonicPhrase();
+
+    const mnemonic = isSocialLoginWallet ? null : importedWallet?.mnemonic || generateMnemonicPhrase();
 
     // create wallet object
-    const ethersWallet = ethers.Wallet.fromMnemonic(mnemonic);
+    const ethersWallet: Object = isSocialLoginWallet ? importedWallet : ethers.Wallet.fromMnemonic(mnemonic);
 
     // raw private key will be removed from reducer once registration finishes
     const { address, privateKey } = ethersWallet;
@@ -619,6 +634,77 @@ export const beginOnboardingAction = (enableBiometrics?: boolean) => {
   };
 };
 
+export const importWalletFromPrivateKeyAction = (privKey: string) => {
+  return async (dispatch: Dispatch) => {
+    // reset if back was pressed and new mnemonic entered
+    dispatch({ type: SET_ONBOARDING_WALLET, payload: null });
+    dispatch({ type: SET_ONBOARDING_USER, payload: null });
+
+    logBreadcrumb('onboarding', 'importWalletFromPrivateKeyAction: dispatching SET_IMPORTING_WALLET');
+    dispatch({ type: SET_IMPORTING_WALLET });
+    dispatch({ type: SET_NEW_USER, payload: false });
+    dispatch({ type: SET_VIEWED_RECEIVE_TOKENS_WARNING, payload: false });
+    dispatch(saveDbAction('is_new_user', { isNewUser: false }));
+    dispatch(setViewedReceiveTokensWarning(false));
+
+    let importedWallet;
+    try {
+      const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
+      importedWallet = new ethers.Wallet(`0x${privKey}`, provider);
+    } catch (error) {
+      logBreadcrumb('onboarding', 'importWalletFromPrivateKeyAction: failed import wallet using private key', {
+        error,
+      });
+    }
+
+    if (!importedWallet) return;
+
+    dispatch(resetAndStartImportWalletAction());
+    dispatch({ type: SET_SOCIAL_LOGIN_STATUS, payload: true });
+    dispatch({ type: SET_IMPORTING_WALLET });
+
+    logBreadcrumb('onboarding', 'importWalletFromPrivateKeyAction: Trying to validate registered user');
+    const existingAccounts = await getExistingServicesAccounts(importedWallet.privateKey);
+    const existingAccountWithPillarEns = existingAccounts.find((account) => {
+      const ensName = getAccountEnsName(account);
+      return ensName && ensName.includes(getEnsPrefix());
+    });
+    const ensName = getAccountEnsName(existingAccountWithPillarEns);
+
+    const isEmptyAccounts = isEmpty(existingAccounts);
+
+    dispatch({ type: SET_NEW_USER, payload: isEmptyAccounts });
+    dispatch(saveDbAction('is_new_user', { isNewUser: isEmptyAccounts }));
+
+    if (existingAccountWithPillarEns && ensName) {
+      const username = extractUsernameFromEnsName(ensName);
+
+      logBreadcrumb(
+        'onboarding',
+        'importWalletFromPrivateKeyAction: registered wallet user, dispatching SET_ONBOARDING_USER',
+        { username },
+      );
+      dispatch({ type: SET_ONBOARDING_USER, payload: { username, isExisting: true } });
+    } else dispatch({ type: SET_ONBOARDING_USER, payload: { isExisting: true } });
+
+    const { mnemonic, address, privateKey, encrypt } = importedWallet;
+
+    logBreadcrumb('onboarding', 'importWalletFromPrivateKeyAction: dispatching SET_ONBOARDING_WALLET');
+    dispatch({
+      type: SET_ONBOARDING_WALLET,
+      payload: { mnemonic: mnemonic?.phrase?.mnemonic, address, privateKey, encrypt },
+    });
+
+    logBreadcrumb('onboarding', 'importWalletFromPrivateKeyAction: wallet imported from Mnemonic Action');
+    dispatch(logEventAction('wallet_imported', { method: 'Social login' }));
+    isLogV2AppEvents() && dispatch(logEventAction('v2_account_imported', { method: 'Social login' }));
+    const navProps = ensName ? { username: extractUsernameFromEnsName(ensName) } : null;
+    navigate(
+      NavigationActions.navigate({ routeName: isEmptyAccounts ? SET_WALLET_PIN_CODE : WELCOME_BACK, params: navProps }),
+    );
+  };
+};
+
 export const importWalletFromMnemonicAction = (mnemonicInput: string) => {
   return async (dispatch: Dispatch) => {
     // reset if back was pressed and new mnemonic entered
@@ -650,6 +736,8 @@ export const importWalletFromMnemonicAction = (mnemonicInput: string) => {
     }
 
     dispatch(resetAndStartImportWalletAction());
+    dispatch({ type: SET_SOCIAL_LOGIN_STATUS, payload: false });
+    dispatch({ type: SET_IMPORTING_WALLET });
 
     logBreadcrumb('onboarding', 'importWalletFromMnemonicAction: Trying to validate registered user');
     const existingAccounts = await getExistingServicesAccounts(importedWallet.privateKey);
