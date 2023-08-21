@@ -716,8 +716,8 @@
     "investments": {
       "title": "PLR Staking",
       "description": "Earn ETH by staking your PLR tokens.\n{{stakedPercentage}}% PLR of the vault staked.",
-      "closeTime": "Subscription will close in {{closeTime}}",
-      "apy": "APY:"
+      "apy": "APY:",
+      "stakingCloseTime": "Subscription to PLR Staking will close in"
     }
   },
 
@@ -1761,7 +1761,7 @@
     "pillar": "Pillar",
     "etherspotWallet": "Etherspot Wallet",
     "stakingInfoLoading": "Staking info is loading...",
-    "stakingClosingIn": "Staking will close in ",
+    "stakingClosingIn": "Staking will close in",
     "stakingClosed": "Staking is currently closed",
     "etherspot": "Etherspot",
     "keybased": "Keybased",
@@ -1773,7 +1773,10 @@
       "apy": "APY (Variable)",
       "staked": "Staked",
       "vaultFilling": "Vault filling",
-      "stakers": "Stakers"
+      "stakers": "Stakers",
+      "pillarStaking": "Pillar Staking",
+      "onEthereum": "On Ethereum",
+      "rewards": "Rewards"
     },
     "assetSelector": {
       "from": "From",

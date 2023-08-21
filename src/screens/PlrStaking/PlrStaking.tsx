@@ -21,8 +21,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslationWithPrefix } from 'translations/translate';
 import styled from 'styled-components/native';
 import { useNavigation } from 'react-navigation-hooks';
-import { useDispatch } from 'react-redux';
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber, ethers, utils } from 'ethers';
 import { addDays, intervalToDuration, isAfter } from 'date-fns';
 
 // Constants
@@ -33,6 +32,7 @@ import {
   STAKING_PERIOD,
   WalletType,
   plrSupportedChains,
+  stkPlrToken,
 } from 'constants/plrStakingConstants';
 
 // Hooks
@@ -41,11 +41,14 @@ import { useStableAssets, useNonStableAssets } from 'hooks/assets';
 // Utils
 import { fontStyles, spacing } from 'utils/variables';
 import { formatBigAmount, reportErrorLog } from 'utils/common';
-import { isArchanovaAccount, isKeyBasedAccount } from 'utils/accounts';
+import { isArchanovaAccount, isKeyBasedAccount, getAccountAddress } from 'utils/accounts';
+import { formatTokenValue, formatFiatValue, convertToBigNumberJs } from 'utils/format';
+import { getBalanceInFiat } from 'utils/assets';
 
 // Selectors
-import { activeAccountAddressSelector, useActiveAccount } from 'selectors';
+import { useActiveAccount, useAccounts } from 'selectors';
 import { useSupportedChains } from 'selectors/chains';
+import { useFiatCurrency, useChainRates } from 'selectors';
 
 // Configs
 import { getPlrAddressForChain } from 'configs/assetsConfig';
@@ -63,11 +66,14 @@ import AssetSelectorModal from 'components/Modals/AssetSelectorModal';
 // Local
 import PlrStakingHeaderBlock from './PlrStakingHeaderBlock';
 import {
+  formatRemainingTime,
   getBalanceForAddress,
+  getRewardAmount,
   getStakingApy,
   getStakingContractInfo,
   getStakingRemoteConfig,
 } from 'utils/plrStakingHelper';
+import PlrStakedInfo from './PlrStakedInfo';
 import { CHAIN } from 'constants/chainConstantsTs';
 
 const PlrStaking = () => {
@@ -77,6 +83,9 @@ const PlrStaking = () => {
   const chains: string[] = useSupportedChains();
   const chainsConfig = useChainsConfig();
   const activeAccount = useActiveAccount();
+  const accounts = useAccounts();
+  const currency = useFiatCurrency();
+  const ethRates = useChainRates(CHAIN.ETHEREUM);
 
   const { tokens: stableTokens } = useStableAssets();
   const { tokens: nonStableTokens } = useNonStableAssets();
@@ -103,6 +112,9 @@ const PlrStaking = () => {
   const [accountType, setAccountType] = useState(WalletType.ETHERSPOT);
   const [selectedChain, setSelectedChain] = useState(null);
 
+  const [stakedTokenAddress, setStakedTokenAddress] = useState<string>(null);
+  const [stkPlrBal, setStkPlrBal] = useState<BigNumber>(null);
+
   const [showModal, setShowModal] = useState(false);
 
   const getRemainingTimes = () => {
@@ -124,9 +136,7 @@ const PlrStaking = () => {
 
       const stakingRemoteConfig = getStakingRemoteConfig();
       const startTime = new Date(stakingRemoteConfig.stakingStartTime * 1000);
-
       const lockedStartTime = new Date(stakingRemoteConfig.stakingLockedStartTime * 1000);
-
       const endTime = addDays(startTime, STAKING_PERIOD);
       const lockedEndTime = addDays(lockedStartTime, STAKING_LOCKED_PERIOD);
       setStakingEndTime(endTime);
@@ -142,6 +152,7 @@ const PlrStaking = () => {
         const percentage = Number(totalStaked.mul(100).div(stakingMaxTotal)) / 100;
         const stakers = stakingInfo?.stakedAccounts?.length || 0;
 
+        setStakedTokenAddress(stakingInfo.stakedToken);
         setStakedAmount(formatBigAmount(ethers.utils.formatEther(totalStaked)));
         setStakedPercentage(percentage.toFixed(0).toString());
         setStakers(stakers);
@@ -179,6 +190,21 @@ const PlrStaking = () => {
     setPlrBalances(filteredTokens);
     setBalancesWithoutPlr(filteredWithoutPlr);
   }, []);
+
+  useEffect(() => {
+    const fetchBal = async () => {
+      let totalStkPlr = BigNumber.from(0);
+      for (let account in accounts) {
+        const accountAddress = getAccountAddress(account);
+        const balance = await getBalanceForAddress(CHAIN.ETHEREUM, stakedTokenAddress, accountAddress);
+        if (balance && !balance.isZero()) totalStkPlr.add(balance);
+      }
+
+      setStkPlrBal(totalStkPlr);
+    };
+
+    if (accounts?.length && stakedTokenAddress) fetchBal();
+  }, [stakedTokenAddress]);
 
   useEffect(() => {
     let accountType = WalletType.ETHERSPOT;
@@ -222,6 +248,14 @@ const PlrStaking = () => {
     return symbol + total.toFixed(2);
   };
 
+  const getFiatValue = (value: BigNumber, address: string, isEthereum?: boolean) => {
+    if (!value) return null;
+
+    const etherValue = ethers.utils.formatEther(value.toString());
+    const valueInFiat = getBalanceInFiat(currency, etherValue, ethRates, address);
+    return valueInFiat;
+  };
+
   const selectChain = (chain) => {
     const balance = plrBalances.find((bal) => bal.chain === chain);
 
@@ -254,17 +288,29 @@ const PlrStaking = () => {
     });
   };
 
-  const formatRemainingTime = (time: Duration) => {
-    let timeStr = '';
-    if (!time) return timeStr;
+  const stakedPlrFiat = getFiatValue(stkPlrBal, getPlrAddressForChain(CHAIN.ETHEREUM), true) || 0;
 
-    if (time.months) timeStr += ` ${time.months} months`;
-    if (time.days) timeStr += ` ${time.days} days`;
-    if (time.hours) timeStr += ` ${time.hours}h`;
-    if (time.minutes) timeStr += ` ${time.minutes}m`;
-    if (time.seconds) timeStr += ` ${time.seconds}s`;
+  const renderStakedInfo = () => {
+    if (!stkPlrBal || stkPlrBal.isZero()) return null;
 
-    return timeStr?.slice(1) || '';
+    return (
+      <PlrStakedInfo
+        titles={{
+          pillarStaking: t('header.pillarStaking'),
+          onEthereum: t('header.onEthereum'),
+          rewards: t('header.rewards'),
+        }}
+        formattedStakedAmount={formatTokenValue(
+          convertToBigNumberJs(utils.formatEther(stkPlrBal)),
+          stkPlrToken.symbol,
+          {
+            decimalPlaces: 0,
+          },
+        )}
+        formattedFiatAmount={formatFiatValue(stakedPlrFiat, currency)}
+        formattedRewardsAmount={formatFiatValue(getRewardAmount(stakedPlrFiat), currency)}
+      />
+    );
   };
 
   return (
@@ -286,6 +332,7 @@ const PlrStaking = () => {
         stakedPercentage={stakedPercentage}
         stakers={stakers}
         apy={stakingApy}
+        renderStakedInfo={renderStakedInfo}
       />
       <Content>
         <IconRow>
@@ -295,7 +342,8 @@ const PlrStaking = () => {
             <InfoText>{t('stakingInfoLoading')}</InfoText>
           ) : stakingEnabled ? (
             <InfoText>
-              {t('stakingClosingIn')} <InfoText bold>{formatRemainingTime(remainingStakingTime)}</InfoText>
+              {`${t('stakingClosingIn')} `}
+              <InfoText bold>{formatRemainingTime(remainingStakingTime)}</InfoText>
             </InfoText>
           ) : (
             <InfoText>{t('stakingClosed')}</InfoText>
@@ -390,7 +438,7 @@ const PlrStaking = () => {
               title={t('button.stake')}
               onPress={onStake}
               size="large"
-              disabled={!accountType || !selectedChain}
+              disabled={!accountType || !selectedChain || !stakingEnabled}
             />
           )}
 
