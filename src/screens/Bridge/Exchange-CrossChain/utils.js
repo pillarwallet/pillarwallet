@@ -200,7 +200,7 @@ export function useOffersQuery(
   return useQuery(
     ['ExchangeOffers', fromAsset, toAsset, fromAmount],
     () => etherspotService.getExchangeOffers(chain, fromAsset, toAsset, BigNumber(fromAmount)),
-    { enabled, cacheTime: 0 },
+    { enabled, fetchPolicy: 'no-cache' },
   );
 }
 
