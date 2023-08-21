@@ -31,7 +31,7 @@ import { resetWalletImportErrorAction, importWalletFromMnemonicAction } from 'ac
 // components
 import { ScrollWrapper, Wrapper } from 'components/legacy/Layout';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
-import {  MediumText } from 'components/legacy/Typography';
+import { MediumText } from 'components/legacy/Typography';
 import TextInput from 'components/legacy/TextInput';
 import Button from 'components/legacy/Button';
 
@@ -100,7 +100,7 @@ const NewImportWallet: React.FC<Props> = () => {
   };
 
   const trimmedPhrase = wordsPhrase.split(' ').filter(Boolean);
-  const disabled = !(trimmedPhrase?.length === 12 || trimmedPhrase?.length === 0) || isImportingWallet;
+  const disabled = !(trimmedPhrase?.length === 12 || trimmedPhrase?.length === 0);
 
   const renderFooterButton = () => {
     if (trimmedPhrase?.length === 0) {

@@ -38,6 +38,7 @@ import Toast from 'components/Toast';
 import { spacing, fontStyles } from 'utils/variables';
 import { useDispatch } from 'react-redux';
 import { setNotificationsVisibleStatus } from 'utils/getNotification';
+import { useThemeColors } from 'utils/themes';
 
 // Actions
 import { hasFCMPermission } from 'actions/notificationsActions';
@@ -48,6 +49,7 @@ function GetNotifincations() {
   const { t, tRoot } = useTranslationWithPrefix('getNotifications');
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const colors = useThemeColors();
   const nextRoute = navigation.getParam('nextRouteName');
 
   useEffect(() => {
@@ -84,7 +86,7 @@ function GetNotifincations() {
       <ContentWrapper contentContainerStyle={{ padding: spacing.large, flexGrow: 1 }}>
         <IconWithBackgroundGif />
         <Spacing h={height * 0.05} />
-        <MediumText fontSize={24} style={{ textAlign: 'center' }}>
+        <MediumText color={colors.basic000} fontSize={24} style={{ textAlign: 'center' }}>
           {t('title')}
         </MediumText>
         <Spacing h={60} />

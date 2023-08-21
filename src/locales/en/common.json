@@ -483,7 +483,8 @@
     "last_week": "Last Week",
     "last_month": "Last Month",
     "last_year": "Last Year",
-    "token_analytics": "Token Analytics"
+    "token_analytics": "Token Analytics",
+     "signin":"Sign in"
   },
 
   "paragraph": {
@@ -565,7 +566,7 @@
     },
     "email": {
       "label": "Email",
-      "placeholder": "Email",
+      "enterEmail": "Enter your email",
       "description": {
         "empty": "Add your email to be able receive special requests.",
         "added": "Verify your email and you will be able to invite your friends in Pillar.",
