@@ -15,7 +15,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React from 'react';
-import { Keyboard, Platform } from 'react-native';
+import { Keyboard } from 'react-native';
 import { useNavigation } from 'react-navigation-hooks';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
@@ -29,7 +29,7 @@ import Button from 'components/legacy/Button';
 import ProfileImage from 'components/ProfileImage';
 
 // Constants
-import { PERMISSIONS, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
+import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 
 // Selectors
 import { useRootSelector } from 'selectors';
@@ -53,13 +53,7 @@ const WelcomeBack = () => {
   const proceedToNextScreen = () => {
     Keyboard.dismiss();
     const navProps = user?.username ? user?.username : null;
-    if (Platform.OS === 'android') {
-      // $FlowFixMe: react-navigation types
-      navigation.navigate(PERMISSIONS, navProps);
-    } else {
-      // $FlowFixMe: react-navigation types
-      navigation.navigate(SET_WALLET_PIN_CODE, navProps);
-    }
+    navigation.navigate(SET_WALLET_PIN_CODE, navProps);
   };
 
   const renderWelcomeBack = () => (
