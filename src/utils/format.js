@@ -19,6 +19,7 @@
 */
 
 import { BigNumber } from 'bignumber.js';
+import { BigNumber as EthersBigNumber } from 'ethers';
 import t from 'translations/translate';
 
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
@@ -307,4 +308,14 @@ export const formatAmountDisplay = (
     maximumFractionDigits: 2,
     minimumFractionDigits,
   }).format(+amount)}`;
+};
+
+/**
+ * Convert values to BigNumber from bignumber.js, as we use both across the app
+ *
+ * Accepts string, number or BigNumber from ethers.js
+ */
+export const convertToBigNumberJs = (value: string | number | EthersBigNumber): BigNumber => {
+  const valueToConvert = value.toString() || '0';
+  return new BigNumber(valueToConvert);
 };

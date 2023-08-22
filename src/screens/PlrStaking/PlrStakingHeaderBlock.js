@@ -95,6 +95,7 @@ export type OwnProps = {|
   stakedPercentage?: string,
   stakers?: string,
   apy?: string,
+  renderStakedInfo: any,
 |};
 
 type Props = {|
@@ -118,7 +119,7 @@ const HeaderContentWrapper = styled.View`
   padding-vertical: 10px;
   ${({ noHorizontalPadding }) => !noHorizontalPadding && `padding-horizontal: ${spacing.layoutSides}px;`}
   width: 100%;
-  height: 220px;
+  height: ${({ expand }) => (expand ? 320 : 220)}px;
   background-color: ${({ theme }) => theme.colors.plrStaking};
   overflow: hidden;
 `;
@@ -234,12 +235,10 @@ const BackgroundImage = styled(Image)`
 
 const StakeInfoWrapper = styled.View`
   display: flex;
-  flex: 1;
   padding: 12px 24px;
 `;
 
 const InfoRow = styled.View`
-  flex: 1;
   display: flex;
   flex-direction: row;
 `;
@@ -473,7 +472,10 @@ class HeaderBlock extends React.Component<Props> {
       stakers,
       headerTitles,
       apy,
+      renderStakedInfo,
     } = this.props;
+    const stakedInfoComponent = renderStakedInfo?.() ?? null;
+
     const updatedColors = {};
     if (light) {
       updatedColors.primary = theme.colors.control;
@@ -493,7 +495,7 @@ class HeaderBlock extends React.Component<Props> {
             noPaddingTop={noPaddingTop}
             androidStatusbarHeight={StatusBar.currentHeight}
           >
-            <HeaderContentWrapper noHorizontalPadding={noHorizontalPadding}>
+            <HeaderContentWrapper noHorizontalPadding={noHorizontalPadding} expand={!!stakedInfoComponent}>
               {this.renderHeaderContent()}
 
               <StakeInfoWrapper>
@@ -541,6 +543,8 @@ class HeaderBlock extends React.Component<Props> {
                   </InfoItem>
                 </InfoRow>
               </StakeInfoWrapper>
+
+              {stakedInfoComponent}
 
               <BackgroundImage source={plrStakingBg} resizeMode="contain" />
             </HeaderContentWrapper>

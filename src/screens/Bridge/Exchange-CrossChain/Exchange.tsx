@@ -24,6 +24,9 @@ import { isEmpty, maxBy } from 'lodash';
 import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 
+// Services
+import { firebaseRemoteConfig } from 'services/firebase';
+
 // Actions
 import { fetchGasThresholds } from 'redux/actions/gas-threshold-actions';
 import { exchangeGasFeeAction } from 'actions/etherspotActions';
@@ -45,6 +48,7 @@ import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { TRANSACTION_TYPE } from 'constants/transactionsConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { EXCHANGE_PROVIDER, RESET_EXCHANGE_GAS_FEE_INFO } from 'constants/exchangeConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Utils
 import { useChainConfig } from 'utils/uiConfig';
@@ -230,9 +234,13 @@ function Exchange({ fetchExchangeTitle }: Props) {
     setFromValue(null);
   };
 
-  const toValue = isEmpty(selectedProvider)
+  const captureFeeMultiplier = 1 - firebaseRemoteConfig.getNumber(REMOTE_CONFIG.EXCHANGE_FEE_CAPTURE_PERCENTAGE) / 100;
+
+  let toValue = isEmpty(selectedProvider)
     ? maxBy(offers, (offer: any) => offer.toAmount)?.toAmount.precision(6)
     : offers?.find((offer) => offer.provider === selectedProvider)?.toAmount.precision(6);
+  if (toValue) toValue = toValue / captureFeeMultiplier;
+
   const customTitle = !chain
     ? t('exchangeContent.title.initialExchange')
     : t('exchangeContent.title.exchange', { chain: chainConfig.titleShort });

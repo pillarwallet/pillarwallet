@@ -1,7 +1,7 @@
 // @flow
 /*
     Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
+    Copyright (C) 2021 Stiftung Pillar Project
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,18 +17,21 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import type { Wallet as EthersWallet } from 'ethers';
 
-export type EthereumWallet = {
-  mnemonic: ?string,
-  address: string,
-  privateKey: ?string,
-  encrypt?: ?Function,
+import { useCallback, useEffect, useRef } from 'react';
+
+const useIsMounted = () => {
+  const isMounted = useRef(false);
+
+  useEffect(() => {
+    isMounted.current = true;
+
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  return useCallback(() => isMounted.current, []);
 };
 
-export type WalletObject = {
-  mnemonic: ?string,
-  privateKey: ?string,
-};
-
-export type OnValidPinCallback = (pin: ?string, wallet: EthersWallet) => Promise<void>;
+export default useIsMounted;
