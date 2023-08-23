@@ -184,7 +184,7 @@
     "react-native-tcp": "^3.3.2",
     "react-native-udp": "^2.6.0",
     "react-native-vector-icons": "^6.6.0",
-    "react-native-webview": "^10.1.0",
+    "react-native-webview": "^11.22.7",
     "react-navigation": "^4.4.3",
     "react-navigation-hooks": "^1.1.0",
     "react-navigation-redux-helpers": "2.0.1",
