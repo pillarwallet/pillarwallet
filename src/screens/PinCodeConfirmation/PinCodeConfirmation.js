@@ -48,6 +48,7 @@ import { maxPinCodeLengthSelector } from 'selectors/appSettings';
 import { validatePinWithConfirmation } from 'utils/validators';
 import { spacing } from 'utils/variables';
 import { getSupportedBiometryType } from 'utils/keychain';
+import { useThemeColors } from 'utils/themes';
 
 // Types
 import type { Dispatch } from 'reducers/rootReducer';
@@ -64,6 +65,7 @@ const { height } = Dimensions.get('window');
 const PinCodeConfirmation = ({ setOnboardingPinCode, navigation }) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const dispatch = useDispatch();
+  const colors = useThemeColors();
 
   const wallet = useRootSelector((root) => root.wallet.data);
   const maxPinCodeLength = useRootSelector(maxPinCodeLengthSelector);
@@ -101,7 +103,7 @@ const PinCodeConfirmation = ({ setOnboardingPinCode, navigation }) => {
         <IconWithBackgroundGif />
         <Spacing h={height * 0.05} />
 
-        <MediumText fontSize={24} center>
+        <MediumText color={colors.basic000} fontSize={24} center>
           {t('auth:label.reenterToConfirm')}
         </MediumText>
         {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}

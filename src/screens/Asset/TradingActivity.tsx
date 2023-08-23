@@ -83,6 +83,9 @@ const TradingActivityScreen = () => {
           ListEmptyComponent={renderEmptyState}
           style={{ width: '100%' }}
           keyExtractor={getActivityKeyExtractor}
+          scrollEventThrottle={1}
+          maxToRenderPerBatch={30}
+          removeClippedSubviews
           contentContainerStyle={{ paddingBottom: 120 }}
         />
 

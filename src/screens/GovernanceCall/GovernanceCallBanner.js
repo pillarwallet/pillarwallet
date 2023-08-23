@@ -61,6 +61,7 @@ const GovernanceCallBanner = () => {
   const [timingData, setTimingData] = React.useState({});
   const [remainingTime, setRemainingTime] = React.useState({});
   const [isVisible, setIsVisible] = React.useState(false);
+  const interval = React.useRef();
 
   const calculateLeftOverTime = (startTime) => {
     const thisDateNow = Date.now();
@@ -115,11 +116,12 @@ const GovernanceCallBanner = () => {
   }, [fetchGovernanceCallDataMemoized]);
 
   React.useEffect(() => {
-    setInterval(() => {
+    interval.current = setInterval(() => {
       if (timingData?.governanceCallStartTime) {
         setRemainingTime(calculateLeftOverTime(timingData?.governanceCallStartTime));
       }
     }, 60000);
+    return () => clearInterval(interval.current);
   }, [timingData]);
 
   if (!isVisible) return null;

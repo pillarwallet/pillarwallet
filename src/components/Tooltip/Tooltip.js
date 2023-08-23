@@ -31,6 +31,8 @@ import { useThemeColors } from 'utils/themes';
 import { getDeviceWidth, reportLog } from 'utils/common';
 import { measure } from 'utils/ui';
 
+// Hook
+import useIsMounted from 'hooks/useMounted';
 
 const screenWidth = getDeviceWidth();
 const ARROW_SIZE = 10;
@@ -64,6 +66,7 @@ const Tooltip = (props: Props) => {
   } = props;
 
   const colors = useThemeColors();
+  const isMounted = useIsMounted();
 
   const [wrapperLayout, setWrapperLayout] = React.useState<$ReadOnly<Layout>>({
     width: 0, height: 0, x: 0, y: 0,
@@ -87,11 +90,14 @@ const Tooltip = (props: Props) => {
         toValue: isVisible ? 1 : 0,
         duration: 200,
         useNativeDriver: true,
-      }).start(() => { if (!isVisible) setVisibilityState(false); });
+      }).start(() => {
+        if (!isVisible && isMounted) setVisibilityState(false);
+      });
     }
-    if (isVisible) {
+    if (isVisible && isMounted) {
       setVisibilityState(true);
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isVisible, tooltipLayout]);
 
