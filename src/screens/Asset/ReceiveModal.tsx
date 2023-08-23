@@ -38,7 +38,7 @@ import { spacing, fontStyles, fontSizes, appFont, borderRadiusSizes, lineHeights
 import { getThemeColors } from 'utils/themes';
 import { useChainsConfig } from 'utils/uiConfig';
 import { getDeviceHeight } from 'utils/common';
-import { isArchanovaAccount, isKeyBasedAccount } from 'utils/accounts';
+import { isArchanovaAccount, isKeyBasedAccount, getActiveAccountName } from 'utils/accounts';
 
 // Types
 import type { Theme } from 'models/Theme';
@@ -68,6 +68,7 @@ const ReceiveModal: FC<IReceiveModal> = ({ address, onModalHide, theme }) => {
   const chainsConfig = useChainsConfig();
   const activeAccount = useActiveAccount();
   const isArchanovaOrKeyBasedWallet = isKeyBasedAccount(activeAccount) || isArchanovaAccount(activeAccount);
+  const activeAccountName = getActiveAccountName(activeAccount);
 
   const handleCopyToClipboard = (addressName: string) => {
     Clipboard.setString(addressName);
@@ -107,10 +108,10 @@ const ReceiveModal: FC<IReceiveModal> = ({ address, onModalHide, theme }) => {
       }
     >
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
-        {!isArchanovaOrKeyBasedWallet && <ReceiveTitle>{t('receiveModal.etherspotTitle')}</ReceiveTitle>}
+        <ReceiveTitle>{activeAccountName}</ReceiveTitle>
 
         <InfoView>
-          <AddressWrapper isArchanovaOrKeyBasedWallet={isArchanovaOrKeyBasedWallet}>
+          <AddressWrapper>
             <TextWithCopy
               toastText={t('toast.addressCopiedToClipboard')}
               textToCopy={address}
@@ -200,10 +201,8 @@ const ContentWrapper = styled(SafeAreaView)`
   align-items: center;
 `;
 
-const AddressWrapper = styled.View<{ isArchanovaOrKeyBasedWallet?: boolean }>`
+const AddressWrapper = styled.View`
   padding: 0 ${spacing.extraPlusLarge}px;
-  ${({ isArchanovaOrKeyBasedWallet }) =>
-    isArchanovaOrKeyBasedWallet && `margin: ${spacing.large}px ${spacing.large}px ${spacing.mediumLarge}px`};
 `;
 
 const ButtonRow = styled.View`
