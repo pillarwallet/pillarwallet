@@ -75,8 +75,8 @@ interface IStakingContractAbi {
 
 interface IStakingContractInfo {
   contractState: number;
-  minStakeAmount: string;
-  maxStakeAmount: string;
+  minStakeAmount: BigNumber;
+  maxStakeAmount: BigNumber;
   maxStakeTotal: string;
   totalStaked: string;
   rewardToken: string;
@@ -257,8 +257,8 @@ export const getStakingContractInfo = async (refresh?: boolean): Promise<IStakin
 
     storedContractInfo = {
       contractState,
-      minStakeAmount,
-      maxStakeAmount,
+      minStakeAmount: minStakingAmount,
+      maxStakeAmount: maxStakingAmount,
       maxStakeTotal,
       totalStaked,
       rewardToken,

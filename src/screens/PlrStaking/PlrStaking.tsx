@@ -31,6 +31,7 @@ import {
   STAKING_LOCKED_PERIOD,
   STAKING_PERIOD,
   WalletType,
+  defaultPlrToken,
   plrSupportedChains,
   stkPlrToken,
 } from 'constants/plrStakingConstants';
@@ -41,7 +42,7 @@ import { useStableAssets, useNonStableAssets } from 'hooks/assets';
 // Utils
 import { fontStyles, spacing } from 'utils/variables';
 import { formatBigAmount, reportErrorLog } from 'utils/common';
-import { isArchanovaAccount, isKeyBasedAccount, getAccountAddress } from 'utils/accounts';
+import { isArchanovaAccount, isKeyBasedAccount, getAccountAddress, isEtherspotAccount } from 'utils/accounts';
 import { formatTokenValue, formatFiatValue, convertToBigNumberJs } from 'utils/format';
 import { getBalanceInFiat } from 'utils/assets';
 
@@ -87,6 +88,9 @@ const PlrStaking = () => {
   const currency = useFiatCurrency();
   const ethRates = useChainRates(CHAIN.ETHEREUM);
 
+  const ethereumPlrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
+  const { titleShort: ethereumTitle } = chainsConfig[CHAIN.ETHEREUM];
+
   const { tokens: stableTokens } = useStableAssets();
   const { tokens: nonStableTokens } = useNonStableAssets();
   const tokens = [...stableTokens, ...nonStableTokens];
@@ -97,6 +101,7 @@ const PlrStaking = () => {
   const [stakedPercentage, setStakedPercentage] = useState(null);
   const [stakers, setStakers] = useState(0);
   const [stakingApy, setStakingApy] = useState<string>(null);
+  const [minStakeAmount, setMinStakeAmount] = useState<BigNumber>(BigNumber.from(0));
 
   // Remote Config
   const [stakingEndTime, setStakingEndTime] = useState<Date>(null);
@@ -110,7 +115,10 @@ const PlrStaking = () => {
   const [hasEnoughPlr, setHasEnoughPlr] = useState(false);
 
   const [accountType, setAccountType] = useState(WalletType.ETHERSPOT);
+  const [selectedAccount, setSelectedAccount] = useState(WalletType.ETHERSPOT);
   const [selectedChain, setSelectedChain] = useState(null);
+  const [keybasedPlrBalance, setKeybasedPlrBalance] = useState<BigNumber>(null);
+  const [archanovaPlrBalance, setArchanovaPlrBalance] = useState<BigNumber>(null);
 
   const [stakedTokenAddress, setStakedTokenAddress] = useState<string>(null);
   const [stkPlrBal, setStkPlrBal] = useState<BigNumber>(null);
@@ -156,45 +164,46 @@ const PlrStaking = () => {
         setStakedAmount(formatBigAmount(ethers.utils.formatEther(totalStaked)));
         setStakedPercentage(percentage.toFixed(0).toString());
         setStakers(stakers);
+        setMinStakeAmount(stakingInfo.minStakeAmount);
       } catch (e) {
         reportErrorLog('PlrStaking - fetchStakingInfo error', e);
       }
+
+      const plrAddresses: string[] = [];
+      chains.map((chain) => {
+        const plrAddress = getPlrAddressForChain(chain);
+        if (!!plrAddress) plrAddresses.push(plrAddress.toLowerCase());
+      });
+
+      const filteredWithoutPlr = tokens.filter(
+        (token) =>
+          !plrAddresses.includes(token?.address?.toLowerCase()) &&
+          plrSupportedChains.includes(token.chain) &&
+          token.assetBalance > 0,
+      );
+
+      const filteredTokens = tokens
+        .filter((token) => plrAddresses.includes(token?.address?.toLowerCase()))
+        .sort((a, b) => b?.assetBalance - a?.assetBalance);
+
+      if (!filteredTokens?.length) {
+        setHasEnoughPlr(false);
+        return;
+      }
+
+      setSelectedChain(filteredTokens[0].chain);
+      setHasEnoughPlr(ethers.utils.parseUnits(filteredTokens?.[0]?.assetBalance || 0).gte(stakingInfo.minStakeAmount));
+      setPlrBalances(filteredTokens);
+      setBalancesWithoutPlr(filteredWithoutPlr);
     };
 
     fetchStakingInfo();
-
-    const plrAddresses: string[] = [];
-    chains.map((chain) => {
-      const plrAddress = getPlrAddressForChain(chain);
-      if (!!plrAddress) plrAddresses.push(plrAddress.toLowerCase());
-    });
-
-    const filteredWithoutPlr = tokens.filter(
-      (token) =>
-        !plrAddresses.includes(token?.address?.toLowerCase()) &&
-        plrSupportedChains.includes(token.chain) &&
-        token.assetBalance > 0,
-    );
-
-    const filteredTokens = tokens
-      .filter((token) => plrAddresses.includes(token?.address?.toLowerCase()))
-      .sort((a, b) => b?.assetBalance - a?.assetBalance);
-
-    if (!filteredTokens?.length) {
-      setHasEnoughPlr(false);
-      return;
-    }
-
-    setSelectedChain(filteredTokens[0].chain);
-    setHasEnoughPlr(filteredTokens[0].assetBalance >= MIN_PLR_STAKE_AMOUNT);
-    setPlrBalances(filteredTokens);
-    setBalancesWithoutPlr(filteredWithoutPlr);
   }, []);
 
   useEffect(() => {
     const fetchBal = async () => {
       let totalStkPlr = BigNumber.from(0);
-      for (let account in accounts) {
+      for (let account of accounts) {
         const accountAddress = getAccountAddress(account);
         const balance = await getBalanceForAddress(CHAIN.ETHEREUM, stakedTokenAddress, accountAddress);
         if (balance && !balance.isZero()) totalStkPlr.add(balance);
@@ -207,10 +216,26 @@ const PlrStaking = () => {
   }, [stakedTokenAddress]);
 
   useEffect(() => {
+    const fetchPlrBalances = async () => {
+      for (let account of accounts) {
+        if (!isArchanovaAccount(account) && !isKeyBasedAccount(account)) continue;
+
+        const accountAddress = getAccountAddress(account);
+        const balance = await getBalanceForAddress(CHAIN.ETHEREUM, ethereumPlrAddress, accountAddress);
+
+        if (!balance || balance.isZero()) continue;
+
+        if (isArchanovaAccount(account)) setArchanovaPlrBalance(balance);
+        else if (isKeyBasedAccount(account)) setKeybasedPlrBalance(balance);
+      }
+    };
+
     let accountType = WalletType.ETHERSPOT;
     if (isArchanovaAccount(activeAccount)) accountType = WalletType.ARCHANOVA;
     else if (isKeyBasedAccount(activeAccount)) accountType = WalletType.KEYBASED;
     setAccountType(accountType);
+
+    if (accountType === WalletType.ETHERSPOT) fetchPlrBalances();
   }, [activeAccount]);
 
   useEffect(() => {
@@ -256,20 +281,40 @@ const PlrStaking = () => {
     return valueInFiat;
   };
 
+  const selectActiveAccount = () => {
+    if (isArchanovaAccount(activeAccount)) setSelectedAccount(WalletType.ARCHANOVA);
+    else if (isKeyBasedAccount(activeAccount)) setSelectedAccount(WalletType.KEYBASED);
+    else setSelectedAccount(WalletType.ETHERSPOT);
+  };
+
   const selectChain = (chain) => {
     const balance = plrBalances.find((bal) => bal.chain === chain);
 
-    if (!balance || balance.assetBalance < MIN_PLR_STAKE_AMOUNT) return;
+    if (!balance?.assetBalance || ethers.utils.parseUnits(balance.assetBalance).lt(minStakeAmount)) return;
 
+    selectActiveAccount();
     setSelectedChain(chain);
+  };
+
+  const selectWallet = (wallet: WalletType) => {
+    let balance: BigNumber;
+    if (wallet === WalletType.ARCHANOVA) balance = archanovaPlrBalance;
+    else if (wallet === WalletType.KEYBASED) balance = keybasedPlrBalance;
+
+    if (!balance || balance.isZero() || balance.lt(minStakeAmount)) return;
+
+    setSelectedAccount(wallet);
+    setSelectedChain(CHAIN.ETHEREUM);
   };
 
   const onSelectToken = (token) => {
     setShowModal(false);
+    selectActiveAccount();
     navigation.navigate(PLR_STAKING_VALIDATOR, {
       token: token,
       chain: token.chain,
       balancesWithoutPlr: balancesWithoutPlr,
+      selectedAccount,
     });
   };
 
@@ -278,17 +323,28 @@ const PlrStaking = () => {
   };
 
   const onStake = () => {
-    const token = plrBalances.find((bl) => bl?.chain === selectedChain);
+    let token;
+    if (!isArchanovaAccount(activeAccount) && !isKeyBasedAccount(activeAccount)) {
+      token = plrBalances.find((bl) => bl?.chain === selectedChain);
+    } else {
+      token = {
+        ...defaultPlrToken,
+        address: ethereumPlrAddress,
+        chain: CHAIN.ETHEREUM,
+      };
+    }
+
     if (!token) return;
 
     navigation.navigate(PLR_STAKING_VALIDATOR, {
       token: token,
       chain: token.chain,
       balancesWithoutPlr: balancesWithoutPlr,
+      selectedAccount,
     });
   };
 
-  const stakedPlrFiat = getFiatValue(stkPlrBal, getPlrAddressForChain(CHAIN.ETHEREUM), true) || 0;
+  const stakedPlrFiat = getFiatValue(stkPlrBal, ethereumPlrAddress, true) || 0;
 
   const renderStakedInfo = () => {
     if (!stkPlrBal || stkPlrBal.isZero()) return null;
@@ -312,6 +368,19 @@ const PlrStaking = () => {
       />
     );
   };
+
+  const archanovaDisabled = !archanovaPlrBalance || archanovaPlrBalance.lt(minStakeAmount);
+  const formattedArchanovaPlr: string = archanovaPlrBalance
+    ? formatTokenValue(convertToBigNumberJs(utils.formatEther(archanovaPlrBalance)), defaultPlrToken.symbol, {
+        decimalPlaces: 2,
+      })
+    : '';
+  const keybasedDisabled = !keybasedPlrBalance || keybasedPlrBalance.lt(minStakeAmount);
+  const formattedKeybasedPlr = keybasedPlrBalance
+    ? formatTokenValue(convertToBigNumberJs(utils.formatEther(keybasedPlrBalance)), defaultPlrToken.symbol, {
+        decimalPlaces: 2,
+      })
+    : '';
 
   return (
     <Container>
@@ -402,13 +471,17 @@ const PlrStaking = () => {
               {plrBalances.map((bal) => {
                 const { titleShort } = chainsConfig[bal.chain];
 
-                const disabled = bal?.assetBalance < MIN_PLR_STAKE_AMOUNT || isNaN(bal.assetBalance);
+                const disabled =
+                  ethers.utils.parseUnits(bal?.assetBalance || 0).lt(minStakeAmount) || isNaN(bal.assetBalance);
 
                 return (
                   <BalanceItem onPress={() => selectChain(bal.chain)} disabled={disabled}>
                     <BalanceLeftItem>
                       <Spacing w={spacing.large} />
-                      <RadioButton visible={bal.chain === selectedChain} disabled={disabled} />
+                      <RadioButton
+                        visible={bal.chain === selectedChain && selectedAccount === accountType}
+                        disabled={disabled}
+                      />
                       <Spacing w={spacing.small} />
                       {/* @ts-ignore */}
                       <Icon name={bal.chain + 16} />
@@ -427,10 +500,84 @@ const PlrStaking = () => {
                 );
               })}
             </BalanceSelectWrapper>
+
+            {archanovaPlrBalance && !archanovaPlrBalance.isZero() && (
+              <BalanceSelectWrapper>
+                <BalanceItem>
+                  <BalanceLeftItem>
+                    <>
+                      <Icon name="pillar16" />
+                      <BalanceTitle>{`${t('archanova')} ${t('wallet')}`}</BalanceTitle>
+                    </>
+                  </BalanceLeftItem>
+
+                  <BalanceRightItem>
+                    <BalanceValueText>{formattedArchanovaPlr}</BalanceValueText>
+                    <BalanceValueText fiat>
+                      {formatFiatValue(getFiatValue(archanovaPlrBalance, ethereumPlrAddress, true), currency)}
+                    </BalanceValueText>
+                  </BalanceRightItem>
+                </BalanceItem>
+                <BalanceItem onPress={() => selectWallet(WalletType.ARCHANOVA)} disabled={archanovaDisabled}>
+                  <BalanceLeftItem>
+                    <Spacing w={spacing.large} />
+                    <RadioButton visible={selectedAccount === WalletType.ARCHANOVA} disabled={archanovaDisabled} />
+                    <Spacing w={spacing.small} />
+                    {/* @ts-ignore */}
+                    <Icon name={CHAIN.ETHEREUM + 16} />
+                    <BalanceTitle disabled={archanovaDisabled}>{ethereumTitle}</BalanceTitle>
+                  </BalanceLeftItem>
+
+                  <BalanceRightItem>
+                    <BalanceValueText disabled={archanovaDisabled}>{formattedArchanovaPlr}</BalanceValueText>
+                    <BalanceValueText fiat disabled={archanovaDisabled}>
+                      {formatFiatValue(getFiatValue(archanovaPlrBalance, ethereumPlrAddress, true), currency)}
+                    </BalanceValueText>
+                  </BalanceRightItem>
+                </BalanceItem>
+              </BalanceSelectWrapper>
+            )}
+
+            {keybasedPlrBalance && !keybasedPlrBalance.isZero() && (
+              <BalanceSelectWrapper>
+                <BalanceItem>
+                  <BalanceLeftItem>
+                    <>
+                      <Icon name="wallet16" />
+                      <BalanceTitle>{`${t('keybased')} ${t('wallet')}`}</BalanceTitle>
+                    </>
+                  </BalanceLeftItem>
+
+                  <BalanceRightItem>
+                    <BalanceValueText>{formattedKeybasedPlr}</BalanceValueText>
+                    <BalanceValueText fiat>
+                      {formatFiatValue(getFiatValue(keybasedPlrBalance, ethereumPlrAddress, true), currency)}
+                    </BalanceValueText>
+                  </BalanceRightItem>
+                </BalanceItem>
+                <BalanceItem onPress={() => selectWallet(WalletType.KEYBASED)} disabled={keybasedDisabled}>
+                  <BalanceLeftItem>
+                    <Spacing w={spacing.large} />
+                    <RadioButton visible={selectedAccount === WalletType.KEYBASED} disabled={keybasedDisabled} />
+                    <Spacing w={spacing.small} />
+                    {/* @ts-ignore */}
+                    <Icon name={CHAIN.ETHEREUM + 16} />
+                    <BalanceTitle disabled={keybasedDisabled}>{ethereumTitle}</BalanceTitle>
+                  </BalanceLeftItem>
+
+                  <BalanceRightItem>
+                    <BalanceValueText disabled={keybasedDisabled}>{formattedKeybasedPlr}</BalanceValueText>
+                    <BalanceValueText fiat disabled={keybasedDisabled}>
+                      {formatFiatValue(getFiatValue(keybasedPlrBalance, ethereumPlrAddress, true), currency)}
+                    </BalanceValueText>
+                  </BalanceRightItem>
+                </BalanceItem>
+              </BalanceSelectWrapper>
+            )}
           </PlrBalancesWrapper>
         )}
 
-        {!plrBalances?.length || (!hasEnoughPlr && <LimitWarningText>{t('limitWarning')}</LimitWarningText>)}
+        {(!plrBalances?.length || !hasEnoughPlr) && <LimitWarningText>{t('limitWarning')}</LimitWarningText>}
 
         <ContinueButtonWrapper>
           {!!hasEnoughPlr && (

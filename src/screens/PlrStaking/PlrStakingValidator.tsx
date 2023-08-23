@@ -26,7 +26,7 @@ import { BigNumber, ethers } from 'ethers';
 
 // Constants
 import { CHAIN } from 'constants/chainConstantsTs';
-import { WalletType, stkPlrToken } from 'constants/plrStakingConstants';
+import { WalletType, defaultPlrToken, stkPlrToken } from 'constants/plrStakingConstants';
 import { TRANSACTION_TYPE } from 'constants/transactionsConstants';
 import { HOME } from 'constants/navigationConstants';
 
@@ -106,9 +106,10 @@ const PlrStakingValidator = () => {
   const token = navigation.getParam('token');
   const chain = navigation.getParam('chain');
   const balancesWithoutPlr = navigation.getParam('balancesWithoutPlr');
+  const selectedAccount = navigation.getParam('selectedAccount');
 
-  const activeAccount = useActiveAccount();
   const accounts = useAccounts();
+  const activeAccount = useActiveAccount();
 
   const inputRef: any = useRef();
   const stakeRef: any = useRef();
@@ -117,7 +118,7 @@ const PlrStakingValidator = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedToken, setSelectedToken] = useState(token);
   const [selectedChain, setSelectedChain] = useState(chain);
-  const [accountType, setAccountType] = useState<WalletType>(null);
+  const [accountType, setAccountType] = useState<WalletType>(selectedAccount);
 
   const [gasFeeAsset, setGasFeeAsset] = useState<AssetOption | null>(null);
   const [value, setValue] = useState(null);
@@ -188,16 +189,15 @@ const PlrStakingValidator = () => {
   );
 
   useEffect(() => {
-    let accountType = WalletType.ETHERSPOT;
-    if (isArchanovaAccount(activeAccount)) accountType = WalletType.ARCHANOVA;
-    else if (isKeyBasedAccount(activeAccount)) accountType = WalletType.KEYBASED;
-    setAccountType(accountType);
-  }, [activeAccount]);
-
-  useEffect(() => {
     if (!!plrToken || !toOptions) return;
     const asset = toOptions?.find((a) => a.chain === CHAIN.ETHEREUM && addressesEqual(a.address, ethereumPlrAddress));
     if (!!asset) setPlrToken(asset);
+    else
+      setPlrToken({
+        ...defaultPlrToken,
+        address: ethereumPlrAddress,
+        chain: CHAIN.ETHEREUM,
+      });
   }, [toOptions]);
 
   // Get Staking Fees
@@ -358,6 +358,10 @@ const PlrStakingValidator = () => {
     resetForm(true);
     setSelectedToken(token);
     setSelectedChain(token?.chain);
+
+    if (isArchanovaAccount(activeAccount)) setAccountType(WalletType.ARCHANOVA);
+    else if (isKeyBasedAccount(activeAccount)) setAccountType(WalletType.KEYBASED);
+    else setAccountType(WalletType.ETHERSPOT);
   };
 
   const validatePlr = (): boolean => {
