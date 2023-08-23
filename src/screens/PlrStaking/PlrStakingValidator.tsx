@@ -233,7 +233,7 @@ const PlrStakingValidator = () => {
 
       const data: ISendData = {
         sourceWallet: accountType,
-        formattedValue: `${truncateDecimalPlaces(value.toString(), 0)} ${selectedToken?.symbol}`,
+        formattedValue: `${truncateDecimalPlaces(value?.toString(), 0)} ${selectedToken?.symbol}`,
         asset: selectedToken,
         feeInfo: null,
       };
@@ -426,7 +426,7 @@ const PlrStakingValidator = () => {
 
       sendTransactionPayload = {
         to: etherspotAddress,
-        amount: truncateAmount(value.toString(), selectedToken.decimals),
+        amount: truncateAmount(value?.toString(), selectedToken.decimals),
         symbol: selectedToken.symbol,
         contractAddress: selectedToken.address,
         decimals: selectedToken.decimals,
