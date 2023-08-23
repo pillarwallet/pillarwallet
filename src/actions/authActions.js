@@ -451,7 +451,7 @@ export const logoutAction = () => {
 export const resetAndStartImportWalletAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     // reset services
-    dispatch(resetAppServicesAction());
+    await dispatch(resetAppServicesAction());
 
     // reset reducer state
     const { isOnline, translationsInitialised, fallbackLanguageVersion, sessionLanguageCode, sessionLanguageVersion } =
