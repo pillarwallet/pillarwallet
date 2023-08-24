@@ -25,6 +25,15 @@ export enum WalletType {
 
 export const plrSupportedChains = [CHAIN.ETHEREUM, CHAIN.POLYGON, CHAIN.BINANCE];
 
+export const defaultPlrToken = {
+  chain: CHAIN.ETHEREUM,
+  address: '',
+  name: 'PLR',
+  symbol: 'PLR',
+  decimals: 18,
+  iconUrl: PLR_ICON_URL,
+};
+
 export const stkPlrToken = {
   chain: CHAIN.ETHEREUM,
   address: '',
