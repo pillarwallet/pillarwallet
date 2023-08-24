@@ -245,7 +245,7 @@ const PlrStaking = () => {
     return () => clearInterval(timerCountdown);
   }, [stakingEndTime]);
 
-  const getPlrTotal = () => {
+  const getPlrTotal = (includeAllWallets?: boolean) => {
     if (!plrBalances?.length) return 0;
 
     let total = 0;
@@ -255,10 +255,15 @@ const PlrStaking = () => {
       total += parseFloat(bal?.assetBalance || 0);
     });
 
+    if (includeAllWallets) {
+      if (archanovaPlrBalance) total += parseFloat(ethers.utils.formatEther(archanovaPlrBalance));
+      if (keybasedPlrBalance) total += parseFloat(ethers.utils.formatEther(keybasedPlrBalance));
+    }
+
     return `${total.toFixed(2)} ${symbol}`;
   };
 
-  const getPlrFiatTotal = () => {
+  const getPlrFiatTotal = (includeAllWallets?: boolean) => {
     if (!plrBalances?.length) return 0;
 
     let total = 0;
@@ -268,7 +273,10 @@ const PlrStaking = () => {
       total += parseFloat(bal?.balance?.balanceInFiat || 0);
     });
 
-    if (!total) return 0;
+    if (includeAllWallets) {
+      if (archanovaPlrBalance) total += getFiatValue(archanovaPlrBalance, ethereumPlrAddress);
+      if (keybasedPlrBalance) total += getFiatValue(keybasedPlrBalance, ethereumPlrAddress);
+    }
 
     return symbol + total.toFixed(2);
   };
@@ -435,8 +443,8 @@ const PlrStaking = () => {
               </AvailablePlrTokenWrapper>
 
               <AvailablePlrBoxTextWrapper>
-                <AvailablePlrText>{getPlrTotal()}</AvailablePlrText>
-                <AvailablePlrFiatText>{getPlrFiatTotal()}</AvailablePlrFiatText>
+                <AvailablePlrText>{getPlrTotal(true)}</AvailablePlrText>
+                <AvailablePlrFiatText>{getPlrFiatTotal(true)}</AvailablePlrFiatText>
               </AvailablePlrBoxTextWrapper>
             </AvailablePlrBox>
 
