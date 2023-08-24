@@ -1503,6 +1503,9 @@ export const estimateSmartWalletDeploymentAction = () => {
 export const checkArchanovaSessionIfNeededAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { isCheckingSmartWalletSession } = getState().smartWallet;
+    // skip check if no archanova account
+    const archanovaAccountExists = !!findFirstArchanovaAccount(accountsSelector(getState()));
+    if (!archanovaAccountExists) return;
 
     if (isCheckingSmartWalletSession) return;
 
