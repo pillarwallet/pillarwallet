@@ -75,8 +75,9 @@ export async function migrate(
     case 'customTokensList':
       data = loadAndMigrateCustomTokens(storageData);
       break;
+
     case 'appsHoldings':
-      data = loadAndMigrateAppsHoldings(storageData, dispatch);
+      data = loadAndMigrateAppsHoldings(storageData);
       break;
 
     default:
