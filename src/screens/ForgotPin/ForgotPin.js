@@ -24,7 +24,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 
 // constants
-import { IMPORT_WALLET_LEGALS, FORGOT_PIN } from 'constants/navigationConstants';
+import { IMPORT_WALLET_LEGALS, FORGOT_PIN, PIN_CODE_UNLOCK } from 'constants/navigationConstants';
 
 // components
 import { Wrapper } from 'components/legacy/Layout';
@@ -57,7 +57,7 @@ const FooterWrapper = styled.View`
 
 class ForgotPin extends React.Component<Props, {}> {
   goBackToPin = () => {
-    this.props.navigation.goBack(null);
+    this.props.navigation.navigate(PIN_CODE_UNLOCK);
   };
 
   toImportWallet = () => {

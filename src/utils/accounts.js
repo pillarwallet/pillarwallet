@@ -150,6 +150,17 @@ export const getAccountName = (accountType: AccountTypes | TranslatedString): st
   }
 };
 
+export const getActiveAccountName = (activeAccount: ?Account): string => {
+  if (isKeyBasedAccount(activeAccount)) {
+    return t('receiveModal.accountName.keyBased');
+  } else if (isArchanovaAccount(activeAccount)) {
+    return t('receiveModal.accountName.archanova');
+  } else if (isEtherspotAccount(activeAccount)) {
+    return t('receiveModal.accountName.etherspot');
+  }
+  return '';
+};
+
 export const findAccountByAddress = (address: string, accounts: Account[]): ?Account => {
   return accounts.find((account) => addressesEqual(address, getAccountAddress(account)));
 };
