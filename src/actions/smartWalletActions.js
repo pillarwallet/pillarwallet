@@ -1547,7 +1547,10 @@ export const checkArchanovaSessionIfNeededAction = () => {
 
     dispatch({ type: SET_CHECKING_ARCHANOVA_SESSION, payload: false });
 
-    if (!smartWalletNeedsInit) return;
+    if (!smartWalletNeedsInit) {
+      dispatch(lockScreenAction(onLoginSuccess));
+      return;
+    }
 
     dispatch(lockScreenAction(onLoginSuccess));
   };
