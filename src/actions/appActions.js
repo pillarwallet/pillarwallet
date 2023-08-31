@@ -141,7 +141,7 @@ export const initAppAndRedirectAction = () => {
       const rates = storageData?.rates?.rates ?? {};
       dispatch({ type: SET_RATES, payload: rates });
 
-      const appsHoldings = storageData?.appsHoldings?.data ?? {};
+      const appsHoldings = storageData?.appsHoldings?.appsHoldings ?? {};
       dispatch({ type: SET_APP_HOLDINGS, payload: appsHoldings });
 
       const { txCount = {} } = get(storageData, 'txCount', {});
