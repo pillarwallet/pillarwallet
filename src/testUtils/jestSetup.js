@@ -22,14 +22,14 @@
 import 'react-native-gesture-handler/jestSetup';
 import React from 'react';
 import Enzyme from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
+import Adapter from '@cfaester/enzyme-adapter-react-18';
 import { JSDOM } from 'jsdom';
 import { BN } from 'ethereumjs-util'; // same BigNumber library as in Archanova SDK
 import { View as mockView } from 'react-native';
 import { utils, BigNumber as EthersBigNumber, constants as ethersConstants, Wallet as EthersWallet } from 'ethers';
 import mocktract from 'mocktract';
 import * as Etherspot from 'etherspot';
-
+import { Animated } from 'react-native';
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { ADDRESS_ZERO, ETH, PLR } from 'constants/assetsConstants';
@@ -111,6 +111,7 @@ jest.mock('@react-native-firebase/auth', () => () => ({
 jest.mock('@react-native-firebase/analytics', () => () => ({
   logScreenView: () => jest.fn(),
   logEvent: () => jest.fn(),
+  setUserProperties: () => jest.fn()
 }));
 
 jest.mock('@react-native-firebase/crashlytics', () => () => ({
@@ -139,6 +140,10 @@ jest.setMock('react-native-splash-screen', {
 });
 
 jest.setMock('react-native-shadow-2', { Shadow: () => '' });
+
+jest.setMock('react-native-modal', () => 'react-native-modal');
+
+jest.setMock('axios-mock-adapter');
 
 jest.setMock('react-native-scrypt', () => Promise.resolve('xxxx'));
 
@@ -261,6 +266,14 @@ export const mockExchangeRates = {
 jest.setMock('react-native-share', {});
 
 jest.setMock('react-native-fast-image', () => null);
+
+jest.setMock('@storybook/addon-storyshots', () => null);
+
+jest.setMock('@walletconnect/utils', {});
+
+jest.setMock('@walletconnect/core', {});
+
+jest.setMock('@walletconnect/web3wallet', {});
 
 export const mockArchanovaAccountApiData = {
   id: 123,
@@ -481,4 +494,6 @@ jest.setMock('services/etherspot', {
   getSupportedAssets: (chain) => Promise.resolve(chain === CHAIN.ETHEREUM ? mockSupportedAssets : []),
   getBalances: mockEtherspotGetBalances,
   getAccountTotalBalances: () => Promise.resolve(),
+  getAccountInvestments: () => Promise.resolve(),
+  getEnsNode: () => Promise.resolve(),
 });

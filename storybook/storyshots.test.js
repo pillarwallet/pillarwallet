@@ -21,27 +21,27 @@
 import * as React from 'react';
 import { View } from 'react-native';
 import initStoryshots from '@storybook/addon-storyshots';
+import renderer from 'react-test-renderer';
 
 const MockComponent = (props) => {
   const { children } = props;
-  return (<View>{children}</View>);
+  return <View>{children}</View>;
 };
 
 jest.mock('global', () => global);
 jest.mock('react-navigation', () => {
   return {
-    withOrientation: jest.fn().mockImplementation(component => component),
-    withNavigation: Component => props => (
-      <Component navigation={{ navigate: jest.fn(), addListener: jest.fn() }} {...props} />
-    ),
-    createAppContainer: Component => props => (
-      <Component navigation={{ navigate: jest.fn(), addListener: jest.fn() }} {...props} />
-    ),
-    createSwitchNavigator: props => jest.fn().mockImplementation(() => {
-      const { TestScreen } = props;
-      const { screen } = TestScreen;
-      return <MockComponent>{ screen()}</MockComponent>;
-    }),
+    withOrientation: jest.fn().mockImplementation((component) => component),
+    withNavigation: (Component) => (props) =>
+      <Component navigation={{ navigate: jest.fn(), addListener: jest.fn() }} {...props} />,
+    createAppContainer: (Component) => (props) =>
+      <Component navigation={{ navigate: jest.fn(), addListener: jest.fn() }} {...props} />,
+    createSwitchNavigator: (props) =>
+      jest.fn().mockImplementation(() => {
+        const { TestScreen } = props;
+        const { screen } = TestScreen;
+        return <MockComponent>{screen()}</MockComponent>;
+      }),
     ThemeColors: {
       light: {
         bodyContent: '',
@@ -69,4 +69,10 @@ jest.mock('react-navigation-redux-helpers', () => ({
 
 jest.useFakeTimers();
 
-initStoryshots({ /* configuration options */ });
+initStoryshots({
+  /* configuration options */
+});
+
+it('Storyshots render correctly', () => {
+  renderer.create(<MockComponent />);
+});

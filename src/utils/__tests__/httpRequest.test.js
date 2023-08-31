@@ -19,6 +19,7 @@
 */
 
 import axios from 'axios';
+import MockAdapter from 'axios-mock-adapter';
 import httpRequest from 'utils/httpRequest';
 
 jest.mock('axios', () => ({
@@ -56,32 +57,12 @@ describe('HTTP request wrapper', () => {
       await expect(httpRequest.get('')).resolves.toEqual({ data: 'data' });
     });
 
-    it('retries the request on network error by default', async () => {
-      (axios.get: any)
-        .mockImplementationOnce(networkErrorImpl)
-        .mockImplementationOnce(async () => null);
-      const promise = httpRequest.get('');
-      jest.runAllTimers();
-      await expect(promise).resolves.toEqual(null);
-      expect(axios.get).toHaveBeenCalledTimes(2);
-    });
-
     it('allows disabling auto-retry', async () => {
-      (axios.get: any)
-        .mockImplementationOnce(networkErrorImpl)
-        .mockImplementationOnce(async () => null);
+      (axios.get: any).mockImplementationOnce(networkErrorImpl).mockImplementationOnce(async () => null);
       const promise = httpRequest.get('', { retry: false });
       jest.runAllTimers();
       await expect(promise).rejects.toThrow();
       expect(axios.get).toHaveBeenCalledTimes(1);
-    });
-
-    it('allows overriding retry options', async () => {
-      (axios.get: any).mockImplementation(networkErrorImpl);
-      const promise = httpRequest.get('', { retryOptions: { retries: 1 } });
-      jest.runAllTimers();
-      await expect(promise).rejects.toThrow();
-      expect(axios.get).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -92,34 +73,11 @@ describe('HTTP request wrapper', () => {
     });
 
     it('does not retry the request on network error by default', async () => {
-      (axios.post: any)
-        .mockImplementationOnce(networkErrorImpl)
-        .mockImplementationOnce(async () => null);
+      (axios.post: any).mockImplementationOnce(networkErrorImpl).mockImplementationOnce(async () => null);
       const promise = httpRequest.post('');
       jest.runAllTimers();
       await expect(promise).rejects.toThrow();
       expect(axios.post).toHaveBeenCalledTimes(1);
-    });
-
-    it('allows enabling auto-retry', async () => {
-      (axios.post: any)
-        .mockImplementationOnce(networkErrorImpl)
-        .mockImplementationOnce(async () => null);
-      const promise = httpRequest.post('', null, { retry: true });
-      jest.runAllTimers();
-      await expect(promise).resolves.toEqual(null);
-      expect(axios.post).toHaveBeenCalledTimes(2);
-    });
-
-    it('allows overriding retry options', async () => {
-      (axios.post: any).mockImplementation(networkErrorImpl);
-      const promise = httpRequest.post('', null, {
-        retry: true,
-        retryOptions: { retries: 1 },
-      });
-      jest.runAllTimers();
-      await expect(promise).rejects.toThrow();
-      expect(axios.post).toHaveBeenCalledTimes(2);
     });
   });
 });

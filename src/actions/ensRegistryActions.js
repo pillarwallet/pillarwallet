@@ -102,7 +102,7 @@ export const lookupAddressAction = (address: string) => {
 
 export const extractEnsInfoFromTransactionsAction = (transactions: Object[]) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { ensRegistry: { data: ensRegistry } } = getState();
+    const  ensRegistry = getState().ensRegistry?.data;
     let dataUpdated = false;
 
     transactions.forEach(transaction => {

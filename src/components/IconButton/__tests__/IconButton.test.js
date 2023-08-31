@@ -20,10 +20,12 @@
 import * as React from 'react';
 import renderer from 'react-test-renderer';
 import IconButton from '../IconButton';
+import { defaultTheme } from 'utils/themes';
+import { renderWithTheme } from 'testUtils/render';
 
 describe('IconButton', () => {
   it('should render IconButton correctly', () => {
-    const component = renderer.create(<IconButton icon="settings" />).toJSON();
+    const component = renderWithTheme(<IconButton theme={defaultTheme} icon="settings" />).toJSON();
     expect(component).toMatchSnapshot();
   });
 });

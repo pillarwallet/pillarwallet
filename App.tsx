@@ -161,7 +161,7 @@ class App extends React.Component<Props, any> {
       this.removeNetInfoEventListener();
       delete this.removeNetInfoEventListener;
     }
-    Linking.removeEventListener('url', this.handleDeepLinkEvent);
+    Linking.removeAllListeners('url', this.handleDeepLinkEvent);
   }
 
   async componentDidMount() {
@@ -190,14 +190,14 @@ class App extends React.Component<Props, any> {
     remoteConfig()
       .setDefaults(INITIAL_REMOTE_CONFIG)
       .then(() => logBreadcrumb('App.js ', 'Remote Config: Defaults loaded and available'))
-      .catch((e) => reportOrWarn('Remote Config: An error occurred loading defaults:', e, 'error'));
+      .catch(e => reportOrWarn('Remote Config: An error occurred loading defaults:', e, 'error'));
     logBreadcrumb('App.js', 'Remote Config: Finished setting up default values.');
 
     logBreadcrumb('App.js', 'Remote Config: Ensuring last activated values are available...');
     remoteConfig()
       .ensureInitialized()
       .then(() => logBreadcrumb('App.js ', 'Remote Config: Defaults loaded and available'))
-      .catch((e) => reportOrWarn('Remote Config: An error occurred loading defaults:', e, 'error'));
+      .catch(e => reportOrWarn('Remote Config: An error occurred loading defaults:', e, 'error'));
     logBreadcrumb('App.js', 'Remote Config: Finished ensuring last activated values are available.');
 
     /**
@@ -212,14 +212,14 @@ class App extends React.Component<Props, any> {
     logBreadcrumb('App.js', 'Remote Config: Activating latest values, if any...');
     remoteConfig()
       .activate()
-      .then((activationResult) => {
+      .then(activationResult => {
         logBreadcrumb('App.js', `Remote Config: Activation result was ${activationResult}`);
         if (sessionLanguageVersion !== firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_LOCALES_LATEST_TIMESTAMP)) {
           logBreadcrumb('App.js', 'Remote Config: Triggering i18n update...');
           updateTranslationResourceOnContextChange();
         }
       })
-      .catch((e) => reportOrWarn('Remote Config: An error occurred while activating:', e));
+      .catch(e => reportOrWarn('Remote Config: An error occurred while activating:', e));
     logBreadcrumb('App.js', 'Remote Config: Finished activating latest values, if any.');
 
     /**
@@ -236,10 +236,10 @@ class App extends React.Component<Props, any> {
         onDeepLinkListener: true, // Optional
         timeToWaitForATTUserAuthorization: 10, // for iOS 14.5
       },
-      (result) => {
+      result => {
         logBreadcrumb('App.js', `AppsFlyer: initSdk completed successfully: ${result}`);
       },
-      (error) => reportOrWarn('AppsFlyer reported an error whilst running initSdk', error),
+      error => reportOrWarn('AppsFlyer reported an error whilst running initSdk', error),
     );
 
     // GA Install Referrer - get install timestamp, install version, ...
@@ -255,17 +255,17 @@ class App extends React.Component<Props, any> {
 
     // Kochava init
     if (Platform.OS === 'android') {
-      logBreadcrumb('App.js', `Kochava: initialize android`);
+      logBreadcrumb('App.js', 'Kochava: initialize android');
       KochavaTracker.instance.registerAndroidAppGuid(getEnv().KOCHAVA_ANDROID_ID);
     } else {
-      logBreadcrumb('App.js', `Kochava: initialize ios`);
+      logBreadcrumb('App.js', 'Kochava: initialize ios');
       KochavaTracker.instance.registerIosAppGuid(getEnv().KOCHAVA_IOS_ID);
     }
     KochavaTracker.instance.start();
 
     // hold the UI and wait until network status finished for later app connectivity checks
     await NetInfo.fetch()
-      .then((netInfoState) => this.setOnlineStatus(netInfoState.isInternetReachable))
+      .then(netInfoState => this.setOnlineStatus(netInfoState.isInternetReachable))
       .catch(() => null);
     this.removeNetInfoEventListener = NetInfo.addEventListener(this.handleConnectivityChange);
     fetchAppSettingsAndRedirect();
@@ -302,7 +302,7 @@ class App extends React.Component<Props, any> {
     }
   }
 
-  setOnlineStatus = (isOnline) => {
+  setOnlineStatus = isOnline => {
     const { updateSessionNetworkStatus, updateOfflineQueueNetworkStatus } = this.props;
     updateSessionNetworkStatus(isOnline);
     updateOfflineQueueNetworkStatus(isOnline);
@@ -325,7 +325,9 @@ class App extends React.Component<Props, any> {
         });
       }
     } else {
-      if (this.offlineToastId !== null) Toast.close(this.offlineToastId);
+      if (this.offlineToastId !== null) {
+        Toast.close(this.offlineToastId);
+      }
       updateTranslationResourceOnContextChange();
       initWalletConnectSessionsWithoutReset();
     }
@@ -336,13 +338,17 @@ class App extends React.Component<Props, any> {
     if (this.props.initialDeepLinkExecuted) {
       const { executeDeepLink } = this.props;
       const { url: deepLink } = event;
-      if (deepLink === undefined) return;
+      if (deepLink === undefined) {
+        return;
+      }
       executeDeepLink(deepLink);
     }
   };
 
   handleNavigationStateChange = (prevState, nextState, action) => {
-    if (action.type === NavigationActions.NAVIGATE) Modal.closeAll();
+    if (action.type === NavigationActions.NAVIGATE) {
+      Modal.closeAll();
+    }
 
     const nextRouteName = getActiveRouteName(nextState);
     const previousRouteName = getActiveRouteName(prevState);
@@ -364,7 +370,9 @@ class App extends React.Component<Props, any> {
     const theme = getThemeByType(themeType);
     const { current } = theme;
 
-    if (!isFetched || (localeConfig.isEnabled && !translationsInitialised)) return null;
+    if (!isFetched || (localeConfig.isEnabled && !translationsInitialised)) {
+      return null;
+    }
 
     return (
       <AppearanceProvider>
@@ -372,8 +380,10 @@ class App extends React.Component<Props, any> {
           <React.Fragment>
             <Root>
               <RootNavigation
-                ref={(node) => {
-                  if (!node) return;
+                ref={node => {
+                  if (!node) {
+                    return;
+                  }
                   setTopLevelNavigator(node);
                 }}
                 theme={current === LIGHT_THEME ? 'light' : 'dark'} // eslint-disable-line i18next/no-literal-string
@@ -404,7 +414,7 @@ class App extends React.Component<Props, any> {
                 />
               )}
               <PercentsInputAccessoryHolder
-                ref={(c) => {
+                ref={c => {
                   if (c && !PercentsInputAccessoryHolder.instances.includes(c)) {
                     PercentsInputAccessoryHolder.instances.push(c);
                   }
@@ -446,7 +456,7 @@ const mapDispatchToProps = (dispatch: Dispatch): Partial<Props> => ({
   executeDeepLink: (deepLink: string) => dispatch(executeDeepLinkAction(deepLink)),
   setAppTheme: (themeType: string) => dispatch(setAppThemeAction(themeType)),
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
-  changeLanguage: (language) => dispatch(changeLanguageAction(language)),
+  changeLanguage: language => dispatch(changeLanguageAction(language)),
   updateTranslationResourceOnContextChange: () => dispatch(updateTranslationResourceOnContextChangeAction()),
   logScreenView: (screenName: string) => dispatch(logScreenViewAction(screenName)),
   initWalletConnectSessionsWithoutReset: () => dispatch(initWalletConnectSessionsAction(false)),
@@ -463,8 +473,7 @@ const AppRoot = () => (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Spinner theme={defaultTheme} />
       </View>
-    }
-  >
+    }>
     <SafeAreaProvider>
       <Provider store={store}>
         <PersistGate
@@ -473,8 +482,7 @@ const AppRoot = () => (
               <LoadingSpinner theme={defaultTheme} />
             </Container>
           }
-          persistor={persistor}
-        >
+          persistor={persistor}>
           <QueryClientProvider client={queryClient}>
             {getEnv().SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />}
           </QueryClientProvider>

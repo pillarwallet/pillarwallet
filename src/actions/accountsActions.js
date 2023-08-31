@@ -160,7 +160,7 @@ export const setActiveAccountAction = (accountId: string) => {
       accounts: { data: accounts },
       smartWallet: {
         connectedAccount = {},
-        upgrade: { status: upgradeStatus },
+        upgrade,
       },
     } = getState();
 
@@ -183,7 +183,7 @@ export const setActiveAccountAction = (accountId: string) => {
     }
     if (
       [ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYING, ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE].includes(
-        upgradeStatus,
+        upgrade?.status,
       )
     ) {
       return;

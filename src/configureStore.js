@@ -29,7 +29,7 @@ import { persistStore, persistReducer, createMigrate } from 'redux-persist';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import thunk from 'redux-thunk';
 import createSagaMiddleware from 'redux-saga';
-import { composeWithDevTools } from 'redux-devtools-extension';
+import { composeWithDevTools } from '@redux-devtools/extension';
 import { createReactNavigationReduxMiddleware } from 'react-navigation-redux-helpers';
 import ReduxAsyncQueue from 'redux-async-queue';
 import rootSaga from 'redux/sagas/root-saga';

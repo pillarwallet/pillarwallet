@@ -117,7 +117,7 @@ const collectibleTransactionUpdate = (hash: string) => {
 
 export const fetchCollectiblesAction = (defaultAccount?: Account) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const nftsEnabled = getState().nftFlag.visible;
+    const nftsEnabled = getState().nftFlag?.visible;
 
     /**
      * Is the NFT flag falsy? Return.

@@ -1,21 +1,20 @@
 package com.pillarproject.wallet;
 
-import android.content.Context;
+
 import androidx.multidex.MultiDexApplication;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
-import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
+import com.facebook.react.defaults.DefaultReactNativeHost;
 import com.facebook.soloader.SoLoader;
-import com.wix.reactnativenotifications.RNNotificationsPackage;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 
 public class MainApplication extends MultiDexApplication implements ReactApplication {
 
-    private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
+    private final DefaultReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
         @Override
         public boolean getUseDeveloperSupport() {
           return BuildConfig.DEBUG;
@@ -34,6 +33,15 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
         protected String getJSMainModuleName() {
           return "index";
         }
+
+        @Override
+        protected boolean isNewArchEnabled() {
+            return BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
+        }
+        @Override
+        protected Boolean isHermesEnabled() {
+            return BuildConfig.IS_HERMES_ENABLED;
+        }
     };
 
 
@@ -46,6 +54,12 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
     public void onCreate() {
         super.onCreate();
         SoLoader.init(this, /* native exopackage */ false);
+
+        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+            // If you opted-in for the New Architecture, we load the native entry point for this app.
+            DefaultNewArchitectureEntryPoint.load();
+        }
+        ReactNativeFlipper.initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
 
         // react-native-async-storage custom max storage
         long storageSizeMax = 60L * 1024L * 1024L; // 60 MB

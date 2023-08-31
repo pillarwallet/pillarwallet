@@ -3,8 +3,8 @@
 exports[`ActivityFeed does not fail for invalid values 1`] = `
 <View
   style={
-    Array [
-      Object {
+    [
+      {
         "flexBasis": 0,
         "flexGrow": 1,
         "flexShrink": 1,
@@ -14,29 +14,29 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
 >
   <RCTScrollView
     contentContainerStyle={
-      Array [
-        Object {},
+      [
+        {},
         undefined,
       ]
     }
     data={
-      Array [
-        Object {
+      [
+        {
           "component": undefined,
           "type": "HEADER",
         },
-        Object {
+        {
           "component": undefined,
           "type": "TABS",
         },
-        Object {
-          "section": Object {
+        {
+          "section": {
             "title": "Sep 9 2019",
           },
           "type": "SECTION",
         },
-        Object {
-          "item": Object {
+        {
+          "item": {
             "createdAt": 1568030400,
             "from": "0x0000000000000000000000000000000000000000",
             "to": "0x0000000000000000000000000000000000000000",
@@ -47,16 +47,14 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
         },
       ]
     }
-    disableVirtualization={false}
     getItem={[Function]}
     getItemCount={[Function]}
-    horizontal={false}
     initialNumToRender={7}
     keyExtractor={[Function]}
-    maxToRenderPerBatch={10}
     onContentSizeChange={[Function]}
     onEndReachedThreshold={0.5}
     onLayout={[Function]}
+    onMomentumScrollBegin={[Function]}
     onMomentumScrollEnd={[Function]}
     onScroll={[Function]}
     onScrollBeginDrag={[Function]}
@@ -65,13 +63,13 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
     renderItem={[Function]}
     scrollEventThrottle={50}
     stickyHeaderIndices={
-      Array [
+      [
         1,
       ]
     }
     style={
-      Array [
-        Object {
+      [
+        {
           "flexBasis": 0,
           "flexGrow": 1,
           "flexShrink": 1,
@@ -79,34 +77,35 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
         },
       ]
     }
-    updateCellsBatchingPeriod={50}
-    viewabilityConfigCallbackPairs={Array []}
-    windowSize={21}
+    viewabilityConfigCallbackPairs={[]}
   >
     <View>
       <View
+        onFocusCapture={[Function]}
         onLayout={[Function]}
         style={null}
       />
       <View
+        onFocusCapture={[Function]}
         onLayout={[Function]}
         style={null}
       />
       <View
+        onFocusCapture={[Function]}
         onLayout={[Function]}
         style={null}
       >
         <View
           style={
-            Array [
-              Object {},
+            [
+              {},
             ]
           }
         >
           <View
             style={
-              Array [
-                Object {
+              [
+                {
                   "paddingBottom": 8,
                   "paddingLeft": 20,
                   "paddingRight": 20,
@@ -118,8 +117,8 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
           >
             <Text
               style={
-                Array [
-                  Object {
+                [
+                  {
                     "color": "#0A1427",
                     "fontFamily": "EuclidCircularB-Regular",
                     "fontSize": 14,
@@ -135,20 +134,21 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
         </View>
       </View>
       <View
+        onFocusCapture={[Function]}
         onLayout={[Function]}
         style={null}
       >
         <View
           style={
-            Array [
-              Object {},
+            [
+              {},
             ]
           }
         >
           <View
             style={
-              Array [
-                Object {
+              [
+                {
                   "flexDirection": "column",
                   "width": "100%",
                 },
@@ -156,7 +156,25 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
             }
           >
             <View
+              accessibilityState={
+                {
+                  "busy": undefined,
+                  "checked": undefined,
+                  "disabled": false,
+                  "expanded": undefined,
+                  "selected": undefined,
+                }
+              }
+              accessibilityValue={
+                {
+                  "max": undefined,
+                  "min": undefined,
+                  "now": undefined,
+                  "text": undefined,
+                }
+              }
               accessible={true}
+              collapsable={false}
               focusable={true}
               onClick={[Function]}
               onResponderGrant={[Function]}
@@ -166,7 +184,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                Object {
+                {
                   "alignItems": "center",
                   "flexDirection": "row",
                   "justifyContent": "center",
@@ -181,8 +199,8 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
             >
               <View
                 style={
-                  Array [
-                    Object {
+                  [
+                    {
                       "alignItems": "center",
                       "justifyContent": "center",
                       "paddingRight": 12,
@@ -194,8 +212,8 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                   backgroundColor={null}
                   diameter={48}
                   style={
-                    Array [
-                      Object {
+                    [
+                      {
                         "alignItems": "center",
                         "backgroundColor": "#EBF0F6",
                         "borderColor": "#EBF0F6",
@@ -213,8 +231,8 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                   <View
                     name="sent"
                     style={
-                      Array [
-                        Object {
+                      [
+                        {
                           "color": "#BD573A",
                           "fontSize": 48,
                         },
@@ -225,15 +243,15 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
               </View>
               <View
                 style={
-                  Object {
+                  {
                     "flex": 1,
                   }
                 }
               >
                 <View
                   style={
-                    Array [
-                      Object {
+                    [
+                      {
                         "alignItems": "center",
                         "flexDirection": "row",
                         "justifyContent": "space-between",
@@ -245,8 +263,8 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                 >
                   <View
                     style={
-                      Array [
-                        Object {
+                      [
+                        {
                           "alignItems": "flex-start",
                           "flexBasis": 0,
                           "flexDirection": "column",
@@ -255,7 +273,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                           "justifyContent": "center",
                           "minHeight": 54,
                         },
-                        Object {
+                        {
                           "flexGrow": 1,
                         },
                       ]
@@ -264,8 +282,8 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                   >
                     <View
                       style={
-                        Array [
-                          Object {
+                        [
+                          {
                             "alignItems": "center",
                             "flexDirection": "row",
                             "justifyContent": "space-between",
@@ -277,8 +295,8 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                         ellipsizeMode="tail"
                         numberOfLines={2}
                         style={
-                          Array [
-                            Object {
+                          [
+                            {
                               "color": "#0A1427",
                               "fontFamily": "EuclidCircularB-Medium",
                               "fontSize": 18,
@@ -296,15 +314,15 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                   </View>
                   <View
                     style={
-                      Array [
-                        Object {
+                      [
+                        {
                           "alignItems": "flex-end",
                           "flexDirection": "column",
                           "justifyContent": "center",
                           "marginLeft": 10,
                           "minHeight": 54,
                         },
-                        Object {
+                        {
                           "maxWidth": "50%",
                         },
                       ]
@@ -313,9 +331,9 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                   >
                     <View
                       style={
-                        Array [
+                        [
                           undefined,
-                          Object {
+                          {
                             "flexWrap": "wrap",
                           },
                         ]
@@ -324,15 +342,15 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                       <View
                         horizontal={true}
                         style={
-                          Array [
-                            Object {
+                          [
+                            {
                               "flexDirection": "row",
                               "marginBottom": 0,
                               "marginLeft": 0,
                               "marginRight": 0,
                               "marginTop": 0,
                             },
-                            Object {
+                            {
                               "alignItems": "center",
                               "flexWrap": "wrap",
                               "justifyContent": "flex-end",
@@ -345,8 +363,8 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                           ellipsizeMode="tail"
                           numberOfLines={2}
                           style={
-                            Array [
-                              Object {
+                            [
+                              {
                                 "color": "#0A1427",
                                 "fontFamily": "EuclidCircularB-Regular",
                                 "fontSize": 18,
@@ -376,8 +394,8 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
 exports[`ActivityFeed renders the Asset correctly 1`] = `
 <View
   style={
-    Array [
-      Object {
+    [
+      {
         "flexBasis": 0,
         "flexGrow": 1,
         "flexShrink": 1,
@@ -387,29 +405,29 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
 >
   <RCTScrollView
     contentContainerStyle={
-      Array [
-        Object {},
+      [
+        {},
         undefined,
       ]
     }
     data={
-      Array [
-        Object {
+      [
+        {
           "component": undefined,
           "type": "HEADER",
         },
-        Object {
+        {
           "component": undefined,
           "type": "TABS",
         },
-        Object {
-          "section": Object {
+        {
+          "section": {
             "title": "Sep 9 2019",
           },
           "type": "SECTION",
         },
-        Object {
-          "item": Object {
+        {
+          "item": {
             "createdAt": 1568030400,
             "from": "0x0000000000000000000000000000000000000000",
             "to": "0x0000000000000000000000000000000000000000",
@@ -420,16 +438,14 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
         },
       ]
     }
-    disableVirtualization={false}
     getItem={[Function]}
     getItemCount={[Function]}
-    horizontal={false}
     initialNumToRender={7}
     keyExtractor={[Function]}
-    maxToRenderPerBatch={10}
     onContentSizeChange={[Function]}
     onEndReachedThreshold={0.5}
     onLayout={[Function]}
+    onMomentumScrollBegin={[Function]}
     onMomentumScrollEnd={[Function]}
     onScroll={[Function]}
     onScrollBeginDrag={[Function]}
@@ -438,13 +454,13 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
     renderItem={[Function]}
     scrollEventThrottle={50}
     stickyHeaderIndices={
-      Array [
+      [
         1,
       ]
     }
     style={
-      Array [
-        Object {
+      [
+        {
           "flexBasis": 0,
           "flexGrow": 1,
           "flexShrink": 1,
@@ -452,34 +468,35 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
         },
       ]
     }
-    updateCellsBatchingPeriod={50}
-    viewabilityConfigCallbackPairs={Array []}
-    windowSize={21}
+    viewabilityConfigCallbackPairs={[]}
   >
     <View>
       <View
+        onFocusCapture={[Function]}
         onLayout={[Function]}
         style={null}
       />
       <View
+        onFocusCapture={[Function]}
         onLayout={[Function]}
         style={null}
       />
       <View
+        onFocusCapture={[Function]}
         onLayout={[Function]}
         style={null}
       >
         <View
           style={
-            Array [
-              Object {},
+            [
+              {},
             ]
           }
         >
           <View
             style={
-              Array [
-                Object {
+              [
+                {
                   "paddingBottom": 8,
                   "paddingLeft": 20,
                   "paddingRight": 20,
@@ -491,8 +508,8 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
           >
             <Text
               style={
-                Array [
-                  Object {
+                [
+                  {
                     "color": "#0A1427",
                     "fontFamily": "EuclidCircularB-Regular",
                     "fontSize": 14,
@@ -508,20 +525,21 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
         </View>
       </View>
       <View
+        onFocusCapture={[Function]}
         onLayout={[Function]}
         style={null}
       >
         <View
           style={
-            Array [
-              Object {},
+            [
+              {},
             ]
           }
         >
           <View
             style={
-              Array [
-                Object {
+              [
+                {
                   "flexDirection": "column",
                   "width": "100%",
                 },
@@ -529,7 +547,25 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
             }
           >
             <View
+              accessibilityState={
+                {
+                  "busy": undefined,
+                  "checked": undefined,
+                  "disabled": false,
+                  "expanded": undefined,
+                  "selected": undefined,
+                }
+              }
+              accessibilityValue={
+                {
+                  "max": undefined,
+                  "min": undefined,
+                  "now": undefined,
+                  "text": undefined,
+                }
+              }
               accessible={true}
+              collapsable={false}
               focusable={true}
               onClick={[Function]}
               onResponderGrant={[Function]}
@@ -539,7 +575,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                Object {
+                {
                   "alignItems": "center",
                   "flexDirection": "row",
                   "justifyContent": "center",
@@ -554,8 +590,8 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
             >
               <View
                 style={
-                  Array [
-                    Object {
+                  [
+                    {
                       "alignItems": "center",
                       "justifyContent": "center",
                       "paddingRight": 12,
@@ -567,8 +603,8 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                   backgroundColor={null}
                   diameter={48}
                   style={
-                    Array [
-                      Object {
+                    [
+                      {
                         "alignItems": "center",
                         "backgroundColor": "#EBF0F6",
                         "borderColor": "#EBF0F6",
@@ -586,8 +622,8 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                   <View
                     name="sent"
                     style={
-                      Array [
-                        Object {
+                      [
+                        {
                           "color": "#BD573A",
                           "fontSize": 48,
                         },
@@ -598,15 +634,15 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
               </View>
               <View
                 style={
-                  Object {
+                  {
                     "flex": 1,
                   }
                 }
               >
                 <View
                   style={
-                    Array [
-                      Object {
+                    [
+                      {
                         "alignItems": "center",
                         "flexDirection": "row",
                         "justifyContent": "space-between",
@@ -618,8 +654,8 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                 >
                   <View
                     style={
-                      Array [
-                        Object {
+                      [
+                        {
                           "alignItems": "flex-start",
                           "flexBasis": 0,
                           "flexDirection": "column",
@@ -628,7 +664,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                           "justifyContent": "center",
                           "minHeight": 54,
                         },
-                        Object {
+                        {
                           "flexGrow": 1,
                         },
                       ]
@@ -637,8 +673,8 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                   >
                     <View
                       style={
-                        Array [
-                          Object {
+                        [
+                          {
                             "alignItems": "center",
                             "flexDirection": "row",
                             "justifyContent": "space-between",
@@ -650,8 +686,8 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                         ellipsizeMode="tail"
                         numberOfLines={2}
                         style={
-                          Array [
-                            Object {
+                          [
+                            {
                               "color": "#0A1427",
                               "fontFamily": "EuclidCircularB-Medium",
                               "fontSize": 18,
@@ -669,15 +705,15 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                   </View>
                   <View
                     style={
-                      Array [
-                        Object {
+                      [
+                        {
                           "alignItems": "flex-end",
                           "flexDirection": "column",
                           "justifyContent": "center",
                           "marginLeft": 10,
                           "minHeight": 54,
                         },
-                        Object {
+                        {
                           "maxWidth": "50%",
                         },
                       ]
@@ -686,9 +722,9 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                   >
                     <View
                       style={
-                        Array [
+                        [
                           undefined,
-                          Object {
+                          {
                             "flexWrap": "wrap",
                           },
                         ]
@@ -697,15 +733,15 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                       <View
                         horizontal={true}
                         style={
-                          Array [
-                            Object {
+                          [
+                            {
                               "flexDirection": "row",
                               "marginBottom": 0,
                               "marginLeft": 0,
                               "marginRight": 0,
                               "marginTop": 0,
                             },
-                            Object {
+                            {
                               "alignItems": "center",
                               "flexWrap": "wrap",
                               "justifyContent": "flex-end",
@@ -718,8 +754,8 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                           ellipsizeMode="tail"
                           numberOfLines={2}
                           style={
-                            Array [
-                              Object {
+                            [
+                              {
                                 "color": "#0A1427",
                                 "fontFamily": "EuclidCircularB-Regular",
                                 "fontSize": 18,

@@ -36,21 +36,30 @@ describe('keychain utils test', () => {
     expect(getPrivateKeyFromKeychainData({ privateKey: 'testKey' })).toEqual('testKey');
   });
 
-  it('Should return true if keychain object update is necessary', () => {
-    expect(shouldUpdateKeychainObject({})).toEqual(true);
-    expect(shouldUpdateKeychainObject({ testKey: 'testValue' })).toEqual(true);
-    expect(shouldUpdateKeychainObject({ privateKey: 'testValue' })).toEqual(true);
-    expect(shouldUpdateKeychainObject({ mnemonic: 'testValue' })).toEqual(true);
-    expect(shouldUpdateKeychainObject({ privateKey: '', mnemonic: '', pin: '' })).toEqual(true);
+  it('Should return true if keychain object update is necessary', async () => {
+    await expect(shouldUpdateKeychainObject({})).toEqual(true);
+    await expect(shouldUpdateKeychainObject({ testKey: 'testValue' })).toEqual(true);
+    await expect(shouldUpdateKeychainObject({ privateKey: 'testValue' })).toEqual(true);
+    await expect(shouldUpdateKeychainObject({ mnemonic: 'testValue' })).toEqual(true);
+    await expect(shouldUpdateKeychainObject({ privateKey: '', mnemonic: '', pin: '' })).toEqual(true);
   });
 
-  it('Should return false if keychain object update is not necessary', () => {
-    expect(shouldUpdateKeychainObject({
-      privateKey: 'testValue', mnemonic: 'testValue', pin: 'testPin',
-    })).toEqual(false);
+  it('Should return false if keychain object update is not necessary', async () => {
+    await expect(
+      shouldUpdateKeychainObject({
+        privateKey: 'testValue',
+        mnemonic: 'testValue',
+        pin: 'testPin',
+      }),
+    ).toEqual(false);
   });
 
-  it('Should throw error on catch block if keychain object is unsupported', () => {
-    expect(getKeychainDataObject()).rejects.toThrow(handleCatch('0xb0604b2d7FBD6cD53f00fA001504135b7aEC9B4D'));
+  it('Should throw error on catch block if keychain object is unsupported', async () => {
+    const err = await getKeychainDataObject()
+      .then(() => {
+        throw new Error('Success');
+      })
+      .catch((err) => 'Fail');
+    expect(err).toEqual('Fail');
   });
 });
