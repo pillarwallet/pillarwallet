@@ -234,13 +234,10 @@ function Exchange({ fetchExchangeTitle }: Props) {
     setFromValue(null);
   };
 
-  const captureFeeMultiplier = 1 - firebaseRemoteConfig.getNumber(REMOTE_CONFIG.EXCHANGE_FEE_CAPTURE_PERCENTAGE) / 100;
-
-  let toValue = isEmpty(selectedProvider)
+ let toValue = isEmpty(selectedProvider)
     ? maxBy(offers, (offer: any) => offer.toAmount)?.toAmount.precision(6)
     : offers?.find((offer) => offer.provider === selectedProvider)?.toAmount.precision(6);
-  if (toValue) toValue = toValue / captureFeeMultiplier;
-
+ 
   const customTitle = !chain
     ? t('exchangeContent.title.initialExchange')
     : t('exchangeContent.title.exchange', { chain: chainConfig.titleShort });
