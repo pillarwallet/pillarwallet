@@ -120,14 +120,14 @@ aliases:
         - ~/nodes_modules
   - &android_latest_npm
     run:
-      name: Install latest npm version
+      name: Install 9.8.1 npm version
       command: |
-        sudo npm install -g npm@latest
+        sudo npm install -g npm@9.8.1
   - &ios_latest_npm
     run:
-      name: Install latest npm version
+      name: Install 9.8.1 npm version
       command: |
-        npm install -g npm@latest
+        npm install -g npm@9.8.1
   - &ios_latest_yarn
     run:
       name: Install latest yarn version
