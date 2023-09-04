@@ -47,6 +47,7 @@ import { getNotificationsVisibleStatus } from 'utils/getNotification';
 
 // Service
 import { loginWithWeb3Auth } from 'services/web3Auth';
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // Selectors
 import { useRootSelector } from 'selectors';
@@ -54,10 +55,12 @@ import { useRootSelector } from 'selectors';
 // constants
 import { NEW_IMPORT_WALLET, GET_NOTIFICATIONS, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 const Welcome = () => {
   const darkTheme = getThemeByType(DARK_THEME);
   const { width, height } = Dimensions.get('window');
+  const visibleWeb3AuthSignin = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.VISIBILE_WEB3_AUTH);
 
   const dispatch = useDispatch();
   const colors = useThemeColors();
@@ -120,38 +123,43 @@ const Welcome = () => {
           <MediumText color={colors.basic000} fontSize={24} style={{ textAlign: 'center' }}>
             {t('auth:title.welcomeToPillarGetStarted')}
           </MediumText>
+          {visibleWeb3AuthSignin ? (
+            <>
+              <Spacing h={height * 0.07} />
 
-          <Spacing h={height * 0.07} />
-
-          <ListView
-            numColumns={3}
-            data={SOCIAL_AUTH_LIST}
-            scrollEnabled={false}
-            contentContainerStyle={{ alignItems: 'center' }}
-            style={{ width: '100%', maxHeight: 150 }}
-            renderItem={({ item }) => (
-              <Touchable key={item.name} onPress={item.onPress}>
-                <Icon name={item.icon} width={width * 0.27} />
-              </Touchable>
-            )}
-          />
-          <RowWrapper>
-            <LinearGradient
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              colors={['rgba(208, 104, 255, 0.73)', 'rgba(201, 55, 255, 0.5)']}
-              style={{ width: '36%', height: 1 }}
-            />
-            <Text variant="medium" color={colors.purpleHeat} style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
-              {t('label.or')}
-            </Text>
-            <LinearGradient
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              colors={['rgba(165, 104, 255, 0.73)', 'rgba(55, 128, 255, 0.5)']}
-              style={{ width: '36%', height: 1 }}
-            />
-          </RowWrapper>
+              <ListView
+                numColumns={3}
+                data={SOCIAL_AUTH_LIST}
+                scrollEnabled={false}
+                contentContainerStyle={{ alignItems: 'center' }}
+                style={{ width: '100%', maxHeight: 150 }}
+                renderItem={({ item }) => (
+                  <Touchable key={item.name} onPress={item.onPress}>
+                    <Icon name={item.icon} width={width * 0.27} />
+                  </Touchable>
+                )}
+              />
+              <RowWrapper>
+                <LinearGradient
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  colors={['rgba(208, 104, 255, 0.73)', 'rgba(201, 55, 255, 0.5)']}
+                  style={{ width: '36%', height: 1 }}
+                />
+                <Text variant="medium" color={colors.purpleHeat} style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
+                  {t('label.or')}
+                </Text>
+                <LinearGradient
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  colors={['rgba(165, 104, 255, 0.73)', 'rgba(55, 128, 255, 0.5)']}
+                  style={{ width: '36%', height: 1 }}
+                />
+              </RowWrapper>
+            </>
+          ) : (
+            <Spacing h={height * 0.3} />
+          )}
 
           <SubContainer>
             <Icon name="button-border-color" style={{ position: 'absolute' }} width={width * 0.9} />
