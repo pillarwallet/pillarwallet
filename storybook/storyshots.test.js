@@ -20,6 +20,7 @@
 
 import * as React from 'react';
 import { View } from 'react-native';
+import renderer from 'react-test-renderer';
 
 const MockComponent = (props) => {
   const { children } = props;
@@ -68,8 +69,4 @@ jest.mock('react-navigation-redux-helpers', () => ({
 
 jest.useFakeTimers();
 
-describe('Storyshots', () => {
-  it('it must be true', () => {
-    expect(true).toBeTruthy();
-  });
-});
+it('Storyshots render correctly', () => { renderer.create(<MockComponent />);});
