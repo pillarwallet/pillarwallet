@@ -37,7 +37,7 @@ import {
 } from 'constants/navigationConstants';
 
 // Utils
-import { isArchanovaAccount } from 'utils/accounts';
+import { isArchanovaAccount, isKeyBasedAccount } from 'utils/accounts';
 import { sumRecord } from 'utils/bigNumber';
 
 // Selectors
@@ -60,6 +60,7 @@ function FloatingActions() {
   const address = useRootSelector(activeAccountAddressSelector);
   const viewedReceiveTokensWarning = useRootSelector(viewedReceiveTokensWarningSelector);
   const isExchangeAvailable = useIsExchangeAvailable();
+  const activeAccount = useActiveAccount();
 
   const { isSendEnabled, isExchangeEnabled } = useEnabledActions();
 
@@ -68,7 +69,7 @@ function FloatingActions() {
   };
 
   const onReceivePress = () => {
-    if (viewedReceiveTokensWarning) {
+    if (viewedReceiveTokensWarning || isKeyBasedAccount(activeAccount)) {
       showReceiveModal();
     } else {
       navigation.navigate(RECEIVE_TOKENS_WARNING, {
