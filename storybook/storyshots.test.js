@@ -69,4 +69,4 @@ jest.mock('react-navigation-redux-helpers', () => ({
 
 jest.useFakeTimers();
 
-it('Storyshots render correctly', () => { renderer.create(<MockComponent />);});
+it('Storyshots render correctly', () => { renderer.create(<MockComponent />); });
