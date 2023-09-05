@@ -237,7 +237,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
   const captureFeeMultiplier = 1 - firebaseRemoteConfig.getNumber(REMOTE_CONFIG.EXCHANGE_FEE_CAPTURE_PERCENTAGE) / 100;
 
   let toValue = isEmpty(selectedProvider)
-    ? maxBy(offers, (offer: any) => offer.toAmount)?.toAmount.precision(6)
+    ? null
     : offers?.find((offer) => offer.provider === selectedProvider)?.toAmount.precision(6);
   if (toValue) toValue = toValue / captureFeeMultiplier;
 

@@ -1503,14 +1503,10 @@ export const estimateSmartWalletDeploymentAction = () => {
 export const checkArchanovaSessionIfNeededAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { isCheckingSmartWalletSession } = getState().smartWallet;
-    const onLoginSuccess = async (pin: ?string, wallet: EthersWallet) => {
-      const rawPrivateKey = formatToRawPrivateKey(wallet.privateKey);
-      await dispatch(initOnLoginArchanovaAccountAction(rawPrivateKey));
-    };
     // skip check if no archanova account
     const archanovaAccountExists = !!findFirstArchanovaAccount(accountsSelector(getState()));
     if (!archanovaAccountExists) {
-      dispatch(lockScreenAction(onLoginSuccess));
+      dispatch(lockScreenAction());
       return;
     }
 
@@ -1548,9 +1544,14 @@ export const checkArchanovaSessionIfNeededAction = () => {
     dispatch({ type: SET_CHECKING_ARCHANOVA_SESSION, payload: false });
 
     if (!smartWalletNeedsInit) {
-      dispatch(lockScreenAction(onLoginSuccess));
+      dispatch(lockScreenAction());
       return;
     }
+
+    const onLoginSuccess = async (pin: ?string, wallet: EthersWallet) => {
+      const rawPrivateKey = formatToRawPrivateKey(wallet.privateKey);
+      await dispatch(initOnLoginArchanovaAccountAction(rawPrivateKey));
+    };
 
     dispatch(lockScreenAction(onLoginSuccess));
   };
