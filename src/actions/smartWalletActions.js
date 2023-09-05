@@ -71,7 +71,7 @@ import {
   UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES,
   UPDATE_PAYMENT_NETWORK_STAKED,
 } from 'constants/paymentNetworkConstants';
-import { PIN_CODE, WALLET_ACTIVATED } from 'constants/navigationConstants';
+import { PIN_CODE, PIN_CODE_UNLOCK, WALLET_ACTIVATED } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // configs
@@ -1500,13 +1500,13 @@ export const estimateSmartWalletDeploymentAction = () => {
  * and 1 edge case:
  * 3) sdk initialization lost(?)
  */
-export const checkArchanovaSessionIfNeededAction = (isFromBackground?: boolean) => {
+export const checkArchanovaSessionIfNeededAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { isCheckingSmartWalletSession } = getState().smartWallet;
     // skip check if no archanova account
     const archanovaAccountExists = !!findFirstArchanovaAccount(accountsSelector(getState()));
     if (!archanovaAccountExists) {
-      isFromBackground && dispatch(lockScreenAction());
+      navigate(PIN_CODE_UNLOCK);
       return;
     }
 
@@ -1544,7 +1544,7 @@ export const checkArchanovaSessionIfNeededAction = (isFromBackground?: boolean) 
     dispatch({ type: SET_CHECKING_ARCHANOVA_SESSION, payload: false });
 
     if (!smartWalletNeedsInit) {
-      isFromBackground && dispatch(lockScreenAction());
+      navigate(PIN_CODE_UNLOCK);
       return;
     }
 

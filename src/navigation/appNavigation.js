@@ -284,8 +284,7 @@ const SLEEP_TIMEOUT = 20000;
 const SMART_WALLET_SESSION_CHECK_INTERVAL = 30 * 60000; // 30 min
 const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
-const INACTIVE_APP_STATE = 'inactive';
-const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE, INACTIVE_APP_STATE];
+const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
 
 const StackNavigatorModalConfig = {
   defaultNavigationOptions: {
@@ -695,7 +694,7 @@ type Props = {
   i18n: I18n,
   onboardingUsernameRegistrationFailed: boolean,
   handleSystemLanguageChange: () => void,
-  checkArchanovaSession: (isFromBackground?: boolean) => void,
+  checkArchanovaSession: () => void,
 };
 
 type State = {
@@ -770,7 +769,7 @@ class AppFlow extends React.Component<Props, State> {
     } else if (APP_LOGOUT_STATES.includes(lastAppState) && nextAppState === ACTIVE_APP_STATE) {
       handleSystemDefaultThemeChange();
       handleSystemLanguageChange();
-      checkArchanovaSession(true);
+      checkArchanovaSession();
       initWalletConnectSessions(false);
     }
     this.setState({ lastAppState: nextAppState });
@@ -842,8 +841,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   endWalkthrough: () => dispatch(endWalkthroughAction()),
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
   handleSystemLanguageChange: () => dispatch(handleSystemLanguageChangeAction()),
-  checkArchanovaSession: (isFromBackground?: boolean) =>
-    dispatch(checkArchanovaSessionIfNeededAction(isFromBackground)),
+  checkArchanovaSession: () => dispatch(checkArchanovaSessionIfNeededAction()),
 });
 
 const ConnectedAppFlow = withTranslation()(connect(mapStateToProps, mapDispatchToProps)(AppFlow));
