@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 // @flow
 /*
     Pillar Wallet: the personal data locker
@@ -20,6 +21,7 @@
 
 import * as React from 'react';
 import { View } from 'react-native';
+import initStoryshots from '@storybook/addon-storyshots';
 
 const MockComponent = (props) => {
   const { children } = props;
@@ -68,8 +70,4 @@ jest.mock('react-navigation-redux-helpers', () => ({
 
 jest.useFakeTimers();
 
-describe('Storyshots', () => {
-  it('it must be true', () => {
-    expect(true).toBeTruthy();
-  });
-});
+initStoryshots({ /* configuration options */ });
