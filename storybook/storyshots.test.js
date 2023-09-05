@@ -1,4 +1,3 @@
-
 // @flow
 /*
     Pillar Wallet: the personal data locker
