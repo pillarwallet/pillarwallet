@@ -695,7 +695,7 @@ type Props = {
   i18n: I18n,
   onboardingUsernameRegistrationFailed: boolean,
   handleSystemLanguageChange: () => void,
-  checkArchanovaSession: () => void,
+  checkArchanovaSession: (isFromBackground?: boolean) => void,
 };
 
 type State = {
@@ -770,7 +770,7 @@ class AppFlow extends React.Component<Props, State> {
     } else if (APP_LOGOUT_STATES.includes(lastAppState) && nextAppState === ACTIVE_APP_STATE) {
       handleSystemDefaultThemeChange();
       handleSystemLanguageChange();
-      checkArchanovaSession();
+      checkArchanovaSession(true);
       initWalletConnectSessions(false);
     }
     this.setState({ lastAppState: nextAppState });
@@ -842,7 +842,8 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   endWalkthrough: () => dispatch(endWalkthroughAction()),
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
   handleSystemLanguageChange: () => dispatch(handleSystemLanguageChangeAction()),
-  checkArchanovaSession: () => dispatch(checkArchanovaSessionIfNeededAction()),
+  checkArchanovaSession: (isFromBackground?: boolean) =>
+    dispatch(checkArchanovaSessionIfNeededAction(isFromBackground)),
 });
 
 const ConnectedAppFlow = withTranslation()(connect(mapStateToProps, mapDispatchToProps)(AppFlow));

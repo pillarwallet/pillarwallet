@@ -1500,13 +1500,13 @@ export const estimateSmartWalletDeploymentAction = () => {
  * and 1 edge case:
  * 3) sdk initialization lost(?)
  */
-export const checkArchanovaSessionIfNeededAction = () => {
+export const checkArchanovaSessionIfNeededAction = (isFromBackground?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { isCheckingSmartWalletSession } = getState().smartWallet;
     // skip check if no archanova account
     const archanovaAccountExists = !!findFirstArchanovaAccount(accountsSelector(getState()));
     if (!archanovaAccountExists) {
-      dispatch(lockScreenAction());
+      isFromBackground && dispatch(lockScreenAction());
       return;
     }
 
@@ -1544,7 +1544,7 @@ export const checkArchanovaSessionIfNeededAction = () => {
     dispatch({ type: SET_CHECKING_ARCHANOVA_SESSION, payload: false });
 
     if (!smartWalletNeedsInit) {
-      dispatch(lockScreenAction());
+      isFromBackground && dispatch(lockScreenAction());
       return;
     }
 
