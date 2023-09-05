@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+
 // @flow
 /*
     Pillar Wallet: the personal data locker
