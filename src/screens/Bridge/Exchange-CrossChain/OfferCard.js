@@ -148,14 +148,14 @@ function OfferCard({
 
   const title = React.useMemo(() => {
     if (crossChainTxs) {
-      const crossChainButtonTitle = `${nFormatter(toValue, 4)} ${offer.toAsset.symbol}` ?? '';
+      const crossChainButtonTitle = `${nFormatter(Number(toAmount), 4)} ${offer.toAsset.symbol}` ?? '';
       // eslint-disable-next-line i18next/no-literal-string
       return `${crossChainButtonTitle}  •  ${formattedFiatValue || ''}`;
     }
     const buttonTitle = formatTokenValue(toValueInBignumber, offer.toAsset.symbol) ?? '';
     // eslint-disable-next-line i18next/no-literal-string
     return `${buttonTitle}  •  ${formattedFiatValue || ''}`;
-  }, [crossChainTxs, offer, formattedFiatValue, toValue, toValueInBignumber]);
+  }, [crossChainTxs, offer, formattedFiatValue, toAmount, toValueInBignumber]);
 
   React.useEffect(() => {
     if (estimationErrorMessage) {
