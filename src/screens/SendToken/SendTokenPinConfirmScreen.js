@@ -139,9 +139,9 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
   handleBack = () => {
     const { navigation, resetIncorrectPassword } = this.props;
     if (this.goBackDismiss) {
-      navigation.dismiss();
-    } else {
       navigation.goBack(null);
+    } else {
+      navigation.dismiss();
     }
     resetIncorrectPassword();
   };
