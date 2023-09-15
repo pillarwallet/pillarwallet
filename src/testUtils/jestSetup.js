@@ -19,7 +19,7 @@
 */
 
 // This script runs at the beginning of all unit tests
-import jestSetup from 'react-native-gesture-handler/jestSetup';
+import 'react-native-gesture-handler/jestSetup';
 import React from 'react';
 import Enzyme from 'enzyme';
 import Adapter from '@cfaester/enzyme-adapter-react-18';
@@ -29,7 +29,7 @@ import { View as mockView } from 'react-native';
 import { utils, BigNumber as EthersBigNumber, constants as ethersConstants, Wallet as EthersWallet } from 'ethers';
 import mocktract from 'mocktract';
 import * as Etherspot from 'etherspot';
-import { Animated } from 'react-native';
+
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { ADDRESS_ZERO, ETH, PLR } from 'constants/assetsConstants';
@@ -63,11 +63,7 @@ function copyProps(src, target) {
   });
 }
 
-global.window = window;
 global.document = window.document;
-global.navigator = {
-  userAgent: 'node.js',
-};
 
 copyProps(window, global);
 

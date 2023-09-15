@@ -76,10 +76,10 @@ export const setUserPropertiesAction = () => (
     properties = { ...properties, ens: accountEnsName };
   }
 
-  try{
-    return firebaseAnalytics
-        .setUserProperties(properties)
-  } catch (error){
+  try {
+    firebaseAnalytics.setUserProperties(properties);
+    return;
+  } catch (error) {
     reportLog('Firebase Analytics: Failed to set user properties', { error });
   }
 };

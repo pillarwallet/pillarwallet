@@ -76,19 +76,6 @@ describe('Analytics Actions', () => {
       });
     });
 
-  // describe('authActions', () => {
-  //   describe('user properties for analytics', () => {
-  //     beforeEach(() => optOutTracking(false));
-
-  //     it('calls firebaseAnalytics().setUserProperties', () => {
-  //       expect(firebaseAnalytics.setUserProperties).toBeCalledWith(
-  //         expect.objectContaining({
-  //           screen_name: 'name',
-  //           screen_class: 'name',
-  //         }),
-  //       );
-  //     });
-  //   });
 
     describe('when opted out tracking', () => {
       beforeEach(() => optOutTracking(true));

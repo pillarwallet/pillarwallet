@@ -19,7 +19,6 @@
 */
 
 import axios from 'axios';
-import MockAdapter from 'axios-mock-adapter';
 import httpRequest from 'utils/httpRequest';
 
 jest.mock('axios', () => ({

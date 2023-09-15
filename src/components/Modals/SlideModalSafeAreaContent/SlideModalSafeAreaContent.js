@@ -76,8 +76,8 @@ const useKeyboardVisible = () => {
     const showSubscription = Keyboard.addListener('keyboardDidShow', handleKeyboardWillShow);
     const hideSubscription = Keyboard.addListener('keyboardDidHide', handleKeyboardWillHide);
     return () => {
-     showSubscription.remove();
-     hideSubscription.remove();
+      showSubscription.remove();
+      hideSubscription.remove();
     };
   }, []);
 

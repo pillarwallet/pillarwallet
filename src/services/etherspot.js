@@ -837,7 +837,7 @@ export class EtherspotService {
         { chain },
       );
       // fail gracefully as transaction has been sent anyway
-      return Promise.resolve();
+      return Promise.resolve('');
     }
 
     let temporaryBatchSubscription;

@@ -23,7 +23,7 @@ import { View } from 'react-native';
 import initStoryshots from '@storybook/addon-storyshots';
 import renderer from 'react-test-renderer';
 
-const MockComponent = (props) => {
+const MockComponent = (props: any) => {
   const { children } = props;
   return <View>{children}</View>;
 };

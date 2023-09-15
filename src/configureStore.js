@@ -22,14 +22,12 @@
 /**
  * Create the Redux store
  */
-import { applyMiddleware } from 'redux';
 import { configureStore as toolkitConfigureStore } from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { persistStore, persistReducer, createMigrate } from 'redux-persist';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import thunk from 'redux-thunk';
 import createSagaMiddleware from 'redux-saga';
-import { composeWithDevTools } from '@redux-devtools/extension';
 import { createReactNavigationReduxMiddleware } from 'react-navigation-redux-helpers';
 import ReduxAsyncQueue from 'redux-async-queue';
 import rootSaga from 'redux/sagas/root-saga';
@@ -69,9 +67,6 @@ const navigationMiddleware = createReactNavigationReduxMiddleware('root', (state
 const initialiseSagaMiddleware = createSagaMiddleware();
 
 const middlewares = [thunk, navigationMiddleware, ReduxAsyncQueue, offlineMiddleware, initialiseSagaMiddleware];
-const enhancer = composeWithDevTools({
-  // Options: https://github.com/jhen0409/react-native-debugger#options
-})(applyMiddleware(...middlewares));
 
 const configureStore = (): Object => {
   const store = toolkitConfigureStore({

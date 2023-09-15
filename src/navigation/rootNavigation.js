@@ -47,7 +47,6 @@ import { ModalProvider } from 'components/Modal';
 
 // Constants
 import {
-  APP_FLOW,
   ONBOARDING_FLOW,
   AUTH_FLOW,
   SET_WALLET_PIN_CODE,

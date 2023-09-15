@@ -236,7 +236,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
     const lastPinAttemptTime = new Date(date);
     const currentTime = new Date();
-    const nextInterval = new Date(lastPinAttemptTime?.getTime() + LOCK_TIME * numberOfFailedAttempts * 1000);
+    const nextInterval = new Date(lastPinAttemptTime?.getTime() + (LOCK_TIME * numberOfFailedAttempts * 1000));
 
     if (pinAttemptsCount === 0 && currentTime < nextInterval) {
       const pendingTime = (nextInterval - currentTime) / 1000;
@@ -285,7 +285,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   formattedHour = (time: number) => {
     const minutes = Math.floor(time / 60);
-    const seconds = time - minutes * 60;
+    const seconds = time - (minutes * 60);
     return `${minutes?.toFixed(0)}:${seconds?.toFixed(0)}`;
   };
 

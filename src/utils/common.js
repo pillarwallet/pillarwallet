@@ -92,7 +92,9 @@ export const errorLog = (...params: any) => {
 export const reportLog = (message: string, extra?: Object, level: SeverityLevel = 'info') => {
   Sentry.withScope((scope) => {
     scope.setExtras({ extra, level });
+    // eslint-disable-next-line i18next/no-literal-string
     if (level === 'info') {
+      // eslint-disable-next-line i18next/no-literal-string
       Sentry.captureMessage(message, 'info');
     } else {
       Sentry.captureException(new Error(message));
@@ -138,7 +140,7 @@ export const delay = async (ms: number) => {
 };
 
 export const getRandomInt = (min: number, max: number): number => {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+  return Math.floor(Math.random() * ((max - min) + 1)) + min;
 };
 
 /**

@@ -20,7 +20,6 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
-import { WebSocket } from 'mock-socket';
 
 // constants
 import { SET_WALLET, UPDATE_WALLET_BACKUP_STATUS, SET_WALLET_IS_ENCRYPTING } from 'constants/walletConstants';
@@ -31,14 +30,10 @@ import {
 } from 'constants/onboardingConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { SET_USER } from 'constants/userConstants';
-import {
-  SET_ARCHANOVA_WALLET_ACCOUNTS,
-  SET_ARCHANOVA_SDK_INIT,
-  ARCHANOVA_WALLET_UPGRADE_STATUSES,
-} from 'constants/archanovaConstants';
+import { SET_ARCHANOVA_WALLET_ACCOUNTS, SET_ARCHANOVA_SDK_INIT } from 'constants/archanovaConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import { ETH, PLR, SET_CHAIN_SUPPORTED_ASSETS, NFT_FLAG } from 'constants/assetsConstants';
-import { SET_FETCHING_HISTORY, SET_HISTORY } from 'constants/historyConstants';
+import { SET_FETCHING_HISTORY } from 'constants/historyConstants';
 import { SET_FETCHING_RATES } from 'constants/ratesConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { SET_FETCHING_TOTAL_BALANCES } from 'constants/totalsBalancesConstants';
@@ -68,8 +63,6 @@ import {
 
 // types
 import type { EthereumWallet } from 'models/Wallet';
-
-global.WebSocket = WebSocket;
 
 jest.setTimeout(20000);
 
@@ -326,7 +319,6 @@ describe('Onboarding actions', () => {
 
       { type: SET_FETCHING_HISTORY, payload: true },
       { type: SET_FETCHING_RATES, payload: true },
-
 
       { type: SET_FETCHING_RATES, payload: false },
 

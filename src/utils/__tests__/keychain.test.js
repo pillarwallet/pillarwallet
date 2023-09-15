@@ -18,12 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import {
-  getPrivateKeyFromKeychainData,
-  shouldUpdateKeychainObject,
-  getKeychainDataObject,
-  handleCatch,
-} from 'utils/keychain';
+import { getPrivateKeyFromKeychainData, shouldUpdateKeychainObject, getKeychainDataObject } from 'utils/keychain';
 
 describe('keychain utils test', () => {
   it('Should return null for invalid data provided', () => {
@@ -59,7 +54,7 @@ describe('keychain utils test', () => {
       .then(() => {
         throw new Error('Success');
       })
-      .catch((err) => 'Fail');
+      .catch(() => 'Fail');
     expect(err).toEqual('Fail');
   });
 });

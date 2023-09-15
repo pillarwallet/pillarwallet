@@ -110,11 +110,10 @@ describe('Auth actions', () => {
       smartWallet: {
         upgrade: { status: ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE },
       },
-      keyBasedAssetTransfer: { availableBalances: {}, availableCollectibles: [] },
-      keyBasedAssetTransfer: { data: [] },
+      keyBasedAssetTransfer: { data: [], availableBalances: {}, availableCollectibles: [] },
       totalBalances: { isFetching: false },
       assetsBalances: { data: {} },
-      blockchainNetwork:{ data: [] },
+      blockchainNetwork: { data: [] },
       rates: { isFetching: false },
       appsHoldings: { isFetching: false },
       user: { data: { username: 'test-username' } },
