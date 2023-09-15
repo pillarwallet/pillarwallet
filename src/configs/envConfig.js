@@ -84,7 +84,7 @@ const envVars = {
     TX_DETAILS_URL_XDAI: 'https://blockscout.com/poa/sokol/tx/',
     TX_DETAILS_URL_OPTIMISM: 'https://blockscout.com/optimism/goerli/tx/',
     TX_DETAILS_URL_ARBITRUM: 'https://goerli.arbiscan.io/tx/',
-    NETWORK_PROVIDER: 'kovan',
+    NETWORK_PROVIDER: 'goerli',
     COLLECTIBLES_NETWORK: 'rinkeby',
     OPEN_SEA_API: 'https://rinkeby-api.opensea.io/api/v1',
     ON_RAMPER_WIDGET_URL: 'https://ri-widget-staging-kovan.firebaseapp.com/',

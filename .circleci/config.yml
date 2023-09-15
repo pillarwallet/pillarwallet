@@ -120,14 +120,14 @@ aliases:
         - ~/nodes_modules
   - &android_latest_npm
     run:
-      name: Install latest npm version
+      name: Install 9.8.1 npm version
       command: |
-        sudo npm install -g npm@latest
+        sudo npm install -g npm@9.8.1
   - &ios_latest_npm
     run:
-      name: Install latest npm version
+      name: Install 9.8.1 npm version
       command: |
-        npm install -g npm@latest
+        npm install -g npm@9.8.1
   - &ios_latest_yarn
     run:
       name: Install latest yarn version
@@ -286,6 +286,7 @@ jobs:
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
             sed -i.bak "s/_wallet_connect_id_/$WALLETCONNECT_PROJECT_ID/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_web3_auth_testnet_client_id_/$WEB3_AUTH_TESTNET_CLIENT_ID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_onramper_api_key_/$ONRAMPER_API_KEY/g" ./src/configs/buildConfig.js
@@ -404,6 +405,7 @@ jobs:
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
             sed -i.bak "s/_wallet_connect_id_/$WALLETCONNECT_PROJECT_ID/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_web3_auth_testnet_client_id_/$WEB3_AUTH_TESTNET_CLIENT_ID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_onramper_api_key_/$ONRAMPER_API_KEY/g" ./src/configs/buildConfig.js
@@ -528,6 +530,7 @@ jobs:
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
             sed -i.bak "s/_wallet_connect_id_/$WALLETCONNECT_PROJECT_ID/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_web3_auth_client_id_/$WEB3_AUTH_CLIENT_ID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_onramper_api_key_/$ONRAMPER_API_KEY/g" ./src/configs/buildConfig.js
@@ -648,6 +651,7 @@ jobs:
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
             sed -i.bak "s/_wallet_connect_id_/$WALLETCONNECT_PROJECT_ID/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_web3_auth_client_id_/$WEB3_AUTH_CLIENT_ID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_onramper_api_key_/$ONRAMPER_API_KEY/g" ./src/configs/buildConfig.js

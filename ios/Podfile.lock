@@ -794,6 +794,10 @@ PODS:
     - React
   - toolbar-android (0.2.1):
     - React
+  - Web3Auth (3.3.0)
+  - web3auth-react-native-sdk (2.2.0):
+    - React-Core
+    - Web3Auth (= 3.3.0)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -917,6 +921,7 @@ DEPENDENCIES:
   - SwiftyGif (from `https://github.com/kirualex/SwiftyGif`)
   - TcpSockets (from `../node_modules/react-native-tcp`)
   - "toolbar-android (from `../node_modules/@react-native-community/toolbar-android`)"
+  - "web3auth-react-native-sdk (from `../node_modules/@web3auth/react-native-sdk`)"
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -959,6 +964,7 @@ SPEC REPOS:
     - Sentry
     - SentryPrivate
     - SocketRocket
+    - Web3Auth
     - YogaKit
 
 EXTERNAL SOURCES:
@@ -1151,6 +1157,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-tcp"
   toolbar-android:
     :path: "../node_modules/@react-native-community/toolbar-android"
+  web3auth-react-native-sdk:
+    :path: "../node_modules/@web3auth/react-native-sdk"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -1292,9 +1300,11 @@ SPEC CHECKSUMS:
   SwiftyGif: 93a1cc87bf3a51916001cf8f3d63835fb64c819f
   TcpSockets: bd31674146c0931a064fc254a59812dfd1a73ae0
   toolbar-android: 2a73856e98b750d7e71ce4644d3f41cc98211719
+  Web3Auth: 83062b2ccc9b5882f44c02fa3464283f833c169f
+  web3auth-react-native-sdk: f3bf00cde3cc93e30895a03499dbcb26739307a2
   Yoga: 3efc43e0d48686ce2e8c60f99d4e6bd349aff981
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 49220f4cad29b88552a7203dfb4f798734eb53f2
+PODFILE CHECKSUM: 57a2378db86bc5bbf5659491974998addd7a8b39
 
 COCOAPODS: 1.12.1

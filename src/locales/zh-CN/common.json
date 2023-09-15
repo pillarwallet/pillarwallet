@@ -463,7 +463,8 @@
     "last_week": "上星期",
     "last_month": "上个月",
     "last_year": "去年",
-    "token_analytics": "代币分析"
+    "token_analytics": "代币分析",
+     "signin":"登入"
   },
   "paragraph": {
     "addressCopiedToClipboard": "地址已复制到剪贴板。",
@@ -542,7 +543,7 @@
     },
     "email": {
       "label": "电子邮件",
-      "placeholder": "电子邮件",
+      "enterEmail": "输入你的电子邮箱",
       "description": {
         "empty": "添加您的电子邮件以接收特殊请求。",
         "added": "验证您的电子邮件，您将能够在 Pillar 中邀请您的朋友。",

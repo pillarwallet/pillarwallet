@@ -32,6 +32,7 @@ import { MediumText } from 'components/legacy/Typography';
 
 // Utils
 import { spacing } from 'utils/variables';
+import { useThemeColors } from 'utils/themes';
 
 // Hooks
 import { useBioMetricsPopup } from 'hooks/biometrics';
@@ -41,6 +42,7 @@ const { height } = Dimensions.get('window');
 function GetNotifincations() {
   const { t } = useTranslationWithPrefix('biometricLogin');
   const navigation = useNavigation();
+  const colors = useThemeColors();
 
   useBioMetricsPopup(navigation);
 
@@ -49,7 +51,7 @@ function GetNotifincations() {
       <ContentWrapper contentContainerStyle={{ padding: spacing.large, flexGrow: 1 }}>
         <IconWithBackgroundGif iconName="face-id" />
         <Spacing h={height * 0.05} />
-        <MediumText fontSize={24} style={{ textAlign: 'center' }}>
+        <MediumText color={colors.basic000} fontSize={24} style={{ textAlign: 'center' }}>
           {t('enableBiometric')}
         </MediumText>
       </ContentWrapper>

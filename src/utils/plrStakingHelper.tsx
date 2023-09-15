@@ -69,14 +69,14 @@ interface IStakingContractAbi {
   callMaxTotalStake: () => Promise<string>;
   callTotalStaked: () => Promise<string>;
   callRewardToken: () => Promise<string>;
-  callStakingToken: () => Promise<string>;
+  callStakedToken: () => Promise<string>;
   callGetStakedAccounts: () => Promise<string[]>;
 }
 
 interface IStakingContractInfo {
   contractState: number;
-  minStakeAmount: string;
-  maxStakeAmount: string;
+  minStakeAmount: BigNumber;
+  maxStakeAmount: BigNumber;
   maxStakeTotal: string;
   totalStaked: string;
   rewardToken: string;
@@ -179,9 +179,7 @@ export const getStakingApy = async (): Promise<string> => {
   if (stakingApy) return stakingApy;
 
   const response = await fetch(STAKING_APY_ENDPOINT);
-  console.log('stakingResponse', response);
   const data: IStakingApyResponse = await response.json();
-  console.log('stakingData', data);
   if (data?.apr) {
     stakingApy = data?.apr;
     return stakingApy;
@@ -219,7 +217,7 @@ export const getStakedToken = async () => {
     const stakingContract = getStakingContract();
     if (!stakingContract) return null;
 
-    stakedToken = await stakingContract.callStakingToken();
+    stakedToken = await stakingContract.callStakedToken();
   }
 
   return stakedToken;
@@ -243,7 +241,7 @@ export const getStakingContractInfo = async (refresh?: boolean): Promise<IStakin
     const maxStakeTotal = await stakingContract.callMaxTotalStake();
     const totalStaked = await stakingContract.callTotalStaked();
     const contractRewardToken = await stakingContract.callRewardToken();
-    const contractStakingToken = await stakingContract.callStakingToken();
+    const contractStakedToken = await stakingContract.callStakedToken();
     const stakedAccounts = await stakingContract.callGetStakedAccounts();
 
     try {
@@ -254,13 +252,13 @@ export const getStakingContractInfo = async (refresh?: boolean): Promise<IStakin
     }
 
     stakingContractState = contractState;
-    stakedToken = contractStakingToken;
+    stakedToken = contractStakedToken;
     rewardToken = contractRewardToken;
 
     storedContractInfo = {
       contractState,
-      minStakeAmount,
-      maxStakeAmount,
+      minStakeAmount: minStakingAmount,
+      maxStakeAmount: maxStakingAmount,
       maxStakeTotal,
       totalStaked,
       rewardToken,
@@ -402,4 +400,26 @@ export const sendArchanovaTransaction = async (transaction: TransactionPayload, 
 
 export const bridgeServiceIdToDetails: { [id: string]: { title: string; iconUrl: string } } = {
   lifi: { title: 'LiFi', iconUrl: 'https://li.fi/logo192.png' },
+};
+
+export const formatRemainingTime = (time: Duration, fullDuration: boolean = false) => {
+  let timeStr = '';
+  if (!time) return timeStr;
+
+  if (time.months) timeStr += ` ${time.months} months`;
+  if (time.days) timeStr += ` ${time.days} days`;
+
+  if (timeStr && !fullDuration) return timeStr.slice(1);
+
+  if (time.hours) timeStr += ` ${time.hours}h`;
+  if (time.minutes) timeStr += ` ${time.minutes}m`;
+  if (time.seconds) timeStr += ` ${time.seconds}s`;
+
+  return timeStr?.slice(1) || '';
+};
+
+export const getRewardAmount = (value: number) => {
+  const apy = stakingApy ? parseFloat(stakingApy) : 0;
+
+  return value * (apy / 100);
 };

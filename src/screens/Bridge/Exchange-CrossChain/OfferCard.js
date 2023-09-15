@@ -21,6 +21,8 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
+import { BigNumber } from 'bignumber.js';
+
 
 // Components
 import Button from 'components/core/Button';
@@ -33,6 +35,7 @@ import { BaseText } from 'components/legacy/Typography';
 
 // Constants
 import { OFFERS } from 'constants/exchangeConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Utils
 import { useProviderConfig, getFeeInfoFromList } from 'utils/exchange';
@@ -55,6 +58,9 @@ import { gasThresholdsSelector } from 'redux/selectors/gas-threshold-selector';
 // Hooks
 import { useTransactionsEstimate } from 'hooks/transactions';
 import useIsMounted from 'hooks/useMounted';
+
+// Services
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // Local
 import { getSortingValue, appendFeeCaptureTransactionIfNeeded } from './utils';
@@ -116,7 +122,14 @@ function OfferCard({
   const rates = useChainRates(toChain || chain);
   const currency = useFiatCurrency();
 
-  const fiatValue = getAssetValueInFiat(toAmount, toAsset?.address, rates, currency) ?? null;
+  const captureFeeMultiplier = 1 -
+  (firebaseRemoteConfig.getNumber(REMOTE_CONFIG.EXCHANGE_FEE_CAPTURE_PERCENTAGE) / 100);
+
+  const toValue = Number(toAmount) / captureFeeMultiplier;
+
+  const toValueInBignumber = BigNumber(toValue);
+
+  const fiatValue = getAssetValueInFiat(toValueInBignumber, toAsset?.address, rates, currency) ?? null;
   const formattedFiatValue = formatFiatValue(fiatValue, currency);
 
   const {
@@ -135,14 +148,14 @@ function OfferCard({
 
   const title = React.useMemo(() => {
     if (crossChainTxs) {
-      const crossChainButtonTitle = `${nFormatter(Number(offer.toAmount), 4)} ${offer.toAsset.symbol}` ?? '';
+      const crossChainButtonTitle = `${nFormatter(Number(toAmount), 4)} ${offer.toAsset.symbol}` ?? '';
       // eslint-disable-next-line i18next/no-literal-string
       return `${crossChainButtonTitle}  •  ${formattedFiatValue || ''}`;
     }
-    const buttonTitle = formatTokenValue(offer.toAmount, offer.toAsset.symbol) ?? '';
+    const buttonTitle = formatTokenValue(toValueInBignumber, offer.toAsset.symbol) ?? '';
     // eslint-disable-next-line i18next/no-literal-string
     return `${buttonTitle}  •  ${formattedFiatValue || ''}`;
-  }, [formattedFiatValue, crossChainTxs, offer]);
+  }, [crossChainTxs, offer, formattedFiatValue, toAmount, toValueInBignumber]);
 
   React.useEffect(() => {
     if (estimationErrorMessage) {

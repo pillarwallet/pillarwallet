@@ -71,7 +71,7 @@ import {
   UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES,
   UPDATE_PAYMENT_NETWORK_STAKED,
 } from 'constants/paymentNetworkConstants';
-import { PIN_CODE, WALLET_ACTIVATED } from 'constants/navigationConstants';
+import { PIN_CODE, PIN_CODE_UNLOCK, WALLET_ACTIVATED } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // configs
@@ -1502,11 +1502,13 @@ export const estimateSmartWalletDeploymentAction = () => {
  */
 export const checkArchanovaSessionIfNeededAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
+    const { isCheckingSmartWalletSession } = getState().smartWallet;
     // skip check if no archanova account
     const archanovaAccountExists = !!findFirstArchanovaAccount(accountsSelector(getState()));
-    if (!archanovaAccountExists) return;
-
-    const { isCheckingSmartWalletSession } = getState().smartWallet;
+    if (!archanovaAccountExists) {
+      navigate(PIN_CODE_UNLOCK);
+      return;
+    }
 
     if (isCheckingSmartWalletSession) return;
 
@@ -1541,14 +1543,17 @@ export const checkArchanovaSessionIfNeededAction = () => {
 
     dispatch({ type: SET_CHECKING_ARCHANOVA_SESSION, payload: false });
 
-    if (!smartWalletNeedsInit) return;
+    if (!smartWalletNeedsInit) {
+      navigate(PIN_CODE_UNLOCK);
+      return;
+    }
 
     const onLoginSuccess = async (pin: ?string, wallet: EthersWallet) => {
       const rawPrivateKey = formatToRawPrivateKey(wallet.privateKey);
       await dispatch(initOnLoginArchanovaAccountAction(rawPrivateKey));
     };
 
-    dispatch(lockScreenAction(onLoginSuccess, t('paragraph.sessionExpiredReEnterPin')));
+    dispatch(lockScreenAction(onLoginSuccess));
   };
 };
 

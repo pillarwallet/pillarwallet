@@ -37,6 +37,7 @@ import {
   SET_FETCHING,
   SET_LOADING_MESSAGE,
   SET_BIOMETIC_STATUS,
+  SET_SOCIAL_LOGIN_STATUS,
 } from 'constants/onboardingConstants';
 
 // Types
@@ -61,6 +62,7 @@ export type OnboardingReducerState = {
   isFetching: boolean,
   loaderMessage: string,
   enableBiometrics: boolean,
+  isSocialLogin: boolean,
 };
 
 export type OnboardingReducerAction = {
@@ -85,6 +87,7 @@ export const initialState = {
   isFetching: false,
   loaderMessage: '',
   enableBiometrics: false,
+  isSocialLogin: false,
 };
 
 export default function onboardingReducer(
@@ -180,6 +183,11 @@ export default function onboardingReducer(
       return {
         ...state,
         enableBiometrics: action.payload,
+      };
+    case SET_SOCIAL_LOGIN_STATUS:
+      return {
+        ...state,
+        isSocialLogin: action.payload,
       };
     case RESET_ONBOARDING:
       return { ...initialState };

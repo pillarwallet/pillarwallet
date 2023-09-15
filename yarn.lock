@@ -228,6 +228,17 @@
     lru-cache "^5.1.1"
     semver "^6.3.1"
 
+"@babel/helper-compilation-targets@^7.22.10":
+  version "7.22.10"
+  resolved "https://registry.yarnpkg.com/@babel/helper-compilation-targets/-/helper-compilation-targets-7.22.10.tgz#01d648bbc25dd88f513d862ee0df27b7d4e67024"
+  integrity sha512-JMSwHD4J7SLod0idLq5PKgI+6g/hLD/iuWBq08ZX49xE14VpVEojJ5rHWptpirV2j020MvypRLAXAO50igCJ5Q==
+  dependencies:
+    "@babel/compat-data" "^7.22.9"
+    "@babel/helper-validator-option" "^7.22.5"
+    browserslist "^4.21.9"
+    lru-cache "^5.1.1"
+    semver "^6.3.1"
+
 "@babel/helper-create-class-features-plugin@^7.18.6", "@babel/helper-create-class-features-plugin@^7.22.5", "@babel/helper-create-class-features-plugin@^7.22.9":
   version "7.22.9"
   resolved "https://registry.yarnpkg.com/@babel/helper-create-class-features-plugin/-/helper-create-class-features-plugin-7.22.9.tgz#c36ea240bb3348f942f08b0fbe28d6d979fab236"
@@ -6205,6 +6216,11 @@
   dependencies:
     "@walletconnect/window-getters" "^1.0.1"
     tslib "1.14.1"
+
+"@web3auth/react-native-sdk@2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@web3auth/react-native-sdk/-/react-native-sdk-2.2.0.tgz#d2980888b0a2193a4367d50de1bf5d2d630f89e8"
+  integrity sha512-4I2A1Txu3eoO5X0q6OBuqLE9Qw+0f9OPep+xN2DF7nsngCaCiC2QzQMQN2IpVuFSQ2NkX/QUHvMk5Fee3ExGYQ==
 
 "@webassemblyjs/ast@1.9.0":
   version "1.9.0"

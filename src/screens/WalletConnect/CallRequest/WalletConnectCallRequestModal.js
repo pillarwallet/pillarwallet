@@ -30,7 +30,7 @@ import Toast from 'components/Toast';
 
 // Constants
 import { WALLETCONNECT_PIN_CONFIRM_SCREEN } from 'constants/navigationConstants';
-import { REQUEST_TYPE, ETH_SIGN_TYPED_DATA, ETH_SIGN_TYPED_DATA_V4 } from 'constants/walletConnectConstants';
+import { REQUEST_TYPE } from 'constants/walletConnectConstants';
 
 // Hooks
 import useWalletConnect from 'hooks/useWalletConnect';
@@ -71,9 +71,7 @@ function WalletConnectCallRequestModal({ request }: Props) {
   const appName = parsePeerName(request.name);
 
   const title =
-    type === REQUEST_TYPE.TRANSACTION ||
-    request.method === ETH_SIGN_TYPED_DATA ||
-    request.method === ETH_SIGN_TYPED_DATA_V4
+    type !== REQUEST_TYPE.UNSUPPORTED
       ? t('walletConnect.requests.transactionRequestFormat', { app: appName, chain: chainName })
       : formatRequestType(type);
 
