@@ -269,7 +269,7 @@ import {
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
 // utils
-import { modalTransition, addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
+import { modalTransition, addAppStateChangeListener } from 'utils/common';
 import { getThemeByType, getThemeColors } from 'utils/themes';
 
 // types
@@ -705,6 +705,7 @@ let lockTimer;
 let smartWalletSessionCheckInterval;
 
 class AppFlow extends React.Component<Props, State> {
+  appStateSubscriptions;
   state = {
     lastAppState: AppState.currentState,
   };
@@ -713,7 +714,7 @@ class AppFlow extends React.Component<Props, State> {
     const { startListeningNotifications, initWalletConnectSessions, checkArchanovaSession } = this.props;
 
     startListeningNotifications();
-    addAppStateChangeListener(this.handleAppStateChange);
+    this.appStateSubscriptions = addAppStateChangeListener(this.handleAppStateChange);
 
     smartWalletSessionCheckInterval = BackgroundTimer.setInterval(
       checkArchanovaSession,
@@ -741,7 +742,7 @@ class AppFlow extends React.Component<Props, State> {
     const { stopListeningNotifications } = this.props;
 
     stopListeningNotifications();
-    removeAppStateChangeListener(this.handleAppStateChange);
+    if (this.appStateSubscriptions) this.appStateSubscriptions.remove();
     BackgroundTimer.clearInterval(smartWalletSessionCheckInterval);
   }
 

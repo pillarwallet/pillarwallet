@@ -44,7 +44,7 @@ import PinCode from 'components/PinCode';
 import { Spacing } from 'components/layout/Layout';
 
 // utils
-import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
+import { addAppStateChangeListener } from 'utils/common';
 import {
   getKeychainDataObject,
   getPrivateKeyFromKeychainData,
@@ -89,6 +89,7 @@ type State = {
 const { height } = Dimensions.get('window');
 class PinCodeUnlock extends React.Component<Props, State> {
   errorMessage: string;
+  appStateSubscriptions: any;
   onLoginSuccess: ?OnValidPinCallback;
   interval: IntervalID;
   timeout: any;
@@ -115,7 +116,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    addAppStateChangeListener(this.handleAppStateChange);
+    this.appStateSubscriptions = addAppStateChangeListener(this.handleAppStateChange);
     const { navigation, wallet, removePrivateKeyFromMemory } = this.props;
     if (wallet?.data?.privateKey) removePrivateKeyFromMemory();
 
@@ -146,7 +147,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
   }
 
   componentWillUnmount() {
-    removeAppStateChangeListener(this.handleAppStateChange);
+    if (this.appStateSubscriptions) this.appStateSubscriptions.remove();
     if (this.timeout) clearTimeout(this.timeout);
     if (this.interval) {
       clearInterval(this.interval);
@@ -185,7 +186,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
     }
     const privateKey = getPrivateKeyFromKeychainData(data);
     if (privateKey) {
-      removeAppStateChangeListener(this.handleAppStateChange);
+      if (this.appStateSubscriptions) this.appStateSubscriptions.remove();
       this.handleUnlockAction({
         privateKey,
         defaultAction: () => loginWithPrivateKey(privateKey, this.onLoginSuccess),
@@ -235,7 +236,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
     const lastPinAttemptTime = new Date(date);
     const currentTime = new Date();
-    const nextInterval = new Date(lastPinAttemptTime?.getTime() + (LOCK_TIME * numberOfFailedAttempts * 1000));
+    const nextInterval = new Date(lastPinAttemptTime?.getTime() + LOCK_TIME * numberOfFailedAttempts * 1000);
 
     if (pinAttemptsCount === 0 && currentTime < nextInterval) {
       const pendingTime = (nextInterval - currentTime) / 1000;
@@ -284,7 +285,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   formattedHour = (time: number) => {
     const minutes = Math.floor(time / 60);
-    const seconds = time - (minutes * 60);
+    const seconds = time - minutes * 60;
     return `${minutes?.toFixed(0)}:${seconds?.toFixed(0)}`;
   };
 

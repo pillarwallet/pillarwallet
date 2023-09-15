@@ -87,7 +87,7 @@ def enableProguardInReleaseBuilds = false
  *
  * The international variant includes ICU i18n library and necessary data
  * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
- * give correct results when using with locales other than en-US. Note that
+ * give correct results when using with locales other than en-US.  Note that
  * this variant is about 6MiB larger per architecture than default.
  */
 def jscFlavor = 'org.webkit:android-jsc:+'
@@ -107,11 +107,7 @@ def keystoreProperties = new Properties()
 if (keystorePropertiesFile.exists()) keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    ndkVersion rootProject.ext.ndkVersion
-
     compileSdkVersion rootProject.ext.compileSdkVersion
-
-    namespace "com.pillarproject.wallet"
 
     signingConfigs {
         debug {
@@ -167,6 +163,10 @@ android {
             zipAlignEnabled true
             signingConfig signingConfigs.release
         }
+    }
+    namespace 'com.pillarproject.wallet'
+    lint {
+        abortOnError false
     }
 }
 

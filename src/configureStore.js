@@ -22,8 +22,8 @@
 /**
  * Create the Redux store
  */
-import { createStore, applyMiddleware } from 'redux';
-// eslint-disable-next-line import/no-extraneous-dependencies
+import { applyMiddleware } from 'redux';
+import { configureStore as toolkitConfigureStore } from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { persistStore, persistReducer, createMigrate } from 'redux-persist';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
@@ -74,7 +74,10 @@ const enhancer = composeWithDevTools({
 })(applyMiddleware(...middlewares));
 
 const configureStore = (): Object => {
-  const store = createStore(pReducer, enhancer);
+  const store = toolkitConfigureStore({
+    reducer: pReducer,
+    middleware: middlewares,
+  });
 
   const persistor = persistStore(store);
 

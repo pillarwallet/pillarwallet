@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { createStore } from 'redux';
+import { configureStore } from '@reduxjs/toolkit';
 
 // Reducer
 import rootReducer, { initialState } from 'reducers/rootReducer';
@@ -34,5 +34,5 @@ export const initialTestState = {
 
 export const createTestStore = (partialState: ?PartialRootReducerState) => {
   const state = { ...initialState, ...partialState };
-  return createStore(rootReducer, state);
+  return configureStore({ reducer: rootReducer, preloadedState: state });
 };

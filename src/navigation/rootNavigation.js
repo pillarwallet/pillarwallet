@@ -68,7 +68,7 @@ import {
 
 import type { NavigationNavigator } from 'react-navigation';
 
-import AppFlow from './appNavigation';
+// import AppFlow from './appNavigation';
 
 type Props = {
   language: string,
@@ -111,7 +111,7 @@ const authFlow = createStackNavigator(
 const RootSwitch: NavigationNavigator<any, {}, {}> = createSwitchNavigator({
   [ONBOARDING_FLOW]: onBoardingFlow,
   [AUTH_FLOW]: authFlow,
-  [APP_FLOW]: AppFlow,
+  // [APP_FLOW]: AppFlow,
 });
 
 // to pass in language prop so stacks would rerender on language change

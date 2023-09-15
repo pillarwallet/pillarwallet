@@ -142,15 +142,12 @@ class App extends React.Component<Props, any> {
     if (!__DEV__) {
       const dist = DeviceInfo.getBuildNumber();
       const release = `${DeviceInfo.getBundleId()}@${DeviceInfo.getVersion()}+${dist}`;
-      Sentry.init({ dsn: getEnv().SENTRY_DSN });
-      Sentry.setRelease(release);
-      Sentry.setDist(dist);
+      Sentry.init({ dsn: getEnv().SENTRY_DSN, release, dist });
       Sentry.setTags({ environment: getEnv().BUILD_TYPE });
     }
     this.state = {
       env: null,
     };
-
   }
 
   // https://reactjs.org/blog/2018/03/27/update-on-async-rendering.html#gradual-migration-path
@@ -190,14 +187,14 @@ class App extends React.Component<Props, any> {
     remoteConfig()
       .setDefaults(INITIAL_REMOTE_CONFIG)
       .then(() => logBreadcrumb('App.js ', 'Remote Config: Defaults loaded and available'))
-      .catch(e => reportOrWarn('Remote Config: An error occurred loading defaults:', e, 'error'));
+      .catch((e) => reportOrWarn('Remote Config: An error occurred loading defaults:', e, 'error'));
     logBreadcrumb('App.js', 'Remote Config: Finished setting up default values.');
 
     logBreadcrumb('App.js', 'Remote Config: Ensuring last activated values are available...');
     remoteConfig()
       .ensureInitialized()
       .then(() => logBreadcrumb('App.js ', 'Remote Config: Defaults loaded and available'))
-      .catch(e => reportOrWarn('Remote Config: An error occurred loading defaults:', e, 'error'));
+      .catch((e) => reportOrWarn('Remote Config: An error occurred loading defaults:', e, 'error'));
     logBreadcrumb('App.js', 'Remote Config: Finished ensuring last activated values are available.');
 
     /**
@@ -212,14 +209,14 @@ class App extends React.Component<Props, any> {
     logBreadcrumb('App.js', 'Remote Config: Activating latest values, if any...');
     remoteConfig()
       .activate()
-      .then(activationResult => {
+      .then((activationResult) => {
         logBreadcrumb('App.js', `Remote Config: Activation result was ${activationResult}`);
         if (sessionLanguageVersion !== firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_LOCALES_LATEST_TIMESTAMP)) {
           logBreadcrumb('App.js', 'Remote Config: Triggering i18n update...');
           updateTranslationResourceOnContextChange();
         }
       })
-      .catch(e => reportOrWarn('Remote Config: An error occurred while activating:', e));
+      .catch((e) => reportOrWarn('Remote Config: An error occurred while activating:', e));
     logBreadcrumb('App.js', 'Remote Config: Finished activating latest values, if any.');
 
     /**
@@ -236,10 +233,10 @@ class App extends React.Component<Props, any> {
         onDeepLinkListener: true, // Optional
         timeToWaitForATTUserAuthorization: 10, // for iOS 14.5
       },
-      result => {
+      (result) => {
         logBreadcrumb('App.js', `AppsFlyer: initSdk completed successfully: ${result}`);
       },
-      error => reportOrWarn('AppsFlyer reported an error whilst running initSdk', error),
+      (error) => reportOrWarn('AppsFlyer reported an error whilst running initSdk', error),
     );
 
     // GA Install Referrer - get install timestamp, install version, ...
@@ -265,7 +262,7 @@ class App extends React.Component<Props, any> {
 
     // hold the UI and wait until network status finished for later app connectivity checks
     await NetInfo.fetch()
-      .then(netInfoState => this.setOnlineStatus(netInfoState.isInternetReachable))
+      .then((netInfoState) => this.setOnlineStatus(netInfoState.isInternetReachable))
       .catch(() => null);
     this.removeNetInfoEventListener = NetInfo.addEventListener(this.handleConnectivityChange);
     fetchAppSettingsAndRedirect();
@@ -302,7 +299,7 @@ class App extends React.Component<Props, any> {
     }
   }
 
-  setOnlineStatus = isOnline => {
+  setOnlineStatus = (isOnline) => {
     const { updateSessionNetworkStatus, updateOfflineQueueNetworkStatus } = this.props;
     updateSessionNetworkStatus(isOnline);
     updateOfflineQueueNetworkStatus(isOnline);
@@ -380,7 +377,7 @@ class App extends React.Component<Props, any> {
           <React.Fragment>
             <Root>
               <RootNavigation
-                ref={node => {
+                ref={(node) => {
                   if (!node) {
                     return;
                   }
@@ -414,7 +411,7 @@ class App extends React.Component<Props, any> {
                 />
               )}
               <PercentsInputAccessoryHolder
-                ref={c => {
+                ref={(c) => {
                   if (c && !PercentsInputAccessoryHolder.instances.includes(c)) {
                     PercentsInputAccessoryHolder.instances.push(c);
                   }
@@ -456,7 +453,7 @@ const mapDispatchToProps = (dispatch: Dispatch): Partial<Props> => ({
   executeDeepLink: (deepLink: string) => dispatch(executeDeepLinkAction(deepLink)),
   setAppTheme: (themeType: string) => dispatch(setAppThemeAction(themeType)),
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
-  changeLanguage: language => dispatch(changeLanguageAction(language)),
+  changeLanguage: (language) => dispatch(changeLanguageAction(language)),
   updateTranslationResourceOnContextChange: () => dispatch(updateTranslationResourceOnContextChangeAction()),
   logScreenView: (screenName: string) => dispatch(logScreenViewAction(screenName)),
   initWalletConnectSessionsWithoutReset: () => dispatch(initWalletConnectSessionsAction(false)),
@@ -468,28 +465,14 @@ const mapDispatchToProps = (dispatch: Dispatch): Partial<Props> => ({
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(withTranslation()(App));
 
 const AppRoot = () => (
-  <Suspense
-    fallback={
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Spinner theme={defaultTheme} />
-      </View>
-    }>
-    <SafeAreaProvider>
-      <Provider store={store}>
-        <PersistGate
-          loading={
-            <Container defaultTheme={defaultTheme}>
-              <LoadingSpinner theme={defaultTheme} />
-            </Container>
-          }
-          persistor={persistor}>
-          <QueryClientProvider client={queryClient}>
-            {getEnv().SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />}
-          </QueryClientProvider>
-        </PersistGate>
-      </Provider>
-    </SafeAreaProvider>
-  </Suspense>
+  <SafeAreaProvider>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        {/* {getEnv().SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />} */}
+        <AppWithNavigationState />
+      </QueryClientProvider>
+    </Provider>
+  </SafeAreaProvider>
 );
 
 export default AppRoot;
