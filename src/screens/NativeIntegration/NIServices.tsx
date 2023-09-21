@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'translations/translate';
 import styled from 'styled-components/native';
 
@@ -86,7 +86,7 @@ function NIServices() {
         leftItems={[{ close: true }]}
         centerItems={[{ title: t('home.apps.title') }]}
         navigation={navigation}
-        onClose={() => navigation.dismiss()}
+        onClose={() => navigation.goBack()}
       />
       {!isArchanovaAccount(activeAccount) && <DropdownChainView selectedChain={updateChain} />}
       {contractList ? (

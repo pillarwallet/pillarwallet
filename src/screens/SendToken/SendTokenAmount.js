@@ -25,31 +25,29 @@ import { createStructuredSelector } from 'reselect';
 import SendAsset from 'components/SendAsset';
 
 // types
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
 import type { AccountAssetBalances } from 'models/Balances';
+import type { Route } from '@react-navigation/native';
 
 // selectors
 import { accountAssetsBalancesSelector } from 'selectors/balances';
 
-
 type Props = {
   navigation: NavigationScreenProp<*>,
+  route: Route,
   accountAssetsBalances: AccountAssetBalances,
   session: SessionData,
 };
 
-const SendTokenAmount = ({
-  navigation,
-  accountAssetsBalances,
-  session,
-}: Props) => {
-  const defaultContact = navigation.getParam('contact');
-  const source = navigation.getParam('source', '');
+const SendTokenAmount = ({ navigation, route, accountAssetsBalances, session }: Props) => {
+  const defaultContact = route?.params?.contact;
+  const source = route?.params?.source ?? '';
 
   return (
     <SendAsset
+      route={route}
       navigation={navigation}
       defaultContact={defaultContact}
       source={source}
@@ -59,9 +57,7 @@ const SendTokenAmount = ({
   );
 };
 
-const mapStateToProps = ({
-  session: { data: session },
-}: RootReducerState): $Shape<Props> => ({
+const mapStateToProps = ({ session: { data: session } }: RootReducerState): $Shape<Props> => ({
   session,
 });
 

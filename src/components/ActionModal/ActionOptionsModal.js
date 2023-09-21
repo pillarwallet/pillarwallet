@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { SafeAreaView } from 'react-navigation';
+import SafeAreaView from 'react-native-safe-area-view';
 import styled from 'styled-components/native';
 
 import SlideModal from 'components/Modals/SlideModal';
@@ -37,7 +37,7 @@ type ItemType = {
   value?: string,
   isDisabled?: boolean,
   hide?: boolean,
-}
+};
 
 type Props = {|
   items: (?ItemType | false)[],
@@ -51,20 +51,12 @@ const MainContainer = styled(SafeAreaView)`
 
 class ActionOptionsModal extends React.Component<Props> {
   renderItem = (item: ItemType) => {
-    const {
-      label,
-      onPress,
-      isDisabled,
-      iconName,
-      key,
-    } = item;
+    const { label, onPress, isDisabled, iconName, key } = item;
 
     return (
       <ListItemWithImage
         key={key}
-        customLabel={(
-          <BaseText medium>{label}</BaseText>
-        )}
+        customLabel={<BaseText medium>{label}</BaseText>}
         disabled={isDisabled}
         onPress={onPress}
         diameter={48}
@@ -81,19 +73,13 @@ class ActionOptionsModal extends React.Component<Props> {
     const items = compactFalsy(this.props.items);
 
     return (
-      <SlideModal
-        noClose
-        hideHeader
-      >
+      <SlideModal noClose hideHeader>
         <MainContainer>
-          {!!title &&
-          <MediumText
-            style={{ paddingBottom: 22, paddingHorizontal: spacing.layoutSides }}
-            center
-            big
-          >
-            {title}
-          </MediumText>}
+          {!!title && (
+            <MediumText style={{ paddingBottom: 22, paddingHorizontal: spacing.layoutSides }} center big>
+              {title}
+            </MediumText>
+          )}
           {items.filter(({ hide }) => !hide).map(this.renderItem)}
         </MainContainer>
         {footer}

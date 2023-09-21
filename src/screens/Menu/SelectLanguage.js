@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { FlatList } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
@@ -49,7 +49,6 @@ import IconEn from 'assets/icons/svg/icon-48-lang-en.svg';
 import IconAm from 'assets/icons/svg/icon-48-lang-am.svg';
 import IconBs from 'assets/icons/svg/icon-48-lang-bs.svg';
 import IconCn from 'assets/icons/svg/icon-48-lang-cn.svg';
-
 
 const SelectLanguage = () => {
   const { t } = useTranslationWithPrefix('menu.selectLanguage');

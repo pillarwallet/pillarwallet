@@ -2,7 +2,7 @@ import React, { FC, useState, useEffect, useRef } from 'react';
 import HTML from 'react-native-render-html';
 import { useTranslationWithPrefix } from 'translations/translate';
 import styled from 'styled-components/native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 
 // Components
 import { Container, Content } from 'components/layout/Layout';

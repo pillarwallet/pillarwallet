@@ -19,7 +19,7 @@
 */
 
 import React from 'react';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Config
@@ -31,7 +31,6 @@ import HeaderBlock from 'components/HeaderBlock';
 
 // Local
 import InfoItem from './components/InfoItem';
-
 
 const SystemInformation = () => {
   const { t } = useTranslationWithPrefix('menu.systemInformation');

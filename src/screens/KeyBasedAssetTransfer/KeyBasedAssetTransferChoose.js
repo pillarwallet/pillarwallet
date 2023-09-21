@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { SectionList } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 import { connect, useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import isEmpty from 'lodash.isempty';
@@ -75,7 +75,6 @@ import type { Collectible } from 'models/Collectible';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { WalletAssetsBalances } from 'models/Balances';
 import type { Currency } from 'models/Rates';
-
 
 type Props = {
   fetchAvailableBalancesToTransfer: () => void,
@@ -206,12 +205,7 @@ const KeyBasedAssetTransferChoose = ({
 
   let totalValue = 0;
   keyBasedAssetsToTransfer.forEach((asset) => {
-    totalValue += getBalanceInFiat(
-      baseFiatCurrency,
-      asset.draftAmount,
-      ethereumRates,
-      asset.assetData.contractAddress,
-    );
+    totalValue += getBalanceInFiat(baseFiatCurrency, asset.draftAmount, ethereumRates, asset.assetData.contractAddress);
   });
 
   return (
@@ -277,16 +271,14 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   removeKeyBasedAssetToTransfer: (assetData: AssetData) => dispatch(removeKeyBasedAssetToTransferAction(assetData)),
-  addKeyBasedAssetToTransfer: (assetData: AssetData, amount?: BigNumber) => dispatch(
-    addKeyBasedAssetToTransferAction(assetData, amount),
-  ),
+  addKeyBasedAssetToTransfer: (assetData: AssetData, amount?: BigNumber) =>
+    dispatch(addKeyBasedAssetToTransferAction(assetData, amount)),
   fetchAvailableBalancesToTransfer: () => dispatch(fetchAvailableBalancesToTransferAction()),
   fetchAvailableCollectiblesToTransfer: () => dispatch(fetchAvailableCollectiblesToTransferAction()),
   calculateTransactionsGas: () => dispatch(calculateKeyBasedAssetsToTransferTransactionGasAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(KeyBasedAssetTransferChoose);
-
 
 const renderEmptyResult = (emptyMessage: string, isLoading: boolean) => (
   <Wrapper

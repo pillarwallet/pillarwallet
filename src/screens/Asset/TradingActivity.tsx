@@ -19,7 +19,7 @@
 */
 import React from 'react';
 import t from 'translations/translate';
-import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import styled from 'styled-components/native';
 
 // Components
@@ -36,6 +36,7 @@ import { getActivityKeyExtractor } from 'utils/assets';
 
 // models, types
 import type { AssetDataNavigationParam } from 'models/Asset';
+import type { Route } from '@react-navigation/native';
 
 // Local
 import AnimatedFloatingActions from './AnimatedFloatingActions';
@@ -44,9 +45,10 @@ import TokenAnalyticsActivityList from './components/TokenAnalyticsActivityList'
 
 const TradingActivityScreen = () => {
   const navigation = useNavigation();
+  const route: Route = useRoute();
 
-  const assetData: AssetDataNavigationParam = useNavigationParam('assetData');
-  const tokenDetails = useNavigationParam('tokenDetails');
+  const assetData: AssetDataNavigationParam = route?.params?.assetData;
+  const tokenDetails = route?.params?.tokenDetails;
   const { chain, imageUrl } = assetData;
 
   const tradingHistoryQuery = useTradingHistoryQuery(assetData);

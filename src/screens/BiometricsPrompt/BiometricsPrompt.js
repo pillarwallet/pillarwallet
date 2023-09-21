@@ -23,7 +23,7 @@ import { Platform, Linking } from 'react-native';
 import styled from 'styled-components/native';
 import * as Keychain from 'react-native-keychain';
 import { PERMISSIONS, RESULTS, request as requestPermission } from 'react-native-permissions';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import t from 'translations/translate';
 
 // actions
@@ -43,9 +43,11 @@ import { themedColors } from 'utils/themes';
 
 // types
 import type { Dispatch } from 'reducers/rootReducer';
+import type { Route } from '@react-navigation/native';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  route: Route,
   beginOnboarding: (enableBiometrics: boolean) => void,
 };
 
@@ -106,7 +108,7 @@ const showFaceIDFailed = () => {
 
 class BiometricsPrompt extends React.Component<Props> {
   proceedToBeginOnboarding = (setBiometrics: boolean) => {
-    const { beginOnboarding, navigation } = this.props;
+    const { beginOnboarding, route } = this.props;
 
     /**
      * as for permission if it's iOS FaceID, otherwise – no permission needed,
@@ -116,7 +118,7 @@ class BiometricsPrompt extends React.Component<Props> {
      * P. S. granted status will be returned even after user logs out because the permission
      * is given to the app and not the user (obvious, but just making a note if questions rise)
      */
-    const biometryType = navigation.getParam('biometryType');
+    const biometryType = route?.params?.biometryType;
     if (setBiometrics && Platform.OS === 'ios' && biometryType === Keychain.BIOMETRY_TYPE.FACE_ID) {
       requestPermission(PERMISSIONS.IOS.FACE_ID)
         .then((status) => beginOnboarding(status === RESULTS.GRANTED))
@@ -128,8 +130,8 @@ class BiometricsPrompt extends React.Component<Props> {
   };
 
   render() {
-    const { navigation } = this.props;
-    const biometryType = navigation.getParam('biometryType');
+    const { route } = this.props;
+    const biometryType = route?.params?.biometryType;
     const biometryTypeTitle = getBiometryType(biometryType);
     const imageSource = getBiometryImage(biometryType);
     return (

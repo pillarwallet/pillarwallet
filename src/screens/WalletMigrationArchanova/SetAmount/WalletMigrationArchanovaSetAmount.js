@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { InteractionManager } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
@@ -49,12 +49,13 @@ import { isValidValueForTransfer, isLessThanOrEqualToBalance } from 'utils/trans
 function WalletMigrationArchanovaSetAmount() {
   const { t, tRoot } = useTranslationWithPrefix('walletMigrationArchanova.setAmount');
   const navigation = useNavigation();
+  const route = useRoute();
   const dispatch = useDispatch();
 
   const inputRef = React.useRef();
 
-  const address: string = navigation.getParam('address');
-  const initialValue = wrapBigNumberOrNil(navigation.getParam('value'));
+  const address: string = route?.params?.address;
+  const initialValue = wrapBigNumberOrNil(route?.params?.value);
 
   const asset = useSupportedAsset(CHAIN.ETHEREUM, address);
   const balance = useWalletAssetBalance(CHAIN.ETHEREUM, address);
@@ -68,7 +69,9 @@ function WalletMigrationArchanovaSetAmount() {
 
   React.useEffect(() => {
     const promise = InteractionManager.runAfterInteractions(() => inputRef.current?.focus());
-    return () => { promise.cancel(); };
+    return () => {
+      promise.cancel();
+    };
   }, []);
 
   const isValid = isValidValueForTransfer(value, balance);

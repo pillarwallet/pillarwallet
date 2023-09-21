@@ -23,8 +23,7 @@ import { connect } from 'react-redux';
 import { ScrollView, View } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
-import { withNavigation } from 'react-navigation';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import t from 'translations/translate';
 
 // actions
@@ -498,4 +497,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
 });
 
-export default withTheme(withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(PPNView)));
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(PPNView));

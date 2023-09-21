@@ -20,7 +20,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import t from 'translations/translate';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 
 // actions
 import { changePinAction, resetIncorrectPasswordAction } from 'actions/authActions';
@@ -42,21 +42,17 @@ import { validatePinWithConfirmation } from 'utils/validators';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-
+import type { Route } from '@react-navigation/native';
 
 type Props = {
   changePin: (newPin: string, currentPin: string) => void,
   isChangingPin: boolean,
   navigation: NavigationScreenProp<*>,
+  route: Route,
   resetIncorrectPassword: () => void,
 };
 
-const ConfirmNewPin = ({
-  resetIncorrectPassword,
-  navigation,
-  isChangingPin,
-  changePin,
-}: Props) => {
+const ConfirmNewPin = ({ resetIncorrectPassword, navigation, route, isChangingPin, changePin }: Props) => {
   const [pinError, setPinError] = useState(null);
   const [pinSuccessfullyChanged, setPinSuccessfullyChanged] = useState(false);
   const [newPinSubmitted, setNewPinSubmitted] = useState(false);
@@ -71,8 +67,8 @@ const ConfirmNewPin = ({
   }, [isChangingPin]);
 
   const handlePinSubmit = (enteredPin: string) => {
-    const currentPin = navigation.getParam('currentPin');
-    const newPin = navigation.getParam('newPin');
+    const currentPin = route?.params?.currentPin;
+    const newPin = route?.params?.newPin;
     const validationError = validatePinWithConfirmation(enteredPin, newPin, maxPinCodeLength);
 
     if (validationError) {
@@ -86,7 +82,7 @@ const ConfirmNewPin = ({
 
   const handleScreenDismissal = () => {
     resetIncorrectPassword();
-    navigation.dismiss();
+    navigation.goBack();
   };
 
   if (isChangingPin) {
@@ -110,11 +106,7 @@ const ConfirmNewPin = ({
 
   return (
     <Container>
-      <Header
-        title={t('title.confirmNewPin')}
-        centerTitle
-        onClose={handleScreenDismissal}
-      />
+      <Header title={t('title.confirmNewPin')} centerTitle onClose={handleScreenDismissal} />
       {!!pinError && <ErrorMessage>{pinError}</ErrorMessage>}
       <PinCode
         onPinEntered={handlePinSubmit}
@@ -127,9 +119,7 @@ const ConfirmNewPin = ({
   );
 };
 
-const mapStateToProps = ({
-  wallet: { isChangingPin },
-}: RootReducerState): $Shape<Props> => ({
+const mapStateToProps = ({ wallet: { isChangingPin } }: RootReducerState): $Shape<Props> => ({
   isChangingPin,
 });
 

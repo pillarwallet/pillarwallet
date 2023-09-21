@@ -19,7 +19,7 @@
 */
 
 import t from 'translations/translate';
-import { NavigationActions } from 'react-navigation';
+import { CommonActions } from '@react-navigation/native';
 import { upperFirst } from 'lodash';
 
 // Components,
@@ -40,7 +40,6 @@ import { CHAIN } from 'constants/chainConstants';
 // Types
 import type { Account } from 'models/Account';
 import type { Chain } from 'models/Chain';
-
 
 type ViewableTransaction = {
   hash: ?string,
@@ -81,11 +80,11 @@ export async function viewTransactionOnBlockchain(chain: Chain, transaction: Vie
   }
 
   navigate(
-    NavigationActions.navigate({
-      routeName: WALLETCONNECT_BROWSER,
+    CommonActions.navigate({
+      name: WALLETCONNECT_BROWSER,
       params: {
         url: explorerLink,
-        title: t('title.chain_explorer', { title: ((chain === CHAIN.XDAI)) ? 'Gnosis' : upperFirst(chain) }),
+        title: t('title.chain_explorer', { title: chain === CHAIN.XDAI ? 'Gnosis' : upperFirst(chain) }),
         isBlockchainExplorer: true,
       },
     }),

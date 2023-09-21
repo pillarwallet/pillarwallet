@@ -19,10 +19,10 @@
 */
 
 import React, { useRef } from 'react';
-import { SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
+import SafeAreaView from 'react-native-safe-area-view';
 
 // components
 import SlideModal from 'components/Modals/SlideModal';
@@ -32,7 +32,6 @@ import { Spacing } from 'components/legacy/Layout';
 
 // constants
 import { ACCOUNTS } from 'constants/navigationConstants';
-
 
 const ModalContainer = styled.View`
   padding: 20px 0 40px;
@@ -48,16 +47,17 @@ const BuyCryptoAccountNotActiveModal = () => {
   };
 
   return (
-    <SlideModal
-      ref={modalRef}
-      hideHeader
-    >
+    <SlideModal ref={modalRef} hideHeader>
       <SafeAreaView>
         <ModalContainer>
           <React.Fragment>
-            <MediumText center medium>{t('exchangeContent.modal.smartWalletIsNotActive.title')}</MediumText>
+            <MediumText center medium>
+              {t('exchangeContent.modal.smartWalletIsNotActive.title')}
+            </MediumText>
             <Spacing h={20} />
-            <BaseText center medium>{t('exchangeContent.modal.smartWalletIsNotActive.paragraph')}</BaseText>
+            <BaseText center medium>
+              {t('exchangeContent.modal.smartWalletIsNotActive.paragraph')}
+            </BaseText>
             <Spacing h={34} />
             <Button
               secondary

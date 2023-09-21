@@ -21,7 +21,7 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import isEmpty from 'lodash.isempty';
 import styled from 'styled-components/native';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 
 // constants
 import { TRANSACTION_EVENT } from 'constants/historyConstants';

@@ -17,13 +17,12 @@
 import * as React from 'react';
 import { WebView } from 'react-native-webview';
 import { useBackHandler } from '@react-native-community/hooks';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 
 // components
 import { Wrapper } from 'components/legacy/Layout';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import Spinner from 'components/Spinner';
-
 
 type Props = {
   onWebViewMessage?: Function,
@@ -56,7 +55,7 @@ const WebViewComponent = ({
   const handleNavigationBack = () => {
     if (!webViewRef || !canWebViewNavigateBack) {
       if (goBackDismiss) {
-        navigation.dismiss();
+        navigation.goBack();
         return;
       }
       navigation.goBack();
@@ -84,9 +83,12 @@ const WebViewComponent = ({
     >
       <Wrapper style={{ flex: 1 }}>
         {!isVisible && renderLoading()}
-        {isVisible &&
+        {isVisible && (
           <WebView
-            ref={(ref) => { webViewRef = ref; if (onRef) onRef(webViewRef); }}
+            ref={(ref) => {
+              webViewRef = ref;
+              if (onRef) onRef(webViewRef);
+            }}
             source={{ uri: url }}
             onNavigationStateChange={onNavigationStateChange}
             allowsBackForwardNavigationGestures={false}
@@ -99,7 +101,7 @@ const WebViewComponent = ({
             startInLoadingState
             incognito
           />
-        }
+        )}
       </Wrapper>
     </ContainerWithHeader>
   );

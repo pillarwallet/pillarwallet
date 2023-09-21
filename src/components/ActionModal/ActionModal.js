@@ -19,13 +19,13 @@
 */
 import * as React from 'react';
 import { TouchableWithoutFeedback } from 'react-native';
-import { SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
 import { MediumText, BaseText } from 'components/legacy/Typography';
 import Icon from 'components/legacy/Icon';
 import { spacing, fontStyles } from 'utils/variables';
 import { noop } from 'utils/common';
+import SafeAreaView from 'react-native-safe-area-view';
 
 type ItemType = {
   label: string,
@@ -34,7 +34,7 @@ type ItemType = {
   value?: string,
   chevron?: boolean,
   isDisabled?: boolean,
-}
+};
 
 type Props = {|
   items: ItemType[],
@@ -51,14 +51,13 @@ type ItemProps = {
   children?: React.Node,
 };
 
-
 const MainContainer = styled.View`
   padding: 20px ${spacing.layoutSides}px 30px;
 `;
 
 const ItemContainer = styled.View`
   padding: 20px 0;
-  opacity: ${({ disabled }) => disabled ? 0.5 : 1};
+  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
 `;
 
 const Row = styled.View`
@@ -78,15 +77,16 @@ const Paragraph = styled(BaseText)`
   margin-top: 8px;
 `;
 
-
-const Item = ({
-  label, onPress, value, chevron, isDisabled, paragraph, children,
-}: ItemProps) => (
+const Item = ({ label, onPress, value, chevron, isDisabled, paragraph, children }: ItemProps) => (
   <TouchableWithoutFeedback onPress={onPress} disabled={isDisabled}>
     <ItemContainer disabled={isDisabled}>
       <Row>
         <MediumText big>{label}</MediumText>
-        {!!value && <BaseText medium secondary>{value}</BaseText>}
+        {!!value && (
+          <BaseText medium secondary>
+            {value}
+          </BaseText>
+        )}
         {chevron && <ChevronIcon name="chevron-right" />}
       </Row>
       {!!paragraph && <Paragraph>{paragraph}</Paragraph>}
@@ -116,21 +116,14 @@ class ActionModal extends React.Component<Props> {
     const { items } = this.props;
     return (
       <SafeAreaView>
-        <MainContainer>
-          {items.map(this.renderItem)}
-        </MainContainer>
+        <MainContainer>{items.map(this.renderItem)}</MainContainer>
       </SafeAreaView>
     );
   };
 
   render() {
     return (
-      <SlideModal
-        ref={this.modalRef}
-        noClose
-        hideHeader
-        sideMargins={spacing.large}
-      >
+      <SlideModal ref={this.modalRef} noClose hideHeader sideMargins={spacing.large}>
         {this.renderContent()}
       </SlideModal>
     );

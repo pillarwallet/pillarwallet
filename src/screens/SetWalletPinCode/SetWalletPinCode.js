@@ -46,7 +46,7 @@ import { useThemeColors } from 'utils/themes';
 import { logEventAction } from 'actions/analyticsActions';
 
 // Types
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 
 type Props = {
   navigation: NavigationScreenProp<*>,

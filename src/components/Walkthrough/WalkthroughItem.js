@@ -2,7 +2,6 @@
 import * as React from 'react';
 import { View, TouchableOpacity, Platform } from 'react-native';
 import { connect } from 'react-redux';
-import { withNavigation } from 'react-navigation';
 
 import {
   addWalkthroughStepMeasureAction,
@@ -158,4 +157,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   showNextStep: () => dispatch(showNextStepExternalAction()),
 });
 
-export default withNavigation(connect(mapStateToProps, mapDispatchToProps)(WalkthroughItem));
+export default connect(mapStateToProps, mapDispatchToProps)(WalkthroughItem);

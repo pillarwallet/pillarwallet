@@ -20,7 +20,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
@@ -45,10 +45,11 @@ import { activeAccountAddressSelector } from 'selectors';
 // types
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { RootReducerState } from 'reducers/rootReducer';
-
+import type { Route } from '@react-navigation/native';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  route: Route,
   feeInfo: ?TransactionFeeInfo,
   accountAddress: string,
 };
@@ -57,15 +58,9 @@ const MainWrapper = styled.View`
   padding: 32px 20px;
 `;
 
-const StakeTokensReviewScreen = ({
-  navigation,
-  feeInfo,
-  accountAddress,
-}: Props) => {
+const StakeTokensReviewScreen = ({ navigation, route, feeInfo, accountAddress }: Props) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const {
-    poolToken, amount, pool,
-  } = navigation.state.params;
+  const { poolToken, amount, pool } = route.params;
 
   const onNextButtonPress = async () => {
     if (isSubmitted) return;
@@ -80,12 +75,7 @@ const StakeTokensReviewScreen = ({
       return;
     }
 
-    let transactionPayload = getUnstakeTransaction(
-      pool,
-      accountAddress,
-      amount,
-      feeInfo?.fee,
-    );
+    let transactionPayload = getUnstakeTransaction(pool, accountAddress, amount, feeInfo?.fee);
 
     if (feeInfo?.gasToken) transactionPayload = { ...transactionPayload, gasToken: feeInfo?.gasToken };
 
@@ -122,18 +112,13 @@ const StakeTokensReviewScreen = ({
           </TableRow>
         </Table>
         <Spacing h={48} />
-        <Button
-          title={t('liquidityPoolsContent.button.unstake')}
-          onPress={onNextButtonPress}
-        />
+        <Button title={t('liquidityPoolsContent.button.unstake')} onPress={onNextButtonPress} />
       </MainWrapper>
     </ContainerWithHeader>
   );
 };
 
-const mapStateToProps = ({
-  transactionEstimate: { feeInfo },
-}: RootReducerState): $Shape<Props> => ({
+const mapStateToProps = ({ transactionEstimate: { feeInfo } }: RootReducerState): $Shape<Props> => ({
   feeInfo,
 });
 

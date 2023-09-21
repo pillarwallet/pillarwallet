@@ -19,11 +19,12 @@
 */
 
 import * as React from 'react';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { useTranslation } from 'translations/translate';
 import styled from 'styled-components/native';
 import { debounce } from 'lodash';
 import { utils } from 'ethers';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 // Utils
 import { chainFromChainId } from 'utils/chains';
@@ -55,13 +56,17 @@ import NIInputField from './components/NIInputField';
 // Constant
 import { NI_TRANSACTION_COMPLETED } from 'constants/navigationConstants';
 
+// Type
+import type { Route } from '@react-navigation/native';
+
 function NIInputService() {
   const { t } = useTranslation();
-  const navigation = useNavigation();
+  const navigation: NativeStackNavigationProp<any> = useNavigation();
+  const route: Route = useRoute();
   const dispatch = useDispatch();
-  const action = navigation.getParam('action');
-  const contractData = navigation.getParam('contractData');
-  const contractType = navigation.getParam('contractType');
+  const action = route?.params?.action;
+  const contractData = route?.params?.contractData;
+  const contractType = route?.params?.contractType;
   const title = action?.['action-name'][0]?.text;
   const actionName = action?.['action-contract-call'];
   const chain = chainFromChainId[contractData?.chain_id];

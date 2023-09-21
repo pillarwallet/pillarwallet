@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { View } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
@@ -46,6 +46,7 @@ import { appFont, fontStyles, spacing } from 'utils/variables';
 
 // Types
 import type { WalletObject } from 'models/Wallet';
+import type { Route } from '@react-navigation/native';
 
 // Local
 import AppearanceSetting from './components/AppearanceSetting';
@@ -57,11 +58,16 @@ import ViewBackupPhraseSetting from './components/ViewBackupPhraseSetting';
 import BackupWalletSetting from './components/BackupWalletSetting';
 import ImportFlowSetting from './components/ImportFlowSetting';
 
-const Settings = () => {
+interface Props {
+  route: Route,
+}
+
+const Settings = ({ route }: Props) => {
   const { t } = useTranslationWithPrefix('menu.settings');
   const navigation = useNavigation();
   const isBackedUp = useIsWalletBackedUp();
-  const screenName = navigation.state.routeName;
+  const screenName = route.name;
+
   const { showPinModal, pin, wallet, onPinValid } = useWalletData();
 
   if (showPinModal) {

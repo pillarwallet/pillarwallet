@@ -43,7 +43,6 @@ i18n
       supportedLngs: Object.keys(localeConfig.supportedLanguages),
       debug: !!__DEV__,
       react: {
-        wait: true,
         nsMode: 'default',
         useSuspense: true,
       },

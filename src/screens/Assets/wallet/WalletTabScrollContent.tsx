@@ -19,11 +19,12 @@
 */
 
 import * as React from 'react';
-import { Dimensions, FlatList, DeviceEventEmitter } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
+import { Dimensions, FlatList, NativeEventEmitter } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 
 // Hooks
 import { useNonStableAssets, useFilteredAssets } from 'hooks/assets';
@@ -73,10 +74,13 @@ type Props = {
 
 function WalletTabScrollContent({ isNavigateToHome, hasPositiveBalance }: Props) {
   const { tRoot } = useTranslationWithPrefix('assets.wallet');
-  const navigation = useNavigation();
+  const navigation: NavigationScreenProp<any> = useNavigation();
   const safeArea = useSafeAreaInsets();
   const ref: any = React.useRef();
   const colors = useThemeColors();
+
+  const emitter: any = ''
+  const dropdownManagerEmitter = new NativeEventEmitter(emitter);
 
   const items = [
     { key: ALL, title: ALL, color: colors.preciousPersimmon },
@@ -103,11 +107,11 @@ function WalletTabScrollContent({ isNavigateToHome, hasPositiveBalance }: Props)
 
   const navigateToAssetDetails = (category: any, chain: Chain) => {
     const assetData = buildAssetDataNavigationParam(category, chain);
-    navigation.navigate(ASSET, { assetData, isNavigateToHome });
+    navigation.navigate(ASSET, { screen: ASSET, params: { assetData, isNavigateToHome } });
   };
 
   React.useEffect(() => {
-    DeviceEventEmitter.emit(WALLET_DROPDOWN_REF, ref);
+    dropdownManagerEmitter.emit(WALLET_DROPDOWN_REF, ref);
   }, [ref, visibleRiskinessModal]);
 
   const openPortfolioRiskinessModal = () => {

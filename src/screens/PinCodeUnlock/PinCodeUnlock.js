@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { AppState, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import t from 'translations/translate';
 
 // actions
@@ -56,6 +56,7 @@ import {
 import type { InitArchanovaProps } from 'models/ArchanovaWalletAccount';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { OnValidPinCallback } from 'models/Wallet';
+import type { Route } from '@react-navigation/native';
 
 const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
@@ -71,6 +72,7 @@ type Props = {
   loginWithPrivateKey: (privateKey: string, callback: ?OnValidPinCallback) => void,
   wallet: Object,
   navigation: NavigationScreenProp<*>,
+  route: Route,
   useBiometrics: ?boolean,
   initSmartWalletSdkWithPrivateKeyOrPin: (initProps: InitArchanovaProps) => void,
   switchAccount: (accountId: string) => void,
@@ -103,11 +105,11 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   constructor(props) {
     super(props);
-    const { navigation, useBiometrics } = this.props;
-    this.errorMessage = navigation.getParam('errorMessage', '');
-    this.onLoginSuccess = navigation.getParam('onLoginSuccess', null);
-    const forcePinParam = navigation.getParam('forcePin');
-    const omitPinParam = navigation.getParam('omitPin');
+    const { useBiometrics, route } = this.props;
+    this.errorMessage = route?.params?.errorMessage || '';
+    this.onLoginSuccess = route?.params?.onLoginSuccess || null;
+    const forcePinParam = route?.params?.forcePin;
+    const omitPinParam = route?.params?.omitPin;
     this.timeout = null;
 
     if ((!useBiometrics || forcePinParam) && !omitPinParam) {
@@ -117,16 +119,16 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   componentDidMount() {
     this.appStateSubscriptions = addAppStateChangeListener(this.handleAppStateChange);
-    const { navigation, wallet, removePrivateKeyFromMemory } = this.props;
+    const { route, wallet, removePrivateKeyFromMemory } = this.props;
     if (wallet?.data?.privateKey) removePrivateKeyFromMemory();
 
     const { lastAppState } = this.state;
 
-    if (navigation.getParam('forcePin')) return;
+    if (route?.params?.forcePin) return;
 
     this.handleLocking();
 
-    if (navigation.getParam('omitPin')) {
+    if (route?.params?.omitPin) {
       getKeychainDataObject()
         .then((data) => {
           this.loginWithPrivateKey(data);
@@ -164,9 +166,9 @@ class PinCodeUnlock extends React.Component<Props, State> {
   };
 
   handleUnlockAction = async ({ pin, privateKey, defaultAction }: HandleUnlockActionProps) => {
-    const { navigation, switchAccount, initSmartWalletSdkWithPrivateKeyOrPin } = this.props;
-    const shouldInitSmartWalletSdk = navigation.getParam('initSmartWalletSdk');
-    const accountIdToSwitchTo = navigation.getParam('switchToAcc');
+    const { navigation, route, switchAccount, initSmartWalletSdkWithPrivateKeyOrPin } = this.props;
+    const shouldInitSmartWalletSdk = route?.params?.initSmartWalletSdk;
+    const accountIdToSwitchTo = route?.params?.switchToAcc;
 
     if (shouldInitSmartWalletSdk) {
       await initSmartWalletSdkWithPrivateKeyOrPin({ privateKey, pin });
@@ -336,7 +338,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
       );
     }
 
-    return null;
+    return <Container />;
   }
 }
 

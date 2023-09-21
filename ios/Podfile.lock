@@ -758,14 +758,15 @@ PODS:
     - React
   - RNKeychain (8.1.2):
     - React-Core
-  - RNLocalize (1.4.3):
+  - RNLocalize (3.0.2):
     - React-Core
   - RNOS (1.2.6):
     - React
   - RNPermissions (2.2.2):
     - React-Core
-  - RNScreens (2.18.1):
+  - RNScreens (3.25.0):
     - React-Core
+    - React-RCTImage
   - RNScrypt (1.2.1):
     - React
   - RNSentry (5.9.1):
@@ -794,10 +795,6 @@ PODS:
     - React
   - toolbar-android (0.2.1):
     - React
-  - Web3Auth (3.3.0)
-  - web3auth-react-native-sdk (2.2.0):
-    - React-Core
-    - Web3Auth (= 3.3.0)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -921,7 +918,6 @@ DEPENDENCIES:
   - SwiftyGif (from `https://github.com/kirualex/SwiftyGif`)
   - TcpSockets (from `../node_modules/react-native-tcp`)
   - "toolbar-android (from `../node_modules/@react-native-community/toolbar-android`)"
-  - "web3auth-react-native-sdk (from `../node_modules/@web3auth/react-native-sdk`)"
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -964,7 +960,6 @@ SPEC REPOS:
     - Sentry
     - SentryPrivate
     - SocketRocket
-    - Web3Auth
     - YogaKit
 
 EXTERNAL SOURCES:
@@ -1157,8 +1152,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-tcp"
   toolbar-android:
     :path: "../node_modules/@react-native-community/toolbar-android"
-  web3auth-react-native-sdk:
-    :path: "../node_modules/@web3auth/react-native-sdk"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -1282,10 +1275,10 @@ SPEC CHECKSUMS:
   RNImageCropPicker: 9d1a7eea4f8368fc479cbd2bf26459bd3c74d9aa
   RNInAppBrowser: c1a0dad2734458d79bcb6c8f4297ba8658a1da9f
   RNKeychain: a65256b6ca6ba6976132cc4124b238a5b13b3d9c
-  RNLocalize: 7c7aeda16c01db7a0918981c14875c0a53be9b79
+  RNLocalize: dbea38dcb344bf80ff18a1757b1becf11f70cae4
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNPermissions: 5df468064df661a4c8c017e2791ce90d7695eea5
-  RNScreens: f7ad633b2e0190b77b6a7aab7f914fad6f198d8d
+  RNScreens: 85d3880b52d34db7b8eeebe2f1a0e807c05e69fa
   RNScrypt: 95fdef077b482e9fdf8a761120cb69d129ef4016
   RNSentry: 0a1daa8ee81e2776f977ae8c66e67c8d85587828
   RNShare: 48cf88cadf9ca2143cdaa557c1ec7f8808040ffc
@@ -1300,8 +1293,6 @@ SPEC CHECKSUMS:
   SwiftyGif: 93a1cc87bf3a51916001cf8f3d63835fb64c819f
   TcpSockets: bd31674146c0931a064fc254a59812dfd1a73ae0
   toolbar-android: 2a73856e98b750d7e71ce4644d3f41cc98211719
-  Web3Auth: 83062b2ccc9b5882f44c02fa3464283f833c169f
-  web3auth-react-native-sdk: f3bf00cde3cc93e30895a03499dbcb26739307a2
   Yoga: 3efc43e0d48686ce2e8c60f99d4e6bd349aff981
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 

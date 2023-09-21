@@ -20,13 +20,20 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { ethers } from 'ethers';
-import { NavigationActions } from 'react-navigation';
+import { CommonActions } from '@react-navigation/native';
 import t from 'translations/translate';
 import { isEmpty } from 'lodash';
 
 // constants
 import { SET_WALLET, UPDATE_WALLET_BACKUP_STATUS } from 'constants/walletConstants';
-import { APP_FLOW, TUTORIAL_FLOW, HOME, WELCOME_BACK, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
+import {
+  APP_FLOW,
+  TUTORIAL_FLOW,
+  HOME_FLOW,
+  WELCOME_BACK,
+  ONBOARDING_FLOW,
+  SET_WALLET_PIN_CODE,
+} from 'constants/navigationConstants';
 import { SET_USER } from 'constants/userConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import {
@@ -143,21 +150,21 @@ export const setupAddressAction = () => {
     if (isOnline) {
       logBreadcrumb('onboarding', 'setupAddressAction: user is online, registering for FCM Remote Notifications');
       // we us FCM notifications so we must register for FCM, not regular native Push-Notifications
-      await firebaseMessaging.registerForRemoteNotifications().catch((error) => {
-        logBreadcrumb('onboarding', 'setupAddressAction: firebaseMessaging.registerForRemoteNotifications failed', {
-          error,
-        });
-      });
+      // await firebaseMessaging.registerForRemoteNotifications().catch((error) => {
+      //   logBreadcrumb('onboarding', 'setupAddressAction: firebaseMessaging.registerForRemoteNotifications failed', {
+      //     error,
+      //   });
+      // });
       await firebaseMessaging.requestPermission().catch(() => null);
 
-      logBreadcrumb('onboarding', 'setupAddressAction: user is online, getting fcmToken for firebase messaging');
-      const fcmToken = await firebaseMessaging.getToken().catch((error) => {
-        reportErrorLog('firebaseMessaging.getToken failed', { error });
-        return null;
-      });
+      // logBreadcrumb('onboarding', 'setupAddressAction: user is online, getting fcmToken for firebase messaging');
+      // const fcmToken = await firebaseMessaging.getToken().catch((error) => {
+      //   reportErrorLog('firebaseMessaging.getToken failed', { error });
+      //   return null;
+      // });
 
-      logBreadcrumb('onboarding', 'setupAddressAction: dispatching UPDATE_SESSION');
-      dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
+      // logBreadcrumb('onboarding', 'setupAddressAction: dispatching UPDATE_SESSION');
+      // dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
 
       logBreadcrumb('onboarding', 'setupAddressAction: dispatching logEventAction: wallet created');
       dispatch(logEventAction('wallet_created'));
@@ -563,7 +570,7 @@ export const finishOnboardingAction = (retry?: boolean) => {
     logBreadcrumb('onboarding', 'finishOnboardingAction: dispatching initialDeepLinkExecutedAction');
     dispatch(initialDeepLinkExecutedAction());
 
-    let routeName = HOME;
+    let routeName = HOME_FLOW;
 
     const enableOnboardingTutorial = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ONBOARDING_TUTORIAL);
     if (enableOnboardingTutorial) {
@@ -581,10 +588,9 @@ export const finishOnboardingAction = (retry?: boolean) => {
       'finishOnboardingAction: checking if tutorial needs to be shown and navigating accordingly',
     );
     navigate(
-      NavigationActions.navigate({
-        routeName: APP_FLOW,
-        params: {},
-        action: NavigationActions.navigate({ routeName }),
+      CommonActions.navigate({
+        name: APP_FLOW,
+        params: { screen: routeName },
       }),
     );
 
@@ -699,9 +705,7 @@ export const importWalletFromPrivateKeyAction = (privKey: string) => {
     dispatch(logEventAction('wallet_imported', { method: 'Social login' }));
     isLogV2AppEvents() && dispatch(logEventAction('v2_account_imported', { method: 'Social login' }));
     const navProps = ensName ? { username: extractUsernameFromEnsName(ensName) } : null;
-    navigate(
-      NavigationActions.navigate({ routeName: isEmptyAccounts ? SET_WALLET_PIN_CODE : WELCOME_BACK, params: navProps }),
-    );
+    navigate(CommonActions.navigate({ name: isEmptyAccounts ? SET_WALLET_PIN_CODE : WELCOME_BACK, params: navProps }));
   };
 };
 
@@ -770,7 +774,8 @@ export const importWalletFromMnemonicAction = (mnemonicInput: string) => {
     logBreadcrumb('onboarding', 'importWalletFromMnemonicAction: wallet imported from Mnemonic Action');
     dispatch(logEventAction('wallet_imported', { method: 'Words Phrase' }));
     isLogV2AppEvents() && dispatch(logEventAction('v2_account_imported', { method: 'Seed phrase' }));
-    navigate(NavigationActions.navigate({ routeName: WELCOME_BACK }));
+
+    navigate(CommonActions.navigate(ONBOARDING_FLOW, { screen: WELCOME_BACK }));
   };
 };
 
@@ -794,7 +799,7 @@ export const resetOnboardingAndNavigateAction = (routeName: string, nextRouteNam
   return (dispatch: Dispatch) => {
     logBreadcrumb('onboarding', 'resetOnboardingAndNavigateAction: dispatching resetOnboardingAction');
     dispatch(resetOnboardingAction());
-    navigate(NavigationActions.navigate({ routeName, params: { nextRouteName } }));
+    navigate(CommonActions.navigate(routeName, { nextRouteName }));
   };
 };
 

@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
@@ -36,7 +36,6 @@ import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
 import MultiChainHistoryEtherspot from './MultiChainHistoryEtherspot';
 import HistoryListArchanova from './HistoryListArchanova';
 
-
 function HistoryScreen() {
   const { t } = useTranslationWithPrefix('history');
   const navigation = useNavigation();
@@ -45,11 +44,7 @@ function HistoryScreen() {
 
   return (
     <Container>
-      <HeaderBlock
-        centerItems={[{ title: t('title') }]}
-        navigation={navigation}
-        noPaddingTop
-      />
+      <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
 
       {/* Extracted as separete HistoryList components because you cannot conditionally call hooks. */}
       {isEtherspotAccount(activeAccount) && <MultiChainHistoryEtherspot />}

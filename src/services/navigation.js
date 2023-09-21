@@ -18,50 +18,39 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { NavigationActions } from 'react-navigation';
+import { CommonActions, createNavigationContainerRef } from '@react-navigation/native';
 
 type LastActiveScreenState = {
   lastActiveScreen: ?string,
   lastActiveScreenParams?: Object,
-}
+};
 
-let _navigator;
+export const navigationRef = createNavigationContainerRef();
 
 let _state = {
   lastActiveScreen: null,
   lastActiveScreenParams: null,
 };
 
-export function setTopLevelNavigator(navigatorRef: Object) {
-  _navigator = navigatorRef;
-}
+export const NavigationActions = navigationRef;
 
 export function navigate(routeName: string | Object, params?: Object) {
-  if (!_navigator) return;
-  const route = typeof routeName === 'object'
-    ? routeName
-    : NavigationActions.navigate({
-      routeName,
-      params,
-    });
-  _navigator.dispatch(route);
+  if (!navigationRef.isReady()) return;
+
+  const route = typeof routeName === 'object' ? routeName : CommonActions.navigate({ name: routeName, params });
+  navigationRef.dispatch(route);
 }
 
 export function getNavigationState() {
   return {
     ..._state,
-    navigator: _navigator,
+    navigator: navigationRef,
   };
 }
 
 export function getNavigationPathAndParamsState() {
-  if (!_navigator) return null;
-  return _navigator._navigation.router.getPathAndParamsForState(_navigator._navigation.state);
-}
-
-export function getActionForPathAndParams(path: string, params: Object) {
-  if (!_navigator) return null;
-  return _navigator._navigation.router.getActionForPathAndParams(path, params);
+  if (!navigationRef.isReady()) return null;
+  return navigationRef.getCurrentRoute();
 }
 
 export function updateNavigationLastScreenState({

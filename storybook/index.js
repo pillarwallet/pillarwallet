@@ -24,7 +24,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { withI18next } from 'storybook-addon-i18next';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import { createAppContainer, createSwitchNavigator } from 'react-navigation';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+
+import { STORYBOOK } from 'constants/navigationConstants';
 
 import { loadStories } from './storyLoader';
 import './rn-addons';
@@ -38,6 +41,15 @@ addDecorator(
   }),
 );
 
+const rootFlowStack = createNativeStackNavigator();
+function RootNavigator() {
+  return (
+    <rootFlowStack.Navigator initialRouteName={STORYBOOK}>
+      <rootFlowStack.Screen name={STORYBOOK} component={StorybookUIRoot} />
+    </rootFlowStack.Navigator>
+  );
+}
+
 const StorybookUIRoot = () => {
   const StorybookComponent = getStorybookUI({
     asyncStorage: AsyncStorage,
@@ -45,7 +57,10 @@ const StorybookUIRoot = () => {
   return <StorybookComponent />;
 };
 
-// $FlowFixMe: react-navigation types
-const StorybookWithNav = createAppContainer(createSwitchNavigator({ Screen: StorybookUIRoot }));
+const StorybookWithNav = () => (
+  <NavigationContainer>
+    <RootNavigator />
+  </NavigationContainer>
+);
 
 export default StorybookWithNav;

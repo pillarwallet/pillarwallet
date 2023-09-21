@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { ethers } from 'ethers';
-import { NavigationActions } from 'react-navigation';
+import { CommonActions } from '@react-navigation/native';
 import t from 'translations/translate';
 
 // Components
@@ -32,7 +32,7 @@ import {
   SET_WALLET_IS_ENCRYPTING,
   TODAY_FAILED_ATTEMPTS,
 } from 'constants/walletConstants';
-import { MENU_SETTINGS } from 'constants/navigationConstants';
+import { MENU_SETTINGS, MENU_FLOW } from 'constants/navigationConstants';
 
 // Utils
 import { getSaltedPin } from 'utils/wallet';
@@ -185,8 +185,8 @@ export const checkForWalletBackupToastAction = () => {
       emoji: 'point_up',
       autoClose: true,
       onPress: () => {
-        const action = NavigationActions.navigate({
-          routeName: MENU_SETTINGS,
+        const action = CommonActions.navigate(MENU_FLOW, {
+          screen: MENU_SETTINGS,
         });
         navigate(action);
       },

@@ -17,12 +17,13 @@
 
 import * as React from 'react';
 import { Keyboard, Platform } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { useDebounce } from 'use-debounce';
-import { isEmpty, maxBy } from 'lodash';
+import { isEmpty } from 'lodash';
 import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 // Services
 import { firebaseRemoteConfig } from 'services/firebase';
@@ -68,6 +69,7 @@ import type { AssetOption } from 'models/Asset';
 import type { ExchangeOffer } from 'models/Exchange';
 import type { Chain } from 'models/Chain';
 import type { TransactionPayload } from 'models/Transaction';
+import type { Route } from '@react-navigation/native';
 
 // Selectors
 import { useExchangeGasFee, useActiveAccount, useChainRates, useFiatCurrency } from 'selectors';
@@ -97,7 +99,8 @@ interface Props {
 
 function Exchange({ fetchExchangeTitle }: Props) {
   const { t } = useTranslation();
-  const navigation = useNavigation();
+  const navigation: NativeStackNavigationProp<any> = useNavigation();
+  const route: Route = useRoute();
   const dispatch = useDispatch();
   const activeAccount = useActiveAccount();
   const fromInputRef: any = React.useRef();
@@ -107,10 +110,9 @@ function Exchange({ fetchExchangeTitle }: Props) {
 
   const isEstimaing = gasFeeList?.find((feeInfo) => feeInfo.isEstimating);
 
-  const initialChain: Chain = navigation.getParam('chain');
-  const initialFromAddress: string =
-    navigation.getParam('fromAssetAddress') || nativeAssetPerChain[initialChain]?.address;
-  const initialToAddress: string = navigation.getParam('toAssetAddress');
+  const initialChain: Chain = route?.params?.chain;
+  const initialFromAddress: string = route?.params?.fromAssetAddress || nativeAssetPerChain[initialChain]?.address;
+  const initialToAddress: string = route?.params?.toAssetAddress;
 
   const [chain, setChain] = React.useState(initialChain);
   const [fromAddress, setFromAddress] = React.useState(initialFromAddress);

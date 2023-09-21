@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { NavigationActions } from 'react-navigation';
+import { CommonActions } from '@react-navigation/native';
 import t from 'translations/translate';
 import { BigNumber } from 'bignumber.js';
 import { isEmpty } from 'lodash';
@@ -227,8 +227,8 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
       });
 
       navigate(
-        NavigationActions.navigate({
-          routeName: WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
+        CommonActions.navigate({
+          name: WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
           params: { connector: { ...proposal, namespaces }, isV2: true, chainId },
         }),
       );
@@ -267,8 +267,8 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
       });
 
       navigate(
-        NavigationActions.navigate({
-          routeName: WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
+        CommonActions.navigate({
+          name: WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
           params: { connector, chainId },
         }),
       );
@@ -733,8 +733,8 @@ export const subscribeToWalletConnectV2ConnectorEventsAction = () => {
         return;
       }
 
-      const navigateToAppAction = NavigationActions.navigate({
-        routeName: WALLETCONNECT_CALL_REQUEST_SCREEN,
+      const navigateToAppAction = CommonActions.navigate({
+        name: WALLETCONNECT_CALL_REQUEST_SCREEN,
         params: navParams,
       });
 
@@ -829,8 +829,8 @@ export const subscribeToWalletConnectConnectorEventsAction = (connector: WalletC
         return;
       }
 
-      const navigateToAppAction = NavigationActions.navigate({
-        routeName: WALLETCONNECT_CALL_REQUEST_SCREEN,
+      const navigateToAppAction = CommonActions.navigate({
+        name: WALLETCONNECT_CALL_REQUEST_SCREEN,
         params: navParams,
       });
 

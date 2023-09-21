@@ -24,7 +24,7 @@ import orderBy from 'lodash.orderby';
 import { BigNumber } from 'bignumber.js';
 import { Dimensions, Platform, Linking, PixelRatio, AppState, StatusBar } from 'react-native';
 import { providers, utils, BigNumber as EthersBigNumber } from 'ethers';
-import { CardStyleInterpolators } from 'react-navigation-stack';
+import { CardStyleInterpolators } from '@react-navigation/stack';
 import t from 'translations/translate';
 import { getEnv } from 'configs/envConfig';
 
@@ -357,11 +357,10 @@ export const getiOSNavbarHeight = (): number => {
 };
 
 export const modalTransition = {
-  mode: 'modal',
-  defaultNavigationOptions: {
-    headerShown: false,
-    cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
-  },
+  // eslint-disable-next-line i18next/no-literal-string
+  presentation: 'containedModal',
+  headerShown: false,
+  cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
 };
 
 export const handleUrlPress = (url: string) => {

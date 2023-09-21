@@ -22,7 +22,7 @@ import React, { useEffect, useRef } from 'react';
 import type { Node as ReactNode } from 'react';
 import { Dimensions, Animated } from 'react-native';
 import styled from 'styled-components/native';
-import { SafeAreaView } from 'react-navigation';
+import SafeAreaView from 'react-native-safe-area-view';
 
 import { UIColors, spacing } from 'utils/variables';
 
@@ -62,9 +62,7 @@ const FloatingBox = ({ children, isVisible = true }: Props) => {
 
   return (
     <Wrapper forceInset={{ bottom: 'always', top: 'never' }}>
-      <Box style={{ transform: [{ translateY: offsetVar }] }}>
-        {children}
-      </Box>
+      <Box style={{ transform: [{ translateY: offsetVar }] }}>{children}</Box>
     </Wrapper>
   );
 };

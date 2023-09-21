@@ -31,7 +31,6 @@ import NetInfo, { NetInfoState, NetInfoSubscription } from '@react-native-commun
 import DeviceInfo from 'react-native-device-info';
 import { WithTranslation, withTranslation } from 'react-i18next';
 import t from 'translations/translate';
-import { NavigationActions } from 'react-navigation';
 import remoteConfig from '@react-native-firebase/remote-config';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -77,7 +76,6 @@ import { log } from 'utils/logger';
 import { logBreadcrumb, reportOrWarn, reportLog } from 'utils/common';
 
 // services
-import { setTopLevelNavigator } from 'services/navigation';
 import { firebaseRemoteConfig } from 'services/firebase';
 import { logScreenViewAction } from 'actions/analyticsActions';
 
@@ -88,7 +86,7 @@ import type { I18n } from 'models/Translations';
 
 // other
 import RootNavigation from 'navigation/rootNavigation';
-import Storybook from 'screens/Storybook';
+// import Storybook from 'screens/Storybook';
 import { store, persistor } from 'src/configureStore';
 
 // redux
@@ -158,7 +156,7 @@ class App extends React.Component<Props, any> {
       this.removeNetInfoEventListener();
       delete this.removeNetInfoEventListener;
     }
-    Linking.removeAllListeners('url', this.handleDeepLinkEvent);
+    Linking.removeAllListeners('url');
   }
 
   async componentDidMount() {
@@ -342,17 +340,6 @@ class App extends React.Component<Props, any> {
     }
   };
 
-  handleNavigationStateChange = (prevState, nextState, action) => {
-    if (action.type === NavigationActions.NAVIGATE) {
-      Modal.closeAll();
-    }
-
-    const nextRouteName = getActiveRouteName(nextState);
-    const previousRouteName = getActiveRouteName(prevState);
-    if (!!nextRouteName && nextRouteName !== previousRouteName) {
-      this.props.logScreenView(nextRouteName);
-    }
-  };
 
   render() {
     const {
@@ -377,15 +364,8 @@ class App extends React.Component<Props, any> {
           <React.Fragment>
             <Root>
               <RootNavigation
-                ref={(node) => {
-                  if (!node) {
-                    return;
-                  }
-                  setTopLevelNavigator(node);
-                }}
                 theme={current === LIGHT_THEME ? 'light' : 'dark'} // eslint-disable-line i18next/no-literal-string
                 language={i18next.language}
-                onNavigationStateChange={this.handleNavigationStateChange}
               />
               {!!getEnv().SHOW_THEME_TOGGLE && (
                 <Button
@@ -464,15 +444,15 @@ const mapDispatchToProps = (dispatch: Dispatch): Partial<Props> => ({
 // @ts-ignore
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(withTranslation()(App));
 
-const AppRoot = () => (
-  <SafeAreaProvider>
-    <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
-        {/* {getEnv().SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />} */}
-        <AppWithNavigationState />
-      </QueryClientProvider>
-    </Provider>
-  </SafeAreaProvider>
-);
+const AppRoot = () =>  (
+      <SafeAreaProvider>
+        <Provider store={store}>
+            <QueryClientProvider client={queryClient}>
+              {/* {getEnv().SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />} */}
+              <AppWithNavigationState />
+            </QueryClientProvider>
+        </Provider>
+      </SafeAreaProvider>
+  );
 
 export default AppRoot;

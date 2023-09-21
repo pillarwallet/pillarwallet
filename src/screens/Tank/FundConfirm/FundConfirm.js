@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { connect } from 'react-redux';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
@@ -40,6 +40,7 @@ import { getGasToken, getTxFeeInWei } from 'utils/transactions';
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { TopUpFee } from 'models/PaymentNetwork';
+import type { Route } from '@react-navigation/native';
 
 // selectors
 import { useGasTokenSelector } from 'selectors/archanova';
@@ -47,9 +48,9 @@ import { useGasTokenSelector } from 'selectors/archanova';
 // other
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
-
 type Props = {
   navigation: NavigationScreenProp<*>,
+  route: Route,
   session: Object,
   topUpFee: TopUpFee,
   estimateTopUpVirtualAccount: (amount: string) => void,
@@ -60,7 +61,6 @@ type Props = {
 type State = {
   topUpButtonSubmitted: boolean,
 };
-
 
 class FundConfirm extends React.Component<Props, State> {
   state = {
@@ -78,17 +78,21 @@ class FundConfirm extends React.Component<Props, State> {
   }
 
   callEstimateMethod() {
-    const { navigation, estimateTopUpVirtualAccount } = this.props;
-    const amount = navigation.getParam('amount', '0');
+    const { route, estimateTopUpVirtualAccount } = this.props;
+    const amount = route?.params?.amount || '0';
     estimateTopUpVirtualAccount(amount);
   }
 
   handleFormSubmit = async () => {
     const {
-      navigation, topUpVirtualAccount, useGasToken, topUpFee: { feeInfo },
+      navigation,
+      route,
+      topUpVirtualAccount,
+      useGasToken,
+      topUpFee: { feeInfo },
     } = this.props;
     this.setState({ topUpButtonSubmitted: true });
-    const amount = navigation.getParam('amount', '0');
+    const amount = route?.params?.amount || '0';
     const payForGasWithToken = !!getGasToken(useGasToken, feeInfo);
     await topUpVirtualAccount(amount, payForGasWithToken);
     this.setState({ topUpButtonSubmitted: false }, () => navigation.navigate(ASSETS));
@@ -96,10 +100,14 @@ class FundConfirm extends React.Component<Props, State> {
 
   render() {
     const {
-      session, navigation, topUpFee, useGasToken, topUpFee: { feeInfo },
+      session,
+      route,
+      topUpFee,
+      useGasToken,
+      topUpFee: { feeInfo },
     } = this.props;
     const { topUpButtonSubmitted } = this.state;
-    const amount = navigation.getParam('amount', '0');
+    const amount = route?.params?.amount || '0';
     const submitButtonTitle = !topUpButtonSubmitted ? t('ppnContent.button.fundTank') : t('label.processing');
 
     const gasToken = getGasToken(useGasToken, feeInfo);

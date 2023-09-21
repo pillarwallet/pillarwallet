@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Constants
@@ -43,12 +43,7 @@ function ImportFlowSetting({ wallet }: Props) {
 
   const goToImportWallet = () => navigation.navigate(IMPORT_WALLET, { wallet });
 
-  return (
-    <SettingsItem
-      title={t('importWallet')}
-      onPress={goToImportWallet}
-    />
-  );
+  return <SettingsItem title={t('importWallet')} onPress={goToImportWallet} />;
 }
 
 export default ImportFlowSetting;

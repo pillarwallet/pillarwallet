@@ -20,19 +20,21 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useTranslationWithPrefix } from 'translations/translate';
 import styled from 'styled-components/native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { useDebounce } from 'use-debounce';
 import { BigNumber, ethers } from 'ethers';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 
 // Constants
 import { CHAIN } from 'constants/chainConstantsTs';
 import { WalletType, defaultPlrToken, stkPlrToken } from 'constants/plrStakingConstants';
 import { TRANSACTION_TYPE } from 'constants/transactionsConstants';
-import { HOME } from 'constants/navigationConstants';
+import { HOME_FLOW } from 'constants/navigationConstants';
 
 // Types
 import type { AssetOption } from 'models/Asset';
 import type { TransactionPayload } from 'models/Transaction';
+import type { Route } from '@react-navigation/native';
 
 // Selectors
 import { useAccounts, useActiveAccount } from 'selectors';
@@ -99,14 +101,15 @@ import { ISendData, IStakingSteps } from './RouteCard';
 const BALANCE_CHECK_INTERVAL = 5000;
 
 const PlrStakingValidator = () => {
-  const navigation = useNavigation();
+  const navigation: NavigationScreenProp<any> = useNavigation();
+  const route: Route = useRoute();
   const { t, tRoot } = useTranslationWithPrefix('plrStaking.validator');
   const { t: tMain } = useTranslationWithPrefix('plrStaking');
 
-  const token = navigation.getParam('token');
-  const chain = navigation.getParam('chain');
-  const balancesWithoutPlr = navigation.getParam('balancesWithoutPlr');
-  const selectedAccount = navigation.getParam('selectedAccount');
+  const token = route?.params?.token;
+  const chain = route?.params?.chain;
+  const balancesWithoutPlr = route?.params?.balancesWithoutPlr;
+  const selectedAccount = route?.params?.selectedAccount;
 
   const accounts = useAccounts();
   const activeAccount = useActiveAccount();
@@ -519,7 +522,7 @@ const PlrStakingValidator = () => {
   const onDone = async () => {
     await getStakingContractInfo();
 
-    navigation.navigate(HOME);
+    navigation.navigate(HOME_FLOW);
   };
 
   const formButtonText = () => {

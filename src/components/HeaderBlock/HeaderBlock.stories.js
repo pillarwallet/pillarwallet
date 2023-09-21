@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 import { storiesOf } from '@storybook/react-native';
 import { getColorByTheme } from 'utils/themes';
 
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 import HeaderBlock from './HeaderBlock';
@@ -38,11 +38,7 @@ const Background = styled.View`
 
 // so floating transparent header would be more visible
 const BackgroundDecorator = (story) => {
-  return (
-    <Background>
-      {story()}
-    </Background>
-  );
+  return <Background>{story()}</Background>;
 };
 
 storiesOf('HeaderBlock', module)
@@ -59,21 +55,25 @@ storiesOf('HeaderBlock', module)
     <HeaderBlock
       navigation={navigationMock}
       centerItems={[{ title: 'Title' }]}
-      leftItems={[{
-        icon: 'hamburger',
-        onPress: () => {},
-        iconProps: { secondary: true, style: { marginLeft: -4 } },
-      }]}
+      leftItems={[
+        {
+          icon: 'hamburger',
+          onPress: () => {},
+          iconProps: { secondary: true, style: { marginLeft: -4 } },
+        },
+      ]}
     />
   ))
   .add('with close icon on the left', () => (
     <HeaderBlock
       navigation={navigationMock}
       centerItems={[{ title: 'Title' }]}
-      leftItems={[{
-        close: true,
-        onPress: () => {},
-      }]}
+      leftItems={[
+        {
+          close: true,
+          onPress: () => {},
+        },
+      ]}
     />
   ))
   .add('with close icon on the right', () => (
@@ -81,10 +81,12 @@ storiesOf('HeaderBlock', module)
       navigation={navigationMock}
       noBack
       centerItems={[{ title: 'Title' }]}
-      rightItems={[{
-        close: true,
-        onPress: () => {},
-      }]}
+      rightItems={[
+        {
+          close: true,
+          onPress: () => {},
+        },
+      ]}
     />
   ))
   .add('edge cases', () => (

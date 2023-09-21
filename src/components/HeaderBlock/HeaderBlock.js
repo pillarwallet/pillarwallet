@@ -23,7 +23,7 @@ import { StatusBar, View, TouchableOpacity, Animated } from 'react-native';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import styled, { ThemeProvider, withTheme } from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import { BaseText } from 'components/legacy/Typography';
 import IconButton from 'components/IconButton';
 import SvgIcon from 'components/core/Icon';
@@ -209,7 +209,7 @@ const RIGHT = 'RIGHT';
 
 const getCloseAction = (props, navigation) => {
   if (props.onClose) return () => props.onClose?.();
-  if (props.dismiss) return navigation ? () => navigation.dismiss() : noop;
+  if (props.dismiss) return navigation ? () => navigation.goBack() : noop;
   return navigation ? () => navigation.goBack(null) : noop;
 };
 

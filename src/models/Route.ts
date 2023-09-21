@@ -18,29 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
-import { useNavigation, useRoute } from '@react-navigation/native';
-
-// Components
-import Modal from 'components/Modal';
-
-// Local
-import WalletConnectRequestModal from './Requests/WalletConnectConnectorRequestModal';
-
-function WalletConnectConnectorRequestScreen() {
-  const navigation = useNavigation();
-  const route = useRoute();
-  const connector = route?.params?.connector;
-  const chainId = route?.params?.chainId;
-  const isV2WC = route?.params?.isV2;
-
-  React.useLayoutEffect(() => {
-    navigation.goBack(null);
-    if (!connector) return;
-    Modal.open(() => <WalletConnectRequestModal isV2WC={isV2WC} connector={connector} chainId={chainId} />);
-  }, [connector, navigation, chainId, isV2WC]);
-
-  return null;
-}
-
-export default WalletConnectConnectorRequestScreen;
+export type Route = {
+  key: string;
+  name: string;
+  path?: string;
+  params?: any;
+};

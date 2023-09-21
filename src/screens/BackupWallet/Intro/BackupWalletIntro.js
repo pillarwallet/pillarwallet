@@ -20,7 +20,7 @@
 
 import React, { useState } from 'react';
 import { Image } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
@@ -50,7 +50,8 @@ type Props = {
 function BackupWalletIntro({ resetIncorrectPassword }: Props) {
   const { t, tRoot } = useTranslationWithPrefix('backupWallet.intro');
   const navigation = useNavigation();
-  const wallet = navigation.getParam('wallet', null);
+  const route = useRoute();
+  const wallet = route?.params?.wallet ?? null;
 
   const [pinIsValid, setPinIsValid] = useState(!!wallet);
   const [unlockedwallet, setUnlockedWallet] = React.useState<?WalletObject>(wallet);
@@ -69,12 +70,7 @@ function BackupWalletIntro({ resetIncorrectPassword }: Props) {
 
   if (!pinIsValid || !mnemonicPhrase) {
     return (
-      <CheckAuth
-        revealMnemonic
-        enforcePin
-        onPinValid={onPinValid}
-        headerProps={{ onClose: handleScreenDismissal }}
-      />
+      <CheckAuth revealMnemonic enforcePin onPinValid={onPinValid} headerProps={{ onClose: handleScreenDismissal }} />
     );
   }
 
@@ -83,7 +79,7 @@ function BackupWalletIntro({ resetIncorrectPassword }: Props) {
   };
 
   const close = () => {
-    navigation.dismiss();
+    navigation.goBack();
   };
 
   return (

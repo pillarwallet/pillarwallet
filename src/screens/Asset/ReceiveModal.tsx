@@ -20,7 +20,7 @@
 
 import React, { FC, useState } from 'react';
 import Clipboard from '@react-native-community/clipboard';
-import { SafeAreaView } from 'react-navigation';
+import SafeAreaView from 'react-native-safe-area-view';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 

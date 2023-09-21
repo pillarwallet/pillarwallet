@@ -20,7 +20,7 @@
 
 import React, { FC, useEffect, useState, useCallback } from 'react';
 import { View } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 import { useDispatch } from 'react-redux';
@@ -32,6 +32,7 @@ import { CHAIN } from 'constants/chainConstants';
 // Types
 import type { Theme } from 'models/Theme';
 import type { Chain } from 'models/Chain';
+import type { Route } from '@react-navigation/native';
 
 // Utils
 import { images } from 'utils/images';
@@ -66,13 +67,14 @@ interface IReceiveTokensWarning {
 
 const ReceiveTokensWarning: FC<IReceiveTokensWarning> = ({ theme }) => {
   const navigation = useNavigation();
+  const route: Route = useRoute();
   const dispatch = useDispatch();
   const { t, tRoot } = useTranslationWithPrefix('home.receiveTokenWarning');
   const { pillarIcon } = images(theme);
 
   const orderedChains = [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.OPTIMISM, CHAIN.ARBITRUM, CHAIN.ETHEREUM];
 
-  const onContinue: () => void = navigation.getParam('onContinue');
+  const onContinue: () => void = route?.params?.onContinue;
 
   const [viewed, setViewed] = useState(false);
 
@@ -104,7 +106,7 @@ const ReceiveTokensWarning: FC<IReceiveTokensWarning> = ({ theme }) => {
 
   const onSubmit = () => {
     dispatch(setViewedReceiveTokensWarning(viewed));
-    navigation?.goBack(null);
+    navigation?.goBack();
     onContinue?.();
   };
 

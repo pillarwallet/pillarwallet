@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { StyleSheet } from 'react-native';
 
 // Utils
@@ -33,10 +33,14 @@ import BigNumberInput from 'components/inputs/BigNumberInput';
 // Services
 import etherspotService from 'services/etherspot';
 
+// Type
+import type { Route } from '@react-navigation/native';
+
 function NIViewService() {
   const navigation = useNavigation();
-  const action = navigation.getParam('action');
-  const contractData = navigation.getParam('contractData');
+  const route: Route = useRoute();
+  const action = route?.params?.action;
+  const contractData = route?.params?.contractData;
   const title = action?.['action-name'][0]?.text;
   const actionName = action?.['action-contract-call'];
   const chain = chainFromChainId[contractData?.chain_id];

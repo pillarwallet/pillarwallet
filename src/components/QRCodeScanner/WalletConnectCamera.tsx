@@ -173,7 +173,7 @@ export default function (props: Props) {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.basic070 }]}>
       {isAuthorized === false && <NoPermissions onClose={close} />}
 
       {visibleCamera && isAuthorized && (
@@ -205,6 +205,7 @@ export default function (props: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    
   },
   bottomContent: {
     alignSelf: 'center',
