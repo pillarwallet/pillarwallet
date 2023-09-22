@@ -35,6 +35,7 @@ i18n
   .use(CapitalizationPostProcessor)
   .init(
     {
+      compatibilityJSON: 'v3',
       interpolation: { escapeValue: false },
       ns: localeConfig.namespaces,
       defaultNS: localeConfig.defaultNameSpace,
