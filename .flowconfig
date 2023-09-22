@@ -13,7 +13,8 @@
 <PROJECT_ROOT>/node_modules/jest-resolve/node_modules/resolve/test/resolver/malformed_package_json/package.json
 <PROJECT_ROOT>/node_modules/@mdx-js/mdx/node_modules/resolve/test/resolver/malformed_package_json/package.json
 <PROJECT_ROOT>/android/app/build/intermediates/variant_model/debug/variant_model.json
-
+<PROJECT_ROOT>/node_modules/@storybook/core/node_modules/resolve/test/resolver/malformed_package_json/package.json
+<PROJECT_ROOT>/node_modules/rechoir/node_modules/resolve/test/resolver/malformed_package_json/package.json
 ; We fork some components by platform
 .*/*[.]android.js
 
