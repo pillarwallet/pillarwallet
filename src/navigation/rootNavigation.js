@@ -23,6 +23,7 @@ import { Platform } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { CardStyleInterpolators } from '@react-navigation/stack';
+import { useFlipper, useReduxDevToolsExtension } from '@react-navigation/devtools';
 
 // Screens
 import WelcomeBackScreen from 'screens/WelcomeBack';
@@ -163,19 +164,19 @@ function RootNavigator({ onNavigationStateChange }) {
 }
 
 // to pass in language prop so stacks would rerender on language change
-class WrappedRootSwitch extends React.Component<Props> {
-  static router = RootNavigator.router;
+const WrappedRootSwitch = (props: Props) => {
+  const { language } = props;
 
-  render() {
-    const { language } = this.props;
-    return (
-      <NavigationContainer ref={navigationRef}>
-        <ModalProvider />
-        {/* $FlowFixMe: flow update to 0.122 */}
-        <RootNavigator screenProps={{ language }} {...this.props} />
-      </NavigationContainer>
-    );
-  }
-}
+  useFlipper(navigationRef);
+  useReduxDevToolsExtension(navigationRef);
+
+  return (
+    <NavigationContainer ref={navigationRef}>
+      <ModalProvider />
+      {/* $FlowFixMe: flow update to 0.122 */}
+      <RootNavigator screenProps={{ language }} {...this.props} />
+    </NavigationContainer>
+  );
+};
 
 export default WrappedRootSwitch;

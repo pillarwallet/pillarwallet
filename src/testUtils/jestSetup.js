@@ -141,6 +141,10 @@ jest.setMock('react-native-modal', () => 'react-native-modal');
 
 jest.setMock('axios-mock-adapter');
 
+jest.setMock('react-native-encrypted-storage', {});
+
+jest.setMock('@toruslabs/react-native-web-browser', {});
+
 jest.setMock('react-native-scrypt', () => Promise.resolve('xxxx'));
 
 jest.setMock('react-native-permissions', {
