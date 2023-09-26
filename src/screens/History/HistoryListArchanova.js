@@ -20,7 +20,7 @@
 
 import React, { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // Components
@@ -44,7 +44,6 @@ import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { mapTransactionsHistory } from 'utils/feedData';
 import { getAccountId } from 'utils/accounts';
 import { parseTimestamp } from 'utils/common';
-
 
 function HistoryListArchanova() {
   const navigation = useNavigation();
@@ -94,13 +93,7 @@ function useHistoryFeedItems(): any[] {
 
   const transactions = useRootSelector(archanovaAccountEthereumHistorySelector);
   const mappedTransactions = useMemo(
-    () => mapTransactionsHistory(
-      transactions,
-      accounts,
-      TRANSACTION_EVENT,
-      true,
-      true,
-    ),
+    () => mapTransactionsHistory(transactions, accounts, TRANSACTION_EVENT, true, true),
     [transactions, accounts],
   );
 
@@ -109,17 +102,8 @@ function useHistoryFeedItems(): any[] {
   const mappedCollectiblesTransactions = useMemo(() => {
     const collectiblesTransactions = accountCollectiblesHistory[CHAIN.ETHEREUM] ?? [];
 
-    return mapTransactionsHistory(
-      collectiblesTransactions,
-      accounts,
-      COLLECTIBLE_TRANSACTION,
-      true,
-    );
+    return mapTransactionsHistory(collectiblesTransactions, accounts, COLLECTIBLE_TRANSACTION, true);
   }, [accountCollectiblesHistory, accounts]);
 
-  return [
-    ...mappedTransactions,
-    ...mappedCollectiblesTransactions,
-    ...mappedArchanovaEthereumWalletEvents,
-  ];
+  return [...mappedTransactions, ...mappedCollectiblesTransactions, ...mappedArchanovaEthereumWalletEvents];
 }

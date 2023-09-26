@@ -20,7 +20,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import debounce from 'lodash.debounce';
 import t from 'translations/translate';
 
@@ -185,11 +185,10 @@ const UsernameFailed = ({
 };
 
 const mapStateToProps = ({
-  onboarding: {
-    user: onboardingUser,
-    errorMessage,
+  onboarding: { user: onboardingUser, errorMessage },
+  user: {
+    data: { username: savedUsername },
   },
-  user: { data: { username: savedUsername } },
 }: RootReducerState): $Shape<Props> => ({
   onboardingUser,
   savedUsername,

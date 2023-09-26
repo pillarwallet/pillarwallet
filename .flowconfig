@@ -8,6 +8,13 @@
 <PROJECT_ROOT>/node_modules/.findup-2XwtwOIH/test/fixture/f/e/d/c/config.json
 <PROJECT_ROOT>/node_modules/.react-native-vector-icons-pKlfVeht/.*
 <PROJECT_ROOT>/node_modules/.react-native-vector-icons-pKlfVeht/MaterialCommunityIcons.js.flow
+<PROJECT_ROOT>/node_modules/remark-mdx/node_modules/resolve/test/resolver/malformed_package_json/package.json
+<PROJECT_ROOT>/node_modules/babel-plugin-macros/node_modules/resolve/test/resolver/malformed_package_json/package.json
+<PROJECT_ROOT>/node_modules/jest-resolve/node_modules/resolve/test/resolver/malformed_package_json/package.json
+<PROJECT_ROOT>/node_modules/@mdx-js/mdx/node_modules/resolve/test/resolver/malformed_package_json/package.json
+<PROJECT_ROOT>/android/app/build/intermediates/variant_model/debug/variant_model.json
+<PROJECT_ROOT>/node_modules/@storybook/core/node_modules/resolve/test/resolver/malformed_package_json/package.json
+<PROJECT_ROOT>/node_modules/rechoir/node_modules/resolve/test/resolver/malformed_package_json/package.json
 ; We fork some components by platform
 .*/*[.]android.js
 
@@ -48,7 +55,16 @@ node_modules/warning/.*
 <PROJECT_ROOT>/node_modules/redux-persist/.*
 <PROJECT_ROOT>/node_modules/react-native-inappbrowser-reborn/.*
 <PROJECT_ROOT>/node_modules/react-native-linear-gradient/.*
-<PROJECT_ROOT>/node_modules/react-native-linear-gradient/.*
+<PROJECT_ROOT>/node_modules/react-native/Libraries/.*
+<PROJECT_ROOT>/node_modules/metro-config/.*
+<PROJECT_ROOT>/node_modules/metro/.*
+<PROJECT_ROOT>/node_modules/metro-resolver/.*
+<PROJECT_ROOT>/node_modules/metro-file-map/.*
+<PROJECT_ROOT>/node_modules/metro-react-native-babel-transformer/.*
+<PROJECT_ROOT>/node_modules/hermes-parser/.*
+<PROJECT_ROOT>/node_modules/hermes-estree/.*
+<PROJECT_ROOT>/node_modules/@react-native/.*
+<PROJECT_ROOT>/node_modules/@react-native-community/cli-plugin-metro/node_modules/metro-react-native-babel-transformer/.*
 ; ;;; custom untyped end ;;;
 
 [include]

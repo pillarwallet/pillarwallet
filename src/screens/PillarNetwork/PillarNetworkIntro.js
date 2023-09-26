@@ -20,7 +20,7 @@
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { FlatList, Platform } from 'react-native';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 import t from 'translations/translate';
 
@@ -61,10 +61,10 @@ type Props = {
   setPLRTankAsInit: Function,
   setActiveBlockchainNetwork: Function,
   theme: Theme,
-}
+};
 type State = {
   processingCreate: boolean,
-}
+};
 
 const CustomWrapper = styled.View`
   flex: 1;
@@ -152,11 +152,10 @@ class PillarNetworkIntro extends React.Component<Props, State> {
     await delay(500);
     ensureArchanovaAccountConnected()
       .then(() => {
-        this.setState({ processingCreate: false },
-          () => {
-            navigation.navigate(ASSETS);
-            setPLRTankAsInit();
-          });
+        this.setState({ processingCreate: false }, () => {
+          navigation.navigate(ASSETS);
+          setPLRTankAsInit();
+        });
       })
       .catch(() => null);
   };
@@ -184,7 +183,6 @@ class PillarNetworkIntro extends React.Component<Props, State> {
       },
     ];
 
-
     return (
       <ContainerWithHeader
         headerProps={{
@@ -197,20 +195,14 @@ class PillarNetworkIntro extends React.Component<Props, State> {
         <ScrollWrapper contentContainerStyle={{ paddingTop: 80 }}>
           <CustomWrapper>
             <FeatureIcon source={PPNIcon} />
-            <Title>
-              {t('pillarNetwork')}
-            </Title>
-            <BodyText>
-              {t('ppnContent.paragraph.introFirstParagraph')}
-            </BodyText>
+            <Title>{t('pillarNetwork')}</Title>
+            <BodyText>{t('ppnContent.paragraph.introFirstParagraph')}</BodyText>
             <LabelBadge
               label={t('label.comingSoon')}
               containerStyle={{ backgroundColor: colors.orange, marginTop: 57, paddingVertical: 2 }}
               labelStyle={{ color: colors.PPNText, fontSize: responsiveSize(11) }}
             />
-            <BodyText style={{ marginTop: 10 }}>
-              {t('ppnContent.paragraph.introSecondParagraph')}
-            </BodyText>
+            <BodyText style={{ marginTop: 10 }}>{t('ppnContent.paragraph.introSecondParagraph')}</BodyText>
             <FlatList
               data={features}
               keyExtractor={(item) => item.key}

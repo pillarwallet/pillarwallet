@@ -70,7 +70,7 @@ export const fetchAppsHoldingsAction = () => {
     dispatch(setIsFetchingHoldingsAction(true));
 
     const getChainInvestments = chains.map((chain) =>
-      etherspotService.getAccountInvestments(chain, etherspotAccount.id),
+      etherspotService.getAccountInvestments(chain, etherspotAccount?.id),
     );
 
     const accountsInvestments = await Promise.all(getChainInvestments);

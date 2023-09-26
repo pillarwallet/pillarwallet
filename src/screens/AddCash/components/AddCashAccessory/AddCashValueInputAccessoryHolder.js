@@ -31,6 +31,8 @@ type State = {
 export const INPUT_ACCESSORY_NATIVE_ID = 'INPUT_ACCESSORY_NATIVE_ID_VALUES';
 
 class AddCashValueInputAccessoryHolder extends React.Component<{}, State> {
+  showSubscription: any;
+  hideSubscription: any;
   static instances: Object[] = [];
 
   static addAccessory = (onSelectValueCallback: (string) => any) => {
@@ -55,13 +57,13 @@ class AddCashValueInputAccessoryHolder extends React.Component<{}, State> {
   };
 
   componentDidMount() {
-    Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow);
-    Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide);
+    this.showSubscription = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow);
+    this.hideSubscription = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide);
   }
 
   componentWillUnmount() {
-    Keyboard.removeListener('keyboardDidShow', this.handleKeyboardDidShow);
-    Keyboard.removeListener('keyboardDidHide', this.handleKeyboardDidHide);
+    if (this.showSubscription) this.showSubscription.remove();
+    if (this.hideSubscription) this.hideSubscription.remove();
     AddCashValueInputAccessoryHolder.instances.splice(AddCashValueInputAccessoryHolder.instances.length - 1);
   }
 

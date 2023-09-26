@@ -35,6 +35,7 @@ i18n
   .use(CapitalizationPostProcessor)
   .init(
     {
+      compatibilityJSON: 'v3',
       interpolation: { escapeValue: false },
       ns: localeConfig.namespaces,
       defaultNS: localeConfig.defaultNameSpace,
@@ -43,7 +44,6 @@ i18n
       supportedLngs: Object.keys(localeConfig.supportedLanguages),
       debug: !!__DEV__,
       react: {
-        wait: true,
         nsMode: 'default',
         useSuspense: true,
       },

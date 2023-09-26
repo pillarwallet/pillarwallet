@@ -3,8 +3,8 @@
 exports[`Header should render Header correctly 1`] = `
 <View
   style={
-    Array [
-      Object {
+    [
+      {
         "borderBottomWidth": 0,
         "paddingBottom": 0,
         "paddingLeft": 16,
@@ -17,8 +17,8 @@ exports[`Header should render Header correctly 1`] = `
 >
   <View
     style={
-      Array [
-        Object {
+      [
+        {
           "alignItems": "flex-end",
           "flexDirection": "row",
           "height": 50,
@@ -33,13 +33,13 @@ exports[`Header should render Header correctly 1`] = `
       flex={[Function]}
       showTitleLeft={false}
       style={
-        Array [
-          Object {
+        [
+          {
             "alignItems": "flex-start",
             "alignSelf": "center",
             "flex": 1,
           },
-          Object {
+          {
             "alignItems": "flex-end",
             "flexBasis": 0,
             "flexGrow": 1,
@@ -50,7 +50,25 @@ exports[`Header should render Header correctly 1`] = `
       }
     >
       <View
+        accessibilityState={
+          {
+            "busy": undefined,
+            "checked": undefined,
+            "disabled": undefined,
+            "expanded": undefined,
+            "selected": undefined,
+          }
+        }
+        accessibilityValue={
+          {
+            "max": undefined,
+            "min": undefined,
+            "now": undefined,
+            "text": undefined,
+          }
+        }
         accessible={true}
+        collapsable={false}
         focusable={true}
         onClick={[Function]}
         onResponderGrant={[Function]}
@@ -60,7 +78,7 @@ exports[`Header should render Header correctly 1`] = `
         onResponderTerminationRequest={[Function]}
         onStartShouldSetResponder={[Function]}
         style={
-          Object {
+          {
             "alignItems": "flex-start",
             "alignSelf": "flex-start",
             "height": 44,
@@ -79,8 +97,8 @@ exports[`Header should render Header correctly 1`] = `
         <View
           name="back"
           style={
-            Array [
-              Object {
+            [
+              {
                 "color": "#0A1427",
                 "fontSize": 24,
                 "marginBottom": undefined,
@@ -89,7 +107,7 @@ exports[`Header should render Header correctly 1`] = `
                 "marginTop": undefined,
                 "paddingTop": 0,
               },
-              Object {},
+              {},
             ]
           }
         />
@@ -99,13 +117,13 @@ exports[`Header should render Header correctly 1`] = `
       flex={[Function]}
       onClose={[Function]}
       style={
-        Array [
-          Object {
+        [
+          {
             "alignItems": "flex-end",
             "alignSelf": "center",
             "flex": 1,
           },
-          Object {
+          {
             "alignItems": "flex-end",
             "flexBasis": 0,
             "flexDirection": "row",

@@ -21,7 +21,7 @@
 */
 import React, { FC } from 'react';
 import styled, { withTheme } from 'styled-components/native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 
 // Components
 import Icon from 'components/core/Icon';

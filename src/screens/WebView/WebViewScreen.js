@@ -19,18 +19,22 @@
 */
 
 import React from 'react';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
+
+// Type
+import type { Route } from '@react-navigation/native';
 
 // components
 import WebView from 'components/WebView';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  route: Route,
 };
 
-const WebViewScreen = ({ navigation }: Props) => {
-  const title = navigation.getParam('title');
-  const url = navigation.getParam('url');
+const WebViewScreen = ({ navigation, route }: Props) => {
+  const title = route?.params?.title;
+  const url = route?.params?.url;
   return <WebView title={title} url={url} navigation={navigation} />;
 };
 

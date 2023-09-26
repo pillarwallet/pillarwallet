@@ -21,7 +21,7 @@ import React, { useState } from 'react';
 import { Dimensions } from 'react-native';
 import { connect, useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import t from 'translations/translate';
 
 // Actions
@@ -37,7 +37,7 @@ import IconWithBackgroundGif from 'components/Gif/IconWithBackgroundGif';
 import { Spacing } from 'components/legacy/Layout';
 
 // Constants
-import { HOME, ENALBE_BIOMETRICS_SCREEN } from 'constants/navigationConstants';
+import { APP_FLOW, ENALBE_BIOMETRICS_SCREEN } from 'constants/navigationConstants';
 import { SET_FETCHING } from 'constants/onboardingConstants';
 
 // Selectors
@@ -62,7 +62,7 @@ type Props = {
 
 const { height } = Dimensions.get('window');
 
-const PinCodeConfirmation = ({ setOnboardingPinCode, navigation }) => {
+const PinCodeConfirmation = ({ setOnboardingPinCode, navigation, route }) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const dispatch = useDispatch();
   const colors = useThemeColors();
@@ -70,7 +70,7 @@ const PinCodeConfirmation = ({ setOnboardingPinCode, navigation }) => {
   const wallet = useRootSelector((root) => root.wallet.data);
   const maxPinCodeLength = useRootSelector(maxPinCodeLengthSelector);
 
-  const previousPinCode = navigation.getParam('pinCode');
+  const previousPinCode = route?.params?.pinCode;
 
   const handlePinSubmit = (pinCode: string) => {
     const validationError = validatePinWithConfirmation(pinCode, previousPinCode, maxPinCodeLength);
@@ -92,7 +92,7 @@ const PinCodeConfirmation = ({ setOnboardingPinCode, navigation }) => {
           dispatch({ type: SET_FETCHING, payload: true });
           dispatch(walletSetupAction(false));
         }
-        navigation.navigate(HOME);
+        navigation.navigate(APP_FLOW);
       }
     });
   };

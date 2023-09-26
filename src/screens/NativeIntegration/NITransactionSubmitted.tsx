@@ -20,8 +20,9 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
-import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import t from 'translations/translate';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 
 // Components
 import { Container, Wrapper } from 'components/legacy/Layout';
@@ -46,11 +47,15 @@ import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 import etherspotService from 'services/etherspot';
 import { catchError } from 'services/nativeIntegration';
 
+// Model
+import type { Route } from '@react-navigation/native';
+
 function NITransactionSubmitted() {
   const dispatch = useDispatch();
-  const navigation = useNavigation();
+  const navigation: NavigationScreenProp<any> = useNavigation();
+  const route: Route = useRoute();
   const fromAddress = useRootSelector(activeAccountAddressSelector);
-  const transactionInfo = useNavigationParam('transactionInfo');
+  const transactionInfo = route?.params?.transactionInfo;
   const { chain = CHAIN.ETHEREUM, batchHash } = transactionInfo;
 
   const illustrationIcon = require('assets/images/illustration.png');
@@ -62,7 +67,9 @@ function NITransactionSubmitted() {
     const handleHashChange = async () => {
       if (!hash && batchHash) {
         setisResolvingHash(true);
-        const hash = await etherspotService.waitForTransactionHashFromSubmittedBatch(chain, batchHash).catch(() => catchError('Transaction hash failed!'))
+        const hash = await etherspotService
+          .waitForTransactionHashFromSubmittedBatch(chain, batchHash)
+          .catch(() => catchError('Transaction hash failed!'));
         if (hash) setHash(hash);
         setisResolvingHash(false);
       }
@@ -70,9 +77,13 @@ function NITransactionSubmitted() {
     handleHashChange();
   }, [transactionInfo]);
 
-  const viewOnBlockchain = () => { dispatch(viewTransactionOnBlockchainAction(chain, { hash, batchHash, fromAddress })); };
+  const viewOnBlockchain = () => {
+    dispatch(viewTransactionOnBlockchainAction(chain, { hash, batchHash, fromAddress }));
+  };
 
-  const handleDismissal = () => { navigation.dismiss(); };
+  const handleDismissal = () => {
+    navigation.goBack();
+  };
 
   const renderSuccess = () => {
     return (

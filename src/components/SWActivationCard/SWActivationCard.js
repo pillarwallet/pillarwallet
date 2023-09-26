@@ -20,8 +20,8 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import { withNavigation } from 'react-navigation';
 import t from 'translations/translate';
+import { useNavigation } from '@react-navigation/native';
 
 // components
 import InsightWithButton from 'components/InsightWithButton';
@@ -42,12 +42,10 @@ import {
 // types
 import type { ArchanovaWalletStatus } from 'models/ArchanovaWalletStatus';
 import type { Account } from 'models/Account';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import type { Theme } from 'models/Theme';
 
-
 type Props = {
-  navigation: NavigationScreenProp<*>,
   message: string,
   buttonTitle: string,
   accounts: Account[],
@@ -62,23 +60,27 @@ const SWActivationCard = ({
   message = t('smartWalletContent.activationCard.description.default'),
   accounts,
   smartWalletState,
-  navigation,
 }: Props) => {
+  const navigation: NavigationScreenProp<*> = useNavigation();
+
   const openActivationModal = () => Modal.open(() => <SWActivationModal navigation={navigation} />);
 
   const archanovaWalletStatus: ArchanovaWalletStatus = getArchanovaWalletStatus(accounts, smartWalletState);
 
   if (archanovaWalletStatus.status === ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) return null;
 
-  const { upgrade: { deploymentStarted } } = smartWalletState;
+  const {
+    upgrade: { deploymentStarted },
+  } = smartWalletState;
 
   const isDeploying = isDeployingArchanovaWallet(smartWalletState, accounts);
 
   const deploymentData = getDeploymentData(smartWalletState);
 
   const sendingBlockedMessage = archanovaWalletStatus.sendingBlockedMessage || {};
-  const deploymentErrorMessage = deploymentData.error ?
-    getDeployErrorMessage(deploymentData.error) : sendingBlockedMessage;
+  const deploymentErrorMessage = deploymentData.error
+    ? getDeployErrorMessage(deploymentData.error)
+    : sendingBlockedMessage;
 
   let showMessage = message;
   if (deploymentStarted) {
@@ -108,12 +110,9 @@ const SWActivationCard = ({
   );
 };
 
-const mapStateToProps = ({
-  accounts: { data: accounts },
-  smartWallet: smartWalletState,
-}) => ({
+const mapStateToProps = ({ accounts: { data: accounts }, smartWallet: smartWalletState }) => ({
   accounts,
   smartWalletState,
 });
 
-export default withNavigation(connect(mapStateToProps)(SWActivationCard));
+export default connect(mapStateToProps)(SWActivationCard);

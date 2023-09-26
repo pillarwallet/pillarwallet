@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 
 // Actions

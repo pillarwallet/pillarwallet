@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { SectionList } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
@@ -61,9 +61,10 @@ import LiquidityPoolListItem from './LiquidityPoolListItem';
 function LiquidityPoolsTab() {
   const { t } = useTranslationWithPrefix('assets.liquidityPools');
   const navigation = useNavigation();
+  const route = useRoute();
   const safeArea = useSafeAreaInsets();
 
-  const initialChain: ?Chain = navigation.getParam('chain');
+  const initialChain: ?Chain = route?.params?.chain;
   const { expandItemsPerChain, toggleExpandItems } = useExpandItemsPerChain(initialChain);
 
   const totalBalance = useLiquidityPoolsTotalBalance();
@@ -141,7 +142,7 @@ export default LiquidityPoolsTab;
 type Section = {
   ...SectionBase<HeaderListItem<ServiceAssetBalance>>,
   chain: Chain,
-    balance: BigNumber,
+  balance: BigNumber,
 };
 
 const useSectionData = (expandItemsPerChain: FlagPerChain): Section[] => {

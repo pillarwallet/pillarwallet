@@ -22,7 +22,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import { BigNumber } from 'bignumber.js';
 import t from 'translations/translate';
 
@@ -50,7 +50,6 @@ import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { formatAmount, formatTransactionFee } from 'utils/common';
 import { getGasToken, getTxFeeInWei } from 'utils/transactions';
 
-
 type Props = {
   navigation: NavigationScreenProp<*>,
   session: Object,
@@ -65,7 +64,6 @@ type State = {
   settleButtonSubmitted: boolean,
 };
 
-
 class SettleBalanceConfirm extends React.Component<Props, State> {
   txToSettle: TxToSettle[] = [];
   state = {
@@ -74,7 +72,7 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
 
   constructor(props) {
     super(props);
-    this.txToSettle = props.navigation.getParam('txToSettle', []);
+    this.txToSettle = props.route?.params?.txToSettle || [];
   }
 
   componentDidMount() {
@@ -104,19 +102,20 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
     const feeSymbol = get(gasToken, 'symbol', ETH);
 
     // add unsettled amounts to balances
-    const combinedBalances = Object.keys(balances)
-      .reduce((memo, assetAddress) => {
-        const balanceData: WalletAssetBalance = balances[assetAddress];
-        let balance = new BigNumber(balanceData.balance);
-        this.txToSettle.forEach(asset => { balance = balance.plus(asset.value); });
-        return {
-          [assetAddress]: {
-            ...balanceData,
-            balance: balance.toString(),
-          },
-          ...memo,
-        };
-      }, {});
+    const combinedBalances = Object.keys(balances).reduce((memo, assetAddress) => {
+      const balanceData: WalletAssetBalance = balances[assetAddress];
+      let balance = new BigNumber(balanceData.balance);
+      this.txToSettle.forEach((asset) => {
+        balance = balance.plus(asset.value);
+      });
+      return {
+        [assetAddress]: {
+          ...balanceData,
+          balance: balance.toString(),
+        },
+        ...memo,
+      };
+    }, {});
 
     const balanceCheckTransaction = {
       txFeeInWei,
@@ -135,14 +134,17 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
 
     this.setState({ settleButtonSubmitted: true }, async () => {
       await settleTransactions(this.txToSettle, payForGasWithToken);
-      this.setState({ settleButtonSubmitted: false }, () => navigation.dismiss());
+      this.setState({ settleButtonSubmitted: false }, () => navigation.goBack());
     });
   };
 
   render() {
     const { settleButtonSubmitted } = this.state;
     const {
-      session, settleTxFee, useGasToken, settleTxFee: { feeInfo },
+      session,
+      settleTxFee,
+      useGasToken,
+      settleTxFee: { feeInfo },
     } = this.props;
 
     let submitButtonTitle = t('ppnContent.button.releaseTankFunds');
@@ -152,15 +154,14 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
       submitButtonTitle = t('label.processing');
     }
 
-    const submitButtonDisabled = !session.isOnline
-      || !settleTxFee.isFetched
-      || settleButtonSubmitted;
+    const submitButtonDisabled = !session.isOnline || !settleTxFee.isFetched || settleButtonSubmitted;
 
     const gasToken = getGasToken(useGasToken, feeInfo);
     const feeDisplayValue = formatTransactionFee(CHAIN.ETHEREUM, getTxFeeInWei(useGasToken, feeInfo), gasToken);
 
-    const txToSettle = this.txToSettle.map((asset: Object) =>
-      `${formatAmount(asset.value.toNumber())} ${asset.symbol}`);
+    const txToSettle = this.txToSettle.map(
+      (asset: Object) => `${formatAmount(asset.value.toNumber())} ${asset.symbol}`,
+    );
 
     const reviewData = [
       {
@@ -185,10 +186,7 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({
-  session: { data: session },
-  paymentNetwork: { settleTxFee },
-}) => ({
+const mapStateToProps = ({ session: { data: session }, paymentNetwork: { settleTxFee } }) => ({
   session,
   settleTxFee,
 });
@@ -204,10 +202,8 @@ const combinedMapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  settleTransactions: (
-    transactions,
-    payForGasWithToken,
-  ) => dispatch(settleTransactionsAction(transactions, payForGasWithToken)),
+  settleTransactions: (transactions, payForGasWithToken) =>
+    dispatch(settleTransactionsAction(transactions, payForGasWithToken)),
   estimateSettleBalance: (transactions) => dispatch(estimateSettleBalanceAction(transactions)),
 });
 

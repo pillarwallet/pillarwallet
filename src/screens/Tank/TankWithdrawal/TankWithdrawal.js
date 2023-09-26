@@ -40,19 +40,14 @@ import { getPlrAddressForChain, PPN_TOKEN } from 'configs/assetsConfig';
 // utils
 import { formatAmount, formatFiat, formatTokenAmount } from 'utils/common';
 import { spacing, fontStyles } from 'utils/variables';
-import {
-  calculateMaxAmount,
-  isEnoughBalanceForTransactionFee,
-  getAssetsAsList,
-  addressesEqual,
-} from 'utils/assets';
+import { calculateMaxAmount, isEnoughBalanceForTransactionFee, getAssetsAsList, addressesEqual } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
 import { themedColors } from 'utils/themes';
 import { getGasToken, getTxFeeInWei } from 'utils/transactions';
 import { getAssetRateInFiat } from 'utils/rates';
 
 // types
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import type { WithdrawalFee } from 'models/PaymentNetwork';
 import type { AssetByAddress } from 'models/Asset';
 import type { WalletAssetsBalances } from 'models/Balances';
@@ -71,7 +66,6 @@ import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances'
 import { availableStakeSelector } from 'selectors/paymentNetwork';
 import { accountEthereumAssetsSelector } from 'selectors/assets';
 import { useGasTokenSelector } from 'selectors/archanova';
-
 
 const ActionsWrapper = styled.View`
   display: flex;
@@ -149,7 +143,11 @@ class TankWithdrawal extends React.Component<Props, State> {
   }
 
   getMaxAmount() {
-    const { availableStake, useGasToken, withdrawalFee: { feeInfo } } = this.props;
+    const {
+      availableStake,
+      useGasToken,
+      withdrawalFee: { feeInfo },
+    } = this.props;
     const token = PPN_TOKEN;
     const txFeeInWei = getTxFeeInWei(useGasToken, feeInfo);
     return calculateMaxAmount(token, availableStake, txFeeInWei);
@@ -172,11 +170,14 @@ class TankWithdrawal extends React.Component<Props, State> {
 
   useMaxValue = () => {
     const maxAmount = this.getMaxAmount();
-    this.setState({
-      value: {
-        amount: formatAmount(maxAmount),
+    this.setState(
+      {
+        value: {
+          amount: formatAmount(maxAmount),
+        },
       },
-    }, () => this.checkFormInputErrors());
+      () => this.checkFormInputErrors(),
+    );
   };
 
   checkFormInputErrors = () => {
@@ -205,11 +206,7 @@ class TankWithdrawal extends React.Component<Props, State> {
     const plrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
     const assetsList = getAssetsAsList(assets);
 
-    const {
-      symbol,
-      iconUrl,
-      decimals,
-    } = assetsList.find(({ address }) => addressesEqual(address, plrAddress)) ?? {};
+    const { symbol, iconUrl, decimals } = assetsList.find(({ address }) => addressesEqual(address, plrAddress)) ?? {};
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
@@ -224,7 +221,7 @@ class TankWithdrawal extends React.Component<Props, State> {
     const formattedBalanceInFiat = formatFiat(totalInFiat, baseFiatCurrency);
 
     // value
-    const currentValue = (!!value && !!parseFloat(value.amount)) ? parseFloat(value.amount) : 0;
+    const currentValue = !!value && !!parseFloat(value.amount) ? parseFloat(value.amount) : 0;
 
     // fee
     const gasToken = getGasToken(useGasToken, feeInfo);
@@ -261,7 +258,7 @@ class TankWithdrawal extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: t('ppnContent.title.withdrawFromTankScreen') }] }}
-        footer={(
+        footer={
           <FooterInner>
             <FeeLabelToggle
               txFeeInWei={txFeeInWei}
@@ -269,24 +266,26 @@ class TankWithdrawal extends React.Component<Props, State> {
               isLoading={!withdrawalFee.isFetched}
               chain={CHAIN.ETHEREUM}
             />
-            {!!value && !!parseFloat(value.amount) && !inputHasError &&
-            <Button
-              disabled={!session.isOnline || !withdrawalFee.isFetched}
-              small
-              block={false}
-              flexRight
-              title={t('button.next')}
-              onPress={this.handleFormSubmit}
-            />
-            }
+            {!!value && !!parseFloat(value.amount) && !inputHasError && (
+              <Button
+                disabled={!session.isOnline || !withdrawalFee.isFetched}
+                small
+                block={false}
+                flexRight
+                title={t('button.next')}
+                onPress={this.handleFormSubmit}
+              />
+            )}
           </FooterInner>
-        )}
+        }
         minAvoidHeight={200}
       >
         <Wrapper regularPadding>
           <FormWrapper>
             <Form
-              ref={node => { this._form = node; }}
+              ref={(node) => {
+                this._form = node;
+              }}
               type={formStructure}
               options={formFields}
               value={value}
@@ -303,11 +302,11 @@ class TankWithdrawal extends React.Component<Props, State> {
                 <HelperText>{formattedBalanceInFiat}</HelperText>
               </TextRow>
             </SendTokenDetails>
-            {withdrawalFee.isFetched &&
-            <TouchableOpacity onPress={this.useMaxValue}>
-              <TextLink>{t('button.sendAll')}</TextLink>
-            </TouchableOpacity>
-            }
+            {withdrawalFee.isFetched && (
+              <TouchableOpacity onPress={this.useMaxValue}>
+                <TextLink>{t('button.sendAll')}</TextLink>
+              </TouchableOpacity>
+            )}
           </ActionsWrapper>
         </Wrapper>
       </ContainerWithHeader>
@@ -319,7 +318,9 @@ const mapStateToProps = ({
   session: { data: session },
   rates: { data: ratesPerChain },
   paymentNetwork: { withdrawalFee },
-  appSettings: { data: { baseFiatCurrency } },
+  appSettings: {
+    data: { baseFiatCurrency },
+  },
 }) => ({
   ratesPerChain,
   session,

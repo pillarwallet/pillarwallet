@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { FlatList } from 'react-native';
 import isEqual from 'lodash.isequal';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import styled, { withTheme } from 'styled-components/native';
 
 // types
@@ -45,7 +45,6 @@ import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { LIGHT_THEME } from 'constants/appSettingsConstants';
 import { EVENT_TYPE } from 'models/History';
-
 
 const ActivityFeedList = styled.FlatList`
   width: 100%;
@@ -83,7 +82,9 @@ const CardHeaderWrapper = styled.View`
   background-color: ${({ theme }) => theme.colors.basic050};
   padding: 13px 20px 17px;
   margin-top: 16px;
-  ${({ theme }) => theme.current === LIGHT_THEME && `
+  ${({ theme }) =>
+    theme.current === LIGHT_THEME &&
+    `
     box-shadow: 0px 2px 7px rgba(0,0,0,.1);
     elevation: 1;
   `}
@@ -166,10 +167,7 @@ class ActivityFeed extends React.Component<Props> {
 
     const filteredFeedList = feedList.filter(this.shouldRenderActivityItem);
     if (!filteredFeedList.length) {
-      return [
-        ...items,
-        { type: ITEM_TYPE.EMPTY_STATE },
-      ];
+      return [...items, { type: ITEM_TYPE.EMPTY_STATE }];
     }
 
     if (card) {
@@ -185,11 +183,7 @@ class ActivityFeed extends React.Component<Props> {
   };
 
   getEmptyStateData = () => {
-    const {
-      tabs = [],
-      activeTab,
-      emptyState,
-    } = this.props;
+    const { tabs = [], activeTab, emptyState } = this.props;
 
     let emptyStateData = emptyState || {};
     if (tabs.length) {
@@ -197,7 +191,7 @@ class ActivityFeed extends React.Component<Props> {
       if (activeTabInfo) ({ emptyState: emptyStateData = {} } = activeTabInfo);
     }
     return emptyStateData;
-  }
+  };
 
   shouldComponentUpdate(nextProps: Props) {
     return !isEqual(this.props, nextProps);
@@ -227,13 +221,7 @@ class ActivityFeed extends React.Component<Props> {
   };
 
   renderActivityFeedItem = ({ item }) => {
-    const {
-      isPPNView,
-      isForAllAccounts,
-      isAssetView,
-      card,
-      cardHeaderTitle,
-    } = this.props;
+    const { isPPNView, isForAllAccounts, isAssetView, card, cardHeaderTitle } = this.props;
     switch (item.type) {
       case ITEM_TYPE.HEADER:
       case ITEM_TYPE.TABS:
@@ -307,30 +295,30 @@ class ActivityFeed extends React.Component<Props> {
     } = this.props;
 
     const formattedFeedData = this.generateFeedSections(
-      tabs, activeTab, feedData, headerComponent, tabsComponent, card,
+      tabs,
+      activeTab,
+      feedData,
+      headerComponent,
+      tabsComponent,
+      card,
     );
 
     const firstTab = tabs.length ? tabs[0].id : '';
 
-    const additionalContentContainerStyle = !formattedFeedData.length
-      ? { justifyContent: 'center', flex: 1 }
-      : {};
+    const additionalContentContainerStyle = !formattedFeedData.length ? { justifyContent: 'center', flex: 1 } : {};
 
     const tabsProps = tabs.map(({ data, emptyState, ...necessaryTabProps }) => necessaryTabProps);
 
     return (
       <ActivityFeedWrapper style={wrapperStyle}>
-        {!!feedTitle &&
-        <ActivityFeedHeader>
-          <Title subtitle title={feedTitle} noMargin />
-        </ActivityFeedHeader>}
-        {tabs.length > 1 && !hideTabs &&
-          <Tabs
-            tabs={tabsProps}
-            wrapperStyle={{ paddingTop: 0 }}
-            activeTab={activeTab || firstTab}
-          />
-        }
+        {!!feedTitle && (
+          <ActivityFeedHeader>
+            <Title subtitle title={feedTitle} noMargin />
+          </ActivityFeedHeader>
+        )}
+        {tabs.length > 1 && !hideTabs && (
+          <Tabs tabs={tabsProps} wrapperStyle={{ paddingTop: 0 }} activeTab={activeTab || firstTab} />
+        )}
         <ActivityFeedList
           data={formattedFeedData}
           initialNumToRender={initialNumToRender}

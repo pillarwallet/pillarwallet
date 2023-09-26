@@ -24,7 +24,7 @@ import { BigNumber } from 'bignumber.js';
 import { useTranslationWithPrefix } from 'translations/translate';
 import { Platform } from 'react-native';
 import InAppBrowser from 'react-native-inappbrowser-reborn';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 
 // Constants
 import { RECEIVE_TOKENS_WARNING } from 'constants/navigationConstants';

@@ -1,0 +1,12 @@
+diff --git a/node_modules/react-native-scrypt/android/build.gradle b/node_modules/react-native-scrypt/android/build.gradle
+index dac9cc5..ffc86fc 100644
+--- a/node_modules/react-native-scrypt/android/build.gradle
++++ b/node_modules/react-native-scrypt/android/build.gradle
+@@ -54,6 +54,6 @@ repositories {
+ }
+ 
+ dependencies {
+-    compile 'com.facebook.react:react-native:+'
++    implementation('com.facebook.react:react-native:+')
+ }
+ 

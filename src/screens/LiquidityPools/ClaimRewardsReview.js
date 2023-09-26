@@ -20,7 +20,7 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
@@ -50,10 +50,11 @@ import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 import type { UnipoolLiquidityPool } from 'models/LiquidityPools';
 import type { WalletAssetsBalances } from 'models/Balances';
-
+import type { Route } from '@react-navigation/native';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  route: Route,
   feeInfo: ?TransactionFeeInfo,
   accountAddress: string,
   balances: WalletAssetsBalances,
@@ -74,6 +75,7 @@ const MainWrapper = styled.View`
 
 const ClaimRewardReviewScreen = ({
   navigation,
+  route,
   feeInfo,
   accountAddress,
   resetEstimateTransaction,
@@ -84,7 +86,7 @@ const ClaimRewardReviewScreen = ({
   liquidityPoolsReducer,
 }: Props) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const { pool }: NavigationParams = navigation.state.params;
+  const { pool }: NavigationParams = route.params;
   const poolStats = getPoolStats(pool, liquidityPoolsReducer);
 
   const rewardsToClaim = poolStats?.rewardsToClaim || 0;
@@ -115,7 +117,6 @@ const ClaimRewardReviewScreen = ({
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, { transactionPayload });
     setIsSubmitted(false);
   };
-
 
   let notEnoughForFee;
   if (feeInfo) {
@@ -173,11 +174,7 @@ const ClaimRewardReviewScreen = ({
             <Spacing h={20} />
           </>
         )}
-        <Button
-          title={nextButtonTitle}
-          onPress={onNextButtonPress}
-          disabled={isNextButtonDisabled}
-        />
+        <Button title={nextButtonTitle} onPress={onNextButtonPress} disabled={isNextButtonDisabled} />
       </MainWrapper>
     </ContainerWithHeader>
   );
@@ -208,6 +205,5 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   calculateClaimRewardsTransactionEstimate: (pool: UnipoolLiquidityPool, amountToClaim: number) =>
     dispatch(calculateClaimRewardsTransactionEstimateAction(pool, amountToClaim)),
 });
-
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(ClaimRewardReviewScreen);

@@ -23,7 +23,7 @@ import { Image } from 'react-native';
 import Clipboard from '@react-native-community/clipboard';
 import SafeAreaView from 'react-native-safe-area-view';
 import { connect } from 'react-redux';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
@@ -43,17 +43,19 @@ import { appFont, spacing, fontSizes } from 'utils/variables';
 
 // Types
 import type { Dispatch } from 'reducers/rootReducer';
+import type { Route } from '@react-navigation/native';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   backupWallet: () => void,
+  route: Route,
 };
 
 // Assets
 const walletBackupImage = require('assets/images/logo-wallet-backup.png');
 
-const BackupPhraseValidate = ({ navigation, backupWallet }: Props) => {
-  const wallet = navigation.getParam('unlockedwallet', null);
+const BackupPhraseValidate = ({ navigation, backupWallet, route }: Props) => {
+  const wallet = route?.params?.unlockedwallet ?? null;
 
   const mnemonicPhrase = wallet?.mnemonic;
   const walletPrivateKey = wallet?.privateKey;
@@ -69,7 +71,7 @@ const BackupPhraseValidate = ({ navigation, backupWallet }: Props) => {
 
   const handlePassedValidation = () => {
     backupWallet();
-    navigation.dismiss();
+    navigation.goBack();
     Toast.show({
       message: t('toast.walletBackedUp'),
       emoji: 'the_horns',

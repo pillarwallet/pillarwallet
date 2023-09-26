@@ -20,18 +20,16 @@
 */
 import 'utils/setup';
 import { setupEnv, switchEnvironments, getEnv } from 'configs/envConfig';
-import React, { Suspense } from 'react';
-import { StatusBar, Platform, Linking, View, UIManager } from 'react-native';
+import React from 'react';
+import { StatusBar, Platform, Linking, UIManager } from 'react-native';
 import { Provider, connect } from 'react-redux';
 import * as Sentry from '@sentry/react-native';
-import { PersistGate } from 'redux-persist/lib/integration/react';
 import styled, { ThemeProvider } from 'styled-components/native';
 import { AppearanceProvider } from 'react-native-appearance';
 import NetInfo, { NetInfoState, NetInfoSubscription } from '@react-native-community/netinfo';
 import DeviceInfo from 'react-native-device-info';
 import { WithTranslation, withTranslation } from 'react-i18next';
 import t from 'translations/translate';
-import { NavigationActions } from 'react-navigation';
 import remoteConfig from '@react-native-firebase/remote-config';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -61,23 +59,19 @@ import { STAGING } from 'constants/envConstants';
 import { REMOTE_CONFIG, INITIAL_REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // components
-import { Container } from 'components/legacy/Layout';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
 import Spinner from 'components/Spinner';
 import Walkthrough from 'components/Walkthrough';
 import Button from 'components/legacy/Button';
 import PercentsInputAccessoryHolder from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
-import Modal from 'components/Modal';
 
 // utils
-import { getThemeByType, defaultTheme } from 'utils/themes';
-import { getActiveRouteName } from 'utils/navigation';
+import { getThemeByType } from 'utils/themes';
 import { log } from 'utils/logger';
 import { logBreadcrumb, reportOrWarn, reportLog } from 'utils/common';
 
 // services
-import { setTopLevelNavigator } from 'services/navigation';
 import { firebaseRemoteConfig } from 'services/firebase';
 import { logScreenViewAction } from 'actions/analyticsActions';
 
@@ -88,8 +82,8 @@ import type { I18n } from 'models/Translations';
 
 // other
 import RootNavigation from 'navigation/rootNavigation';
-import Storybook from 'screens/Storybook';
-import { store, persistor } from 'src/configureStore';
+// import Storybook from 'screens/Storybook';
+import { store } from 'src/configureStore';
 
 // redux
 import { syncStateWithFirestore } from 'src/redux/actions/firestore-actions';
@@ -142,15 +136,12 @@ class App extends React.Component<Props, any> {
     if (!__DEV__) {
       const dist = DeviceInfo.getBuildNumber();
       const release = `${DeviceInfo.getBundleId()}@${DeviceInfo.getVersion()}+${dist}`;
-      Sentry.init({ dsn: getEnv().SENTRY_DSN });
-      Sentry.setRelease(release);
-      Sentry.setDist(dist);
+      Sentry.init({ dsn: getEnv().SENTRY_DSN, release, dist });
       Sentry.setTags({ environment: getEnv().BUILD_TYPE });
     }
     this.state = {
       env: null,
     };
-
   }
 
   // https://reactjs.org/blog/2018/03/27/update-on-async-rendering.html#gradual-migration-path
@@ -161,7 +152,7 @@ class App extends React.Component<Props, any> {
       this.removeNetInfoEventListener();
       delete this.removeNetInfoEventListener;
     }
-    Linking.removeEventListener('url', this.handleDeepLinkEvent);
+    Linking.removeAllListeners('url');
   }
 
   async componentDidMount() {
@@ -255,10 +246,10 @@ class App extends React.Component<Props, any> {
 
     // Kochava init
     if (Platform.OS === 'android') {
-      logBreadcrumb('App.js', `Kochava: initialize android`);
+      logBreadcrumb('App.js', 'Kochava: initialize android');
       KochavaTracker.instance.registerAndroidAppGuid(getEnv().KOCHAVA_ANDROID_ID);
     } else {
-      logBreadcrumb('App.js', `Kochava: initialize ios`);
+      logBreadcrumb('App.js', 'Kochava: initialize ios');
       KochavaTracker.instance.registerIosAppGuid(getEnv().KOCHAVA_IOS_ID);
     }
     KochavaTracker.instance.start();
@@ -325,7 +316,9 @@ class App extends React.Component<Props, any> {
         });
       }
     } else {
-      if (this.offlineToastId !== null) Toast.close(this.offlineToastId);
+      if (this.offlineToastId !== null) {
+        Toast.close(this.offlineToastId);
+      }
       updateTranslationResourceOnContextChange();
       initWalletConnectSessionsWithoutReset();
     }
@@ -336,18 +329,10 @@ class App extends React.Component<Props, any> {
     if (this.props.initialDeepLinkExecuted) {
       const { executeDeepLink } = this.props;
       const { url: deepLink } = event;
-      if (deepLink === undefined) return;
+      if (deepLink === undefined) {
+        return;
+      }
       executeDeepLink(deepLink);
-    }
-  };
-
-  handleNavigationStateChange = (prevState, nextState, action) => {
-    if (action.type === NavigationActions.NAVIGATE) Modal.closeAll();
-
-    const nextRouteName = getActiveRouteName(nextState);
-    const previousRouteName = getActiveRouteName(prevState);
-    if (!!nextRouteName && nextRouteName !== previousRouteName) {
-      this.props.logScreenView(nextRouteName);
     }
   };
 
@@ -364,7 +349,9 @@ class App extends React.Component<Props, any> {
     const theme = getThemeByType(themeType);
     const { current } = theme;
 
-    if (!isFetched || (localeConfig.isEnabled && !translationsInitialised)) return null;
+    if (!isFetched || (localeConfig.isEnabled && !translationsInitialised)) {
+      return null;
+    }
 
     return (
       <AppearanceProvider>
@@ -372,13 +359,8 @@ class App extends React.Component<Props, any> {
           <React.Fragment>
             <Root>
               <RootNavigation
-                ref={(node) => {
-                  if (!node) return;
-                  setTopLevelNavigator(node);
-                }}
                 theme={current === LIGHT_THEME ? 'light' : 'dark'} // eslint-disable-line i18next/no-literal-string
                 language={i18next.language}
-                onNavigationStateChange={this.handleNavigationStateChange}
               />
               {!!getEnv().SHOW_THEME_TOGGLE && (
                 <Button
@@ -458,30 +440,15 @@ const mapDispatchToProps = (dispatch: Dispatch): Partial<Props> => ({
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(withTranslation()(App));
 
 const AppRoot = () => (
-  <Suspense
-    fallback={
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Spinner theme={defaultTheme} />
-      </View>
-    }
-  >
-    <SafeAreaProvider>
-      <Provider store={store}>
-        <PersistGate
-          loading={
-            <Container defaultTheme={defaultTheme}>
-              <LoadingSpinner theme={defaultTheme} />
-            </Container>
-          }
-          persistor={persistor}
-        >
-          <QueryClientProvider client={queryClient}>
-            {getEnv().SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />}
-          </QueryClientProvider>
-        </PersistGate>
-      </Provider>
-    </SafeAreaProvider>
-  </Suspense>
+  <SafeAreaProvider>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        {/* Temporary disable storybook */}
+        {/* {getEnv().SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />} */}
+        <AppWithNavigationState />
+      </QueryClientProvider>
+    </Provider>
+  </SafeAreaProvider>
 );
 
 export default AppRoot;

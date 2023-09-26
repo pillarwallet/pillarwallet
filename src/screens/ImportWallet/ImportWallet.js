@@ -21,7 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Keyboard } from 'react-native';
 import styled from 'styled-components/native';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import t from 'translations/translate';
 
 // actions
@@ -44,12 +44,14 @@ import { themedColors } from 'utils/themes';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { Route } from '@react-navigation/native';
 
 type Props = {
   importWalletFromMnemonic: (mnemonic: string) => void,
   wallet: Object,
   errorMessage: ?string,
   navigation: NavigationScreenProp<*>,
+  route: Route,
   resetWalletError: () => void,
   isImportingWallet: boolean,
 };
@@ -90,10 +92,10 @@ class ImportWallet extends React.Component<Props, State> {
   handleImportSubmit = () => {
     requestAnimationFrame(() => {
       Keyboard.dismiss();
-      const { importWalletFromMnemonic, navigation } = this.props;
+      const { importWalletFromMnemonic, route } = this.props;
       const { tWordsPhrase, activeTab, backupPhrase } = this.state;
 
-      const wallet = navigation.getParam('wallet', null);
+      const wallet = route?.params?.wallet || null;
 
       if (activeTab === TWORDSPHRASE) {
         const trimmedPhrase = Object.values(backupPhrase).join(' ');

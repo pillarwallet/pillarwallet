@@ -20,7 +20,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
@@ -50,10 +50,11 @@ import { activeAccountAddressSelector, useChainRates } from 'selectors';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Currency } from 'models/Rates';
-
+import type { Route } from '@react-navigation/native';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  route: Route,
   feeInfo: ?TransactionFeeInfo,
   baseFiatCurrency: ?Currency,
   accountAddress: string,
@@ -63,19 +64,12 @@ const MainWrapper = styled.View`
   padding: 32px 20px;
 `;
 
-const RemoveLiquidityReviewScreen = ({
-  navigation,
-  feeInfo,
-  baseFiatCurrency,
-  accountAddress,
-}: Props) => {
+const RemoveLiquidityReviewScreen = ({ navigation, route, feeInfo, baseFiatCurrency, accountAddress }: Props) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const ethereumRates = useChainRates(CHAIN.ETHEREUM);
 
-  const {
-    obtainedTokensData, poolToken, obtainedTokensValues, poolTokenValue, pool,
-  } = navigation.state.params;
+  const { obtainedTokensData, poolToken, obtainedTokensValues, poolTokenValue, pool } = route.params;
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const totalValue = obtainedTokensData.reduce((sum, token, i) => {
@@ -153,7 +147,7 @@ const RemoveLiquidityReviewScreen = ({
                 <BaseText secondary>{tokensValuesInFiat[i]}</BaseText>
               </BaseText>
             </TableRow>
-        ))}
+          ))}
         </Table>
         <Spacing h={20} />
         <Table title={t('transactions.label.fees')}>
@@ -171,10 +165,7 @@ const RemoveLiquidityReviewScreen = ({
           </TableRow>
         </Table>
         <Spacing h={48} />
-        <Button
-          title={t('liquidityPoolsContent.button.removeLiquidity')}
-          onPress={onNextButtonPress}
-        />
+        <Button title={t('liquidityPoolsContent.button.removeLiquidity')} onPress={onNextButtonPress} />
       </MainWrapper>
     </ContainerWithHeader>
   );
@@ -182,7 +173,9 @@ const RemoveLiquidityReviewScreen = ({
 
 const mapStateToProps = ({
   transactionEstimate: { feeInfo },
-  appSettings: { data: { baseFiatCurrency } },
+  appSettings: {
+    data: { baseFiatCurrency },
+  },
 }: RootReducerState): $Shape<Props> => ({
   feeInfo,
   baseFiatCurrency,

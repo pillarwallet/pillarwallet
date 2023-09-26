@@ -21,7 +21,7 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import t from 'translations/translate';
 import debounce from 'lodash.debounce';
 
@@ -64,10 +64,11 @@ import type { LiquidityPool } from 'models/LiquidityPools';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 import type { WalletAssetsBalances } from 'models/Balances';
-
+import type { Route } from '@react-navigation/native';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  route: Route,
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
   estimateErrorMessage: ?string,
@@ -91,7 +92,7 @@ const StyledIcon = styled(Icon)`
   font-size: 20px;
   color: ${({ theme }) => theme.colors.basic010};
   align-self: center;
-  margin: 24px 0; 
+  margin: 24px 0;
 `;
 
 const FeeInfo = styled.View`
@@ -107,6 +108,7 @@ const FooterInner = styled.View`
 
 const RemoveLiquidityScreen = ({
   navigation,
+  route,
   feeInfo,
   isEstimating,
   estimateErrorMessage,
@@ -128,18 +130,19 @@ const RemoveLiquidityScreen = ({
   const rates = useChainRates(CHAIN.ETHEREUM);
   const fiatCurrency = useFiatCurrency();
 
-  const { pool } = navigation.state.params;
+  const { pool } = route.params;
   const poolStats = getPoolStats(pool, liquidityPoolsState);
 
-  const tokensData = pool.tokensProportions
-    .map(({ address: assetAddress }) => findAssetByAddress(ethereumSupportedAssets, assetAddress));
+  const tokensData = pool.tokensProportions.map(({ address: assetAddress }) =>
+    findAssetByAddress(ethereumSupportedAssets, assetAddress),
+  );
 
   const poolTokenData = findAssetByAddress(ethereumSupportedAssets, pool.uniswapPairAddress);
 
   useEffect(() => {
     if (
       !parseFloat(poolTokenAmount) ||
-      !obtainedTokenFieldsValid.every(f => f) ||
+      !obtainedTokenFieldsValid.every((f) => f) ||
       !poolTokenFieldValid ||
       !poolTokenData
     ) {
@@ -148,13 +151,7 @@ const RemoveLiquidityScreen = ({
     const erc20Token = tokensData[1];
     if (!erc20Token) return;
 
-    calculateRemoveLiquidityTransactionEstimate(
-      pool,
-      poolTokenAmount,
-      poolTokenData,
-      tokensData,
-      obtainedAssetsValues,
-    );
+    calculateRemoveLiquidityTransactionEstimate(pool, poolTokenAmount, poolTokenData, tokensData, obtainedAssetsValues);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [poolTokenAmount, obtainedTokenFieldsValid, poolTokenFieldValid]);
 
@@ -173,9 +170,9 @@ const RemoveLiquidityScreen = ({
 
     const amounts = calculateProportionalAssetAmountsForRemoval(pool, newValue || '0', tokenIndex, liquidityPoolsState);
     setPoolTokenAmount(formatAmount(amounts.poolToken));
-    setObtainedAssetsValues(amounts.pairTokens.map((amount, i) =>
-      i === tokenIndex ? newValue : formatAmount(amount),
-    ));
+    setObtainedAssetsValues(
+      amounts.pairTokens.map((amount, i) => (i === tokenIndex ? newValue : formatAmount(amount))),
+    );
   };
 
   const renderTokenInput = (tokenIndex: number) => {
@@ -185,7 +182,7 @@ const RemoveLiquidityScreen = ({
     const totalAmount = parseFloat(poolStats?.totalSupply);
     const tokenPool = parseFloat(poolStats?.tokensLiquidity[pool.tokensProportions[tokenIndex].symbol]);
 
-    const tokenMaxWithdrawn = ((tokenPool * maxAmountBurned) / totalAmount);
+    const tokenMaxWithdrawn = (tokenPool * maxAmountBurned) / totalAmount;
 
     const { symbol: assetSymbol, address: assetAddress } = tokensData[tokenIndex];
     const customBalances: WalletAssetsBalances = {
@@ -229,23 +226,22 @@ const RemoveLiquidityScreen = ({
     : estimateErrorMessage;
 
   const nextButtonTitle = isEstimating ? t('label.gettingFee') : t('button.next');
-  const isNextButtonDisabled = !!isEstimating
-    || !!errorMessage
-    || !obtainedTokenFieldsValid.every(f => f)
-    || !poolTokenFieldValid
-    || !parseFloat(poolTokenAmount)
-    || !feeInfo;
+  const isNextButtonDisabled =
+    !!isEstimating ||
+    !!errorMessage ||
+    !obtainedTokenFieldsValid.every((f) => f) ||
+    !poolTokenFieldValid ||
+    !parseFloat(poolTokenAmount) ||
+    !feeInfo;
 
-  const onNextButtonPress = () => navigation.navigate(
-    LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW,
-    {
+  const onNextButtonPress = () =>
+    navigation.navigate(LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW, {
       obtainedTokensData: tokensData,
       poolToken: poolTokenData,
       obtainedTokensValues: obtainedAssetsValues,
       poolTokenValue: poolTokenAmount,
       pool,
-    },
-  );
+    });
 
   const poolTokenCustomBalances = poolTokenData && {
     [addressAsKey(poolTokenData.address)]: {
@@ -260,7 +256,7 @@ const RemoveLiquidityScreen = ({
       headerProps={{ centerItems: [{ title: t('liquidityPoolsContent.title.removeLiquidity') }] }}
       inset={{ bottom: 0 }}
       putContentInScrollView
-      footer={(
+      footer={
         <FooterInner>
           <FeeInfo>
             {feeInfo && (
@@ -280,13 +276,9 @@ const RemoveLiquidityScreen = ({
             )}
           </FeeInfo>
           <Spacing h={20} />
-          <Button
-            disabled={isNextButtonDisabled}
-            title={nextButtonTitle}
-            onPress={onNextButtonPress}
-          />
+          <Button disabled={isNextButtonDisabled} title={nextButtonTitle} onPress={onNextButtonPress} />
         </FooterInner>
-      )}
+      }
     >
       <MainContainer>
         <ValueInput
@@ -327,16 +319,25 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
-  calculateRemoveLiquidityTransactionEstimate: debounce((
-    pool: LiquidityPool,
-    tokenAmount: string,
-    poolAsset: Asset,
-    tokensAssets: Asset[],
-    obtainedAssetsValues: string[],
-  ) => dispatch(
-    calculateRemoveLiquidityTransactionEstimateAction(
-      pool, tokenAmount, poolAsset, tokensAssets, obtainedAssetsValues,
-    )), 500),
+  calculateRemoveLiquidityTransactionEstimate: debounce(
+    (
+      pool: LiquidityPool,
+      tokenAmount: string,
+      poolAsset: Asset,
+      tokensAssets: Asset[],
+      obtainedAssetsValues: string[],
+    ) =>
+      dispatch(
+        calculateRemoveLiquidityTransactionEstimateAction(
+          pool,
+          tokenAmount,
+          poolAsset,
+          tokensAssets,
+          obtainedAssetsValues,
+        ),
+      ),
+    500,
+  ),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(RemoveLiquidityScreen);

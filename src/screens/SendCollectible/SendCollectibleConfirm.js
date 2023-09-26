@@ -26,7 +26,7 @@ import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
-import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 // Actions
 import { appsFlyerlogEventAction } from 'actions/analyticsActions';
@@ -93,12 +93,13 @@ const SendCollectibleConfirm = ({
   logAppsFlyerEvent,
 }: Props) => {
   const navigation = useNavigation();
+  const route = useRoute();
 
-  const receiverEnsName: ?string = useNavigationParam('receiverEnsName');
-  const assetData: Collectible = useNavigationParam('assetData');
-  const receiver: string = useNavigationParam('receiver');
-  const navigationSource: ?string = useNavigationParam('source');
-  const chain: Chain = useNavigationParam('chain');
+  const receiverEnsName: ?string = route?.params?.receiverEnsName;
+  const assetData: Collectible = route?.params?.assetData;
+  const receiver: string = route?.params?.receiver;
+  const navigationSource: ?string = route?.params?.source;
+  const chain: Chain = route?.params?.chain;
 
   const activeAccount = useActiveAccount();
   const walletBalances = balances?.[chain] ?? {};

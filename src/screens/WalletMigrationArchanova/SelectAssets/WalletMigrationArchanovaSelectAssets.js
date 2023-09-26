@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { useTranslationWithPrefix } from 'translations/translate';
 import { BigNumber } from 'bignumber.js';
@@ -59,7 +59,6 @@ import { valueForAddress } from 'utils/common';
 import WalletSummary from './WalletSummary';
 import AssetList from './AssetList';
 import { useTokensWithBalances, useTotalMigrationValueInFiat } from './utils';
-
 
 const WalletMigrationArchanovaSelectAssets = () => {
   const { t } = useTranslationWithPrefix('walletMigrationArchanova.selectAssets');

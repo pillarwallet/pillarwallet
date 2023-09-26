@@ -20,9 +20,10 @@
 
 import React from 'react';
 import { Dimensions } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 
 // Components
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
@@ -41,7 +42,7 @@ const { height } = Dimensions.get('window');
 
 function GetNotifincations() {
   const { t } = useTranslationWithPrefix('biometricLogin');
-  const navigation = useNavigation();
+  const navigation: NavigationScreenProp<any> = useNavigation();
   const colors = useThemeColors();
 
   useBioMetricsPopup(navigation);

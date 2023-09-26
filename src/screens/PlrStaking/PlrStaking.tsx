@@ -20,7 +20,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslationWithPrefix } from 'translations/translate';
 import styled from 'styled-components/native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 import { BigNumber, ethers, utils } from 'ethers';
 import { addDays, intervalToDuration, isAfter } from 'date-fns';
 

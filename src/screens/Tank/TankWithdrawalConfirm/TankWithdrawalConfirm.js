@@ -19,15 +19,13 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
+import type { Route } from '@react-navigation/native';
 
 // actions
-import {
-  estimateWithdrawFromVirtualAccountAction,
-  withdrawFromVirtualAccountAction,
-} from 'actions/smartWalletActions';
+import { estimateWithdrawFromVirtualAccountAction, withdrawFromVirtualAccountAction } from 'actions/smartWalletActions';
 
 // constants
 import { ASSETS } from 'constants/navigationConstants';
@@ -50,9 +48,9 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 // selectors
 import { useGasTokenSelector } from 'selectors/archanova';
 
-
 type Props = {
   navigation: NavigationScreenProp<*>,
+  route: Route,
   session: Object,
   withdrawalFee: WithdrawalFee,
   estimateWithdrawFromVirtualAccount: Function,
@@ -63,7 +61,6 @@ type Props = {
 type State = {
   buttonSubmitted: boolean,
 };
-
 
 class TankWithdrawalConfirm extends React.Component<Props, State> {
   state = {
@@ -81,17 +78,21 @@ class TankWithdrawalConfirm extends React.Component<Props, State> {
   }
 
   callEstimateMethod() {
-    const { navigation, estimateWithdrawFromVirtualAccount } = this.props;
-    const amount = navigation.getParam('amount', '0');
+    const { route, estimateWithdrawFromVirtualAccount } = this.props;
+    const amount = route?.params?.amount || '0';
     estimateWithdrawFromVirtualAccount(amount);
   }
 
   handleFormSubmit = async () => {
     const {
-      navigation, withdrawFromVirtualAccount, useGasToken, withdrawalFee: { feeInfo },
+      navigation,
+      route,
+      withdrawFromVirtualAccount,
+      useGasToken,
+      withdrawalFee: { feeInfo },
     } = this.props;
     this.setState({ buttonSubmitted: true });
-    const amount = navigation.getParam('amount', '0');
+    const amount = route?.params?.amount || '0';
     const payForGasWithToken = !!getGasToken(useGasToken, feeInfo);
     await withdrawFromVirtualAccount(amount, payForGasWithToken);
     this.setState({ buttonSubmitted: false }, () => navigation.navigate(ASSETS));
@@ -99,18 +100,20 @@ class TankWithdrawalConfirm extends React.Component<Props, State> {
 
   render() {
     const {
-      session, navigation, withdrawalFee, useGasToken, withdrawalFee: { feeInfo },
+      session,
+      route,
+      withdrawalFee,
+      useGasToken,
+      withdrawalFee: { feeInfo },
     } = this.props;
     const { buttonSubmitted } = this.state;
-    const amount = navigation.getParam('amount', '0');
+    const amount = route?.params?.amount || '0';
     const formattedAmount = formatTokenAmount(amount, PPN_TOKEN);
 
     const gasToken = getGasToken(useGasToken, feeInfo);
     const feeDisplayValue = formatTransactionFee(CHAIN.ETHEREUM, getTxFeeInWei(useGasToken, feeInfo), gasToken);
 
-    const submitButtonTitle = buttonSubmitted
-      ? t('label.processing')
-      : t('ppnContent.button.withdrawFromTank');
+    const submitButtonTitle = buttonSubmitted ? t('label.processing') : t('ppnContent.button.withdrawFromTank');
 
     const reviewData = [
       {
@@ -139,10 +142,7 @@ class TankWithdrawalConfirm extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({
-  session: { data: session },
-  paymentNetwork: { withdrawalFee },
-}) => ({
+const mapStateToProps = ({ session: { data: session }, paymentNetwork: { withdrawalFee } }) => ({
   session,
   withdrawalFee,
 });
@@ -157,10 +157,8 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  withdrawFromVirtualAccount: (
-    amount: string,
-    payForGasWithToken: boolean,
-  ) => dispatch(withdrawFromVirtualAccountAction(amount, payForGasWithToken)),
+  withdrawFromVirtualAccount: (amount: string, payForGasWithToken: boolean) =>
+    dispatch(withdrawFromVirtualAccountAction(amount, payForGasWithToken)),
   estimateWithdrawFromVirtualAccount: (amount: string) => dispatch(estimateWithdrawFromVirtualAccountAction(amount)),
 });
 

@@ -46,11 +46,12 @@ import { ACCOUNTS, SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // models, types
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import type { AssetOption } from 'models/Asset';
 import type { TransactionPayload } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Contact } from 'models/Contact';
+import type { Route } from '@react-navigation/native';
 
 // services
 import archanovaService from 'services/archanova';
@@ -64,6 +65,7 @@ import SendContainer from './SendContainer';
 
 type Props = {
   navigation: NavigationScreenProp<any>,
+  route: Route,
   isOnline: boolean,
   fetchSingleEthereumAssetRates: (asset: Object) => void,
   isFetchingSyntheticAssets: boolean,
@@ -113,8 +115,8 @@ class SendSyntheticAmount extends React.Component<Props, State> {
   }
 
   setPreselectedValues = () => {
-    const { navigation } = this.props;
-    const contact = navigation.getParam('contact');
+    const { route } = this.props;
+    const contact = route?.params?.contact;
     if (contact) {
       const { userName, ethAddress } = contact;
       const receiver = {

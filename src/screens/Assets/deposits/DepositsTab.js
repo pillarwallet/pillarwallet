@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { SectionList } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
@@ -62,10 +62,11 @@ import { useDepositsTotalBalance, useDepositsBalancePerChain, useDepositsAssets 
 function DepositsTab() {
   const { t, tRoot } = useTranslationWithPrefix('assets.deposits');
   const navigation = useNavigation();
+  const route = useRoute();
   const safeArea = useSafeAreaInsets();
   const screenName = getActiveScreenName(navigation);
 
-  const initialChain: ?Chain = navigation.getParam('chain');
+  const initialChain: ?Chain = route?.params?.chain;
   const { expandItemsPerChain, toggleExpandItems } = useExpandItemsPerChain(initialChain);
 
   const totalBalance = useDepositsTotalBalance();

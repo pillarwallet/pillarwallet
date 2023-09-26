@@ -47,9 +47,8 @@ import { accountEthereumAssetsSelector } from 'selectors/assets';
 
 // types
 import type { AssetByAddress } from 'models/Asset';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import type { Currency, RatesPerChain } from 'models/Rates';
-
 
 type Props = {
   baseFiatCurrency: Currency,
@@ -62,18 +61,14 @@ type Props = {
 const FloatingButtonView = styled.View`
   position: absolute;
   bottom: ${spacing.rhythm}px;
-  alignItems: center;
+  alignitems: center;
   justify-content: center;
   width: 100%;
 `;
 
 class UnsettledAssets extends React.Component<Props> {
   renderAsset = ({ item }) => {
-    const {
-      baseFiatCurrency,
-      assets,
-      ratesPerChain,
-    } = this.props;
+    const { baseFiatCurrency, assets, ratesPerChain } = this.props;
 
     const { address, balance = 0 } = item;
     const { name, symbol } = findAssetByAddress(getAssetsAsList(assets), address) ?? {};
@@ -130,7 +125,9 @@ class UnsettledAssets extends React.Component<Props> {
 
 const mapStateToProps = ({
   rates: { data: ratesPerChain },
-  appSettings: { data: { baseFiatCurrency } },
+  appSettings: {
+    data: { baseFiatCurrency },
+  },
 }) => ({
   ratesPerChain,
   baseFiatCurrency,

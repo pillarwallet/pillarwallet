@@ -20,7 +20,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import t from 'translations/translate';
 import debounce from 'lodash.debounce';
 
@@ -58,10 +58,11 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { UnipoolLiquidityPool } from 'models/LiquidityPools';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 import type { WalletAssetsBalances } from 'models/Balances';
-
+import type { Route } from '@react-navigation/native';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  route: Route,
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
   estimateErrorMessage: ?string,
@@ -91,6 +92,7 @@ const FooterInner = styled.View`
 
 const StakeTokensScreen = ({
   navigation,
+  route,
   feeInfo,
   isEstimating,
   estimateErrorMessage,
@@ -105,7 +107,7 @@ const StakeTokensScreen = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const { pool }: NaivgationParams = navigation.state.params;
+  const { pool }: NaivgationParams = route.params;
   useEffect(() => {
     if (pool.type !== LIQUIDITY_POOL_TYPES.UNIPOOL) {
       navigation.goBack();
@@ -120,11 +122,7 @@ const StakeTokensScreen = ({
 
   useEffect(() => {
     if (!parseFloat(assetValue) || !isValid || !assetData) return;
-    calculateStakeTransactionEstimate(
-      pool,
-      assetValue,
-      assetData,
-    );
+    calculateStakeTransactionEstimate(pool, assetValue, assetData);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assetValue, isValid]);
 
@@ -133,16 +131,11 @@ const StakeTokensScreen = ({
   }
 
   const nextButtonTitle = isEstimating ? t('label.gettingFee') : t('button.next');
-  const isNextButtonDisabled = !!isEstimating
-    || !parseFloat(assetValue)
-    || !!estimateErrorMessage
-    || !isValid
-    || !feeInfo;
+  const isNextButtonDisabled =
+    !!isEstimating || !parseFloat(assetValue) || !!estimateErrorMessage || !isValid || !feeInfo;
 
-  const onNextButtonPress = () => navigation.navigate(
-    LIQUIDITY_POOLS_STAKE_REVIEW,
-    { amount: assetValue, poolToken: assetData, pool },
-  );
+  const onNextButtonPress = () =>
+    navigation.navigate(LIQUIDITY_POOLS_STAKE_REVIEW, { amount: assetValue, poolToken: assetData, pool });
 
   const poolTokenCustomBalances: WalletAssetsBalances =
     assetData != null
@@ -159,7 +152,7 @@ const StakeTokensScreen = ({
     <ContainerWithHeader
       headerProps={{ centerItems: [{ title: t('liquidityPoolsContent.title.stakeTokens') }] }}
       inset={{ bottom: 0 }}
-      footer={(
+      footer={
         <FooterInner>
           <FeeInfo>
             {feeInfo && (
@@ -179,13 +172,9 @@ const StakeTokensScreen = ({
             )}
           </FeeInfo>
           <Spacing h={20} />
-          <Button
-            disabled={isNextButtonDisabled}
-            title={nextButtonTitle}
-            onPress={onNextButtonPress}
-          />
+          <Button disabled={isNextButtonDisabled} title={nextButtonTitle} onPress={onNextButtonPress} />
         </FooterInner>
-      )}
+      }
     >
       <MainContainer>
         <ValueInput
@@ -213,12 +202,11 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
-  calculateStakeTransactionEstimate: debounce((
-    pool: UnipoolLiquidityPool,
-    tokenAmount: string,
-    tokenAsset: Asset,
-  ) => dispatch(calculateStakeTransactionEstimateAction(pool, tokenAmount, tokenAsset)), 500),
+  calculateStakeTransactionEstimate: debounce(
+    (pool: UnipoolLiquidityPool, tokenAmount: string, tokenAsset: Asset) =>
+      dispatch(calculateStakeTransactionEstimateAction(pool, tokenAmount, tokenAsset)),
+    500,
+  ),
 });
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(StakeTokensScreen);

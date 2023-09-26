@@ -20,10 +20,11 @@
 
 import React from 'react';
 import { Linking } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 import { switchEnvironments } from 'configs/envConfig';
+import type { Route } from '@react-navigation/native';
 
 // Components
 import { Container, Content } from 'components/layout/Layout';
@@ -60,14 +61,18 @@ import MenuItem from './components/MenuItem';
 import MenuFooter from './components/MenuFooter';
 import SocialMediaLinks from './components/SocialMediaLinks';
 
-const Menu = () => {
+interface Props {
+  route: Route,
+}
+
+const Menu = ({ route }: Props) => {
   const { t, tRoot } = useTranslationWithPrefix('menu');
   const isDarkTheme = useIsDarkTheme();
   const navigation = useNavigation();
   const colors = useThemeColors();
   const isBackedUp = useIsWalletBackedUp();
 
-  const screenName = navigation.state.routeName;
+  const screenName = route.name;
   const accounts = useAccounts();
 
   const knowledgebaseUrl = firebaseRemoteConfig.getString(REMOTE_CONFIG.KNOWLEDGEBASE_URL);

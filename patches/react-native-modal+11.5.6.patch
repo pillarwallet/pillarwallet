@@ -1,0 +1,35 @@
+diff --git a/node_modules/react-native-modal/dist/modal.js b/node_modules/react-native-modal/dist/modal.js
+index 2e3f530..cb17e0b 100644
+--- a/node_modules/react-native-modal/dist/modal.js
++++ b/node_modules/react-native-modal/dist/modal.js
+@@ -1,5 +1,5 @@
+ import * as React from 'react';
+-import { Animated, DeviceEventEmitter, Dimensions, KeyboardAvoidingView, Modal, PanResponder, Platform, TouchableWithoutFeedback, View, } from 'react-native';
++import { Animated, NativeEventEmitter, Dimensions, KeyboardAvoidingView, Modal, PanResponder, Platform, TouchableWithoutFeedback, View, } from 'react-native';
+ import * as PropTypes from 'prop-types';
+ import * as animatable from 'react-native-animatable';
+ import { initializeAnimations, buildAnimations, reversePercentage, } from './utils';
+@@ -30,6 +30,7 @@ export class ReactNativeModal extends React.Component {
+         this.inSwipeClosingState = false;
+         this.currentSwipingDirection = null;
+         this.panResponder = null;
++        this.eventEmitter = new NativeEventEmitter('');
+         this.buildPanResponder = () => {
+             let animEvt = null;
+             this.panResponder = PanResponder.create({
+@@ -352,13 +353,13 @@ export class ReactNativeModal extends React.Component {
+         if (this.props.onSwipe) {
+             console.warn('`<Modal onSwipe="..." />` is deprecated and will be removed starting from 13.0.0. Use `<Modal onSwipeComplete="..." />` instead.');
+         }
+-        DeviceEventEmitter.addListener('didUpdateDimensions', this.handleDimensionsUpdate);
++        this.eventEmitter.addListener('didUpdateDimensions', this.handleDimensionsUpdate);
+         if (this.state.isVisible) {
+             this.open();
+         }
+     }
+     componentWillUnmount() {
+-        DeviceEventEmitter.removeListener('didUpdateDimensions', this.handleDimensionsUpdate);
++        this.eventEmitter.removeAllListeners('didUpdateDimensions');
+     }
+     componentDidUpdate(prevProps) {
+         // If the animations have been changed then rebuild them to make sure we're

@@ -18,12 +18,15 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import renderer from 'react-test-renderer';
+
+// Utils
+import { renderWithTheme } from 'testUtils/render';
+
 import Header from '../Header';
 
 describe('Header', () => {
   it('should render Header correctly', () => {
-    const component = renderer.create(<Header onBack={() => {}} />).toJSON();
+    const component = renderWithTheme(<Header onBack={() => {}} />).toJSON();
     expect(component).toMatchSnapshot();
   });
 });

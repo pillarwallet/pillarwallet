@@ -527,16 +527,16 @@ export const getAssetsToAddress = async (chain: Chain, contractAddress: string) 
 };
 
 export const getChainsAssetsToAddress = async (supportedChains: Chain[], contractAddress: string) => {
-  const assets = await Promise.all(supportedChains?.map((chain) => getAssetsToAddress(chain, contractAddress))).catch(
-    (error) => {
-      reportErrorLog('Contract address to get token details fot supported chains: getChainsAssetsToAddress failed', {
-        error,
-        supportedChains,
-      });
-      return null;
-    },
-  );
-  return assets ? assets.filter((asset) => !!asset) : [];
+  const assets: any = await Promise.all(
+    supportedChains?.map((chain) => getAssetsToAddress(chain, contractAddress)),
+  ).catch((error) => {
+    reportErrorLog('Contract address to get token details fot supported chains: getChainsAssetsToAddress failed', {
+      error,
+      supportedChains,
+    });
+    return null;
+  });
+  return assets ? assets?.filter((asset) => !!asset) : [];
 };
 
 export const getUrlToSymbol = (

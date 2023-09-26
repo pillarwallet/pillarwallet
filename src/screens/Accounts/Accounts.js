@@ -63,7 +63,7 @@ import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 import type { TotalBalancesPerAccount } from 'models/TotalBalances';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 
 const ITEM_TYPE = {
   ACCOUNT: 'ACCOUNT',

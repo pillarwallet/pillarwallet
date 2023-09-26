@@ -4,7 +4,7 @@ import { Dimensions, StyleSheet, SafeAreaView, Platform } from 'react-native';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import ExtraDimensions from 'react-native-extra-dimensions-android';
-import { NavigationActions } from 'react-navigation';
+import { CommonActions } from '@react-navigation/native';
 import t from 'translations/translate';
 import { getNavigationPathAndParamsState, navigate } from 'services/navigation';
 import Button from 'components/legacy/Button';
@@ -20,13 +20,13 @@ import { hexToRgba } from 'utils/ui';
 import { WalkthroughTooltip } from './WalkthroughTooltip';
 
 const { width, height: windowHeight } = Dimensions.get('window');
-const height = Platform.OS === 'android'
-  ? ExtraDimensions.get('REAL_WINDOW_HEIGHT') - ExtraDimensions.getSoftMenuBarHeight()
-  : windowHeight;
-
+const height =
+  Platform.OS === 'android'
+    ? ExtraDimensions.get('REAL_WINDOW_HEIGHT') - ExtraDimensions.getSoftMenuBarHeight()
+    : windowHeight;
 
 type Props = {
-  steps: Steps;
+  steps: Steps,
   waitingForStepId: string,
   endWalkthrough: () => void,
   setWaitingForStepId: (id: string) => void,
@@ -133,42 +133,32 @@ class Walkthrough extends React.Component<Props, State> {
   };
 
   nextStep = (forcedStepIndex?: number) => {
-    const {
-      steps,
-      setActiveStepId,
-    } = this.props;
+    const { steps, setActiveStepId } = this.props;
     const { index: indexInState } = this.state;
     const newIndex = forcedStepIndex || indexInState + 1;
     const step = steps[newIndex];
     if (newIndex >= steps.length) {
       this.endWalkthrough();
     } else {
-      const {
-        activeScreen,
-        id,
-        buttonText,
-        measure,
-        type,
-        title,
-        body,
-      } = step;
+      const { activeScreen, id, buttonText, measure, type, title, body } = step;
 
       const { path } = getNavigationPathAndParamsState() || {};
       const pathSteps = path ? path.split('/') : [];
       const currentScreen = pathSteps[pathSteps.length - 1];
 
-      if (!measure && type !== WALKTHROUGH_TYPES.SHADE) { // step is not yet updated with measure
+      if (!measure && type !== WALKTHROUGH_TYPES.SHADE) {
+        // step is not yet updated with measure
         if (activeScreen !== currentScreen) {
-          const action = NavigationActions.navigate({
-            routeName: activeScreen,
+          const action = CommonActions.navigate({
+            name: activeScreen,
           });
           navigate(action);
         }
         this.waitForNextStep(id);
       } else {
         if (activeScreen !== currentScreen && type === WALKTHROUGH_TYPES.SHADE) {
-          const action = NavigationActions.navigate({
-            routeName: activeScreen,
+          const action = CommonActions.navigate({
+            name: activeScreen,
           });
           navigate(action);
         }
@@ -214,14 +204,7 @@ class Walkthrough extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      index,
-      buttonText,
-      type,
-      title,
-      body,
-      measure,
-    } = this.state;
+    const { index, buttonText, type, title, body, measure } = this.state;
     const { waitingForStepId } = this.props;
 
     if (index === -1) {
@@ -234,18 +217,19 @@ class Walkthrough extends React.Component<Props, State> {
           <Container fill="rgba(0, 0, 0, 0.1)">
             <Shade />
           </Container>
-          {!waitingForStepId &&
-          <KeyboardAvoidWrapper enabled behavior={Platform.OS === 'ios' ? 'height' : null}>
-            <SafeAreaView>
-              <ShadeContent>
-                <MainContent>
-                  <Title>{title}</Title>
-                  <WhiteParagraph small>{body}</WhiteParagraph>
-                </MainContent>
-                <Button title={buttonText || t('button.next')} onPress={this.nextStep} />
-              </ShadeContent>
-            </SafeAreaView>
-          </KeyboardAvoidWrapper>}
+          {!waitingForStepId && (
+            <KeyboardAvoidWrapper enabled behavior={Platform.OS === 'ios' ? 'height' : null}>
+              <SafeAreaView>
+                <ShadeContent>
+                  <MainContent>
+                    <Title>{title}</Title>
+                    <WhiteParagraph small>{body}</WhiteParagraph>
+                  </MainContent>
+                  <Button title={buttonText || t('button.next')} onPress={this.nextStep} />
+                </ShadeContent>
+              </SafeAreaView>
+            </KeyboardAvoidWrapper>
+          )}
         </React.Fragment>
       );
     }
@@ -254,7 +238,7 @@ class Walkthrough extends React.Component<Props, State> {
       return (
         <React.Fragment>
           <Container>
-            {!waitingForStepId && measure &&
+            {!waitingForStepId && measure && (
               <WalkthroughTooltip
                 targetMeasurements={measure}
                 onTooltipButtonPress={this.nextStep}
@@ -262,7 +246,7 @@ class Walkthrough extends React.Component<Props, State> {
                 body={body}
                 buttonText={buttonText}
               />
-            }
+            )}
           </Container>
         </React.Fragment>
       );
@@ -272,9 +256,7 @@ class Walkthrough extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({
-  walkthroughs: { waitingForStepId, forcedStepIndex },
-}: RootReducerState): $Shape<Props> => ({
+const mapStateToProps = ({ walkthroughs: { waitingForStepId, forcedStepIndex } }: RootReducerState): $Shape<Props> => ({
   waitingForStepId,
   forcedStepIndex,
 });

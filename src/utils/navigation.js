@@ -27,7 +27,7 @@ export const isNavigationAllowed = (): boolean => {
     return false;
   }
 
-  const pathParts = pathAndParams.path.split('/');
+  const pathParts = pathAndParams.path?.split('/');
   const currentFlow = pathParts[0];
 
   return currentFlow !== AUTH_FLOW;
@@ -48,6 +48,7 @@ export const getActiveRouteName = (navigationState: any): string | null => {
 
 export const getActiveScreenName = (navigation: any): string | null => {
   if (!navigation) return null;
-  const screenName = navigation.state.routeName;
+  const state = navigation.getState();
+  const screenName = state.routes?.[0]?.name;
   return screenName;
 };

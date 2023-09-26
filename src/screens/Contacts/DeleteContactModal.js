@@ -19,7 +19,7 @@
 */
 
 import React, { useRef } from 'react';
-import { SafeAreaView } from 'react-navigation';
+import SafeAreaView from 'react-native-safe-area-view';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
@@ -41,7 +41,7 @@ import { spacing } from 'utils/variables';
 import type { Contact } from 'models/Contact';
 
 type Props = {|
-  contact: Contact;
+  contact: Contact,
 |};
 
 const DeleteContactModal = ({ contact }: Props) => {

@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { DeviceEventEmitter } from 'react-native';
+import { NativeEventEmitter } from 'react-native';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 import { useDispatch } from 'react-redux';
@@ -71,6 +71,10 @@ function AppListItem({ title, iconUrl, onPress, v2Session, ...rest }: Props) {
   const { t } = useTranslationWithPrefix('walletConnect.disconnectModal');
   const { connector } = rest;
 
+  const emitter: any = '';
+  const dropdownManagerEmitter = new NativeEventEmitter(emitter);
+  const networkEventEmitter = new NativeEventEmitter(emitter);
+
   const v2SessionInfo = React.useMemo(() => {
     if (isEmpty(v2Session)) return null;
     const { namespaces, requiredNamespaces, topic } = v2Session;
@@ -111,11 +115,13 @@ function AppListItem({ title, iconUrl, onPress, v2Session, ...rest }: Props) {
   };
 
   React.useEffect(() => {
-    DeviceEventEmitter.emit(WALLET_DROPDOWN_REF, Dropdownref);
+    dropdownManagerEmitter.emit(WALLET_DROPDOWN_REF, Dropdownref);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Dropdownref, visibleModal, visibleWalletSwitchModal]);
 
   React.useEffect(() => {
-    DeviceEventEmitter.emit(WALLET_DROPDOWN_REF, NetworkRef);
+    networkEventEmitter.emit(WALLET_DROPDOWN_REF, NetworkRef);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [NetworkRef, visibleNetworkSwitchModal]);
 
   const onChangeChainSession = (updatedChain: Chain) => {

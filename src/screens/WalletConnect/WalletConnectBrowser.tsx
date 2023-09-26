@@ -1,6 +1,7 @@
 import React, { FC, useEffect } from 'react';
 import { Linking } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 
 // Components
 import { Container } from 'components/layout/Layout';
@@ -10,13 +11,17 @@ import InAppBrowser from 'components/InAppBrowser/InAppBrowser';
 // Utils
 import { showServiceLaunchErrorToast } from 'utils/inAppBrowser';
 
-const WalletConnectBrowser: FC = () => {
-  const navigation = useNavigation();
+// type
+import type { Route } from '@react-navigation/native';
 
-  const url = navigation.getParam('url');
-  const title = navigation.getParam('title');
-  const iconUrl = navigation.getParam('iconUrl');
-  const isBlockchainExplorer = navigation.getParam('isBlockchainExplorer');
+const WalletConnectBrowser: FC = () => {
+  const navigation: NavigationScreenProp<any> = useNavigation();
+  const route: Route = useRoute();
+
+  const url = route?.params?.url;
+  const title = route?.params?.title;
+  const iconUrl = route?.params?.iconUrl;
+  const isBlockchainExplorer = route?.params?.isBlockchainExplorer;
 
   useEffect(() => {
     if (!url || !Linking.canOpenURL(url)) showServiceLaunchErrorToast();
@@ -28,7 +33,7 @@ const WalletConnectBrowser: FC = () => {
         leftItems={[{ close: true }]}
         centerItems={[{ title: title }]}
         onClose={() => {
-          if (isBlockchainExplorer) navigation.dismiss();
+          if (isBlockchainExplorer) navigation.goBack();
           else navigation.goBack();
         }}
         noPaddingTop

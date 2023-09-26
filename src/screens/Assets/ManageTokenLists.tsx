@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { Keyboard } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'translations/translate';
 import styled from 'styled-components/native';
 import Clipboard from '@react-native-community/clipboard';

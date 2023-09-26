@@ -19,7 +19,7 @@
 */
 import debounce from 'lodash.debounce';
 import isEmpty from 'lodash.isempty';
-import { NavigationActions } from 'react-navigation';
+import { CommonActions } from '@react-navigation/native';
 import { Alert } from 'react-native';
 import { Notifications } from 'react-native-notifications';
 import messaging from '@react-native-firebase/messaging';
@@ -42,7 +42,7 @@ import {
   COLLECTIBLE,
   FCM_DATA_TYPE,
 } from 'constants/notificationConstants';
-import { HOME, AUTH_FLOW, APP_FLOW } from 'constants/navigationConstants';
+import { HOME_FLOW, AUTH_FLOW, APP_FLOW } from 'constants/navigationConstants';
 
 // Services
 import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenState } from 'services/navigation';
@@ -66,8 +66,8 @@ let disabledFetchingBalanceListener = null;
 let notificationsOpenerListener = null;
 
 const NOTIFICATION_ROUTES = {
-  [BCX]: HOME,
-  [COLLECTIBLE]: HOME,
+  [BCX]: HOME_FLOW,
+  [COLLECTIBLE]: HOME_FLOW,
 };
 
 function checkForSupportAlert(messageData) {
@@ -219,7 +219,7 @@ export const startListeningOnOpenNotificationAction = () => {
       resetAppNotificationsBadgeNumber();
       const pathAndParams = getNavigationPathAndParamsState();
       if (!pathAndParams) return;
-      const currentFlow = pathAndParams.path.split('/')[0];
+      const currentFlow = pathAndParams.path?.split('/')[0];
       const { type, navigationParams = {} } = processNotification(openedNotificationPayload) || {};
       const notificationRoute = NOTIFICATION_ROUTES[type] || null;
       updateNavigationLastScreenState({
@@ -235,14 +235,13 @@ export const startListeningOnOpenNotificationAction = () => {
           dispatch(fetchAllCollectiblesDataAction());
         }
 
-        const routeName = notificationRoute || HOME;
-        const navigateToAppAction = NavigationActions.navigate({
-          routeName: APP_FLOW,
-          params: {},
-          action: NavigationActions.navigate({
-            routeName,
+        const routeName = notificationRoute || HOME_FLOW;
+        const navigateToAppAction = CommonActions.navigate({
+          name: APP_FLOW,
+          params: {
+            screen: routeName,
             params: navigationParams,
-          }),
+          },
         });
         navigate(navigateToAppAction);
       }

@@ -53,7 +53,7 @@ import { getGasToken, getTxFeeInWei } from 'utils/transactions';
 import { getAssetRateInFiat } from 'utils/rates';
 
 // types
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import type { TopUpFee } from 'models/PaymentNetwork';
 import type { AssetByAddress } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -72,7 +72,6 @@ import { estimateTopUpVirtualAccountAction } from 'actions/smartWalletActions';
 import { accountEthereumWalletAssetsBalancesSelector } from 'selectors/balances';
 import { accountEthereumAssetsSelector } from 'selectors/assets';
 import { useGasTokenSelector } from 'selectors/archanova';
-
 
 const ActionsWrapper = styled.View`
   display: flex;
@@ -164,7 +163,12 @@ class FundTank extends React.Component<Props, State> {
   };
 
   useMaxValue = () => {
-    const { balances, useGasToken, topUpFee: { feeInfo }, assets } = this.props;
+    const {
+      balances,
+      useGasToken,
+      topUpFee: { feeInfo },
+      assets,
+    } = this.props;
     const txFeeInWei = getTxFeeInWei(useGasToken, feeInfo);
 
     const plrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
@@ -174,11 +178,14 @@ class FundTank extends React.Component<Props, State> {
     const balance = getBalance(balances, address);
     const gasToken = getGasToken(useGasToken, feeInfo);
     const maxAmount = calculateMaxAmount(token, balance, txFeeInWei, gasToken);
-    this.setState({
-      value: {
-        amount: formatAmount(maxAmount),
+    this.setState(
+      {
+        value: {
+          amount: formatAmount(maxAmount),
+        },
       },
-    }, () => this.checkFormInputErrors);
+      () => this.checkFormInputErrors,
+    );
   };
 
   checkFormInputErrors = () => {
@@ -219,7 +226,7 @@ class FundTank extends React.Component<Props, State> {
     const formattedBalanceInFiat = formatFiat(totalInFiat, baseFiatCurrency);
 
     // value
-    const currentValue = (!!value && !!parseFloat(value.amount)) ? parseFloat(value.amount) : 0;
+    const currentValue = !!value && !!parseFloat(value.amount) ? parseFloat(value.amount) : 0;
 
     // fee
     const gasToken = getGasToken(useGasToken, feeInfo);
@@ -259,7 +266,7 @@ class FundTank extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: t('ppnContent.title.fundTankScreen') }] }}
-        footer={(
+        footer={
           <FooterInner>
             <FeeLabelToggle
               txFeeInWei={txFeeInWei}
@@ -267,24 +274,26 @@ class FundTank extends React.Component<Props, State> {
               isLoading={!topUpFee.isFetched && balance > 0}
               chain={CHAIN.ETHEREUM}
             />
-            {!!value && !!parseFloat(value.amount) && !inputHasError &&
-            <Button
-              disabled={!session.isOnline || !topUpFee.isFetched}
-              small
-              block={false}
-              flexRight
-              title={t('button.next')}
-              onPress={this.handleFormSubmit}
-            />
-            }
+            {!!value && !!parseFloat(value.amount) && !inputHasError && (
+              <Button
+                disabled={!session.isOnline || !topUpFee.isFetched}
+                small
+                block={false}
+                flexRight
+                title={t('button.next')}
+                onPress={this.handleFormSubmit}
+              />
+            )}
           </FooterInner>
-        )}
+        }
         minAvoidHeight={200}
       >
         <Wrapper regularPadding>
           <FormWrapper>
             <Form
-              ref={node => { this._form = node; }}
+              ref={(node) => {
+                this._form = node;
+              }}
               type={formStructure}
               options={formFields}
               value={value}
@@ -295,17 +304,15 @@ class FundTank extends React.Component<Props, State> {
             <SendTokenDetails>
               <Label small>{t('ppnContent.label.availableBalance')}</Label>
               <TextRow>
-                <SendTokenDetailsValue>
-                  {t('tokenValue', { value: formattedBalance, token })}
-                </SendTokenDetailsValue>
+                <SendTokenDetailsValue>{t('tokenValue', { value: formattedBalance, token })}</SendTokenDetailsValue>
                 <HelperText>{formattedBalanceInFiat}</HelperText>
               </TextRow>
             </SendTokenDetails>
-            {topUpFee.isFetched &&
-            <TouchableOpacity onPress={this.useMaxValue}>
-              <TextLink>{t('button.sendAll')}</TextLink>
-            </TouchableOpacity>
-            }
+            {topUpFee.isFetched && (
+              <TouchableOpacity onPress={this.useMaxValue}>
+                <TextLink>{t('button.sendAll')}</TextLink>
+              </TouchableOpacity>
+            )}
           </ActionsWrapper>
         </Wrapper>
       </ContainerWithHeader>
@@ -317,7 +324,9 @@ const mapStateToProps = ({
   session: { data: session },
   rates: { data: ratesPerChain },
   paymentNetwork: { topUpFee },
-  appSettings: { data: { baseFiatCurrency } },
+  appSettings: {
+    data: { baseFiatCurrency },
+  },
 }: RootReducerState): $Shape<Props> => ({
   ratesPerChain,
   session,

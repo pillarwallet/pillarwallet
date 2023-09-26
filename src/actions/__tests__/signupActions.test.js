@@ -31,16 +31,16 @@ const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
 const store = mockStore({});
 describe('Signup actions', () => {
   xit('should expect series of actions to be dispatch on confirmOTPAction execution including storage update', () => {
-    const expectedActions = [
-      { type: NAVIGATE, routeName: ONBOARDING_FLOW },
-    ];
+    const expectedActions = [{ type: NAVIGATE, name: ONBOARDING_FLOW }];
 
-    return store.dispatch(confirmOTPAction('1111'))
+    return store
+      .dispatch(confirmOTPAction('1111'))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);
         return storage.get('app_settings');
-      }).then((appSettings) => {
+      })
+      .then((appSettings) => {
         expect(appSettings.OTP).toBeTruthy();
       });
   });

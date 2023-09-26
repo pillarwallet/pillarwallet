@@ -27,8 +27,8 @@ import { Provider } from 'react-redux';
 import { ThemeProvider } from 'styled-components/native';
 import { I18nextProvider } from 'react-i18next';
 import i18n from 'services/localisation/testing';
-import * as reactNavigationHooks from 'react-navigation-hooks';
-import { createAppContainer, createSwitchNavigator } from 'react-navigation';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
 
 import { initialState as smartWalletState } from 'reducers/smartWalletReducer';
 import { initialState as assetsBalancesState } from 'reducers/assetsBalancesReducer';
@@ -42,6 +42,8 @@ import { initialState as appSettingsState } from 'reducers/appSettingsReducer';
 import { initialState as userSettingsState } from 'reducers/userSettingsReducer';
 
 import { defaultTheme } from 'utils/themes';
+
+import { ASSET } from 'constants/navigationConstants';
 
 const mockStore = configureMockStore([thunk]);
 
@@ -58,12 +60,18 @@ const initialStore = mockStore({
   userSettings: userSettingsState,
 });
 
-jest.spyOn(reactNavigationHooks, 'useNavigationParam').mockImplementation(() => ({
-  token: 'PLR',
-  patternIcon: 'http://icons/plr?size=3',
-}));
-
-const AssetScreen = createAppContainer(createSwitchNavigator({ screen: Asset }));
+// jest.spyOn(reactNavigationHooks, 'useNavigationParam').mockImplementation(() => ({
+//   token: 'PLR',
+//   patternIcon: 'http://icons/plr?size=3',
+// }));
+const rootFlowStack = createNativeStackNavigator();
+function RootNavigator() {
+  return (
+    <rootFlowStack.Navigator initialRouteName={ASSET}>
+      <rootFlowStack.Screen name={ASSET} component={Asset} />
+    </rootFlowStack.Navigator>
+  );
+}
 
 const Component = (store) =>
   renderer.create(
@@ -71,7 +79,9 @@ const Component = (store) =>
       <ThemeProvider theme={defaultTheme}>
         <Provider store={store}>
           <I18nextProvider i18n={i18n}>
-            <AssetScreen />
+            <NavigationContainer>
+              <RootNavigator />
+            </NavigationContainer>
           </I18nextProvider>
         </Provider>
       </ThemeProvider>

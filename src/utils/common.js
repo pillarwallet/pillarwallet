@@ -24,7 +24,7 @@ import orderBy from 'lodash.orderby';
 import { BigNumber } from 'bignumber.js';
 import { Dimensions, Platform, Linking, PixelRatio, AppState, StatusBar } from 'react-native';
 import { providers, utils, BigNumber as EthersBigNumber } from 'ethers';
-import { CardStyleInterpolators } from 'react-navigation-stack';
+import { CardStyleInterpolators } from '@react-navigation/stack';
 import t from 'translations/translate';
 import { getEnv } from 'configs/envConfig';
 
@@ -52,6 +52,7 @@ import type { GasToken } from 'models/Transaction';
 import type { Value } from 'models/Value';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Record } from 'utils/object';
+import type { SeverityLevel } from '@sentry/types';
 
 // local
 import { humanizeDateString, formatDate } from './date';
@@ -88,11 +89,13 @@ export const errorLog = (...params: any) => {
   console.error(...params); // eslint-disable-line
 };
 
-export const reportLog = (message: string, extra?: Object, level: Sentry.Severity = Sentry.Severity.Info) => {
+export const reportLog = (message: string, extra?: Object, level: SeverityLevel = 'info') => {
   Sentry.withScope((scope) => {
     scope.setExtras({ extra, level });
-    if (level === Sentry.Severity.Info) {
-      Sentry.captureMessage(message, Sentry.Severity.Info);
+    // eslint-disable-next-line i18next/no-literal-string
+    if (level === 'info') {
+      // eslint-disable-next-line i18next/no-literal-string
+      Sentry.captureMessage(message, 'info');
     } else {
       Sentry.captureException(new Error(message));
     }
@@ -101,15 +104,10 @@ export const reportLog = (message: string, extra?: Object, level: Sentry.Severit
 };
 
 export const reportErrorLog = (message: string, extra?: Object) => {
-  reportLog(message, extra, Sentry.Severity.Error);
+  reportLog(message, extra, 'error');
 };
 
-export const logBreadcrumb = (
-  category: string,
-  message: string,
-  extra: any,
-  level: Sentry.Severity = Sentry.Severity.Info,
-) => {
+export const logBreadcrumb = (category: string, message: string, extra: any, level: SeverityLevel = 'info') => {
   if (__DEV__) {
     if (extra != null) printLog(`${level} - ${category}: ${message}`, extra);
     else printLog(`${level} - ${category}: ${message}`);
@@ -124,7 +122,7 @@ export const logBreadcrumb = (
   });
 };
 
-export const reportOrWarn = (message: string, extra?: Object, level: Sentry.Severity = Sentry.Severity.Info) => {
+export const reportOrWarn = (message: string, extra?: Object, level: SeverityLevel = 'info') => {
   if (__DEV__) {
     console.error(message, extra); // eslint-disable-line no-console
     return;
@@ -177,7 +175,11 @@ export const decodeSupportedAddress = (encodedAddress: string): string => {
 };
 
 export const pipe = (...fns: Function[]) => {
-  return fns.reduceRight((a, b) => (...args) => a(b(...args)));
+  return fns.reduceRight(
+    (a, b) =>
+      (...args) =>
+        a(b(...args)),
+  );
 };
 
 export const noop = () => {};
@@ -355,11 +357,10 @@ export const getiOSNavbarHeight = (): number => {
 };
 
 export const modalTransition = {
-  mode: 'modal',
-  defaultNavigationOptions: {
-    headerShown: false,
-    cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
-  },
+  // eslint-disable-next-line i18next/no-literal-string
+  presentation: 'containedModal',
+  headerShown: false,
+  cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
 };
 
 export const handleUrlPress = (url: string) => {
@@ -375,8 +376,6 @@ export const handleUrlPress = (url: string) => {
 };
 
 export const addAppStateChangeListener = (callback: Function) => AppState.addEventListener('change', callback);
-
-export const removeAppStateChangeListener = (callback: Function) => AppState.removeEventListener('change', callback);
 
 export const smallScreen = () => {
   if (Platform.OS === 'ios') {

@@ -19,13 +19,15 @@
 */
 
 import * as React from 'react';
-import { createStackNavigator, CardStyleInterpolators } from 'react-navigation-stack';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
+
 import BackgroundTimer from 'react-native-background-timer';
 import { connect } from 'react-redux';
 import { AppState } from 'react-native';
 import { withTheme } from 'styled-components/native';
 import { withTranslation } from 'react-i18next';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { CardStyleInterpolators } from '@react-navigation/stack';
 
 // screens
 import AssetsScreen from 'screens/Assets';
@@ -63,7 +65,7 @@ import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount
 import LogoutPendingScreen from 'screens/LogoutPending';
 import PPNHomeScreen from 'screens/PPNHome/PPNHome';
 import ServicesScreen from 'screens/Services';
-import StorybookScreen from 'screens/Storybook';
+// import StorybookScreen from 'screens/Storybook';
 import MenuScreen from 'screens/Menu/Menu';
 import MenuSettingsScreen from 'screens/Menu/Settings';
 import MenuSelectLanguageScreen from 'screens/Menu/SelectLanguage';
@@ -139,7 +141,6 @@ import { initWalletConnectSessionsAction } from 'actions/walletConnectSessionsAc
 
 // constants
 import {
-  MAIN_FLOW,
   ASSETS,
   ASSET,
   POOLS_ACTIVITY,
@@ -202,7 +203,7 @@ import {
   UNSETTLED_ASSETS_FLOW,
   SERVICES,
   PPN_HOME,
-  STORYBOOK,
+  // STORYBOOK,
   CONNECT_FLOW,
   SEND_TOKEN_FROM_HOME_FLOW,
   PIN_CODE,
@@ -269,7 +270,7 @@ import {
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
 // utils
-import { modalTransition, addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
+import { modalTransition, addAppStateChangeListener } from 'utils/common';
 import { getThemeByType, getThemeColors } from 'utils/themes';
 
 // types
@@ -287,392 +288,512 @@ const BACKGROUND_APP_STATE = 'background';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
 
 const StackNavigatorModalConfig = {
-  defaultNavigationOptions: {
-    headerShown: false,
-    cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
-  },
+  headerShown: false,
+  cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
 };
 
 const StackNavigatorConfig = {
-  defaultNavigationOptions: {
-    headerShown: false,
-    gestureEnabled: true,
-    cardStyle: {
-      backgroundColor: {
-        dark: getThemeColors(getThemeByType(DARK_THEME)).basic070,
-        light: getThemeColors(getThemeByType()).basic070,
-      },
+  headerShown: false,
+  gestureEnabled: true,
+  cardStyle: {
+    backgroundColor: {
+      dark: getThemeColors(getThemeByType(DARK_THEME)).basic070,
+      light: getThemeColors(getThemeByType()).basic070,
     },
   },
 };
 
 const StackNavigatorConfigDisableGesture = {
-  defaultNavigationOptions: {
-    headerShown: false,
-    gestureEnabled: false,
-    cardStyle: {
-      backgroundColor: {
-        dark: getThemeColors(getThemeByType(DARK_THEME)).basic070,
-        light: getThemeColors(getThemeByType()).basic070,
-      },
+  headerShown: false,
+  gestureEnabled: false,
+  cardStyle: {
+    backgroundColor: {
+      dark: getThemeColors(getThemeByType(DARK_THEME)).basic070,
+      light: getThemeColors(getThemeByType()).basic070,
     },
   },
 };
 
 // ASSETS FLOW
-const assetsFlow = createStackNavigator(
-  {
-    [ASSETS]: AssetsScreen,
-    [COLLECTIBLE]: CollectibleScreen,
-    [ADD_TOKENS]: AddTokensScreen,
-    [TOKENS_WITH_TOGGLES]: TokenWithToggles,
-    [MANAGE_TOKEN_LISTS]: ManageTokenLists,
-  },
-  StackNavigatorConfig,
-);
+const assetsFlowNavigator = createNativeStackNavigator();
+function AssetsFlow() {
+  return (
+    <assetsFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
+      <assetsFlowNavigator.Screen name={ASSETS} component={AssetsScreen} />
+      <assetsFlowNavigator.Screen name={COLLECTIBLE} component={CollectibleScreen} />
+      <assetsFlowNavigator.Screen name={ADD_TOKENS} component={AddTokensScreen} />
+      <assetsFlowNavigator.Screen name={TOKENS_WITH_TOGGLES} component={TokenWithToggles} />
+      <assetsFlowNavigator.Screen name={MANAGE_TOKEN_LISTS} component={ManageTokenLists} />
+    </assetsFlowNavigator.Navigator>
+  );
+}
 
-const assetFlow = createStackNavigator(
-  {
-    [ASSET]: AssetScreen,
-    [POOLS_ACTIVITY]: PoolsActivityScreen,
-    [TRADING_ACTIVITY]: TradingActivityScreen,
-  },
-  StackNavigatorConfigDisableGesture,
-);
+const assetFlowNavigator = createNativeStackNavigator();
+function AssetFlow() {
+  return (
+    <assetFlowNavigator.Navigator screenOptions={StackNavigatorConfigDisableGesture}>
+      <assetFlowNavigator.Screen name={ASSET} component={AssetScreen} />
+      <assetFlowNavigator.Screen name={POOLS_ACTIVITY} component={PoolsActivityScreen} />
+      <assetFlowNavigator.Screen name={TRADING_ACTIVITY} component={TradingActivityScreen} />
+    </assetFlowNavigator.Navigator>
+  );
+}
 
-const exchangeFlow = createStackNavigator(
-  {
-    [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
-    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-  },
-  StackNavigatorConfigDisableGesture,
-);
+const exchangeFlowNavigator = createNativeStackNavigator();
+function ExchangeFlow() {
+  return (
+    <exchangeFlowNavigator.Navigator screenOptions={StackNavigatorConfigDisableGesture}>
+      <exchangeFlowNavigator.Screen name={EXCHANGE_CONFIRM} component={ExchangeConfirmScreen} />
+      <exchangeFlowNavigator.Screen name={SEND_TOKEN_PIN_CONFIRM} component={SendTokenPinConfirmScreen} />
+      <exchangeFlowNavigator.Screen name={SEND_TOKEN_TRANSACTION} component={SendTokenTransactionScreen} />
+    </exchangeFlowNavigator.Navigator>
+  );
+}
 
 // SERVICES FLOW
-const servicesFlow = createStackNavigator(
-  {
-    [SERVICES]: ServicesScreen,
-  },
-  StackNavigatorConfig,
-);
+const servicesFlowNavigator = createNativeStackNavigator();
+function ServicesFlow() {
+  return (
+    <servicesFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
+      <servicesFlowNavigator.Screen name={SERVICES} component={ServicesScreen} />
+    </servicesFlowNavigator.Navigator>
+  );
+}
 
 // WALLETCONNECT CALL REQUEST FLOW
-const walletConnectCallRequestFlow = createStackNavigator(
-  {
-    [WALLETCONNECT_PIN_CONFIRM_SCREEN]: WalletConnectPinConfirm,
-    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-  },
-  StackNavigatorConfig,
-);
+const walletConnectCallRequestFlowNavigator = createNativeStackNavigator();
+function WalletConnectCallRequestFlow() {
+  return (
+    <walletConnectCallRequestFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
+      <walletConnectCallRequestFlowNavigator.Screen
+        name={WALLETCONNECT_PIN_CONFIRM_SCREEN}
+        component={WalletConnectPinConfirm}
+      />
+      <walletConnectCallRequestFlowNavigator.Screen
+        name={SEND_TOKEN_TRANSACTION}
+        component={SendTokenTransactionScreen}
+      />
+    </walletConnectCallRequestFlowNavigator.Navigator>
+  );
+}
 
 // WALLETCONNECT FLOW
-const walletConnectFlow = createStackNavigator(
-  {
-    [WALLETCONNECT]: WalletConnectHomeScreen,
-    [WALLETCONNECT_CONNECTED_APPS]: WalletConnectConnectedAppsScreen,
-    [WALLETCONNECT_BROWSER]: WalletConnectBrowser,
-  },
-  StackNavigatorConfig,
-);
+const walletConnectFlowNavigator = createNativeStackNavigator();
+function WalletConnectFlow() {
+  return (
+    <walletConnectFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
+      <walletConnectFlowNavigator.Screen name={WALLETCONNECT} component={WalletConnectHomeScreen} />
+      <walletConnectFlowNavigator.Screen
+        name={WALLETCONNECT_CONNECTED_APPS}
+        component={WalletConnectConnectedAppsScreen}
+      />
+      <walletConnectFlowNavigator.Screen name={WALLETCONNECT_BROWSER} component={WalletConnectBrowser} />
+    </walletConnectFlowNavigator.Navigator>
+  );
+}
 
 // NATIVE INTEGRATION FLOW
-const nativeIntegrationFlow = createStackNavigator(
-  {
-    [NI_WARNING]: NIWarningScreen,
-    [NI_SERVICES]: NIServices,
-    [NI_INPUT_SERVICE]: NIInputService,
-    [NI_VIEW_SERVICE]: NIViewService,
-    [NI_TRANSACTION_COMPLETED]: NITransactionSubmitted,
-  },
-  StackNavigatorConfig,
-);
+const nativeIntegrationFlowNavigator = createNativeStackNavigator();
+function NativeIntegrationFlow() {
+  return (
+    <nativeIntegrationFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
+      <nativeIntegrationFlowNavigator.Screen name={NI_WARNING} component={NIWarningScreen} />
+      <nativeIntegrationFlowNavigator.Screen name={NI_SERVICES} component={NIServices} />
+      <nativeIntegrationFlowNavigator.Screen name={NI_INPUT_SERVICE} component={NIInputService} />
+      <nativeIntegrationFlowNavigator.Screen name={NI_VIEW_SERVICE} component={NIViewService} />
+      <nativeIntegrationFlowNavigator.Screen name={NI_TRANSACTION_COMPLETED} component={NITransactionSubmitted} />
+    </nativeIntegrationFlowNavigator.Navigator>
+  );
+}
 
 // HOME FLOW
-const homeFlow = createStackNavigator(
-  {
-    [HOME]: HomeScreen,
-    [ADD_TOKENS]: AddTokensScreen,
-    [TOKENS_WITH_TOGGLES]: TokenWithToggles,
-    [MANAGE_TOKEN_LISTS]: ManageTokenLists,
-    [HOME_HISTORY]: HistoryScreen,
-    [COLLECTIBLE]: CollectibleScreen,
-    [STORYBOOK]: StorybookScreen,
-    [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
-    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-    [REGISTER_ENS]: RegisterENSScreen,
-    [RECEIVE_TOKENS_WARNING]: ReceiveTokensWarning,
-  },
-  StackNavigatorConfig,
-);
+const homeFlowNavigator = createNativeStackNavigator();
+function HomeFlow() {
+  return (
+    <homeFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
+      <homeFlowNavigator.Screen name={HOME} component={HomeScreen} />
+      <homeFlowNavigator.Screen name={ADD_TOKENS} component={AddTokensScreen} />
+      <homeFlowNavigator.Screen name={TOKENS_WITH_TOGGLES} component={TokenWithToggles} />
+      <homeFlowNavigator.Screen name={MANAGE_TOKEN_LISTS} component={ManageTokenLists} />
+      <homeFlowNavigator.Screen name={HOME_HISTORY} component={HistoryScreen} />
+      <homeFlowNavigator.Screen name={COLLECTIBLE} component={CollectibleScreen} />
+      {/* <homeFlowNavigator.Screen name={STORYBOOK} component={StorybookScreen} /> */}
+      <homeFlowNavigator.Screen name={SEND_TOKEN_AMOUNT} component={SendTokenAmountScreen} />
+      <homeFlowNavigator.Screen name={SEND_TOKEN_PIN_CONFIRM} component={SendTokenPinConfirmScreen} />
+      <homeFlowNavigator.Screen name={SEND_TOKEN_TRANSACTION} component={SendTokenTransactionScreen} />
+      <homeFlowNavigator.Screen name={REGISTER_ENS} component={RegisterENSScreen} />
+      <homeFlowNavigator.Screen name={RECEIVE_TOKENS_WARNING} component={ReceiveTokensWarning} />
+    </homeFlowNavigator.Navigator>
+  );
+}
 
 // SEND TOKEN FLOW
-const sendTokenFlow = createStackNavigator(
-  {
-    [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
-    [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
-    [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
-    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-  },
-  StackNavigatorModalConfig,
-);
+const sendTokenFlowNavigator = createNativeStackNavigator();
+function SendTokenFlow() {
+  return (
+    <sendTokenFlowNavigator.Navigator screenOptions={StackNavigatorModalConfig}>
+      <sendTokenFlowNavigator.Screen name={SEND_TOKEN_AMOUNT} component={SendTokenAmountScreen} />
+      <sendTokenFlowNavigator.Screen name={SEND_COLLECTIBLE_CONFIRM} component={SendCollectibleConfirmScreen} />
+      <sendTokenFlowNavigator.Screen name={SEND_TOKEN_CONFIRM} component={SendTokenConfirmScreen} />
+      <sendTokenFlowNavigator.Screen name={SEND_TOKEN_PIN_CONFIRM} component={SendTokenPinConfirmScreen} />
+      <sendTokenFlowNavigator.Screen name={SEND_TOKEN_TRANSACTION} component={SendTokenTransactionScreen} />
+    </sendTokenFlowNavigator.Navigator>
+  );
+}
 
-const changePinFlow = createStackNavigator(
-  {
-    [CHANGE_PIN_CURRENT_PIN]: ChangePinCurrentPinScreen,
-    [CHANGE_PIN_NEW_PIN]: ChangePinNewPinScreen,
-    [CHANGE_PIN_CONFIRM_NEW_PIN]: ChangePinConfirmNewPinScreen,
-  },
-  StackNavigatorModalConfig,
-);
+const changePinFlowNavigator = createNativeStackNavigator();
+function ChangePinFlow() {
+  return (
+    <changePinFlowNavigator.Navigator screenOptions={StackNavigatorModalConfig}>
+      <changePinFlowNavigator.Screen name={CHANGE_PIN_CURRENT_PIN} component={ChangePinCurrentPinScreen} />
+      <changePinFlowNavigator.Screen name={CHANGE_PIN_NEW_PIN} component={ChangePinNewPinScreen} />
+      <changePinFlowNavigator.Screen name={CHANGE_PIN_CONFIRM_NEW_PIN} component={ChangePinConfirmNewPinScreen} />
+    </changePinFlowNavigator.Navigator>
+  );
+}
 
 // WALLET BACKUP IN SETTINGS FLOW
-const backupWalletFlow = createStackNavigator(
-  {
-    [BACKUP_WALLET_INTRO]: BackupWalletIntro,
-    [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
-  },
-  StackNavigatorModalConfig,
-);
+const backupWalletFlowNavigator = createNativeStackNavigator();
+function BackupWalletFlow() {
+  return (
+    <backupWalletFlowNavigator.Navigator screenOptions={StackNavigatorModalConfig}>
+      <backupWalletFlowNavigator.Screen name={BACKUP_WALLET_INTRO} component={BackupWalletIntro} />
+      <backupWalletFlowNavigator.Screen name={BACKUP_PHRASE_VALIDATE} component={BackupPhraseValidateScreen} />
+    </backupWalletFlowNavigator.Navigator>
+  );
+}
 
 // TUTORIAL FLOW
-const tutorialFlow = createStackNavigator(
-  {
-    [TUTORIAL]: TutorialScreen,
-  },
-  StackNavigatorConfig,
-);
+const tutorialFlowNavigator = createNativeStackNavigator();
+function TutorialFlow() {
+  return (
+    <tutorialFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
+      <tutorialFlowNavigator.Screen name={TUTORIAL} component={TutorialScreen} />
+    </tutorialFlowNavigator.Navigator>
+  );
+}
 
 // PPN SEND TOKEN FROM ASSET FLOW
-const ppnSendTokenFromAssetFlow = createStackNavigator(
-  {
-    [PPN_SEND_TOKEN_AMOUNT]: PPNSendTokenAmountScreen,
-  },
-  StackNavigatorModalConfig,
-);
+const ppnSendTokenFromAssetFlowNavigator = createNativeStackNavigator();
+function PpnSendTokenFromAssetFlow() {
+  return (
+    <ppnSendTokenFromAssetFlowNavigator.Navigator screenOptions={StackNavigatorModalConfig}>
+      <ppnSendTokenFromAssetFlowNavigator.Screen name={PPN_SEND_TOKEN_AMOUNT} component={PPNSendTokenAmountScreen} />
+    </ppnSendTokenFromAssetFlowNavigator.Navigator>
+  );
+}
 
 // PPN SEND SYNTHETIC ASSET FULL FLOW
-const ppnSendSyntheticAssetFlow = createStackNavigator(
-  {
-    // synthetic
-    [SEND_SYNTHETIC_AMOUNT]: SendSyntheticAmountScreen,
-    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-    // other
-    [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
-    [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
-    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-  },
-  StackNavigatorModalConfig,
-);
+const ppnSendSyntheticAssetFlowNavigator = createNativeStackNavigator();
+function PpnSendSyntheticAssetFlow() {
+  return (
+    <ppnSendSyntheticAssetFlowNavigator.Navigator screenOptions={StackNavigatorModalConfig}>
+      <ppnSendSyntheticAssetFlowNavigator.Screen name={SEND_SYNTHETIC_AMOUNT} component={SendSyntheticAmountScreen} />
+      <ppnSendSyntheticAssetFlowNavigator.Screen name={SEND_TOKEN_PIN_CONFIRM} component={SendTokenPinConfirmScreen} />
+      <ppnSendSyntheticAssetFlowNavigator.Screen name={SEND_TOKEN_TRANSACTION} component={SendTokenTransactionScreen} />
+      <ppnSendSyntheticAssetFlowNavigator.Screen name={SEND_TOKEN_AMOUNT} component={SendTokenAmountScreen} />
+      <ppnSendSyntheticAssetFlowNavigator.Screen name={SEND_TOKEN_CONFIRM} component={SendTokenConfirmScreen} />
+      <ppnSendSyntheticAssetFlowNavigator.Screen name={SEND_TOKEN_PIN_CONFIRM} component={SendTokenPinConfirmScreen} />
+    </ppnSendSyntheticAssetFlowNavigator.Navigator>
+  );
+}
 
 // MANAGE WALLETS FLOW
-const manageWalletsFlow = createStackNavigator(
-  {
-    [ACCOUNTS]: AccountsScreen,
-    [FUND_CONFIRM]: FundConfirmScreen,
-  },
-  StackNavigatorConfig,
-);
+const manageWalletsFlowNavigator = createNativeStackNavigator();
+function ManageWalletsFlow() {
+  return (
+    <manageWalletsFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
+      <manageWalletsFlowNavigator.Screen name={ACCOUNTS} component={AccountsScreen} />
+      <manageWalletsFlowNavigator.Screen name={FUND_CONFIRM} component={FundConfirmScreen} />
+    </manageWalletsFlowNavigator.Navigator>
+  );
+}
 
 // TANK FLOWS
-const tankSettleFlow = createStackNavigator(
-  {
-    [SETTLE_BALANCE]: SettleBalanceScreen,
-    [SETTLE_BALANCE_CONFIRM]: SettleBalanceConfirmScreen,
-  },
-  StackNavigatorConfig,
-);
+const tankSettleFlowNavigator = createNativeStackNavigator();
+function TankSettleFlow() {
+  return (
+    <tankSettleFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
+      <tankSettleFlowNavigator.Screen name={SETTLE_BALANCE} component={SettleBalanceScreen} />
+      <tankSettleFlowNavigator.Screen name={SETTLE_BALANCE_CONFIRM} component={SettleBalanceConfirmScreen} />
+    </tankSettleFlowNavigator.Navigator>
+  );
+}
 
 // UNSETTLED ASSETS FLOW
-const unsettledAssetsFlow = createStackNavigator(
-  {
-    [UNSETTLED_ASSETS]: UnsettledAssetsScreen,
-    [SETTLE_BALANCE]: SettleBalanceScreen,
-    [SETTLE_BALANCE_CONFIRM]: SettleBalanceConfirmScreen,
-  },
-  StackNavigatorConfig,
-);
+const unsettledAssetsFlowNavigator = createNativeStackNavigator();
+function UnsettledAssetsFlow() {
+  return (
+    <unsettledAssetsFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
+      <unsettledAssetsFlowNavigator.Screen name={UNSETTLED_ASSETS} component={UnsettledAssetsScreen} />
+      <unsettledAssetsFlowNavigator.Screen name={SETTLE_BALANCE} component={SettleBalanceScreen} />
+      <unsettledAssetsFlowNavigator.Screen name={SETTLE_BALANCE_CONFIRM} component={SettleBalanceConfirmScreen} />
+    </unsettledAssetsFlowNavigator.Navigator>
+  );
+}
 
-const tankFundFlow = createStackNavigator(
-  {
-    [FUND_TANK]: FundTankScreen,
-    [FUND_CONFIRM]: FundConfirmScreen,
-  },
-  StackNavigatorConfig,
-);
+const tankFundFlowNavigator = createNativeStackNavigator();
+function TankFundFlow() {
+  return (
+    <tankFundFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
+      <tankFundFlowNavigator.Screen name={FUND_TANK} component={FundTankScreen} />
+      <tankFundFlowNavigator.Screen name={FUND_CONFIRM} component={FundConfirmScreen} />
+    </tankFundFlowNavigator.Navigator>
+  );
+}
 
-const tankWithdrawalFlow = createStackNavigator(
-  {
-    [TANK_WITHDRAWAL]: TankWithdrawalScreen,
-    [TANK_WITHDRAWAL_CONFIRM]: TankWithdrawalConfirmScreen,
-  },
-  StackNavigatorConfig,
-);
+const tankWithdrawalFlowNavigator = createNativeStackNavigator();
+function TankWithdrawalFlow() {
+  return (
+    <tankWithdrawalFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
+      <tankWithdrawalFlowNavigator.Screen name={TANK_WITHDRAWAL} component={TankWithdrawalScreen} />
+      <tankWithdrawalFlowNavigator.Screen name={TANK_WITHDRAWAL_CONFIRM} component={TankWithdrawalConfirmScreen} />
+    </tankWithdrawalFlowNavigator.Navigator>
+  );
+}
 
-const menuFlow = createStackNavigator(
-  {
-    [MENU]: MenuScreen,
-    [MENU_SETTINGS]: MenuSettingsScreen,
-    [MANAGE_TOKEN_LISTS]: ManageTokenLists,
-    [MENU_SELECT_LANGUAGE]: MenuSelectLanguageScreen,
-    [MENU_SELECT_APPEARANCE]: MenuSelectAppearanceScreen,
-    [MENU_SELECT_CURRENCY]: MenuSelectCurrencyScreen,
-    [MENU_SYSTEM_INFORMATION]: MenuSystemInformationScreen,
-    [IMPORT_WALLET]: ImportWalletScreen,
-    [WELCOME_BACK]: WelcomeBackScreen,
-    [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
-    [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
-  },
-  StackNavigatorConfig,
-);
+const menuFlowNavigator = createNativeStackNavigator();
+function MenuFlow() {
+  return (
+    <menuFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
+      <menuFlowNavigator.Screen name={MENU} component={MenuScreen} />
+      <menuFlowNavigator.Screen name={MENU_SETTINGS} component={MenuSettingsScreen} />
+      <menuFlowNavigator.Screen name={MANAGE_TOKEN_LISTS} component={ManageTokenLists} />
+      <menuFlowNavigator.Screen name={MENU_SELECT_LANGUAGE} component={MenuSelectLanguageScreen} />
+      <menuFlowNavigator.Screen name={MENU_SELECT_APPEARANCE} component={MenuSelectAppearanceScreen} />
+      <menuFlowNavigator.Screen name={MENU_SELECT_CURRENCY} component={MenuSelectCurrencyScreen} />
+      <menuFlowNavigator.Screen name={MENU_SYSTEM_INFORMATION} component={MenuSystemInformationScreen} />
+      <menuFlowNavigator.Screen name={IMPORT_WALLET} component={ImportWalletScreen} />
+      <menuFlowNavigator.Screen name={WELCOME_BACK} component={WelcomeBackScreen} />
+      <menuFlowNavigator.Screen name={SET_WALLET_PIN_CODE} component={SetWalletPinCodeScreen} />
+      <menuFlowNavigator.Screen name={PIN_CODE_CONFIRMATION} component={PinCodeConfirmationScreen} />
+    </menuFlowNavigator.Navigator>
+  );
+}
 
-const ImportFlowFromSettings = createStackNavigator(
-  {
-    [IMPORT_WALLET]: ImportWalletScreen,
-    [WELCOME_BACK]: WelcomeBackScreen,
-    [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
-    [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
-  },
-  StackNavigatorConfig,
-);
+const importFlowFromSettingsNavigator = createNativeStackNavigator();
+function ImportFlowFromSettings() {
+  return (
+    <importFlowFromSettingsNavigator.Navigator screenOptions={StackNavigatorConfig}>
+      <importFlowFromSettingsNavigator.Screen name={IMPORT_WALLET} component={ImportWalletScreen} />
+      <importFlowFromSettingsNavigator.Screen name={WELCOME_BACK} component={WelcomeBackScreen} />
+      <importFlowFromSettingsNavigator.Screen name={SET_WALLET_PIN_CODE} component={SetWalletPinCodeScreen} />
+      <importFlowFromSettingsNavigator.Screen name={PIN_CODE_CONFIRMATION} component={PinCodeConfirmationScreen} />
+    </importFlowFromSettingsNavigator.Navigator>
+  );
+}
 
-const keyBasedAssetTransferFlow = createStackNavigator(
-  {
-    [KEY_BASED_ASSET_TRANSFER_INTRO]: KeyBasedAssetTransferIntroScreen,
-    [KEY_BASED_ASSET_TRANSFER_CHOOSE]: KeyBasedAssetTransferChooseScreen,
-    [KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT]: KeyBasedAssetTransferEditAmountScreen,
-    [KEY_BASED_ASSET_TRANSFER_CONFIRM]: KeyBasedAssetTransferConfirmScreen,
-    [KEY_BASED_ASSET_TRANSFER_UNLOCK]: KeyBasedAssetTransferUnlockScreen,
-    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-  },
-  StackNavigatorConfig,
-);
+const keyBasedAssetTransferFlowNavigator = createNativeStackNavigator();
+function KeyBasedAssetTransferFlow() {
+  return (
+    <keyBasedAssetTransferFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
+      <keyBasedAssetTransferFlowNavigator.Screen
+        name={KEY_BASED_ASSET_TRANSFER_INTRO}
+        component={KeyBasedAssetTransferIntroScreen}
+      />
+      <keyBasedAssetTransferFlowNavigator.Screen
+        name={KEY_BASED_ASSET_TRANSFER_CHOOSE}
+        component={KeyBasedAssetTransferChooseScreen}
+      />
+      <keyBasedAssetTransferFlowNavigator.Screen
+        name={KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT}
+        component={KeyBasedAssetTransferEditAmountScreen}
+      />
+      <keyBasedAssetTransferFlowNavigator.Screen
+        name={KEY_BASED_ASSET_TRANSFER_CONFIRM}
+        component={KeyBasedAssetTransferConfirmScreen}
+      />
+      <keyBasedAssetTransferFlowNavigator.Screen
+        name={KEY_BASED_ASSET_TRANSFER_UNLOCK}
+        component={KeyBasedAssetTransferUnlockScreen}
+      />
+      <keyBasedAssetTransferFlowNavigator.Screen name={SEND_TOKEN_TRANSACTION} component={SendTokenTransactionScreen} />
+    </keyBasedAssetTransferFlowNavigator.Navigator>
+  );
+}
 
-const walletMigrationFlow = createStackNavigator(
-  {
-    [WALLET_MIGRATION_ARCHANOVA_INTRO]: WalletMigrationArchanovaIntroScreen,
-    [WALLET_MIGRATION_ARCHANOVA_SELECT_ASSETS]: WalletMigrationArchanovaSelectAssetsScreen,
-    [WALLET_MIGRATION_ARCHANOVA_SET_AMOUNT]: WalletMigrationArchanovaSetAmountScreen,
-    [WALLET_MIGRATION_ARCHANOVA_REVIEW]: WalletMigrationArchanovaReviewScreen,
-    [WALLET_MIGRATION_ARCHANOVA_PIN_CONFIRM]: WalletMigrationArchanovaPinConfirmScreen,
-    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-  },
-  StackNavigatorConfig,
-);
+const walletMigrationFlowNavigator = createNativeStackNavigator();
+function WalletMigrationFlow() {
+  return (
+    <walletMigrationFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
+      <walletMigrationFlowNavigator.Screen
+        name={WALLET_MIGRATION_ARCHANOVA_INTRO}
+        component={WalletMigrationArchanovaIntroScreen}
+      />
+      <walletMigrationFlowNavigator.Screen
+        name={WALLET_MIGRATION_ARCHANOVA_SELECT_ASSETS}
+        component={WalletMigrationArchanovaSelectAssetsScreen}
+      />
+      <walletMigrationFlowNavigator.Screen
+        name={WALLET_MIGRATION_ARCHANOVA_SET_AMOUNT}
+        component={WalletMigrationArchanovaSetAmountScreen}
+      />
+      <walletMigrationFlowNavigator.Screen
+        name={WALLET_MIGRATION_ARCHANOVA_REVIEW}
+        component={WalletMigrationArchanovaReviewScreen}
+      />
+      <walletMigrationFlowNavigator.Screen
+        name={WALLET_MIGRATION_ARCHANOVA_PIN_CONFIRM}
+        component={WalletMigrationArchanovaPinConfirmScreen}
+      />
+      <walletMigrationFlowNavigator.Screen name={SEND_TOKEN_TRANSACTION} component={SendTokenTransactionScreen} />
+    </walletMigrationFlowNavigator.Navigator>
+  );
+}
 
-const contactsFlow = createStackNavigator(
-  {
-    [CONTACTS_LIST]: ContactsListScreen,
-  },
-  StackNavigatorConfig,
-);
+const contactsFlowNavigator = createNativeStackNavigator();
+function ContactsFlow() {
+  return (
+    <contactsFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
+      <contactsFlowNavigator.Screen name={CONTACTS_LIST} component={ContactsListScreen} />
+    </contactsFlowNavigator.Navigator>
+  );
+}
 
 // BRIDGE TAB (Exchange and Cross-chain)
-const bridgeFlow = createStackNavigator(
-  {
-    [BRIDGE_TAB]: BridgeTabScreen,
-  },
-  StackNavigatorConfig,
-);
+const bridgeFlowNavigator = createNativeStackNavigator();
+function BridgeFlow() {
+  return (
+    <bridgeFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
+      <bridgeFlowNavigator.Screen name={BRIDGE_TAB} component={BridgeTabScreen} />
+    </bridgeFlowNavigator.Navigator>
+  );
+}
 
-const ensMigrationFlow = createStackNavigator(
-  {
-    [ENS_MIGRATION_CONFIRM]: EnsMigrationConfirmScreen,
-    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-  },
-  StackNavigatorConfig,
-);
+const ensMigrationFlowNavigator = createNativeStackNavigator();
+function EnsMigrationFlow() {
+  return (
+    <ensMigrationFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
+      <ensMigrationFlowNavigator.Screen name={ENS_MIGRATION_CONFIRM} component={EnsMigrationConfirmScreen} />
+      <ensMigrationFlowNavigator.Screen name={SEND_TOKEN_TRANSACTION} component={SendTokenTransactionScreen} />
+    </ensMigrationFlowNavigator.Navigator>
+  );
+}
 
-const liquidityPoolsFlow = createStackNavigator(
-  {
-    [LIQUIDITY_POOLS]: LiquidityPoolsScreen,
-    [LIQUIDITY_POOL_DASHBOARD]: LiquidityPoolDashboardScreen,
-    [LIQUIDITY_POOLS_ADD_LIQUIDITY]: LiquidityPoolsAddLiquidityScreen,
-    [LIQUIDITY_POOLS_ADD_LIQUIDITY_REVIEW]: LiquidityPoolsAddLiquidityReviewScreen,
-    [LIQUIDITY_POOLS_STAKE]: LiquidityPoolsStakeTokensScreen,
-    [LIQUIDITY_POOLS_STAKE_REVIEW]: LiquidityPoolsStakeTokensReviewScreen,
-    [LIQUIDITY_POOLS_UNSTAKE]: LiquidityPoolsUnstakeTokensScreen,
-    [LIQUIDITY_POOLS_UNSTAKE_REVIEW]: LiquidityPoolsUnstakeTokensReviewScreen,
-    [LIQUIDITY_POOLS_REMOVE_LIQUIDITY]: LiquidityPoolsRemoveLiquidityScreen,
-    [LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW]: LiquidityPoolsRemoveLiquidityReviewScreen,
-    [LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW]: LiquidityPoolsClaimRewardsReviewScreen,
-    [LIQUIDITY_POOLS_INFO]: LiquidityPoolsInfoScreen,
-    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-  },
-  StackNavigatorConfig,
-);
+const liquidityPoolsFlowNavigator = createNativeStackNavigator();
+function LiquidityPoolsFlow() {
+  return (
+    <liquidityPoolsFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
+      <liquidityPoolsFlowNavigator.Screen name={LIQUIDITY_POOLS} component={LiquidityPoolsScreen} />
+      <liquidityPoolsFlowNavigator.Screen name={LIQUIDITY_POOL_DASHBOARD} component={LiquidityPoolDashboardScreen} />
+      <liquidityPoolsFlowNavigator.Screen
+        name={LIQUIDITY_POOLS_ADD_LIQUIDITY}
+        component={LiquidityPoolsAddLiquidityScreen}
+      />
+      <liquidityPoolsFlowNavigator.Screen
+        name={LIQUIDITY_POOLS_ADD_LIQUIDITY_REVIEW}
+        component={LiquidityPoolsAddLiquidityReviewScreen}
+      />
+      <liquidityPoolsFlowNavigator.Screen name={LIQUIDITY_POOLS_STAKE} component={LiquidityPoolsStakeTokensScreen} />
+      <liquidityPoolsFlowNavigator.Screen
+        name={LIQUIDITY_POOLS_STAKE_REVIEW}
+        component={LiquidityPoolsStakeTokensReviewScreen}
+      />
+      <liquidityPoolsFlowNavigator.Screen
+        name={LIQUIDITY_POOLS_UNSTAKE}
+        component={LiquidityPoolsUnstakeTokensScreen}
+      />
+      <liquidityPoolsFlowNavigator.Screen
+        name={LIQUIDITY_POOLS_UNSTAKE_REVIEW}
+        component={LiquidityPoolsUnstakeTokensReviewScreen}
+      />
+      <liquidityPoolsFlowNavigator.Screen
+        name={LIQUIDITY_POOLS_REMOVE_LIQUIDITY}
+        component={LiquidityPoolsRemoveLiquidityScreen}
+      />
+      <liquidityPoolsFlowNavigator.Screen
+        name={LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW}
+        component={LiquidityPoolsRemoveLiquidityReviewScreen}
+      />
+      <liquidityPoolsFlowNavigator.Screen
+        name={LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW}
+        component={LiquidityPoolsClaimRewardsReviewScreen}
+      />
+      <liquidityPoolsFlowNavigator.Screen name={LIQUIDITY_POOLS_INFO} component={LiquidityPoolsInfoScreen} />
+      <liquidityPoolsFlowNavigator.Screen name={SEND_TOKEN_PIN_CONFIRM} component={SendTokenPinConfirmScreen} />
+      <liquidityPoolsFlowNavigator.Screen name={SEND_TOKEN_TRANSACTION} component={SendTokenTransactionScreen} />
+    </liquidityPoolsFlowNavigator.Navigator>
+  );
+}
 
-const plrStakingFlow = createStackNavigator(
-  {
-    [PLR_STAKING]: PlrStaking,
-    [PLR_STAKING_VALIDATOR]: PlrStakingValidator,
-  },
-  StackNavigatorConfig,
-);
-
-const MainStack = createStackNavigator(
-  {
-    [HOME_FLOW]: homeFlow,
-    [ASSETS]: assetsFlow,
-  },
-  StackNavigatorConfig,
-);
+const plrStakingFlowNavigator = createNativeStackNavigator();
+function PlrStakingFlow() {
+  return (
+    <plrStakingFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
+      <plrStakingFlowNavigator.Screen name={PLR_STAKING} component={PlrStaking} />
+      <plrStakingFlowNavigator.Screen name={PLR_STAKING_VALIDATOR} component={PlrStakingValidator} />
+    </plrStakingFlowNavigator.Navigator>
+  );
+}
 
 // Below screens/flows will appear as modals
-const AppFlowNavigation = createStackNavigator(
-  {
-    [MAIN_FLOW]: MainStack,
-    [SEND_TOKEN_FROM_HOME_FLOW]: sendTokenFlow,
-    [CONNECT_FLOW]: walletConnectFlow,
-    [SERVICES_FLOW]: servicesFlow,
-    [PPN_HOME]: PPNHomeScreen,
-    [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFlow,
-    [PPN_SEND_TOKEN_FROM_ASSET_FLOW]: ppnSendTokenFromAssetFlow,
-    [PPN_SEND_SYNTHETIC_ASSET_FLOW]: ppnSendSyntheticAssetFlow,
-    [SEND_TOKEN_FROM_CONTACT_FLOW]: sendTokenFlow,
-    [SEND_COLLECTIBLE_FROM_ASSET_FLOW]: sendTokenFlow,
-    [CHANGE_PIN_FLOW]: changePinFlow,
-    [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
-    [BACKUP_WALLET_IN_SETTINGS_FLOW]: backupWalletFlow,
-    [MANAGE_WALLETS_FLOW]: manageWalletsFlow,
-    [TANK_SETTLE_FLOW]: tankSettleFlow,
-    [UNSETTLED_ASSETS_FLOW]: unsettledAssetsFlow,
-    [TANK_FUND_FLOW]: tankFundFlow,
-    [TANK_WITHDRAWAL_FLOW]: tankWithdrawalFlow,
-    [WALLETCONNECT_FLOW]: walletConnectFlow,
-    [ASSET]: assetFlow,
-    [PILLAR_NETWORK_INTRO]: PillarNetworkIntro,
-    [LOGOUT_PENDING]: LogoutPendingScreen,
-    [MENU_FLOW]: menuFlow,
-    [PIN_CODE]: PinCodeUnlockScreen,
-    [WALLET_ACTIVATED]: WalletActivatedScreen,
-    [WALLET_MIGRATION_ARCHANOVA_FLOW]: walletMigrationFlow,
-    [WALLET_MIGRATION_ARCHANOVA_STATUS]: WalletMigrationArchanovaStatusScreen,
-    [KEY_BASED_ASSET_TRANSFER_FLOW]: keyBasedAssetTransferFlow,
-    [KEY_BASED_ASSET_TRANSFER_STATUS]: KeyBasedAssetTransferStatusScreen,
-    [CONTACTS_FLOW]: contactsFlow,
-    [EXCHANGE_FLOW]: exchangeFlow,
-    [LIQUIDITY_POOLS_FLOW]: liquidityPoolsFlow,
-    [TUTORIAL_FLOW]: tutorialFlow,
-    [WALLETCONNECT_CONNECTOR_REQUEST_SCREEN]: WalletConnectConnectorRequestScreen,
-    [WALLETCONNECT_CALL_REQUEST_SCREEN]: WalletConnectCallRequestScreen,
-    [WALLETCONNECT_CALL_REQUEST_FLOW]: walletConnectCallRequestFlow,
-    [ETHERSPOT_DEPLOYMENT_INTERJECTION]: EtherspotDeploymentInterjection,
-    [ENS_MIGRATION_FLOW]: ensMigrationFlow,
-    [WEB_VIEW]: WebViewScreen,
-    [LEGAL_SCREEN]: LegalScreen,
-    [IMPORT_FLOW_FROM_SETTINGS]: ImportFlowFromSettings,
-    [BRIDGE_FLOW]: bridgeFlow,
-    [NATIVE_INTEGRATION_FLOW]: nativeIntegrationFlow,
-    [PILLAR_STAKING_FLOW]: plrStakingFlow,
-  },
-  modalTransition,
-);
+const AppFlowStackNavigator = createNativeStackNavigator();
+function AppFlowNavigation() {
+  return (
+    <AppFlowStackNavigator.Navigator screenOptions={modalTransition}>
+      <AppFlowStackNavigator.Screen name={HOME_FLOW} component={HomeFlow} />
+      <AppFlowStackNavigator.Screen name={ASSETS} component={AssetsFlow} />
+      <AppFlowStackNavigator.Screen name={SEND_TOKEN_FROM_HOME_FLOW} component={SendTokenFlow} />
+      <AppFlowStackNavigator.Screen name={CONNECT_FLOW} component={WalletConnectFlow} />
+      <AppFlowStackNavigator.Screen name={SERVICES_FLOW} component={ServicesFlow} />
+      <AppFlowStackNavigator.Screen name={PPN_HOME} component={PPNHomeScreen} />
+      <AppFlowStackNavigator.Screen name={SEND_TOKEN_FROM_ASSET_FLOW} component={SendTokenFlow} />
+      <AppFlowStackNavigator.Screen name={PPN_SEND_TOKEN_FROM_ASSET_FLOW} component={PpnSendTokenFromAssetFlow} />
+      <AppFlowStackNavigator.Screen name={PPN_SEND_SYNTHETIC_ASSET_FLOW} component={PpnSendSyntheticAssetFlow} />
+      <AppFlowStackNavigator.Screen name={SEND_TOKEN_FROM_CONTACT_FLOW} component={SendTokenFlow} />
+      <AppFlowStackNavigator.Screen name={SEND_COLLECTIBLE_FROM_ASSET_FLOW} component={SendTokenFlow} />
+      <AppFlowStackNavigator.Screen name={CHANGE_PIN_FLOW} component={ChangePinFlow} />
+      <AppFlowStackNavigator.Screen name={REVEAL_BACKUP_PHRASE} component={RevealBackupPhraseScreen} />
+      <AppFlowStackNavigator.Screen name={BACKUP_WALLET_IN_SETTINGS_FLOW} component={BackupWalletFlow} />
+      <AppFlowStackNavigator.Screen name={MANAGE_WALLETS_FLOW} component={ManageWalletsFlow} />
+      <AppFlowStackNavigator.Screen name={TANK_SETTLE_FLOW} component={TankSettleFlow} />
+      <AppFlowStackNavigator.Screen name={UNSETTLED_ASSETS_FLOW} component={UnsettledAssetsFlow} />
+      <AppFlowStackNavigator.Screen name={TANK_FUND_FLOW} component={TankFundFlow} />
+      <AppFlowStackNavigator.Screen name={TANK_WITHDRAWAL_FLOW} component={TankWithdrawalFlow} />
+      <AppFlowStackNavigator.Screen name={WALLETCONNECT_FLOW} component={WalletConnectFlow} />
+      <AppFlowStackNavigator.Screen name={ASSET} component={AssetFlow} />
+      <AppFlowStackNavigator.Screen name={PILLAR_NETWORK_INTRO} component={PillarNetworkIntro} />
+      <AppFlowStackNavigator.Screen name={LOGOUT_PENDING} component={LogoutPendingScreen} />
+      <AppFlowStackNavigator.Screen name={MENU_FLOW} component={MenuFlow} />
+      <AppFlowStackNavigator.Screen name={PIN_CODE} component={PinCodeUnlockScreen} />
+      <AppFlowStackNavigator.Screen name={WALLET_ACTIVATED} component={WalletActivatedScreen} />
+      <AppFlowStackNavigator.Screen name={WALLET_MIGRATION_ARCHANOVA_FLOW} component={WalletMigrationFlow} />
+      <AppFlowStackNavigator.Screen
+        name={WALLET_MIGRATION_ARCHANOVA_STATUS}
+        component={WalletMigrationArchanovaStatusScreen}
+      />
+      <AppFlowStackNavigator.Screen name={KEY_BASED_ASSET_TRANSFER_FLOW} component={KeyBasedAssetTransferFlow} />
+      <AppFlowStackNavigator.Screen
+        name={KEY_BASED_ASSET_TRANSFER_STATUS}
+        component={KeyBasedAssetTransferStatusScreen}
+      />
+      <AppFlowStackNavigator.Screen name={CONTACTS_FLOW} component={ContactsFlow} />
+      <AppFlowStackNavigator.Screen name={EXCHANGE_FLOW} component={ExchangeFlow} />
+      <AppFlowStackNavigator.Screen name={LIQUIDITY_POOLS_FLOW} component={LiquidityPoolsFlow} />
+      <AppFlowStackNavigator.Screen name={TUTORIAL_FLOW} component={TutorialFlow} />
+      <AppFlowStackNavigator.Screen
+        name={WALLETCONNECT_CONNECTOR_REQUEST_SCREEN}
+        component={WalletConnectConnectorRequestScreen}
+      />
+      <AppFlowStackNavigator.Screen
+        name={WALLETCONNECT_CALL_REQUEST_SCREEN}
+        component={WalletConnectCallRequestScreen}
+      />
+      <AppFlowStackNavigator.Screen name={WALLETCONNECT_CALL_REQUEST_FLOW} component={WalletConnectCallRequestFlow} />
+      <AppFlowStackNavigator.Screen
+        name={ETHERSPOT_DEPLOYMENT_INTERJECTION}
+        component={EtherspotDeploymentInterjection}
+      />
+      <AppFlowStackNavigator.Screen name={ENS_MIGRATION_FLOW} component={EnsMigrationFlow} />
+      <AppFlowStackNavigator.Screen name={WEB_VIEW} component={WebViewScreen} />
+      <AppFlowStackNavigator.Screen name={LEGAL_SCREEN} component={LegalScreen} />
+      <AppFlowStackNavigator.Screen name={IMPORT_FLOW_FROM_SETTINGS} component={ImportFlowFromSettings} />
+      <AppFlowStackNavigator.Screen name={BRIDGE_FLOW} component={BridgeFlow} />
+      <AppFlowStackNavigator.Screen name={NATIVE_INTEGRATION_FLOW} component={NativeIntegrationFlow} />
+      <AppFlowStackNavigator.Screen name={PILLAR_STAKING_FLOW} component={PlrStakingFlow} />
+    </AppFlowStackNavigator.Navigator>
+  );
+}
 
 type Props = {
   fetchAppSettingsAndRedirect: Function,
@@ -705,6 +826,7 @@ let lockTimer;
 let smartWalletSessionCheckInterval;
 
 class AppFlow extends React.Component<Props, State> {
+  appStateSubscriptions;
   state = {
     lastAppState: AppState.currentState,
   };
@@ -713,7 +835,7 @@ class AppFlow extends React.Component<Props, State> {
     const { startListeningNotifications, initWalletConnectSessions, checkArchanovaSession } = this.props;
 
     startListeningNotifications();
-    addAppStateChangeListener(this.handleAppStateChange);
+    this.appStateSubscriptions = addAppStateChangeListener(this.handleAppStateChange);
 
     smartWalletSessionCheckInterval = BackgroundTimer.setInterval(
       checkArchanovaSession,
@@ -724,12 +846,8 @@ class AppFlow extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { notifications, wallet, removePrivateKeyFromMemory } = this.props;
+    const { notifications } = this.props;
     const { notifications: prevNotifications } = prevProps;
-
-    if (wallet?.privateKey) {
-      removePrivateKeyFromMemory();
-    }
 
     notifications
       .slice(prevNotifications.length)
@@ -741,7 +859,7 @@ class AppFlow extends React.Component<Props, State> {
     const { stopListeningNotifications } = this.props;
 
     stopListeningNotifications();
-    removeAppStateChangeListener(this.handleAppStateChange);
+    if (this.appStateSubscriptions) this.appStateSubscriptions.remove();
     BackgroundTimer.clearInterval(smartWalletSessionCheckInterval);
   }
 

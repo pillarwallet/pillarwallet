@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 import { isEmpty } from 'lodash';
 import { useTranslationWithPrefix } from 'translations/translate';
 

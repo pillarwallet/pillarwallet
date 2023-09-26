@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 import { useDispatch } from 'react-redux';
@@ -72,6 +72,7 @@ function EtherspotDeploymentInterjection() {
   const { t } = useTranslationWithPrefix('etherspot.deploymentInterjection');
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const route = useRoute();
   const fiatCurrency = useFiatCurrency();
   const [interjectionPrismicContent, setInterjectionPrismicContent] = React.useState({});
   const [introductionText, setIntroductionText] = React.useState('');
@@ -79,7 +80,7 @@ function EtherspotDeploymentInterjection() {
   const [errorMessage, setErrorMessage] = React.useState('');
   const [showDeploymentFeeInToken, setShowDeploymentFeeInToken] = React.useState(false);
 
-  const chain: Chain = navigation.getParam('chain') ?? CHAIN.ETHEREUM;
+  const chain: Chain = route?.params?.chain ?? CHAIN.ETHEREUM;
 
   const chainRates = useChainRates(chain);
   const gasInfo = useChainGasInfo(chain);
@@ -102,12 +103,10 @@ function EtherspotDeploymentInterjection() {
     async function fetchPrismicData() {
       try {
         const interjectionDocument = await Prismic.queryDocumentsByID(prismicInterjectionDocumentId);
-        const introductionContent = interjectionDocument?.introduction?.map(
-          (introduction: Prismic.DocumentData) => {
-            if (!introduction) return null;
-            return introduction.text.replace('{{network}}', chainTitle);
-          },
-        );
+        const introductionContent = interjectionDocument?.introduction?.map((introduction: Prismic.DocumentData) => {
+          if (!introduction) return null;
+          return introduction.text.replace('{{network}}', chainTitle);
+        });
         setIntroductionText(introductionContent);
         const prismicContent = [];
         /* eslint-disable camelcase */
@@ -123,7 +122,6 @@ function EtherspotDeploymentInterjection() {
     }
     fetchPrismicData();
   }, [prismicInterjectionDocumentId, chainTitle, t]);
-
 
   const showReceiveModal = () => {
     Modal.open(() => <ReceiveModal address={address} />);
@@ -157,7 +155,11 @@ function EtherspotDeploymentInterjection() {
               titleStyle={styles.buttonTitle}
             />
           </ButtonContainer>
-          {!gasInfo?.isFetched && <SpinnerWrapper><Spinner size={20} trackWidth={2} /></SpinnerWrapper>}
+          {!gasInfo?.isFetched && (
+            <SpinnerWrapper>
+              <Spinner size={20} trackWidth={2} />
+            </SpinnerWrapper>
+          )}
           {!!deploymentFee?.tokenValue && !!deploymentFee?.fiatValue && (
             <Tooltip
               body={deploymentFee.tokenValue}

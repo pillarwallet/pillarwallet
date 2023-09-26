@@ -22,7 +22,7 @@
 import 'react-native-gesture-handler/jestSetup';
 import React from 'react';
 import Enzyme from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
+import Adapter from '@cfaester/enzyme-adapter-react-18';
 import { JSDOM } from 'jsdom';
 import { BN } from 'ethereumjs-util'; // same BigNumber library as in Archanova SDK
 import { View as mockView } from 'react-native';
@@ -63,11 +63,7 @@ function copyProps(src, target) {
   });
 }
 
-global.window = window;
 global.document = window.document;
-global.navigator = {
-  userAgent: 'node.js',
-};
 
 copyProps(window, global);
 
@@ -86,19 +82,19 @@ jest.mock('@react-native-async-storage/async-storage', () => MockAsyncStorage);
 jest.mock('react-native-safe-area-view', () => ({ children }) => <>{children}</>);
 
 // Source: https://reactnavigation.org/docs/testing/#mocking-native-modules
-jest.mock('react-native-reanimated', () => {
-  // eslint-disable-next-line global-require
-  const Reanimated = require('react-native-reanimated/mock');
+// jest.mock('react-native-reanimated', () => {
+//   // eslint-disable-next-line global-require
+//   const Reanimated = require('react-native-reanimated/mock');
 
-  // Silence the warning: Animated: `useNativeDriver` is not supported because the native animated module is missing
-  jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper');
+//   // Silence the warning: Animated: `useNativeDriver` is not supported because the native animated module is missing
+//   jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper');
 
-  // The mock for `call` immediately calls the callback which is incorrect
-  // So we override it with a no-op
-  Reanimated.default.call = () => {};
+//   // The mock for `call` immediately calls the callback which is incorrect
+//   // So we override it with a no-op
+//   Reanimated.default.call = () => {};
 
-  return Reanimated;
-});
+//   return Reanimated;
+// });
 
 jest.setMock('@react-native-firebase/app/lib/internal/registry/nativeModule', {});
 
@@ -111,6 +107,7 @@ jest.mock('@react-native-firebase/auth', () => () => ({
 jest.mock('@react-native-firebase/analytics', () => () => ({
   logScreenView: () => jest.fn(),
   logEvent: () => jest.fn(),
+  setUserProperties: () => jest.fn(),
 }));
 
 jest.mock('@react-native-firebase/crashlytics', () => () => ({
@@ -139,6 +136,10 @@ jest.setMock('react-native-splash-screen', {
 });
 
 jest.setMock('react-native-shadow-2', { Shadow: () => '' });
+
+jest.setMock('react-native-modal', () => 'react-native-modal');
+
+jest.setMock('axios-mock-adapter');
 
 jest.setMock('react-native-scrypt', () => Promise.resolve('xxxx'));
 
@@ -262,6 +263,14 @@ jest.setMock('react-native-share', {});
 
 jest.setMock('react-native-fast-image', () => null);
 
+jest.setMock('@storybook/addon-storyshots', () => null);
+
+jest.setMock('@walletconnect/utils', {});
+
+jest.setMock('@walletconnect/core', {});
+
+jest.setMock('@walletconnect/web3wallet', {});
+
 export const mockArchanovaAccountApiData = {
   id: 123,
   address: '0x0',
@@ -367,7 +376,6 @@ jest.setMock('@walletconnect/client', WalletConnectMock);
 
 jest.setMock('@sentry/react-native', {
   withScope: () => {},
-  Severity: {},
   addBreadcrumb: () => {},
 });
 
@@ -481,4 +489,6 @@ jest.setMock('services/etherspot', {
   getSupportedAssets: (chain) => Promise.resolve(chain === CHAIN.ETHEREUM ? mockSupportedAssets : []),
   getBalances: mockEtherspotGetBalances,
   getAccountTotalBalances: () => Promise.resolve(),
+  getAccountInvestments: () => Promise.resolve(),
+  getEnsNode: () => Promise.resolve(),
 });

@@ -23,7 +23,7 @@ import { ScrollView, Keyboard } from 'react-native';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 import { BigNumber } from 'bignumber.js';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 
 // Components
 import { Spacing } from 'components/legacy/Layout';

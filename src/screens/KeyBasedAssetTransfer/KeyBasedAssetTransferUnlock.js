@@ -21,7 +21,7 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Wallet } from 'ethers';
 import t from 'translations/translate';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 
 // actions
 import { createKeyBasedAssetsToTransferTransactionsAction } from 'actions/keyBasedAssetTransferActions';
@@ -34,7 +34,6 @@ import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -74,7 +73,9 @@ const KeyBasedAssetTransferUnlock = ({
 };
 
 const mapStateToProps = ({
-  appSettings: { data: { useBiometrics } },
+  appSettings: {
+    data: { useBiometrics },
+  },
   keyBasedAssetTransfer: { creatingTransactions },
 }: RootReducerState): $Shape<Props> => ({
   useBiometrics,
@@ -82,9 +83,8 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  createKeyBasedAssetsToTransferTransactions: (wallet: Wallet) => dispatch(
-    createKeyBasedAssetsToTransferTransactionsAction(wallet),
-  ),
+  createKeyBasedAssetsToTransferTransactions: (wallet: Wallet) =>
+    dispatch(createKeyBasedAssetsToTransferTransactionsAction(wallet)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(KeyBasedAssetTransferUnlock);

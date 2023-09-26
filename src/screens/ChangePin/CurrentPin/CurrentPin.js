@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import t from 'translations/translate';
 
 import { Container } from 'components/legacy/Layout';
@@ -38,7 +38,7 @@ type Props = {
 class CurrentPin extends React.Component<Props> {
   handleScreenDismissal = () => {
     this.props.resetIncorrectPassword();
-    this.props.navigation.dismiss();
+    this.props.navigation.goBack();
   };
 
   render() {
@@ -63,9 +63,7 @@ class CurrentPin extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({
-  wallet: { isDecrypting },
-}: RootReducerState): $Shape<Props> => ({
+const mapStateToProps = ({ wallet: { isDecrypting } }: RootReducerState): $Shape<Props> => ({
   isDecrypting,
 });
 

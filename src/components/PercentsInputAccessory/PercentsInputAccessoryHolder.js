@@ -33,6 +33,8 @@ type State = {
 export const INPUT_ACCESSORY_NATIVE_ID = 'INPUT_ACCESSORY_NATIVE_ID';
 
 class PercentsInputAccessoryHolder extends React.Component<{}, State> {
+  showSubscription: any;
+  hideSubscription: any;
   static instances: Object[] = [];
 
   static addAccessory = (onUsePercent: (number) => mixed, disableMaxValue: boolean = false) => {
@@ -58,13 +60,13 @@ class PercentsInputAccessoryHolder extends React.Component<{}, State> {
   };
 
   componentDidMount() {
-    Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow);
-    Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide);
+    this.showSubscription = Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow);
+    this.hideSubscription = Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide);
   }
 
   componentWillUnmount() {
-    Keyboard.removeListener('keyboardDidShow', this.handleKeyboardDidShow);
-    Keyboard.removeListener('keyboardDidHide', this.handleKeyboardDidHide);
+    if (this.showSubscription) this.showSubscription.remove();
+    if (this.hideSubscription) this.hideSubscription.remove();
     PercentsInputAccessoryHolder.instances.splice(PercentsInputAccessoryHolder.instances.length - 1);
   }
 

@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { NavigationActions } from 'react-navigation';
+import { CommonActions } from '@react-navigation/native';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 
@@ -33,7 +33,7 @@ import {
   APP_FLOW,
   AUTH_FLOW,
   ONBOARDING_FLOW,
-  MAIN_FLOW,
+  HOME_FLOW,
   PIN_CODE_UNLOCK,
   LOGOUT_PENDING,
   TUTORIAL_FLOW,
@@ -147,6 +147,7 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
     await dispatch(checkAuthAction(pin, privateKey, onLoginSuccess));
 
     const wallet = getState().wallet.data;
+
     if (!wallet) {
       logBreadcrumb('loginAction', 'failed: no wallet', { user });
       dispatch({ type: UPDATE_SESSION, payload: { isAuthorizing: false } });
@@ -179,11 +180,12 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
     dispatch(updatePinAttemptsAction(false));
 
     const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
-    let navigateAction = NavigationActions.navigate({
+
+    let navigateAction = {
       // current active screen will be always AUTH_FLOW due to login/logout
-      routeName: lastActiveScreen || MAIN_FLOW,
+      screen: lastActiveScreen || HOME_FLOW,
       params: lastActiveScreenParams,
-    });
+    };
 
     const enableOnboardingTutorial = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ONBOARDING_TUTORIAL);
     if (enableOnboardingTutorial) {
@@ -191,15 +193,14 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
       const {
         onboarding: { tutorialData },
       } = getState();
-      if (tutorialData) navigateAction = NavigationActions.navigate({ routeName: TUTORIAL_FLOW });
+      if (tutorialData) navigateAction = { screen: TUTORIAL_FLOW };
     }
 
     if (!bannerData) dispatch(bannerDataAction());
 
-    const navigateToAppAction = NavigationActions.navigate({
-      routeName: APP_FLOW,
-      params: {},
-      action: navigateAction,
+    const navigateToAppAction = CommonActions.navigate({
+      name: APP_FLOW,
+      params: navigateAction,
     });
 
     dispatch(checkInitialDeepLinkAction());
@@ -346,17 +347,16 @@ export const resetIncorrectPasswordAction = () => ({ type: RESET_WALLET_ERROR })
 export const lockScreenAction = (onLoginSuccess: ?OnValidPinCallback, errorMessage?: string) => {
   return () => {
     navigate(
-      NavigationActions.navigate({
-        routeName: AUTH_FLOW,
-        params: {},
-        action: NavigationActions.navigate({
-          routeName: PIN_CODE_UNLOCK,
+      CommonActions.navigate({
+        name: AUTH_FLOW,
+        params: {
+          screen: PIN_CODE_UNLOCK,
           params: {
             onLoginSuccess,
             errorMessage,
             forcePin: true,
           },
-        }),
+        },
       }),
     );
   };
@@ -418,7 +418,7 @@ export const resetAppServicesAction = () => {
 export const logoutAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     // show logout pending screen
-    navigate(NavigationActions.navigate({ routeName: LOGOUT_PENDING }));
+    navigate(CommonActions.navigate({ name: LOGOUT_PENDING }));
 
     // reset services
     await dispatch(resetAppServicesAction());
@@ -445,7 +445,7 @@ export const logoutAction = () => {
 
     // leave translation initialised flag in place
     if (getState()?.session?.data?.translationsInitialised) dispatch(setSessionTranslationBundleInitialisedAction());
-    navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
+    navigate(CommonActions.navigate(ONBOARDING_FLOW));
   };
 };
 

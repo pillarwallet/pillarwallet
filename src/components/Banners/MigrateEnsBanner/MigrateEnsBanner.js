@@ -22,7 +22,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components/native';
 import LinearGradient from 'react-native-linear-gradient';
 import { useTranslationWithPrefix } from 'translations/translate';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 
 // components
 import Text from 'components/core/Text';
@@ -44,7 +44,6 @@ import type { ViewStyleProp } from 'utils/types/react-native';
 
 // assets
 const migrateEnsIcon = require('assets/icons/migrate_ens_name.png');
-
 
 type Props = {|
   style?: ViewStyleProp,

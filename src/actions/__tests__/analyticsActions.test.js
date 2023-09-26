@@ -76,6 +76,7 @@ describe('Analytics Actions', () => {
       });
     });
 
+
     describe('when opted out tracking', () => {
       beforeEach(() => optOutTracking(true));
 

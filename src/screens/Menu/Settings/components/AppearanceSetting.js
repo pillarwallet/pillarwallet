@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { useTranslationWithPrefix } from 'translations/translate';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 
 // Constants
 import { MENU_SELECT_APPEARANCE } from 'constants/navigationConstants';
