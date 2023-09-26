@@ -18,15 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { defaultTheme } from 'utils/themes';
 import { renderWithTheme } from 'testUtils/render';
 
 import IconButton from '../IconButton';
 
-
 describe('IconButton', () => {
   it('should render IconButton correctly', () => {
-    const component = renderWithTheme(<IconButton theme={defaultTheme} icon="settings" />).toJSON();
+    const component = renderWithTheme(<IconButton icon="settings" />).toJSON();
     expect(component).toMatchSnapshot();
   });
 });
