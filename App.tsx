@@ -20,11 +20,10 @@
 */
 import 'utils/setup';
 import { setupEnv, switchEnvironments, getEnv } from 'configs/envConfig';
-import React, { Suspense } from 'react';
-import { StatusBar, Platform, Linking, View, UIManager } from 'react-native';
+import React from 'react';
+import { StatusBar, Platform, Linking, UIManager } from 'react-native';
 import { Provider, connect } from 'react-redux';
 import * as Sentry from '@sentry/react-native';
-import { PersistGate } from 'redux-persist/lib/integration/react';
 import styled, { ThemeProvider } from 'styled-components/native';
 import { AppearanceProvider } from 'react-native-appearance';
 import NetInfo, { NetInfoState, NetInfoSubscription } from '@react-native-community/netinfo';
@@ -60,18 +59,15 @@ import { STAGING } from 'constants/envConstants';
 import { REMOTE_CONFIG, INITIAL_REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // components
-import { Container } from 'components/legacy/Layout';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
 import Spinner from 'components/Spinner';
 import Walkthrough from 'components/Walkthrough';
 import Button from 'components/legacy/Button';
 import PercentsInputAccessoryHolder from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
-import Modal from 'components/Modal';
 
 // utils
-import { getThemeByType, defaultTheme } from 'utils/themes';
-import { getActiveRouteName } from 'utils/navigation';
+import { getThemeByType } from 'utils/themes';
 import { log } from 'utils/logger';
 import { logBreadcrumb, reportOrWarn, reportLog } from 'utils/common';
 
@@ -87,7 +83,7 @@ import type { I18n } from 'models/Translations';
 // other
 import RootNavigation from 'navigation/rootNavigation';
 // import Storybook from 'screens/Storybook';
-import { store, persistor } from 'src/configureStore';
+import { store } from 'src/configureStore';
 
 // redux
 import { syncStateWithFirestore } from 'src/redux/actions/firestore-actions';
