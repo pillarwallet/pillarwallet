@@ -20,14 +20,13 @@
 import * as React from 'react';
 
 // Utils
-import { defaultTheme } from 'utils/themes';
 import { renderWithTheme } from 'testUtils/render';
 
 import Header from '../Header';
 
 describe('Header', () => {
   it('should render Header correctly', () => {
-    const component = renderWithTheme(<Header theme={defaultTheme} onBack={() => {}} />).toJSON();
+    const component = renderWithTheme(<Header onBack={() => {}} />).toJSON();
     expect(component).toMatchSnapshot();
   });
 });
