@@ -340,7 +340,6 @@ class App extends React.Component<Props, any> {
     }
   };
 
-
   render() {
     const {
       isFetched,
@@ -444,15 +443,16 @@ const mapDispatchToProps = (dispatch: Dispatch): Partial<Props> => ({
 // @ts-ignore
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(withTranslation()(App));
 
-const AppRoot = () =>  (
-      <SafeAreaProvider>
-        <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              {/* {getEnv().SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />} */}
-              <AppWithNavigationState />
-            </QueryClientProvider>
-        </Provider>
-      </SafeAreaProvider>
-  );
+const AppRoot = () => (
+  <SafeAreaProvider>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        {/* Temporary disable storybook */}
+        {/* {getEnv().SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />} */}
+        <AppWithNavigationState />
+      </QueryClientProvider>
+    </Provider>
+  </SafeAreaProvider>
+);
 
 export default AppRoot;
