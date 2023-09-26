@@ -37,6 +37,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import appsFlyer from 'react-native-appsflyer';
 import { PlayInstallReferrer } from 'react-native-play-install-referrer';
 import { KochavaTracker } from 'react-native-kochava-tracker';
+import { NativeBaseProvider } from 'native-base';
 
 import 'services/localisation/translations';
 import localeConfig from 'configs/localeConfig';
@@ -340,7 +341,6 @@ class App extends React.Component<Props, any> {
     }
   };
 
-
   render() {
     const {
       isFetched,
@@ -444,15 +444,17 @@ const mapDispatchToProps = (dispatch: Dispatch): Partial<Props> => ({
 // @ts-ignore
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(withTranslation()(App));
 
-const AppRoot = () =>  (
-      <SafeAreaProvider>
-        <Provider store={store}>
-            <QueryClientProvider client={queryClient}>
-              {/* {getEnv().SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />} */}
-              <AppWithNavigationState />
-            </QueryClientProvider>
-        </Provider>
-      </SafeAreaProvider>
-  );
+const AppRoot = () => (
+  <SafeAreaProvider>
+    <NativeBaseProvider>
+      <Provider store={store}>
+        <QueryClientProvider client={queryClient}>
+          {/* {getEnv().SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />} */}
+          <AppWithNavigationState />
+        </QueryClientProvider>
+      </Provider>
+    </NativeBaseProvider>
+  </SafeAreaProvider>
+);
 
 export default AppRoot;

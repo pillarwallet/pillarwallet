@@ -117,7 +117,7 @@
     "lottie-react-native": "6.2.0",
     "memoize-one": "^5.1.1",
     "moment": "^2.29.4",
-    "native-base": "^2.15.2",
+    "native-base": "^3.4.28",
     "patch-package": "^7.0.0",
     "path-browserify": "0.0.0",
     "polished": "^1.9.2",
