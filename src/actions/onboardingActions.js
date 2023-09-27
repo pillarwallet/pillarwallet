@@ -665,7 +665,7 @@ export const importWalletFromPrivateKeyAction = (privKey: string) => {
 
     if (!importedWallet) return;
 
-    dispatch(resetAndStartImportWalletAction());
+    await dispatch(resetAndStartImportWalletAction());
     dispatch({ type: SET_SOCIAL_LOGIN_STATUS, payload: true });
     dispatch({ type: SET_IMPORTING_WALLET });
 
@@ -739,7 +739,7 @@ export const importWalletFromMnemonicAction = (mnemonicInput: string) => {
       return;
     }
 
-    dispatch(resetAndStartImportWalletAction());
+    await dispatch(resetAndStartImportWalletAction());
     dispatch({ type: SET_SOCIAL_LOGIN_STATUS, payload: false });
     dispatch({ type: SET_IMPORTING_WALLET });
 

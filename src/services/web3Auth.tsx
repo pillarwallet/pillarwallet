@@ -17,50 +17,66 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import Web3Auth, { LOGIN_PROVIDER_TYPE, OPENLOGIN_NETWORK, OPENLOGIN_NETWORK_TYPE } from '@web3auth/react-native-sdk';
+import * as WebBrowser from '@toruslabs/react-native-web-browser';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
-// import Web3Auth, { type LoginProvider, Web3authNetwork } from '@web3auth/react-native-sdk';
+// Utils
+import { isProdEnv } from 'utils/environment';
+import { logBreadcrumb } from 'utils/common';
 
-// // Utils
-// import { isProdEnv } from 'utils/environment';
-// import { logBreadcrumb } from 'utils/common';
+// Config
+import { getEnv } from 'configs/envConfig';
 
-// // Config
-// import { getEnv } from 'configs/envConfig';
+// Actions
+import { importWalletFromPrivateKeyAction } from 'actions/onboardingActions';
 
-// // Actions
-// import { importWalletFromPrivateKeyAction } from 'actions/onboardingActions';
+// Types
+import type { Dispatch } from 'reducers/rootReducer';
 
-// // Types
-// import type { Dispatch } from 'reducers/rootReducer';
+const scheme = 'com.pillarproject.wallet';
+const resolvedRedirectUrl = `${scheme}://auth`;
+const clientId = isProdEnv() ? getEnv().WEB3_AUTH_CLIENT_ID : getEnv().WEB3_AUTH_TESTNET_CLIENT_ID;
 
-// const scheme = 'com.pillarproject.wallet';
-// const resolvedRedirectUrl = `${scheme}://auth`;
-// const clientId = isProdEnv() ? getEnv().WEB3_AUTH_CLIENT_ID : getEnv().WEB3_AUTH_TESTNET_CLIENT_ID;
+interface ParamsProps {
+  clientId: string;
+  network: OPENLOGIN_NETWORK_TYPE;
+}
 
-// const initParams = {
-//   clientId,
-//   network: isProdEnv() ? Web3authNetwork.MAINNET : Web3authNetwork.TESTNET,
-//   redirectUrl: resolvedRedirectUrl,
-// };
+const initParams: ParamsProps = {
+  clientId: clientId ?? 'clientId',
+  network: isProdEnv() ? OPENLOGIN_NETWORK.MAINNET : OPENLOGIN_NETWORK.TESTNET,
+};
 
-// export const loginWithWeb3Auth = (provider: LoginProvider, email?: string) => {
-//   return async (dispatch: Dispatch) => {
-//     try {
-//       await Web3Auth.init(initParams);
+const web3auth = new Web3Auth(WebBrowser, EncryptedStorage, initParams);
 
-//       const result = await Web3Auth.login({
-//         provider,
-//         redirectUrl: resolvedRedirectUrl,
-//         extraLoginOptions: email && {
-//           login_hint: email,
-//         },
-//       });
+export const loginWithWeb3Auth = (loginProvider: LOGIN_PROVIDER_TYPE, email?: string) => {
+  return async (dispatch: Dispatch) => {
+    try {
+      await web3auth.init();
+      await web3auth.login({
+        loginProvider,
+        redirectUrl: resolvedRedirectUrl,
+        extraLoginOptions: email && {
+          login_hint: email,
+        },
+      });
 
-//       if (!result) return null;
+      if (!web3auth?.privKey) return null;
 
-//       dispatch(importWalletFromPrivateKeyAction(result?.privKey));
-//     } catch (error) {
-//       logBreadcrumb('loginWithWeb3Auth', 'failed loginWithWeb3Auth', { provider, error });
-//     }
-//   };
-// };
+      dispatch(importWalletFromPrivateKeyAction(web3auth.privKey));
+    } catch (error) {
+      logBreadcrumb('loginWithWeb3Auth', 'failed loginWithWeb3Auth', { loginProvider, error });
+    }
+  };
+};
+
+export const logoutWeb3Auth = async () => {
+  if (!web3auth) return;
+
+  try {
+    await web3auth.logout();
+  } catch (error) {
+    logBreadcrumb('logoutWeb3Auth', 'failed logoutWeb3Auth', { error });
+  }
+};
