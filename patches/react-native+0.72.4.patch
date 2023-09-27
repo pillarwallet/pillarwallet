@@ -1,3 +1,38 @@
+diff --git a/node_modules/react-native/Libraries/BatchedBridge/MessageQueue.js b/node_modules/react-native/Libraries/BatchedBridge/MessageQueue.js
+index 932d309..ca104ed 100644
+--- a/node_modules/react-native/Libraries/BatchedBridge/MessageQueue.js
++++ b/node_modules/react-native/Libraries/BatchedBridge/MessageQueue.js
+@@ -167,21 +167,16 @@ class MessageQueue {
+   callNativeSyncHook(
+     moduleID: number,
+     methodID: number,
+-    params: mixed[],
+-    onFail: ?(...mixed[]) => void,
+-    onSucc: ?(...mixed[]) => void,
+-  ): mixed {
+-    if (__DEV__) {
+-      invariant(
+-        global.nativeCallSyncHook,
+-        'Calling synchronous methods on native ' +
+-          'modules is not supported in Chrome.\n\n Consider providing alternative ' +
+-          'methods to expose this method in debug mode, e.g. by exposing constants ' +
+-          'ahead-of-time.',
+-      );
+-    }
++    params: any[],
++    onFail: ?Function,
++    onSucc: ?Function,
++  ): any {
++    const isDebuggingEnabled = (typeof atob !== 'undefined');
+     this.processCallbacks(moduleID, methodID, params, onFail, onSucc);
+-    return global.nativeCallSyncHook(moduleID, methodID, params);
++    if(!isDebuggingEnabled)
++    {
++      return global.nativeCallSyncHook(moduleID, methodID, params);
++    }
+   }
+ 
+   processCallbacks(
 diff --git a/node_modules/react-native/ReactCommon/react/renderer/components/rncore/ComponentDescriptors.h b/node_modules/react-native/ReactCommon/react/renderer/components/rncore/ComponentDescriptors.h
 new file mode 100644
 index 0000000..e69de29
