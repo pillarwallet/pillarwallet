@@ -14,7 +14,7 @@
     "generate:ios:ipa": "mkdir ./ios/build/Build/Products/Release-iphoneos/Payload && cp -R ./ios/build/Build/Products/Release-iphoneos/pillarwallet.app ./ios/build/Build/Products/Release-iphoneos/Payload && cd ./ios/build/Build/Products/Release-iphoneos/ && /usr/bin/zip -r  pillarwallet.ipa Payload && rm -rf Payload && mv pillarwallet.ipa ../../../..",
     "build:ios": "react-native bundle --entry-file='index.js' --bundle-output='./ios/pillarwallet/main.jsbundle' --dev=false --platform='ios' --assets-dest='./ios'",
     "build:android": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res",
-    "test": "TZ=UTC jest --maxWorkers=4",
+    "test": "TZ=UTC jest --maxWorkers=8",
     "test:coverage": "TZ=UTC jest --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
