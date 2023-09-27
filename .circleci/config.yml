@@ -9,7 +9,7 @@ executors:
   ios-executor:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "14.2.0"
+      xcode: "14.1.0"
     resource_class: macos.x86.medium.gen2
     environment:
       NODE_OPTIONS: "--max-old-space-size=4096"
@@ -23,7 +23,7 @@ executors:
   android-executor:
     working_directory: ~/pillarwallet
     docker:
-      - image: cimg/android:2023.09.1-node
+      - image: cimg/android:2022.06.1-node
         auth:
           username: $DOCKERHUB_USER
           password: $DOCKERHUB_PASSWORD
@@ -340,6 +340,10 @@ jobs:
     executor: android-executor
     steps:
       - checkout
+      - node/install:
+          install-yarn: true
+          node-version: '20.6.1'
+      - run: node --version
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
       - aws-cli/setup:
@@ -499,6 +503,10 @@ jobs:
     executor: ios-executor
     steps:
       - checkout
+      - node/install:
+          install-yarn: true
+          node-version: '20.6.1'
+      - run: node --version
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
       - aws-cli/setup:
