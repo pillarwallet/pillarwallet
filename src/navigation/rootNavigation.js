@@ -23,7 +23,6 @@ import { Platform } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { CardStyleInterpolators } from '@react-navigation/stack';
-import { useFlipper, useReduxDevToolsExtension } from '@react-navigation/devtools';
 
 // Screens
 import WelcomeBackScreen from 'screens/WelcomeBack';
@@ -166,10 +165,6 @@ function RootNavigator({ onNavigationStateChange }) {
 // to pass in language prop so stacks would rerender on language change
 const WrappedRootSwitch = (props: Props) => {
   const { language } = props;
-
-  useFlipper(navigationRef);
-  useReduxDevToolsExtension(navigationRef);
-
   return (
     <NavigationContainer ref={navigationRef}>
       <ModalProvider />
