@@ -9,7 +9,7 @@ executors:
   ios-executor:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "14.2.0"
+      xcode: "14.3.1"
     resource_class: macos.x86.medium.gen2
     environment:
       NODE_OPTIONS: "--max-old-space-size=4096"
@@ -23,11 +23,11 @@ executors:
   android-executor:
     working_directory: ~/pillarwallet
     docker:
-      - image: cimg/android:2023.09.1-node
+      - image: cimg/android:2022.07.1-node
         auth:
           username: $DOCKERHUB_USER
           password: $DOCKERHUB_PASSWORD
-    resource_class: large
+    resource_class: xlarge
     environment:
       NODE_OPTIONS: "--max-old-space-size=4096"
       TERM: dumb
@@ -43,9 +43,9 @@ executors:
         auth:
           username: $DOCKERHUB_USER
           password: $DOCKERHUB_PASSWORD
-    resource_class: large
+    resource_class: xlarge
     environment:
-      NODE_OPTIONS: "--max-old-space-size=4096"
+      NODE_OPTIONS: "--max-old-space-size=6144"
     shell: /bin/bash --login -o pipefail
 
   python3-alpine-executor:
@@ -85,6 +85,19 @@ aliases:
       environment:
         BUNDLE_JOBS: 4
         BUNDLE_RETRY: 3
+  - &swap_node_version
+   run:
+      name: Swap node versions
+      command: |
+        set +e
+        wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
+        export NVM_DIR="$HOME/.nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+        [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+        nvm install v20
+        nvm alias default v20
+        echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV
+        echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
   - &save_gems_cache_ios
     save_cache:
       name: Save ios gems cache
@@ -245,6 +258,8 @@ jobs:
 
       - *node_restore_cache
 
+      - *swap_node_version
+
       - *yarn_install_ios
 
       - *node_save_cache
@@ -340,6 +355,7 @@ jobs:
     executor: android-executor
     steps:
       - checkout
+      - run: node --version
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
       - aws-cli/setup:
@@ -355,6 +371,7 @@ jobs:
       - *node_restore_cache
       - *android_latest_npm
       - *yarn_restore_cache
+      - *swap_node_version
       - *yarn_install
       - *yarn_save_cache
       - *node_save_cache
@@ -499,6 +516,7 @@ jobs:
     executor: ios-executor
     steps:
       - checkout
+      - run: node --version
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
       - aws-cli/setup:
