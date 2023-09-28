@@ -1128,7 +1128,6 @@ index 0000000..cc4fe37
 +int string catalyst_inspector 0x0
 +int string catalyst_inspector_stop 0x0
 +int string catalyst_loading_from_url 0x0
-+int string catalyst_open_flipper_error 0x0
 +int string catalyst_perf_monitor 0x0
 +int string catalyst_perf_monitor_stop 0x0
 +int string catalyst_reload 0x0
@@ -3493,7 +3492,6 @@ index 0000000..fca9126
 +string catalyst_inspector
 +string catalyst_inspector_stop
 +string catalyst_loading_from_url
-+string catalyst_open_flipper_error
 +string catalyst_perf_monitor
 +string catalyst_perf_monitor_stop
 +string catalyst_reload
