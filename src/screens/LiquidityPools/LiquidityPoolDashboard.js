@@ -21,7 +21,7 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
 import styled, { useTheme } from 'styled-components/native';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import t from 'translations/translate';
 
 // actions
@@ -69,13 +69,14 @@ import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer'
 import type { LiquidityPool } from 'models/LiquidityPools';
 import type { WalletAssetsBalances } from 'models/Balances';
 import type { Currency } from 'models/Rates';
+import type { Route } from '@react-navigation/native';
 
 // local
 import StakingEnabledModal from './StakingEnabledModal';
 
-
 type Props = {
   navigation: NavigationScreenProp<*>,
+  route: Route,
   balances: WalletAssetsBalances,
   baseFiatCurrency: ?Currency,
   poolDataGraphQueryFailed: boolean,
@@ -154,6 +155,7 @@ const AssetIcon = styled(Image)`
 
 const LiquidityPoolDashboard = ({
   navigation,
+  route,
   baseFiatCurrency,
   isFetchingLiquidityPoolsData,
   poolDataGraphQueryFailed,
@@ -165,7 +167,7 @@ const LiquidityPoolDashboard = ({
   const ethereumSupportedAssets = useChainSupportedAssets(CHAIN.ETHEREUM);
   const usdToFiatRate = useUsdToFiatRate();
 
-  const { pool } = navigation.state.params;
+  const { pool } = route.params;
   const poolStats = getPoolStats(pool, liquidityPoolsReducer);
 
   const [scrollEnabled, setScrollEnabled] = useState(true);
@@ -188,7 +190,9 @@ const LiquidityPoolDashboard = ({
       Modal.open(() => (
         <StakingEnabledModal
           pool={pool}
-          stakeTokens={() => { navigation.navigate(LIQUIDITY_POOLS_STAKE, { pool }); }}
+          stakeTokens={() => {
+            navigation.navigate(LIQUIDITY_POOLS_STAKE, { pool });
+          }}
         />
       ));
       setShownStakingEnabledModal(pool.name);
@@ -209,10 +213,7 @@ const LiquidityPoolDashboard = ({
   const hasBalance = balance > 0;
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  const fiatBalance = formatFiat(
-    usdToFiatRate * balance * poolStats.currentPrice,
-    fiatCurrency,
-  );
+  const fiatBalance = formatFiat(usdToFiatRate * balance * poolStats.currentPrice, fiatCurrency);
   const stakedAmountInFiat = usdToFiatRate * poolStats.stakedAmount.toNumber() * poolStats.currentPrice;
   const formattedStakedAmountInFiat = formatFiat(stakedAmountInFiat, fiatCurrency);
 
@@ -234,24 +235,15 @@ const LiquidityPoolDashboard = ({
   const stats = [
     {
       title: t('liquidityPoolsContent.label.24hFees'),
-      value: formatBigFiatAmount(
-        usdToFiatRate * poolStats.dailyFees,
-        fiatCurrency,
-      ),
+      value: formatBigFiatAmount(usdToFiatRate * poolStats.dailyFees, fiatCurrency),
     },
     {
       title: t('liquidityPoolsContent.label.totalLiquidity'),
-      value: formatBigFiatAmount(
-        usdToFiatRate * poolStats.totalLiquidity,
-        fiatCurrency,
-      ),
+      value: formatBigFiatAmount(usdToFiatRate * poolStats.totalLiquidity, fiatCurrency),
     },
     {
       title: t('liquidityPoolsContent.label.24hVolume'),
-      value: formatBigFiatAmount(
-        usdToFiatRate * poolStats.dailyVolume,
-        fiatCurrency,
-      ),
+      value: formatBigFiatAmount(usdToFiatRate * poolStats.dailyVolume, fiatCurrency),
     },
   ];
 
@@ -283,22 +275,21 @@ const LiquidityPoolDashboard = ({
     >
       <ScrollWrapper
         refreshControl={
-          <RefreshControl
-            refreshing={isFetchingLiquidityPoolsData}
-            onRefresh={() => fetchLiquidityPoolsData([pool])}
-          />
+          <RefreshControl refreshing={isFetchingLiquidityPoolsData} onRefresh={() => fetchLiquidityPoolsData([pool])} />
         }
         scrollEnabled={scrollEnabled}
       >
         <MainContainter>
-          <AssetIcon
-            source={{ uri: pool.iconUrl }}
-            fallbackSource={genericToken}
-          />
-          <MediumText giant center>{formattedBalance}{' '}
-            <MediumText secondary fontSize={20}>{pool.symbol}</MediumText>
+          <AssetIcon source={{ uri: pool.iconUrl }} fallbackSource={genericToken} />
+          <MediumText giant center>
+            {formattedBalance}{' '}
+            <MediumText secondary fontSize={20}>
+              {pool.symbol}
+            </MediumText>
           </MediumText>
-          <BaseText regular secondary center>{fiatBalance}</BaseText>
+          <BaseText regular secondary center>
+            {fiatBalance}
+          </BaseText>
           <ValueOverTimeGraph
             data={poolStats.history}
             fiatCurrency={fiatCurrency}
@@ -323,10 +314,7 @@ const LiquidityPoolDashboard = ({
                 />
               </ButtonsRow>
             ) : (
-              <Button
-                title={t('liquidityPoolsContent.button.addLiquidity')}
-                onPress={onAddLiquidity}
-              />
+              <Button title={t('liquidityPoolsContent.button.addLiquidity')} onPress={onAddLiquidity} />
             )}
             <Spacing h={36} />
             <MediumText big>{t('label.keyFacts')}</MediumText>
@@ -337,93 +325,99 @@ const LiquidityPoolDashboard = ({
 
           <HorizontalPadding>
             {showStakeSection && rewardAssetData && (
-            <>
-              <MediumText big>{t('liquidityPoolsContent.label.staked')}</MediumText>
-              <Spacing h={6} />
-              <Card>
-                <StretchedRow>
+              <>
+                <MediumText big>{t('liquidityPoolsContent.label.staked')}</MediumText>
+                <Spacing h={6} />
+                <Card>
+                  <StretchedRow>
+                    <Row>
+                      <CardIcon source={{ uri: pool.iconUrl }} />
+                      <Spacing w={12} />
+                      <MediumText fontSize={20}>
+                        {formatTokenAmount(poolStats.stakedAmount, pool.symbol)}{' '}
+                        <MediumText secondary regular>
+                          {pool.symbol}
+                        </MediumText>
+                      </MediumText>
+                    </Row>
+                    <MediumText big>{formattedStakedAmountInFiat}</MediumText>
+                  </StretchedRow>
+                  <Spacing h={20} />
                   <Row>
-                    <CardIcon source={{ uri: pool.iconUrl }} />
-                    <Spacing w={12} />
-                    <MediumText fontSize={20}>{formatTokenAmount(poolStats.stakedAmount, pool.symbol)}{' '}
-                      <MediumText secondary regular>{pool.symbol}</MediumText>
-                    </MediumText>
+                    {pool.rewardsEnabled && (
+                      <>
+                        <ButtonWrapper>
+                          <Button
+                            title={t('liquidityPoolsContent.button.stake')}
+                            onPress={() => navigation.navigate(LIQUIDITY_POOLS_STAKE, { pool })}
+                          />
+                        </ButtonWrapper>
+                        <Spacing w={7} />
+                      </>
+                    )}
+                    <ButtonWrapper>
+                      <Button
+                        title={t('liquidityPoolsContent.button.unstake')}
+                        secondary
+                        onPress={() => navigation.navigate(LIQUIDITY_POOLS_UNSTAKE, { pool })}
+                      />
+                    </ButtonWrapper>
                   </Row>
-                  <MediumText big>{formattedStakedAmountInFiat}</MediumText>
-                </StretchedRow>
-                <Spacing h={20} />
-                <Row>
-                  {pool.rewardsEnabled && (
+                  {balance === 0 && poolStats.stakedAmount.eq(0) && (
                     <>
-                      <ButtonWrapper>
-                        <Button
-                          title={t('liquidityPoolsContent.button.stake')}
-                          onPress={() => navigation.navigate(LIQUIDITY_POOLS_STAKE, { pool })}
-                        />
-                      </ButtonWrapper>
-                      <Spacing w={7} />
+                      <Overlay />
+                      <AbsolutePositioning>
+                        <BaseText medium secondary>
+                          {t('liquidityPoolsContent.label.addLiquidityToStartEarning')}
+                        </BaseText>
+                      </AbsolutePositioning>
                     </>
                   )}
-                  <ButtonWrapper>
-                    <Button
-                      title={t('liquidityPoolsContent.button.unstake')}
-                      secondary
-                      onPress={() => navigation.navigate(LIQUIDITY_POOLS_UNSTAKE, { pool })}
-                    />
-                  </ButtonWrapper>
-                </Row>
-                {balance === 0 && poolStats.stakedAmount.eq(0) && (
-                  <>
-                    <Overlay />
-                    <AbsolutePositioning>
-                      <BaseText medium secondary>
-                        {t('liquidityPoolsContent.label.addLiquidityToStartEarning')}
-                      </BaseText>
-                    </AbsolutePositioning>
-                  </>
-                )}
-              </Card>
-              <Spacing h={28} />
+                </Card>
+                <Spacing h={28} />
 
-              <MediumText big>{t('liquidityPoolsContent.label.rewards')}</MediumText>
-              <Spacing h={6} />
-              <Card>
-                <Row>
-                  <CardIcon source={{ uri: rewardAssetData.iconUrl }} />
-                  <Spacing w={12} />
-                  <View>
-                    <BaseText fontSize={20}>
-                      {formatTokenAmount(poolStats.rewardsToClaim, rewardAssetData.symbol)}{' '}
-                      <BaseText secondary regular>{rewardAssetData.symbol}</BaseText>
-                    </BaseText>
-                    <BaseText regular secondary>
-                      {t('liquidityPoolsContent.label.claimedSoFar', { value: 0, token: rewardAssetData.symbol })}
-                    </BaseText>
-                  </View>
-                </Row>
-                <Spacing h={20} />
-                <Button
-                  title={t('liquidityPoolsContent.button.claimRewards')}
-                  primarySecond
-                  onPress={onClaimReward}
-                />
-                {poolStats.stakedAmount.eq(0) && (
-                  <>
-                    <Overlay />
-                    <AbsolutePositioning>
-                      <BaseText medium secondary>
-                        {t('liquidityPoolsContent.label.stakeLiquidityToGetRewards')}
+                <MediumText big>{t('liquidityPoolsContent.label.rewards')}</MediumText>
+                <Spacing h={6} />
+                <Card>
+                  <Row>
+                    <CardIcon source={{ uri: rewardAssetData.iconUrl }} />
+                    <Spacing w={12} />
+                    <View>
+                      <BaseText fontSize={20}>
+                        {formatTokenAmount(poolStats.rewardsToClaim, rewardAssetData.symbol)}{' '}
+                        <BaseText secondary regular>
+                          {rewardAssetData.symbol}
+                        </BaseText>
                       </BaseText>
-                    </AbsolutePositioning>
-                  </>
-                )}
-              </Card>
-            </>
-          )}
+                      <BaseText regular secondary>
+                        {t('liquidityPoolsContent.label.claimedSoFar', { value: 0, token: rewardAssetData.symbol })}
+                      </BaseText>
+                    </View>
+                  </Row>
+                  <Spacing h={20} />
+                  <Button
+                    title={t('liquidityPoolsContent.button.claimRewards')}
+                    primarySecond
+                    onPress={onClaimReward}
+                  />
+                  {poolStats.stakedAmount.eq(0) && (
+                    <>
+                      <Overlay />
+                      <AbsolutePositioning>
+                        <BaseText medium secondary>
+                          {t('liquidityPoolsContent.label.stakeLiquidityToGetRewards')}
+                        </BaseText>
+                      </AbsolutePositioning>
+                    </>
+                  )}
+                </Card>
+              </>
+            )}
             <Spacing h={28} />
-            <MediumText big>{hasBalance
-              ? t('liquidityPoolsContent.label.yourPoolShareAllocation')
-              : t('liquidityPoolsContent.label.poolTokenAllocation')}
+            <MediumText big>
+              {hasBalance
+                ? t('liquidityPoolsContent.label.yourPoolShareAllocation')
+                : t('liquidityPoolsContent.label.poolTokenAllocation')}
             </MediumText>
             <Spacing h={22} />
             {pool.tokensProportions.map(({ symbol: tokenSymbol, proportion, progressBarColor }) => {
@@ -432,22 +426,21 @@ const LiquidityPoolDashboard = ({
               const tokenPriceInFiat = usdToFiatRate * poolStats.tokensPricesUSD[tokenSymbol];
               const formattedTokenPrice = formatFiat(tokenPriceInFiat, fiatCurrency);
               const quantity = hasBalance
-                  ? poolStats.tokensPerLiquidityToken[tokenSymbol] * balance
-                  : poolStats.tokensLiquidity[tokenSymbol];
+                ? poolStats.tokensPerLiquidityToken[tokenSymbol] * balance
+                : poolStats.tokensLiquidity[tokenSymbol];
               const formattedQuantity = formatTokenAmount(quantity, tokenSymbol);
 
               return (
                 <View key={tokenSymbol}>
                   <StretchedRow>
                     <Row>
-                      <AllocationIcon
-                        source={{ uri: tokenData.iconUrl }}
-                        fallbackSource={genericToken}
-                      />
+                      <AllocationIcon source={{ uri: tokenData.iconUrl }} fallbackSource={genericToken} />
                       <Spacing w={8} />
                       <MediumText big>{tokenData.name}</MediumText>
                       <Spacing w={8} />
-                      <BaseText regular secondary>{t('percentValue', { value: proportion * 100 })}</BaseText>
+                      <BaseText regular secondary>
+                        {t('percentValue', { value: proportion * 100 })}
+                      </BaseText>
                     </Row>
                     <MediumText big>{formatFiat(quantity * tokenPriceInFiat, fiatCurrency)}</MediumText>
                   </StretchedRow>
@@ -458,29 +451,30 @@ const LiquidityPoolDashboard = ({
                     height={6}
                     colorStart={progressBarColor}
                     colorEnd={progressBarColor}
-                    emptyBarBackgroundColor={
-                      getColorByThemeOutsideStyled(theme.current, { lightKey: 'basic080', darkKey: 'basic070' })
-                    }
+                    emptyBarBackgroundColor={getColorByThemeOutsideStyled(theme.current, {
+                      lightKey: 'basic080',
+                      darkKey: 'basic070',
+                    })}
                     barPadding={0}
                   />
                   <Spacing h={24} />
                   <StretchedRow>
-                    <BaseText secondary medium>{t('liquidityPoolsContent.label.tokenPrice')}</BaseText>
-                    <BaseText medium>
-                      {formattedTokenPrice}
+                    <BaseText secondary medium>
+                      {t('liquidityPoolsContent.label.tokenPrice')}
                     </BaseText>
+                    <BaseText medium>{formattedTokenPrice}</BaseText>
                   </StretchedRow>
                   <Spacing h={25} />
                   <StretchedRow>
-                    <BaseText secondary medium>{t('liquidityPoolsContent.label.quantity')}</BaseText>
-                    <BaseText medium>
-                      {t('tokenValue', { value: formattedQuantity, token: tokenSymbol })}
+                    <BaseText secondary medium>
+                      {t('liquidityPoolsContent.label.quantity')}
                     </BaseText>
+                    <BaseText medium>{t('tokenValue', { value: formattedQuantity, token: tokenSymbol })}</BaseText>
                   </StretchedRow>
                   <Spacing h={34} />
                 </View>
               );
-          })}
+            })}
           </HorizontalPadding>
         </MainContainter>
       </ScrollWrapper>
@@ -495,12 +489,10 @@ const LiquidityPoolDashboard = ({
 };
 
 const mapStateToProps = ({
-  appSettings: { data: { baseFiatCurrency } },
-  liquidityPools: {
-    isFetchingLiquidityPoolsData,
-    poolDataGraphQueryFailed,
-    shownStakingEnabledModal,
+  appSettings: {
+    data: { baseFiatCurrency },
   },
+  liquidityPools: { isFetchingLiquidityPoolsData, poolDataGraphQueryFailed, shownStakingEnabledModal },
   liquidityPools: liquidityPoolsReducer,
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,

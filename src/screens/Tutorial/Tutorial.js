@@ -20,9 +20,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 
-import { HOME } from 'constants/navigationConstants';
+import { HOME_FLOW } from 'constants/navigationConstants';
 
 import type { TutorialDataObject } from 'models/CMSData';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -30,30 +30,30 @@ import { CMS_DATA_TYPES } from 'constants/cmsConstants';
 
 import { hasSeenTutorialAction } from 'actions/appSettingsActions';
 
+import type { Route } from '@react-navigation/native';
+
 import TutorialSwiper from './TutorialSwiper';
 
 type Props = {
   hasSeenTutorial: () => void,
   tutorialData: ?TutorialDataObject,
-}
+  route: Route,
+};
 
-const {
-  ONBOARDING_SCREENS_FOR_NATIVES: NATIVES,
-  ONBOARDING_SCREENS_FOR_NEWBIES: NEWBIES,
-} = CMS_DATA_TYPES;
+const { ONBOARDING_SCREENS_FOR_NATIVES: NATIVES, ONBOARDING_SCREENS_FOR_NEWBIES: NEWBIES } = CMS_DATA_TYPES;
 
 type TUTORIAL_PATH = typeof NATIVES | typeof NEWBIES;
 
-const TutorialScreen = ({ hasSeenTutorial, tutorialData }: Props) => {
+const TutorialScreen = ({ hasSeenTutorial, tutorialData, route }: Props) => {
   const [activePath, setActivePath] = useState<TUTORIAL_PATH>(NEWBIES);
   const navigation = useNavigation();
-  const routeName = navigation?.state?.params?.nextNavigationRouteName || HOME;
+  const routeName = route.name || HOME_FLOW;
 
   useEffect(() => {
     if (!tutorialData) {
       navigation.navigate(routeName);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleFinish = () => {
@@ -64,7 +64,7 @@ const TutorialScreen = ({ hasSeenTutorial, tutorialData }: Props) => {
   return (
     <TutorialSwiper
       data={tutorialData[activePath]}
-      onButtonPress={val => setActivePath(val)}
+      onButtonPress={(val) => setActivePath(val)}
       onFinish={handleFinish}
     />
   );
@@ -74,9 +74,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   hasSeenTutorial: () => dispatch(hasSeenTutorialAction()),
 });
 
-const mapStateToProps = ({
-  onboarding: { tutorialData },
-}: RootReducerState): $Shape<Props> => ({
+const mapStateToProps = ({ onboarding: { tutorialData } }: RootReducerState): $Shape<Props> => ({
   tutorialData,
 });
 

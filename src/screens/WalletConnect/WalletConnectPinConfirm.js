@@ -20,7 +20,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { Wallet } from 'ethers';
 import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -77,6 +77,7 @@ type Props = {
 const WalletConnectPinConfirmScreeen = ({ resetIncorrectPassword, useBiometrics, sendAsset, activeAccount }: Props) => {
   const [isChecking, setIsChecking] = useState(false);
   const navigation = useNavigation();
+  const route = useRoute();
   const {
     approveCallRequest,
     approveV2CallRequest,
@@ -86,15 +87,15 @@ const WalletConnectPinConfirmScreeen = ({ resetIncorrectPassword, useBiometrics,
   } = useWalletConnect();
   const { t } = useTranslation();
 
-  const callRequest = navigation.getParam('callRequest');
-  const transactionPayload = navigation.getParam('transactionPayload');
+  const callRequest = route?.params?.callRequest;
+  const transactionPayload = route?.params?.transactionPayload;
 
   const isV2CallRequest = !!callRequest?.topic;
 
   const dismissScreen = () => {
     resetIncorrectPassword();
     setIsChecking(false);
-    navigation.dismiss();
+    navigation.goBack();
   };
 
   const handleSendTransaction = (privateKey): void => {

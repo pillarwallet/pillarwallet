@@ -19,8 +19,8 @@
 */
 
 import * as React from 'react';
-import { useNavigation } from 'react-navigation-hooks';
 import { useTranslation } from 'translations/translate';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 
 // Components
 import { Container } from 'components/layout/Layout';
@@ -38,6 +38,7 @@ import { useAssetCategoriesConfig } from 'utils/uiConfig';
 
 // Types
 import type { AssetCategory } from 'models/AssetCategory';
+import type { Route } from '@react-navigation/native';
 
 // Local
 import WalletTab from './wallet/WalletTab';
@@ -46,10 +47,11 @@ import CollectiblesTab from './collectibles/CollectiblesTab';
 
 type Props = {
   onBackPress?: () => void,
+  navigation: NavigationScreenProp<*>,
+  route: Route,
 };
 
-function Assets({ onBackPress }: Props) {
-  const navigation = useNavigation();
+function Assets({ onBackPress, navigation, route }: Props) {
   const { t } = useTranslation();
   const config = useAssetCategoriesConfig();
   const visibleNFTs = useNftFlag();
@@ -67,7 +69,7 @@ function Assets({ onBackPress }: Props) {
     items.push({ key: CATEGORY.COLLECTIBLES, title: config[CATEGORY.COLLECTIBLES].title, component: CollectiblesTab });
   }
 
-  const initialCategory: ?AssetCategory = navigation.getParam('category');
+  const initialCategory: ?AssetCategory = route?.params?.category;
 
   const initialTabIndex = items.findIndex((item) => item.key === initialCategory);
   const [tabIndex, setTabIndex] = React.useState(initialTabIndex >= 0 ? initialTabIndex : 0);

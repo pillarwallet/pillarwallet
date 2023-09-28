@@ -20,10 +20,11 @@
 
 import React, { useEffect } from 'react';
 import { Keyboard, Dimensions } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 import messaging from '@react-native-firebase/messaging';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 
 // Components
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
@@ -43,14 +44,18 @@ import { useThemeColors } from 'utils/themes';
 // Actions
 import { hasFCMPermission } from 'actions/notificationsActions';
 
+// Type
+import type { Route } from '@react-navigation/native';
+
 const { height } = Dimensions.get('window');
 
 function GetNotifincations() {
   const { t, tRoot } = useTranslationWithPrefix('getNotifications');
   const dispatch = useDispatch();
-  const navigation = useNavigation();
+  const navigation: NavigationScreenProp<any> = useNavigation();
+  const route: Route = useRoute();
   const colors = useThemeColors();
-  const nextRoute = navigation.getParam('nextRouteName');
+  const nextRoute = route?.params?.nextRouteName;
 
   useEffect(() => {
     Keyboard.dismiss();

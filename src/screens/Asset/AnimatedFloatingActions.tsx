@@ -19,13 +19,14 @@
 */
 import React, { useRef, useState } from 'react';
 import t from 'translations/translate';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 import { Animated, StyleSheet, View } from 'react-native';
 import InAppBrowser from 'react-native-inappbrowser-reborn';
 import { useIsDarkTheme } from 'utils/themes';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 
 // Constants
-import { BRIDGE_TAB, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
+import { BRIDGE_TAB, BRIDGE_FLOW, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
@@ -46,7 +47,7 @@ import { showServiceLaunchErrorToast } from 'utils/inAppBrowser';
 import { getActiveAccount } from 'utils/accounts';
 
 const AnimatedFloatingActions = ({ assetData }) => {
-  const navigation = useNavigation();
+  const navigation: NavigationScreenProp<any> = useNavigation();
   const isDarkTheme = useIsDarkTheme();
 
   const isExchangeAvailable = useIsExchangeAvailable();
@@ -170,7 +171,7 @@ const AnimatedFloatingActions = ({ assetData }) => {
       onPress: () => {
         if (!!flipRotation) flipToBack();
         else flipToFront();
-        navigation.navigate(BRIDGE_TAB, { toAssetAddress: contractAddress, chain });
+        navigation.navigate(BRIDGE_FLOW, { screen: BRIDGE_TAB, params: { toAssetAddress: contractAddress, chain } });
       },
     },
     {
@@ -179,7 +180,7 @@ const AnimatedFloatingActions = ({ assetData }) => {
       onPress: () => {
         if (!!flipRotation) flipToBack();
         else flipToFront();
-        navigation.navigate(BRIDGE_TAB, { fromAssetAddress: contractAddress, chain });
+        navigation.navigate(BRIDGE_FLOW, { screen: BRIDGE_TAB, params: { fromAssetAddress: contractAddress, chain } });
       },
     },
   ];

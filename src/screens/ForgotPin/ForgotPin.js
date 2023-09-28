@@ -20,11 +20,11 @@
 import * as React from 'react';
 import t from 'translations/translate';
 import { connect } from 'react-redux';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import styled from 'styled-components/native';
 
 // constants
-import { IMPORT_WALLET_LEGALS, FORGOT_PIN, PIN_CODE_UNLOCK } from 'constants/navigationConstants';
+import { IMPORT_WALLET_LEGALS, FORGOT_PIN, PIN_CODE_UNLOCK, ONBOARDING_FLOW } from 'constants/navigationConstants';
 
 // components
 import { Wrapper } from 'components/legacy/Layout';
@@ -61,7 +61,10 @@ class ForgotPin extends React.Component<Props, {}> {
   };
 
   toImportWallet = () => {
-    this.props.navigation.navigate(IMPORT_WALLET_LEGALS, { navigateTo: FORGOT_PIN });
+    this.props.navigation.navigate(ONBOARDING_FLOW, {
+      screen: IMPORT_WALLET_LEGALS,
+      params: { navigateTo: FORGOT_PIN },
+    });
   };
 
   render() {

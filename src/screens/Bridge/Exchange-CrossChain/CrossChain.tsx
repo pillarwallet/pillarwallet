@@ -17,12 +17,13 @@
 
 import * as React from 'react';
 import { Keyboard, Platform } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
 import { BigNumber } from 'bignumber.js';
 import { useDebounce } from 'use-debounce';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 
 // Components
 import { Container, Content, Spacing } from 'components/layout/Layout';
@@ -35,7 +36,7 @@ import SwapButton from 'components/legacy/Button';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
-import { SEND_TOKEN_PIN_CONFIRM, EXCHANGE_CONFIRM } from 'constants/navigationConstants';
+import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { TRANSACTION_TYPE } from 'constants/transactionsConstants';
 
 // Utils
@@ -56,6 +57,7 @@ import { useFiatCurrency, useChainRates, useActiveAccount } from 'selectors';
 import type { AssetOption } from 'models/Asset';
 import type { Chain } from 'models/Chain';
 import type { TransactionPayload } from 'models/Transaction';
+import type { Route } from '@react-navigation/native';
 
 // Local
 import FromAssetSelector from './FromAssetSelector';
@@ -78,15 +80,15 @@ interface Props {
 
 function CrossChain({ fetchCrossChainTitle }: Props) {
   const { t } = useTranslation();
-  const navigation = useNavigation();
+  const navigation: NavigationScreenProp<any> = useNavigation();
+  const route: Route = useRoute();
   const dispatch = useDispatch();
   const fromInputRef: any = React.useRef();
   const screenName = getActiveScreenName(navigation);
   const activeAccount = useActiveAccount();
 
-  const initialChain: Chain = navigation.getParam('chain');
-  const initialFromAddress: string =
-    navigation.getParam('fromAssetAddress') || nativeAssetPerChain[initialChain]?.address;
+  const initialChain: Chain = route?.params?.chain;
+  const initialFromAddress: string = route?.params?.fromAssetAddress || nativeAssetPerChain[initialChain]?.address;
 
   const [chain, setChain] = React.useState(initialChain);
   const [toAddressChain, setToAddressChain] = React.useState(null);

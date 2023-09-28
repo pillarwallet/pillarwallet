@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { Platform } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import styled from 'styled-components/native';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'translations/translate';
@@ -68,10 +68,11 @@ const ExchangeConfirmScreen = () => {
   const colors = useThemeColors();
   const { t } = useTranslation();
   const navigation = useNavigation();
+  const route = useRoute();
   const dispatch = useDispatch();
   const activeAccount = useActiveAccount();
 
-  const offer: ExchangeOffer = navigation.getParam('offer');
+  const offer: ExchangeOffer = route?.params?.offer;
   const { fromAsset, toAsset, fromAmount, toAmount, provider, chain: chainName, gasFeeAsset } = offer;
   const toAssetSymbol = toAsset.symbol;
 

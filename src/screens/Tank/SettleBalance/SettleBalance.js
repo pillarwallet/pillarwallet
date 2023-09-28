@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import { BigNumber } from 'bignumber.js';
 import t from 'translations/translate';
 import { createStructuredSelector } from 'reselect';
@@ -61,7 +61,6 @@ import { nativeAssetPerChain } from 'utils/chains';
 
 // selectors
 import { accountEthereumAssetsSelector } from 'selectors/assets';
-
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -149,12 +148,7 @@ class SettleBalance extends React.Component<Props, State> {
   }
 
   renderItem = ({ item }) => {
-    const {
-      baseFiatCurrency,
-      assets,
-      ratesPerChain,
-      theme,
-    } = this.props;
+    const { baseFiatCurrency, assets, ratesPerChain, theme } = this.props;
     const { txToSettle } = this.state;
     const colors = getThemeColors(theme);
     const assetsList = getAssetsAsList(assets);
@@ -195,9 +189,7 @@ class SettleBalance extends React.Component<Props, State> {
           <AddonWrapper>
             <BalanceWrapper>
               <TankAssetBalance amount={formattedAmount} token={assetSymbol} />
-              <ValueInFiat>
-                {formattedAmountInFiat}
-              </ValueInFiat>
+              <ValueInFiat>{formattedAmountInFiat}</ValueInFiat>
             </BalanceWrapper>
             <Checkbox
               onPress={() => this.toggleItemToTransfer(assetInfo)}
@@ -237,18 +229,14 @@ class SettleBalance extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      session,
-      availableToSettleTx,
-      isFetched,
-    } = this.props;
+    const { session, availableToSettleTx, isFetched } = this.props;
     const { txToSettle } = this.state;
     const showSpinner = !isFetched;
     const formattedFeedData = groupSectionsByDate(availableToSettleTx, 1);
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: t('ppnContent.title.settleTransactionsScreen') }] }}
-        footer={(
+        footer={
           <FooterInner style={{ alignItems: 'center' }}>
             <Label>&nbsp;</Label>
             {!!txToSettle.length && (
@@ -261,13 +249,15 @@ class SettleBalance extends React.Component<Props, State> {
               />
             )}
           </FooterInner>
-        )}
+        }
       >
         {showSpinner && <LoadingSpinner />}
-        {!showSpinner &&
+        {!showSpinner && (
           <React.Fragment>
             <SubtitleView>
-              <Paragraph light small>{t('ppnContent.label.transactionsAvailableToSettle')}</Paragraph>
+              <Paragraph light small>
+                {t('ppnContent.label.transactionsAvailableToSettle')}
+              </Paragraph>
               <Paragraph style={{ textAlign: 'right', marginLeft: 4 }} small>
                 {t('valueOfValue', { partOfValue: txToSettle.length, allValue: MAX_TX_TO_SETTLE })}
               </Paragraph>
@@ -288,7 +278,7 @@ class SettleBalance extends React.Component<Props, State> {
               })}
               maxToRenderPerBatch={7}
               onEndReachedThreshold={0.5}
-              keyExtractor={item => item.hash}
+              keyExtractor={(item) => item.hash}
               contentContainerStyle={{ flexGrow: 1, paddingTop: 10 }}
               removeClippedSubviews
               stickySectionHeadersEnabled={false}
@@ -302,7 +292,7 @@ class SettleBalance extends React.Component<Props, State> {
               }
             />
           </React.Fragment>
-        }
+        )}
       </ContainerWithHeader>
     );
   }
@@ -310,9 +300,13 @@ class SettleBalance extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   rates: { data: ratesPerChain },
-  appSettings: { data: { baseFiatCurrency } },
+  appSettings: {
+    data: { baseFiatCurrency },
+  },
   session: { data: session },
-  paymentNetwork: { availableToSettleTx: { data: availableToSettleTx, isFetched } },
+  paymentNetwork: {
+    availableToSettleTx: { data: availableToSettleTx, isFetched },
+  },
 }: RootReducerState): $Shape<Props> => ({
   ratesPerChain,
   baseFiatCurrency,

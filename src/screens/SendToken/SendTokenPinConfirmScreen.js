@@ -32,14 +32,15 @@ import { logEventAction, appsFlyerlogEventAction } from 'actions/analyticsAction
 import { transactionNotificationActions } from 'actions/transactionNotificationActions';
 
 // Constants
-import { HOME } from 'constants/navigationConstants';
+import { HOME_FLOW } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // Types
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import type { TransactionPayload, TransactionStatus } from 'models/Transaction';
 import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { Route } from '@react-navigation/native';
 
 // Utils
 import { isLogV2AppEvents } from 'utils/environment';
@@ -48,6 +49,7 @@ import { currentDate, currentTime } from 'utils/date';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  route: Route,
   sendAsset: (
     transactionPayload: TransactionPayload,
     privateKey: string,
@@ -74,10 +76,10 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    const { navigation } = props;
-    const transactionPayload = navigation.getParam('transactionPayload', {});
-    this.source = navigation.getParam('source', '');
-    this.goBackDismiss = navigation.getParam('goBackDismiss', false);
+    const { route } = props;
+    const transactionPayload = route?.params?.transactionPayload || {};
+    this.source = route?.params?.source || '';
+    this.goBackDismiss = route?.params?.goBackDismiss || false;
     this.state = {
       transactionPayload,
       isChecking: false,
@@ -128,20 +130,20 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
   };
 
   navigateToTransactionState = (params: ?Object) => {
-    const { navigation, showTransactionNotificationAction } = this.props;
+    const { navigation, route, showTransactionNotificationAction } = this.props;
     const { transactionPayload } = this.state;
-    const transactionType = navigation.getParam('transactionType', '');
+    const transactionType = route?.params?.transactionType || '';
 
     showTransactionNotificationAction({ ...transactionPayload, ...params, transactionType });
-    navigation.navigate(HOME);
+    navigation.navigate(HOME_FLOW);
   };
 
   handleBack = () => {
     const { navigation, resetIncorrectPassword } = this.props;
     if (this.goBackDismiss) {
-      navigation.dismiss();
-    } else {
       navigation.goBack(null);
+    } else {
+      navigation.goBack();
     }
     resetIncorrectPassword();
   };

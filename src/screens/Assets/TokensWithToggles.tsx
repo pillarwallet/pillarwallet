@@ -20,9 +20,9 @@
 
 import * as React from 'react';
 import { FlatList } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
 import { useTranslation } from 'translations/translate';
 import { useDispatch } from 'react-redux';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 
 // Components
 import { Container } from 'components/layout/Layout';
@@ -47,11 +47,18 @@ import { getMatchingTokens } from 'utils/wallet';
 import { fontSizes } from 'utils/variables';
 import { filteredWithChain } from 'utils/etherspot';
 
-export default function () {
+// type
+import type { Route } from '@react-navigation/native';
+
+type Props = {
+  navigation: NavigationScreenProp<any>;
+  route: Route;
+};
+
+export default function ({ navigation, route }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const navigation = useNavigation();
-  const tokenInfo = navigation.getParam('tokenInfo');
+  const tokenInfo = route?.params?.tokenInfo;
   const { addTokensList: tokenList, isFetching } = useRootSelector(addTokensListSelector);
 
   const fetchedTokenInfo = tokenList.find((token) => token.chain === tokenInfo.chain && token.name === tokenInfo.name);

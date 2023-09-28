@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 // Components
 import Modal from 'components/Modal';
@@ -29,9 +29,10 @@ import WalletConnectRequestModal from './Requests/WalletConnectConnectorRequestM
 
 function WalletConnectConnectorRequestScreen() {
   const navigation = useNavigation();
-  const connector = navigation.getParam('connector');
-  const chainId = navigation.getParam('chainId');
-  const isV2WC = navigation.getParam('isV2');
+  const route = useRoute();
+  const connector = route?.params?.connector;
+  const chainId = route?.params?.chainId;
+  const isV2WC = route?.params?.isV2;
 
   React.useLayoutEffect(() => {
     navigation.goBack(null);

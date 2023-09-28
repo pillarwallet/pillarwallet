@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { BackHandler } from 'react-native';
-import { useNavigation, useFocusEffect } from 'react-navigation-hooks';
+import { useNavigation, useFocusEffect, useRoute } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'translations/translate';
 import { ENSNodeStates } from 'etherspot';
@@ -44,7 +44,7 @@ import { Spacing } from 'components/legacy/Layout';
 import WalletConnectCamera from 'components/QRCodeScanner/WalletConnectCamera';
 
 // Constants
-import { MENU, HOME_HISTORY, REGISTER_ENS, CONNECT_FLOW } from 'constants/navigationConstants';
+import { MENU_FLOW, HOME_HISTORY, REGISTER_ENS, CONNECT_FLOW } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
@@ -93,6 +93,7 @@ import PlrStakingBanner from './PlrStakingBanner';
 
 function Home() {
   const navigation = useNavigation();
+  const route = useRoute();
   const colors = useThemeColors();
   const { t } = useTranslation();
   const swiperRef = React.useRef(null);
@@ -225,7 +226,7 @@ function Home() {
               {
                 svgIcon: 'menu',
                 color: colors.basic020,
-                onPress: () => navigation.navigate(MENU),
+                onPress: () => navigation.navigate(MENU_FLOW),
                 testID: `${TAG}-button-header_menu`, // eslint-disable-line i18next/no-literal-string
                 accessibilityLabel: `${TAG}-button-header_menu`, // eslint-disable-line i18next/no-literal-string
               },
@@ -303,7 +304,7 @@ function Home() {
       </>
 
       {/* Right Side Assets content */}
-      <Assets onBackPress={() => swiperRef.current?.scrollBy(-1)} />
+      <Assets onBackPress={() => swiperRef.current?.scrollBy(-1)} navigation={navigation} route={route} />
     </Swiper>
   );
 }

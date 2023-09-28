@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { SafeAreaView } from 'react-navigation';
+import SafeAreaView from 'react-native-safe-area-view';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
@@ -91,31 +91,29 @@ class RelayerMigrationModal extends React.PureComponent<Props, State> {
   };
 
   render() {
-    const {
-      accountAssets,
-      accountHistory,
-    } = this.props;
+    const { accountAssets, accountHistory } = this.props;
     const { switchPressed } = this.state;
     const plrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
     const { iconUrl } = findAssetByAddress(getAssetsAsList(accountAssets), plrAddress) ?? {};
     const isSwitchPending = getCrossChainAccountHistory(accountHistory).some(({ tag, status }) => {
       return tag === ARCHANOVA_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER && status === TX_PENDING_STATUS;
     });
-    const buttonTitle = switchPressed || isSwitchPending
-      ? t('relayerMigrationContent.modal.switch.label.waitingForConfirmation')
-      : t('relayerMigrationContent.modal.switch.button.switch');
-    const subtitle = switchPressed || isSwitchPending
-      ? t('relayerMigrationContent.modal.switch.label.switchPending')
-      : t('relayerMigrationContent.modal.switch.label.freeSwitching');
+    const buttonTitle =
+      switchPressed || isSwitchPending
+        ? t('relayerMigrationContent.modal.switch.label.waitingForConfirmation')
+        : t('relayerMigrationContent.modal.switch.button.switch');
+    const subtitle =
+      switchPressed || isSwitchPending
+        ? t('relayerMigrationContent.modal.switch.label.switchPending')
+        : t('relayerMigrationContent.modal.switch.label.freeSwitching');
 
     return (
-      <SlideModal
-        ref={this.modalRef}
-        hideHeader
-      >
+      <SlideModal ref={this.modalRef} hideHeader>
         <SafeAreaView forceInset={{ top: 'never', bottom: 'always' }}>
           <ModalContainer>
-            <MediumText center medium>{t('relayerMigrationContent.modal.switch.title')}</MediumText>
+            <MediumText center medium>
+              {t('relayerMigrationContent.modal.switch.title')}
+            </MediumText>
             <Spacing h={18} />
             {iconUrl && (
               <Image
@@ -127,13 +125,11 @@ class RelayerMigrationModal extends React.PureComponent<Props, State> {
             <Spacing h={20} />
             <BaseText medium>{t('relayerMigrationContent.modal.switch.paragraph')}</BaseText>
             <Spacing h={30} />
-            <Button
-              title={buttonTitle}
-              disabled={isSwitchPending || switchPressed}
-              onPress={this.onSwitchPress}
-            />
+            <Button title={buttonTitle} disabled={isSwitchPending || switchPressed} onPress={this.onSwitchPress} />
             <Spacing h={30} />
-            <BaseText regular center secondary>{subtitle}</BaseText>
+            <BaseText regular center secondary>
+              {subtitle}
+            </BaseText>
           </ModalContainer>
         </SafeAreaView>
       </SlideModal>

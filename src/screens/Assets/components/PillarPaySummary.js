@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
@@ -106,6 +106,6 @@ const TitleWrapper = styled.View`
 `;
 
 const Title = styled(Text)`
-  font-family: "${appFont.medium}";
+  font-family: '${appFont.medium}';
   margin-right: ${spacing.small}px;
 `;

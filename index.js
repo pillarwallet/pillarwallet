@@ -21,6 +21,7 @@
 import 'react-native-gesture-handler';
 import '@ethersproject/shims';
 import '@walletconnect/react-native-compat';
+import 'react-native-get-random-values';
 
 import { AppRegistry, LogBox } from 'react-native';
 import App from './App';

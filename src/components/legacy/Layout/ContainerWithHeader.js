@@ -19,8 +19,6 @@
 */
 import * as React from 'react';
 import { Platform, StatusBar, View, Dimensions, ScrollView, Animated } from 'react-native';
-import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
-import { withNavigation } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import SafeAreaView from 'react-native-safe-area-view';
 import isEqual from 'lodash.isequal';
@@ -37,10 +35,12 @@ import { DARK_THEME, LIGHT_CONTENT, DARK_CONTENT, LIGHT_THEME } from 'constants/
 // types
 import type { StatusBarStyle, KeyboardShouldPersistTaps } from 'utils/types/react-native';
 
+// Services
+import { navigationRef } from 'services/navigation';
+
 import { ScrollWrapper } from './Layout';
 
 type Props = {
-  navigation: NavigationScreenProp<*>,
   children?: React.Node,
   headerProps?: Object,
   inset?: Object,
@@ -68,7 +68,7 @@ type State = {
 export const StyledSafeAreaView = styled(SafeAreaView)`
   background-color: ${({ color, theme }) => color || theme.colors.basic070};
   flex: 1;
-  ${props => props.androidStatusbarHeight ? `padding-top: ${props.androidStatusbarHeight}px` : ''};
+  ${(props) => (props.androidStatusbarHeight ? `padding-top: ${props.androidStatusbarHeight}px` : '')};
 `;
 
 const ContentWrapper = styled.View`
@@ -83,7 +83,7 @@ const Footer = styled.KeyboardAvoidingView`
 const { height: screenHeight } = Dimensions.get('window');
 
 class ContainerWithHeader extends React.Component<Props, State> {
-  focusSubscription: NavigationEventSubscription;
+  focusSubscription;
 
   state = {
     scrollY: new Animated.Value(0),
@@ -95,12 +95,11 @@ class ContainerWithHeader extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { navigation } = this.props;
-    this.focusSubscription = navigation.addListener('didFocus', this.setStatusBarStyleForView);
+    this.focusSubscription = navigationRef.addListener('focus', this.setStatusBarStyleForView);
   }
 
   componentWillUnmount() {
-    if (this.focusSubscription) this.focusSubscription.remove();
+    this.focusSubscription();
   }
 
   getStatusBarColor = (themeType): StatusBarStyle => {
@@ -113,12 +112,7 @@ class ContainerWithHeader extends React.Component<Props, State> {
   };
 
   setStatusBarStyleForView = () => {
-    const {
-      headerProps = {},
-      theme,
-      backgroundColor,
-      statusbarColor,
-    } = this.props;
+    const { headerProps = {}, theme, backgroundColor, statusbarColor } = this.props;
     const { transparent, floating } = headerProps;
     const themeType = getThemeType(theme);
     let statusBarStyle = this.getStatusBarColor(themeType);
@@ -160,9 +154,7 @@ class ContainerWithHeader extends React.Component<Props, State> {
     }
     const content = (
       <>
-        <ContentWrapper>
-          {children}
-        </ContentWrapper>
+        <ContentWrapper>{children}</ContentWrapper>
         {footer}
       </>
     );
@@ -182,16 +174,12 @@ class ContainerWithHeader extends React.Component<Props, State> {
   };
 
   onScroll = () => {
-    return Animated.event(
-      [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
-      { useNativeDriver: false },
-    );
-  }
+    return Animated.event([{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }], { useNativeDriver: false });
+  };
 
   render() {
     const {
       headerProps = {},
-      navigation,
       inset,
       backgroundColor,
       footer,
@@ -213,13 +201,10 @@ class ContainerWithHeader extends React.Component<Props, State> {
 
     return (
       <View style={{ flex: 1 }}>
-        {!isEmpty(headerProps) &&
+        {!isEmpty(headerProps) && (
           // $FlowFixMe: flow update to 0.122
-          <HeaderBlock
-            {...headerProps}
-            navigation={navigation}
-            noPaddingTop
-          />}
+          <HeaderBlock {...headerProps} navigation={navigationRef} noPaddingTop />
+        )}
         <StyledSafeAreaView
           forceInset={{ top: topInset, bottom: bottomInset, ...inset }}
           androidStatusbarHeight={androidStatusBarSpacing}
@@ -227,29 +212,33 @@ class ContainerWithHeader extends React.Component<Props, State> {
         >
           {this.renderContent(!shouldRenderKbAvoidingFooter && footer, putContentInScrollView)}
         </StyledSafeAreaView>
-        {!!footer && shouldRenderKbAvoidingFooter &&
-        <Footer
-          enabled={Platform.OS === 'ios'}
-          behavior={Platform.OS === 'ios' ? 'padding' : null}
-          keyboardVerticalOffset={isIphoneX() ? -40 : 0}
-        >
-          <SafeAreaView
-            forceInset={{
-              top: 'never', bottom: 'always', ...inset, ...footerContainerInset,
-            }}
-            style={{
-              backgroundColor: backgroundColor || colors.basic070,
-              width: '100%',
-              flexWrap: 'wrap',
-              ...footerContainerStyle,
-            }}
+        {!!footer && shouldRenderKbAvoidingFooter && (
+          <Footer
+            enabled={Platform.OS === 'ios'}
+            behavior={Platform.OS === 'ios' ? 'padding' : null}
+            keyboardVerticalOffset={isIphoneX() ? -40 : 0}
           >
-            {footer}
-          </SafeAreaView>
-        </Footer>}
+            <SafeAreaView
+              forceInset={{
+                top: 'never',
+                bottom: 'always',
+                ...inset,
+                ...footerContainerInset,
+              }}
+              style={{
+                backgroundColor: backgroundColor || colors.basic070,
+                width: '100%',
+                flexWrap: 'wrap',
+                ...footerContainerStyle,
+              }}
+            >
+              {footer}
+            </SafeAreaView>
+          </Footer>
+        )}
       </View>
     );
   }
 }
 
-export default withTheme(withNavigation(ContainerWithHeader));
+export default withTheme(ContainerWithHeader);

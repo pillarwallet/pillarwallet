@@ -18,14 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React from 'react';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import { connect } from 'react-redux';
 
 // components
 import { Container } from 'components/legacy/Layout';
 import Loader from 'components/Loader';
 import RetryApiRegistration from 'components/RetryApiRegistration';
-
 
 type Props = {
   navigation: NavigationScreenProp<*>,

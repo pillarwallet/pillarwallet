@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { FlatList, View } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import Swipeout from 'react-native-swipeout';

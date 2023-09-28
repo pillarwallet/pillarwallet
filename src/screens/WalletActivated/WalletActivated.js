@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { ScrollView, Image } from 'react-native';
 import { connect } from 'react-redux';
-import { withNavigation, type NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import styled, { withTheme } from 'styled-components/native';
 import t from 'translations/translate';
 
@@ -119,4 +119,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTheme(withNavigation(WalletActivated)));
+export default connect(mapStateToProps, mapDispatchToProps)(withTheme(WalletActivated));

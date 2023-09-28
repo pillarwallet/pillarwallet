@@ -21,7 +21,7 @@
 
 import * as React from 'react';
 import { Image } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 import styled, { ThemeProvider } from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
@@ -40,7 +40,6 @@ import EmojiCard from 'components/other/EmojiCard';
 // Utils
 import { appFont, fontStyles, spacing } from 'utils/variables';
 import { getThemeByType } from 'utils/themes';
-
 
 const smartWalletImage = require('assets/images/smart-wallet-migration.png');
 
@@ -95,9 +94,8 @@ function KeyBasedAssetTransferIntro() {
 
 export default KeyBasedAssetTransferIntro;
 
-
 const Title = styled(Text)`
-  font-family: "${appFont.medium}";
+  font-family: '${appFont.medium}';
   ${fontStyles.large};
   margin: 0px 50px;
   text-align: center;

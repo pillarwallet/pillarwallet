@@ -20,7 +20,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components/native';
 import { StatusBar } from 'react-native';
-import { SafeAreaView } from 'react-navigation';
+import SafeAreaView from 'react-native-safe-area-view';
 import t from 'translations/translate';
 
 // Utils
@@ -55,10 +55,10 @@ type ToastItem = {
 type ProviderId = $FlowFixMe;
 
 type Instance = {
-  show: (toast: ToastItem, options?: { noAnimation?: boolean }) => void;
-  close: (id: string) => void;
-  closeAll: () => void;
-  getToasts: () => ToastItem[];
+  show: (toast: ToastItem, options?: { noAnimation?: boolean }) => void,
+  close: (id: string) => void,
+  closeAll: () => void,
+  getToasts: () => ToastItem[],
   +id: ProviderId,
 };
 
@@ -85,26 +85,20 @@ export default class Toast {
     const nextInstance = Toast._getTopInstance();
 
     if (nextInstance) {
-      toasts.forEach(toast => {
+      toasts.forEach((toast) => {
         const noAnimation = !Toast._justShownIds.has(toast.id);
         nextInstance.show(toast, { noAnimation });
       });
     } else {
       toasts.forEach(({ data: { onClose = noop } }) => onClose());
     }
-  }
+  };
 
   static show = (options: ToastOptions): string | null => {
     const instance = Toast._getTopInstance();
 
     if (instance) {
-      const {
-        link,
-        onLinkPress,
-        supportLink,
-        autoClose = true,
-        ...rest
-      } = options;
+      const { link, onLinkPress, supportLink, autoClose = true, ...rest } = options;
 
       const id = (++Toast._lastToastId).toString();
 
@@ -113,13 +107,15 @@ export default class Toast {
         Toast._justShownIds.delete(id);
       });
 
-      const linkProps = supportLink ? {
-        link: t('label.contactSupport'),
-        onLinkPress: goToSupport,
-      } : {
-        link,
-        onLinkPress,
-      };
+      const linkProps = supportLink
+        ? {
+          link: t('label.contactSupport'),
+          onLinkPress: goToSupport,
+        }
+        : {
+          link,
+          onLinkPress,
+        };
 
       instance.show({
         id,
@@ -139,9 +135,9 @@ export default class Toast {
     return null;
   };
 
-  static close = (id: string) => Toast._toastInstances.forEach(instance => instance.close(id));
-  static closeAll = () => Toast._toastInstances.forEach(instance => instance.closeAll());
-  static isVisible = () => Toast._toastInstances.some(instance => instance.getToasts().length > 0);
+  static close = (id: string) => Toast._toastInstances.forEach((instance) => instance.close(id));
+  static closeAll = () => Toast._toastInstances.forEach((instance) => instance.closeAll());
+  static isVisible = () => Toast._toastInstances.some((instance) => instance.getToasts().length > 0);
 }
 
 export const ToastProvider = () => {
@@ -172,17 +168,23 @@ export const ToastProvider = () => {
     id: Symbol('ToastProvider instance id'),
   });
 
-  instance.current.show = useCallback((toast: ToastItem, { noAnimation = false } = {}) => {
-    updateToasts(prev => [toast, ...prev], noAnimation);
-  }, [updateToasts]);
+  instance.current.show = useCallback(
+    (toast: ToastItem, { noAnimation = false } = {}) => {
+      updateToasts((prev) => [toast, ...prev], noAnimation);
+    },
+    [updateToasts],
+  );
 
-  const close = useCallback((targetId: string) => {
-    const toast = toasts.find(({ id }) => id === targetId);
-    if (toast) {
-      updateToasts(prev => prev.filter(({ id }) => id !== targetId));
-      if (toast.data.onClose) toast.data.onClose();
-    }
-  }, [toasts, updateToasts]);
+  const close = useCallback(
+    (targetId: string) => {
+      const toast = toasts.find(({ id }) => id === targetId);
+      if (toast) {
+        updateToasts((prev) => prev.filter(({ id }) => id !== targetId));
+        if (toast.data.onClose) toast.data.onClose();
+      }
+    },
+    [toasts, updateToasts],
+  );
   instance.current.close = close;
 
   instance.current.closeAll = useCallback(() => {
@@ -197,7 +199,7 @@ export const ToastProvider = () => {
     // available on outside are stable.
     const instanceWrapper: Instance = {
       show: (toast, options) => instance.current.show(toast, options),
-      close: id => instance.current.close(id),
+      close: (id) => instance.current.close(id),
       closeAll: () => instance.current.closeAll(),
       getToasts: () => toastCopy.current,
       id: providerId,
@@ -210,23 +212,23 @@ export const ToastProvider = () => {
     };
   }, []);
 
-  const renderToast = useCallback(({ id, data: { onPress = noop, ...rest } }) => (
-    <ToastCard
-      key={id}
-      {...rest}
-      onPress={() => {
-        close(id);
-        onPress();
-      }}
-      onClose={() => close(id)}
-    />
-  ), [close]);
+  const renderToast = useCallback(
+    ({ id, data: { onPress = noop, ...rest } }) => (
+      <ToastCard
+        key={id}
+        {...rest}
+        onPress={() => {
+          close(id);
+          onPress();
+        }}
+        onClose={() => close(id)}
+      />
+    ),
+    [close],
+  );
 
   return (
-    <ToastsWrapper
-      forceInset={{ top: 'always', bottom: 'never' }}
-      statusBarHeight={StatusBar.currentHeight}
-    >
+    <ToastsWrapper forceInset={{ top: 'always', bottom: 'never' }} statusBarHeight={StatusBar.currentHeight}>
       <AnimatedToastList
         items={toasts}
         renderItem={renderToast}

@@ -19,7 +19,7 @@
 */
 import React from 'react';
 import styled from 'styled-components/native';
-import { useNavigationParam } from 'react-navigation-hooks';
+import { useRoute } from '@react-navigation/native';
 import { isEmpty } from 'lodash';
 
 // Utils
@@ -41,6 +41,7 @@ import { useSupportedChains } from 'selectors/chains';
 // Models
 import type { AssetDataNavigationParam } from 'models/Asset';
 import type { TradingActivityData, PoolActivityData } from 'models/Exchange';
+import type { Route } from '@react-navigation/native';
 
 interface TokenAnalyticsActivityListProps {
   data: PoolActivityData | TradingActivityData;
@@ -53,8 +54,9 @@ const TokenAnalyticsActivityList = ({ data, isTrading }: TokenAnalyticsActivityL
   const ratesPerChain = useRatesPerChain();
   const supportedAssets = useSupportedAssetsPerChain();
   const chains = useSupportedChains();
+  const route: Route = useRoute();
 
-  const assetData: AssetDataNavigationParam = useNavigationParam('assetData');
+  const assetData: AssetDataNavigationParam = route?.params?.assetData;
 
   const { chain } = assetData;
 

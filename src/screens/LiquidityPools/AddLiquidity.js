@@ -21,7 +21,7 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import t from 'translations/translate';
 import { useDebounce } from 'use-debounce';
 
@@ -66,10 +66,11 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 import type { LiquidityPool } from 'models/LiquidityPools';
 import type { WalletAssetsBalances } from 'models/Balances';
-
+import type { Route } from '@react-navigation/native';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  route: Route,
   supportedAssets: Asset[],
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
@@ -93,7 +94,7 @@ const StyledIcon = styled(Icon)`
   font-size: 20px;
   color: ${({ theme }) => theme.colors.basic010};
   align-self: center;
-  margin: 24px 0; 
+  margin: 24px 0;
 `;
 
 const FeeInfo = styled.View`
@@ -119,6 +120,7 @@ const Row = styled.View`
 
 const AddLiquidityScreen = ({
   navigation,
+  route,
   supportedAssets,
   feeInfo,
   isEstimating,
@@ -140,7 +142,7 @@ const AddLiquidityScreen = ({
   const rates = useChainRates(CHAIN.ETHEREUM);
   const fiatCurrency = useFiatCurrency();
 
-  const { pool } = navigation.state.params;
+  const { pool } = route.params;
   const poolStats = getPoolStats(pool, liquidityPoolsReducer);
 
   const tokensData = pool.tokensProportions.map(({ address }) => findAssetByAddress(supportedAssets, address));
@@ -157,11 +159,15 @@ const AddLiquidityScreen = ({
 
   const onAssetValueChange = (newValue: string, tokenIndex: number) => {
     const assetsAmounts = calculateProportionalAssetValues(
-      pool, parseFloat(newValue) || 0, tokenIndex, liquidityPoolsReducer,
+      pool,
+      parseFloat(newValue) || 0,
+      tokenIndex,
+      liquidityPoolsReducer,
     );
     setPoolTokenAmount(formatAmount(assetsAmounts.pop()));
-    const formattedAssetsValues = assetsAmounts
-      .map((amount, i) => i === tokenIndex ? newValue : formatAmount(amount));
+    const formattedAssetsValues = assetsAmounts.map((amount, i) =>
+      i === tokenIndex ? newValue : formatAmount(amount),
+    );
     setAssetsValues(formattedAssetsValues);
   };
 
@@ -200,32 +206,35 @@ const AddLiquidityScreen = ({
     : estimateErrorMessage;
 
   const nextButtonTitle = isEstimating ? t('label.gettingFee') : t('button.next');
-  const isNextButtonDisabled = !!isEstimating
-    || !assetsValues.every(f => !!parseFloat(f))
-    || !!errorMessage
-    || !fieldsValid.every(f => f)
-    || !feeInfo;
+  const isNextButtonDisabled =
+    !!isEstimating ||
+    !assetsValues.every((f) => !!parseFloat(f)) ||
+    !!errorMessage ||
+    !fieldsValid.every((f) => f) ||
+    !feeInfo;
 
-  const shareOfPool = getShareOfPool(pool, assetsValues.map(f => parseFloat(f) || 0), liquidityPoolsReducer);
+  const shareOfPool = getShareOfPool(
+    pool,
+    assetsValues.map((f) => parseFloat(f) || 0),
+    liquidityPoolsReducer,
+  );
 
-  const onNextButtonPress = () => navigation.navigate(
-    LIQUIDITY_POOLS_ADD_LIQUIDITY_REVIEW,
-    {
+  const onNextButtonPress = () =>
+    navigation.navigate(LIQUIDITY_POOLS_ADD_LIQUIDITY_REVIEW, {
       tokensData,
       poolToken: poolTokenData,
       tokensValues: assetsValues,
       poolTokenValue: poolTokenAmount,
       shareOfPool,
       pool,
-    },
-  );
+    });
 
   return (
     <ContainerWithHeader
       headerProps={{ centerItems: [{ title: t('liquidityPoolsContent.title.addLiquidity') }] }}
       inset={{ bottom: 0 }}
       putContentInScrollView
-      footer={(
+      footer={
         <FooterInner>
           <FeeInfo>
             {feeInfo && (
@@ -245,13 +254,9 @@ const AddLiquidityScreen = ({
             )}
           </FeeInfo>
           <Spacing h={20} />
-          <Button
-            disabled={isNextButtonDisabled}
-            title={nextButtonTitle}
-            onPress={onNextButtonPress}
-          />
+          <Button disabled={isNextButtonDisabled} title={nextButtonTitle} onPress={onNextButtonPress} />
         </FooterInner>
-      )}
+      }
     >
       <MainContainer>
         {renderTokenInput(1)}
@@ -273,7 +278,7 @@ const AddLiquidityScreen = ({
               <Spacing w={4} />
               <BaseText>
                 {t('exchangeContent.label.exchangeRateLayout', {
-                  rate: poolStats && (parseFloat(poolStats.tokensPrices[tokensData[1]?.symbol])).toFixed(2),
+                  rate: poolStats && parseFloat(poolStats.tokensPrices[tokensData[1]?.symbol]).toFixed(2),
                   toAssetCode: tokensData[1]?.symbol,
                   fromAssetCode: tokensData[0]?.symbol,
                 })}
@@ -282,9 +287,7 @@ const AddLiquidityScreen = ({
           </TableRow>
           <TableRow>
             <TableLabel>{t('liquidityPoolsContent.label.shareOfPool')}</TableLabel>
-            <BaseText>
-              {t('percentValue', { value: formatAmount(shareOfPool) })}
-            </BaseText>
+            <BaseText>{t('percentValue', { value: formatAmount(shareOfPool) })}</BaseText>
           </TableRow>
         </Table>
       </MainContainer>
@@ -319,9 +322,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     tokenAmounts: string[],
     poolTokenAmount: string,
     tokensAssets: Asset[],
-  ) => dispatch(
-    calculateAddLiquidityTransactionEstimateAction(pool, tokenAmounts, poolTokenAmount, tokensAssets),
-  ),
+  ) => dispatch(calculateAddLiquidityTransactionEstimateAction(pool, tokenAmounts, poolTokenAmount, tokensAssets)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AddLiquidityScreen);

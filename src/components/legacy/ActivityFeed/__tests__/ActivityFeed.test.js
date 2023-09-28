@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { Provider } from 'react-redux';
-import renderer from 'react-test-renderer';
+import { render } from '@testing-library/react-native';
 import thunk from 'redux-thunk';
 import configureMockStore from 'redux-mock-store';
 import { ThemeProvider } from 'styled-components/native';
@@ -38,7 +38,6 @@ import { initialState as sessionState } from 'reducers/sessionReducer';
 import { initialState as appSettingsState } from 'reducers/appSettingsReducer';
 import { initialState as assetsBalancesState } from 'reducers/assetsBalancesReducer';
 
-
 const mockStore = configureMockStore([thunk]);
 
 const initialStore = mockStore({
@@ -52,14 +51,12 @@ const initialStore = mockStore({
   assetsBalances: assetsBalancesState,
 });
 
-const Component = (store, children) => (
-  renderer.create(
+const Component = (store, children) =>
+  render(
     <Provider store={store}>
-      <I18nextProvider i18n={i18n}>
-        {children}
-      </I18nextProvider>
-    </Provider>)
-);
+      <I18nextProvider i18n={i18n}>{children}</I18nextProvider>
+    </Provider>,
+  );
 
 const transaction = (attrs = {}) => {
   return {
@@ -74,31 +71,31 @@ const transaction = (attrs = {}) => {
 
 describe('ActivityFeed', () => {
   it('renders the Asset correctly', () => {
-    const transactions = [
-      transaction(),
-    ];
+    const transactions = [transaction()];
 
     const tabs = [{ data: transactions }];
 
-    const component = Component(initialStore,
+    const component = Component(
+      initialStore,
       <ThemeProvider theme={defaultTheme}>
         <ActivityFeed tabs={tabs} />
-      </ThemeProvider>).toJSON();
+      </ThemeProvider>,
+    ).toJSON();
 
     expect(component).toMatchSnapshot();
   });
 
   it('does not fail for invalid values', () => {
-    const transactions = [
-      transaction({ value: undefined }),
-    ];
+    const transactions = [transaction({ value: undefined })];
 
     const tabs = [{ data: transactions }];
 
-    const component = Component(initialStore,
+    const component = Component(
+      initialStore,
       <ThemeProvider theme={defaultTheme}>
         <ActivityFeed tabs={tabs} />
-      </ThemeProvider>).toJSON();
+      </ThemeProvider>,
+    ).toJSON();
 
     expect(component).toMatchSnapshot();
   });

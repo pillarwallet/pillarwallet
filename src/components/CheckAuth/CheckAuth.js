@@ -37,7 +37,7 @@ import CheckAuthWrapperModal from 'components/Modals/SlideModal/CheckAuthWrapper
 import Header from 'components/Header';
 
 // utils
-import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
+import { addAppStateChangeListener } from 'utils/common';
 import { getKeychainDataObject } from 'utils/keychain';
 import { constructWalletFromMnemonic } from 'utils/wallet';
 
@@ -90,6 +90,7 @@ const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
 
 class CheckAuth extends React.Component<Props, State> {
+  appStateSubscriptions;
   static defaultProps = {
     revealMnemonic: false,
   };
@@ -102,7 +103,7 @@ class CheckAuth extends React.Component<Props, State> {
   _isMounted: boolean = false;
 
   componentDidMount() {
-    addAppStateChangeListener(this.handleAppStateChange);
+    this.appStateSubscriptions = addAppStateChangeListener(this.handleAppStateChange);
     const { useBiometrics, revealMnemonic, enforcePin, modalProps } = this.props;
     const { lastAppState } = this.state;
 
@@ -148,7 +149,7 @@ class CheckAuth extends React.Component<Props, State> {
       const keychainData = await getKeychainDataObject(errorHandler);
       if (keychainData) {
         const { privateKey, mnemonic } = keychainData;
-        removeAppStateChangeListener(this.handleAppStateChange);
+        if (this.appStateSubscriptions) this.appStateSubscriptions.remove();
         checkPrivateKey(privateKey, (_, wallet) =>
           onPinValid(_, revealMnemonic && mnemonic ? constructWalletFromMnemonic(mnemonic) : wallet),
         );

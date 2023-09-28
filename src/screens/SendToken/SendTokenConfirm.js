@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { Keyboard } from 'react-native';
 import t from 'translations/translate';
-import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 // constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
@@ -50,14 +50,14 @@ import { useActiveAccount, useRootSelector } from 'selectors';
 // types
 import type { TransactionPayload } from 'models/Transaction';
 
-
 const SendTokenConfirm = () => {
   const session = useRootSelector(({ session: sessionState }) => sessionState.data);
   const navigation = useNavigation();
+  const route = useRoute();
   const activeAccount = useActiveAccount();
 
-  const source: ?string = useNavigationParam('source');
-  const transactionPayload: TransactionPayload = useNavigationParam('transactionPayload');
+  const source: ?string = route?.params?.source;
+  const transactionPayload: TransactionPayload = route?.params?.transactionPayload;
 
   const {
     amount,
@@ -78,9 +78,8 @@ const SendTokenConfirm = () => {
   };
 
   const { isDeployedOnChain } = useDeploymentStatus();
-  const feeTooltip = isEtherspotAccount(activeAccount) && !isDeployedOnChain?.[chain]
-    ? t('tooltip.includesDeploymentFee')
-    : undefined;
+  const feeTooltip =
+    isEtherspotAccount(activeAccount) && !isDeployedOnChain?.[chain] ? t('tooltip.includesDeploymentFee') : undefined;
 
   const transactionFeeLabel = deploymentFee
     ? t('transactions.label.maxTransactionFee')
@@ -135,11 +134,7 @@ const SendTokenConfirm = () => {
 
         <TransactionDeploymentWarning chain={chain} style={styles.transactionDeploymentWarning} />
 
-        <Button
-          disabled={!session.isOnline}
-          onPress={handleFormSubmit}
-          title={t('transactions.button.send')}
-        />
+        <Button disabled={!session.isOnline} onPress={handleFormSubmit} title={t('transactions.button.send')} />
       </Content>
     </Container>
   );

@@ -22,7 +22,7 @@ import React from 'react';
 import HTML from 'react-native-render-html';
 import t from 'translations/translate';
 import styled from 'styled-components/native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 // Components
 import { Container, Content, Footer } from 'components/layout/Layout';
@@ -42,10 +42,11 @@ import { spacing } from 'utils/variables';
 
 const LegalScreen = () => {
   const navigation = useNavigation();
+  const route = useRoute();
   const colors = useThemeColors();
-  const prismicDocumentId = navigation.getParam('prismicDocumentId');
-  const prismicDocumentName = navigation.getParam('prismicDocumentName');
-  const onBoardingFlow = navigation.getParam('onBoardingFlow', false);
+  const prismicDocumentId = route?.params?.prismicDocumentId;
+  const prismicDocumentName = route?.params?.prismicDocumentName;
+  const onBoardingFlow = route?.params?.onBoardingFlow || false;
   const [documentHTMLData, setDocumentHTMLData] = React.useState('');
   const [isPrismicHTMLFetched, setIsPrismicHTMLFetched] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);

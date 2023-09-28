@@ -64,10 +64,7 @@ import {
   isArchanovaAccountAddress,
 } from 'utils/feedData';
 import { images } from 'utils/images';
-import {
-  findCollectibleTransactionAcrossAccounts,
-  findTransactionAcrossAccounts,
-} from 'utils/history';
+import { findCollectibleTransactionAcrossAccounts, findTransactionAcrossAccounts } from 'utils/history';
 import { getFormattedValue } from 'utils/strings';
 import {
   findAccountByAddress,
@@ -118,11 +115,7 @@ import {
 } from 'constants/navigationConstants';
 import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/transactionsConstants';
 import { POOLTOGETHER_DEPOSIT_TRANSACTION, POOLTOGETHER_WITHDRAW_TRANSACTION } from 'constants/poolTogetherConstants';
-import {
-  SABLIER_CREATE_STREAM,
-  SABLIER_WITHDRAW,
-  SABLIER_CANCEL_STREAM,
-} from 'constants/sablierConstants';
+import { SABLIER_CREATE_STREAM, SABLIER_WITHDRAW, SABLIER_CANCEL_STREAM } from 'constants/sablierConstants';
 import { WBTC_PENDING_TRANSACTION } from 'constants/exchangeConstants';
 import {
   RARI_DEPOSIT_TRANSACTION,
@@ -149,10 +142,7 @@ import {
 } from 'selectors/paymentNetwork';
 import { activeAccountAddressSelector, activeBlockchainSelector } from 'selectors';
 import { isArchanovaAccountDeployedSelector } from 'selectors/archanova';
-import {
-  assetDecimalsSelector,
-  ethereumSupportedAssetsSelector,
-} from 'selectors/assets';
+import { assetDecimalsSelector, ethereumSupportedAssetsSelector } from 'selectors/assets';
 import { collectiblesHistorySelector } from 'selectors/collectibles';
 
 // actions
@@ -169,14 +159,13 @@ import type { Account } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
 import type { CollectibleTransaction, CollectiblesHistoryStore } from 'models/Collectible';
 import type { TransactionsGroup } from 'utils/feedData';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import type { EventData as PassedEventData } from 'components/legacy/ActivityFeed/ActivityFeedItem';
 import type { LiquidityPool } from 'models/LiquidityPools';
 import type { Selector } from 'selectors';
 import type { TransactionsStore } from 'models/History';
 import type { Currency, RatesPerChain } from 'models/Rates';
 import { EVENT_TYPE } from 'models/History';
-
 
 type StateProps = {|
   ratesPerChain: RatesPerChain,
@@ -241,7 +230,7 @@ type EventData = {
   imageBorder?: boolean,
   imageBackground?: ?string,
   collectibleUrl?: ?string,
-  isFailed?: boolean;
+  isFailed?: boolean,
   errorMessage?: string,
   sublabel?: string,
 };
@@ -283,7 +272,9 @@ const IconCircle = styled.View`
   align-items: center;
   justify-content: center;
   text-align: center;
-  ${({ border, theme }) => border && `
+  ${({ border, theme }) =>
+    border &&
+    `
     border-color: ${theme.colors.border};
     border-width: 1px;
   `}
@@ -441,7 +432,8 @@ export class EventDetail extends React.Component<Props> {
     const rate = getAssetRateInFiat(ethereumRates, address, fiatCurrency);
     const formattedFiatValue = formatFiat(fee * rate, fiatCurrency);
     return t('label.feeTokenFiat', {
-      tokenValue: t('tokenValue', { value: fee, token: symbol }), fiatValue: formattedFiatValue,
+      tokenValue: t('tokenValue', { value: fee, token: symbol }),
+      fiatValue: formattedFiatValue,
     });
   };
 
@@ -496,9 +488,10 @@ export class EventDetail extends React.Component<Props> {
     if (!hash && batchHash && isEtherspotAccount(fromAccount)) {
       explorerLink = await etherspotService.getTransactionExplorerLinkByBatch(CHAIN.ETHEREUM, batchHash);
     } else {
-      explorerLink = fromAccount && isArchanovaAccount(fromAccount)
-        ? archanovaService.getConnectedAccountTransactionExplorerLink(hash)
-        : etherspotService.getTransactionExplorerLink(CHAIN.ETHEREUM, hash);
+      explorerLink =
+        fromAccount && isArchanovaAccount(fromAccount)
+          ? archanovaService.getConnectedAccountTransactionExplorerLink(hash)
+          : etherspotService.getTransactionExplorerLink(CHAIN.ETHEREUM, hash);
     }
 
     if (!explorerLink) {
@@ -545,8 +538,10 @@ export class EventDetail extends React.Component<Props> {
 
   sendSynthetic = (relatedAddress: string) => {
     const { navigation, ensRegistry } = this.props;
-    const contactFromAddress = relatedAddress
-      && { ethAddress: relatedAddress, username: ensRegistry[relatedAddress] || relatedAddress };
+    const contactFromAddress = relatedAddress && {
+      ethAddress: relatedAddress,
+      username: ensRegistry[relatedAddress] || relatedAddress,
+    };
     const contact = contactFromAddress;
     navigation.navigate(SEND_SYNTHETIC_AMOUNT, { contact });
   };
@@ -558,31 +553,35 @@ export class EventDetail extends React.Component<Props> {
 
   goToLiquidityPool = (pool: LiquidityPool) => {
     this.props.navigation.navigate(LIQUIDITY_POOL_DASHBOARD, { pool });
-  }
+  };
 
   getLiquidityEventButtons = (buttonTitle: string, pool: LiquidityPool) => {
-    return [{
-      secondary: true,
-      title: buttonTitle,
-      onPress: () => this.goToLiquidityPool(pool),
-    }];
-  }
+    return [
+      {
+        secondary: true,
+        title: buttonTitle,
+        onPress: () => this.goToLiquidityPool(pool),
+      },
+    ];
+  };
 
   renderLiquidityPoolsExchange = (
-    topTokens: {name: string, symbol: string}[],
+    topTokens: { name: string, symbol: string }[],
     topTokensAmounts: number[],
-    bottomTokens: {name: string, symbol: string }[],
+    bottomTokens: { name: string, symbol: string }[],
     bottomTokensAmounts: number[],
     options: {
       topTokensSecondary?: boolean,
-      bottomTokensSecondary?: boolean
+      bottomTokensSecondary?: boolean,
     },
   ) => {
     return (
       <View style={{ width: '100%' }}>
         {topTokens.map((token, index) => (
           <Row key={token.name}>
-            <BaseText regular secondary={options.topTokensSecondary}>{token.name}</BaseText>
+            <BaseText regular secondary={options.topTokensSecondary}>
+              {token.name}
+            </BaseText>
             <BaseText regular>
               {getFormattedValue(formatAmount(topTokensAmounts[index]), token.symbol, { isPositive: false })}
             </BaseText>
@@ -593,7 +592,9 @@ export class EventDetail extends React.Component<Props> {
         <Spacing h={16} />
         {bottomTokens.map((token, index) => (
           <Row key={token.name}>
-            <BaseText regular secondary={options.bottomTokensSecondary}>{token.name}</BaseText>
+            <BaseText regular secondary={options.bottomTokensSecondary}>
+              {token.name}
+            </BaseText>
             <BaseText fontSize={20} positive>
               {getFormattedValue(formatAmount(bottomTokensAmounts[index]), token.symbol, { isPositive: true })}
             </BaseText>
@@ -601,7 +602,7 @@ export class EventDetail extends React.Component<Props> {
         ))}
       </View>
     );
-  }
+  };
 
   renderPoolTogetherTickets = (event: Object) => {
     const { symbol, amount, decimals } = event.extra;
@@ -615,9 +616,15 @@ export class EventDetail extends React.Component<Props> {
 
     return (
       <PoolTogetherTicketsWrapper>
-        <BaseText secondary regular>{title}</BaseText>
-        <MediumText large color={this.getColor(amountTextColor)}>{amountText}</MediumText>
-        <BaseText secondary medium>{ticketsText}</BaseText>
+        <BaseText secondary regular>
+          {title}
+        </BaseText>
+        <MediumText large color={this.getColor(amountTextColor)}>
+          {amountText}
+        </MediumText>
+        <BaseText secondary medium>
+          {ticketsText}
+        </BaseText>
       </PoolTogetherTicketsWrapper>
     );
   };
@@ -687,14 +694,7 @@ export class EventDetail extends React.Component<Props> {
   };
 
   getTransactionEventData = (event: Object): ?EventData => {
-    const {
-      assetDecimals,
-      accounts,
-      isPPNActivated,
-      itemData,
-      ensRegistry,
-      supportedAssets,
-    } = this.props;
+    const { assetDecimals, accounts, isPPNActivated, itemData, ensRegistry, supportedAssets } = this.props;
 
     const value = formatUnits(event.value, assetDecimals);
     const relevantAddress = this.getRelevantAddress(event);
@@ -720,9 +720,7 @@ export class EventDetail extends React.Component<Props> {
         eventData = {
           actionTitle: t('label.activated'),
           actionSubtitle: this.getFeeLabel(event),
-          buttons: !isPPNActivated && isArchanovaAccountActive
-            ? [activatePillarNetworkButton]
-            : [],
+          buttons: !isPPNActivated && isArchanovaAccountActive ? [activatePillarNetworkButton] : [],
         };
         break;
       case PAYMENT_NETWORK_ACCOUNT_TOPUP:
@@ -844,9 +842,7 @@ export class EventDetail extends React.Component<Props> {
       case RARI_DEPOSIT_TRANSACTION:
       case RARI_CLAIM_TRANSACTION:
       case RARI_WITHDRAW_TRANSACTION: {
-        const {
-          symbol, decimals, amount, rftMinted, rftBurned, claimed, rariPool, rgtBurned,
-        } = event.extra;
+        const { symbol, decimals, amount, rftMinted, rftBurned, claimed, rariPool, rgtBurned } = event.extra;
         let label = null;
         let subtext = null;
         let negativeValueAmount = null;
@@ -857,7 +853,9 @@ export class EventDetail extends React.Component<Props> {
 
         const rariToken = rariPool && RARI_TOKENS_DATA[rariPool].symbol;
         const formattedAmount = formatAmount(
-          formatUnits(amount || claimed, decimals), symbol ? getDecimalPlaces(symbol) : 6);
+          formatUnits(amount || claimed, decimals),
+          symbol ? getDecimalPlaces(symbol) : 6,
+        );
 
         if (event.tag === RARI_DEPOSIT_TRANSACTION) {
           label = t('label.deposit');
@@ -907,36 +905,30 @@ export class EventDetail extends React.Component<Props> {
         break;
       }
       case LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION: {
-        const {
-          amount, pool, tokenAmounts,
-        } = event.extra;
-        const tokensData = pool.tokensProportions.map(
-          ({ address: tokenAddress }) => findAssetByAddress(supportedAssets, tokenAddress),
+        const { amount, pool, tokenAmounts } = event.extra;
+        const tokensData = pool.tokensProportions.map(({ address: tokenAddress }) =>
+          findAssetByAddress(supportedAssets, tokenAddress),
         );
         eventData = {
           fee: this.getFeeLabel(event),
-          customActionTitle: this.renderLiquidityPoolsExchange(
-            tokensData, tokenAmounts, [pool], [amount], { topTokensSecondary: true },
-          ),
-          buttons: isArchanovaAccountActive
-            ? this.getLiquidityEventButtons(t('button.addMoreLiquidity'), pool)
-            : [],
+          customActionTitle: this.renderLiquidityPoolsExchange(tokensData, tokenAmounts, [pool], [amount], {
+            topTokensSecondary: true,
+          }),
+          buttons: isArchanovaAccountActive ? this.getLiquidityEventButtons(t('button.addMoreLiquidity'), pool) : [],
         };
         break;
       }
       case LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION: {
         const { amount, pool, tokenAmounts } = event.extra;
-        const tokensData = pool.tokensProportions.map(
-          ({ address: tokenAddress }) => findAssetByAddress(supportedAssets, tokenAddress),
+        const tokensData = pool.tokensProportions.map(({ address: tokenAddress }) =>
+          findAssetByAddress(supportedAssets, tokenAddress),
         );
         eventData = {
           fee: this.getFeeLabel(event),
-          customActionTitle: this.renderLiquidityPoolsExchange(
-            [pool], [amount], tokensData, tokenAmounts, { bottomTokensSecondary: true },
-          ),
-          buttons: isArchanovaAccountActive
-            ? this.getLiquidityEventButtons(t('button.removeMoreLiquidity'), pool)
-            : [],
+          customActionTitle: this.renderLiquidityPoolsExchange([pool], [amount], tokensData, tokenAmounts, {
+            bottomTokensSecondary: true,
+          }),
+          buttons: isArchanovaAccountActive ? this.getLiquidityEventButtons(t('button.removeMoreLiquidity'), pool) : [],
         };
         break;
       }
@@ -944,9 +936,7 @@ export class EventDetail extends React.Component<Props> {
         const { pool } = event.extra;
         eventData = {
           fee: this.getFeeLabel(event),
-          buttons: isArchanovaAccountActive
-            ? this.getLiquidityEventButtons(t('button.stakeMoreLiquidity'), pool)
-            : [],
+          buttons: isArchanovaAccountActive ? this.getLiquidityEventButtons(t('button.stakeMoreLiquidity'), pool) : [],
         };
         break;
       }
@@ -964,9 +954,7 @@ export class EventDetail extends React.Component<Props> {
         const { pool } = event.extra;
         eventData = {
           fee: this.getFeeLabel(event),
-          buttons: isArchanovaAccountActive
-            ? this.getLiquidityEventButtons(t('button.claimMoreRewards'), pool)
-            : [],
+          buttons: isArchanovaAccountActive ? this.getLiquidityEventButtons(t('button.claimMoreRewards'), pool) : [],
         };
         break;
       }
@@ -986,8 +974,8 @@ export class EventDetail extends React.Component<Props> {
         break;
       default:
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
-        const isBetweenArchanovaAccounts = isArchanovaAccountAddress(event.from, accounts)
-          && isArchanovaAccountAddress(event.to, accounts);
+        const isBetweenArchanovaAccounts =
+          isArchanovaAccountAddress(event.from, accounts) && isArchanovaAccountAddress(event.to, accounts);
 
         const actionSubtitle = isReceived ? t('label.toPPN') : t('label.fromPPN');
         const isZeroValue = formattedValue === '0';
@@ -996,9 +984,10 @@ export class EventDetail extends React.Component<Props> {
           eventData = {
             customActionTitle: !isBetweenArchanovaAccounts && (
               <TankAssetBalance
-                amount={
-                  getFormattedValue(formattedValue, event.asset, { isPositive: !!isReceived, noSymbol: isZeroValue })
-                }
+                amount={getFormattedValue(formattedValue, event.asset, {
+                  isPositive: !!isReceived,
+                  noSymbol: isZeroValue,
+                })}
                 textStyle={{ fontSize: fontSizes.large }}
                 iconStyle={{ height: 14, width: 8, marginRight: 9 }}
               />
@@ -1068,9 +1057,7 @@ export class EventDetail extends React.Component<Props> {
 
     if (isFailed || isTimedOut) {
       eventData.isFailed = true;
-      eventData.errorMessage = isFailed
-        ? t('error.transactionFailed.default')
-        : t('error.transactionFailed.timeOut');
+      eventData.errorMessage = isFailed ? t('error.transactionFailed.default') : t('error.transactionFailed.timeOut');
       eventData.actionIcon = 'failed'; // eslint-disable-line i18next/no-literal-string
     }
 
@@ -1176,11 +1163,7 @@ export class EventDetail extends React.Component<Props> {
     if (iconName) {
       return (
         <IconCircle borderRadius={borderRadius}>
-          <ItemIcon
-            borderRadius={borderRadius}
-            name={iconName}
-            iconColor={this.getColor(iconColor)}
-          />
+          <ItemIcon borderRadius={borderRadius} name={iconName} iconColor={this.getColor(iconColor)} />
         </IconCircle>
       );
     }
@@ -1198,14 +1181,7 @@ export class EventDetail extends React.Component<Props> {
     }
 
     if (profileImage) {
-      return (
-        <ProfileImage
-          userName={label}
-          diameter={64}
-          cornerIcon={cornerIcon}
-          cornerIconSize={22}
-        />
-      );
+      return <ProfileImage userName={label} diameter={64} cornerIcon={cornerIcon} cornerIconSize={22} />;
     }
 
     return null;
@@ -1225,12 +1201,12 @@ export class EventDetail extends React.Component<Props> {
     const { isFailed, errorMessage } = eventData;
     const mappedTransactions = isForAllAccounts
       ? settleEventData.extra.reduce((mapped, event) => {
-        const relatedTrx = mergedPPNTransactions.find(tx => tx.hash === event.hash);
+        const relatedTrx = mergedPPNTransactions.find((tx) => tx.hash === event.hash);
         if (relatedTrx) return [...mapped, relatedTrx];
         return mapped;
       }, [])
       : settleEventData.extra.reduce((mapped, event) => {
-        const relatedTrx = PPNTransactions.find(tx => tx.hash === event.hash);
+        const relatedTrx = PPNTransactions.find((tx) => tx.hash === event.hash);
         if (relatedTrx) return [...mapped, relatedTrx];
         return mapped;
       }, []);
@@ -1239,53 +1215,65 @@ export class EventDetail extends React.Component<Props> {
 
     return (
       <SettleWrapper>
-        {!!groupedTransactions && groupedTransactions.map(group => {
-          const formattedVal = formatUnits(group.value.toString(), 18);
-          return (
-            <React.Fragment key={group.symbol}>
-              <Row marginBottom={10}>
-                <BaseText regular synthetic>{t('label.fromPillarTank')}</BaseText>
-                <TankAssetBalance
-                  amount={getFormattedValue(formattedVal, group.symbol, { isPositive: !isFailed, noSymbol: !isFailed })}
-                  textStyle={{ fontSize: fontSizes.big }}
-                  iconStyle={{ height: 14, width: 8, marginRight: 9 }}
-                  failed={isFailed}
-                />
-              </Row>
-              {group.transactions.map(({
-                createdAt, assetSymbol, value, hash,
-              }) => {
-                const createdAtDate = createdAt ? parseISO(createdAt.toString()) : 0;
-                const formattedDate = formatDate(new Date(createdAtDate * 1000), 'MMM d HH:mm');
-                const formattedAmount = formatAmount(formatUnits(value.toString(), 18));
-                return (
-                  <Row marginBottom={13} key={hash}>
-                    <BaseText secondary tiny>{formattedDate}</BaseText>
-                    <BaseText secondary small>
-                      {getFormattedValue(formattedAmount, assetSymbol, { isPositive: !isFailed, noSymbol: !isFailed })}
-                    </BaseText>
-                  </Row>
-                );
-              })}
-            </React.Fragment>
-          );
-        })}
-        {!isFailed &&
-        <>
-          <Spacing h={8} />
-          <Divider />
-          <Spacing h={18} />
-          <Row>
-            <BaseText regular positive>{t('label.toSmartWallet')}</BaseText>
-            <View>
-              {groupedTransactions.map(({ value, symbol }) => (
-                <BaseText positive large key={symbol}>
-                  {t('positiveTokenValue', { value: formatUnits(value.toString(), 18), token: symbol })}
-                </BaseText>
-              ))}
-            </View>
-          </Row>
-        </>}
+        {!!groupedTransactions &&
+          groupedTransactions.map((group) => {
+            const formattedVal = formatUnits(group.value.toString(), 18);
+            return (
+              <React.Fragment key={group.symbol}>
+                <Row marginBottom={10}>
+                  <BaseText regular synthetic>
+                    {t('label.fromPillarTank')}
+                  </BaseText>
+                  <TankAssetBalance
+                    amount={getFormattedValue(formattedVal, group.symbol, {
+                      isPositive: !isFailed,
+                      noSymbol: !isFailed,
+                    })}
+                    textStyle={{ fontSize: fontSizes.big }}
+                    iconStyle={{ height: 14, width: 8, marginRight: 9 }}
+                    failed={isFailed}
+                  />
+                </Row>
+                {group.transactions.map(({ createdAt, assetSymbol, value, hash }) => {
+                  const createdAtDate = createdAt ? parseISO(createdAt.toString()) : 0;
+                  const formattedDate = formatDate(new Date(createdAtDate * 1000), 'MMM d HH:mm');
+                  const formattedAmount = formatAmount(formatUnits(value.toString(), 18));
+                  return (
+                    <Row marginBottom={13} key={hash}>
+                      <BaseText secondary tiny>
+                        {formattedDate}
+                      </BaseText>
+                      <BaseText secondary small>
+                        {getFormattedValue(formattedAmount, assetSymbol, {
+                          isPositive: !isFailed,
+                          noSymbol: !isFailed,
+                        })}
+                      </BaseText>
+                    </Row>
+                  );
+                })}
+              </React.Fragment>
+            );
+          })}
+        {!isFailed && (
+          <>
+            <Spacing h={8} />
+            <Divider />
+            <Spacing h={18} />
+            <Row>
+              <BaseText regular positive>
+                {t('label.toSmartWallet')}
+              </BaseText>
+              <View>
+                {groupedTransactions.map(({ value, symbol }) => (
+                  <BaseText positive large key={symbol}>
+                    {t('positiveTokenValue', { value: formatUnits(value.toString(), 18), token: symbol })}
+                  </BaseText>
+                ))}
+              </View>
+            </Row>
+          </>
+        )}
         {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
       </SettleWrapper>
     );
@@ -1305,26 +1293,24 @@ export class EventDetail extends React.Component<Props> {
   renderContent = (event: Object, eventData: EventData) => {
     const { itemData } = this.props;
     const {
-      date, name,
-      actionTitle, actionSubtitle, actionIcon, customActionTitle,
-      buttons = [], settleEventData, fee,
+      date,
+      name,
+      actionTitle,
+      actionSubtitle,
+      actionIcon,
+      customActionTitle,
+      buttons = [],
+      settleEventData,
+      fee,
       errorMessage,
       sublabel,
     } = eventData;
 
-    const {
-      label: itemLabel,
-      actionLabel,
-      fullItemValue,
-      subtext,
-      valueColor,
-      isReceived,
-      statusIconColor,
-    } = itemData;
+    const { label: itemLabel, actionLabel, fullItemValue, subtext, valueColor, isReceived, statusIconColor } = itemData;
 
     const title = actionTitle || actionLabel || fullItemValue;
     const label = name || itemLabel;
-    const subtitle = (actionSubtitle || fullItemValue) ? actionSubtitle || subtext : null;
+    const subtitle = actionSubtitle || fullItemValue ? actionSubtitle || subtext : null;
     const titleColor = this.getColor(valueColor) || undefined;
 
     const commonProps = {
@@ -1338,18 +1324,13 @@ export class EventDetail extends React.Component<Props> {
     if (settleEventData) {
       return (
         // $FlowFixMe: flow update to 0.122
-        <DetailModal {...commonProps}>
-          {this.renderSettle(settleEventData, eventData)}
-        </DetailModal>
+        <DetailModal {...commonProps}>{this.renderSettle(settleEventData, eventData)}</DetailModal>
       );
     }
 
     return (
       // $FlowFixMe: flow update to 0.122
-      <DetailModal
-        {...commonProps}
-        fee={this.getFee(event.hash, fee, isReceived)}
-      >
+      <DetailModal {...commonProps} fee={this.getFee(event.hash, fee, isReceived)}>
         {!!title && (
           <DetailRow color={titleColor}>
             {title}
@@ -1380,8 +1361,8 @@ export class EventDetail extends React.Component<Props> {
       const currentModalButtons = eventData?.buttons || [];
       const hasModalButtons = !isEmpty(currentModalButtons);
       const viewOnBlockchainButtonTitle = t('button.viewOnBlockchain');
-      const alreadyHasViewOnBlockchainButton = hasModalButtons
-        && currentModalButtons.some(({ title }) => title === viewOnBlockchainButtonTitle);
+      const alreadyHasViewOnBlockchainButton =
+        hasModalButtons && currentModalButtons.some(({ title }) => title === viewOnBlockchainButtonTitle);
 
       if (!alreadyHasViewOnBlockchainButton) {
         const viewOnBlockchainButton = {
@@ -1397,9 +1378,10 @@ export class EventDetail extends React.Component<Props> {
          * however, not cutting all buttons and just replacing last
          * assuming that there can only be 2
          */
-        const updatedModalButtons = currentModalButtons.length > 1
-          ? currentModalButtons.slice(0, -1).concat(viewOnBlockchainButton)
-          : currentModalButtons.concat(viewOnBlockchainButton);
+        const updatedModalButtons =
+          currentModalButtons.length > 1
+            ? currentModalButtons.slice(0, -1).concat(viewOnBlockchainButton)
+            : currentModalButtons.concat(viewOnBlockchainButton);
 
         eventData = {
           ...eventData,
@@ -1414,7 +1396,9 @@ export class EventDetail extends React.Component<Props> {
 
 const mapStateToProps = ({
   rates: { data: ratesPerChain },
-  appSettings: { data: { baseFiatCurrency } },
+  appSettings: {
+    data: { baseFiatCurrency },
+  },
   user: { data: user },
   accounts: { data: accounts },
   ensRegistry: { data: ensRegistry },

@@ -21,6 +21,7 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import t from 'translations/translate';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 
 // Components
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
@@ -31,10 +32,14 @@ import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 // Local
 import PPNView from './PPNView';
 
+interface Props {
+  navigation: NavigationScreenProp<any>;
+}
+
 /**
  * This is legacy PPN Home screen extracted from legacy Assets screen.
  */
-function PPNHome() {
+function PPNHome({ navigation }: Props) {
   const dispatch = useDispatch();
 
   React.useEffect(() => {
@@ -54,7 +59,7 @@ function PPNHome() {
       inset={{ bottom: 0 }}
       tab
     >
-      {(onScroll) => <PPNView onScroll={onScroll} />}
+      {(onScroll) => <PPNView onScroll={onScroll} navigation={navigation} />}
     </ContainerWithHeader>
   );
 }

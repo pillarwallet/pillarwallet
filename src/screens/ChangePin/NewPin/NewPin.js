@@ -18,8 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import t from 'translations/translate';
+import type { Route } from '@react-navigation/native';
 
 import { Container } from 'components/legacy/Layout';
 import Header from 'components/Header';
@@ -29,6 +30,7 @@ import { CHANGE_PIN_CONFIRM_NEW_PIN } from 'constants/navigationConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  route: Route,
   pin: string,
 };
 
@@ -42,8 +44,8 @@ export default class NewPin extends React.Component<Props, State> {
   };
 
   handlePinSubmit = (newPin: string) => {
-    const { navigation } = this.props;
-    const currentPin = navigation.getParam('currentPin');
+    const { navigation, route } = this.props;
+    const currentPin = route?.params?.currentPin;
 
     if (currentPin === newPin) {
       this.setState({
@@ -65,7 +67,7 @@ export default class NewPin extends React.Component<Props, State> {
   };
 
   handleScreenDismissal = () => {
-    this.props.navigation.dismiss();
+    this.props.navigation.goBack();
   };
 
   render() {
@@ -74,11 +76,7 @@ export default class NewPin extends React.Component<Props, State> {
 
     return (
       <Container>
-        <Header
-          title={t('title.enterNewPincode')}
-          centerTitle
-          onClose={this.handleScreenDismissal}
-        />
+        <Header title={t('title.enterNewPincode')} centerTitle onClose={this.handleScreenDismissal} />
         {showError}
         <PinCode
           onPinEntered={this.handlePinSubmit}

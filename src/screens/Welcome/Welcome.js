@@ -24,7 +24,7 @@ import { useDispatch } from 'react-redux';
 import styled, { ThemeProvider } from 'styled-components/native';
 import t from 'translations/translate';
 import LinearGradient from 'react-native-linear-gradient';
-import { LoginProvider } from '@web3auth/react-native-sdk';
+import { LOGIN_PROVIDER } from '@web3auth/react-native-sdk';
 
 // actions
 import { resetOnboardingAndNavigateAction } from 'actions/onboardingActions';
@@ -75,7 +75,7 @@ const Welcome = () => {
     Modal.open(() => (
       <SigninWithEmailModal
         onSave={(email) => {
-          dispatch(loginWithWeb3Auth(LoginProvider.EMAIL_PASSWORDLESS, email));
+          dispatch(loginWithWeb3Auth(LOGIN_PROVIDER.EMAIL_PASSWORDLESS, email));
         }}
       />
     ));
@@ -84,27 +84,27 @@ const Welcome = () => {
     {
       name: 'google',
       icon: 'google-button',
-      onPress: () => dispatch(loginWithWeb3Auth(LoginProvider.GOOGLE)),
+      onPress: () => dispatch(loginWithWeb3Auth(LOGIN_PROVIDER.GOOGLE)),
     },
     {
       name: 'facebook',
       icon: 'facebook-button',
-      onPress: () => dispatch(loginWithWeb3Auth(LoginProvider.FACEBOOK)),
+      onPress: () => dispatch(loginWithWeb3Auth(LOGIN_PROVIDER.FACEBOOK)),
     },
     {
       name: 'apple',
       icon: 'apple-button',
-      onPress: () => dispatch(loginWithWeb3Auth(LoginProvider.APPLE)),
+      onPress: () => dispatch(loginWithWeb3Auth(LOGIN_PROVIDER.APPLE)),
     },
     {
       name: 'discord',
       icon: 'discord-button',
-      onPress: () => dispatch(loginWithWeb3Auth(LoginProvider.DISCORD)),
+      onPress: () => dispatch(loginWithWeb3Auth(LOGIN_PROVIDER.DISCORD)),
     },
     {
       name: 'twitch',
       icon: 'twitch-button',
-      onPress: () => dispatch(loginWithWeb3Auth(LoginProvider.TWITCH)),
+      onPress: () => dispatch(loginWithWeb3Auth(LOGIN_PROVIDER.TWITCH)),
     },
     {
       name: 'email',

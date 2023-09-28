@@ -1,108 +1,172 @@
-diff --git a/node_modules/react-native-keychain/android/build.gradle b/node_modules/react-native-keychain/android/build.gradle
-index ecc3b46..695bdfc 100755
---- a/node_modules/react-native-keychain/android/build.gradle
-+++ b/node_modules/react-native-keychain/android/build.gradle
-@@ -37,6 +37,10 @@ android {
-       includeAndroidResources = true
-     }
-   }
-+  compileOptions {
-+    sourceCompatibility JavaVersion.VERSION_1_8
-+    targetCompatibility JavaVersion.VERSION_1_8
-+  }
+diff --git a/node_modules/react-native-appearance/android/build.gradle b/node_modules/react-native-appearance/android/build.gradle
+index 57d3f80..a22e258 100644
+--- a/node_modules/react-native-appearance/android/build.gradle
++++ b/node_modules/react-native-appearance/android/build.gradle
+@@ -20,7 +20,6 @@ buildscript {
  }
  
- repositories {
-diff --git a/node_modules/react-native-keychain/android/build/generated/source/buildConfig/debug/com/oblador/keychain/BuildConfig.java b/node_modules/react-native-keychain/android/build/generated/source/buildConfig/debug/com/oblador/keychain/BuildConfig.java
+ apply plugin: 'com.android.library'
+-apply plugin: 'maven'
+ 
+ // Matches values in recent template from React Native 0.59 / 0.60
+ // https://github.com/facebook/react-native/blob/0.59-stable/template/android/build.gradle#L5-L9
+@@ -92,46 +91,3 @@ def configureReactNativePom(def pom) {
+         }
+     }
+ }
+-
+-afterEvaluate { project ->
+-    // some Gradle build hooks ref:
+-    // https://www.oreilly.com/library/view/gradle-beyond-the/9781449373801/ch03.html
+-    task androidJavadoc(type: Javadoc) {
+-        source = android.sourceSets.main.java.srcDirs
+-        classpath += files(android.bootClasspath)
+-        classpath += files(project.getConfigurations().getByName('compile').asList())
+-        include '**/*.java'
+-    }
+-
+-    task androidJavadocJar(type: Jar, dependsOn: androidJavadoc) {
+-        classifier = 'javadoc'
+-        from androidJavadoc.destinationDir
+-    }
+-
+-    task androidSourcesJar(type: Jar) {
+-        classifier = 'sources'
+-        from android.sourceSets.main.java.srcDirs
+-        include '**/*.java'
+-    }
+-
+-    android.libraryVariants.all { variant ->
+-        def name = variant.name.capitalize()
+-        task "jar${name}"(type: Jar, dependsOn: variant.javaCompileProvider.get()) {
+-            from variant.javaCompileProvider.get().destinationDir
+-        }
+-    }
+-
+-    artifacts {
+-        archives androidSourcesJar
+-        archives androidJavadocJar
+-    }
+-
+-    task installArchives(type: Upload) {
+-        configuration = configurations.archives
+-        repositories.mavenDeployer {
+-            // Deploy to react-native-event-bridge/maven, ready to publish to npm
+-            repository url: "file://${projectDir}/../android/maven"
+-            configureReactNativePom pom
+-        }
+-    }
+-}
+diff --git a/node_modules/react-native-appearance/android/build/.transforms/3be9196c73819099f30c10023c39cd06/results.bin b/node_modules/react-native-appearance/android/build/.transforms/3be9196c73819099f30c10023c39cd06/results.bin
 new file mode 100644
-index 0000000..ad2b389
+index 0000000..28bb879
 --- /dev/null
-+++ b/node_modules/react-native-keychain/android/build/generated/source/buildConfig/debug/com/oblador/keychain/BuildConfig.java
++++ b/node_modules/react-native-appearance/android/build/.transforms/3be9196c73819099f30c10023c39cd06/results.bin
+@@ -0,0 +1 @@
++o/classes.jar
+diff --git a/node_modules/react-native-appearance/android/build/.transforms/3be9196c73819099f30c10023c39cd06/transformed/classes.jar b/node_modules/react-native-appearance/android/build/.transforms/3be9196c73819099f30c10023c39cd06/transformed/classes.jar
+new file mode 100644
+index 0000000..3e36061
+Binary files /dev/null and b/node_modules/react-native-appearance/android/build/.transforms/3be9196c73819099f30c10023c39cd06/transformed/classes.jar differ
+diff --git a/node_modules/react-native-appearance/android/build/.transforms/ac27500372aba05d1479246c461c277c/results.bin b/node_modules/react-native-appearance/android/build/.transforms/ac27500372aba05d1479246c461c277c/results.bin
+new file mode 100644
+index 0000000..0d259dd
+--- /dev/null
++++ b/node_modules/react-native-appearance/android/build/.transforms/ac27500372aba05d1479246c461c277c/results.bin
+@@ -0,0 +1 @@
++o/classes
+diff --git a/node_modules/react-native-appearance/android/build/.transforms/ac27500372aba05d1479246c461c277c/transformed/classes/classes.dex b/node_modules/react-native-appearance/android/build/.transforms/ac27500372aba05d1479246c461c277c/transformed/classes/classes.dex
+new file mode 100644
+index 0000000..a48a0a2
+Binary files /dev/null and b/node_modules/react-native-appearance/android/build/.transforms/ac27500372aba05d1479246c461c277c/transformed/classes/classes.dex differ
+diff --git a/node_modules/react-native-appearance/android/build/generated/source/buildConfig/debug/io/expo/appearance/BuildConfig.java b/node_modules/react-native-appearance/android/build/generated/source/buildConfig/debug/io/expo/appearance/BuildConfig.java
+new file mode 100644
+index 0000000..54acda3
+--- /dev/null
++++ b/node_modules/react-native-appearance/android/build/generated/source/buildConfig/debug/io/expo/appearance/BuildConfig.java
 @@ -0,0 +1,10 @@
 +/**
 + * Automatically generated file. DO NOT MODIFY
 + */
-+package com.oblador.keychain;
++package io.expo.appearance;
 +
 +public final class BuildConfig {
 +  public static final boolean DEBUG = Boolean.parseBoolean("true");
-+  public static final String LIBRARY_PACKAGE_NAME = "com.oblador.keychain";
++  public static final String LIBRARY_PACKAGE_NAME = "io.expo.appearance";
 +  public static final String BUILD_TYPE = "debug";
 +}
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml b/node_modules/react-native-keychain/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml
+diff --git a/node_modules/react-native-appearance/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml b/node_modules/react-native-appearance/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml
 new file mode 100644
-index 0000000..bd08037
+index 0000000..6259c5a
 --- /dev/null
-+++ b/node_modules/react-native-keychain/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml
-@@ -0,0 +1,14 @@
++++ b/node_modules/react-native-appearance/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/AndroidManifest.xml
+@@ -0,0 +1,7 @@
 +<?xml version="1.0" encoding="utf-8"?>
 +<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-+    package="com.oblador.keychain"
-+    android:versionCode="1"
-+    android:versionName="1.0" >
++    package="io.expo.appearance" >
 +
-+    <uses-sdk
-+        android:minSdkVersion="28"
-+        android:targetSdkVersion="32" />
-+
-+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
-+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
++    <uses-sdk android:minSdkVersion="28" />
 +
 +</manifest>
 \ No newline at end of file
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output-metadata.json b/node_modules/react-native-keychain/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output-metadata.json
+diff --git a/node_modules/react-native-appearance/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output-metadata.json b/node_modules/react-native-appearance/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output-metadata.json
 new file mode 100644
-index 0000000..e67b2db
+index 0000000..10ffd69
 --- /dev/null
-+++ b/node_modules/react-native-keychain/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output-metadata.json
-@@ -0,0 +1,16 @@
++++ b/node_modules/react-native-appearance/android/build/intermediates/aapt_friendly_merged_manifests/debug/aapt/output-metadata.json
+@@ -0,0 +1,18 @@
 +{
-+  "version": 2,
++  "version": 3,
 +  "artifactType": {
 +    "type": "AAPT_FRIENDLY_MERGED_MANIFESTS",
 +    "kind": "Directory"
 +  },
-+  "applicationId": "com.oblador.keychain",
++  "applicationId": "io.expo.appearance",
 +  "variantName": "debug",
 +  "elements": [
 +    {
 +      "type": "SINGLE",
 +      "filters": [],
++      "attributes": [],
 +      "outputFile": "AndroidManifest.xml"
 +    }
-+  ]
++  ],
++  "elementType": "File"
 +}
 \ No newline at end of file
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/aar_metadata/debug/aar-metadata.properties b/node_modules/react-native-keychain/android/build/intermediates/aar_metadata/debug/aar-metadata.properties
+diff --git a/node_modules/react-native-appearance/android/build/intermediates/aar_metadata/debug/aar-metadata.properties b/node_modules/react-native-appearance/android/build/intermediates/aar_metadata/debug/aar-metadata.properties
 new file mode 100644
-index 0000000..d8560bd
+index 0000000..776557e
 --- /dev/null
-+++ b/node_modules/react-native-keychain/android/build/intermediates/aar_metadata/debug/aar-metadata.properties
-@@ -0,0 +1,2 @@
++++ b/node_modules/react-native-appearance/android/build/intermediates/aar_metadata/debug/aar-metadata.properties
+@@ -0,0 +1,5 @@
 +aarFormatVersion=1.0
 +aarMetadataVersion=1.0
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/annotation_processor_list/debug/annotationProcessors.json b/node_modules/react-native-keychain/android/build/intermediates/annotation_processor_list/debug/annotationProcessors.json
++minCompileSdk=1
++minCompileSdkExtension=0
++minAndroidGradlePluginVersion=1.0.0
+diff --git a/node_modules/react-native-appearance/android/build/intermediates/annotation_processor_list/debug/annotationProcessors.json b/node_modules/react-native-appearance/android/build/intermediates/annotation_processor_list/debug/annotationProcessors.json
 new file mode 100644
 index 0000000..9e26dfe
 --- /dev/null
-+++ b/node_modules/react-native-keychain/android/build/intermediates/annotation_processor_list/debug/annotationProcessors.json
++++ b/node_modules/react-native-appearance/android/build/intermediates/annotation_processor_list/debug/annotationProcessors.json
 @@ -0,0 +1 @@
 +{}
 \ No newline at end of file
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/compile_library_classes_jar/debug/classes.jar b/node_modules/react-native-keychain/android/build/intermediates/compile_library_classes_jar/debug/classes.jar
+diff --git a/node_modules/react-native-appearance/android/build/intermediates/compile_library_classes_jar/debug/classes.jar b/node_modules/react-native-appearance/android/build/intermediates/compile_library_classes_jar/debug/classes.jar
 new file mode 100644
-index 0000000..b0e35d5
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/compile_library_classes_jar/debug/classes.jar differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/compile_r_class_jar/debug/R.jar b/node_modules/react-native-keychain/android/build/intermediates/compile_r_class_jar/debug/R.jar
+index 0000000..f39e862
+Binary files /dev/null and b/node_modules/react-native-appearance/android/build/intermediates/compile_library_classes_jar/debug/classes.jar differ
+diff --git a/node_modules/react-native-appearance/android/build/intermediates/compile_r_class_jar/debug/R.jar b/node_modules/react-native-appearance/android/build/intermediates/compile_r_class_jar/debug/R.jar
 new file mode 100644
-index 0000000..ceb8cb3
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/compile_r_class_jar/debug/R.jar differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/compile_symbol_list/debug/R.txt b/node_modules/react-native-keychain/android/build/intermediates/compile_symbol_list/debug/R.txt
+index 0000000..a479f54
+Binary files /dev/null and b/node_modules/react-native-appearance/android/build/intermediates/compile_r_class_jar/debug/R.jar differ
+diff --git a/node_modules/react-native-appearance/android/build/intermediates/compile_symbol_list/debug/R.txt b/node_modules/react-native-appearance/android/build/intermediates/compile_symbol_list/debug/R.txt
 new file mode 100644
-index 0000000..457a603
+index 0000000..5347f17
 --- /dev/null
-+++ b/node_modules/react-native-keychain/android/build/intermediates/compile_symbol_list/debug/R.txt
-@@ -0,0 +1,2033 @@
++++ b/node_modules/react-native-appearance/android/build/intermediates/compile_symbol_list/debug/R.txt
+@@ -0,0 +1,1954 @@
 +int anim abc_fade_in 0x0
 +int anim abc_fade_out 0x0
 +int anim abc_grow_fade_in_from_bottom 0x0
@@ -133,24 +197,13 @@ index 0000000..457a603
 +int anim catalyst_push_up_out 0x0
 +int anim catalyst_slide_down 0x0
 +int anim catalyst_slide_up 0x0
-+int anim fragment_close_enter 0x0
-+int anim fragment_close_exit 0x0
-+int anim fragment_fade_enter 0x0
-+int anim fragment_fade_exit 0x0
 +int anim fragment_fast_out_extra_slow_in 0x0
-+int anim fragment_open_enter 0x0
-+int anim fragment_open_exit 0x0
 +int animator fragment_close_enter 0x0
 +int animator fragment_close_exit 0x0
 +int animator fragment_fade_enter 0x0
 +int animator fragment_fade_exit 0x0
 +int animator fragment_open_enter 0x0
 +int animator fragment_open_exit 0x0
-+int array assume_strong_biometrics_models 0x0
-+int array crypto_fingerprint_fallback_prefixes 0x0
-+int array crypto_fingerprint_fallback_vendors 0x0
-+int array delay_showing_prompt_models 0x0
-+int array hide_fingerprint_instantly_prefixes 0x0
 +int attr actionBarDivider 0x0
 +int attr actionBarItemBackground 0x0
 +int attr actionBarPopupTheme 0x0
@@ -205,6 +258,11 @@ index 0000000..457a603
 +int attr autoSizePresetSizes 0x0
 +int attr autoSizeStepGranularity 0x0
 +int attr autoSizeTextType 0x0
++int attr autofillInlineSuggestionChip 0x0
++int attr autofillInlineSuggestionEndIconStyle 0x0
++int attr autofillInlineSuggestionStartIconStyle 0x0
++int attr autofillInlineSuggestionSubtitle 0x0
++int attr autofillInlineSuggestionTitle 0x0
 +int attr background 0x0
 +int attr backgroundImage 0x0
 +int attr backgroundSplit 0x0
@@ -255,7 +313,6 @@ index 0000000..457a603
 +int attr contentInsetStart 0x0
 +int attr contentInsetStartWithNavigation 0x0
 +int attr controlBackground 0x0
-+int attr coordinatorLayoutStyle 0x0
 +int attr customNavigationLayout 0x0
 +int attr defaultQueryHint 0x0
 +int attr dialogCornerRadius 0x0
@@ -313,18 +370,12 @@ index 0000000..457a603
 +int attr imageButtonStyle 0x0
 +int attr indeterminateProgressStyle 0x0
 +int attr initialActivityCount 0x0
++int attr isAutofillInlineSuggestionTheme 0x0
 +int attr isLightTheme 0x0
 +int attr itemPadding 0x0
-+int attr keylines 0x0
 +int attr lStar 0x0
 +int attr lastBaselineToBottomHeight 0x0
 +int attr layout 0x0
-+int attr layout_anchor 0x0
-+int attr layout_anchorGravity 0x0
-+int attr layout_behavior 0x0
-+int attr layout_dodgeInsetEdges 0x0
-+int attr layout_insetEdge 0x0
-+int attr layout_keyline 0x0
 +int attr lineHeight 0x0
 +int attr listChoiceBackgroundIndicator 0x0
 +int attr listChoiceIndicatorMultipleAnimated 0x0
@@ -414,7 +465,6 @@ index 0000000..457a603
 +int attr splitTrack 0x0
 +int attr srcCompat 0x0
 +int attr state_above_anchor 0x0
-+int attr statusBarBackground 0x0
 +int attr subMenuArrow 0x0
 +int attr submitBackground 0x0
 +int attr subtitle 0x0
@@ -481,7 +531,6 @@ index 0000000..457a603
 +int attr windowMinWidthMinor 0x0
 +int attr windowNoTitle 0x0
 +int bool abc_action_bar_embed_tabs 0x0
-+int bool abc_allow_stacked_button_bar 0x0
 +int bool abc_config_actionMenuItemAllCaps 0x0
 +int color abc_background_cache_hint_selector_material_dark 0x0
 +int color abc_background_cache_hint_selector_material_light 0x0
@@ -492,7 +541,6 @@ index 0000000..457a603
 +int color abc_decor_view_status_guard_light 0x0
 +int color abc_hint_foreground_material_dark 0x0
 +int color abc_hint_foreground_material_light 0x0
-+int color abc_input_method_navigation_guard 0x0
 +int color abc_primary_text_disable_only_material_dark 0x0
 +int color abc_primary_text_disable_only_material_light 0x0
 +int color abc_primary_text_material_dark 0x0
@@ -517,7 +565,6 @@ index 0000000..457a603
 +int color background_floating_material_light 0x0
 +int color background_material_dark 0x0
 +int color background_material_light 0x0
-+int color biometric_error_color 0x0
 +int color bright_foreground_disabled_material_dark 0x0
 +int color bright_foreground_disabled_material_light 0x0
 +int color bright_foreground_inverse_material_dark 0x0
@@ -552,7 +599,6 @@ index 0000000..457a603
 +int color material_grey_900 0x0
 +int color notification_action_color_filter 0x0
 +int color notification_icon_bg_color 0x0
-+int color notification_material_background_media_default_color 0x0
 +int color primary_dark_material_dark 0x0
 +int color primary_dark_material_light 0x0
 +int color primary_material_dark 0x0
@@ -656,6 +702,7 @@ index 0000000..457a603
 +int dimen abc_text_size_subtitle_material_toolbar 0x0
 +int dimen abc_text_size_title_material 0x0
 +int dimen abc_text_size_title_material_toolbar 0x0
++int dimen autofill_inline_suggestion_icon_size 0x0
 +int dimen compat_button_inset_horizontal_material 0x0
 +int dimen compat_button_inset_vertical_material 0x0
 +int dimen compat_button_padding_horizontal_material 0x0
@@ -665,7 +712,6 @@ index 0000000..457a603
 +int dimen compat_notification_large_icon_max_width 0x0
 +int dimen disabled_alpha_material_dark 0x0
 +int dimen disabled_alpha_material_light 0x0
-+int dimen fingerprint_icon_size 0x0
 +int dimen highlight_alpha_material_colored 0x0
 +int dimen highlight_alpha_material_dark 0x0
 +int dimen highlight_alpha_material_light 0x0
@@ -688,10 +734,6 @@ index 0000000..457a603
 +int dimen notification_subtext_size 0x0
 +int dimen notification_top_pad 0x0
 +int dimen notification_top_pad_large_text 0x0
-+int dimen subtitle_corner_radius 0x0
-+int dimen subtitle_outline_width 0x0
-+int dimen subtitle_shadow_offset 0x0
-+int dimen subtitle_shadow_radius 0x0
 +int dimen tooltip_corner_radius 0x0
 +int dimen tooltip_horizontal_padding 0x0
 +int dimen tooltip_margin 0x0
@@ -733,12 +775,6 @@ index 0000000..457a603
 +int drawable abc_ic_menu_selectall_mtrl_alpha 0x0
 +int drawable abc_ic_menu_share_mtrl_alpha 0x0
 +int drawable abc_ic_search_api_material 0x0
-+int drawable abc_ic_star_black_16dp 0x0
-+int drawable abc_ic_star_black_36dp 0x0
-+int drawable abc_ic_star_black_48dp 0x0
-+int drawable abc_ic_star_half_black_16dp 0x0
-+int drawable abc_ic_star_half_black_36dp 0x0
-+int drawable abc_ic_star_half_black_48dp 0x0
 +int drawable abc_ic_voice_search_api_material 0x0
 +int drawable abc_item_background_holo_dark 0x0
 +int drawable abc_item_background_holo_light 0x0
@@ -777,20 +813,15 @@ index 0000000..457a603
 +int drawable abc_tab_indicator_mtrl_alpha 0x0
 +int drawable abc_text_cursor_material 0x0
 +int drawable abc_text_select_handle_left_mtrl 0x0
-+int drawable abc_text_select_handle_left_mtrl_dark 0x0
-+int drawable abc_text_select_handle_left_mtrl_light 0x0
 +int drawable abc_text_select_handle_middle_mtrl 0x0
-+int drawable abc_text_select_handle_middle_mtrl_dark 0x0
-+int drawable abc_text_select_handle_middle_mtrl_light 0x0
 +int drawable abc_text_select_handle_right_mtrl 0x0
-+int drawable abc_text_select_handle_right_mtrl_dark 0x0
-+int drawable abc_text_select_handle_right_mtrl_light 0x0
 +int drawable abc_textfield_activated_mtrl_alpha 0x0
 +int drawable abc_textfield_default_mtrl_alpha 0x0
 +int drawable abc_textfield_search_activated_mtrl_alpha 0x0
 +int drawable abc_textfield_search_default_mtrl_alpha 0x0
 +int drawable abc_textfield_search_material 0x0
 +int drawable abc_vector_test 0x0
++int drawable autofill_inline_suggestion_chip_background 0x0
 +int drawable btn_checkbox_checked_mtrl 0x0
 +int drawable btn_checkbox_checked_to_unchecked_mtrl_animation 0x0
 +int drawable btn_checkbox_unchecked_mtrl 0x0
@@ -799,8 +830,6 @@ index 0000000..457a603
 +int drawable btn_radio_off_to_on_mtrl_animation 0x0
 +int drawable btn_radio_on_mtrl 0x0
 +int drawable btn_radio_on_to_off_mtrl_animation 0x0
-+int drawable fingerprint_dialog_error 0x0
-+int drawable fingerprint_dialog_fp_icon 0x0
 +int drawable notification_action_background 0x0
 +int drawable notification_bg 0x0
 +int drawable notification_bg_low 0x0
@@ -819,6 +848,8 @@ index 0000000..457a603
 +int drawable tooltip_frame_light 0x0
 +int id accessibility_action_clickable_span 0x0
 +int id accessibility_actions 0x0
++int id accessibility_collection 0x0
++int id accessibility_collection_item 0x0
 +int id accessibility_custom_action_0 0x0
 +int id accessibility_custom_action_1 0x0
 +int id accessibility_custom_action_10 0x0
@@ -853,10 +884,11 @@ index 0000000..457a603
 +int id accessibility_custom_action_9 0x0
 +int id accessibility_hint 0x0
 +int id accessibility_label 0x0
++int id accessibility_links 0x0
 +int id accessibility_role 0x0
 +int id accessibility_state 0x0
++int id accessibility_state_expanded 0x0
 +int id accessibility_value 0x0
-+int id action0 0x0
 +int id action_bar 0x0
 +int id action_bar_activity_content 0x0
 +int id action_bar_container 0x0
@@ -879,10 +911,12 @@ index 0000000..457a603
 +int id add 0x0
 +int id alertTitle 0x0
 +int id async 0x0
++int id autofill_inline_suggestion_end_icon 0x0
++int id autofill_inline_suggestion_start_icon 0x0
++int id autofill_inline_suggestion_subtitle 0x0
++int id autofill_inline_suggestion_title 0x0
 +int id blocking 0x0
-+int id bottom 0x0
 +int id buttonPanel 0x0
-+int id cancel_action 0x0
 +int id catalyst_redbox_title 0x0
 +int id center 0x0
 +int id centerCrop 0x0
@@ -898,14 +932,8 @@ index 0000000..457a603
 +int id default_activity_button 0x0
 +int id dialog_button 0x0
 +int id edit_query 0x0
-+int id end 0x0
-+int id end_padder 0x0
 +int id expand_activities_button 0x0
 +int id expanded_menu 0x0
-+int id fingerprint_description 0x0
-+int id fingerprint_error 0x0
-+int id fingerprint_icon 0x0
-+int id fingerprint_subtitle 0x0
 +int id fitBottomStart 0x0
 +int id fitCenter 0x0
 +int id fitEnd 0x0
@@ -926,12 +954,11 @@ index 0000000..457a603
 +int id item2 0x0
 +int id item3 0x0
 +int id item4 0x0
-+int id left 0x0
++int id labelled_by 0x0
 +int id line1 0x0
 +int id line3 0x0
 +int id listMode 0x0
 +int id list_item 0x0
-+int id media_actions 0x0
 +int id message 0x0
 +int id multiply 0x0
 +int id none 0x0
@@ -942,11 +969,11 @@ index 0000000..457a603
 +int id off 0x0
 +int id on 0x0
 +int id parentPanel 0x0
++int id pointer_events 0x0
 +int id progress_circular 0x0
 +int id progress_horizontal 0x0
 +int id radio 0x0
 +int id react_test_id 0x0
-+int id right 0x0
 +int id right_icon 0x0
 +int id right_side 0x0
 +int id rn_frame_file 0x0
@@ -980,8 +1007,6 @@ index 0000000..457a603
 +int id src_atop 0x0
 +int id src_in 0x0
 +int id src_over 0x0
-+int id start 0x0
-+int id status_bar_latest_event_content 0x0
 +int id submenuarrow 0x0
 +int id submit_area 0x0
 +int id tabMode 0x0
@@ -1006,7 +1031,6 @@ index 0000000..457a603
 +int id title 0x0
 +int id titleDividerNoCustom 0x0
 +int id title_template 0x0
-+int id top 0x0
 +int id topPanel 0x0
 +int id unchecked 0x0
 +int id uniform 0x0
@@ -1060,23 +1084,14 @@ index 0000000..457a603
 +int layout abc_search_view 0x0
 +int layout abc_select_dialog_material 0x0
 +int layout abc_tooltip 0x0
++int layout autofill_inline_suggestion 0x0
 +int layout custom_dialog 0x0
 +int layout dev_loading_view 0x0
-+int layout fingerprint_dialog_layout 0x0
 +int layout fps_view 0x0
 +int layout notification_action 0x0
 +int layout notification_action_tombstone 0x0
-+int layout notification_media_action 0x0
-+int layout notification_media_cancel_action 0x0
-+int layout notification_template_big_media 0x0
-+int layout notification_template_big_media_custom 0x0
-+int layout notification_template_big_media_narrow 0x0
-+int layout notification_template_big_media_narrow_custom 0x0
 +int layout notification_template_custom_big 0x0
 +int layout notification_template_icon_group 0x0
-+int layout notification_template_lines_media 0x0
-+int layout notification_template_media 0x0
-+int layout notification_template_media_custom 0x0
 +int layout notification_template_part_chronometer 0x0
 +int layout notification_template_part_time 0x0
 +int layout redbox_item_frame 0x0
@@ -1096,18 +1111,6 @@ index 0000000..457a603
 +int string abc_activitychooserview_choose_application 0x0
 +int string abc_capital_off 0x0
 +int string abc_capital_on 0x0
-+int string abc_font_family_body_1_material 0x0
-+int string abc_font_family_body_2_material 0x0
-+int string abc_font_family_button_material 0x0
-+int string abc_font_family_caption_material 0x0
-+int string abc_font_family_display_1_material 0x0
-+int string abc_font_family_display_2_material 0x0
-+int string abc_font_family_display_3_material 0x0
-+int string abc_font_family_display_4_material 0x0
-+int string abc_font_family_headline_material 0x0
-+int string abc_font_family_menu_material 0x0
-+int string abc_font_family_subhead_material 0x0
-+int string abc_font_family_title_material 0x0
 +int string abc_menu_alt_shortcut_label 0x0
 +int string abc_menu_ctrl_shortcut_label 0x0
 +int string abc_menu_delete_shortcut_label 0x0
@@ -1128,7 +1131,6 @@ index 0000000..457a603
 +int string abc_shareactionprovider_share_with_application 0x0
 +int string abc_toolbar_collapse_description 0x0
 +int string alert_description 0x0
-+int string button_description 0x0
 +int string catalyst_change_bundle_location 0x0
 +int string catalyst_copy_button 0x0
 +int string catalyst_debug 0x0
@@ -1136,9 +1138,9 @@ index 0000000..457a603
 +int string catalyst_debug_chrome_stop 0x0
 +int string catalyst_debug_connecting 0x0
 +int string catalyst_debug_error 0x0
-+int string catalyst_debug_nuclide 0x0
-+int string catalyst_debug_nuclide_error 0x0
++int string catalyst_debug_open 0x0
 +int string catalyst_debug_stop 0x0
++int string catalyst_devtools_open 0x0
 +int string catalyst_dismiss_button 0x0
 +int string catalyst_heap_capture 0x0
 +int string catalyst_hot_reloading 0x0
@@ -1146,7 +1148,9 @@ index 0000000..457a603
 +int string catalyst_hot_reloading_auto_enable 0x0
 +int string catalyst_hot_reloading_stop 0x0
 +int string catalyst_inspector 0x0
++int string catalyst_inspector_stop 0x0
 +int string catalyst_loading_from_url 0x0
++int string catalyst_open_flipper_error 0x0
 +int string catalyst_perf_monitor 0x0
 +int string catalyst_perf_monitor_stop 0x0
 +int string catalyst_reload 0x0
@@ -1158,18 +1162,6 @@ index 0000000..457a603
 +int string catalyst_settings 0x0
 +int string catalyst_settings_title 0x0
 +int string combobox_description 0x0
-+int string confirm_device_credential_password 0x0
-+int string default_error_msg 0x0
-+int string fingerprint_dialog_touch_sensor 0x0
-+int string fingerprint_error_hw_not_available 0x0
-+int string fingerprint_error_hw_not_present 0x0
-+int string fingerprint_error_lockout 0x0
-+int string fingerprint_error_no_fingerprints 0x0
-+int string fingerprint_error_user_canceled 0x0
-+int string fingerprint_not_recognized 0x0
-+int string generic_error_no_device_credential 0x0
-+int string generic_error_no_keyguard 0x0
-+int string generic_error_user_canceled 0x0
 +int string header_description 0x0
 +int string image_description 0x0
 +int string imagebutton_description 0x0
@@ -1181,7 +1173,6 @@ index 0000000..457a603
 +int string radiogroup_description 0x0
 +int string rn_tab_description 0x0
 +int string scrollbar_description 0x0
-+int string search_description 0x0
 +int string search_menu_title 0x0
 +int string spinbutton_description 0x0
 +int string state_busy_description 0x0
@@ -1190,6 +1181,7 @@ index 0000000..457a603
 +int string state_mixed_description 0x0
 +int string state_off_description 0x0
 +int string state_on_description 0x0
++int string state_unselected_description 0x0
 +int string status_bar_notification_info_overflow 0x0
 +int string summary_description 0x0
 +int string tablist_description 0x0
@@ -1360,8 +1352,6 @@ index 0000000..457a603
 +int style Base_Widget_AppCompat_Toolbar_Button_Navigation 0x0
 +int style CalendarDatePickerDialog 0x0
 +int style CalendarDatePickerStyle 0x0
-+int style ClockTimePickerDialog 0x0
-+int style ClockTimePickerStyle 0x0
 +int style DialogAnimationFade 0x0
 +int style DialogAnimationSlide 0x0
 +int style Platform_AppCompat 0x0
@@ -1393,8 +1383,6 @@ index 0000000..457a603
 +int style RtlUnderlay_Widget_AppCompat_ActionButton_Overflow 0x0
 +int style SpinnerDatePickerDialog 0x0
 +int style SpinnerDatePickerStyle 0x0
-+int style SpinnerTimePickerDialog 0x0
-+int style SpinnerTimePickerStyle 0x0
 +int style TextAppearance_AppCompat 0x0
 +int style TextAppearance_AppCompat_Body1 0x0
 +int style TextAppearance_AppCompat_Body2 0x0
@@ -1445,14 +1433,9 @@ index 0000000..457a603
 +int style TextAppearance_AppCompat_Widget_TextView_SpinnerItem 0x0
 +int style TextAppearance_Compat_Notification 0x0
 +int style TextAppearance_Compat_Notification_Info 0x0
-+int style TextAppearance_Compat_Notification_Info_Media 0x0
 +int style TextAppearance_Compat_Notification_Line2 0x0
-+int style TextAppearance_Compat_Notification_Line2_Media 0x0
-+int style TextAppearance_Compat_Notification_Media 0x0
 +int style TextAppearance_Compat_Notification_Time 0x0
-+int style TextAppearance_Compat_Notification_Time_Media 0x0
 +int style TextAppearance_Compat_Notification_Title 0x0
-+int style TextAppearance_Compat_Notification_Title_Media 0x0
 +int style TextAppearance_Widget_AppCompat_ExpandedMenu_Item 0x0
 +int style TextAppearance_Widget_AppCompat_Toolbar_Subtitle 0x0
 +int style TextAppearance_Widget_AppCompat_Toolbar_Title 0x0
@@ -1488,6 +1471,7 @@ index 0000000..457a603
 +int style Theme_AppCompat_Light_Dialog_MinWidth 0x0
 +int style Theme_AppCompat_Light_NoActionBar 0x0
 +int style Theme_AppCompat_NoActionBar 0x0
++int style Theme_AutofillInlineSuggestion 0x0
 +int style Theme_Catalyst 0x0
 +int style Theme_Catalyst_LogBox 0x0
 +int style Theme_Catalyst_RedBox 0x0
@@ -1569,9 +1553,14 @@ index 0000000..457a603
 +int style Widget_AppCompat_TextView_SpinnerItem 0x0
 +int style Widget_AppCompat_Toolbar 0x0
 +int style Widget_AppCompat_Toolbar_Button_Navigation 0x0
++int style Widget_Autofill 0x0
++int style Widget_Autofill_InlineSuggestionChip 0x0
++int style Widget_Autofill_InlineSuggestionEndIconStyle 0x0
++int style Widget_Autofill_InlineSuggestionStartIconStyle 0x0
++int style Widget_Autofill_InlineSuggestionSubtitle 0x0
++int style Widget_Autofill_InlineSuggestionTitle 0x0
 +int style Widget_Compat_NotificationActionContainer 0x0
 +int style Widget_Compat_NotificationActionText 0x0
-+int style Widget_Support_CoordinatorLayout 0x0
 +int style redboxButton 0x0
 +int[] styleable ActionBar { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 }
 +int styleable ActionBar_background 0
@@ -1812,6 +1801,13 @@ index 0000000..457a603
 +int styleable AppCompatTheme_windowMinWidthMajor 124
 +int styleable AppCompatTheme_windowMinWidthMinor 125
 +int styleable AppCompatTheme_windowNoTitle 126
++int[] styleable Autofill_InlineSuggestion { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 }
++int styleable Autofill_InlineSuggestion_autofillInlineSuggestionChip 0
++int styleable Autofill_InlineSuggestion_autofillInlineSuggestionEndIconStyle 1
++int styleable Autofill_InlineSuggestion_autofillInlineSuggestionStartIconStyle 2
++int styleable Autofill_InlineSuggestion_autofillInlineSuggestionSubtitle 3
++int styleable Autofill_InlineSuggestion_autofillInlineSuggestionTitle 4
++int styleable Autofill_InlineSuggestion_isAutofillInlineSuggestionTheme 5
 +int[] styleable ButtonBarLayout { 0x0 }
 +int styleable ButtonBarLayout_allowStacking 0
 +int[] styleable Capability { 0x0, 0x0 }
@@ -1833,17 +1829,6 @@ index 0000000..457a603
 +int styleable CompoundButton_buttonCompat 1
 +int styleable CompoundButton_buttonTint 2
 +int styleable CompoundButton_buttonTintMode 3
-+int[] styleable CoordinatorLayout { 0x0, 0x0 }
-+int styleable CoordinatorLayout_keylines 0
-+int styleable CoordinatorLayout_statusBarBackground 1
-+int[] styleable CoordinatorLayout_Layout { 0x10100b3, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 }
-+int styleable CoordinatorLayout_Layout_android_layout_gravity 0
-+int styleable CoordinatorLayout_Layout_layout_anchor 1
-+int styleable CoordinatorLayout_Layout_layout_anchorGravity 2
-+int styleable CoordinatorLayout_Layout_layout_behavior 3
-+int styleable CoordinatorLayout_Layout_layout_dodgeInsetEdges 4
-+int styleable CoordinatorLayout_Layout_layout_insetEdge 5
-+int styleable CoordinatorLayout_Layout_layout_keyline 6
 +int[] styleable DrawerArrowToggle { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 }
 +int styleable DrawerArrowToggle_arrowHeadLength 0
 +int styleable DrawerArrowToggle_arrowShaftLength 1
@@ -2136,290 +2121,118 @@ index 0000000..457a603
 +int styleable ViewStubCompat_android_inflatedId 1
 +int styleable ViewStubCompat_android_layout 2
 +int xml rn_dev_preferences 0x0
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml b/node_modules/react-native-keychain/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml
+diff --git a/node_modules/react-native-appearance/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties b/node_modules/react-native-appearance/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
 new file mode 100644
-index 0000000..64c9dbf
+index 0000000..afac2bc
 --- /dev/null
-+++ b/node_modules/react-native-keychain/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml
-@@ -0,0 +1,2 @@
-+<?xml version="1.0" encoding="utf-8"?>
-+<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/yash.chaubal/Documents/GitHub/pillarwallet/android/app/src/main/jniLibs"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/yash.chaubal/Documents/GitHub/pillarwallet/android/app/src/debug/jniLibs"/></dataSet></merger>
-\ No newline at end of file
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/incremental/mergeDebugShaders/merger.xml b/node_modules/react-native-keychain/android/build/intermediates/incremental/mergeDebugShaders/merger.xml
-new file mode 100644
-index 0000000..923aa45
---- /dev/null
-+++ b/node_modules/react-native-keychain/android/build/intermediates/incremental/mergeDebugShaders/merger.xml
-@@ -0,0 +1,2 @@
-+<?xml version="1.0" encoding="utf-8"?>
-+<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/yash.chaubal/Documents/GitHub/pillarwallet/android/app/src/main/shaders"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/yash.chaubal/Documents/GitHub/pillarwallet/android/app/src/debug/shaders"/></dataSet></merger>
-\ No newline at end of file
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/incremental/packageDebugAssets/merger.xml b/node_modules/react-native-keychain/android/build/intermediates/incremental/packageDebugAssets/merger.xml
-new file mode 100644
-index 0000000..b41e8ee
---- /dev/null
-+++ b/node_modules/react-native-keychain/android/build/intermediates/incremental/packageDebugAssets/merger.xml
-@@ -0,0 +1,2 @@
-+<?xml version="1.0" encoding="utf-8"?>
-+<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/instabug-reactnative/android/src/main/assets"/><source path="/Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/instabug-reactnative/android/build/intermediates/shader_assets/debug/out"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/instabug-reactnative/android/src/debug/assets"/></dataSet></merger>
-\ No newline at end of file
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/incremental/packageDebugResources/compile-file-map.properties b/node_modules/react-native-keychain/android/build/intermediates/incremental/packageDebugResources/compile-file-map.properties
-new file mode 100644
-index 0000000..3273a83
---- /dev/null
-+++ b/node_modules/react-native-keychain/android/build/intermediates/incremental/packageDebugResources/compile-file-map.properties
++++ b/node_modules/react-native-appearance/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
 @@ -0,0 +1 @@
-+#Thu May 04 12:24:34 BST 2023
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/incremental/packageDebugResources/merger.xml b/node_modules/react-native-keychain/android/build/intermediates/incremental/packageDebugResources/merger.xml
++#Mon Sep 11 12:04:41 IST 2023
+diff --git a/node_modules/react-native-appearance/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml b/node_modules/react-native-appearance/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml
 new file mode 100644
-index 0000000..66baa14
+index 0000000..f8d89e6
 --- /dev/null
-+++ b/node_modules/react-native-keychain/android/build/intermediates/incremental/packageDebugResources/merger.xml
++++ b/node_modules/react-native-appearance/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml
 @@ -0,0 +1,2 @@
 +<?xml version="1.0" encoding="utf-8"?>
-+<merger version="3"><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/lottie-react-native/src/android/src/main/res"/><source path="/Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/lottie-react-native/src/android/build/generated/res/rs/debug"/><source path="/Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/lottie-react-native/src/android/build/generated/res/resValues/debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main" generated-set="main$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/lottie-react-native/src/android/src/main/res"/><source path="/Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/lottie-react-native/src/android/build/generated/res/rs/debug"/><source path="/Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/lottie-react-native/src/android/build/generated/res/resValues/debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/lottie-react-native/src/android/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug" generated-set="debug$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/lottie-react-native/src/android/src/debug/res"/></dataSet><mergedItems/></merger>
++<merger version="3"><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/src/main/res"/><source path="/Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/build/generated/res/rs/debug"/><source path="/Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/build/generated/res/resValues/debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main" generated-set="main$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/src/main/res"/><source path="/Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/build/generated/res/rs/debug"/><source path="/Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/build/generated/res/resValues/debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug" generated-set="debug$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"/><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated" generated-set="generated$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"/><mergedItems/></merger>
 \ No newline at end of file
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/BuildConfig.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/BuildConfig.class
+diff --git a/node_modules/react-native-appearance/android/build/intermediates/javac/debug/classes/io/expo/appearance/BuildConfig.class b/node_modules/react-native-appearance/android/build/intermediates/javac/debug/classes/io/expo/appearance/BuildConfig.class
 new file mode 100644
-index 0000000..86b545f
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/BuildConfig.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/DeviceAvailability.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/DeviceAvailability.class
+index 0000000..de5d105
+Binary files /dev/null and b/node_modules/react-native-appearance/android/build/intermediates/javac/debug/classes/io/expo/appearance/BuildConfig.class differ
+diff --git a/node_modules/react-native-appearance/android/build/intermediates/javac/debug/classes/io/expo/appearance/RNCAppearanceModule$1.class b/node_modules/react-native-appearance/android/build/intermediates/javac/debug/classes/io/expo/appearance/RNCAppearanceModule$1.class
 new file mode 100644
-index 0000000..af5ce30
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/DeviceAvailability.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/KeychainModule$AccessControl.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/KeychainModule$AccessControl.class
+index 0000000..56c4ba0
+Binary files /dev/null and b/node_modules/react-native-appearance/android/build/intermediates/javac/debug/classes/io/expo/appearance/RNCAppearanceModule$1.class differ
+diff --git a/node_modules/react-native-appearance/android/build/intermediates/javac/debug/classes/io/expo/appearance/RNCAppearanceModule.class b/node_modules/react-native-appearance/android/build/intermediates/javac/debug/classes/io/expo/appearance/RNCAppearanceModule.class
 new file mode 100644
-index 0000000..2991fe9
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/KeychainModule$AccessControl.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/KeychainModule$AuthPromptOptions.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/KeychainModule$AuthPromptOptions.class
+index 0000000..54ea72a
+Binary files /dev/null and b/node_modules/react-native-appearance/android/build/intermediates/javac/debug/classes/io/expo/appearance/RNCAppearanceModule.class differ
+diff --git a/node_modules/react-native-appearance/android/build/intermediates/javac/debug/classes/io/expo/appearance/RNCAppearancePackage.class b/node_modules/react-native-appearance/android/build/intermediates/javac/debug/classes/io/expo/appearance/RNCAppearancePackage.class
 new file mode 100644
-index 0000000..16b236e
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/KeychainModule$AuthPromptOptions.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/KeychainModule$Errors.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/KeychainModule$Errors.class
-new file mode 100644
-index 0000000..1ac38e4
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/KeychainModule$Errors.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/KeychainModule$KnownCiphers.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/KeychainModule$KnownCiphers.class
-new file mode 100644
-index 0000000..e293e64
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/KeychainModule$KnownCiphers.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/KeychainModule$Maps.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/KeychainModule$Maps.class
-new file mode 100644
-index 0000000..cace901
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/KeychainModule$Maps.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/KeychainModule$Rules.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/KeychainModule$Rules.class
-new file mode 100644
-index 0000000..7c61f77
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/KeychainModule$Rules.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/KeychainModule.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/KeychainModule.class
-new file mode 100644
-index 0000000..2d3e1a0
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/KeychainModule.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/KeychainModuleBuilder.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/KeychainModuleBuilder.class
-new file mode 100644
-index 0000000..9de71a5
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/KeychainModuleBuilder.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/KeychainPackage.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/KeychainPackage.class
-new file mode 100644
-index 0000000..effbdb4
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/KeychainPackage.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/PrefsStorage$ResultSet.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/PrefsStorage$ResultSet.class
-new file mode 100644
-index 0000000..ac04e4f
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/PrefsStorage$ResultSet.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/PrefsStorage.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/PrefsStorage.class
-new file mode 100644
-index 0000000..34c22cd
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/PrefsStorage.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/SecurityLevel.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/SecurityLevel.class
-new file mode 100644
-index 0000000..798e238
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/SecurityLevel.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorage$CipherResult.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorage$CipherResult.class
-new file mode 100644
-index 0000000..ca6e54d
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorage$CipherResult.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorage$DecryptionContext.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorage$DecryptionContext.class
-new file mode 100644
-index 0000000..dbfcb07
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorage$DecryptionContext.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorage$DecryptionResult.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorage$DecryptionResult.class
-new file mode 100644
-index 0000000..d08ebc2
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorage$DecryptionResult.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorage$EncryptionResult.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorage$EncryptionResult.class
-new file mode 100644
-index 0000000..ccff4d1
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorage$EncryptionResult.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorage.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorage.class
-new file mode 100644
-index 0000000..585395c
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorage.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorageBase$DecryptBytesHandler.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorageBase$DecryptBytesHandler.class
-new file mode 100644
-index 0000000..09b5606
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorageBase$DecryptBytesHandler.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorageBase$Defaults.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorageBase$Defaults.class
-new file mode 100644
-index 0000000..9dd83e4
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorageBase$Defaults.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorageBase$EncryptStringHandler.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorageBase$EncryptStringHandler.class
-new file mode 100644
-index 0000000..9105a2a
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorageBase$EncryptStringHandler.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorageBase$IV.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorageBase$IV.class
-new file mode 100644
-index 0000000..5973b8a
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorageBase$IV.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorageBase$SelfDestroyKey.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorageBase$SelfDestroyKey.class
-new file mode 100644
-index 0000000..1af6994
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorageBase$SelfDestroyKey.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorageBase.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorageBase.class
-new file mode 100644
-index 0000000..91643c3
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorageBase.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorageFacebookConceal.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorageFacebookConceal.class
-new file mode 100644
-index 0000000..b6d3c4e
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorageFacebookConceal.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorageKeystoreAesCbc.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorageKeystoreAesCbc.class
-new file mode 100644
-index 0000000..ae950c6
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorageKeystoreAesCbc.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorageKeystoreRsaEcb.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorageKeystoreRsaEcb.class
-new file mode 100644
-index 0000000..fce077f
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/cipherStorage/CipherStorageKeystoreRsaEcb.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/decryptionHandler/DecryptionResultHandler.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/decryptionHandler/DecryptionResultHandler.class
-new file mode 100644
-index 0000000..5d688fa
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/decryptionHandler/DecryptionResultHandler.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/decryptionHandler/DecryptionResultHandlerInteractiveBiometric.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/decryptionHandler/DecryptionResultHandlerInteractiveBiometric.class
-new file mode 100644
-index 0000000..1be444d
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/decryptionHandler/DecryptionResultHandlerInteractiveBiometric.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/decryptionHandler/DecryptionResultHandlerInteractiveBiometricManualRetry.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/decryptionHandler/DecryptionResultHandlerInteractiveBiometricManualRetry.class
-new file mode 100644
-index 0000000..072cb0b
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/decryptionHandler/DecryptionResultHandlerInteractiveBiometricManualRetry.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/decryptionHandler/DecryptionResultHandlerNonInteractive.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/decryptionHandler/DecryptionResultHandlerNonInteractive.class
-new file mode 100644
-index 0000000..16fb9a0
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/decryptionHandler/DecryptionResultHandlerNonInteractive.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/decryptionHandler/DecryptionResultHandlerProvider.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/decryptionHandler/DecryptionResultHandlerProvider.class
-new file mode 100644
-index 0000000..c7a9eda
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/decryptionHandler/DecryptionResultHandlerProvider.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/exceptions/CryptoFailedException.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/exceptions/CryptoFailedException.class
-new file mode 100644
-index 0000000..cde89cf
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/exceptions/CryptoFailedException.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/exceptions/EmptyParameterException.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/exceptions/EmptyParameterException.class
-new file mode 100644
-index 0000000..5b1b78b
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/exceptions/EmptyParameterException.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/exceptions/KeyStoreAccessException.class b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/exceptions/KeyStoreAccessException.class
-new file mode 100644
-index 0000000..6f2482e
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/javac/debug/classes/com/oblador/keychain/exceptions/KeyStoreAccessException.class differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/library_manifest/debug/AndroidManifest.xml b/node_modules/react-native-keychain/android/build/intermediates/library_manifest/debug/AndroidManifest.xml
-new file mode 100644
-index 0000000..bd08037
---- /dev/null
-+++ b/node_modules/react-native-keychain/android/build/intermediates/library_manifest/debug/AndroidManifest.xml
-@@ -0,0 +1,14 @@
-+<?xml version="1.0" encoding="utf-8"?>
-+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-+    package="com.oblador.keychain"
-+    android:versionCode="1"
-+    android:versionName="1.0" >
-+
-+    <uses-sdk
-+        android:minSdkVersion="28"
-+        android:targetSdkVersion="32" />
-+
-+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
-+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
-+
-+</manifest>
-\ No newline at end of file
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/local_only_symbol_list/debug/R-def.txt b/node_modules/react-native-keychain/android/build/intermediates/local_only_symbol_list/debug/R-def.txt
+index 0000000..6b13a60
+Binary files /dev/null and b/node_modules/react-native-appearance/android/build/intermediates/javac/debug/classes/io/expo/appearance/RNCAppearancePackage.class differ
+diff --git a/node_modules/react-native-appearance/android/build/intermediates/local_only_symbol_list/debug/R-def.txt b/node_modules/react-native-appearance/android/build/intermediates/local_only_symbol_list/debug/R-def.txt
 new file mode 100644
 index 0000000..78ac5b8
 --- /dev/null
-+++ b/node_modules/react-native-keychain/android/build/intermediates/local_only_symbol_list/debug/R-def.txt
++++ b/node_modules/react-native-appearance/android/build/intermediates/local_only_symbol_list/debug/R-def.txt
 @@ -0,0 +1,2 @@
 +R_DEF: Internal format may change without notice
 +local
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/manifest_merge_blame_file/debug/manifest-merger-blame-debug-report.txt b/node_modules/react-native-keychain/android/build/intermediates/manifest_merge_blame_file/debug/manifest-merger-blame-debug-report.txt
+diff --git a/node_modules/react-native-appearance/android/build/intermediates/manifest_merge_blame_file/debug/manifest-merger-blame-debug-report.txt b/node_modules/react-native-appearance/android/build/intermediates/manifest_merge_blame_file/debug/manifest-merger-blame-debug-report.txt
 new file mode 100644
-index 0000000..85c1cff
+index 0000000..d07d2f2
 --- /dev/null
-+++ b/node_modules/react-native-keychain/android/build/intermediates/manifest_merge_blame_file/debug/manifest-merger-blame-debug-report.txt
-@@ -0,0 +1,20 @@
++++ b/node_modules/react-native-appearance/android/build/intermediates/manifest_merge_blame_file/debug/manifest-merger-blame-debug-report.txt
+@@ -0,0 +1,8 @@
 +1<?xml version="1.0" encoding="utf-8"?>
 +2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-+3    package="com.oblador.keychain"
-+4    android:versionCode="1"
-+5    android:versionName="1.0" >
++3    package="io.expo.appearance" >
++4
++5    <uses-sdk android:minSdkVersion="28" />
++5-->/Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/src/main/AndroidManifest.xml
 +6
-+7    <uses-sdk
-+8        android:minSdkVersion="28"
-+8-->/Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml
-+9        android:targetSdkVersion="32" />
-+9-->/Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml
-+10
-+11    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
-+11-->/Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml:6:3-70
-+11-->/Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml:6:20-67
-+12    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
-+12-->/Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml:7:3-72
-+12-->/Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml:7:20-69
-+13
-+14</manifest>
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/navigation_json/debug/navigation.json b/node_modules/react-native-keychain/android/build/intermediates/navigation_json/debug/navigation.json
++7</manifest>
+diff --git a/node_modules/react-native-appearance/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml b/node_modules/react-native-appearance/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml
+new file mode 100644
+index 0000000..6259c5a
+--- /dev/null
++++ b/node_modules/react-native-appearance/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="io.expo.appearance" >
++
++    <uses-sdk android:minSdkVersion="28" />
++
++</manifest>
+\ No newline at end of file
+diff --git a/node_modules/react-native-appearance/android/build/intermediates/navigation_json/debug/navigation.json b/node_modules/react-native-appearance/android/build/intermediates/navigation_json/debug/navigation.json
 new file mode 100644
 index 0000000..0637a08
 --- /dev/null
-+++ b/node_modules/react-native-keychain/android/build/intermediates/navigation_json/debug/navigation.json
++++ b/node_modules/react-native-appearance/android/build/intermediates/navigation_json/debug/navigation.json
 @@ -0,0 +1 @@
 +[]
 \ No newline at end of file
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/packaged_manifests/debug/output-metadata.json b/node_modules/react-native-keychain/android/build/intermediates/packaged_manifests/debug/output-metadata.json
+diff --git a/node_modules/react-native-appearance/android/build/intermediates/packaged_manifests/debug/output-metadata.json b/node_modules/react-native-appearance/android/build/intermediates/packaged_manifests/debug/output-metadata.json
 new file mode 100644
-index 0000000..6ab7355
+index 0000000..0ec68d4
 --- /dev/null
-+++ b/node_modules/react-native-keychain/android/build/intermediates/packaged_manifests/debug/output-metadata.json
-@@ -0,0 +1,16 @@
++++ b/node_modules/react-native-appearance/android/build/intermediates/packaged_manifests/debug/output-metadata.json
+@@ -0,0 +1,18 @@
 +{
-+  "version": 2,
++  "version": 3,
 +  "artifactType": {
 +    "type": "PACKAGED_MANIFESTS",
 +    "kind": "Directory"
 +  },
-+  "applicationId": "com.oblador.keychain",
++  "applicationId": "io.expo.appearance",
 +  "variantName": "debug",
 +  "elements": [
 +    {
 +      "type": "SINGLE",
 +      "filters": [],
-+      "outputFile": "../../library_manifest/debug/AndroidManifest.xml"
++      "attributes": [],
++      "outputFile": "../../merged_manifest/debug/AndroidManifest.xml"
 +    }
-+  ]
++  ],
++  "elementType": "File"
 +}
 \ No newline at end of file
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/runtime_library_classes_jar/debug/classes.jar b/node_modules/react-native-keychain/android/build/intermediates/runtime_library_classes_jar/debug/classes.jar
+diff --git a/node_modules/react-native-appearance/android/build/intermediates/runtime_library_classes_jar/debug/classes.jar b/node_modules/react-native-appearance/android/build/intermediates/runtime_library_classes_jar/debug/classes.jar
 new file mode 100644
-index 0000000..eca3d9d
-Binary files /dev/null and b/node_modules/react-native-keychain/android/build/intermediates/runtime_library_classes_jar/debug/classes.jar differ
-diff --git a/node_modules/react-native-keychain/android/build/intermediates/symbol_list_with_package_name/debug/package-aware-r.txt b/node_modules/react-native-keychain/android/build/intermediates/symbol_list_with_package_name/debug/package-aware-r.txt
+index 0000000..ed0bbc2
+Binary files /dev/null and b/node_modules/react-native-appearance/android/build/intermediates/runtime_library_classes_jar/debug/classes.jar differ
+diff --git a/node_modules/react-native-appearance/android/build/intermediates/symbol_list_with_package_name/debug/package-aware-r.txt b/node_modules/react-native-appearance/android/build/intermediates/symbol_list_with_package_name/debug/package-aware-r.txt
 new file mode 100644
-index 0000000..6c16d8a
+index 0000000..e5f0578
 --- /dev/null
-+++ b/node_modules/react-native-keychain/android/build/intermediates/symbol_list_with_package_name/debug/package-aware-r.txt
-@@ -0,0 +1,1523 @@
-+com.oblador.keychain
++++ b/node_modules/react-native-appearance/android/build/intermediates/symbol_list_with_package_name/debug/package-aware-r.txt
+@@ -0,0 +1,1447 @@
++io.expo.appearance
 +anim abc_fade_in
 +anim abc_fade_out
 +anim abc_grow_fade_in_from_bottom
@@ -2450,24 +2263,13 @@ index 0000000..6c16d8a
 +anim catalyst_push_up_out
 +anim catalyst_slide_down
 +anim catalyst_slide_up
-+anim fragment_close_enter
-+anim fragment_close_exit
-+anim fragment_fade_enter
-+anim fragment_fade_exit
 +anim fragment_fast_out_extra_slow_in
-+anim fragment_open_enter
-+anim fragment_open_exit
 +animator fragment_close_enter
 +animator fragment_close_exit
 +animator fragment_fade_enter
 +animator fragment_fade_exit
 +animator fragment_open_enter
 +animator fragment_open_exit
-+array assume_strong_biometrics_models
-+array crypto_fingerprint_fallback_prefixes
-+array crypto_fingerprint_fallback_vendors
-+array delay_showing_prompt_models
-+array hide_fingerprint_instantly_prefixes
 +attr actionBarDivider
 +attr actionBarItemBackground
 +attr actionBarPopupTheme
@@ -2522,6 +2324,11 @@ index 0000000..6c16d8a
 +attr autoSizePresetSizes
 +attr autoSizeStepGranularity
 +attr autoSizeTextType
++attr autofillInlineSuggestionChip
++attr autofillInlineSuggestionEndIconStyle
++attr autofillInlineSuggestionStartIconStyle
++attr autofillInlineSuggestionSubtitle
++attr autofillInlineSuggestionTitle
 +attr background
 +attr backgroundImage
 +attr backgroundSplit
@@ -2572,7 +2379,6 @@ index 0000000..6c16d8a
 +attr contentInsetStart
 +attr contentInsetStartWithNavigation
 +attr controlBackground
-+attr coordinatorLayoutStyle
 +attr customNavigationLayout
 +attr defaultQueryHint
 +attr dialogCornerRadius
@@ -2630,18 +2436,12 @@ index 0000000..6c16d8a
 +attr imageButtonStyle
 +attr indeterminateProgressStyle
 +attr initialActivityCount
++attr isAutofillInlineSuggestionTheme
 +attr isLightTheme
 +attr itemPadding
-+attr keylines
 +attr lStar
 +attr lastBaselineToBottomHeight
 +attr layout
-+attr layout_anchor
-+attr layout_anchorGravity
-+attr layout_behavior
-+attr layout_dodgeInsetEdges
-+attr layout_insetEdge
-+attr layout_keyline
 +attr lineHeight
 +attr listChoiceBackgroundIndicator
 +attr listChoiceIndicatorMultipleAnimated
@@ -2731,7 +2531,6 @@ index 0000000..6c16d8a
 +attr splitTrack
 +attr srcCompat
 +attr state_above_anchor
-+attr statusBarBackground
 +attr subMenuArrow
 +attr submitBackground
 +attr subtitle
@@ -2798,7 +2597,6 @@ index 0000000..6c16d8a
 +attr windowMinWidthMinor
 +attr windowNoTitle
 +bool abc_action_bar_embed_tabs
-+bool abc_allow_stacked_button_bar
 +bool abc_config_actionMenuItemAllCaps
 +color abc_background_cache_hint_selector_material_dark
 +color abc_background_cache_hint_selector_material_light
@@ -2809,7 +2607,6 @@ index 0000000..6c16d8a
 +color abc_decor_view_status_guard_light
 +color abc_hint_foreground_material_dark
 +color abc_hint_foreground_material_light
-+color abc_input_method_navigation_guard
 +color abc_primary_text_disable_only_material_dark
 +color abc_primary_text_disable_only_material_light
 +color abc_primary_text_material_dark
@@ -2834,7 +2631,6 @@ index 0000000..6c16d8a
 +color background_floating_material_light
 +color background_material_dark
 +color background_material_light
-+color biometric_error_color
 +color bright_foreground_disabled_material_dark
 +color bright_foreground_disabled_material_light
 +color bright_foreground_inverse_material_dark
@@ -2869,7 +2665,6 @@ index 0000000..6c16d8a
 +color material_grey_900
 +color notification_action_color_filter
 +color notification_icon_bg_color
-+color notification_material_background_media_default_color
 +color primary_dark_material_dark
 +color primary_dark_material_light
 +color primary_material_dark
@@ -2973,6 +2768,7 @@ index 0000000..6c16d8a
 +dimen abc_text_size_subtitle_material_toolbar
 +dimen abc_text_size_title_material
 +dimen abc_text_size_title_material_toolbar
++dimen autofill_inline_suggestion_icon_size
 +dimen compat_button_inset_horizontal_material
 +dimen compat_button_inset_vertical_material
 +dimen compat_button_padding_horizontal_material
@@ -2982,7 +2778,6 @@ index 0000000..6c16d8a
 +dimen compat_notification_large_icon_max_width
 +dimen disabled_alpha_material_dark
 +dimen disabled_alpha_material_light
-+dimen fingerprint_icon_size
 +dimen highlight_alpha_material_colored
 +dimen highlight_alpha_material_dark
 +dimen highlight_alpha_material_light
@@ -3005,10 +2800,6 @@ index 0000000..6c16d8a
 +dimen notification_subtext_size
 +dimen notification_top_pad
 +dimen notification_top_pad_large_text
-+dimen subtitle_corner_radius
-+dimen subtitle_outline_width
-+dimen subtitle_shadow_offset
-+dimen subtitle_shadow_radius
 +dimen tooltip_corner_radius
 +dimen tooltip_horizontal_padding
 +dimen tooltip_margin
@@ -3050,12 +2841,6 @@ index 0000000..6c16d8a
 +drawable abc_ic_menu_selectall_mtrl_alpha
 +drawable abc_ic_menu_share_mtrl_alpha
 +drawable abc_ic_search_api_material
-+drawable abc_ic_star_black_16dp
-+drawable abc_ic_star_black_36dp
-+drawable abc_ic_star_black_48dp
-+drawable abc_ic_star_half_black_16dp
-+drawable abc_ic_star_half_black_36dp
-+drawable abc_ic_star_half_black_48dp
 +drawable abc_ic_voice_search_api_material
 +drawable abc_item_background_holo_dark
 +drawable abc_item_background_holo_light
@@ -3094,20 +2879,15 @@ index 0000000..6c16d8a
 +drawable abc_tab_indicator_mtrl_alpha
 +drawable abc_text_cursor_material
 +drawable abc_text_select_handle_left_mtrl
-+drawable abc_text_select_handle_left_mtrl_dark
-+drawable abc_text_select_handle_left_mtrl_light
 +drawable abc_text_select_handle_middle_mtrl
-+drawable abc_text_select_handle_middle_mtrl_dark
-+drawable abc_text_select_handle_middle_mtrl_light
 +drawable abc_text_select_handle_right_mtrl
-+drawable abc_text_select_handle_right_mtrl_dark
-+drawable abc_text_select_handle_right_mtrl_light
 +drawable abc_textfield_activated_mtrl_alpha
 +drawable abc_textfield_default_mtrl_alpha
 +drawable abc_textfield_search_activated_mtrl_alpha
 +drawable abc_textfield_search_default_mtrl_alpha
 +drawable abc_textfield_search_material
 +drawable abc_vector_test
++drawable autofill_inline_suggestion_chip_background
 +drawable btn_checkbox_checked_mtrl
 +drawable btn_checkbox_checked_to_unchecked_mtrl_animation
 +drawable btn_checkbox_unchecked_mtrl
@@ -3116,8 +2896,6 @@ index 0000000..6c16d8a
 +drawable btn_radio_off_to_on_mtrl_animation
 +drawable btn_radio_on_mtrl
 +drawable btn_radio_on_to_off_mtrl_animation
-+drawable fingerprint_dialog_error
-+drawable fingerprint_dialog_fp_icon
 +drawable notification_action_background
 +drawable notification_bg
 +drawable notification_bg_low
@@ -3136,6 +2914,8 @@ index 0000000..6c16d8a
 +drawable tooltip_frame_light
 +id accessibility_action_clickable_span
 +id accessibility_actions
++id accessibility_collection
++id accessibility_collection_item
 +id accessibility_custom_action_0
 +id accessibility_custom_action_1
 +id accessibility_custom_action_10
@@ -3170,10 +2950,11 @@ index 0000000..6c16d8a
 +id accessibility_custom_action_9
 +id accessibility_hint
 +id accessibility_label
++id accessibility_links
 +id accessibility_role
 +id accessibility_state
++id accessibility_state_expanded
 +id accessibility_value
-+id action0
 +id action_bar
 +id action_bar_activity_content
 +id action_bar_container
@@ -3196,10 +2977,12 @@ index 0000000..6c16d8a
 +id add
 +id alertTitle
 +id async
++id autofill_inline_suggestion_end_icon
++id autofill_inline_suggestion_start_icon
++id autofill_inline_suggestion_subtitle
++id autofill_inline_suggestion_title
 +id blocking
-+id bottom
 +id buttonPanel
-+id cancel_action
 +id catalyst_redbox_title
 +id center
 +id centerCrop
@@ -3215,14 +2998,8 @@ index 0000000..6c16d8a
 +id default_activity_button
 +id dialog_button
 +id edit_query
-+id end
-+id end_padder
 +id expand_activities_button
 +id expanded_menu
-+id fingerprint_description
-+id fingerprint_error
-+id fingerprint_icon
-+id fingerprint_subtitle
 +id fitBottomStart
 +id fitCenter
 +id fitEnd
@@ -3243,12 +3020,11 @@ index 0000000..6c16d8a
 +id item2
 +id item3
 +id item4
-+id left
++id labelled_by
 +id line1
 +id line3
 +id listMode
 +id list_item
-+id media_actions
 +id message
 +id multiply
 +id none
@@ -3259,11 +3035,11 @@ index 0000000..6c16d8a
 +id off
 +id on
 +id parentPanel
++id pointer_events
 +id progress_circular
 +id progress_horizontal
 +id radio
 +id react_test_id
-+id right
 +id right_icon
 +id right_side
 +id rn_frame_file
@@ -3297,8 +3073,6 @@ index 0000000..6c16d8a
 +id src_atop
 +id src_in
 +id src_over
-+id start
-+id status_bar_latest_event_content
 +id submenuarrow
 +id submit_area
 +id tabMode
@@ -3323,7 +3097,6 @@ index 0000000..6c16d8a
 +id title
 +id titleDividerNoCustom
 +id title_template
-+id top
 +id topPanel
 +id unchecked
 +id uniform
@@ -3377,23 +3150,14 @@ index 0000000..6c16d8a
 +layout abc_search_view
 +layout abc_select_dialog_material
 +layout abc_tooltip
++layout autofill_inline_suggestion
 +layout custom_dialog
 +layout dev_loading_view
-+layout fingerprint_dialog_layout
 +layout fps_view
 +layout notification_action
 +layout notification_action_tombstone
-+layout notification_media_action
-+layout notification_media_cancel_action
-+layout notification_template_big_media
-+layout notification_template_big_media_custom
-+layout notification_template_big_media_narrow
-+layout notification_template_big_media_narrow_custom
 +layout notification_template_custom_big
 +layout notification_template_icon_group
-+layout notification_template_lines_media
-+layout notification_template_media
-+layout notification_template_media_custom
 +layout notification_template_part_chronometer
 +layout notification_template_part_time
 +layout redbox_item_frame
@@ -3413,18 +3177,6 @@ index 0000000..6c16d8a
 +string abc_activitychooserview_choose_application
 +string abc_capital_off
 +string abc_capital_on
-+string abc_font_family_body_1_material
-+string abc_font_family_body_2_material
-+string abc_font_family_button_material
-+string abc_font_family_caption_material
-+string abc_font_family_display_1_material
-+string abc_font_family_display_2_material
-+string abc_font_family_display_3_material
-+string abc_font_family_display_4_material
-+string abc_font_family_headline_material
-+string abc_font_family_menu_material
-+string abc_font_family_subhead_material
-+string abc_font_family_title_material
 +string abc_menu_alt_shortcut_label
 +string abc_menu_ctrl_shortcut_label
 +string abc_menu_delete_shortcut_label
@@ -3445,7 +3197,6 @@ index 0000000..6c16d8a
 +string abc_shareactionprovider_share_with_application
 +string abc_toolbar_collapse_description
 +string alert_description
-+string button_description
 +string catalyst_change_bundle_location
 +string catalyst_copy_button
 +string catalyst_debug
@@ -3453,9 +3204,9 @@ index 0000000..6c16d8a
 +string catalyst_debug_chrome_stop
 +string catalyst_debug_connecting
 +string catalyst_debug_error
-+string catalyst_debug_nuclide
-+string catalyst_debug_nuclide_error
++string catalyst_debug_open
 +string catalyst_debug_stop
++string catalyst_devtools_open
 +string catalyst_dismiss_button
 +string catalyst_heap_capture
 +string catalyst_hot_reloading
@@ -3463,7 +3214,9 @@ index 0000000..6c16d8a
 +string catalyst_hot_reloading_auto_enable
 +string catalyst_hot_reloading_stop
 +string catalyst_inspector
++string catalyst_inspector_stop
 +string catalyst_loading_from_url
++string catalyst_open_flipper_error
 +string catalyst_perf_monitor
 +string catalyst_perf_monitor_stop
 +string catalyst_reload
@@ -3475,18 +3228,6 @@ index 0000000..6c16d8a
 +string catalyst_settings
 +string catalyst_settings_title
 +string combobox_description
-+string confirm_device_credential_password
-+string default_error_msg
-+string fingerprint_dialog_touch_sensor
-+string fingerprint_error_hw_not_available
-+string fingerprint_error_hw_not_present
-+string fingerprint_error_lockout
-+string fingerprint_error_no_fingerprints
-+string fingerprint_error_user_canceled
-+string fingerprint_not_recognized
-+string generic_error_no_device_credential
-+string generic_error_no_keyguard
-+string generic_error_user_canceled
 +string header_description
 +string image_description
 +string imagebutton_description
@@ -3498,7 +3239,6 @@ index 0000000..6c16d8a
 +string radiogroup_description
 +string rn_tab_description
 +string scrollbar_description
-+string search_description
 +string search_menu_title
 +string spinbutton_description
 +string state_busy_description
@@ -3507,6 +3247,7 @@ index 0000000..6c16d8a
 +string state_mixed_description
 +string state_off_description
 +string state_on_description
++string state_unselected_description
 +string status_bar_notification_info_overflow
 +string summary_description
 +string tablist_description
@@ -3677,8 +3418,6 @@ index 0000000..6c16d8a
 +style Base_Widget_AppCompat_Toolbar_Button_Navigation
 +style CalendarDatePickerDialog
 +style CalendarDatePickerStyle
-+style ClockTimePickerDialog
-+style ClockTimePickerStyle
 +style DialogAnimationFade
 +style DialogAnimationSlide
 +style Platform_AppCompat
@@ -3710,8 +3449,6 @@ index 0000000..6c16d8a
 +style RtlUnderlay_Widget_AppCompat_ActionButton_Overflow
 +style SpinnerDatePickerDialog
 +style SpinnerDatePickerStyle
-+style SpinnerTimePickerDialog
-+style SpinnerTimePickerStyle
 +style TextAppearance_AppCompat
 +style TextAppearance_AppCompat_Body1
 +style TextAppearance_AppCompat_Body2
@@ -3762,14 +3499,9 @@ index 0000000..6c16d8a
 +style TextAppearance_AppCompat_Widget_TextView_SpinnerItem
 +style TextAppearance_Compat_Notification
 +style TextAppearance_Compat_Notification_Info
-+style TextAppearance_Compat_Notification_Info_Media
 +style TextAppearance_Compat_Notification_Line2
-+style TextAppearance_Compat_Notification_Line2_Media
-+style TextAppearance_Compat_Notification_Media
 +style TextAppearance_Compat_Notification_Time
-+style TextAppearance_Compat_Notification_Time_Media
 +style TextAppearance_Compat_Notification_Title
-+style TextAppearance_Compat_Notification_Title_Media
 +style TextAppearance_Widget_AppCompat_ExpandedMenu_Item
 +style TextAppearance_Widget_AppCompat_Toolbar_Subtitle
 +style TextAppearance_Widget_AppCompat_Toolbar_Title
@@ -3805,6 +3537,7 @@ index 0000000..6c16d8a
 +style Theme_AppCompat_Light_Dialog_MinWidth
 +style Theme_AppCompat_Light_NoActionBar
 +style Theme_AppCompat_NoActionBar
++style Theme_AutofillInlineSuggestion
 +style Theme_Catalyst
 +style Theme_Catalyst_LogBox
 +style Theme_Catalyst_RedBox
@@ -3886,9 +3619,14 @@ index 0000000..6c16d8a
 +style Widget_AppCompat_TextView_SpinnerItem
 +style Widget_AppCompat_Toolbar
 +style Widget_AppCompat_Toolbar_Button_Navigation
++style Widget_Autofill
++style Widget_Autofill_InlineSuggestionChip
++style Widget_Autofill_InlineSuggestionEndIconStyle
++style Widget_Autofill_InlineSuggestionStartIconStyle
++style Widget_Autofill_InlineSuggestionSubtitle
++style Widget_Autofill_InlineSuggestionTitle
 +style Widget_Compat_NotificationActionContainer
 +style Widget_Compat_NotificationActionText
-+style Widget_Support_CoordinatorLayout
 +style redboxButton
 +styleable ActionBar background backgroundSplit backgroundStacked contentInsetEnd contentInsetEndWithActions contentInsetLeft contentInsetRight contentInsetStart contentInsetStartWithNavigation customNavigationLayout displayOptions divider elevation height hideOnContentScroll homeAsUpIndicator homeLayout icon indeterminateProgressStyle itemPadding logo navigationMode popupTheme progressBarPadding progressBarStyle subtitle subtitleTextStyle title titleTextStyle
 +styleable ActionBarLayout android_layout_gravity
@@ -3906,13 +3644,12 @@ index 0000000..6c16d8a
 +styleable AppCompatTextHelper android_drawableBottom android_drawableEnd android_drawableLeft android_drawableRight android_drawableStart android_drawableTop android_textAppearance
 +styleable AppCompatTextView android_textAppearance autoSizeMaxTextSize autoSizeMinTextSize autoSizePresetSizes autoSizeStepGranularity autoSizeTextType drawableBottomCompat drawableEndCompat drawableLeftCompat drawableRightCompat drawableStartCompat drawableTint drawableTintMode drawableTopCompat emojiCompatEnabled firstBaselineToTopHeight fontFamily fontVariationSettings lastBaselineToBottomHeight lineHeight textAllCaps textLocale
 +styleable AppCompatTheme actionBarDivider actionBarItemBackground actionBarPopupTheme actionBarSize actionBarSplitStyle actionBarStyle actionBarTabBarStyle actionBarTabStyle actionBarTabTextStyle actionBarTheme actionBarWidgetTheme actionButtonStyle actionDropDownStyle actionMenuTextAppearance actionMenuTextColor actionModeBackground actionModeCloseButtonStyle actionModeCloseContentDescription actionModeCloseDrawable actionModeCopyDrawable actionModeCutDrawable actionModeFindDrawable actionModePasteDrawable actionModePopupWindowStyle actionModeSelectAllDrawable actionModeShareDrawable actionModeSplitBackground actionModeStyle actionModeTheme actionModeWebSearchDrawable actionOverflowButtonStyle actionOverflowMenuStyle activityChooserViewStyle alertDialogButtonGroupStyle alertDialogCenterButtons alertDialogStyle alertDialogTheme android_windowAnimationStyle android_windowIsFloating autoCompleteTextViewStyle borderlessButtonStyle buttonBarButtonStyle buttonBarNegativeButtonStyle buttonBarNeutralButtonStyle buttonBarPositiveButtonStyle buttonBarStyle buttonStyle buttonStyleSmall checkboxStyle checkedTextViewStyle colorAccent colorBackgroundFloating colorButtonNormal colorControlActivated colorControlHighlight colorControlNormal colorError colorPrimary colorPrimaryDark colorSwitchThumbNormal controlBackground dialogCornerRadius dialogPreferredPadding dialogTheme dividerHorizontal dividerVertical dropDownListViewStyle dropdownListPreferredItemHeight editTextBackground editTextColor editTextStyle homeAsUpIndicator imageButtonStyle listChoiceBackgroundIndicator listChoiceIndicatorMultipleAnimated listChoiceIndicatorSingleAnimated listDividerAlertDialog listMenuViewStyle listPopupWindowStyle listPreferredItemHeight listPreferredItemHeightLarge listPreferredItemHeightSmall listPreferredItemPaddingEnd listPreferredItemPaddingLeft listPreferredItemPaddingRight listPreferredItemPaddingStart panelBackground panelMenuListTheme panelMenuListWidth popupMenuStyle popupWindowStyle radioButtonStyle ratingBarStyle ratingBarStyleIndicator ratingBarStyleSmall searchViewStyle seekBarStyle selectableItemBackground selectableItemBackgroundBorderless spinnerDropDownItemStyle spinnerStyle switchStyle textAppearanceLargePopupMenu textAppearanceListItem textAppearanceListItemSecondary textAppearanceListItemSmall textAppearancePopupMenuHeader textAppearanceSearchResultSubtitle textAppearanceSearchResultTitle textAppearanceSmallPopupMenu textColorAlertDialogListItem textColorSearchUrl toolbarNavigationButtonStyle toolbarStyle tooltipForegroundColor tooltipFrameBackground viewInflaterClass windowActionBar windowActionBarOverlay windowActionModeOverlay windowFixedHeightMajor windowFixedHeightMinor windowFixedWidthMajor windowFixedWidthMinor windowMinWidthMajor windowMinWidthMinor windowNoTitle
++styleable Autofill_InlineSuggestion autofillInlineSuggestionChip autofillInlineSuggestionEndIconStyle autofillInlineSuggestionStartIconStyle autofillInlineSuggestionSubtitle autofillInlineSuggestionTitle isAutofillInlineSuggestionTheme
 +styleable ButtonBarLayout allowStacking
 +styleable Capability queryPatterns shortcutMatchRequired
 +styleable CheckedTextView android_checkMark checkMarkCompat checkMarkTint checkMarkTintMode
 +styleable ColorStateListItem alpha android_alpha android_color android_lStar lStar
 +styleable CompoundButton android_button buttonCompat buttonTint buttonTintMode
-+styleable CoordinatorLayout keylines statusBarBackground
-+styleable CoordinatorLayout_Layout android_layout_gravity layout_anchor layout_anchorGravity layout_behavior layout_dodgeInsetEdges layout_insetEdge layout_keyline
 +styleable DrawerArrowToggle arrowHeadLength arrowShaftLength barLength color drawableSize gapBetweenBars spinBars thickness
 +styleable FontFamily fontProviderAuthority fontProviderCerts fontProviderFetchStrategy fontProviderFetchTimeout fontProviderPackage fontProviderQuery fontProviderSystemFontFamily
 +styleable FontFamilyFont android_font android_fontStyle android_fontVariationSettings android_fontWeight android_ttcIndex font fontStyle fontVariationSettings fontWeight ttcIndex
@@ -3942,116 +3679,38 @@ index 0000000..6c16d8a
 +styleable ViewBackgroundHelper android_background backgroundTint backgroundTintMode
 +styleable ViewStubCompat android_id android_inflatedId android_layout
 +xml rn_dev_preferences
-diff --git a/node_modules/react-native-keychain/android/build/outputs/logs/manifest-merger-debug-report.txt b/node_modules/react-native-keychain/android/build/outputs/logs/manifest-merger-debug-report.txt
+diff --git a/node_modules/react-native-appearance/android/build/outputs/logs/manifest-merger-debug-report.txt b/node_modules/react-native-appearance/android/build/outputs/logs/manifest-merger-debug-report.txt
 new file mode 100644
-index 0000000..29859f1
+index 0000000..b84c468
 --- /dev/null
-+++ b/node_modules/react-native-keychain/android/build/outputs/logs/manifest-merger-debug-report.txt
-@@ -0,0 +1,45 @@
++++ b/node_modules/react-native-appearance/android/build/outputs/logs/manifest-merger-debug-report.txt
+@@ -0,0 +1,25 @@
 +-- Merging decision tree log ---
 +manifest
-+ADDED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml:1:1-9:12
-+INJECTED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml:1:1-9:12
-+INJECTED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml:1:1-9:12
-+INJECTED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml:1:1-9:12
-+INJECTED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml:1:1-9:12
-+INJECTED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml:1:1-9:12
-+INJECTED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml:1:1-9:12
++ADDED from /Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/src/main/AndroidManifest.xml:1:1-4:12
++INJECTED from /Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/src/main/AndroidManifest.xml:1:1-4:12
++INJECTED from /Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/src/main/AndroidManifest.xml:1:1-4:12
 +	package
-+		ADDED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml:3:3-33
-+		INJECTED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml
-+		INJECTED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml
-+	android:versionName
-+		INJECTED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml
-+		ADDED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml:1:1-9:12
-+		INJECTED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml
-+	android:versionCode
-+		INJECTED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml
-+		ADDED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml:1:1-9:12
-+		INJECTED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml
++		ADDED from /Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/src/main/AndroidManifest.xml:2:11-39
++		INJECTED from /Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/src/main/AndroidManifest.xml
++		INJECTED from /Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/src/main/AndroidManifest.xml
 +	xmlns:android
-+		ADDED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml:2:3-61
-+uses-permission#android.permission.USE_BIOMETRIC
-+ADDED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml:6:3-70
-+	android:name
-+		ADDED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml:6:20-67
-+uses-permission#android.permission.USE_FINGERPRINT
-+ADDED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml:7:3-72
-+	android:name
-+		ADDED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml:7:20-69
++		ADDED from /Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/src/main/AndroidManifest.xml:1:11-69
 +uses-sdk
-+INJECTED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml reason: use-sdk injection requested
-+INJECTED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml
-+INJECTED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml
-+INJECTED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml
-+INJECTED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml
++INJECTED from /Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/src/main/AndroidManifest.xml reason: use-sdk injection requested
++INJECTED from /Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/src/main/AndroidManifest.xml
++INJECTED from /Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/src/main/AndroidManifest.xml
++INJECTED from /Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/src/main/AndroidManifest.xml
++INJECTED from /Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/src/main/AndroidManifest.xml
 +	android:targetSdkVersion
-+		INJECTED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml
-+		ADDED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml
-+		INJECTED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml
++		INJECTED from /Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/src/main/AndroidManifest.xml
++		ADDED from /Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/src/main/AndroidManifest.xml
++		INJECTED from /Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/src/main/AndroidManifest.xml
 +	android:minSdkVersion
-+		INJECTED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml
-+		ADDED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml
-+		INJECTED from /Users/yash.chaubal/Documents/GitHub/pillarwallet/node_modules/react-native-keychain/android/src/main/AndroidManifest.xml
-diff --git a/node_modules/react-native-keychain/android/build/tmp/compileDebugJavaWithJavac/source-classes-mapping.txt b/node_modules/react-native-keychain/android/build/tmp/compileDebugJavaWithJavac/source-classes-mapping.txt
++		INJECTED from /Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/src/main/AndroidManifest.xml
++		ADDED from /Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/src/main/AndroidManifest.xml
++		INJECTED from /Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/src/main/AndroidManifest.xml
+diff --git a/node_modules/react-native-appearance/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin b/node_modules/react-native-appearance/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin
 new file mode 100644
-index 0000000..3c7c334
---- /dev/null
-+++ b/node_modules/react-native-keychain/android/build/tmp/compileDebugJavaWithJavac/source-classes-mapping.txt
-@@ -0,0 +1,56 @@
-+com/oblador/keychain/exceptions/KeyStoreAccessException.java
-+ com.oblador.keychain.exceptions.KeyStoreAccessException
-+com/oblador/keychain/KeychainModule.java
-+ com.oblador.keychain.KeychainModule
-+ com.oblador.keychain.KeychainModule$AccessControl
-+ com.oblador.keychain.KeychainModule$AuthPromptOptions
-+ com.oblador.keychain.KeychainModule$Errors
-+ com.oblador.keychain.KeychainModule$KnownCiphers
-+ com.oblador.keychain.KeychainModule$Maps
-+ com.oblador.keychain.KeychainModule$Rules
-+com/oblador/keychain/decryptionHandler/DecryptionResultHandlerInteractiveBiometric.java
-+ com.oblador.keychain.decryptionHandler.DecryptionResultHandlerInteractiveBiometric
-+com/oblador/keychain/cipherStorage/CipherStorageFacebookConceal.java
-+ com.oblador.keychain.cipherStorage.CipherStorageFacebookConceal
-+com/oblador/keychain/cipherStorage/CipherStorage.java
-+ com.oblador.keychain.cipherStorage.CipherStorage
-+ com.oblador.keychain.cipherStorage.CipherStorage$CipherResult
-+ com.oblador.keychain.cipherStorage.CipherStorage$DecryptionContext
-+ com.oblador.keychain.cipherStorage.CipherStorage$DecryptionResult
-+ com.oblador.keychain.cipherStorage.CipherStorage$EncryptionResult
-+com/oblador/keychain/decryptionHandler/DecryptionResultHandlerProvider.java
-+ com.oblador.keychain.decryptionHandler.DecryptionResultHandlerProvider
-+com/oblador/keychain/DeviceAvailability.java
-+ com.oblador.keychain.DeviceAvailability
-+com/oblador/keychain/decryptionHandler/DecryptionResultHandler.java
-+ com.oblador.keychain.decryptionHandler.DecryptionResultHandler
-+com/oblador/keychain/decryptionHandler/DecryptionResultHandlerInteractiveBiometricManualRetry.java
-+ com.oblador.keychain.decryptionHandler.DecryptionResultHandlerInteractiveBiometricManualRetry
-+com/oblador/keychain/cipherStorage/CipherStorageKeystoreAesCbc.java
-+ com.oblador.keychain.cipherStorage.CipherStorageKeystoreAesCbc
-+com/oblador/keychain/KeychainPackage.java
-+ com.oblador.keychain.KeychainPackage
-+com/oblador/keychain/decryptionHandler/DecryptionResultHandlerNonInteractive.java
-+ com.oblador.keychain.decryptionHandler.DecryptionResultHandlerNonInteractive
-+com/oblador/keychain/PrefsStorage.java
-+ com.oblador.keychain.PrefsStorage
-+ com.oblador.keychain.PrefsStorage$ResultSet
-+com/oblador/keychain/BuildConfig.java
-+ com.oblador.keychain.BuildConfig
-+com/oblador/keychain/SecurityLevel.java
-+ com.oblador.keychain.SecurityLevel
-+com/oblador/keychain/KeychainModuleBuilder.java
-+ com.oblador.keychain.KeychainModuleBuilder
-+com/oblador/keychain/exceptions/CryptoFailedException.java
-+ com.oblador.keychain.exceptions.CryptoFailedException
-+com/oblador/keychain/cipherStorage/CipherStorageBase.java
-+ com.oblador.keychain.cipherStorage.CipherStorageBase
-+ com.oblador.keychain.cipherStorage.CipherStorageBase$DecryptBytesHandler
-+ com.oblador.keychain.cipherStorage.CipherStorageBase$Defaults
-+ com.oblador.keychain.cipherStorage.CipherStorageBase$EncryptStringHandler
-+ com.oblador.keychain.cipherStorage.CipherStorageBase$IV
-+ com.oblador.keychain.cipherStorage.CipherStorageBase$SelfDestroyKey
-+com/oblador/keychain/cipherStorage/CipherStorageKeystoreRsaEcb.java
-+ com.oblador.keychain.cipherStorage.CipherStorageKeystoreRsaEcb
-+com/oblador/keychain/exceptions/EmptyParameterException.java
-+ com.oblador.keychain.exceptions.EmptyParameterException
+index 0000000..73056ad
+Binary files /dev/null and b/node_modules/react-native-appearance/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin differ

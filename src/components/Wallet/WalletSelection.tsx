@@ -20,7 +20,7 @@
 
 import React from 'react';
 import { FlatList, TouchableOpacity, StyleSheet } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 
 // Hooks
 import { useStableAssets, useNonStableAssets } from 'hooks/assets';
@@ -88,7 +88,10 @@ export default function () {
   const onNavigate = (category, chain) => {
     const assetData = buildAssetDataNavigationParam(category, chain);
     assetData.backDashboad = true;
-    navigation.navigate(ASSET, { assetData, isNavigateToHome: true });
+    console.log('====================================');
+    console.log('ASSSSTTTTTT', assetData);
+    console.log('====================================');
+    navigation.navigate(ASSET, { screen: ASSET, params: { assetData, isNavigateToHome: true } });
   };
 
   return (

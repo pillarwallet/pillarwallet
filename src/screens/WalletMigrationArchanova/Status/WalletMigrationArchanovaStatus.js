@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
@@ -42,7 +42,6 @@ import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 
 // Utils
 import { mapTransactionsHistory } from 'utils/feedData';
-
 
 const WalletMigrationArchanovaStatus = () => {
   const { t } = useTranslationWithPrefix('walletMigrationArchanova.status');
@@ -85,8 +84,8 @@ function useMigrationTransactions() {
   const transactions = useRootSelector(archanovaMigrationTransactionsSelector);
   const accounts = useRootSelector(accountsSelector);
 
-  return React.useMemo(() => mapTransactionsHistory(transactions, accounts, TRANSACTION_EVENT), [
-    transactions,
-    accounts,
-  ]);
+  return React.useMemo(
+    () => mapTransactionsHistory(transactions, accounts, TRANSACTION_EVENT),
+    [transactions, accounts],
+  );
 }

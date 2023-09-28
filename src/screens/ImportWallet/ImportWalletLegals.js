@@ -20,9 +20,10 @@
 
 import * as React from 'react';
 import { Platform, BackHandler } from 'react-native';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
+import type { Route } from '@react-navigation/native';
 
 // Components
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
@@ -39,10 +40,11 @@ import { firebaseRemoteConfig } from 'services/firebase';
 
 // Constants
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
-import { IMPORT_WALLET, ONBOARDING_LEGAL_SCREEN } from 'constants/navigationConstants';
+import { IMPORT_WALLET, ONBOARDING_LEGAL_SCREEN, AUTH_FLOW } from 'constants/navigationConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  route: Route
 };
 
 type State = {
@@ -62,8 +64,8 @@ class ImportWalletLegals extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { navigation } = this.props;
-    const navigateTo = navigation.getParam('navigateTo', null);
+    const { route } = this.props;
+    const navigateTo = route?.params?.navigateTo || null;
 
     if (Platform.OS === 'android' && navigateTo) {
       BackHandler.addEventListener('hardwareBackPress', this.physicalBackAction);
@@ -77,12 +79,12 @@ class ImportWalletLegals extends React.Component<Props, State> {
   }
 
   handleBackAction = () => {
-    const { navigation } = this.props;
-    const navigateTo = navigation.getParam('navigateTo', null);
+    const { navigation, route } = this.props;
+    const navigateTo = route?.params?.navigateTo || null;
     if (navigateTo) {
-      navigation.navigate(navigateTo);
+      navigation.navigate(AUTH_FLOW, { screen: navigateTo });
     } else {
-      navigation.goBack(null);
+      navigation.goBack();
     }
   };
 

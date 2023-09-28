@@ -21,7 +21,7 @@ import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { Keyboard, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import t from 'translations/translate';
 import Clipboard from '@react-native-community/clipboard';
 
@@ -51,7 +51,7 @@ type Props = {
   isImportingWallet: boolean;
 };
 
-const NewImportWallet: React.FC<Props> = () => {
+const NewImportWallet: React.FC<Props> = ({ navigation }) => {
   const dispatch = useDispatch();
   const colors = useThemeColors();
   const { errorMessage, isImportingWallet } = useRootSelector((state) => state.onboarding);
@@ -129,6 +129,7 @@ const NewImportWallet: React.FC<Props> = () => {
 
   return (
     <ContainerWithHeader
+      navigation={navigation}
       headerProps={{
         noBack: false,
       }}

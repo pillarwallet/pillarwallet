@@ -20,16 +20,14 @@
 
 import * as React from 'react';
 import { Image } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import SafeAreaView from 'react-native-safe-area-view';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Contants
-import {
-  WALLET_MIGRATION_ARCHANOVA_SELECT_ASSETS,
-} from 'constants/navigationConstants';
+import { WALLET_MIGRATION_ARCHANOVA_SELECT_ASSETS } from 'constants/navigationConstants';
 
 // Components
 import { Container } from 'components/layout/Layout';
@@ -42,7 +40,6 @@ import { resetAssetsToMigrateAction } from 'actions/walletMigrationArchanovaActi
 
 // Utils
 import { appFont, fontStyles, spacing } from 'utils/variables';
-
 
 const smartWalletImage = require('assets/images/logo-wallet-migration.png');
 
@@ -121,4 +118,3 @@ const Body = styled(Text)`
   ${fontStyles.medium};
   text-align: center;
 `;
-

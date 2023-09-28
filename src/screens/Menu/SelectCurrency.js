@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { FlatList } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';

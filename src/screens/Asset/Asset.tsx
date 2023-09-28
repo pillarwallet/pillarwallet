@@ -20,7 +20,7 @@
 import React, { useMemo, useState } from 'react';
 import t from 'translations/translate';
 import { Dimensions } from 'react-native';
-import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 // Components
 import { Container, Content } from 'components/layout/Layout';
@@ -45,6 +45,7 @@ import { USD } from 'constants/assetsConstants';
 
 // models, types
 import type { AssetDataNavigationParam } from 'models/Asset';
+import type { Route } from '@react-navigation/native';
 
 // Local
 import DurationSelection from './components/DurationSelection';
@@ -56,10 +57,11 @@ import AnimatedFloatingActions from './AnimatedFloatingActions';
 
 const AssetScreen = () => {
   const navigation = useNavigation();
+  const route: Route = useRoute();
 
   const accountAssetsBalances = useRootSelector(accountAssetsBalancesSelector);
 
-  const assetData: AssetDataNavigationParam = useNavigationParam('assetData');
+  const assetData: AssetDataNavigationParam = route?.params?.assetData;
   const { chain, imageUrl, contractAddress, token } = assetData;
 
   const { width: screenWidth } = Dimensions.get('window');
@@ -121,7 +123,7 @@ const AssetScreen = () => {
           { maxWidth: screenWidth * 0.8 },
           networkName.length > 10 && { marginLeft: screenWidth * 0.05 },
         ]}
-        customOnBack={() => navigation.dismiss()}
+        customOnBack={() => navigation.goBack()}
         noPaddingTop
       />
       <Content scrollEnabled={!pointerVisible} bounces={false} paddingHorizontal={0} paddingVertical={0}>

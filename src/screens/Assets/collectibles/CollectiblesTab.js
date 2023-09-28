@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { SectionList, useWindowDimensions } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 import { chunk } from 'lodash';
@@ -57,9 +57,10 @@ import CollectibleListItem from './CollectibleListItem';
 function CollectiblesTab() {
   const { t } = useTranslation();
   const navigation = useNavigation();
+  const route = useRoute();
   const safeArea = useSafeAreaInsets();
 
-  const initialChain: ?Chain = navigation.getParam('chain');
+  const initialChain: ?Chain = route?.params?.chain;
   const { expandItemsPerChain, toggleExpandItems } = useExpandItemsPerChain(initialChain);
 
   const { width } = useWindowDimensions();
@@ -152,7 +153,7 @@ export default CollectiblesTab;
 type Section = {
   ...SectionBase<CollectibleItem[]>,
   chain: Chain,
-    totalCollectibleCount: number,
+  totalCollectibleCount: number,
 };
 
 const useSectionData = (numberOfColumns: number, expandItemsPerChain: FlagPerChain): Section[] => {

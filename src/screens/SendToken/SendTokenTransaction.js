@@ -20,7 +20,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
-import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { TouchableOpacity } from 'react-native';
 import t from 'translations/translate';
 
@@ -105,17 +105,18 @@ const getTransactionSuccessTitle = (props) => {
 function SendTokenTransaction() {
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const route = useRoute();
   const fromAddress = useRootSelector(activeAccountAddressSelector);
   const [isResolvingHash, setisResolvingHash] = useState(false);
 
-  const isSuccess: boolean = useNavigationParam('isSuccess');
-  const error: ?string = useNavigationParam('error');
-  const transactionPayload: TransactionPayload = useNavigationParam('transactionPayload') ?? {};
-  const transactionType: ?string = useNavigationParam('transactionType');
-  const goBackDismiss: ?string = useNavigationParam('goBackDismiss');
-  const noRetry: string = useNavigationParam('noRetry');
-  const batchHash: ?string = useNavigationParam('batchHash');
-  const [hash, setHash] = useState(useNavigationParam('hash'));
+  const isSuccess: boolean = route?.params?.isSuccess;
+  const error: ?string = route?.params?.error;
+  const transactionPayload: TransactionPayload = route?.params?.transactionPayload ?? {};
+  const transactionType: ?string = route?.params?.transactionType;
+  const goBackDismiss: ?string = route?.params?.goBackDismiss;
+  const noRetry: string = route?.params?.noRetry;
+  const batchHash: ?string = route?.params?.batchHash;
+  const [hash, setHash] = useState(route?.params?.hash);
 
   const {
     tokenType: transactionTokenType,
@@ -177,7 +178,7 @@ function SendTokenTransaction() {
     if (goBackDismiss) {
       navigation.goBack(null);
     } else {
-      navigation.dismiss();
+      navigation.goBack();
     }
 
     if (transactionPayload.usePPN && isSuccess) {

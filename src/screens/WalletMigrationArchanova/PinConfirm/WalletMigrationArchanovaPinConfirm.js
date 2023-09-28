@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { useTranslationWithPrefix } from 'translations/translate';
 
@@ -42,7 +42,6 @@ import {
 // Utils
 import { reportErrorLog } from 'utils/common';
 import { submitMigrationTransactions } from 'utils/walletMigrationArchanova';
-
 
 function WalletMigrationArchanovaPinConfirm() {
   const { t } = useTranslationWithPrefix('walletMigrationArchanova.pinConfirm');

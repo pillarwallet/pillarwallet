@@ -22,7 +22,7 @@ import React, { FC, useState, useEffect } from 'react';
 import { Image } from 'react-native';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 import { addDays, intervalToDuration } from 'date-fns';
 
 // Constants

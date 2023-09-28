@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { InteractionManager } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
@@ -55,8 +55,9 @@ import type { TokenData } from 'models/Asset';
 
 function KeyBasedAssetTransferEditAmount() {
   const navigation = useNavigation();
-  const assetData: ?TokenData = navigation.getParam('assetData');
-  const initialValue: ?number = navigation.getParam('value');
+  const route = useRoute();
+  const assetData: ?TokenData = route?.params?.assetData;
+  const initialValue: ?number = route?.params?.value;
 
   const inputRef = React.useRef();
 
@@ -68,7 +69,9 @@ function KeyBasedAssetTransferEditAmount() {
 
   React.useEffect(() => {
     const promise = InteractionManager.runAfterInteractions(() => inputRef.current?.focus());
-    return () => { promise?.cancel(); };
+    return () => {
+      promise?.cancel();
+    };
   }, []);
 
   // Fail safe

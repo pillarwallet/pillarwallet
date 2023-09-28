@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { SectionList } from 'react-native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useRoute } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
@@ -51,11 +51,11 @@ import RewardListItem from './RewardListItem';
 
 function RewardsTab() {
   const { t } = useTranslationWithPrefix('assets.rewards');
-  const navigation = useNavigation();
+  const route = useRoute();
   const colors = useThemeColors();
   const safeArea = useSafeAreaInsets();
 
-  const initialChain: ?Chain = navigation.getParam('chain');
+  const initialChain: ?Chain = route?.params?.chain;
   const { expandItemsPerChain, toggleExpandItems } = useExpandItemsPerChain(initialChain);
 
   const totalBalance = useRewardsTotalBalance();

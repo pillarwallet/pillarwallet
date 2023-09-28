@@ -18,10 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { NavigationActions } from 'react-navigation';
 import * as Sentry from '@sentry/react-native';
 import get from 'lodash.get';
 import SplashScreen from 'react-native-splash-screen';
+import { CommonActions } from '@react-navigation/native';
 
 // services
 import Storage from 'services/storage';
@@ -236,22 +236,21 @@ export const initAppAndRedirectAction = () => {
     }
 
     dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
-
     let navAction;
     if (walletTimestamp) {
       const appearanceVisible = get(storageData, 'appearance_visible');
       navAction = {
-        routeName: AUTH_FLOW,
-        action: NavigationActions.navigate({
-          routeName: !appearanceVisible ? MENU_SELECT_APPEARANCE : PIN_CODE_UNLOCK,
+        name: AUTH_FLOW,
+        params: {
+          screen: !appearanceVisible ? MENU_SELECT_APPEARANCE : PIN_CODE_UNLOCK,
           params: {
             omitPin: appSettings.omitPinOnLogin,
             next_pin_unlock: true,
           },
-        }),
+        },
       };
     } else {
-      navAction = { routeName: ONBOARDING_FLOW };
+      navAction = { name: ONBOARDING_FLOW };
     }
 
     const { cachedUrls = {} } = get(storageData, 'cachedUrls', {});
@@ -259,7 +258,7 @@ export const initAppAndRedirectAction = () => {
 
     await dispatch(getTranslationsResourcesAndSetLanguageOnAppOpenAction());
 
-    navigate(NavigationActions.navigate(navAction));
+    navigate(CommonActions.navigate(navAction));
 
     SplashScreen.hide();
   };

@@ -19,7 +19,7 @@
 */
 import React, { useState } from 'react';
 import { FlatList, ScrollView, View } from 'react-native';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import styled, { withTheme } from 'styled-components/native';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import t from 'translations/translate';
@@ -44,10 +44,12 @@ import { WELCOME, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 // types
 import type { Theme } from 'models/Theme';
 import Button from 'components/legacy/Button';
+import type { Route } from '@react-navigation/native';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   theme: Theme,
+  route: Route,
 };
 
 const SectionToggle = styled.View`
@@ -100,7 +102,7 @@ const FooterWrapper = styled.View`
   padding: ${spacing.layoutSides}px;
 `;
 
-const Permissions = ({ navigation, theme }: Props) => {
+const Permissions = ({ navigation, theme, route }: Props) => {
   const wallet = useRootSelector((root) => root.onboarding.wallet);
 
   const [openCollapseKey, setOpenCollapseKey] = useState(null);
@@ -211,7 +213,7 @@ const Permissions = ({ navigation, theme }: Props) => {
   };
 
   const handleAgree = () => {
-    const username = navigation.getParam('username');
+    const username = route?.params?.username;
     navigation.navigate(wallet ? SET_WALLET_PIN_CODE : WELCOME, { username });
   };
 

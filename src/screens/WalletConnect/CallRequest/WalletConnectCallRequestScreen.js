@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 // Components
 import Modal from 'components/Modal';
@@ -33,7 +33,9 @@ import WalletConnectRequestModal from './WalletConnectCallRequestModal';
  */
 function WalletConnectCallRequestScreen() {
   const navigation = useNavigation();
-  const request = navigation.getParam('callRequest');
+  const route = useRoute();
+
+  const request = route?.params?.callRequest;
 
   React.useLayoutEffect(() => {
     navigation.goBack(null);

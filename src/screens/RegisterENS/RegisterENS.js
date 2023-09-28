@@ -22,7 +22,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Platform } from 'react-native';
 import t from 'translations/translate';
 import styled from 'styled-components/native';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { debounce } from 'lodash';
 

@@ -21,8 +21,9 @@ import React from 'react';
 import { FlatList } from 'react-native';
 import styled from 'styled-components/native';
 import { useTranslation } from 'translations/translate';
-import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import moment from 'moment';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 
 // Utils
 import { fontStyles } from 'utils/variables';
@@ -43,6 +44,7 @@ import { POOLS_ACTIVITY, TRADING_ACTIVITY } from 'constants/navigationConstants'
 
 // Models
 import type { AssetDataNavigationParam } from 'models/Asset';
+import type { Route } from '@react-navigation/native';
 
 // Local
 import { AllTimeLoader, TokenAnalyticsLoader } from './Loaders';
@@ -51,11 +53,12 @@ const TokenAnalyticsListItem = ({ tokenRate, tokenDetails, marketDetails }) => {
   const { t } = useTranslation();
   const colors = useThemeColors();
   const isDarkTheme = useIsDarkTheme();
-  const navigation = useNavigation();
+  const navigation: NavigationScreenProp<any> = useNavigation();
+  const route: Route = useRoute();
   const ratesPerChain = useRatesPerChain();
   const currency = useFiatCurrency();
 
-  const assetData: AssetDataNavigationParam = useNavigationParam('assetData');
+  const assetData: AssetDataNavigationParam = route?.params?.assetData;
 
   const { data, isLoading } = marketDetails;
   const { data: tokenDetailsData, isLoading: tokenDetailsLoading } = tokenDetails;

@@ -20,12 +20,12 @@
 
 import React, { useEffect } from 'react';
 import type { AbstractComponent } from 'react';
-import { SafeAreaView } from 'react-navigation';
+import SafeAreaView from 'react-native-safe-area-view';
 import styled, { withTheme } from 'styled-components/native';
 import t from 'translations/translate';
 import { connect, useDispatch } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 
 // actions
 import { deploySmartWalletAction, estimateSmartWalletDeploymentAction } from 'actions/smartWalletActions';
@@ -106,9 +106,9 @@ const SWActivationModal = ({
   const { smartWalletIcon } = images(theme);
 
   const txFeeInfo = buildArchanovaTxFeeInfo(deploymentEstimate?.formatted, false);
-  const isEnoughETH = paidByPillar || (
-    txFeeInfo?.fee && isEnoughBalanceForTransactionFee(balances, { txFeeInWei: txFeeInfo.fee }, CHAIN.ETHEREUM)
-  );
+  const isEnoughETH =
+    paidByPillar ||
+    (txFeeInfo?.fee && isEnoughBalanceForTransactionFee(balances, { txFeeInWei: txFeeInfo.fee }, CHAIN.ETHEREUM));
 
   const submitButtonDisabled = !isEnoughETH || !isOnline;
   const submitButtonVisible = true;
@@ -133,12 +133,11 @@ const SWActivationModal = ({
     <SlideModal hideHeader>
       <SafeAreaView>
         <ModalContainer>
-          <MediumText center medium>{t('smartWalletContent.activationModal.title')}</MediumText>
+          <MediumText center medium>
+            {t('smartWalletContent.activationModal.title')}
+          </MediumText>
           <Spacing h={18} />
-          <Image
-            style={{ width: 64, height: 64, alignSelf: 'center' }}
-            source={smartWalletIcon}
-          />
+          <Image style={{ width: 64, height: 64, alignSelf: 'center' }} source={smartWalletIcon} />
           <Spacing h={20} />
           <BaseText medium>{t('smartWalletContent.activationModal.paragraph')}</BaseText>
           <Spacing h={34} />
@@ -155,12 +154,7 @@ const SWActivationModal = ({
           )}
           <Spacing h={34} />
           {submitButtonVisible && (
-            <Button
-              title={submitButtonTitle}
-              disabled={submitButtonDisabled}
-              onPress={onSubmitPress}
-              secondary
-            />
+            <Button title={submitButtonTitle} disabled={submitButtonDisabled} onPress={onSubmitPress} secondary />
           )}
         </ModalContainer>
       </SafeAreaView>
@@ -169,8 +163,12 @@ const SWActivationModal = ({
 };
 
 const mapStateToProps = ({
-  smartWallet: { upgrade: { gettingDeploymentEstimate, deploymentEstimate } },
-  session: { data: { isOnline } },
+  smartWallet: {
+    upgrade: { gettingDeploymentEstimate, deploymentEstimate },
+  },
+  session: {
+    data: { isOnline },
+  },
 }: RootReducerState): $Diff<StateProps, { balances: any }> => ({
   deploymentEstimate,
   gettingDeploymentEstimate,

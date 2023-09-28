@@ -20,17 +20,20 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
-import { WebSocket } from 'mock-socket';
 
 // constants
 import { SET_WALLET, UPDATE_WALLET_BACKUP_STATUS, SET_WALLET_IS_ENCRYPTING } from 'constants/walletConstants';
-import { SET_ONBOARDING_USERNAME_REGISTRATION_FAILED, SET_REGISTERING_USER } from 'constants/onboardingConstants';
+import {
+  SET_ONBOARDING_USERNAME_REGISTRATION_FAILED,
+  SET_REGISTERING_USER,
+  SET_LOADING_MESSAGE,
+} from 'constants/onboardingConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { SET_USER } from 'constants/userConstants';
 import { SET_ARCHANOVA_WALLET_ACCOUNTS, SET_ARCHANOVA_SDK_INIT } from 'constants/archanovaConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
-import { ETH, PLR, SET_CHAIN_SUPPORTED_ASSETS } from 'constants/assetsConstants';
-import { SET_FETCHING_HISTORY, SET_HISTORY } from 'constants/historyConstants';
+import { ETH, PLR, SET_CHAIN_SUPPORTED_ASSETS, NFT_FLAG } from 'constants/assetsConstants';
+import { SET_FETCHING_HISTORY } from 'constants/historyConstants';
 import { SET_FETCHING_RATES } from 'constants/ratesConstants';
 import { CHAIN } from 'constants/chainConstants';
 import { SET_FETCHING_TOTAL_BALANCES } from 'constants/totalsBalancesConstants';
@@ -42,6 +45,7 @@ import { localAssets } from 'actions/assetsActions';
 // services
 import etherspotService from 'services/etherspot';
 import archanovaService from 'services/archanova';
+import { firebaseAnalytics } from 'services/firebase';
 
 // test utils
 import {
@@ -60,11 +64,11 @@ import {
 // types
 import type { EthereumWallet } from 'models/Wallet';
 
-global.WebSocket = WebSocket;
-
 jest.setTimeout(20000);
 
 const mockUser = { username: 'snow' };
+
+const mockMessage = 'onboardingLoaders.initEtherspot';
 
 jest.spyOn(etherspotService, 'getAccounts').mockImplementation(() => [mockEtherspotApiAccount]);
 
@@ -119,6 +123,7 @@ describe('Onboarding actions', () => {
   let store;
   beforeEach(() => {
     store = mockStore({});
+    firebaseAnalytics.setUserProperties = jest.fn();
   });
 
   it(`should expect series of actions with payload to be dispatched
@@ -277,7 +282,10 @@ describe('Onboarding actions', () => {
       },
       user: { data: mockUser },
       accounts: { data: [mockArchanovaAccount] },
-      smartWallet: { connectedAccount: mockArchanovaConnectedAccount },
+      smartWallet: {
+        connectedAccount: mockArchanovaConnectedAccount,
+        upgrade: { status: '' },
+      },
       assets: { supportedAssets: { ethereum: mockSupportedAssets } },
       history: { data: {} },
       assetsBalances: mockAssetsBalancesStore,
@@ -294,6 +302,10 @@ describe('Onboarding actions', () => {
         type: SET_CHAIN_SUPPORTED_ASSETS,
         payload: { chain: CHAIN.ETHEREUM, assets: mockSupportedAssets },
       },
+      {
+        type: SET_LOADING_MESSAGE,
+        payload: mockMessage,
+      },
       { type: SET_ARCHANOVA_SDK_INIT, payload: true }, // archanova init for account check
 
       // archanova
@@ -304,14 +316,13 @@ describe('Onboarding actions', () => {
       { type: UPDATE_ACCOUNTS, payload: [mockNewArchanovaAccount, mockNewEtherspotAccount] },
 
       { payload: true, type: SET_FETCHING_TOTAL_BALANCES },
-      { payload: false, type: SET_FETCHING_TOTAL_BALANCES },
 
       { type: SET_FETCHING_HISTORY, payload: true },
       { type: SET_FETCHING_RATES, payload: true },
 
-      { type: SET_HISTORY, payload: { [mockArchanovaAccount.id]: { ethereum: [] } } },
-
       { type: SET_FETCHING_RATES, payload: false },
+
+      { type: NFT_FLAG, payload: undefined },
 
       // TODO: etherspot history update tba with separate PR
     ];
@@ -333,6 +344,7 @@ describe('Onboarding actions', () => {
       user: { data: mockUser },
       assets: { supportedAssets: { ethereum: localAssets(CHAIN.ETHEREUM) } },
       onboarding: mockOnboarding,
+      accounts: { data: [mockArchanovaAccount] },
     });
 
     const expectedActions = [

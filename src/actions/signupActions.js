@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { NavigationActions } from 'react-navigation';
+import { CommonActions } from '@react-navigation/native';
 import { ONBOARDING_FLOW } from 'constants/navigationConstants';
 import { navigate } from 'services/navigation';
 import { saveDbAction } from './dbActions';
@@ -27,7 +27,7 @@ export const confirmOTPAction = (code: string) => {
     // VALIDATE OTP
     if (code !== '1111') return;
     dispatch(saveDbAction('app_settings', { OTP: +new Date() }));
-    navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
+    navigate(CommonActions.navigate({ name: ONBOARDING_FLOW }));
   };
 };
 

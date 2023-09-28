@@ -20,3 +20,15 @@ index 1cb5b5e..00186ea 100644
      if (props.type !== this.props.type) {
        this.typeInfo = getTypeInfo(props.type);
      }
+diff --git a/node_modules/tcomb-form-native/lib/templates/bootstrap/select.android.js b/node_modules/tcomb-form-native/lib/templates/bootstrap/select.android.js
+index 2fd16cc..68e709b 100644
+--- a/node_modules/tcomb-form-native/lib/templates/bootstrap/select.android.js
++++ b/node_modules/tcomb-form-native/lib/templates/bootstrap/select.android.js
+@@ -1,5 +1,6 @@
+ var React = require("react");
+-var { View, Text, Picker } = require("react-native");
++var { View, Text } = require("react-native");
++var { Picker } = require("@react-native-picker/picker")
+ 
+ function select(locals) {
+   if (locals.hidden) {

@@ -20,9 +20,10 @@
 
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useNavigation } from 'react-navigation-hooks';
 import t from 'translations/translate';
 import styled, { useTheme } from 'styled-components/native';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
+import type { Route } from '@react-navigation/native';
 
 // Components
 import { Container, Center } from 'components/layout/Layout';
@@ -48,14 +49,18 @@ import { logEventAction } from 'actions/analyticsActions';
 const lightTheme = require('assets/images/appAppearence/lightTheme.png');
 const darkTheme = require('assets/images/appAppearence/darkTheme.png');
 
-const AppAppearence = () => {
-  const navigation = useNavigation();
+interface Props {
+  navigation: NavigationScreenProp<*>;
+  route: Route;
+}
+
+const AppAppearence = ({ navigation, route }: Props) => {
   const dispatch = useDispatch();
   const theme = useTheme();
   const { current } = theme;
   const colors = getThemeColors(theme);
-  const omitPin = navigation.getParam('omitPin');
-  const nextScreenPinUnlock = navigation.getParam('next_pin_unlock');
+  const omitPin = route?.params?.omitPin;
+  const nextScreenPinUnlock = route?.params?.next_pin_unlock;
 
   const [currentTheme] = useState(current);
   const [isLightThemePressed, setLightThemePressed] = useState(current === LIGHT_THEME);
@@ -80,7 +85,7 @@ const AppAppearence = () => {
   const onConfirm = async () => {
     if (nextScreenPinUnlock) {
       navigation.navigate({
-        routeName: PIN_CODE_UNLOCK,
+        name: PIN_CODE_UNLOCK,
         params: { omitPin },
       });
       dispatch(logEventAction('confirm_app_appearance'));

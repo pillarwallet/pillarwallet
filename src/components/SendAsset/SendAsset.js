@@ -51,7 +51,7 @@ import { accountAssetsWithBalanceSelector } from 'selectors/assets';
 import { gasThresholdsSelector } from 'redux/selectors/gas-threshold-selector';
 
 // Types
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import type { TransactionPayload, TransactionFeeInfo, TransactionToEstimate } from 'models/Transaction';
 import type { AssetData, AssetOption } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
@@ -60,6 +60,7 @@ import type { SessionData } from 'models/Session';
 import type { Contact } from 'models/Contact';
 import type { AccountAssetBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
+import type { Route } from '@react-navigation/native';
 
 // Local
 import SendContainer from './SendContainer';
@@ -68,6 +69,7 @@ type Props = {
   defaultContact: ?Contact,
   source: string,
   navigation: NavigationScreenProp<*>,
+  route: Route,
   accountAssetsBalances: AccountAssetBalances,
   session: SessionData,
   useGasToken: boolean,
@@ -84,6 +86,7 @@ type Props = {
 const SendAsset = ({
   source,
   navigation,
+  route,
   accountAssetsBalances,
   session,
   useGasToken,
@@ -97,7 +100,7 @@ const SendAsset = ({
   resetEstimateTransaction,
   reduxFetchGasThresholds,
 }: Props) => {
-  let defaultAssetData: any = navigation.getParam('assetData');
+  let defaultAssetData: any = route?.params?.assetData;
 
   if (
     !defaultAssetData?.token &&

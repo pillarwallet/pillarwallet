@@ -22,7 +22,7 @@ import React from 'react';
 import type { Node as ReactNode } from 'react';
 import styled from 'styled-components/native';
 import type { ThemeValue } from 'styled-theming';
-import { SafeAreaView } from 'react-navigation';
+import SafeAreaView from 'react-native-safe-area-view';
 
 // components
 import SlideModal from 'components/Modals/SlideModal';
@@ -63,11 +63,10 @@ const spacing = {
   xxl: 32,
 };
 
-const isTextChild = (node: ?ReactNode): %checks =>
-  typeof node === 'string' || typeof node === 'number';
+const isTextChild = (node: ?ReactNode): %checks => typeof node === 'string' || typeof node === 'number';
 
 const Wrapper = styled(SafeAreaView)`
-  padding-top: ${({ hasDate }) => hasDate ? spacing.s : spacing.m}px;
+  padding-top: ${({ hasDate }) => (hasDate ? spacing.s : spacing.m)}px;
   padding-horizontal: ${spacing.side}px;
   padding-bottom: ${spacing.bottom}px;
   align-items: center;
@@ -106,7 +105,7 @@ const ButtonsContainer = styled.View`
 `;
 
 const ButtonWrapper = styled.View`
-  margin-bottom: ${({ last }) => last ? 0 : spacing.xs}px;
+  margin-bottom: ${({ last }) => (last ? 0 : spacing.xs)}px;
 `;
 
 const DetailText = styled(MediumText)`
@@ -128,10 +127,8 @@ type RowProps = {|
 
 export const DetailRow = ({ children, color }: RowProps) => (
   <RowWrapper>
-    {React.Children.map(children, child =>
-      isTextChild(child)
-        ? <DetailText color={color}>{child}</DetailText>
-        : child,
+    {React.Children.map(children, (child) =>
+      isTextChild(child) ? <DetailText color={color}>{child}</DetailText> : child,
     )}
   </RowWrapper>
 );
@@ -161,30 +158,13 @@ const Fee = ({ fee }: { fee: void | string | FeePending }) => {
   return null;
 };
 
-const DetailModal = ({
-  date,
-  title,
-  subtitle,
-  image,
-  children,
-  fee,
-  buttons,
-}: Props) => {
+const DetailModal = ({ date, title, subtitle, image, children, fee, buttons }: Props) => {
   const hasDate = date !== undefined;
-  const wrappedChildren = isTextChild(children)
-    ? <DetailRow>{children}</DetailRow>
-    : children;
+  const wrappedChildren = isTextChild(children) ? <DetailRow>{children}</DetailRow> : children;
 
   return (
-    <SlideModal
-      noClose
-      hideHeader
-      eventDetail
-    >
-      <Wrapper
-        forceInset={{ top: 'never', bottom: 'always' }}
-        hasDate={hasDate}
-      >
+    <SlideModal noClose hideHeader eventDetail>
+      <Wrapper forceInset={{ top: 'never', bottom: 'always' }} hasDate={hasDate}>
         {hasDate && <EventTime secondary>{formatDate(date, DATE_FORMAT)}</EventTime>}
         <Title>{title}</Title>
         {!!subtitle && <Subtitle secondary>{subtitle}</Subtitle>}
@@ -193,9 +173,7 @@ const DetailModal = ({
         {image}
         <Spacing h={spacing.m} />
 
-        <ChildrenWrapper bottomSpacingCut={getChildrenSpacing(wrappedChildren)}>
-          {wrappedChildren}
-        </ChildrenWrapper>
+        <ChildrenWrapper bottomSpacingCut={getChildrenSpacing(wrappedChildren)}>{wrappedChildren}</ChildrenWrapper>
 
         <Fee fee={fee} />
         {buttons && (

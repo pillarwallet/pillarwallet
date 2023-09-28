@@ -23,7 +23,7 @@ import SafeAreaView from 'react-native-safe-area-view';
 import Clipboard from '@react-native-community/clipboard';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import get from 'lodash.get';
 import t from 'translations/translate';
 
@@ -46,7 +46,6 @@ import { appFont, spacing, fontSizes } from 'utils/variables';
 import type { Dispatch } from 'reducers/rootReducer';
 import type { OnValidPinCallback } from 'models/Wallet';
 
-
 type Props = {
   checkPin: (pin: string, onValidPin: ?OnValidPinCallback) => Function,
   navigation: NavigationScreenProp<*>,
@@ -64,7 +63,7 @@ const walletBackupImage = require('assets/images/logo-wallet-backup.png');
 class RevealBackupPhrase extends React.Component<Props, State> {
   constructor(props) {
     super(props);
-    const wallet = get(props, 'navigation.state.params.wallet', null);
+    const wallet = get(props, 'route.params.wallet', null);
     this.state = {
       pinIsValid: !!wallet,
       wallet: wallet || {},
@@ -91,7 +90,7 @@ class RevealBackupPhrase extends React.Component<Props, State> {
 
   render() {
     const { pinIsValid, wallet } = this.state;
-    const showPrivateKey = get(this.props, 'navigation.state.params.showPrivateKey', false);
+    const showPrivateKey = get(this.props, 'route.params.showPrivateKey', false);
     const mnemonicPhrase = wallet?.mnemonic;
     const privateKey = wallet?.privateKey;
     if (!pinIsValid) {

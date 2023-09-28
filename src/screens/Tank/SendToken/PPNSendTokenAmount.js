@@ -39,9 +39,10 @@ import { themedColors } from 'utils/themes';
 import { getAssetRateInFiat } from 'utils/rates';
 
 // types
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import type { TransactionPayload } from 'models/Transaction';
 import type { Currency, RatesPerChain } from 'models/Rates';
+import type { Route } from '@react-navigation/native';
 
 // constants
 import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
@@ -91,11 +92,11 @@ const FormWrapper = styled.View`
   z-index: 10;
 `;
 
-
 type Props = {
   token: string,
   address: string,
   navigation: NavigationScreenProp<*>,
+  route: Route,
   isVisible: boolean,
   formValues?: Object,
   availableStake: number,
@@ -122,9 +123,9 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.assetData = props.navigation.getParam('assetData', {});
-    this.receiver = props.navigation.getParam('receiver', '');
-    this.source = props.navigation.getParam('source', '');
+    this.assetData = props.route?.params?.assetData || {};
+    this.receiver = props.route?.params?.receiver || '';
+    this.source = props.route?.params?.source || '';
 
     this.state = {
       value: null,
@@ -172,12 +173,7 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
 
   render() {
     const { value } = this.state;
-    const {
-      session,
-      availableStake,
-      ratesPerChain,
-      baseFiatCurrency,
-    } = this.props;
+    const { session, availableStake, ratesPerChain, baseFiatCurrency } = this.props;
 
     const { symbol, iconUrl, decimals } = this.assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -197,7 +193,7 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
     const maxAmount = Number(balance);
 
     // value
-    const currentValue = (!!value && !!parseFloat(value.amount)) ? parseFloat(value.amount) : 0;
+    const currentValue = !!value && !!parseFloat(value.amount) ? parseFloat(value.amount) : 0;
 
     // value in fiat
     const valueInFiat = currentValue * getAssetRateInFiat(ethereumRates, plrAddress, fiatCurrency);
@@ -218,7 +214,7 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
         }}
         footer={
           <FooterWrapper>
-            {!!value && !!parseFloat(value.amount) &&
+            {!!value && !!parseFloat(value.amount) && (
               <Button
                 disabled={!session.isOnline}
                 small
@@ -227,7 +223,7 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
                 block={false}
                 onPress={this.handleFormSubmit}
               />
-            }
+            )}
           </FooterWrapper>
         }
         minAvoidHeight={200}
@@ -236,7 +232,9 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
           <Wrapper regularPadding>
             <FormWrapper>
               <Form
-                ref={node => { this._form = node; }}
+                ref={(node) => {
+                  this._form = node;
+                }}
                 type={formStructure}
                 options={formFields}
                 value={value}
@@ -267,7 +265,9 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
 const mapStateToProps = ({
   session: { data: session },
   rates: { data: ratesPerChain },
-  appSettings: { data: { baseFiatCurrency } },
+  appSettings: {
+    data: { baseFiatCurrency },
+  },
 }) => ({
   ratesPerChain,
   session,

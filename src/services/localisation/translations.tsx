@@ -35,6 +35,7 @@ i18n
   .use(CapitalizationPostProcessor)
   .init(
     {
+      compatibilityJSON: 'v3',
       interpolation: { escapeValue: false },
       ns: localeConfig.namespaces,
       defaultNS: localeConfig.defaultNameSpace,
@@ -43,7 +44,6 @@ i18n
       supportedLngs: Object.keys(localeConfig.supportedLanguages),
       debug: !!__DEV__,
       react: {
-        wait: true,
         nsMode: 'default',
         useSuspense: true,
       },
@@ -79,9 +79,9 @@ export const setLanguage = async (lng: string) => {
 
 export const getDefaultSupportedUserLanguage = () => {
   const userPreferredLocales = RNLocalize.getLocales();
-  const userPreferredLanguages = userPreferredLocales.map(({ languageCode }) => languageCode);
+  const userPreferredLanguages = userPreferredLocales?.map(({ languageCode }) => languageCode);
 
-  const userPreferredSupportedLanguage = userPreferredLanguages.find((languageCode) =>
+  const userPreferredSupportedLanguage = userPreferredLanguages?.find((languageCode) =>
     Object.keys(localeConfig.supportedLanguages).includes(languageCode),
   );
 

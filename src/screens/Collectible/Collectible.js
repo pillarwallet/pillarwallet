@@ -25,7 +25,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import t from 'translations/translate';
-import { useNavigation, useNavigationParam } from 'react-navigation-hooks';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 // Constants
 import { SEND_COLLECTIBLE_FROM_ASSET_FLOW } from 'constants/navigationConstants';
@@ -49,11 +49,7 @@ import { mapTransactionsHistory } from 'utils/feedData';
 import { getThemeColors, themedColors, useTheme } from 'utils/themes';
 import { images, isSvgImage, interpretNftMedia } from 'utils/images';
 import { isMatchingCollectible } from 'utils/assets';
-import {
-  getAccountAddress,
-  isArchanovaAccount,
-  isEtherspotAccount,
-} from 'utils/accounts';
+import { getAccountAddress, isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
 import { getHistoryEventsFromCollectiblesTransactions } from 'utils/history';
 
 // Selectors
@@ -105,31 +101,16 @@ const StyledCollectibleImage = styled(CollectibleImage)`
   margin-top: 30px;
 `;
 
-
-const CollectibleScreen = ({
-  collectibles,
-  accountCollectibleHistory,
-  accounts,
-  activeAccount,
-}) => {
+const CollectibleScreen = ({ collectibles, accountCollectibleHistory, accounts, activeAccount }) => {
   const navigation = useNavigation();
+  const route = useRoute();
   const theme = useTheme();
 
-  const collectible: Collectible = useNavigationParam('collectible');
+  const collectible: Collectible = route?.params?.collectible;
 
-  const {
-    id,
-    name,
-    description,
-    imageUrl,
-    contractAddress,
-    chain,
-  } = collectible;
+  const { id, name, description, imageUrl, contractAddress, chain } = collectible;
 
-  const goToSendTokenFlow = () => navigation.navigate(
-    SEND_COLLECTIBLE_FROM_ASSET_FLOW,
-    { assetData: collectible },
-  );
+  const goToSendTokenFlow = () => navigation.navigate(SEND_COLLECTIBLE_FROM_ASSET_FLOW, { assetData: collectible });
 
   const openCollectibleImage = () => {
     const colors = getThemeColors(theme);
@@ -148,13 +129,10 @@ const CollectibleScreen = ({
     const imageViewImages = [imageViewImage];
 
     Modal.open(() => (
-      <SlideModal
-        fullScreen
-        showHeader
-      >
+      <SlideModal fullScreen showHeader>
         <ImageViewer
           imageUrls={imageViewImages}
-          renderImage={props => <CollectibleImage {...props} />}
+          renderImage={(props) => <CollectibleImage {...props} />}
           renderIndicator={() => null}
           backgroundColor={colors.basic070}
           saveToLocalByLongPress={false}
@@ -169,17 +147,10 @@ const CollectibleScreen = ({
     [collectibles, id, chain],
   );
 
-  const mappedCollectiblesTransactions = useMemo(
-    () => {
-      const collectiblesTransactions = accountCollectibleHistory[chain] ?? [];
-      return mapTransactionsHistory(
-        collectiblesTransactions,
-        accounts,
-        COLLECTIBLE_TRANSACTION,
-      );
-    },
-    [accountCollectibleHistory, accounts, chain],
-  );
+  const mappedCollectiblesTransactions = useMemo(() => {
+    const collectiblesTransactions = accountCollectibleHistory[chain] ?? [];
+    return mapTransactionsHistory(collectiblesTransactions, accounts, COLLECTIBLE_TRANSACTION);
+  }, [accountCollectibleHistory, accounts, chain]);
 
   const transactions = useMemo(() => {
     const relatedTransactions = mappedCollectiblesTransactions.filter(({ assetData }) =>
@@ -207,9 +178,11 @@ const CollectibleScreen = ({
           />
         </TouchableOpacity>
         <DataWrapper>
-          {!!description &&
-            <Paragraph small light>{description.replace(new RegExp('\\n\\n', 'g'), '\n')}</Paragraph>
-          }
+          {!!description && (
+            <Paragraph small light>
+              {description.replace(new RegExp('\\n\\n', 'g'), '\n')}
+            </Paragraph>
+          )}
         </DataWrapper>
         <ActionButtonsWrapper>
           <CircleButtonsWrapper center horizontal>
@@ -241,9 +214,7 @@ const CollectibleScreen = ({
   );
 };
 
-const mapStateToProps = ({
-  accounts: { data: accounts },
-}: RootReducerState): $Shape<Props> => ({
+const mapStateToProps = ({ accounts: { data: accounts } }: RootReducerState): $Shape<Props> => ({
   accounts,
 });
 
@@ -259,4 +230,3 @@ const combinedMapStateToProps = (state: RootReducerState) => ({
 });
 
 export default connect(combinedMapStateToProps)(CollectibleScreen);
-

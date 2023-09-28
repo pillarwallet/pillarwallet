@@ -20,7 +20,7 @@
 
 import React from 'react';
 import styled from 'styled-components/native';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import t from 'translations/translate';
 
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
@@ -32,7 +32,6 @@ import { Spacing } from 'components/legacy/Layout';
 import { getDeviceWidth } from 'utils/common';
 
 import { LIQUIDITY_POOLS } from 'constants/navigationConstants';
-
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -52,9 +51,7 @@ const BannerImage = styled(Image)`
   height: ${bannerWidth * (114 / 335)}px;
 `;
 
-const LiquidityPoolsInfoScreen = ({
-  navigation,
-}: Props) => {
+const LiquidityPoolsInfoScreen = ({ navigation }: Props) => {
   return (
     <ContainerWithHeader
       inset={{ bottom: 'never' }}
@@ -68,20 +65,25 @@ const LiquidityPoolsInfoScreen = ({
         <Spacing h={35} />
         <MediumText big>{t('liquidityPoolsContent.infoContent.subtitle.whatAreLiquidityPools')}</MediumText>
         <Spacing h={14} />
-        <BaseText medium secondary>{t('liquidityPoolsContent.infoContent.paragraph.whatAreLiqudityPools')}</BaseText>
+        <BaseText medium secondary>
+          {t('liquidityPoolsContent.infoContent.paragraph.whatAreLiqudityPools')}
+        </BaseText>
         <Spacing h={28} />
         <MediumText big>{t('liquidityPoolsContent.infoContent.subtitle.howDoLiquidityPoolsWork')}</MediumText>
         <Spacing h={22} />
-        <BaseText medium secondary>{t('liquidityPoolsContent.infoContent.paragraph.howDoLiquidityPoolsWork')}</BaseText>
+        <BaseText medium secondary>
+          {t('liquidityPoolsContent.infoContent.paragraph.howDoLiquidityPoolsWork')}
+        </BaseText>
         <Spacing h={24} />
         <InsightWithButton
           title={t('liquidityPoolsContent.infoContent.insight.title')}
           buttonTitle={t('liquidityPoolsContent.infoContent.insight.button')}
-          onButtonPress={() => { navigation.navigate(LIQUIDITY_POOLS); }}
+          onButtonPress={() => {
+            navigation.navigate(LIQUIDITY_POOLS);
+          }}
         />
         <Spacing h={50} />
       </MainContainer>
-
     </ContainerWithHeader>
   );
 };

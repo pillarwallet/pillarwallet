@@ -17,8 +17,7 @@
 
 import * as React from 'react';
 import { Platform, SectionList, useWindowDimensions } from 'react-native';
-import { NavigationActions } from 'react-navigation';
-import { useNavigation } from 'react-navigation-hooks';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 import { useInteractionManager } from '@react-native-community/hooks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
@@ -145,8 +144,8 @@ function WalletConnectHome() {
   const openAppUrl = (url: string, title: string, iconUrl: ?string) => {
     if (url) {
       navigate(
-        NavigationActions.navigate({
-          routeName: WALLETCONNECT_BROWSER,
+        CommonActions.navigate({
+          name: WALLETCONNECT_BROWSER,
           params: {
             url,
             title,

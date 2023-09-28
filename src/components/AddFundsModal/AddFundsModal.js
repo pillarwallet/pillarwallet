@@ -21,7 +21,7 @@
 import * as React from 'react';
 import { Platform } from 'react-native';
 import t from 'translations/translate';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 
 // Components
 import Modal from 'components/Modal';
@@ -46,12 +46,7 @@ const AddFundsModal = ({ token, receiveAddress }: Props) => {
   const isExchangeAvailable = useIsExchangeAvailable();
 
   const openReceiveModal = React.useCallback(() => {
-    Modal.open(() => (
-      <ReceiveModal
-        address={receiveAddress}
-        showErc20Note={!!token && token !== ETH}
-      />
-    ));
+    Modal.open(() => <ReceiveModal address={receiveAddress} showErc20Note={!!token && token !== ETH} />);
   }, [token, receiveAddress]);
 
   const options = [

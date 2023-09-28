@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 
 // Components
 import Icon from 'components/core/Icon';
@@ -46,7 +46,7 @@ type Props = {
 };
 
 function AppsButton({ isShowLabel, label, navigation, response }: Props) {
-  if (response === null || response?.[0] === undefined) return null
+  if (response === null || response?.[0] === undefined) return null;
 
   const onNativeIntegrationsLaunch = async () => {
     const hideNativeIntegrationWarning = await nativeIntegrationWarning();
@@ -56,7 +56,7 @@ function AppsButton({ isShowLabel, label, navigation, response }: Props) {
 
   return (
     <ButtonContainer onPress={onNativeIntegrationsLaunch}>
-      <Icon name={"apps"} />
+      <Icon name={'apps'} />
       <ItemTitle>{t('home.apps.title')}</ItemTitle>
       {isShowLabel && (
         <TextBackground>

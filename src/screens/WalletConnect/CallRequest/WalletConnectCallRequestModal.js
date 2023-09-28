@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'translations/translate';
 import { getSdkError } from '@walletconnect/utils';
 import { formatJsonRpcError } from '@json-rpc-tools/utils';

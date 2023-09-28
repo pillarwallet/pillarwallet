@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { FlatList } from 'react-native';
 import { connect } from 'react-redux';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
@@ -163,9 +163,7 @@ class ServicesScreen extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({
-  accounts: { data: accounts },
-}: RootReducerState): $Shape<Props> => ({
+const mapStateToProps = ({ accounts: { data: accounts } }: RootReducerState): $Shape<Props> => ({
   accounts,
 });
 

@@ -19,7 +19,7 @@
 */
 
 import React from 'react';
-import { useNavigation } from 'react-navigation-hooks';
+import { useNavigation } from '@react-navigation/native';
 import styled from 'styled-components/native';
 import { formatEther } from 'ethers/lib/utils';
 import { orderBy } from 'lodash';
@@ -41,12 +41,7 @@ import { KEY_BASED_ASSET_TRANSFER_UNLOCK } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // Selectors
-import {
-  useRootSelector,
-  useFiatCurrency,
-  activeAccountAddressSelector,
-  useChainRates,
-} from 'selectors';
+import { useRootSelector, useFiatCurrency, activeAccountAddressSelector, useChainRates } from 'selectors';
 
 // Utils
 import { getBalanceBN, getBalanceInFiat, getFormattedBalanceInFiat } from 'utils/assets';
@@ -69,10 +64,10 @@ const KeyBasedAssetTransferConfirm = () => {
 
   const assetTransfers = useRootSelector((root) => root.keyBasedAssetTransfer.data);
   const keyWalletBalances = useRootSelector((root) => root.keyBasedAssetTransfer.availableBalances);
-  const isCalculatingGas = useRootSelector(root => root.keyBasedAssetTransfer.isCalculatingGas);
+  const isCalculatingGas = useRootSelector((root) => root.keyBasedAssetTransfer.isCalculatingGas);
 
   const activeAccountAddress = useRootSelector(activeAccountAddressSelector);
-  const keyBasedWalletAddress = useRootSelector(root => root.wallet.data?.address);
+  const keyBasedWalletAddress = useRootSelector((root) => root.wallet.data?.address);
 
   const images = useThemedImages();
 
