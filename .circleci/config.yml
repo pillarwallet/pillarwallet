@@ -43,9 +43,9 @@ executors:
         auth:
           username: $DOCKERHUB_USER
           password: $DOCKERHUB_PASSWORD
-    resource_class: large
+    resource_class: xlarge
     environment:
-      NODE_OPTIONS: "--max-old-space-size=4096"
+      NODE_OPTIONS: "--max-old-space-size=6144"
     shell: /bin/bash --login -o pipefail
 
   python3-alpine-executor:
