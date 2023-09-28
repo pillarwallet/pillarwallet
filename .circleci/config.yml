@@ -561,7 +561,7 @@ jobs:
           name: Restore node modules cache
           keys:
             - ios-node-{{ checksum "./yarn.lock" }}
-
+      - *swap_node_version
       - *yarn_install_ios
 
       - save_cache:
@@ -684,6 +684,7 @@ jobs:
             - android-node-{{ checksum "./yarn.lock" }}
 
       - *yarn_restore_cache
+      - *swap_node_version
       - *yarn_install
       - *yarn_save_cache
 
