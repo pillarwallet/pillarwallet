@@ -13,8 +13,6 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		2C5005634DBF4D2A97891E6E /* Roboto_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2862B28966EF4024B1921B80 /* Roboto_medium.ttf */; };
-		41242384B1EC46529CDCCE3B /* Roboto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7FC6FE44C3D94405A67ABDA3 /* Roboto.ttf */; };
 		52BA4756260CFBAE00F3D58E /* SpaceGrotesk-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 52BA4755260CFBAE00F3D58E /* SpaceGrotesk-Medium.ttf */; };
 		670D191A2BF1FB3C92E72195 /* libPods-pillarwallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FC0CC4AAB4FD214CAD84AC1 /* libPods-pillarwallet.a */; };
 		696ACE96240493BC009B0BEC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 696ACE6B240493BC009B0BEC /* GoogleService-Info.plist */; };
@@ -24,7 +22,6 @@
 		696ACF5824049EBC009B0BEC /* EuclidCircularB-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 696ACF5224049C74009B0BEC /* EuclidCircularB-Regular.otf */; };
 		696ACF5924049EBC009B0BEC /* PillarIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 696ACF5124049C74009B0BEC /* PillarIcons.ttf */; };
 		69D2EB04240865F60039EA75 /* SwiftBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69D2EB03240865F60039EA75 /* SwiftBridge.swift */; };
-		C10A0D8D4AAF42EE8E9129CB /* rubicon-icon-font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7B0FB7812C8F4F6380DDD5F6 /* rubicon-icon-font.ttf */; };
 		DDF7658EFBED429BB821F03C /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 834179E4DB574F6C94CF4839 /* libz.tbd */; };
 /* End PBXBuildFile section */
 
@@ -260,10 +257,7 @@
 				52BA4756260CFBAE00F3D58E /* SpaceGrotesk-Medium.ttf in Resources */,
 				696ACF5924049EBC009B0BEC /* PillarIcons.ttf in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				2C5005634DBF4D2A97891E6E /* Roboto_medium.ttf in Resources */,
 				04981AAD24C97CEC00748082 /* Launch.storyboard in Resources */,
-				41242384B1EC46529CDCCE3B /* Roboto.ttf in Resources */,
-				C10A0D8D4AAF42EE8E9129CB /* rubicon-icon-font.ttf in Resources */,
 				696ACE96240493BC009B0BEC /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -69,9 +69,6 @@
 	<string>Give Pillar Wallet permission to access your photos to allow you set your profile picture.</string>
 	<key>UIAppFonts</key>
 	<array>
-		<string>Roboto_medium.ttf</string>
-		<string>Roboto.ttf</string>
-		<string>rubicon-icon-font.ttf</string>
 		<string>EuclidCircularB-Bold.otf</string>
 		<string>EuclidCircularB-Light.otf</string>
 		<string>EuclidCircularB-Medium.otf</string>
