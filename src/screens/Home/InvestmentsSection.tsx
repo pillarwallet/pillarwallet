@@ -66,11 +66,6 @@ const InvestmentsSection: FC<IInvestmentsSection> = () => {
   const theme: Theme = useTheme();
   const accounts = useAccounts();
 
-
-  console.log('====================================');
-  console.log('theme', theme);
-  console.log('====================================');
-
   const category = ASSET_CATEGORY.INVESTMENTS;
   const categoriesConfig = useAssetCategoriesConfig();
   const categoryInfo = categoriesConfig[category];
