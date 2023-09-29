@@ -188,7 +188,7 @@ const Header = (props: Props) => {
   return (
     <Wrapper style={style} noPadding={noPadding} white={white}>
       <InnerWrapper flexStart={flexStart} noWrapTitle={noWrapTitle}>
-        <HeaderLeft showTitleLeft={showTitleLeft} flex={getHeaderLeftFlex}>
+        <HeaderLeft showTitleLeft={showTitleLeft} flex={getHeaderLeftFlex()}>
           {onBack && (
             <BackIcon
               icon={backIcon || 'back'}
@@ -213,7 +213,7 @@ const Header = (props: Props) => {
           </HeaderBody>
         )}
         {showRight && !noClose && (
-          <HeaderRight flex={getHeaderRightFlex} onClose={onClose || noop}>
+          <HeaderRight flex={getHeaderRightFlex()} onClose={onClose || noop}>
             {!pushRightAddonToTheSide && headerRightAddon}
             {nextText && (
               <TextLink style={nextTextStyle} onPress={onNextPress}>
