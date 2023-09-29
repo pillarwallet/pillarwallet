@@ -184,8 +184,6 @@ export default InvestmentsSection;
 const Container = styled.View`
   flex-direction: column;
   padding: 0 ${spacing.layoutSides}px;
-  height: 80px;
-  background-color: blue;
 `;
 
 const SubContainer = styled.View`
