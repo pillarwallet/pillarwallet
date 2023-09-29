@@ -30,7 +30,7 @@ exports[`Header should render Header correctly 1`] = `
     }
   >
     <View
-      flex={[Function]}
+      flex={1}
       showTitleLeft={false}
       style={
         [
@@ -109,7 +109,7 @@ exports[`Header should render Header correctly 1`] = `
       </View>
     </View>
     <View
-      flex={[Function]}
+      flex={1}
       onClose={[Function]}
       style={
         [
