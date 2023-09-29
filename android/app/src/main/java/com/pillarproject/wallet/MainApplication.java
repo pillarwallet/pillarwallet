@@ -62,8 +62,6 @@ public class MainApplication extends Application implements ReactApplication {
             // If you opted-in for the New Architecture, we load the native entry point for this app.
             DefaultNewArchitectureEntryPoint.load();
         }
-        ReactNativeFlipper.initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
-
         // react-native-async-storage custom max storage
         long storageSizeMax = 60L * 1024L * 1024L; // 60 MB
         com.reactnativecommunity.asyncstorage.ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(storageSizeMax);

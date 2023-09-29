@@ -63,6 +63,7 @@ import { navigate, getNavigationState } from 'services/navigation';
 import { firebaseAuth, firebaseMessaging, firebaseRemoteConfig } from 'services/firebase';
 import etherspotService from 'services/etherspot';
 import archanovaService from 'services/archanova';
+import { logoutWeb3Auth } from 'services/web3Auth';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -406,6 +407,7 @@ export const resetAppServicesAction = () => {
 
     await etherspotService.logout();
     await archanovaService.reset();
+    await logoutWeb3Auth();
 
     // reset data stored in keychain
     await resetKeychainDataObject();

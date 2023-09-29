@@ -21,7 +21,6 @@ import * as React from 'react';
 
 // Utils
 import { renderWithTheme } from 'testUtils/render';
-
 import Header from '../Header';
 
 describe('Header', () => {

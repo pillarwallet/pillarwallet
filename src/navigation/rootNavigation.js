@@ -163,19 +163,15 @@ function RootNavigator({ onNavigationStateChange }) {
 }
 
 // to pass in language prop so stacks would rerender on language change
-class WrappedRootSwitch extends React.Component<Props> {
-  static router = RootNavigator.router;
-
-  render() {
-    const { language } = this.props;
-    return (
-      <NavigationContainer ref={navigationRef}>
-        <ModalProvider />
-        {/* $FlowFixMe: flow update to 0.122 */}
-        <RootNavigator screenProps={{ language }} {...this.props} />
-      </NavigationContainer>
-    );
-  }
-}
+const WrappedRootSwitch = (props: Props) => {
+  const { language } = props;
+  return (
+    <NavigationContainer ref={navigationRef}>
+      <ModalProvider />
+      {/* $FlowFixMe: flow update to 0.122 */}
+      <RootNavigator screenProps={{ language }} {...this.props} />
+    </NavigationContainer>
+  );
+};
 
 export default WrappedRootSwitch;

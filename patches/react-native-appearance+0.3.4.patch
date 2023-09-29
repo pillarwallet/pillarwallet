@@ -57,28 +57,28 @@ index 57d3f80..a22e258 100644
 -        }
 -    }
 -}
-diff --git a/node_modules/react-native-appearance/android/build/.transforms/791a2ef1b96f7a7c5f3a5434dc831a97/results.bin b/node_modules/react-native-appearance/android/build/.transforms/791a2ef1b96f7a7c5f3a5434dc831a97/results.bin
-new file mode 100644
-index 0000000..0d259dd
---- /dev/null
-+++ b/node_modules/react-native-appearance/android/build/.transforms/791a2ef1b96f7a7c5f3a5434dc831a97/results.bin
-@@ -0,0 +1 @@
-+o/classes
-diff --git a/node_modules/react-native-appearance/android/build/.transforms/791a2ef1b96f7a7c5f3a5434dc831a97/transformed/classes/classes.dex b/node_modules/react-native-appearance/android/build/.transforms/791a2ef1b96f7a7c5f3a5434dc831a97/transformed/classes/classes.dex
-new file mode 100644
-index 0000000..a48a0a2
-Binary files /dev/null and b/node_modules/react-native-appearance/android/build/.transforms/791a2ef1b96f7a7c5f3a5434dc831a97/transformed/classes/classes.dex differ
-diff --git a/node_modules/react-native-appearance/android/build/.transforms/d57d70360d87bc8080cc369657ffb509/results.bin b/node_modules/react-native-appearance/android/build/.transforms/d57d70360d87bc8080cc369657ffb509/results.bin
+diff --git a/node_modules/react-native-appearance/android/build/.transforms/3be9196c73819099f30c10023c39cd06/results.bin b/node_modules/react-native-appearance/android/build/.transforms/3be9196c73819099f30c10023c39cd06/results.bin
 new file mode 100644
 index 0000000..28bb879
 --- /dev/null
-+++ b/node_modules/react-native-appearance/android/build/.transforms/d57d70360d87bc8080cc369657ffb509/results.bin
++++ b/node_modules/react-native-appearance/android/build/.transforms/3be9196c73819099f30c10023c39cd06/results.bin
 @@ -0,0 +1 @@
 +o/classes.jar
-diff --git a/node_modules/react-native-appearance/android/build/.transforms/d57d70360d87bc8080cc369657ffb509/transformed/classes.jar b/node_modules/react-native-appearance/android/build/.transforms/d57d70360d87bc8080cc369657ffb509/transformed/classes.jar
+diff --git a/node_modules/react-native-appearance/android/build/.transforms/3be9196c73819099f30c10023c39cd06/transformed/classes.jar b/node_modules/react-native-appearance/android/build/.transforms/3be9196c73819099f30c10023c39cd06/transformed/classes.jar
 new file mode 100644
 index 0000000..3e36061
-Binary files /dev/null and b/node_modules/react-native-appearance/android/build/.transforms/d57d70360d87bc8080cc369657ffb509/transformed/classes.jar differ
+Binary files /dev/null and b/node_modules/react-native-appearance/android/build/.transforms/3be9196c73819099f30c10023c39cd06/transformed/classes.jar differ
+diff --git a/node_modules/react-native-appearance/android/build/.transforms/ac27500372aba05d1479246c461c277c/results.bin b/node_modules/react-native-appearance/android/build/.transforms/ac27500372aba05d1479246c461c277c/results.bin
+new file mode 100644
+index 0000000..0d259dd
+--- /dev/null
++++ b/node_modules/react-native-appearance/android/build/.transforms/ac27500372aba05d1479246c461c277c/results.bin
+@@ -0,0 +1 @@
++o/classes
+diff --git a/node_modules/react-native-appearance/android/build/.transforms/ac27500372aba05d1479246c461c277c/transformed/classes/classes.dex b/node_modules/react-native-appearance/android/build/.transforms/ac27500372aba05d1479246c461c277c/transformed/classes/classes.dex
+new file mode 100644
+index 0000000..a48a0a2
+Binary files /dev/null and b/node_modules/react-native-appearance/android/build/.transforms/ac27500372aba05d1479246c461c277c/transformed/classes/classes.dex differ
 diff --git a/node_modules/react-native-appearance/android/build/generated/source/buildConfig/debug/io/expo/appearance/BuildConfig.java b/node_modules/react-native-appearance/android/build/generated/source/buildConfig/debug/io/expo/appearance/BuildConfig.java
 new file mode 100644
 index 0000000..54acda3

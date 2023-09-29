@@ -79,9 +79,9 @@ export const setLanguage = async (lng: string) => {
 
 export const getDefaultSupportedUserLanguage = () => {
   const userPreferredLocales = RNLocalize.getLocales();
-  const userPreferredLanguages = userPreferredLocales.map(({ languageCode }) => languageCode);
+  const userPreferredLanguages = userPreferredLocales?.map(({ languageCode }) => languageCode);
 
-  const userPreferredSupportedLanguage = userPreferredLanguages.find((languageCode) =>
+  const userPreferredSupportedLanguage = userPreferredLanguages?.find((languageCode) =>
     Object.keys(localeConfig.supportedLanguages).includes(languageCode),
   );
 
