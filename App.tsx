@@ -36,6 +36,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import appsFlyer from 'react-native-appsflyer';
 import { PlayInstallReferrer } from 'react-native-play-install-referrer';
 import { KochavaTracker } from 'react-native-kochava-tracker';
+import { NativeBaseProvider } from 'native-base';
 
 import 'services/localisation/translations';
 import localeConfig from 'configs/localeConfig';
@@ -82,7 +83,6 @@ import type { I18n } from 'models/Translations';
 
 // other
 import RootNavigation from 'navigation/rootNavigation';
-// import Storybook from 'screens/Storybook';
 import { store } from 'src/configureStore';
 
 // redux
@@ -441,13 +441,13 @@ const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(with
 
 const AppRoot = () => (
   <SafeAreaProvider>
-    <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
-        {/* Temporary disable storybook */}
-        {/* {getEnv().SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />} */}
-        <AppWithNavigationState />
-      </QueryClientProvider>
-    </Provider>
+    <NativeBaseProvider>
+      <Provider store={store}>
+        <QueryClientProvider client={queryClient}>
+          <AppWithNavigationState />
+        </QueryClientProvider>
+      </Provider>
+    </NativeBaseProvider>
   </SafeAreaProvider>
 );
 

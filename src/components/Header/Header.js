@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Left, Body, Right } from 'native-base';
+import { Center } from 'native-base';
 import styled, { withTheme } from 'styled-components/native';
 import { TextLink, BaseText } from 'components/legacy/Typography';
 import Title from 'components/legacy/Title';
@@ -55,19 +55,20 @@ type Props = {
   pushRightAddonToTheSide?: boolean,
   white?: boolean,
   theme: Theme,
-}
+};
 
 const Wrapper = styled.View`
   border-bottom-width: 0;
-  padding: ${props => props.noPadding ? 0 : `0 ${spacing.layoutSides}px`};
+  padding: ${(props) => (props.noPadding ? 0 : `0 ${spacing.layoutSides}px`)};
   z-index: 10;
-  ${({ white, theme }) => white
-    ? `
+  ${({ white, theme }) =>
+    white
+      ? `
       background-color: ${theme.colors.basic050};
       border-bottom-width: 1px;
       border-bottom-color: ${theme.colors.basic080};
     `
-    : ''}
+      : ''}
 `;
 
 const InnerWrapper = styled.View`
@@ -75,8 +76,8 @@ const InnerWrapper = styled.View`
   align-items: flex-end;
   flex-direction: row;
   margin-top: ${spacing.rhythm}px;
-  margin-bottom: ${props => props.flexStart ? 'auto' : '4px'};
-  height: ${({ noWrapTitle }) => noWrapTitle ? 'auto' : '50px'};
+  margin-bottom: ${(props) => (props.flexStart ? 'auto' : '4px')};
+  height: ${({ noWrapTitle }) => (noWrapTitle ? 'auto' : '50px')};
 `;
 
 const BackIcon = styled(IconButton)`
@@ -89,7 +90,7 @@ const BackIcon = styled(IconButton)`
 `;
 
 const CloseIconText = styled(BaseText)`
-  color: ${({ light, theme }) => light ? theme.colors.basic005 : theme.colors.basic010};
+  color: ${({ light, theme }) => (light ? theme.colors.basic005 : theme.colors.basic010)};
   font-size: ${fontSizes.small}px;
 `;
 
@@ -114,18 +115,18 @@ const CloseIcon = styled(IconButton)`
   align-items: center;
 `;
 
-const HeaderLeft = styled(Left)`
-  flex: ${props => props.flex ? props.flex : 1};
+const HeaderLeft = styled.View`
+  flex: ${(props) => (props.flex ? props.flex : 1)};
   justify-content: flex-start;
   align-items: flex-end;
 `;
 
-const HeaderBody = styled(Body)`
-  flex: ${props => props.onCloseText ? 2 : 5};
+const HeaderBody = styled(Center)`
+  flex: ${(props) => (props.onCloseText ? 2 : 5)};
 `;
 
-const HeaderRight = styled(Right)`
-  flex: ${props => props.flex};
+const HeaderRight = styled.View`
+  flex: ${(props) => props.flex};
   justify-content: flex-end;
   align-items: flex-end;
   flex-direction: row;
@@ -185,14 +186,10 @@ const Header = (props: Props) => {
   };
 
   return (
-    <Wrapper
-      style={style}
-      noPadding={noPadding}
-      white={white}
-    >
+    <Wrapper style={style} noPadding={noPadding} white={white}>
       <InnerWrapper flexStart={flexStart} noWrapTitle={noWrapTitle}>
-        <HeaderLeft showTitleLeft={showTitleLeft} flex={getHeaderLeftFlex}>
-          {onBack &&
+        <HeaderLeft showTitleLeft={showTitleLeft} flex={getHeaderLeftFlex()}>
+          {onBack && (
             <BackIcon
               icon={backIcon || 'back'}
               color={light ? colors.basic005 : colors.basic010}
@@ -200,17 +197,10 @@ const Header = (props: Props) => {
               fontSize={fontSizes.large}
               horizontalAlign="flex-start"
             />
-          }
-          {showTitleLeft &&
-            <Title
-              noMargin
-              title={title}
-              fullWidth={fullWidthTitle}
-              titleStyles={titleStyles}
-            />
-          }
+          )}
+          {showTitleLeft && <Title noMargin title={title} fullWidth={fullWidthTitle} titleStyles={titleStyles} />}
         </HeaderLeft>
-        {showTitleCenter &&
+        {showTitleCenter && (
           <HeaderBody onCloseText={onCloseText}>
             <Title
               align="center"
@@ -221,14 +211,16 @@ const Header = (props: Props) => {
               titleStyles={titleStyles}
             />
           </HeaderBody>
-        }
-        {showRight && !noClose &&
-          <HeaderRight flex={getHeaderRightFlex} onClose={onClose || noop}>
+        )}
+        {showRight && !noClose && (
+          <HeaderRight flex={getHeaderRightFlex()} onClose={onClose || noop}>
             {!pushRightAddonToTheSide && headerRightAddon}
-            {nextText &&
-              <TextLink style={nextTextStyle} onPress={onNextPress}>{nextText}</TextLink>
-            }
-            {nextIcon &&
+            {nextText && (
+              <TextLink style={nextTextStyle} onPress={onNextPress}>
+                {nextText}
+              </TextLink>
+            )}
+            {nextIcon && (
               <IconWrapper>
                 <NextIcon
                   icon={nextIcon}
@@ -238,13 +230,11 @@ const Header = (props: Props) => {
                   horizontalAlign="flex-end"
                 />
               </IconWrapper>
-            }
+            )}
             {pushRightAddonToTheSide && headerRightAddon}
-            {onClose &&
+            {onClose && (
               <IconWrapper>
-                {onCloseText &&
-                  <CloseIconText light={light} >{onCloseText}</CloseIconText>
-                }
+                {onCloseText && <CloseIconText light={light}>{onCloseText}</CloseIconText>}
                 <CloseIcon
                   icon="close"
                   color={light ? colors.basic005 : colors.basic010}
@@ -253,9 +243,9 @@ const Header = (props: Props) => {
                   horizontalAlign="center"
                 />
               </IconWrapper>
-            }
+            )}
           </HeaderRight>
-        }
+        )}
       </InnerWrapper>
     </Wrapper>
   );

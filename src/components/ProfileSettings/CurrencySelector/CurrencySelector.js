@@ -18,8 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Icon, Picker } from 'native-base';
-import t from 'translations/translate';
+import { Icon, Select } from 'native-base';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { supportedFiatCurrencies } from 'constants/assetsConstants';
 import { connect } from 'react-redux';
@@ -49,21 +49,23 @@ class CurrencySelector extends React.Component<Props, State> {
   render() {
     const { selectedCurrency } = this.state;
     return (
-      <Picker
-        iosHeader={t('label.selectCurrency')}
-        mode="dropdown"
+      <Select
         selectedValue={selectedCurrency}
         onValueChange={this.onCurrencyChanged}
-        iosIcon={<Icon name="arrow-forward" style={{ color: '#c9c8cd' }} />}
+        dropdownIcon={<Icon as={Ionicons} name="arrow-forward" style={{ color: '#c9c8cd' }} />}
       >
-        {supportedFiatCurrencies.map(el => <Picker.Item label={el} value={el} key={el} />)}
-      </Picker>
+        {supportedFiatCurrencies.map((el) => (
+          <Select.Item label={el} value={el} key={el} />
+        ))}
+      </Select>
     );
   }
 }
 
 const mapStateToProps = ({
-  appSettings: { data: { baseFiatCurrency } },
+  appSettings: {
+    data: { baseFiatCurrency },
+  },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
 });
