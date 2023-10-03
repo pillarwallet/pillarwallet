@@ -53,6 +53,9 @@ import Text from 'components/core/Text';
 import TokenIcon from 'components/display/TokenIcon';
 import CategoryListItem from './components/CategoryListItem';
 
+// Types
+import type { Theme, ColorsByThemeProps } from 'models/Theme';
+
 type IInvestmentsSection = {};
 
 const InvestmentsSection: FC<IInvestmentsSection> = () => {
@@ -60,7 +63,7 @@ const InvestmentsSection: FC<IInvestmentsSection> = () => {
   const { t: tStaking } = useTranslationWithPrefix('plrStaking');
 
   const navigation = useNavigation();
-  const theme = useTheme();
+  const theme: Theme = useTheme();
   const accounts = useAccounts();
 
   const category = ASSET_CATEGORY.INVESTMENTS;
@@ -108,7 +111,7 @@ const InvestmentsSection: FC<IInvestmentsSection> = () => {
     try {
       const remoteInfo = getStakingRemoteConfig();
       const stakingInfo = await getStakingContractInfo();
-      if (!stakingInfo && !remoteInfo) return;
+      if (!stakingInfo || !remoteInfo) return;
 
       const startTime = new Date(remoteInfo.stakingStartTime * 1000);
       const lockedStartTime = new Date(remoteInfo.stakingLockedStartTime * 1000);
@@ -118,8 +121,8 @@ const InvestmentsSection: FC<IInvestmentsSection> = () => {
       setStakingLockedEndTime(lockedEndTime);
 
       const enabled = stakingInfo?.contractState === 1 && remoteInfo?.featureStaking;
-      const stakingMaxTotal = BigNumber.from(stakingInfo.maxStakeTotal.toString());
-      const totalStaked = BigNumber.from(stakingInfo.totalStaked.toString());
+      const stakingMaxTotal = BigNumber.from(stakingInfo?.maxStakeTotal.toString());
+      const totalStaked = BigNumber.from(stakingInfo?.totalStaked.toString());
       const percentage = Number(totalStaked.mul(100).div(stakingMaxTotal)) / 100;
 
       setStakedPercentage(percentage);
