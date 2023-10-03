@@ -50,12 +50,9 @@ class CurrencySelector extends React.Component<Props, State> {
     const { selectedCurrency } = this.state;
     return (
       <Select
-        // iosHeader={t('label.selectCurrency')}
-        // mode="dropdown"
         selectedValue={selectedCurrency}
         onValueChange={this.onCurrencyChanged}
         dropdownIcon={<Icon as={Ionicons} name="arrow-forward" style={{ color: '#c9c8cd' }} />}
-        // iosIcon={<Icon name="arrow-forward" style={{ color: '#c9c8cd' }} />}
       >
         {supportedFiatCurrencies.map((el) => (
           <Select.Item label={el} value={el} key={el} />

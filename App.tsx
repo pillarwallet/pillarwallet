@@ -83,7 +83,6 @@ import type { I18n } from 'models/Translations';
 
 // other
 import RootNavigation from 'navigation/rootNavigation';
-// import Storybook from 'screens/Storybook';
 import { store } from 'src/configureStore';
 
 // redux
@@ -445,8 +444,6 @@ const AppRoot = () => (
     <NativeBaseProvider>
       <Provider store={store}>
         <QueryClientProvider client={queryClient}>
-          {/* Temporary disable storybook */}
-          {/* {getEnv().SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />} */}
           <AppWithNavigationState />
         </QueryClientProvider>
       </Provider>
