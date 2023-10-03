@@ -150,10 +150,9 @@ export const setupAddressAction = () => {
     if (isOnline) {
       logBreadcrumb('onboarding', 'setupAddressAction: user is online, registering for FCM Remote Notifications');
       // we us FCM notifications so we must register for FCM, not regular native Push-Notifications
+      logBreadcrumb('onboarding', 'setupAddressAction: firebaseMessaging.registerForRemoteNotifications failed');
       await firebaseMessaging.registerForRemoteNotifications().catch((error) => {
-        logBreadcrumb('onboarding', 'setupAddressAction: firebaseMessaging.registerForRemoteNotifications failed', {
-          error,
-        });
+        reportErrorLog('firebaseMessaging.registerForRemoteNotifications failed', { error });
       });
       await firebaseMessaging.requestPermission().catch(() => null);
 
