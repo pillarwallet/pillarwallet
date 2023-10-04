@@ -19,7 +19,6 @@
 */
 import * as React from 'react';
 import { View } from 'react-native';
-import { ActionSheet } from 'native-base';
 import { ToastProvider } from 'components/Toast';
 
 import type { ViewProps } from 'utils/types/react-native';
@@ -27,17 +26,12 @@ import type { ViewProps } from 'utils/types/react-native';
 type Props = {|
   ...ViewProps,
   children: React.Node,
-|}
+|};
 
 const Root = (props: Props) => (
   <View {...props} style={{ flex: 1 }}>
     {props.children}
     <ToastProvider />
-    <ActionSheet
-      ref={c => {
-        if (c) ActionSheet.actionsheetInstance = c;
-      }}
-    />
   </View>
 );
 

@@ -19,7 +19,6 @@
 */
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
-import { Item as NBItem } from 'native-base';
 import { View, Platform, TextInput as RNInput, TouchableWithoutFeedback } from 'react-native';
 
 import IconButton from 'components/IconButton';
@@ -407,7 +406,7 @@ const IosFocusInput = styled(RNInput)`
   height: 1px;
 `;
 
-const Item = styled(NBItem)`
+const Item = styled.View`
   border-bottom-color: transparent;
   border-bottom-width: 0;
   flex-direction: row;

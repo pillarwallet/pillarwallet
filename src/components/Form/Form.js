@@ -18,22 +18,17 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import styled from 'styled-components/native';
-import { Form } from 'native-base';
 import Input from 'components/Input';
-
-export const LoginForm = styled(Form)`
-  margin: 10px 0 40px;
-`;
 
 export const InputField = styled(Input)`
   border-bottom-width: 1px;
-  border-color: rgb(151,151,151);
+  border-color: rgb(151, 151, 151);
   font-size: 24px;
   margin-bottom: 10px;
 `;
 
 export const PhoneInput = styled(Input)`
   border-bottom-width: 1px;
-  border-color: rgb(151,151,151);
+  border-color: rgb(151, 151, 151);
   font-size: 24px;
 `;

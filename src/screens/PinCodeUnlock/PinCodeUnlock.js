@@ -313,7 +313,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
     if (showPin) {
       return (
-        <Container>
+        <Container inset={{ bottom: 'always' }}>
           <Header centerTitle title={t('auth:enterPincode')} />
           <Spacing h={height * 0.1} />
           {showError}
