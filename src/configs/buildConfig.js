@@ -26,7 +26,7 @@ const buildType = __DEV__ ? DEVELOPMENT : PRODUCTION;
 export const buildEnvironment = {
   APPSFLYER_DEVKEY: '_appsflyer_devkey_',
   IOS_APP_ID: '1346582238',
-  SENTRY_DSN: 'https://3ea39df26dd24e479c27642d11566e43@sentry.io/1294444',
+  SENTRY_DSN: '_sentry_dsn_',
   BUILD_NUMBER: '_build_number_',
   BUILD_TYPE: buildType,
   WERT_ID: '_wert_id_',
