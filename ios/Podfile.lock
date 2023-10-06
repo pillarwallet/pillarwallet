@@ -166,9 +166,9 @@ PODS:
   - libwebp/sharpyuv (1.3.2)
   - libwebp/webp (1.3.2):
     - libwebp/sharpyuv
-  - lottie-ios (4.2.0)
-  - lottie-react-native (6.2.0):
-    - lottie-ios (~> 4.2.0)
+  - lottie-ios (4.3.0)
+  - lottie-react-native (6.3.1):
+    - lottie-ios (~> 4.3.0)
     - React-Core
   - nanopb (2.30908.0):
     - nanopb/decode (= 2.30908.0)
@@ -1053,8 +1053,8 @@ SPEC CHECKSUMS:
   GoogleUtilities: 13e2c67ede716b8741c7989e26893d151b2b2084
   GTMSessionFetcher: 5595ec75acf5be50814f81e9189490412bad82ba
   libwebp: 1786c9f4ff8a279e4dac1e8f385004d5fc253009
-  lottie-ios: 809ecf2d460ed650a6aed7aa88b2ec45fab4779c
-  lottie-react-native: b04640d81bfc87915cd5c9058caa1112374691ff
+  lottie-ios: c69214a487e1a1465a231c1918c6ce174e2d45bc
+  lottie-react-native: c9f1db4f4124dcce9f8159e65d8dc6e8bcb11fb4
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   Permission-Camera: 5d2aaf95592660b6dcb5e8d1d90ed5d0156cad02
   Permission-FaceID: 8f034a57c60ed8c602d184f485a9bd524c0f98b7
@@ -1153,4 +1153,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 5feadc9e32dfe0754c1fb8782fb49f19c7f31739
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.13.0
