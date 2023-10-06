@@ -21,7 +21,7 @@
 import 'utils/setup';
 import { setupEnv, switchEnvironments, getEnv } from 'configs/envConfig';
 import React from 'react';
-import { StatusBar, Platform, Linking, UIManager } from 'react-native';
+import { StatusBar, Platform, Linking, UIManager, View } from 'react-native';
 import { Provider, connect } from 'react-redux';
 import * as Sentry from '@sentry/react-native';
 import styled, { ThemeProvider } from 'styled-components/native';
