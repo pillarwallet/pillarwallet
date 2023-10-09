@@ -26,6 +26,7 @@ import { BigNumber } from 'bignumber.js';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 import { Migrator } from '@etherspot/archanova-migrator';
+import { CommonActions } from '@react-navigation/native';
 
 // components
 import Toast from 'components/Toast';
@@ -71,7 +72,7 @@ import {
   UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES,
   UPDATE_PAYMENT_NETWORK_STAKED,
 } from 'constants/paymentNetworkConstants';
-import { PIN_CODE, PIN_CODE_UNLOCK, WALLET_ACTIVATED } from 'constants/navigationConstants';
+import { PIN_CODE, PIN_CODE_UNLOCK, WALLET_ACTIVATED, AUTH_FLOW } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // configs
@@ -1506,7 +1507,17 @@ export const checkArchanovaSessionIfNeededAction = () => {
     // skip check if no archanova account
     const archanovaAccountExists = !!findFirstArchanovaAccount(accountsSelector(getState()));
     if (!archanovaAccountExists) {
-      navigate(PIN_CODE_UNLOCK);
+      navigate(
+        CommonActions.navigate({
+          name: AUTH_FLOW,
+          params: {
+            screen: PIN_CODE_UNLOCK,
+            params: {
+              forcePin: true,
+            },
+          },
+        }),
+      );
       return;
     }
 
@@ -1544,7 +1555,17 @@ export const checkArchanovaSessionIfNeededAction = () => {
     dispatch({ type: SET_CHECKING_ARCHANOVA_SESSION, payload: false });
 
     if (!smartWalletNeedsInit) {
-      navigate(PIN_CODE_UNLOCK);
+      navigate(
+        CommonActions.navigate({
+          name: AUTH_FLOW,
+          params: {
+            screen: PIN_CODE_UNLOCK,
+            params: {
+              forcePin: true,
+            },
+          },
+        }),
+      );
       return;
     }
 

@@ -295,6 +295,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
     const {
       wallet: { errorMessage: walletErrorMessage },
       isAuthorizing,
+      route,
     } = this.props;
     const { showErrorMessage } = this.state;
     const { waitingTime, showPin } = this.state;
@@ -311,7 +312,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
         </ErrorMessage>
       ) : null;
 
-    if (showPin) {
+    if (showPin || route?.params?.forcePin) {
       return (
         <Container inset={{ bottom: 'always' }}>
           <Header centerTitle title={t('auth:enterPincode')} />
