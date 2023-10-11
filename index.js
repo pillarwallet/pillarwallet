@@ -20,13 +20,12 @@
 
 import 'react-native-gesture-handler';
 import '@ethersproject/shims';
-import '@walletconnect/react-native-compat';
-import 'react-native-get-random-values';
+// import '@walletconnect/react-native-compat';
+// import 'react-native-get-random-values';
 
-import { AppRegistry, LogBox } from 'react-native';
-import App from './App';
+import { AppRegistry } from 'react-native';
+import App from './Test';
 import { name as appName } from './app.json';
 
-LogBox.ignoreAllLogs(true);
 
 AppRegistry.registerComponent(appName, () => App);

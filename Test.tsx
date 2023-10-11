@@ -18,33 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
+import React from 'react';
+// import Splashscreen from 'react-native-splash-screen'
 import { View } from 'react-native';
-// import initStoryshots from '@storybook/addon-storyshots';
-import renderer from 'react-test-renderer';
 
-const MockComponent = (props: any) => {
-  const { children } = props;
-  return <View>{children}</View>;
+const App = () => {
+  // Splashscreen.hide()
+  return <View style={{ flex: 1, backgroundColor: 'blue' }} />;
 };
 
-jest.mock('global', () => global);
-
-jest.mock('react-native-safe-area-context', () => ({
-  useSafeAreaInsets: () => ({
-    bottom: 0,
-    top: 0,
-    left: 0,
-    right: 0,
-  }),
-}));
-
-jest.useFakeTimers();
-
-// initStoryshots({
-//   /* configuration options */
-// });
-
-it('Storyshots render correctly', () => {
-  renderer.create(<MockComponent />);
-});
+export default App;
