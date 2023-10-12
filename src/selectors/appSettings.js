@@ -27,6 +27,7 @@ import { useRootSelector } from 'selectors';
 
 // Types
 import type { Selector } from 'reducers/rootReducer';
+import type { AppSettingsReducerState } from 'reducers/appSettingsReducer';
 
 export function useThemeType() {
   return useRootSelector((root) => root.appSettings.data.themeType);
@@ -45,8 +46,8 @@ export function useBiometricsSelector() {
 
 export const maxPinCodeLengthSelector: Selector<number> = createSelector(
   ({ appSettings }) => appSettings,
-  (): number => {
-    // if (appSettings?.hasSixDigitsPin) return 6; // Temporary disable this
+  ({ data: appSettings }: AppSettingsReducerState): number => {
+    if (appSettings?.hasSixDigitsPin) return 6;
     return 4;
   },
 );
