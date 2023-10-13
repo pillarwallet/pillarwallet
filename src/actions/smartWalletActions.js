@@ -1508,14 +1508,9 @@ export const checkArchanovaSessionIfNeededAction = () => {
     const archanovaAccountExists = !!findFirstArchanovaAccount(accountsSelector(getState()));
     if (!archanovaAccountExists) {
       navigate(
-        CommonActions.navigate({
-          name: AUTH_FLOW,
-          params: {
-            screen: PIN_CODE_UNLOCK,
-            params: {
-              forcePin: true,
-            },
-          },
+        CommonActions.reset({
+          index: 1,
+          routes: [{ name: AUTH_FLOW, params: { screen: PIN_CODE_UNLOCK } }],
         }),
       );
       return;
@@ -1556,14 +1551,9 @@ export const checkArchanovaSessionIfNeededAction = () => {
 
     if (!smartWalletNeedsInit) {
       navigate(
-        CommonActions.navigate({
-          name: AUTH_FLOW,
-          params: {
-            screen: PIN_CODE_UNLOCK,
-            params: {
-              forcePin: true,
-            },
-          },
+        CommonActions.reset({
+          index: 1,
+          routes: [{ name: AUTH_FLOW, params: { screen: PIN_CODE_UNLOCK } }],
         }),
       );
       return;
