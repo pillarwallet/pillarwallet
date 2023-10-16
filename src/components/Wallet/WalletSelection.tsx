@@ -88,9 +88,6 @@ export default function () {
   const onNavigate = (category, chain) => {
     const assetData = buildAssetDataNavigationParam(category, chain);
     assetData.backDashboad = true;
-    console.log('====================================');
-    console.log('ASSSSTTTTTT', assetData);
-    console.log('====================================');
     navigation.navigate(ASSET, { screen: ASSET, params: { assetData, isNavigateToHome: true } });
   };
 
