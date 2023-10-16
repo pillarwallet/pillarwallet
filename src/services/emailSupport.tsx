@@ -62,8 +62,8 @@ export const emailSupport = async (accounts?: Account[]) => {
 
   return openComposer({
     to: email,
-    subject,
-    body,
+    subject: Platform.OS === 'ios' ? encodeURIComponent(subject) : subject,
+    body: Platform.OS === 'ios' ? encodeURIComponent(body) : body,
   }).catch((error) => {
     reportErrorLog('Failed email support', { deviceName, osVersion, error });
     Toast.show({

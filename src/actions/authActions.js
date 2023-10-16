@@ -348,16 +348,21 @@ export const resetIncorrectPasswordAction = () => ({ type: RESET_WALLET_ERROR })
 export const lockScreenAction = (onLoginSuccess: ?OnValidPinCallback, errorMessage?: string) => {
   return () => {
     navigate(
-      CommonActions.navigate({
-        name: AUTH_FLOW,
-        params: {
-          screen: PIN_CODE_UNLOCK,
-          params: {
-            onLoginSuccess,
-            errorMessage,
-            forcePin: true,
+      CommonActions.reset({
+        index: 1,
+        routes: [
+          {
+            name: AUTH_FLOW,
+            params: {
+              screen: PIN_CODE_UNLOCK,
+              params: {
+                onLoginSuccess,
+                errorMessage,
+                forcePin: true,
+              },
+            },
           },
-        },
+        ],
       }),
     );
   };

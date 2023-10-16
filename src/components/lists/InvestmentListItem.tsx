@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { TouchableOpacity, SectionList } from 'react-native';
-
+import { isEmpty } from 'lodash';
 import styled from 'styled-components/native';
 import { useTranslation } from 'react-i18next';
 
@@ -97,7 +97,9 @@ export default function ({
   };
 
   const renderItem = (item) => {
-    const { logoURI: positionImgUri, name: positionName, balance: positionBalance } = item;
+    const positionImgUri = item?.logoURI ?? null ;
+    const positionName = item?.name ?? '';
+    const positionBalance = item?.balance ?? null;
     const positionBalanceInFiat = fiatInvestmentBalance(positionBalance, ethereumRates, currency);
     const balanceWithCurrency = formatFiatValue(positionBalanceInFiat, currency);
 
@@ -141,7 +143,7 @@ export default function ({
         <Icon name={isSelected ? 'up-arrow' : 'down-arrow'} width={16} height={16} />
       </Container>
 
-      {isSelected && (
+      {isSelected && !isEmpty(positionsSection) && (
         <SectionList
           sections={positionsSection}
           scrollEnabled={false}
