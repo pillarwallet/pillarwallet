@@ -92,7 +92,14 @@ const PinCodeConfirmation = ({ setOnboardingPinCode, navigation, route }) => {
           dispatch({ type: SET_FETCHING, payload: true });
           dispatch(walletSetupAction(false));
         }
-        navigation.navigate(APP_FLOW);
+        navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: APP_FLOW,
+            },
+          ],
+        });
       }
     });
   };

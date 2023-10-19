@@ -66,15 +66,18 @@ import Spinner from 'components/Spinner';
 import Walkthrough from 'components/Walkthrough';
 import Button from 'components/legacy/Button';
 import PercentsInputAccessoryHolder from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
+import Modal from 'components/Modal';
 
 // utils
 import { getThemeByType } from 'utils/themes';
 import { log } from 'utils/logger';
 import { logBreadcrumb, reportOrWarn, reportLog } from 'utils/common';
+import { getActiveRouteName } from 'utils/navigation';
 
 // services
 import { firebaseRemoteConfig } from 'services/firebase';
 import { logScreenViewAction } from 'actions/analyticsActions';
+import { setRoutesState } from 'services/navigation';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -336,6 +339,16 @@ class App extends React.Component<Props, any> {
     }
   };
 
+  handleNavigationStateChange = (route) => {
+    if (route.type === 'stack') Modal.closeAll();
+    setRoutesState(route);
+
+    const nextRouteName = getActiveRouteName(route);
+    if (!!nextRouteName) {
+      this.props.logScreenView(nextRouteName);
+    }
+  };
+
   render() {
     const {
       isFetched,
@@ -347,7 +360,8 @@ class App extends React.Component<Props, any> {
       translationsInitialised,
     } = this.props;
     const theme = getThemeByType(themeType);
-    const { current } = theme;
+
+    const { current, colors } = theme;
 
     if (!isFetched || (localeConfig.isEnabled && !translationsInitialised)) {
       return null;
@@ -359,8 +373,9 @@ class App extends React.Component<Props, any> {
           <React.Fragment>
             <Root>
               <RootNavigation
-                theme={current === LIGHT_THEME ? 'light' : 'dark'} // eslint-disable-line i18next/no-literal-string
+                theme={{ dark: current !== LIGHT_THEME, colors }} // eslint-disable-line i18next/no-literal-string
                 language={i18next.language}
+                onNavigationStateChange={this.handleNavigationStateChange}
               />
               {!!getEnv().SHOW_THEME_TOGGLE && (
                 <Button

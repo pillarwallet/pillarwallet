@@ -59,7 +59,7 @@ import { getDeviceUniqueId } from 'utils/device';
 
 // services
 import Storage from 'services/storage';
-import { navigate, getNavigationState } from 'services/navigation';
+import { navigate, getNavigationState, getLastRouteState } from 'services/navigation';
 import { firebaseAuth, firebaseMessaging, firebaseRemoteConfig } from 'services/firebase';
 import etherspotService from 'services/etherspot';
 import archanovaService from 'services/archanova';
@@ -182,6 +182,8 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
 
     const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
 
+    const route = getLastRouteState();
+
     let navigateAction = {
       // current active screen will be always AUTH_FLOW due to login/logout
       screen: lastActiveScreen || HOME_FLOW,
@@ -199,10 +201,19 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
 
     if (!bannerData) dispatch(bannerDataAction());
 
-    const navigateToAppAction = CommonActions.navigate({
-      name: APP_FLOW,
-      params: navigateAction,
+    let navigateToAppAction = CommonActions.reset({
+      index: 0,
+      routes: [
+        {
+          name: APP_FLOW,
+          params: navigateAction,
+        },
+      ],
     });
+
+    if (route) {
+      navigateToAppAction = CommonActions.reset(route);
+    }
 
     dispatch(checkInitialDeepLinkAction());
 

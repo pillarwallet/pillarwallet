@@ -66,7 +66,14 @@ export function useBioMetricsPopup(navigation: NavigationScreenProp<any>) {
     else dispatch(logEventAction(isiOS ? 'cancel_face_id' : 'cancel_biometric_id'));
 
     dispatch(walletSetupAction(setBiometrics));
-    navigation.navigate(APP_FLOW);
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: APP_FLOW,
+        },
+      ],
+    });
   };
 
   const faceIDPermission = (biometryType) => {

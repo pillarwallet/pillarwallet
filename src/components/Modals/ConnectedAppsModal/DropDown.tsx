@@ -26,7 +26,7 @@ import {
   View,
   StyleProp,
   ViewStyle,
-  NativeEventEmitter,
+  DeviceEventEmitter,
   Dimensions,
 } from 'react-native';
 
@@ -48,18 +48,15 @@ const { height } = Dimensions.get('window');
 
 const DropDown: FC<Props> = ({ dropDownStyle, visible, onHide, modalContent, showOnlyBottomSide }) => {
   const colors = useThemeColors();
-  
-  const emitter: any = '';
-  const dropdownManagerEmitter = new NativeEventEmitter(emitter);
 
   const [ref, setRef] = useState(null);
   const [dropDownFromTop, setDropDownFromTop] = React.useState(height);
   const [contentHeight, setContentHeight] = React.useState(0);
 
   useEffect(() => {
-    dropdownManagerEmitter.addListener(WALLET_DROPDOWN_REF, setRef);
+    const listner = DeviceEventEmitter.addListener(WALLET_DROPDOWN_REF, setRef);
     return () => {
-      dropdownManagerEmitter.removeAllListeners(WALLET_DROPDOWN_REF);
+      listner?.remove();
     };
   }, [visible]);
 
