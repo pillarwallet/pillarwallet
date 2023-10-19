@@ -34,7 +34,7 @@ import etherspotService from 'services/etherspot';
 import { navigate } from 'services/navigation';
 
 // Constants
-import { WALLETCONNECT_BROWSER } from 'constants/navigationConstants';
+import { WALLETCONNECT_FLOW, WALLETCONNECT_BROWSER } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // Types
@@ -81,11 +81,14 @@ export async function viewTransactionOnBlockchain(chain: Chain, transaction: Vie
 
   navigate(
     CommonActions.navigate({
-      name: WALLETCONNECT_BROWSER,
+      name: WALLETCONNECT_FLOW,
       params: {
-        url: explorerLink,
-        title: t('title.chain_explorer', { title: chain === CHAIN.XDAI ? 'Gnosis' : upperFirst(chain) }),
-        isBlockchainExplorer: true,
+        screen: WALLETCONNECT_BROWSER,
+        params: {
+          url: explorerLink,
+          title: t('title.chain_explorer', { title: chain === CHAIN.XDAI ? 'Gnosis' : upperFirst(chain) }),
+          isBlockchainExplorer: true,
+        },
       },
     }),
   );

@@ -32,6 +32,9 @@ let _state = {
   lastActiveScreenParams: null,
 };
 
+let routesState = null;
+let lastRouteState = null;
+
 export const NavigationActions = navigationRef;
 
 export function navigate(routeName: string | Object, params?: Object) {
@@ -61,4 +64,19 @@ export function updateNavigationLastScreenState({
     lastActiveScreen,
     lastActiveScreenParams,
   };
+}
+export function setRoutesState(state: any) {
+  routesState = state;
+}
+
+export function getRoutesState() {
+  return routesState;
+}
+
+export function setLastRouteState() {
+  lastRouteState = routesState;
+}
+
+export function getLastRouteState() {
+  return lastRouteState;
 }

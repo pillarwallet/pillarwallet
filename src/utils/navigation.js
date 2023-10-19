@@ -39,11 +39,11 @@ export const getActiveRouteName = (navigationState: any): string | null => {
 
   const route = navigationState.routes[navigationState.index];
   // dive into nested navigators
-  if (route.routes) {
-    return getActiveRouteName(route);
+  if (route?.state) {
+    return getActiveRouteName(route.state);
   }
 
-  return route.routeName;
+  return route.name;
 };
 
 export const getActiveScreenName = (navigation: any): string | null => {

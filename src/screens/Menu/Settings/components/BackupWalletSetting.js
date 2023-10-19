@@ -23,7 +23,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Constants
-import { BACKUP_WALLET_IN_SETTINGS_FLOW } from 'constants/navigationConstants';
+import { BACKUP_WALLET_IN_SETTINGS_FLOW, BACKUP_WALLET_INTRO } from 'constants/navigationConstants';
 
 // Selectors
 import { useIsWalletBackedUp } from 'selectors/wallets';
@@ -50,7 +50,14 @@ function BackupWalletSetting({ wallet }: Props) {
 
   if (isBackedUp || !wallet) return null;
 
-  const goToBackupWallet = () => navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW, { wallet });
+  const goToBackupWallet = () => {
+    navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW, {
+      screen: BACKUP_WALLET_INTRO,
+      params: {
+        wallet,
+      },
+    });
+  };
 
   return (
     <SettingsItem
