@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { Dimensions, FlatList, NativeEventEmitter } from 'react-native';
+import { DeviceEventEmitter, Dimensions, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
@@ -79,9 +79,6 @@ function WalletTabScrollContent({ isNavigateToHome, hasPositiveBalance }: Props)
   const ref: any = React.useRef();
   const colors = useThemeColors();
 
-  const emitter: any = ''
-  const dropdownManagerEmitter = new NativeEventEmitter(emitter);
-
   const items = [
     { key: ALL, title: ALL, color: colors.preciousPersimmon },
     { key: TOKENS, title: TOKENS, color: colors.darkViolet },
@@ -111,7 +108,7 @@ function WalletTabScrollContent({ isNavigateToHome, hasPositiveBalance }: Props)
   };
 
   React.useEffect(() => {
-    dropdownManagerEmitter.emit(WALLET_DROPDOWN_REF, ref);
+    DeviceEventEmitter.emit(WALLET_DROPDOWN_REF, ref);
   }, [ref, visibleRiskinessModal]);
 
   const openPortfolioRiskinessModal = () => {

@@ -273,6 +273,9 @@ import { DARK_THEME } from 'constants/appSettingsConstants';
 import { modalTransition, addAppStateChangeListener } from 'utils/common';
 import { getThemeByType, getThemeColors } from 'utils/themes';
 
+// Services
+import { setLastRouteState } from 'services/navigation';
+
 // types
 import type { Theme } from 'models/Theme';
 import type { I18n } from 'models/Translations';
@@ -885,6 +888,7 @@ class AppFlow extends React.Component<Props, State> {
         stopListeningNotifications();
       }, SLEEP_TIMEOUT);
     } else if (APP_LOGOUT_STATES.includes(lastAppState) && nextAppState === ACTIVE_APP_STATE) {
+      setLastRouteState();
       handleSystemDefaultThemeChange();
       handleSystemLanguageChange();
       checkArchanovaSession();

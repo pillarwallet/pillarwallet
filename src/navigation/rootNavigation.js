@@ -21,7 +21,7 @@
 import * as React from 'react';
 import { Platform } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, type NavigationState } from '@react-navigation/native';
 import { CardStyleInterpolators } from '@react-navigation/stack';
 
 // Screens
@@ -69,10 +69,17 @@ import {
 
 import { navigationRef } from 'services/navigation';
 
+import type { ThemeColors } from 'models/Theme';
+
 import AppFlow from './appNavigation';
 
 type Props = {
   language: string,
+  onNavigationStateChange: (state: NavigationState) => void,
+  theme: {
+    dark: boolean,
+    colors: ThemeColors,
+  },
 };
 
 const onBoraringFlowStack = createNativeStackNavigator();
@@ -136,7 +143,7 @@ function OnBoraringStackNavigator() {
 
 function AuthStackNavigator() {
   return (
-    <authFlowStack.Navigator>
+    <authFlowStack.Navigator screenOptions={StackNavigatorConfig}>
       <authFlowStack.Screen
         name={MENU_SELECT_APPEARANCE}
         component={MenuSelectAppearanceScreen}
@@ -148,13 +155,9 @@ function AuthStackNavigator() {
   );
 }
 
-function RootNavigator({ onNavigationStateChange }) {
+function RootNavigator() {
   return (
-    <rootFlowStack.Navigator
-      screenOptions={StackNavigatorConfig}
-      initialRouteName={ONBOARDING_FLOW}
-      screenListeners={onNavigationStateChange}
-    >
+    <rootFlowStack.Navigator screenOptions={StackNavigatorConfig} initialRouteName={ONBOARDING_FLOW}>
       <rootFlowStack.Screen name={ONBOARDING_FLOW} component={OnBoraringStackNavigator} />
       <rootFlowStack.Screen name={AUTH_FLOW} component={AuthStackNavigator} />
       <rootFlowStack.Screen name={APP_FLOW} component={AppFlow} />
@@ -164,12 +167,12 @@ function RootNavigator({ onNavigationStateChange }) {
 
 // to pass in language prop so stacks would rerender on language change
 const WrappedRootSwitch = (props: Props) => {
-  const { language } = props;
+  const { language, onNavigationStateChange, theme } = props;
   return (
-    <NavigationContainer ref={navigationRef}>
+    <NavigationContainer ref={navigationRef} theme={theme} onStateChange={onNavigationStateChange}>
       <ModalProvider />
       {/* $FlowFixMe: flow update to 0.122 */}
-      <RootNavigator screenProps={{ language }} {...this.props} />
+      <RootNavigator screenProps={{ language }} />
     </NavigationContainer>
   );
 };

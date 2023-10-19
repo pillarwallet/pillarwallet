@@ -171,7 +171,7 @@ const Header = (props: Props) => {
     if (headerRightFlex) {
       return headerRightFlex;
     } else if (onlyCloseIcon) {
-      return '0 0 44px';
+      return 0;
     }
     return 1;
   };

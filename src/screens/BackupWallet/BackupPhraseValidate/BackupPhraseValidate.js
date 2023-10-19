@@ -38,6 +38,9 @@ import Text from 'components/core/Text';
 // Actions
 import { backupWalletAction } from 'actions/walletActions';
 
+// Constants
+import { MENU_SETTINGS } from 'constants/navigationConstants';
+
 // Utils
 import { appFont, spacing, fontSizes } from 'utils/variables';
 
@@ -71,7 +74,7 @@ const BackupPhraseValidate = ({ navigation, backupWallet, route }: Props) => {
 
   const handlePassedValidation = () => {
     backupWallet();
-    navigation.goBack();
+    navigation.navigate(MENU_SETTINGS);
     Toast.show({
       message: t('toast.walletBackedUp'),
       emoji: 'the_horns',

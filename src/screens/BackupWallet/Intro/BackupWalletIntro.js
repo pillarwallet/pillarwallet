@@ -59,8 +59,8 @@ function BackupWalletIntro({ resetIncorrectPassword }: Props) {
   const mnemonicPhrase = unlockedwallet?.mnemonic;
 
   const handleScreenDismissal = () => {
-    resetIncorrectPassword();
-    navigation.goBack(null);
+    resetIncorrectPassword && resetIncorrectPassword();
+    navigation.goBack();
   };
 
   const onPinValid = (walletPin: ?string, { mnemonic, privateKey }) => {
