@@ -46,7 +46,7 @@ import { TRANSACTION_TYPE } from 'constants/transactionsConstants';
 // Hooks
 import { STATUS, useTimer } from 'hooks/timer';
 
-export default function ({ data, index }) {
+export default function ({ data, index, onCloseNofitcation }) {
   const colors = useThemeColors();
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -96,6 +96,7 @@ export default function ({ data, index }) {
   const onClose = () => {
     setIsVisible(false);
     setTimerStatus(STATUS.STOPPED);
+    onCloseNofitcation(data);
   };
 
   const NormalTitle = () => {
@@ -125,6 +126,7 @@ export default function ({ data, index }) {
           <HorizontalSubContainer style={{ paddingBottom: 5 }}>
             <ProgressIcon hash={hash} />
             {hash ? <Title>{t('transactionNotification.you_sent')}</Title> : <NormalTitle />}
+            <CloseButton onPress={onClose} colors={colors} />
           </HorizontalSubContainer>
           <HorizontalSubContainer>
             <Title numberOfLines={1} style={{ marginLeft: 29 }}>
@@ -135,7 +137,6 @@ export default function ({ data, index }) {
             </Title>
           </HorizontalSubContainer>
         </Summary>
-        <CloseButton onPress={onClose} colors={colors} />
       </HorizontalContainer>
       <BottomContainer t={t} onPress={viewOnBlockchain} time={time} gasValue={gasValue} colors={colors} />
     </TouchableContainer>
@@ -215,10 +216,11 @@ const HorizontalSubContainer = styled.View`
 const Title = styled(Text)`
   ${fontStyles.medium};
   font-family: '${appFont.regular}';
-  color: ${({ theme }) => theme.colors.control}; ;
+  color: ${({ theme }) => theme.colors.control};
+  width: 84%;
 `;
 
 const SubText = styled(Text)`
   font-family: '${appFont.regular}';
-  color: ${({ theme }) => theme.colors.control}; ;
+  color: ${({ theme }) => theme.colors.control};
 `;
