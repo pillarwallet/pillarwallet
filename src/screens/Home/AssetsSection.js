@@ -91,7 +91,7 @@ function AssetsSection({ accountTotalBalances, accountCollectibleCounts, visible
   const totalCollectibleCount = calculateTotalCollectibleCount(accountCollectibleCounts);
 
   const navigateToAssetDetails = (category: AssetCategory, chain: Chain) => {
-    navigation.navigate(ASSETS, { category, chain });
+    navigation.navigate(ASSETS, { screen: ASSETS, params: { category, chain } });
   };
 
   const toggleShowChains = (category: AssetCategory) => {

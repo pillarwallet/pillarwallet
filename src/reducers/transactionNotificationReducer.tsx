@@ -15,7 +15,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { TRANSACTION_NOTIFICATION_DATA } from 'constants/exchangeConstants';
+import { TRANSACTION_NOTIFICATION_DATA, REMOVE_TRANSACTION_NOTIFICATION_DATA } from 'constants/exchangeConstants';
 
 export type TransactionNotificationState = {
   data: any;
@@ -33,7 +33,9 @@ export const initialState = {
 export default function (state: TransactionNotificationState = initialState, action: TransactionNotificationAction) {
   switch (action.type) {
     case TRANSACTION_NOTIFICATION_DATA:
-      return { ...state, data: state.data.concat(action.payload), loading: false };
+      return { ...state, data: state.data.concat(action.payload) };
+    case REMOVE_TRANSACTION_NOTIFICATION_DATA:
+      return { ...state, data: action.payload };
     default:
       return state;
   }
