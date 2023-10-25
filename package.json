@@ -78,7 +78,7 @@
     "browserify-zlib": "0.2.0",
     "buffer": "^4.9.1",
     "coinselect": "^3.1.11",
-    "crypto-js": "^4.0.0",
+    "crypto-js": "^4.2.0",
     "d3-interpolate": "^3.0.1",
     "date-fns": "^2.23.0",
     "deprecated-react-native-prop-types": "^4.2.1",
