@@ -108,7 +108,7 @@ function Exchange({ fetchExchangeTitle }: Props) {
   const colors = useThemeColors();
   const gasFeeList = useExchangeGasFee();
 
-  const isEstimaing = gasFeeList?.find((feeInfo) => feeInfo.isEstimating);
+  const isEstimaing = gasFeeList?.some((feeInfo) => feeInfo.isEstimating);
 
   const initialChain: Chain = route?.params?.chain;
   const initialFromAddress: string = route?.params?.fromAssetAddress || nativeAssetPerChain[initialChain]?.address;
