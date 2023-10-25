@@ -35,7 +35,7 @@ import type { WalletConnectConnector } from 'models/WalletConnect';
 
 // Local
 import AppListItem from './AppListItem';
-import { type AppItem, useConnectedAppItems } from './selectors';
+import { useConnectedAppItems } from './selectors';
 
 function WalletConnectConnectedApps() {
   const { t } = useTranslationWithPrefix('walletConnect.connectedApps');
@@ -48,16 +48,8 @@ function WalletConnectConnectedApps() {
     Modal.open(() => <WalletConnectDisconnectModal connector={connector} />);
   };
 
-  const renderItem = ({ title, iconUrl, chain, connector }: AppItem) => {
-    return (
-      <AppListItem
-        title={title}
-        iconUrl={iconUrl}
-        chain={chain}
-        connector={connector}
-        onPress={() => openDisconnectModal(connector)}
-      />
-    );
+  const renderItem = (item: any) => {
+    return <AppListItem {...item} onPress={() => openDisconnectModal(item?.connector)} />;
   };
 
   return (
