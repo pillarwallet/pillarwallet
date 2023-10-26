@@ -47,6 +47,7 @@ import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { NFT_FLAG } from 'constants/assetsConstants';
 import { SET_NEW_USER } from 'constants/onboardingConstants';
+import { REMOVE_APP_HOLDINGS } from 'constants/appsHoldingsConstants';
 
 // utils
 import { logBreadcrumb, reportLog } from 'utils/common';
@@ -440,6 +441,8 @@ export const logoutAction = () => {
 
     // reset services
     await dispatch(resetAppServicesAction());
+
+    dispatch({ type: REMOVE_APP_HOLDINGS });
 
     // reset reducer state
     const { isOnline, translationsInitialised, fallbackLanguageVersion, sessionLanguageCode, sessionLanguageVersion } =

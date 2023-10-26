@@ -54,22 +54,21 @@ import type { WalletConnectConnector, WalletConnectV2Session } from 'models/Wall
 import { isEmpty } from 'lodash';
 
 type Props = {|
+  key: string,
   title: string,
   chain?: Chain,
   onPress?: () => void,
   iconUrl: ?string,
   connector: WalletConnectConnector,
   v2Session?: ?WalletConnectV2Session,
-  rest?: any,
 |};
 
-function AppListItem({ title, iconUrl, onPress, v2Session, ...rest }: Props) {
+function AppListItem({ key, title, iconUrl, onPress, connector, v2Session }: Props) {
   const colors = useThemeColors();
   const Dropdownref: any = React.useRef();
   const NetworkRef: any = React.useRef();
   const dispatch = useDispatch();
   const { t } = useTranslationWithPrefix('walletConnect.disconnectModal');
-  const { connector } = rest;
 
   const v2SessionInfo = React.useMemo(() => {
     if (isEmpty(v2Session)) return null;
@@ -92,8 +91,8 @@ function AppListItem({ title, iconUrl, onPress, v2Session, ...rest }: Props) {
     return { account, chains: v2Chains, topic };
   }, [v2Session]);
 
-  const chain = v2SessionInfo ? v2SessionInfo?.chains[0] : chainFromChainId[connector.chainId];
-  const walletData = useWalletConnectAccounts(v2SessionInfo ? v2SessionInfo?.account : connector.accounts[0]);
+  const chain = v2SessionInfo ? v2SessionInfo?.chains[0] : chainFromChainId[connector?.chainId];
+  const walletData = useWalletConnectAccounts(v2SessionInfo ? v2SessionInfo?.account : connector?.accounts[0]);
 
   const { updateConnectorSession, disconnectSessionByUrl, disconnectSessionV2ByTopic } = useWalletConnect();
 
@@ -123,8 +122,8 @@ function AppListItem({ title, iconUrl, onPress, v2Session, ...rest }: Props) {
     if (v2Session) {
       dispatch(updateSessionV2(chainId, v2Session));
     } else {
-      if (chainId === connector.chainId) return;
-      updateConnectorSession(connector, { chainId, accounts: connector.accounts });
+      if (chainId === connector?.chainId) return;
+      updateConnectorSession(connector, { chainId, accounts: connector?.accounts });
     }
   };
 
@@ -157,7 +156,7 @@ function AppListItem({ title, iconUrl, onPress, v2Session, ...rest }: Props) {
   };
 
   return (
-    <Container>
+    <Container key={key}>
       <Line />
       <TouchableContainer ref={Dropdownref} onPress={onPressButton}>
         <IconContainer>{!!iconUrl && <IconImage source={{ uri: iconUrl }} />}</IconContainer>
@@ -169,7 +168,7 @@ function AppListItem({ title, iconUrl, onPress, v2Session, ...rest }: Props) {
           <Text color={colors.secondaryText}>{walletData[0]?.label}</Text>
         </TitleContainer>
 
-        <RightAddOn disabled={v2SessionInfo} ref={NetworkRef} onPress={onChangeNetwork}>
+        <RightAddOn disabled ref={NetworkRef} onPress={onChangeNetwork}>
           {!v2SessionInfo && <Icon name={chain} width={16} />}
           {v2SessionInfo &&
             v2SessionInfo?.chains?.map((v2chain, index) => {

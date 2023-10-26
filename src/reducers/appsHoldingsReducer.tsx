@@ -19,7 +19,12 @@
 */
 
 // constants
-import { SET_APP_HOLDINGS, UPDATE_APP_HOLDINGS, SET_FETCHING_HOLDINGS } from 'constants/appsHoldingsConstants';
+import {
+  SET_APP_HOLDINGS,
+  UPDATE_APP_HOLDINGS,
+  REMOVE_APP_HOLDINGS,
+  SET_FETCHING_HOLDINGS,
+} from 'constants/appsHoldingsConstants';
 
 // types
 import type { AppHoldings } from 'models/Investment';
@@ -65,7 +70,12 @@ const appsHoldingsReducer = (
         ...state,
         data: action.payload,
       };
-
+    case REMOVE_APP_HOLDINGS:
+      return {
+        ...state,
+        data: [],
+        isFetching: false,
+      };
     case SET_FETCHING_HOLDINGS:
       return {
         ...state,
