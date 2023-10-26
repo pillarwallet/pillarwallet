@@ -67,7 +67,7 @@ const AnimatedGraph = ({ period, marketData, historicData, onChangePointer, toke
       if (perticularItem.timestamp && perticularItem.usdPrice) {
         list.push({
           value: perticularItem.usdPrice,
-          date: moment(perticularItem.timestamp * 1000).format(period === ONE_DAY ? 'MMM DD hh:mm' : 'MMM DD'),
+          date: moment(perticularItem.timestamp).format(period === ONE_DAY ? 'MMM DD hh:mm' : 'MMM DD'),
         });
       }
     });
