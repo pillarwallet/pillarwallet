@@ -72,7 +72,13 @@ import {
   UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES,
   UPDATE_PAYMENT_NETWORK_STAKED,
 } from 'constants/paymentNetworkConstants';
-import { PIN_CODE, PIN_CODE_UNLOCK, WALLET_ACTIVATED, AUTH_FLOW } from 'constants/navigationConstants';
+import {
+  PIN_CODE,
+  PIN_CODE_UNLOCK,
+  WALLET_ACTIVATED,
+  AUTH_FLOW,
+  WALLETCONNECT_BROWSER,
+} from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // configs
@@ -80,7 +86,7 @@ import { getPlrAddressForChain, PPN_TOKEN } from 'configs/assetsConfig';
 
 // services
 import archanovaService, { formatEstimated, parseEstimatePayload } from 'services/archanova';
-import { navigate } from 'services/navigation';
+import { navigate, getRoutesState } from 'services/navigation';
 import etherspotService from 'services/etherspot';
 
 // selectors
@@ -135,6 +141,7 @@ import { formatToRawPrivateKey, getPrivateKeyFromPin, normalizeWalletAddress } f
 import { nativeAssetPerChain } from 'utils/chains';
 import { fromEthersBigNumber } from 'utils/bigNumber';
 import { getDeviceUniqueId } from 'utils/device';
+import { getActiveRouteName } from 'utils/navigation';
 
 // actions
 import {
@@ -1504,15 +1511,21 @@ export const estimateSmartWalletDeploymentAction = () => {
 export const checkArchanovaSessionIfNeededAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { isCheckingSmartWalletSession } = getState().smartWallet;
+
+    const lastRoute = getRoutesState();
+    const nextRouteName = getActiveRouteName(lastRoute);
+
     // skip check if no archanova account
     const archanovaAccountExists = !!findFirstArchanovaAccount(accountsSelector(getState()));
     if (!archanovaAccountExists) {
-      navigate(
-        CommonActions.reset({
-          index: 1,
-          routes: [{ name: AUTH_FLOW, params: { screen: PIN_CODE_UNLOCK } }],
-        }),
-      );
+      if (nextRouteName !== WALLETCONNECT_BROWSER) {
+        navigate(
+          CommonActions.reset({
+            index: 1,
+            routes: [{ name: AUTH_FLOW, params: { screen: PIN_CODE_UNLOCK } }],
+          }),
+        );
+      }
       return;
     }
 
@@ -1550,12 +1563,14 @@ export const checkArchanovaSessionIfNeededAction = () => {
     dispatch({ type: SET_CHECKING_ARCHANOVA_SESSION, payload: false });
 
     if (!smartWalletNeedsInit) {
-      navigate(
-        CommonActions.reset({
-          index: 1,
-          routes: [{ name: AUTH_FLOW, params: { screen: PIN_CODE_UNLOCK } }],
-        }),
-      );
+      if (nextRouteName !== WALLETCONNECT_BROWSER) {
+        navigate(
+          CommonActions.reset({
+            index: 1,
+            routes: [{ name: AUTH_FLOW, params: { screen: PIN_CODE_UNLOCK } }],
+          }),
+        );
+      }
       return;
     }
 
