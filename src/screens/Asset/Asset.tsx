@@ -79,7 +79,7 @@ const AssetScreen = () => {
 
   if (tokenDetailsQuery?.data) {
     const { tokenAddress } = tokenDetailsQuery?.data;
-    if (tokenAddress !== contractAddress?.toLowerCase()) {
+    if (tokenAddress?.toLowerCase() !== contractAddress?.toLowerCase()) {
       tokenDetailsQuery.data = null;
     }
   }
@@ -91,7 +91,7 @@ const AssetScreen = () => {
   }
   if (historicalTokenPricesQuery?.data) {
     const { items } = historicalTokenPricesQuery.data;
-    if (items?.[0]?.tokenAddress !== contractAddress?.toLowerCase()) {
+    if (items?.[0]?.tokenAddress?.toLowerCase() !== contractAddress?.toLowerCase()) {
       historicalTokenPricesQuery.data = null;
     }
   }
