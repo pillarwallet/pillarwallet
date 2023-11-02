@@ -128,6 +128,7 @@ interface Props extends WithTranslation {
   initWalletConnectSessionsWithoutReset: () => void;
   syncReduxStateWithFirestore: () => void;
   reduxFetchGasThresholds: () => void;
+  isVisibleModal: boolean;
 }
 
 class App extends React.Component<Props, any> {
@@ -340,7 +341,8 @@ class App extends React.Component<Props, any> {
   };
 
   handleNavigationStateChange = (route) => {
-    if (route.type === 'stack') Modal.closeAll();
+    const { isVisibleModal } = this.props;
+    if (route.type === 'stack' || !isVisibleModal) Modal.closeAll();
     setRoutesState(route);
 
     const nextRouteName = getActiveRouteName(route);
@@ -424,6 +426,7 @@ const mapStateToProps = ({
   session: {
     data: { translationsInitialised, sessionLanguageVersion },
   },
+  walletConnect: { isVisibleModal },
 }: RootReducerState): Partial<Props> => ({
   isFetched,
   themeType,
@@ -432,6 +435,7 @@ const mapStateToProps = ({
   translationsInitialised,
   initialDeepLinkExecuted,
   sessionLanguageVersion,
+  isVisibleModal,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): Partial<Props> => ({
