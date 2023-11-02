@@ -341,6 +341,7 @@ class App extends React.Component<Props, any> {
   };
 
   handleNavigationStateChange = (route) => {
+    // Use for WC modal
     const { isVisibleModal } = this.props;
     if (route.type === 'stack' || !isVisibleModal) Modal.closeAll();
     setRoutesState(route);
