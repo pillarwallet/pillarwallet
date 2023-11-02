@@ -17,20 +17,18 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { getNavigationPathAndParamsState } from 'services/navigation';
+import { getRoutesState } from 'services/navigation';
 import { AUTH_FLOW } from 'constants/navigationConstants';
 
 export const isNavigationAllowed = (): boolean => {
-  const pathAndParams = getNavigationPathAndParamsState();
+  const routesState = getRoutesState();
 
-  if (!pathAndParams) {
+  if (!routesState) {
     return false;
   }
 
-  const pathParts = pathAndParams.path?.split('/');
-  const currentFlow = pathParts[0];
-
-  return currentFlow !== AUTH_FLOW;
+  const route = routesState.routes[routesState.index];
+  return route?.name !== AUTH_FLOW;
 };
 
 // Source: https://reactnavigation.org/docs/4.x/screen-tracking

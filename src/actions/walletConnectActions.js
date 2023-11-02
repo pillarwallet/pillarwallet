@@ -38,8 +38,10 @@ import {
   ETH_SIGN_TYPED_DATA,
   ETH_SIGN_TYPED_DATA_V4,
   SET_WALLETCONNECT_CURRENT_PROPOSAL,
+  VISIBLE_WC_MODAL,
 } from 'constants/walletConnectConstants';
 import {
+  APP_FLOW,
   WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
   WALLETCONNECT_CALL_REQUEST_SCREEN,
 } from 'constants/navigationConstants';
@@ -226,9 +228,22 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
         payload: { currentProposal: proposal },
       });
 
+      if (!isNavigationAllowed()) {
+        updateNavigationLastScreenState({
+          lastActiveScreen: APP_FLOW,
+          lastActiveScreenParams: {
+            screen: WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
+            params: { connector: { ...proposal, namespaces }, isV2: true, chainId },
+          },
+        });
+        return;
+      }
+
+      dispatch({ type: VISIBLE_WC_MODAL, payload: true });
+
       navigate(
-        CommonActions.navigate({
-          name: WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
+        CommonActions.navigate(APP_FLOW, {
+          screen: WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
           params: { connector: { ...proposal, namespaces }, isV2: true, chainId },
         }),
       );
@@ -267,8 +282,8 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
       });
 
       navigate(
-        CommonActions.navigate({
-          name: WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
+        CommonActions.navigate(APP_FLOW, {
+          screen: WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
           params: { connector, chainId },
         }),
       );
@@ -727,11 +742,16 @@ export const subscribeToWalletConnectV2ConnectorEventsAction = () => {
 
       if (!isNavigationAllowed()) {
         updateNavigationLastScreenState({
-          lastActiveScreen: WALLETCONNECT_CALL_REQUEST_SCREEN,
-          lastActiveScreenParams: navParams,
+          lastActiveScreen: APP_FLOW,
+          lastActiveScreenParams: {
+            screen: WALLETCONNECT_CALL_REQUEST_SCREEN,
+            params: navParams,
+          },
         });
         return;
       }
+
+      dispatch({ type: VISIBLE_WC_MODAL, payload: true });
 
       const navigateToAppAction = CommonActions.navigate({
         name: WALLETCONNECT_CALL_REQUEST_SCREEN,

@@ -1512,20 +1512,23 @@ export const checkArchanovaSessionIfNeededAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { isCheckingSmartWalletSession } = getState().smartWallet;
 
+    const {
+      walletConnect: { isVisibleModal },
+    } = getState();
+
     const lastRoute = getRoutesState();
     const nextRouteName = getActiveRouteName(lastRoute);
 
     // skip check if no archanova account
     const archanovaAccountExists = !!findFirstArchanovaAccount(accountsSelector(getState()));
     if (!archanovaAccountExists) {
-      if (nextRouteName !== WALLETCONNECT_BROWSER) {
-        navigate(
-          CommonActions.reset({
-            index: 1,
-            routes: [{ name: AUTH_FLOW, params: { screen: PIN_CODE_UNLOCK } }],
-          }),
-        );
-      }
+      if (nextRouteName === WALLETCONNECT_BROWSER || isVisibleModal) return;
+      navigate(
+        CommonActions.reset({
+          index: 1,
+          routes: [{ name: AUTH_FLOW, params: { screen: PIN_CODE_UNLOCK } }],
+        }),
+      );
       return;
     }
 
@@ -1563,14 +1566,13 @@ export const checkArchanovaSessionIfNeededAction = () => {
     dispatch({ type: SET_CHECKING_ARCHANOVA_SESSION, payload: false });
 
     if (!smartWalletNeedsInit) {
-      if (nextRouteName !== WALLETCONNECT_BROWSER) {
-        navigate(
-          CommonActions.reset({
-            index: 1,
-            routes: [{ name: AUTH_FLOW, params: { screen: PIN_CODE_UNLOCK } }],
-          }),
-        );
-      }
+      if (nextRouteName === WALLETCONNECT_BROWSER || isVisibleModal) return;
+      navigate(
+        CommonActions.reset({
+          index: 1,
+          routes: [{ name: AUTH_FLOW, params: { screen: PIN_CODE_UNLOCK } }],
+        }),
+      );
       return;
     }
 
