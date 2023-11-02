@@ -567,6 +567,13 @@ export class EtherspotService {
       return null;
     }
 
+    if (batch?.feeAmount?.isZero()) {
+      logBreadcrumb('setTransactionsBatchAndEstimate', 'batch returned zero fee amount', {
+        batch,
+        chain,
+        transactions,
+      });
+    }
     return buildTransactionFeeInfo(batch);
   }
 
