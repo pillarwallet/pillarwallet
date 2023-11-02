@@ -29,7 +29,7 @@ import BottomModal from 'components/layout/BottomModal';
 import Toast from 'components/Toast';
 
 // Constants
-import { WALLETCONNECT_PIN_CONFIRM_SCREEN } from 'constants/navigationConstants';
+import { WALLETCONNECT_PIN_CONFIRM_SCREEN, WALLETCONNECT_CALL_REQUEST_FLOW } from 'constants/navigationConstants';
 import { REQUEST_TYPE } from 'constants/walletConnectConstants';
 
 // Hooks
@@ -88,7 +88,10 @@ function WalletConnectCallRequestModal({ request }: Props) {
     }
 
     ref.current?.close();
-    navigation.navigate(WALLETCONNECT_PIN_CONFIRM_SCREEN, { callRequest: request, transactionPayload });
+    navigation.navigate(WALLETCONNECT_CALL_REQUEST_FLOW, {
+      screen: WALLETCONNECT_PIN_CONFIRM_SCREEN,
+      params: { callRequest: request, transactionPayload },
+    });
   };
 
   const handleReject = () => {
@@ -114,7 +117,12 @@ function WalletConnectCallRequestModal({ request }: Props) {
   return (
     <BottomModal ref={ref} title={title}>
       {type === REQUEST_TYPE.MESSAGE && (
-        <SignatureRequestContent request={request} onConfirm={handleConfirm} onReject={handleReject} />
+        <SignatureRequestContent
+          key={SIGNATURE_KEY}
+          request={request}
+          onConfirm={handleConfirm}
+          onReject={handleReject}
+        />
       )}
       {type === REQUEST_TYPE.TRANSACTION && (
         <TransactionRequestContent request={request} onConfirm={handleConfirm} onReject={handleReject} />
@@ -123,5 +131,7 @@ function WalletConnectCallRequestModal({ request }: Props) {
     </BottomModal>
   );
 }
+
+const SIGNATURE_KEY = 'message_signature_request';
 
 export default WalletConnectCallRequestModal;

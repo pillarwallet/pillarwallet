@@ -20,9 +20,16 @@
 
 import * as React from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { useDispatch } from 'react-redux';
 
 // Components
 import Modal from 'components/Modal';
+
+// Selector
+import { useRootSelector } from 'selectors';
+
+// Constant
+import { VISIBLE_WC_MODAL } from 'constants/walletConnectConstants';
 
 // Local
 import WalletConnectRequestModal from './WalletConnectCallRequestModal';
@@ -33,15 +40,27 @@ import WalletConnectRequestModal from './WalletConnectCallRequestModal';
  */
 function WalletConnectCallRequestScreen() {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const route = useRoute();
+
+  const { isVisibleModal } = useRootSelector((root) => root.walletConnect);
 
   const request = route?.params?.callRequest;
 
-  React.useLayoutEffect(() => {
+  React.useEffect(() => {
     navigation.goBack(null);
 
     if (!request) return;
+
     Modal.open(() => <WalletConnectRequestModal request={request} />);
+
+    if (!isVisibleModal) return;
+    const timeout = setTimeout(() => {
+      dispatch({ type: VISIBLE_WC_MODAL, payload: false });
+    }, 10000);
+    // eslint-disable-next-line consistent-return
+    return () => clearTimeout(timeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [request, navigation]);
 
   return null;

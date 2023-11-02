@@ -27,6 +27,7 @@ import {
   REMOVE_WALLETCONNECT_ACTIVE_CONNECTOR,
   RESET_WALLETCONNECT_ACTIVE_CONNECTORS,
   SET_WALLETCONNECT_CURRENT_PROPOSAL,
+  VISIBLE_WC_MODAL,
 } from 'constants/walletConnectConstants';
 
 import type { WalletConnectConnector, WalletConnectCallRequest, WalletConnectV2Proposal } from 'models/WalletConnect';
@@ -74,6 +75,11 @@ export type SetWalletConnectRequestErrorAction = {|
   payload: { message: string },
 |};
 
+export type WalletConnectRequestVisibleAction = {|
+  type: typeof VISIBLE_WC_MODAL,
+  payload: boolean,
+|};
+
 export type WalletConnectReducerAction =
   | SetWalletConnectConnectorRequestAction
   | ResetWalletConnectConnectorRequestAction
@@ -83,7 +89,8 @@ export type WalletConnectReducerAction =
   | RemoveWalletConnectActiveConnectorAction
   | ResetWalletConnectActiveConnectorsAction
   | SetWalletConnectRequestErrorAction
-  | SetWalletConnectCurrentProposalAction;
+  | SetWalletConnectCurrentProposalAction
+  | WalletConnectRequestVisibleAction;
 
 export type WalletConnectReducerState = {|
   activeConnectors: WalletConnectConnector[],
@@ -91,6 +98,7 @@ export type WalletConnectReducerState = {|
   callRequests: WalletConnectCallRequest[],
   currentProposal: ?WalletConnectV2Proposal,
   errorMessage: ?string,
+  isVisibleModal: boolean,
 |};
 
 const initialState: WalletConnectReducerState = {
@@ -99,6 +107,7 @@ const initialState: WalletConnectReducerState = {
   currentProposal: null,
   callRequests: [],
   errorMessage: null,
+  isVisibleModal: false,
 };
 
 const removeRequestByCallId = (
@@ -131,7 +140,8 @@ const walletConnectReducer = (
 
     case ADD_WALLETCONNECT_CALL_REQUEST:
       const { callRequest } = action.payload;
-      const isExists = callRequests.find((request) => request.callId === callRequest.callId);
+
+      const isExists = callRequests.some((request) => request.callId === callRequest.callId);
       if (isExists) return { ...state, callRequests };
       return { ...state, callRequests: [...callRequests, callRequest] };
 
@@ -149,6 +159,9 @@ const walletConnectReducer = (
 
     case RESET_WALLETCONNECT_ACTIVE_CONNECTORS:
       return { ...state, activeConnectors: [] };
+
+    case VISIBLE_WC_MODAL:
+      return { ...state, isVisibleModal: action.payload };
 
     case SET_WALLETCONNECT_REQUEST_ERROR:
       const { message: errorMessage } = action.payload;
