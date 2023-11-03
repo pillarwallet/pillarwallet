@@ -292,7 +292,8 @@ export async function getDecryptedWallet(
   if (keychainData?.pin) {
     const { pin: keychainPin, privateKey: keychainPrivateKey, mnemonic: keychainMnemonic } = keychainData;
 
-    const mnemonicPhrase = typeof keychainMnemonic === 'string' ? keychainMnemonic : keychainMnemonic?.phrase; // needed for ethers v5 migration
+    const mnemonicPhrase = typeof keychainMnemonic === 'string'
+      ? keychainMnemonic : keychainMnemonic?.phrase; // needed for ethers v5 migration
 
     if (pin && pin === keychainPin && keychainPrivateKey) {
       return withMnemonic && mnemonicPhrase
@@ -304,7 +305,8 @@ export async function getDecryptedWallet(
   const wallet = await decryptWalletFromStorage(pin, deviceUniqueId);
 
   // migrate older users for keychain access
-  // Note: This takes more time when biometrics is enabled. So disable this for biometrics.
+  // Note: This takes more time when biometrics is enabled.
+  // So disable this for biometrics.
   if (!biometricsEnabled) {
     const keychainDataObject = {
       pin,
