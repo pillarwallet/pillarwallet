@@ -36,7 +36,7 @@ export const buildEnvironment = {
   PRISMIC_TOKEN: '_prismic_token_',
   KOCHAVA_IOS_ID: '_kochava_ios_id_',
   KOCHAVA_ANDROID_ID: '_kochava_android_id_',
-  WALLETCONNECT_PROJECT_ID: '15fcfb7323fcce5aa1b58afe4dc6d847',
+  WALLETCONNECT_PROJECT_ID: '_wallet_connect_id_',
   // eslint-disable-next-line i18next/no-literal-string
   WEB3_AUTH_CLIENT_ID: '_web3_auth_client_id_',
   // eslint-disable-next-line i18next/no-literal-string
