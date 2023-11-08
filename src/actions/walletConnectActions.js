@@ -126,6 +126,10 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
 
     const isV2URI = uri.includes('relay-protocol=irn');
 
+    // Note: In every event gets the request URL in android
+    // Disable for tx, sign request
+    if (!isV2URI) return;
+
     const toastId = Toast.show({
       message: t('toast.waitingForWalletConnectConnection'),
       emoji: 'zap',

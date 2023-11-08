@@ -25,8 +25,6 @@ import { useDispatch } from 'react-redux';
 // Components
 import Modal from 'components/Modal';
 
-// Selector
-import { useRootSelector } from 'selectors';
 
 // Constants
 import { VISIBLE_WC_MODAL } from 'constants/walletConnectConstants';
@@ -42,19 +40,14 @@ function WalletConnectConnectorRequestScreen() {
   const chainId = route?.params?.chainId;
   const isV2WC = route?.params?.isV2;
 
-  const { isVisibleModal } = useRootSelector((root) => root.walletConnect);
-
   React.useLayoutEffect(() => {
     navigation.goBack(null);
     if (!connector) return;
     Modal.open(() => <WalletConnectRequestModal isV2WC={isV2WC} connector={connector} chainId={chainId} />);
 
-    if (!isVisibleModal) return;
-    const timeout = setTimeout(() => {
+    setTimeout(() => {
       dispatch({ type: VISIBLE_WC_MODAL, payload: false });
-    }, 10000);
-    // eslint-disable-next-line consistent-return
-    return () => clearTimeout(timeout);
+    }, 5000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connector, navigation, chainId, isV2WC]);
 

@@ -41,6 +41,7 @@ import { reportErrorLog } from 'utils/common';
 const KEYCHAIN_SERVICE = `com.pillarproject.wallet${getEnv().BUILD_TYPE === STAGING ? '.staging' : ''}`;
 
 const KEYCHAIN_DATA_KEY = 'data';
+const ACTIVE_ACCOUNT = 'Active account';
 
 export type KeyChainData = {
   privateKey?: ?string,
@@ -62,7 +63,7 @@ export const handleCatch = (accountAddress: ?string, error: ?any[]) => {
     if (accountAddress) {
       buttons.push({
         text: t('error.failedKeychain.supportButtonText'),
-        onPress: emailSupport([accountAddress]),
+        onPress: () => emailSupport([{ type: ACTIVE_ACCOUNT, id: accountAddress }]),
       });
     }
 
