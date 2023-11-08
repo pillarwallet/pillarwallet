@@ -305,16 +305,12 @@ export async function getDecryptedWallet(
   const wallet = await decryptWalletFromStorage(pin, deviceUniqueId);
 
   // migrate older users for keychain access
-  // Note: This takes more time when biometrics is enabled.
-  // So disable this for biometrics.
-  if (!biometricsEnabled) {
-    const keychainDataObject = {
-      pin,
-      privateKey: wallet?.privateKey,
-      mnemonic: wallet?.mnemonic?.phrase,
-    };
-    await setKeychainDataObject(keychainDataObject, biometricsEnabled);
-  }
+  const keychainDataObject = {
+    pin,
+    privateKey: wallet?.privateKey,
+    mnemonic: wallet?.mnemonic?.phrase,
+  };
+  await setKeychainDataObject(keychainDataObject, biometricsEnabled);
 
   return wallet;
 }
