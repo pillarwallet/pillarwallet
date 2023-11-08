@@ -232,7 +232,7 @@ function isHexString(str, length) {
   if (typeof str !== 'string' || !str.match(/^0x[0-9A-Fa-f]*$/)) {
     return false;
   }
-  if (length && str.length !== 2 + (2 * length)) {
+  if (length && str.length !== 2 + 2 * length) {
     return false;
   }
   return true;
@@ -292,8 +292,7 @@ export async function getDecryptedWallet(
   if (keychainData?.pin) {
     const { pin: keychainPin, privateKey: keychainPrivateKey, mnemonic: keychainMnemonic } = keychainData;
 
-    const mnemonicPhrase = typeof keychainMnemonic === 'string'
-      ? keychainMnemonic : keychainMnemonic?.phrase; // needed for ethers v5 migration
+    const mnemonicPhrase = typeof keychainMnemonic === 'string' ? keychainMnemonic : keychainMnemonic?.phrase; // needed for ethers v5 migration
 
     if (pin && pin === keychainPin && keychainPrivateKey) {
       return withMnemonic && mnemonicPhrase
@@ -305,16 +304,12 @@ export async function getDecryptedWallet(
   const wallet = await decryptWalletFromStorage(pin, deviceUniqueId);
 
   // migrate older users for keychain access
-  // Note: This takes more time when biometrics is enabled.
-  // So disable this for biometrics.
-  if (!biometricsEnabled) {
-    const keychainDataObject = {
-      pin,
-      privateKey: wallet?.privateKey,
-      mnemonic: wallet?.mnemonic?.phrase,
-    };
-    await setKeychainDataObject(keychainDataObject, biometricsEnabled);
-  }
+  const keychainDataObject = {
+    pin,
+    privateKey: wallet?.privateKey,
+    mnemonic: wallet?.mnemonic?.phrase,
+  };
+  await setKeychainDataObject(keychainDataObject, biometricsEnabled);
 
   return wallet;
 }
