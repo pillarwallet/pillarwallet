@@ -32,7 +32,7 @@ import { logEventAction, appsFlyerlogEventAction } from 'actions/analyticsAction
 import { transactionNotificationActions } from 'actions/transactionNotificationActions';
 
 // Constants
-import { HOME_FLOW } from 'constants/navigationConstants';
+import { HOME } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // Types
@@ -135,7 +135,7 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
     const transactionType = route?.params?.transactionType || '';
 
     showTransactionNotificationAction({ ...transactionPayload, ...params, transactionType });
-    navigation.navigate(HOME_FLOW);
+    navigation.navigate(HOME);
   };
 
   handleBack = () => {
