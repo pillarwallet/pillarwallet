@@ -73,7 +73,7 @@ type UseWalletConnectResult = {|
   switchEthereumChainConnectorRequest: (request: Object) => void,
   fetchV2ActiveSessions: () => void,
   approveV2ConnectorRequest: (id: number, namespaces: ?BaseNamespace | any) => void,
-  rejectV2ConnectorRequest: (id: string) => void,
+  rejectV2ConnectorRequest: (id: number) => void,
   rejectV2CallRequest: (callRequest: WalletConnectCallRequest, message: any) => void,
   approveV2CallRequest: (callRequest: WalletConnectCallRequest, result: any) => void,
   disconnectSessionV2ByTopic: (topic: string) => void,
@@ -128,7 +128,7 @@ const useWalletConnect = (): UseWalletConnectResult => {
   );
 
   const rejectV2ConnectorRequest = useCallback(
-    (id: string) => dispatch(rejectWalletConnectV2ConnectorRequestAction(id)),
+    (id: number) => dispatch(rejectWalletConnectV2ConnectorRequestAction(id)),
     [dispatch],
   );
 
