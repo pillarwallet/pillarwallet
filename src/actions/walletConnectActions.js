@@ -50,6 +50,7 @@ import {
   UPDATE_WALLETCONNECT_SESSION,
   ADD_WALLETCONNECT_V2_SESSION,
 } from 'constants/walletConnectSessionsConstants';
+import { ETHERSPOT } from 'constants/walletConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -64,16 +65,17 @@ import {
   disconnectWalletConnectV2SessionByTopicAction,
 } from 'actions/walletConnectSessionsActions';
 import { logEventAction } from 'actions/analyticsActions';
-import { hideWalletConnectPromoCardAction } from 'actions/appSettingsActions';
+import { hideWalletConnectPromoCardAction, dismissSwitchAccountTooltipAction } from 'actions/appSettingsActions';
 import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
+import { switchAccountAction } from 'actions/accountsActions';
 
 // selectors
-import { activeAccountSelector, supportedAssetsPerChainSelector } from 'selectors';
+import { activeAccountSelector, supportedAssetsPerChainSelector, accountsSelector } from 'selectors';
 import { accountAssetsPerChainSelector } from 'selectors/assets';
 
 // utils
 import { isNavigationAllowed } from 'utils/navigation';
-import { getAccountAddress } from 'utils/accounts';
+import { getAccountAddress, findKeyBasedAccount } from 'utils/accounts';
 import { chainFromChainId, isTestnetChainId, isMainnetChainId, getSupportedChains } from 'utils/chains';
 import { isSupportedDappUrl, mapCallRequestToTransactionPayload, pickPeerIcon } from 'utils/walletConnect';
 import { reportErrorLog, logBreadcrumb } from 'utils/common';
@@ -168,7 +170,20 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
         return;
       }
 
-      const activeAccount = activeAccountSelector(getState());
+      let activeAccount = activeAccountSelector(getState());
+
+      const allAccounts = accountsSelector(getState());
+      const appName = proposal?.params?.proposer?.metadata?.name;
+      const keyBasedAccount = findKeyBasedAccount(allAccounts);
+      if (activeAccount !== keyBasedAccount && appName?.includes(ETHERSPOT)) {
+        if (keyBasedAccount?.id) {
+          await dispatch(switchAccountAction(keyBasedAccount.id));
+          dispatch(dismissSwitchAccountTooltipAction(false));
+        }
+      }
+
+      activeAccount = activeAccountSelector(getState());
+
       if (!activeAccount) {
         Toast.show({
           message: t('toast.noActiveAccountFound'),
@@ -327,7 +342,7 @@ export const fetchV2ActiveSessionsAction = (currentSession?: ?WalletConnectV2Ses
 
 export const updateSessionV2 = (newChainId: number, session: WalletConnectV2Session) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { namespaces, topic } = session;
+    const { namespaces, topic, requiredNamespaces, pairingTopic } = session;
 
     const activeAccount = activeAccountSelector(getState());
     if (!activeAccount) {
@@ -342,31 +357,47 @@ export const updateSessionV2 = (newChainId: number, session: WalletConnectV2Sess
 
     const accountAddress = getAccountAddress(activeAccount);
 
-    const methods = namespaces?.eip155.methods;
     const accounts = namespaces?.eip155.accounts;
-    const events = namespaces?.eip155.events;
+    const chains = namespaces?.eip155?.chains || requiredNamespaces?.eip155?.chains;
+
+    const isExists = chains.some((chain) => chain === `eip155:${newChainId}`);
+    if (isExists) return;
+
+    // eslint-disable-next-line i18next/no-literal-string
+    const newChains = [...chains, `eip155:${newChainId}`];
+    // eslint-disable-next-line i18next/no-literal-string
+    const newAccounts = [...accounts, `eip155:${newChainId}:${accountAddress}`];
 
     const updatedNamespaces = {
+      ...namespaces,
       eip155: {
-        methods,
-        // eslint-disable-next-line i18next/no-literal-string
-        accounts: [...accounts, `eip155:${newChainId}:${accountAddress}`],
-        events,
+        ...namespaces.eip155,
+        accounts: newAccounts,
+        chains: newChains,
       },
     };
 
-    await dispatch(updateSessionV2Action(newChainId, topic, updatedNamespaces));
-
-    dispatch(subscribeToWalletConnectV2ConnectorEventsAction());
+    await dispatch(updateSessionV2Action({ topic, namespaces: updatedNamespaces }, pairingTopic));
   };
 };
 
-export const updateSessionV2Action = (newChainId: number, topic: string, namespaces: Object) => {
-  return async () => {
-    await web3wallet?.updateSession({
-      topic,
-      namespaces,
-    });
+export const updateSessionV2Action = (updatedSession: Object, pairingTopic: string) => {
+  return async (dispatch: Dispatch) => {
+    try {
+      await web3wallet?.updateSession(updatedSession);
+
+      const activeSessions: any = await web3wallet?.getActiveSessions();
+      if (!isEmpty(activeSessions)) {
+        const currentSession: any = Object.values(activeSessions)?.find(
+          (activeSession: any) => activeSession.pairingTopic === pairingTopic,
+        );
+        if (currentSession) {
+          dispatch(fetchV2ActiveSessionsAction(currentSession));
+        }
+      }
+    } catch (error) {
+      dispatch(setWalletConnectErrorAction(error?.message));
+    }
   };
 };
 
@@ -486,7 +517,7 @@ export const updateWalletConnectConnectorSessionAction = (connector: Object, ses
   };
 };
 
-export const rejectWalletConnectV2ConnectorRequestAction = (id: string) => {
+export const rejectWalletConnectV2ConnectorRequestAction = (id: number) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       walletConnect: { currentProposal },
