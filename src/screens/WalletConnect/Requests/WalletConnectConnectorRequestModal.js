@@ -19,12 +19,9 @@
 */
 
 import * as React from 'react';
-import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 import { Keyboard } from 'react-native';
-import { isEmpty } from 'lodash';
 
 // Components
 import BottomModal from 'components/layout/BottomModal';
@@ -37,33 +34,25 @@ import useWalletConnect, { useWalletConnectAccounts } from 'hooks/useWalletConne
 import { useDeploymentStatus } from 'hooks/deploymentStatus';
 
 // Types
-import type { WalletConnectConnector } from 'models/WalletConnect';
+import type { WalletConnectV2Proposal } from 'models/WalletConnect';
 import type { Account } from 'models/Account';
 
 // Utils
-import { chainFromChainId, mapChainToChainId } from 'utils/chains';
+import { chainFromChainId } from 'utils/chains';
 import { spacing, fontStyles } from 'utils/variables';
 import { useThemedImages } from 'utils/images';
-import { parsePeerName, pickPeerIcon } from 'utils/walletConnect';
+
 import { useChainsConfig } from 'utils/uiConfig';
-import { getActiveAccount, findKeyBasedAccount, isEtherspotAccount } from 'utils/accounts';
+import { getActiveAccount, isEtherspotAccount } from 'utils/accounts';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
-import { ETHERSPOT } from 'constants/walletConstants';
-
-// Selectors
-import { useRootSelector } from 'selectors';
-
-// Actions
-import { switchAccountAction } from 'actions/accountsActions';
-import { dismissSwitchAccountTooltipAction } from 'actions/appSettingsActions';
 
 // Local
 import WalletConnectSwitchNetwork from './WalletConnectSwitchNetwork';
 
 type Props = {|
-  connector: any,
+  connector: WalletConnectV2Proposal,
   chainId: number,
   isV2WC?: ?boolean,
 |};
@@ -72,66 +61,29 @@ function WalletConnectConnectorRequestModal({ isV2WC, connector, chainId }: Prop
   const ref = React.useRef();
   const { genericToken } = useThemedImages();
   const chainsConfig = useChainsConfig();
-  const dispatch = useDispatch();
   const chain = chainFromChainId[chainId] ?? CHAIN.ETHEREUM;
-  const currentProposal = useRootSelector((root) => root.walletConnect.currentProposal);
 
   const accounts = useWalletConnectAccounts();
   const { isDeployedOnChain } = useDeploymentStatus();
 
-  const keyBasedAccount: ?Account = findKeyBasedAccount(accounts);
   const activeAccount: ?Account = getActiveAccount(accounts);
   const isActiveEtherspotAccount = isEtherspotAccount(activeAccount);
 
   const [selectedChain, setSelectedChain] = React.useState(chain);
   const { title: chainName } = chainsConfig[selectedChain];
 
-  // Note: this will map chain id to testnet in test env.
-  const mappedChainId = mapChainToChainId(selectedChain);
-
-  const { approveConnectorRequest, approveV2ConnectorRequest, rejectConnectorRequest, rejectV2ConnectorRequest } =
-    useWalletConnect();
-  const { app: appName, description, peerID, iconUrl } = getViewData(connector);
-
-  const currentProposalInfo = React.useMemo(() => {
-    if (isEmpty(currentProposal) || !isV2WC) return null;
-    const {
-      name: v2AppName,
-      icons: v2AppIcons,
-      description: v2Description,
-    } = currentProposal?.params?.proposer?.metadata;
-    const chains = currentProposal?.params?.requiredNamespaces?.eip155?.chains;
-
-    return { v2AppName, v2AppIcons, v2Description, chains };
-  }, [isV2WC, currentProposal]);
-
-  useEffect(() => {
-    if (activeAccount !== keyBasedAccount && appName === ETHERSPOT) {
-      if (keyBasedAccount?.id) {
-        dispatch(switchAccountAction(keyBasedAccount.id));
-        dispatch(dismissSwitchAccountTooltipAction(false));
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeAccount, appName, keyBasedAccount]);
+  const { approveV2ConnectorRequest, rejectV2ConnectorRequest } = useWalletConnect();
+  const { app: appName, description, iconUrl, chains } = getViewData(connector);
 
   const onApprovePress = () => {
     Keyboard.dismiss();
-    if (isV2WC) {
-      approveV2ConnectorRequest(connector?.id, connector?.namespaces);
-    } else {
-      approveConnectorRequest(peerID, mappedChainId);
-    }
+    approveV2ConnectorRequest(connector?.id, connector?.namespaces);
     ref.current?.close();
   };
 
   const onRejectPress = () => {
     Keyboard.dismiss();
-    if (isV2WC) {
-      rejectV2ConnectorRequest(connector?.id);
-    } else {
-      rejectConnectorRequest(peerID);
-    }
+    rejectV2ConnectorRequest(connector?.id);
     ref.current?.close();
   };
 
@@ -139,31 +91,24 @@ function WalletConnectConnectorRequestModal({ isV2WC, connector, chainId }: Prop
     <BottomModal
       ref={ref}
       title={t('walletConnectContent.title.walletConnectRequests', {
-        app: isV2WC ? currentProposalInfo?.v2AppName : appName,
+        app: appName,
         chain: chainName,
       })}
       style={styles.title}
     >
-      {(!!iconUrl || !isEmpty(currentProposalInfo?.v2AppIcons)) && (
+      {!!iconUrl && (
         <Image
-          key={isV2WC ? currentProposalInfo?.v2AppName : appName}
-          source={{ uri: isV2WC ? currentProposalInfo?.v2AppIcons[0] : iconUrl }}
+          key={appName}
+          source={{ uri: iconUrl }}
           style={styles.icon}
           fallbackSource={genericToken}
           resizeMode="contain"
         />
       )}
 
-      {(!!description || !!currentProposalInfo?.v2Description) && (
-        <Description>{isV2WC ? currentProposalInfo?.v2Description : description}</Description>
-      )}
+      {!!description && <Description>{description}</Description>}
 
-      <WalletConnectSwitchNetwork
-        isV2WC={isV2WC}
-        chain={chain}
-        chains={currentProposalInfo?.chains}
-        onChangeChain={setSelectedChain}
-      />
+      <WalletConnectSwitchNetwork isV2WC={isV2WC} chain={chain} chains={chains} onChangeChain={setSelectedChain} />
 
       <Button
         disabled={isActiveEtherspotAccount ? !isDeployedOnChain[selectedChain] : false}
@@ -178,12 +123,10 @@ function WalletConnectConnectorRequestModal({ isV2WC, connector, chainId }: Prop
 
 export default WalletConnectConnectorRequestModal;
 
-const getViewData = (connector: WalletConnectConnector) => {
-  const app = parsePeerName(connector.peerMeta?.name);
-  const description = connector.peerMeta?.description;
-  const peerID = connector.peerId;
-  const iconUrl = pickPeerIcon(connector.peerMeta?.icons);
-  return { app, peerID, description, iconUrl };
+const getViewData = (connector: WalletConnectV2Proposal) => {
+  const metadata = connector?.params?.proposer?.metadata;
+  const chains = connector?.params?.requiredNamespaces?.eip155?.chains;
+  return { app: metadata?.name, description: metadata?.description, iconUrl: metadata?.icons?.[0], chains };
 };
 
 const styles = {

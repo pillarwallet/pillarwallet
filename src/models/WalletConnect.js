@@ -91,7 +91,7 @@ export type WalletConnectV2Proposal = {|
       verifyUrl: string,
     },
   },
-  id: string,
+  id: number,
   namespaces?: Object,
   params: {
     expiry: number,
@@ -183,7 +183,7 @@ export type WalletConnectV2Session = {|
   pairingTopic: string,
   peer: PeerMeta,
   relay: ProtocolOptions,
-  requiredNamespaces: ?BaseRequiredNamespace,
+  requiredNamespaces: { eip155: ?BaseRequiredNamespace },
   self: PeerMeta,
   topic: string,
 |};

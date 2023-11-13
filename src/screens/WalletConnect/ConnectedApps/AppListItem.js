@@ -82,7 +82,7 @@ function AppListItem({ key, title, iconUrl, onPress, connector, v2Session }: Pro
     if (isEmpty(eipAccounts) || isEmpty(eipChainIds)) return null;
 
     const accounts: string[] = eipAccounts?.accounts || [''];
-    const v2ChainIds: string[] = eipChainIds?.chains || [''];
+    const v2ChainIds: string[] = eipAccounts?.chains || eipChainIds?.chains || [''];
 
     const account = accounts[0].split(':')?.[2];
     const eip155ChainIds = v2ChainIds.map((eip155ChainId) => eip155ChainId.split(':')?.[1]);
