@@ -832,8 +832,8 @@
     "connectedApps": {
       "title": "Connected dapps",
       "connected": "Connected",
-      "switchWallet": "Switch wallet",
-      "switchNetwork": "Switch network",
+      "addWallet": "Add wallet",
+      "addNetwork": "Add network",
       "disconnect": "Disconnect",
       "etherspot": "Etherspot",
       "plr_v1": "Pillar v1",

@@ -77,7 +77,7 @@ const SwitchNetwork: FC<Props> = ({ dropDownStyle, visible, onHide, onChangeChai
       modalContent={
         <View style={{ maxHeight: 200 }}>
           <Text variant="regular" color={colors.basic030}>
-            {t('switchNetwork')}
+            {t('addNetwork')}
           </Text>
           <Spacing h={5} />
           <View style={[styles.line, { backgroundColor: colors.basic050 }]} />
