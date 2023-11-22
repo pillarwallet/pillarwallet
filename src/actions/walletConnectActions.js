@@ -340,7 +340,7 @@ export const fetchV2ActiveSessionsAction = (currentSession?: ?WalletConnectV2Ses
   };
 };
 
-export const updateSessionV2 = (newChainId: number, session: WalletConnectV2Session) => {
+export const updateSessionV2 = (newChainId: ?number, newAccountAddress: ?string, session: WalletConnectV2Session) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { namespaces, topic, requiredNamespaces, pairingTopic } = session;
 
@@ -357,23 +357,33 @@ export const updateSessionV2 = (newChainId: number, session: WalletConnectV2Sess
 
     const accountAddress = getAccountAddress(activeAccount);
 
-    const accounts = namespaces?.eip155.accounts;
-    const chains = namespaces?.eip155?.chains || requiredNamespaces?.eip155?.chains;
+    let accounts = namespaces?.eip155.accounts;
+    let chains = namespaces?.eip155?.chains || requiredNamespaces?.eip155?.chains;
 
-    const isExists = chains.some((chain) => chain === `eip155:${newChainId}`);
-    if (isExists) return;
+    const isAccountExists = accounts.some((account) => account?.split(':')?.[2] === newAccountAddress);
+    const isExists = newChainId && chains.some((chain) => chain === `eip155:${newChainId}`);
+    if (isExists || isAccountExists) return;
 
-    // eslint-disable-next-line i18next/no-literal-string
-    const newChains = [...chains, `eip155:${newChainId}`];
-    // eslint-disable-next-line i18next/no-literal-string
-    const newAccounts = [...accounts, `eip155:${newChainId}:${accountAddress}`];
+    // Note: Used for adding a new chain
+    if (newChainId) {
+      // eslint-disable-next-line i18next/no-literal-string
+      chains = [...chains, `eip155:${newChainId}`];
+      // eslint-disable-next-line i18next/no-literal-string
+      accounts = [...accounts, `eip155:${newChainId}:${accountAddress}`];
+    }
+
+    // Note: Used for adding a new account(etherspot, key)
+    if (newAccountAddress) {
+      // eslint-disable-next-line i18next/no-literal-string
+      accounts = [...accounts, ...chains.map((chain) => `${chain}:${newAccountAddress}`)];
+    }
 
     const updatedNamespaces = {
       ...namespaces,
       eip155: {
         ...namespaces.eip155,
-        accounts: newAccounts,
-        chains: newChains,
+        accounts,
+        chains,
       },
     };
 

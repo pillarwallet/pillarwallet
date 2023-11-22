@@ -39,6 +39,7 @@ import { addressesEqual, findAssetByAddress } from 'utils/assets';
 import { reportErrorLog } from 'utils/common';
 import { stripEmoji } from 'utils/strings';
 import { chainFromChainId, nativeAssetPerChain } from 'utils/chains';
+import { getAccountAddress } from 'utils/accounts';
 
 // abi
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
@@ -52,6 +53,7 @@ import type {
 import type { TransactionPayload } from 'models/Transaction';
 import type { AssetByAddress, AssetsPerChain } from 'models/Asset';
 import type { ChainRecord } from 'models/Chain';
+import type { Account } from 'models/Account';
 
 // urls of dapps that don't support smart accounts
 // or that we don't want to support for any reason
@@ -243,3 +245,26 @@ export function pickPeerIcon(icons: ?(string[])): ?string {
   const sortedPngUrls = orderBy(pngUrls, [(url) => url.length, (url) => url], ['desc', 'desc']);
   return sortedPngUrls[0];
 }
+
+/**
+ * NOTE: This is only helpful when switching accounts.
+ */
+export const getNewNamespace = (requiredNamespaces: Object, activeAccount: ?Account) => {
+  const namespaces = {};
+  const accountAddress = activeAccount ? getAccountAddress(activeAccount) : '';
+
+  Object.keys(requiredNamespaces).forEach((key) => {
+    const accounts: string[] = [];
+    requiredNamespaces[key].chains.map((chain) => {
+      accounts.push(`${chain}:${accountAddress}`);
+      return null;
+    });
+    namespaces[key] = {
+      accounts,
+      methods: requiredNamespaces[key].methods,
+      events: requiredNamespaces[key].events,
+    };
+  });
+
+  return namespaces;
+};

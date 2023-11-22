@@ -771,8 +771,8 @@
     "connectedApps": {
       "title": "连接的 dapp",
       "connected": "连接的",
-      "switchWallet":"切换钱包",
-      "switchNetwork":"切换网络",
+      "addWallet":"添加钱包",
+      "addNetwork":"添加网络",
       "disconnect":"断开",
       "etherspot":"Etherspot",
       "plr_v1":"Pillar v1",

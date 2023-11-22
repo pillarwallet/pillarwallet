@@ -37,7 +37,6 @@ import SwitchNetworkModal from 'components/Modals/ConnectedAppsModal/SwitchNetwo
 import useWalletConnect, { useWalletConnectAccounts } from 'hooks/useWalletConnect';
 
 // Actions
-import { switchAccountAction } from 'actions/accountsActions';
 import { updateSessionV2 } from 'actions/walletConnectActions';
 
 // Utils
@@ -84,15 +83,16 @@ function AppListItem({ key, title, iconUrl, onPress, connector, v2Session }: Pro
     const accounts: string[] = eipAccounts?.accounts || [''];
     const v2ChainIds: string[] = eipAccounts?.chains || eipChainIds?.chains || [''];
 
-    const account = accounts[0].split(':')?.[2];
+    const duplicateAccountIds = accounts?.map((account) => account.split(':')?.[2]);
+    const accountIds = [...new Set(duplicateAccountIds)];
     const eip155ChainIds = v2ChainIds.map((eip155ChainId) => eip155ChainId.split(':')?.[1]);
 
     const v2Chains = eip155ChainIds.map((chainId) => chainFromChainId[Number(chainId)]);
-    return { account, chains: v2Chains, topic };
+    return { accountIds, chains: v2Chains, topic };
   }, [v2Session]);
 
   const chain = v2SessionInfo ? v2SessionInfo?.chains[0] : chainFromChainId[connector?.chainId];
-  const walletData = useWalletConnectAccounts(v2SessionInfo ? v2SessionInfo?.account : connector?.accounts[0]);
+  const walletData = useWalletConnectAccounts(v2SessionInfo ? v2SessionInfo?.accountIds : connector?.accounts);
 
   const { updateConnectorSession, disconnectSessionByUrl, disconnectSessionV2ByTopic } = useWalletConnect();
 
@@ -120,7 +120,7 @@ function AppListItem({ key, title, iconUrl, onPress, connector, v2Session }: Pro
   const onChangeChainSession = (updatedChain: Chain) => {
     const chainId = mapChainToChainId(updatedChain);
     if (v2Session) {
-      dispatch(updateSessionV2(chainId, v2Session));
+      dispatch(updateSessionV2(chainId, null, v2Session));
     } else {
       if (chainId === connector?.chainId) return;
       updateConnectorSession(connector, { chainId, accounts: connector?.accounts });
@@ -128,9 +128,8 @@ function AppListItem({ key, title, iconUrl, onPress, connector, v2Session }: Pro
   };
 
   const onChangeSessionAccount = (accountId: string) => {
-    if (v2Session) return;
-    dispatch(switchAccountAction(accountId));
-    updateConnectorSession(connector, { chainId: 1, accounts: [accountId] });
+    if (!v2Session) return;
+    dispatch(updateSessionV2(null, accountId, v2Session));
   };
 
   const disconnect = async () => {
@@ -165,10 +164,10 @@ function AppListItem({ key, title, iconUrl, onPress, connector, v2Session }: Pro
           <Text variant="medium" numberOfLines={1}>
             {title}
           </Text>
-          <Text color={colors.secondaryText}>{walletData[0]?.label}</Text>
+          <Text color={colors.secondaryText}>{walletData?.map(({ label }) => label)?.join(', ')}</Text>
         </TitleContainer>
 
-        <RightAddOn disabled ref={NetworkRef} onPress={onChangeNetwork}>
+        <RightAddOn ref={NetworkRef} onPress={onChangeNetwork}>
           {!v2SessionInfo && <Icon name={chain} width={16} />}
           {v2SessionInfo &&
             v2SessionInfo?.chains?.map((v2chain, index) => {
@@ -182,12 +181,12 @@ function AppListItem({ key, title, iconUrl, onPress, connector, v2Session }: Pro
         </RightAddOn>
       </TouchableContainer>
       <ConnectedAppsMenu
-        isV2WC={!!v2SessionInfo}
+        isV2WC={false}
         visible={visibleModal}
         onHide={setVisibleModal}
         onSelect={(item: itemProps) => {
-          if (item.value === 'Switch wallet') setVisibleWalletSwitchModal(true);
-          if (item.value === 'Switch network') setVisibleNetworkSwitchModal(true);
+          if (item.value === 'Add wallet') setVisibleWalletSwitchModal(true);
+          if (item.value === 'Add network') setVisibleNetworkSwitchModal(true);
           if (item.value === 'Disconnect') disconnect();
         }}
       />

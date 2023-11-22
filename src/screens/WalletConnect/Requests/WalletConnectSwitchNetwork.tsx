@@ -194,7 +194,10 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, chains: v2Chains
       if (!!requestedChainInfo) chainInfo.push(requestedChainInfo);
     });
     return chainInfo;
-  }, [v2Chains, isV2WC]);
+  }, [v2Chains, isV2WC, activeAccount]);
+
+  const disabledSwitchAccount =
+    filterdV2Chains?.length > 1 || filterdV2Chains?.some((chainInfo) => chainInfo.chain !== CHAIN.ETHEREUM);
 
   const chainNotDeployedInV2 = isV2WC && filterdV2Chains.find((chainInfo) => !chainInfo.isDeployed);
 
@@ -220,7 +223,7 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, chains: v2Chains
         ItemSeparatorComponent={() => <Spacing w={8} />}
         renderItem={({ item }) => (
           <TouchableOpacity
-            disabled={isV2WC}
+            disabled={disabledSwitchAccount}
             style={[
               styles.walletBtn,
               { backgroundColor: activeAccount?.id === item.id ? colors.modalHandleBar : colors.buttonBackground },

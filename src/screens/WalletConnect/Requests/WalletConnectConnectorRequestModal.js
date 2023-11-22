@@ -41,7 +41,7 @@ import type { Account } from 'models/Account';
 import { chainFromChainId } from 'utils/chains';
 import { spacing, fontStyles } from 'utils/variables';
 import { useThemedImages } from 'utils/images';
-
+import { getNewNamespace } from 'utils/walletConnect';
 import { useChainsConfig } from 'utils/uiConfig';
 import { getActiveAccount, isEtherspotAccount } from 'utils/accounts';
 
@@ -73,11 +73,13 @@ function WalletConnectConnectorRequestModal({ isV2WC, connector, chainId }: Prop
   const { title: chainName } = chainsConfig[selectedChain];
 
   const { approveV2ConnectorRequest, rejectV2ConnectorRequest } = useWalletConnect();
-  const { app: appName, description, iconUrl, chains } = getViewData(connector);
+  const { app: appName, description, iconUrl, chains, requiredNamespaces } = getViewData(connector);
+
+  const newNameSpace = getNewNamespace(requiredNamespaces, activeAccount);
 
   const onApprovePress = () => {
     Keyboard.dismiss();
-    approveV2ConnectorRequest(connector?.id, connector?.namespaces);
+    approveV2ConnectorRequest(connector?.id, newNameSpace);
     ref.current?.close();
   };
 
@@ -126,7 +128,14 @@ export default WalletConnectConnectorRequestModal;
 const getViewData = (connector: WalletConnectV2Proposal) => {
   const metadata = connector?.params?.proposer?.metadata;
   const chains = connector?.params?.requiredNamespaces?.eip155?.chains;
-  return { app: metadata?.name, description: metadata?.description, iconUrl: metadata?.icons?.[0], chains };
+  const requiredNamespaces = connector?.params?.requiredNamespaces;
+  return {
+    app: metadata?.name,
+    description: metadata?.description,
+    iconUrl: metadata?.icons?.[0],
+    chains,
+    requiredNamespaces,
+  };
 };
 
 const styles = {
