@@ -205,7 +205,7 @@ const useWalletConnect = (): UseWalletConnectResult => {
   );
 };
 
-export const useWalletConnectAccounts = (id?: string) => {
+export const useWalletConnectAccounts = (accountIds?: string[]) => {
   const accounts = useAccounts();
   const { t } = useTranslationWithPrefix('walletConnect.connectedApps');
 
@@ -228,8 +228,8 @@ export const useWalletConnectAccounts = (id?: string) => {
     return avlAccounts;
   }, [accounts, t]);
 
-  if (id) {
-    return wallets.filter(({ id: accountId }) => accountId === id);
+  if (accountIds) {
+    return wallets.filter(({ id: accountId }) => accountIds.includes(accountId));
   }
 
   return wallets;

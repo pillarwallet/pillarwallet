@@ -32,7 +32,7 @@ import Icon from 'components/core/Icon';
 import { useThemeColors } from 'utils/themes';
 import { useChainsConfig } from 'utils/uiConfig';
 import { getDeviceHeight, getDeviceWidth } from 'utils/common';
-import { getActiveAccount, isEtherspotAccount, isArchanovaAccount } from 'utils/accounts';
+import { getActiveAccount, isEtherspotAccount, isKeyBasedAccount, isArchanovaAccount } from 'utils/accounts';
 import { objectFontStyles } from 'utils/variables';
 import { chainFromChainId } from 'utils/chains';
 import { isEtherspotAccountDeployed } from 'utils/etherspot';
@@ -91,6 +91,7 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, chains: v2Chains
   const activeAccount: Account | any = getActiveAccount(accounts);
   const isActiveEtherspotAccount = isEtherspotAccount(activeAccount);
   const isActiveArchanovaAccount = isArchanovaAccount(activeAccount);
+  const isActiveKeyBasedAccount = isKeyBasedAccount(activeAccount);
 
   let requestedChainInfo = chains?.find((chainInfo) => chainInfo.chain === chain);
   if (!requestedChainInfo) {
@@ -131,7 +132,7 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, chains: v2Chains
         {item.label}
       </Text>
 
-      {type === 'selectedChain' && !item.isDeployed && (
+      {type === 'selectedChain' && !item.isDeployed && !isActiveKeyBasedAccount && (
         <TouchableOpacity
           onPress={() => showDeploymentInterjection(selectedNetwork.chain)}
           style={[styles.deployBtn, { backgroundColor: colors.buttonPrimaryBackground }]}
@@ -193,7 +194,10 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, chains: v2Chains
       if (!!requestedChainInfo) chainInfo.push(requestedChainInfo);
     });
     return chainInfo;
-  }, [v2Chains, isV2WC]);
+  }, [v2Chains, isV2WC, activeAccount]);
+
+  const disabledSwitchAccount =
+    filterdV2Chains?.length > 1 || filterdV2Chains?.some((chainInfo) => chainInfo.chain !== CHAIN.ETHEREUM);
 
   const chainNotDeployedInV2 = isV2WC && filterdV2Chains.find((chainInfo) => !chainInfo.isDeployed);
 
@@ -219,8 +223,11 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, chains: v2Chains
         ItemSeparatorComponent={() => <Spacing w={8} />}
         renderItem={({ item }) => (
           <TouchableOpacity
-            disabled={isV2WC}
-            style={[styles.walletBtn, activeAccount?.id === item.id && { backgroundColor: colors.modalHandleBar }]}
+            disabled={disabledSwitchAccount}
+            style={[
+              styles.walletBtn,
+              { backgroundColor: activeAccount?.id === item.id ? colors.modalHandleBar : colors.buttonBackground },
+            ]}
             onPress={() => dispatch(switchAccountAction(item.id))}
             key={item.id}
           >

@@ -49,8 +49,8 @@ const ConnectedAppsMenu: FC<Props> = ({ isV2WC, dropDownStyle, visible, onHide, 
   const List: itemProps[] = isV2WC
     ? [{ value: 'Disconnect', label: t('disconnect'), color: colors.secondaryAccent240 }]
     : [
-        { value: 'Switch wallet', label: t('switchWallet') },
-        { value: 'Switch network', label: t('switchNetwork') },
+        { value: 'Add wallet', label: t('addWallet') },
+        { value: 'Add network', label: t('addNetwork') },
         { value: 'Disconnect', label: t('disconnect'), color: colors.secondaryAccent240 },
       ];
 

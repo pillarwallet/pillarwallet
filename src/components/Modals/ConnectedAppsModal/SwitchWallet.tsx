@@ -83,7 +83,7 @@ const SwitchWallet: FC<Props> = ({ dropDownStyle, visible, onHide, onChangeAccou
       modalContent={
         <>
           <Text variant="regular" color={colors.basic030}>
-            {t('switchWallet')}
+            {t('addWallet')}
           </Text>
           <Spacing h={5} />
           <View style={[styles.line, { backgroundColor: colors.basic050 }]} />
