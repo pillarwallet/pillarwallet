@@ -37,22 +37,19 @@ interface Props {
   visible: boolean;
   onHide: (val: boolean) => void;
   onSelect: (val: Object) => void;
-  isV2WC: boolean;
 }
 
 export type itemProps = { label: string; value: string; color?: string };
 
-const ConnectedAppsMenu: FC<Props> = ({ isV2WC, dropDownStyle, visible, onHide, onSelect }) => {
+const ConnectedAppsMenu: FC<Props> = ({ dropDownStyle, visible, onHide, onSelect }) => {
   const colors = useThemeColors();
   const { t } = useTranslationWithPrefix('walletConnect.connectedApps');
 
-  const List: itemProps[] = isV2WC
-    ? [{ value: 'Disconnect', label: t('disconnect'), color: colors.secondaryAccent240 }]
-    : [
-        { value: 'Add wallet', label: t('addWallet') },
-        { value: 'Add network', label: t('addNetwork') },
-        { value: 'Disconnect', label: t('disconnect'), color: colors.secondaryAccent240 },
-      ];
+  const List: itemProps[] = [
+    { value: 'Add wallet', label: t('addWallet') },
+    { value: 'Add network', label: t('addNetwork') },
+    { value: 'Disconnect', label: t('disconnect'), color: colors.secondaryAccent240 },
+  ];
 
   const renderItem = ({ item }): ReactElement<any, any> => (
     <TouchableOpacity

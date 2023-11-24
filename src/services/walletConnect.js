@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import WalletConnect from '@walletconnect/client';
 import { Core } from '@walletconnect/core';
 import { IWeb3Wallet, Web3Wallet } from '@walletconnect/web3wallet';
 import { getSdkError } from '@walletconnect/utils';
@@ -26,17 +25,10 @@ import { getSdkError } from '@walletconnect/utils';
 import { getEnv } from 'configs/envConfig';
 
 // utils
-import { reportErrorLog } from 'utils/common';
-
-// services
-import Storage from 'services/storage';
+import { reportErrorLog, printLog } from 'utils/common';
 
 // types
-import type {
-  WalletConnectSession,
-  WalletConnectConnector,
-  WalletConnectOptions,
-} from 'models/WalletConnect';
+import type { WalletConnectOptions } from 'models/WalletConnect';
 
 // eslint-disable-next-line import/no-mutable-exports
 export let web3wallet: IWeb3Wallet;
@@ -57,8 +49,10 @@ const clientMeta = {
 /* eslint-enable i18next/no-literal-string */
 
 export async function createWeb3Wallet() {
+  const projectId = getEnv().WALLETCONNECT_PROJECT_ID;
+  printLog(`Project Id: ${projectId}`);
   core = new Core({
-    projectId: getEnv().WALLETCONNECT_PROJECT_ID,
+    projectId,
   });
 
   web3wallet = await Web3Wallet.init({
@@ -70,8 +64,10 @@ export async function createWeb3Wallet() {
 }
 
 export async function web3WalletInit() {
+  const projectId = getEnv().WALLETCONNECT_PROJECT_ID;
+  printLog(`Project Id: ${projectId}`);
   const newCore = new Core({
-    projectId: getEnv().WALLETCONNECT_PROJECT_ID,
+    projectId,
   });
 
   const wcInit = await Web3Wallet.init({
@@ -90,22 +86,6 @@ export async function web3WalletPair(options: WalletConnectOptions) {
     return null;
   }
 }
-
-export const createConnector = (options: WalletConnectOptions): ?WalletConnectConnector => {
-  try {
-    return new WalletConnect({ ...options, clientMeta });
-  } catch (error) {
-    reportErrorLog('walletConnect -> createConnector failed', { error });
-    return null;
-  }
-};
-
-export const loadLegacyWalletConnectSessions = async (): Promise<WalletConnectSession[]> => {
-  const storage = Storage.getInstance('db');
-  const walletConnectStorage = await storage.get('walletconnect');
-
-  return walletConnectStorage?.sessions ?? [];
-};
 
 export const disconnectV2Session = async (topic: string) => {
   await web3wallet.disconnectSession({

@@ -35,6 +35,7 @@ import Spinner from 'components/Spinner';
 import WalletConnectRequests from 'screens/WalletConnect/Requests';
 import Modal from 'components/Modal';
 import Icon from 'components/core/Icon';
+import SwitchChainModal from 'components/ChainView/SwitchChainModal';
 
 // Selectors
 import { useActiveAccount } from 'selectors';
@@ -69,7 +70,6 @@ import WalletConnectListItem from './components/WalletConnectListItem';
 import ConnectFloatingButton from './components/ConnectFloatingButton';
 import ConnectedAppsFloatingButton from './components/ConnectedAppsFloatingButton';
 import DeployBanner from './components/DeployBanner';
-import SwitchChainModal from './components/SwitchChainModal';
 
 function WalletConnectHome() {
   const { t } = useTranslationWithPrefix('walletConnect.home');

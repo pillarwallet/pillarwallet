@@ -46,7 +46,6 @@ import {
 } from 'actions/smartWalletActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { connectEtherspotAccountAction } from 'actions/etherspotActions';
-import { updateWalletConnectSessionsByActiveAccount } from 'actions/walletConnectSessionsActions';
 
 // utils
 import {
@@ -158,10 +157,7 @@ export const setActiveAccountAction = (accountId: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
-      smartWallet: {
-        connectedAccount = {},
-        upgrade,
-      },
+      smartWallet: { connectedAccount = {}, upgrade },
     } = getState();
 
     const account = accounts.find((acc) => acc.id === accountId);
@@ -219,7 +215,6 @@ export const switchAccountAction = (accountId: string) => {
     dispatch(fetchAssetsBalancesAction());
     dispatch(fetchCollectiblesAction());
     dispatch(fetchTransactionsHistoryAction());
-    dispatch(updateWalletConnectSessionsByActiveAccount());
     dispatch({ type: CHANGING_ACCOUNT, payload: false });
   };
 };
