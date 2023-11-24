@@ -17,6 +17,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
+import { isEmpty } from 'lodash';
 
 // Components
 import SlideModal from 'components/Modals/SlideModal';
@@ -29,8 +30,14 @@ import { useRootSelector } from 'selectors';
 
 // Local
 import AppListItem from './AppListItem';
-import { type AppItem, useConnectedAppItems } from './selectors';
-import { isEmpty } from 'lodash';
+import type { Chain } from 'models/Chain';
+
+type AppItem = {
+  key: string;
+  title: string;
+  chain: Chain;
+  iconUrl: string;
+};
 
 export default function () {
   const { t } = useTranslationWithPrefix('walletConnect.connectedApps');
@@ -45,10 +52,6 @@ export default function () {
     });
   }, [v2Sessions]);
 
-  const items = useConnectedAppItems();
-
-  const sessions = v2ActiveSessions.concat(items);
-
   const renderItem = (item: AppItem) => {
     return <AppListItem {...item} />;
   };
@@ -56,7 +59,7 @@ export default function () {
   return (
     <SlideModal noPadding noClose showHeader centerTitle title={t('title')}>
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
-        <InfoView>{sessions?.map((item) => renderItem(item))}</InfoView>
+        <InfoView>{v2ActiveSessions?.map((item) => renderItem(item))}</InfoView>
       </ContentWrapper>
     </SlideModal>
   );

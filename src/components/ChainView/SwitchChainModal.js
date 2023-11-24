@@ -36,12 +36,8 @@ import { accountTotalBalancesSelector } from 'selectors/totalBalances';
 import { fontStyles, spacing, appFont, borderRadiusSizes } from 'utils/variables';
 import { calculateTotalBalancePerCategory, calculateTotalBalancePerChain } from 'utils/totalBalances';
 import { formatFiatValue } from 'utils/format';
-import { mapChainToChainId } from 'utils/chains';
 import { isLightTheme } from 'utils/themes';
 import { type Chain } from 'models/Chain';
-
-// Local
-import { useConnectedAppItems } from '../../screens/WalletConnect/Home/selectors';
 
 type itemType = {|
   key: ?Chain,
@@ -58,7 +54,6 @@ type Props = {|
 
 function SwitchChainModal({ items, activeItem, updateActiveChain, updateActiveItem, closeModal }: Props) {
   const { t } = useTranslationWithPrefix('walletConnect.home');
-  const connectedApps = useConnectedAppItems();
   const accountTotalBalances = useRootSelector(accountTotalBalancesSelector);
   const balancePerCategory = calculateTotalBalancePerCategory(accountTotalBalances);
   const balancePerChain = calculateTotalBalancePerChain(accountTotalBalances);
@@ -68,14 +63,6 @@ function SwitchChainModal({ items, activeItem, updateActiveChain, updateActiveIt
     updateActiveItem(chain);
     updateActiveChain(chain?.key);
     closeModal();
-    if (chain?.key) {
-      const chainId = mapChainToChainId(chain?.key);
-      connectedApps.map((item) => {
-        const connector = item?.connector;
-        if (connector) connector.updateSession({ chainId, accounts: item?.accounts });
-        return item;
-      });
-    }
   };
 
   const renderChainAddress = (chain: itemType) => {

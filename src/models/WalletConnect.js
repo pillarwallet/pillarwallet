@@ -20,42 +20,6 @@
 
 import { REQUEST_TYPE } from 'constants/walletConnectConstants';
 
-export type WalletConnectConnector = {|
-  bridge: string,
-  key: string,
-  clientId: string,
-  peerId: string,
-  clientMeta: WalletConnectClientMeta | null,
-  peerMeta: WalletConnectClientMeta | null,
-  handshakeTopic: string,
-  handshakeId: number,
-  uri: string,
-  chainId: number,
-  networkId: number,
-  accounts: string[],
-  rpcUrl: string,
-  connected: boolean,
-  pending: boolean,
-  session: WalletConnectSession,
-  _transport: { close: () => void },
-  on(event: string, callback: (error: Error | null, payload: ?any) => void): void,
-  connect(options?: WalletConnectCreateSessionOptions): Promise<WalletConnectSessionStatus>,
-  createSession(options?: WalletConnectCreateSessionOptions): Promise<void>,
-  approveSession(sessionStatus: WalletConnectSessionStatus): void,
-  rejectSession(sessionError?: WalletConnectSessionError): void,
-  updateSession(sessionStatus: WalletConnectSessionStatus): void,
-  killSession(sessionError?: WalletConnectSessionError): Promise<void>,
-  sendTransaction(tx: WalletConnectTransactionData): Promise<any>,
-  signTransaction(tx: WalletConnectTransactionData): Promise<any>,
-  signMessage(params: any[]): Promise<any>,
-  signPersonalMessage(params: any[]): Promise<any>,
-  signTypedData(params: any[]): Promise<any>,
-  updateChain(chainParams: WalletConnectUpdateChain): Promise<any>,
-  approveRequest(response: WalletConnectRequestApprove): void,
-  rejectRequest(response: WalletConnectRequestReject): void,
-  sendCustomRequest(customRequest: any): void,
-|};
-
 export type WalletConnectV2Connector = {|
   name: string,
   core: any,
@@ -143,11 +107,6 @@ export interface Struct {
   peer: PeerMeta;
 }
 
-export type sessionDataProps = {|
-  accounts?: string[],
-  chainId?: number,
-|};
-
 export type WalletConnectClientMeta = {|
   description: string,
   url: string,
@@ -188,10 +147,6 @@ export type WalletConnectV2Session = {|
   topic: string,
 |};
 
-type WalletConnectCreateSessionOptions = {|
-  chainId?: number,
-|};
-
 export type WalletConnectSessionStatus = {|
   chainId: number,
   accounts: string[],
@@ -222,16 +177,6 @@ export type WalletConnectOptions = {|
   qrcodeModalOptions?: { mobileLinks?: string[] },
 |};
 
-type WalletConnectUpdateChain = {|
-  chainId: number,
-  networkId: number,
-  rpcUrl: string,
-  nativeCurrency: {
-    name: string,
-    symbol: string,
-  },
-|};
-
 export type WalletConnectCallRequest = {|
   peerId: string,
   chainId: number,
@@ -242,26 +187,6 @@ export type WalletConnectCallRequest = {|
   url: string,
   params: any[],
   topic?: string,
-|};
-
-type WalletConnectTransactionData = {|
-  to?: string,
-  value?: number | string,
-  gas?: number | string,
-  gasLimit?: number | string,
-  gasPrice?: number | string,
-  nonce?: number | string,
-  from: string,
-|};
-
-type WalletConnectRequestApprove = {|
-  id: number,
-  result: any,
-|};
-
-type WalletConnectRequestReject = {|
-  id: number,
-  error?: Error,
 |};
 
 export type WalletConnectCallRequestType = $Values<typeof REQUEST_TYPE>;

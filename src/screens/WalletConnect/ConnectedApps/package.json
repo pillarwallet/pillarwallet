@@ -1,6 +1,6 @@
 {
-  "name": "WalletConnectConnectedApps",
+  "name": "WalletConnectAppsCamera",
   "version": "0.0.0",
   "private": true,
-  "main": "./WalletConnectConnectedApps.js"
+  "main": "./WalletConnectAppsCamera.tsx"
 }

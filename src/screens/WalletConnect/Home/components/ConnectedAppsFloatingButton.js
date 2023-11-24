@@ -28,9 +28,6 @@ import Emoji from 'react-native-emoji';
 import Text from 'components/core/Text';
 import Modal from 'components/Modal';
 
-// Hooks
-import useWalletConnect from 'hooks/useWalletConnect';
-
 // Utils
 import { spacing } from 'utils/variables';
 
@@ -46,10 +43,9 @@ type Props = {|
 |};
 
 const ConnectedAppsFloatingButton = ({ style, isInCameraFloating }: Props) => {
-  const { activeConnectors } = useWalletConnect();
   const v2Sessions = useRootSelector((root) => root.walletConnectSessions.v2Sessions);
 
-  if (activeConnectors.length + v2Sessions.length === 0) {
+  if (v2Sessions.length === 0) {
     return null;
   }
 
@@ -63,7 +59,7 @@ const ConnectedAppsFloatingButton = ({ style, isInCameraFloating }: Props) => {
     <TouchableOpacity onPress={openConnectedApps}>
       <ItemContainer>
         <Text>
-          <Emoji name="zap" /> {activeConnectors.length + v2Sessions.length}
+          <Emoji name="zap" /> {v2Sessions.length}
         </Text>
       </ItemContainer>
     </TouchableOpacity>
