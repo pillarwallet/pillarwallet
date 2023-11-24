@@ -52,14 +52,14 @@ export default function () {
     });
   }, [v2Sessions]);
 
-  const renderItem = (item: AppItem) => {
-    return <AppListItem {...item} />;
+  const renderItem = (item: AppItem, index: number) => {
+    return <AppListItem key={index.toString()} {...item} />;
   };
 
   return (
     <SlideModal noPadding noClose showHeader centerTitle title={t('title')}>
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
-        <InfoView>{v2ActiveSessions?.map((item) => renderItem(item))}</InfoView>
+        <InfoView>{v2ActiveSessions?.map((item, index) => renderItem(item, index))}</InfoView>
       </ContentWrapper>
     </SlideModal>
   );

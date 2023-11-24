@@ -157,10 +157,10 @@ function AppListItem({ title, iconUrl, onPress, v2Session }: Props) {
           {sessionInfo &&
             sessionInfo?.chains?.map((v2chain, index) => {
               return (
-                <>
+                <SubContainer key={v2chain}>
                   <Icon name={v2chain} width={16} />
                   {sessionInfo?.chains.length - 1 !== index && <VerticalLine />}
-                </>
+                </SubContainer>
               );
             })}
         </RightAddOn>
@@ -195,6 +195,8 @@ export default AppListItem;
 const Container = styled.View`
   width: 100%;
 `;
+
+const SubContainer = styled.View``;
 
 const TouchableContainer = styled.TouchableOpacity`
   flex-direction: row;
