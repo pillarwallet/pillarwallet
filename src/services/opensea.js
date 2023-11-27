@@ -17,65 +17,11 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { getEnv } from 'configs/envConfig';
 
-// constants
-import { API_REQUEST_TIMEOUT } from 'constants/appConstants';
 
 // utils
-import httpRequest from 'utils/httpRequest';
-import { reportErrorLog } from 'utils/common';
-import type {
-  OpenSeaAsset,
-  OpenSeaHistoryItem,
-} from 'models/OpenSea';
+import type { OpenSeaHistoryItem } from 'models/OpenSea';
 
-const requestConfig = {
-  timeout: API_REQUEST_TIMEOUT,
-  headers: {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-    'X-API-KEY': getEnv().OPEN_SEA_API_KEY,
-  },
-};
-
-const getOpenSeaAssets = (
-  url: string,
-  paginatedData: Array<Object> = [],
-  limit: number = 50,
-  offset: number = 0,
-) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const { data: responseData } = await httpRequest.get(`${url}&limit=${limit}&offset=${offset}`, requestConfig);
-      const assets = responseData?.assets || [];
-      const updatedPaginatedData = [...paginatedData, ...assets];
-      const newOffset = offset + limit;
-
-      const results = assets.length === limit
-        ? await getOpenSeaAssets(url, updatedPaginatedData, limit, newOffset)
-        : updatedPaginatedData;
-
-      resolve(results);
-    } catch (err) {
-      reject(err);
-    }
-  });
-};
-
-/* eslint-disable i18next/no-literal-string */
-export const fetchCollectibles = async (
-  walletAddress: string,
-): Promise<?OpenSeaAsset[]> => {
-  if (!walletAddress) return null;
-
-  const url = `${getEnv().OPEN_SEA_API}/assets/?owner=${walletAddress}`;
-
-  return getOpenSeaAssets(url).catch((error) => {
-    reportErrorLog('fetchCollectibles failed', { walletAddress, error });
-    return null;
-  });
-};
 
 export const fetchCollectiblesTransactionHistory = async (): Promise<?OpenSeaHistoryItem[]> => {
   /**

@@ -57,7 +57,6 @@ import { calculateETHTransactionAmountAfterFee } from 'utils/transactions';
 import { calculateGasEstimate, transferSigned } from 'services/assets';
 import KeyBasedWallet from 'services/keyBasedWallet';
 import etherspotService from 'services/etherspot';
-import { fetchCollectibles } from 'services/opensea';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -208,13 +207,13 @@ export const fetchAvailableCollectiblesToTransferAction = () => {
 
     let availableCollectibles = [];
 
-    const fetchedCollectibles = await fetchCollectibles(keyBasedWalletAddress);
+    const fetchedCollectibles = await etherspotService.getNftList(CHAIN.ETHEREUM, keyBasedWalletAddress);
     if (!fetchedCollectibles) {
       logBreadcrumb('fetchAvailableCollectiblesToTransferAction', 'Failed to fetch key based wallet collectibles', {
         requestResult: fetchedCollectibles,
       });
     } else {
-      availableCollectibles = fetchedCollectibles.map(parseCollectibleFromOpenSeaAsset);
+      availableCollectibles = fetchedCollectibles?.items?.map(parseCollectibleFromOpenSeaAsset);
     }
 
     dispatch({ type: SET_AVAILABLE_KEY_BASED_COLLECTIBLES_TO_TRANSFER, payload: availableCollectibles });
