@@ -170,10 +170,12 @@ const parseEstimateError = (error: Error, logExtras: Object = {}) => {
 export class ArchanovaService {
   sdk: Sdk = null;
   sdkInitialized: boolean;
+  privateKey: string;
 
   constructor() {
     this.sdk = null;
     this.sdkInitialized = false;
+    this.privateKey === '';
   }
 
   getSdk() {
@@ -192,19 +194,26 @@ export class ArchanovaService {
 
   getEnvironmentNetwork(networkName: string) {
     switch (networkName) {
-      case 'rinkeby': return SdkEnvironmentNames.Rinkeby;
-      case 'kovan': return SdkEnvironmentNames.Kovan;
-      case 'homestead': return SdkEnvironmentNames.Main;
-      default: return SdkEnvironmentNames.Kovan;
+      case 'rinkeby':
+        return SdkEnvironmentNames.Rinkeby;
+      case 'kovan':
+        return SdkEnvironmentNames.Kovan;
+      case 'homestead':
+        return SdkEnvironmentNames.Main;
+      default:
+        return SdkEnvironmentNames.Kovan;
     }
   }
 
   async init(privateKey: string, onEvent?: Function, forceInit: boolean = false) {
-    if (this.sdkInitialized && !forceInit) return;
+    if (this.sdkInitialized && !forceInit && this.privateKey === privateKey) return;
 
     await this.getSdk()
       .initialize({ device: { privateKey } })
-      .then(() => { this.sdkInitialized = true; })
+      .then(() => {
+        this.sdkInitialized = true;
+        this.privateKey = privateKey;
+      })
       .catch(() => {
         printLog('Error initiating sdk.');
       });
@@ -217,14 +226,15 @@ export class ArchanovaService {
 
   subscribeToEvents(onEvent?: Function) {
     if (subscribedToEvents || !onEvent) return;
-    this.getSdk().event$.subscribe(event => {
+    this.getSdk().event$.subscribe((event) => {
       if (onEvent) onEvent(event);
     });
     subscribedToEvents = true;
   }
 
   async getAccounts(): Promise<ArchanovaWalletAccount[]> {
-    const accounts = await this.getSdk().getConnectedAccounts()
+    const accounts = await this.getSdk()
+      .getConnectedAccounts()
       .then(({ items = [] }) => items)
       .catch(() => []);
 
@@ -245,7 +255,8 @@ export class ArchanovaService {
   }
 
   getConnectedAccountDevices() {
-    return this.getSdk().getConnectedAccountDevices()
+    return this.getSdk()
+      .getConnectedAccountDevices()
       .then((result) => get(result, 'items', []))
       .catch(this.handleError);
   }
@@ -269,10 +280,11 @@ export class ArchanovaService {
   async deployAccount(
     estimate?: sdkInterfaces.IEstimatedAccountDeployment,
   ): Promise<{ error?: string, deployTxHash?: string }> {
-    const deployEstimate = estimate || await this.estimateAccountDeployment().catch(this.handleError);
+    const deployEstimate = estimate || (await this.estimateAccountDeployment().catch(this.handleError));
     if (!deployEstimate) return { error: ARCHANOVA_WALLET_DEPLOYMENT_ERRORS.REVERTED };
 
-    return this.getSdk().deployAccount(deployEstimate, false)
+    return this.getSdk()
+      .deployAccount(deployEstimate, false)
       .then((hash) => ({ deployTxHash: hash }))
       .catch((e) => {
         reportErrorLog('Unable to deploy account', { e });
@@ -284,7 +296,8 @@ export class ArchanovaService {
     const deployEstimate = await this.getSdk().estimateAccountDeviceDeployment(deviceAddress).catch(this.handleError);
     if (!deployEstimate) return null;
 
-    return this.getSdk().submitAccountTransaction(deployEstimate, payForGasWithToken)
+    return this.getSdk()
+      .submitAccountTransaction(deployEstimate, payForGasWithToken)
       .catch((e) => {
         reportErrorLog('Unable to deploy device', { e });
         return null;
@@ -292,9 +305,11 @@ export class ArchanovaService {
   }
 
   async unDeployAccountDevice(deviceAddress: string, payForGasWithToken: boolean = false) {
-    const unDeployEstimate =
-      await this.getSdk().estimateAccountDeviceUnDeployment(deviceAddress).catch(this.handleError);
-    return this.getSdk().submitAccountTransaction(unDeployEstimate, payForGasWithToken)
+    const unDeployEstimate = await this.getSdk()
+      .estimateAccountDeviceUnDeployment(deviceAddress)
+      .catch(this.handleError);
+    return this.getSdk()
+      .submitAccountTransaction(unDeployEstimate, payForGasWithToken)
       .catch((e) => {
         reportErrorLog('Unable to undeploy device', { e });
         return null;
@@ -303,10 +318,12 @@ export class ArchanovaService {
 
   getAccountStakedAmount(tokenAddress: ?string): Promise<BigNumber> | BigNumber {
     if (!tokenAddress) return new BigNumber(0);
-    return this.getSdk().getConnectedAccountVirtualBalance(tokenAddress)
-      .then(data => {
+    return this.getSdk()
+      .getConnectedAccountVirtualBalance(tokenAddress)
+      .then((data) => {
         let value;
-        if (data.items) { // NOTE: we're getting the data.items response when tokenAddress is null
+        if (data.items) {
+          // NOTE: we're getting the data.items response when tokenAddress is null
           value = get(data, 'items[0].value');
         } else {
           value = get(data, 'value');
@@ -320,7 +337,8 @@ export class ArchanovaService {
   }
 
   getAccountPendingBalances() {
-    return this.getSdk().getConnectedAccountVirtualPendingBalances()
+    return this.getSdk()
+      .getConnectedAccountVirtualPendingBalances()
       .catch((e) => {
         this.handleError(e);
         return [];
@@ -329,7 +347,9 @@ export class ArchanovaService {
 
   async fetchConnectedAccount(): Promise<ConnectedArchanovaWalletAccount> {
     try {
-      const { state: { account: accountData } } = this.getSdk();
+      const {
+        state: { account: accountData },
+      } = this.getSdk();
       const devices = await this.getConnectedAccountDevices();
       const activeDeviceAddress = get(this.getSdk(), 'state.accountDevice.device.address');
       return { ...accountData, devices, activeDeviceAddress };
@@ -359,18 +379,9 @@ export class ArchanovaService {
     return { hash };
   }
 
-  async sendTransaction(
-    transaction: TransactionPayload,
-    fromAccountAddress: string,
-    usePPN?: boolean,
-  ) {
+  async sendTransaction(transaction: TransactionPayload, fromAccountAddress: string, usePPN?: boolean) {
     if (usePPN) {
-      const {
-        amount,
-        decimals,
-        to,
-        contractAddress,
-      } = transaction;
+      const { amount, decimals, to, contractAddress } = transaction;
       const value = utils.parseUnits(amount.toString(), decimals);
 
       return this.createAccountPayment(to, contractAddress, value);
@@ -409,8 +420,10 @@ export class ArchanovaService {
   }
 
   estimateWithdrawFromVirtualAccount(value: EthersBigNumber, tokenAddress: ?string) {
-    return this.getSdk()
-      .estimateWithdrawFromAccountVirtualBalance(value.toHexString(), toChecksumAddress(tokenAddress));
+    return this.getSdk().estimateWithdrawFromAccountVirtualBalance(
+      value.toHexString(),
+      toChecksumAddress(tokenAddress),
+    );
   }
 
   estimatePaymentSettlement(hashes: string[] = []) {
@@ -444,9 +457,7 @@ export class ArchanovaService {
     if (!data) return [];
 
     const items = data.items || [];
-    const foundLastSyncedTx = lastSyncedId
-      ? items.find(({ id }) => id === lastSyncedId)
-      : null;
+    const foundLastSyncedTx = lastSyncedId ? items.find(({ id }) => id === lastSyncedId) : null;
     if (data.nextPage && !foundLastSyncedTx) {
       return [...items, ...(await this.getAccountPayments(lastSyncedId, page + 1))];
     }
@@ -464,9 +475,7 @@ export class ArchanovaService {
     if (!data) return [];
 
     const items = data.items || [];
-    const foundLastSyncedTx = lastSyncedId
-      ? items.find(({ id }) => id === lastSyncedId)
-      : null;
+    const foundLastSyncedTx = lastSyncedId ? items.find(({ id }) => id === lastSyncedId) : null;
     if (data.nextPage && !foundLastSyncedTx) {
       return [...items, ...(await this.getAccountTransactions(lastSyncedId, page + 1))];
     }
@@ -481,11 +490,10 @@ export class ArchanovaService {
     const data = await this.getSdk().getConnectedAccountPayments(page, filters).catch(this.handleError);
     if (!data) return [];
 
-    const items = (data.items || [])
-      .filter(payment => {
-        const recipientAddress = get(payment, 'recipient.account.address', '');
-        return addressesEqual(recipientAddress, accountAddress);
-      });
+    const items = (data.items || []).filter((payment) => {
+      const recipientAddress = get(payment, 'recipient.account.address', '');
+      return addressesEqual(recipientAddress, accountAddress);
+    });
 
     if (data.nextPage) {
       return [...items, ...(await this.getAccountPaymentsToSettle(accountAddress, page + 1))];
@@ -525,7 +533,8 @@ export class ArchanovaService {
   }
 
   async estimateAccountDeviceDeployment(deviceAddress: string) {
-    const estimated = await this.getSdk().estimateAccountDeviceDeployment(deviceAddress)
+    const estimated = await this.getSdk()
+      .estimateAccountDeviceDeployment(deviceAddress)
       .then(parseEstimatePayload)
       .catch(() => ({}));
 
@@ -533,7 +542,8 @@ export class ArchanovaService {
   }
 
   async estimateAccountDeviceUnDeployment(deviceAddress: string) {
-    const estimated = await this.getSdk().estimateAccountDeviceUnDeployment(deviceAddress)
+    const estimated = await this.getSdk()
+      .estimateAccountDeviceUnDeployment(deviceAddress)
       .then(parseEstimatePayload)
       .catch(() => ({}));
 
@@ -546,19 +556,27 @@ export class ArchanovaService {
 
   getTransactionInfo(hash: string) {
     if (!this.sdkInitialized) return null;
-    return this.getSdk().getConnectedAccountTransaction(hash).catch(() => null);
+    return this.getSdk()
+      .getConnectedAccountTransaction(hash)
+      .catch(() => null);
   }
 
   switchToGasTokenRelayer() {
-    return this.getSdk().switchToGasTokenRelayer().catch(() => null);
+    return this.getSdk()
+      .switchToGasTokenRelayer()
+      .catch(() => null);
   }
 
   addAccountDevice(address: string) {
-    return this.getSdk().createAccountDevice(address).catch(() => null);
+    return this.getSdk()
+      .createAccountDevice(address)
+      .catch(() => null);
   }
 
   removeAccountDevice(address: string) {
-    return this.getSdk().removeAccountDevice(address).catch(() => null);
+    return this.getSdk()
+      .removeAccountDevice(address)
+      .catch(() => null);
   }
 
   getConnectedAccountTransactionExplorerLink(hash: string): string {
@@ -566,7 +584,9 @@ export class ArchanovaService {
   }
 
   isValidSession(): Promise<string> {
-    return this.getSdk().session.verifyToken().catch(() => false);
+    return this.getSdk()
+      .session.verifyToken()
+      .catch(() => false);
   }
 
   handleError(error: any) {
@@ -576,13 +596,16 @@ export class ArchanovaService {
   async reset() {
     if (!this.sdkInitialized) return;
     this.sdkInitialized = false;
+    this.privateKey = '';
     if (!this.sdk) return;
     this.sdk.event$.next(null); // unsubscribes
     subscribedToEvents = false;
-    await this.sdk.reset({
-      device: true,
-      session: true,
-    }).catch(() => null);
+    await this.sdk
+      .reset({
+        device: true,
+        session: true,
+      })
+      .catch(() => null);
   }
 }
 

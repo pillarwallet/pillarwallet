@@ -232,7 +232,8 @@ export const initOnLoginArchanovaAccountAction = (privateKey: string) => {
     if (!smartWalletAccount) return;
 
     const smartWalletAccountId = getAccountId(smartWalletAccount);
-    await dispatch(initArchanovaSdkAction(privateKey, true));
+    // Note: Disabled forceInit here, because of gets Account disconnect error
+    await dispatch(initArchanovaSdkAction(privateKey));
 
     const activeAccountType = getActiveAccountType(accounts);
     const setAccountActive = activeAccountType !== ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET; // set to active routine
