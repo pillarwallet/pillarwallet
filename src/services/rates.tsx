@@ -61,7 +61,7 @@ export const getExchangeTokenPrices = async (
 ): Promise<RatesByAssetAddress | any> => {
   const assetsContractAddresses = assets.map(({ address }) => address);
 
-  if (isEmpty(assetsContractAddresses)) {
+  if (isEmpty(assets) || isEmpty(assetsContractAddresses)) {
     return;
   }
   allSettled.shim();
