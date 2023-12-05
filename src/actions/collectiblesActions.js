@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { mapValues } from 'lodash';
+import { isEmpty, mapValues } from 'lodash';
 
 // Constants
 import { ASSET_TYPES } from 'constants/assetsConstants';
@@ -31,7 +31,7 @@ import {
 } from 'constants/collectiblesConstants';
 
 // Services
-import { fetchCollectibles, fetchCollectiblesTransactionHistory } from 'services/opensea';
+import { fetchCollectiblesTransactionHistory } from 'services/opensea';
 import { getPoapCollectiblesOnXDai } from 'services/poap';
 import etherspotService from 'services/etherspot';
 
@@ -45,6 +45,7 @@ import {
 } from 'utils/accounts';
 import { isCaseInsensitiveMatch, logBreadcrumb } from 'utils/common';
 import { parseEtherspotTransactionStatus } from 'utils/etherspot';
+import { getSupportedChains } from 'utils/chains';
 
 // Selectors
 import { activeAccountSelector } from 'selectors';
@@ -60,12 +61,8 @@ import type { NftList } from 'etherspot';
 // Actions
 import { saveDbAction } from './dbActions';
 
-
 const parseCollectibleMedia = (data) => {
-  const {
-    image_url: fullImage = '',
-    image_preview_url: previewImage = '',
-  } = data;
+  const { image_url: fullImage = '', image_preview_url: previewImage = '' } = data;
 
   return {
     icon: previewImage || fullImage,
@@ -92,7 +89,7 @@ export const parseCollectibleFromOpenSeaAsset = (asset: OpenSeaAsset): Collectib
   };
 };
 
-export const parsePolygonCollectibleFromEtherspot = (asset: NftList): Collectible => {
+export const parseCollectibleFromEtherspot = (chain: Chain, asset: NftList): Collectible => {
   return {
     id: asset.items[0]?.tokenId,
     name: asset.items[0]?.name,
@@ -103,7 +100,7 @@ export const parsePolygonCollectibleFromEtherspot = (asset: NftList): Collectibl
     imageUrl: asset.items[0]?.image,
     contractAddress: asset.contractAddress,
     tokenType: ASSET_TYPES.COLLECTIBLE,
-    chain: CHAIN.POLYGON,
+    chain,
     isLegacy: asset.nftVersion === '1.0',
   };
 };
@@ -122,7 +119,9 @@ export const fetchCollectiblesAction = (defaultAccount?: Account) => {
     /**
      * Is the NFT flag falsy? Return.
      */
-    if (!nftsEnabled) { return; }
+    if (!nftsEnabled) {
+      return;
+    }
 
     const account = defaultAccount ?? activeAccountSelector(getState());
     if (!account) {
@@ -133,27 +132,32 @@ export const fetchCollectiblesAction = (defaultAccount?: Account) => {
     const walletAddress = getAccountAddress(account);
     const accountId = getAccountId(account);
 
-    const openSeaCollectibles = await fetchCollectibles(walletAddress);
-    if (!openSeaCollectibles) {
+    const chains = getSupportedChains(account);
+
+    let updatedAccountCollectibles: Object = {};
+    await Promise.all(
+      chains.map(async (chain: Chain) => {
+        const accoutnCollectibles = await etherspotService.getNftList(chain, walletAddress);
+        if (isEmpty(accoutnCollectibles?.items)) return;
+        updatedAccountCollectibles[chain] =
+            accoutnCollectibles?.items?.map((asset) => parseCollectibleFromEtherspot(chain, asset)) ?? [];
+      }),
+    );
+
+    if (!updatedAccountCollectibles) {
       logBreadcrumb('fetchCollectiblesAction', 'failed: fetchCollectibles response not valid', {
-        openSeaCollectibles,
+        accoutnCollectibles: updatedAccountCollectibles,
         accountId,
         walletAddress,
         account,
       });
     }
 
-    let updatedAccountCollectibles = openSeaCollectibles
-      ? { [CHAIN.ETHEREUM]: openSeaCollectibles.map(parseCollectibleFromOpenSeaAsset) }
-      : {};
-
     if (isEtherspotAccount(account)) {
       const poapCollectiblesOnXDai = await getPoapCollectiblesOnXDai(walletAddress);
-      const collectibesOnPolygon = await etherspotService.getNftList(CHAIN.POLYGON, walletAddress);
       updatedAccountCollectibles = {
         ...updatedAccountCollectibles,
         [CHAIN.XDAI]: poapCollectiblesOnXDai,
-        [CHAIN.POLYGON]: collectibesOnPolygon?.items?.map(parsePolygonCollectibleFromEtherspot),
       };
     }
 
@@ -165,20 +169,11 @@ export const fetchCollectiblesAction = (defaultAccount?: Account) => {
 };
 
 const parseCollectibleTransactionFromOpenSeaHistoryItem = (event: OpenSeaHistoryItem): CollectibleTransaction => {
-  const {
-    asset,
-    transaction,
-    to_account: toAcc,
-    from_account: fromAcc,
-  } = event;
+  const { asset, transaction, to_account: toAcc, from_account: fromAcc } = event;
 
   const contract = asset.asset_contract;
 
-  const {
-    transaction_hash: trxHash,
-    block_number: blockNumber,
-    timestamp,
-  } = transaction;
+  const { transaction_hash: trxHash, block_number: blockNumber, timestamp } = transaction;
 
   const transactionId = (+transaction.id).toString();
 
@@ -219,20 +214,18 @@ export const fetchCollectiblesHistoryAction = (account?: Account) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const nftsEnabled = getState().nftFlag.visible;
 
-    if (!nftsEnabled) { return; }
+    if (!nftsEnabled) {
+      return;
+    }
 
     const {
       accounts: { data: accounts },
       collectibles: { transactionHistory: collectiblesHistory },
     } = getState();
 
-    const walletAddress = account
-      ? getAccountAddress(account)
-      : getActiveAccountAddress(accounts);
+    const walletAddress = account ? getAccountAddress(account) : getActiveAccountAddress(accounts);
 
-    const accountId = account
-      ? getAccountId(account)
-      : getActiveAccountId(accounts);
+    const accountId = account ? getAccountId(account) : getActiveAccountId(accounts);
 
     if (!walletAddress || !accountId) {
       logBreadcrumb('fetchCollectiblesHistoryAction', 'failed: no walletAddress or accountId', {
@@ -269,20 +262,18 @@ export const fetchCollectiblesHistoryAction = (account?: Account) => {
   };
 };
 
-
 export const fetchAllAccountsCollectiblesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
     } = getState();
 
-    const promises = accounts.map(async account => {
+    const promises = accounts.map(async (account) => {
       await dispatch(fetchCollectiblesAction(account));
     });
-    await Promise.all(promises).catch(_ => _);
+    await Promise.all(promises).catch((_) => _);
   };
 };
-
 
 export const fetchAllAccountsCollectiblesHistoryAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -290,13 +281,12 @@ export const fetchAllAccountsCollectiblesHistoryAction = () => {
       accounts: { data: accounts },
     } = getState();
 
-    const promises = accounts.map(async account => {
+    const promises = accounts.map(async (account) => {
       await dispatch(fetchCollectiblesHistoryAction(account));
     });
-    await Promise.all(promises).catch(_ => _);
+    await Promise.all(promises).catch((_) => _);
   };
 };
-
 
 export const fetchAllCollectiblesDataAction = () => {
   return async (dispatch: Dispatch) => {
@@ -308,7 +298,9 @@ export const fetchAllCollectiblesDataAction = () => {
 export const updateCollectibleTransactionAction = (chain: Chain, hash: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
-      session: { data: { isOnline } },
+      session: {
+        data: { isOnline },
+      },
       collectibles: { transactionHistory: collectiblesHistory },
     } = getState();
     if (!isOnline) return;
@@ -325,9 +317,8 @@ export const updateCollectibleTransactionAction = (chain: Chain, hash: string) =
 
     const accounts = Object.keys(collectiblesHistory);
     const updatedHistory = accounts.reduce((history, accountId) => {
-      const accountHistory = mapValues(
-        collectiblesHistory[accountId] ?? {},
-        (transactions = []) => transactions.map((transaction) => {
+      const accountHistory = mapValues(collectiblesHistory[accountId] ?? {}, (transactions = []) =>
+        transactions.map((transaction) => {
           if (!transaction?.hash || !isCaseInsensitiveMatch(transaction?.hash, hash)) {
             return transaction;
           }
