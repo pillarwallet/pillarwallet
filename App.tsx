@@ -241,7 +241,7 @@ class App extends React.Component<Props, any> {
     if (Platform.OS === 'android') {
       PlayInstallReferrer.getInstallReferrerInfo((installReferrerInfo, error) => {
         if (!error) {
-          reportLog('GA Install Referrer: installReferrerInfo', installReferrerInfo, 'info');
+          logBreadcrumb('GA Install Referrer: installReferrerInfo', installReferrerInfo);
         } else {
           reportLog('GA Install Referrer: An error occurred getInstallReferrerInfo method', error, 'error');
         }
