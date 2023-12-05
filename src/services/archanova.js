@@ -175,7 +175,7 @@ export class ArchanovaService {
   constructor() {
     this.sdk = null;
     this.sdkInitialized = false;
-    this.privateKey === '';
+    this.privateKey = '';
   }
 
   getSdk() {
