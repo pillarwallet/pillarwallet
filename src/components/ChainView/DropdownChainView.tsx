@@ -80,7 +80,7 @@ function DropdownChainView({ selectedChain }: Props) {
   const { key, title } = activeItem;
 
   return (
-    <ContainerView isSelected onPress={() => openSwitchChainModal()}>
+    <ContainerView onPress={() => openSwitchChainModal()}>
       <RowContainer>
         <ChainViewIcon
           size={24}
@@ -109,7 +109,7 @@ const useTabItems = (): itemType[] => {
 };
 
 const ContainerView = styled.TouchableOpacity`
-  background-color: ${({ theme, isSelected }) => (isSelected ? theme.colors.basic60 : theme.colors.basic050)};
+  background-color: ${({ theme }) => theme.colors.basic60};
   margin: 10px ${spacing.layoutSides}px;
   padding: 0 ${spacing.large}px 0 ${spacing.mediumLarge}px;
   height: 66px;

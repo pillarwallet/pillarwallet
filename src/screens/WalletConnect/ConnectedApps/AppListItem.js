@@ -49,27 +49,25 @@ import { WALLET_DROPDOWN_REF } from 'constants/walletConstants';
 
 // Types
 import type { Chain } from 'models/Chain';
-import type { WalletConnectConnector, WalletConnectV2Session } from 'models/WalletConnect';
+import type { WalletConnectV2Session } from 'models/WalletConnect';
 import { isEmpty } from 'lodash';
 
 type Props = {|
-  key: string,
   title: string,
   chain?: Chain,
   onPress?: () => void,
   iconUrl: ?string,
-  connector: WalletConnectConnector,
   v2Session?: ?WalletConnectV2Session,
 |};
 
-function AppListItem({ key, title, iconUrl, onPress, connector, v2Session }: Props) {
+function AppListItem({ title, iconUrl, onPress, v2Session }: Props) {
   const colors = useThemeColors();
   const Dropdownref: any = React.useRef();
   const NetworkRef: any = React.useRef();
   const dispatch = useDispatch();
   const { t } = useTranslationWithPrefix('walletConnect.disconnectModal');
 
-  const v2SessionInfo = React.useMemo(() => {
+  const sessionInfo = React.useMemo(() => {
     if (isEmpty(v2Session)) return null;
     const { namespaces, requiredNamespaces, topic } = v2Session;
 
@@ -91,10 +89,9 @@ function AppListItem({ key, title, iconUrl, onPress, connector, v2Session }: Pro
     return { accountIds, chains: v2Chains, topic };
   }, [v2Session]);
 
-  const chain = v2SessionInfo ? v2SessionInfo?.chains[0] : chainFromChainId[connector?.chainId];
-  const walletData = useWalletConnectAccounts(v2SessionInfo ? v2SessionInfo?.accountIds : connector?.accounts);
+  const walletData = useWalletConnectAccounts(sessionInfo?.accountIds);
 
-  const { updateConnectorSession, disconnectSessionByUrl, disconnectSessionV2ByTopic } = useWalletConnect();
+  const { disconnectSessionV2ByTopic } = useWalletConnect();
 
   const [visibleModal, setVisibleModal] = React.useState(false);
   const [visibleNetworkSwitchModal, setVisibleNetworkSwitchModal] = React.useState(false);
@@ -119,12 +116,8 @@ function AppListItem({ key, title, iconUrl, onPress, connector, v2Session }: Pro
 
   const onChangeChainSession = (updatedChain: Chain) => {
     const chainId = mapChainToChainId(updatedChain);
-    if (v2Session) {
-      dispatch(updateSessionV2(chainId, null, v2Session));
-    } else {
-      if (chainId === connector?.chainId) return;
-      updateConnectorSession(connector, { chainId, accounts: connector?.accounts });
-    }
+    if (!v2Session) return;
+    dispatch(updateSessionV2(chainId, null, v2Session));
   };
 
   const onChangeSessionAccount = (accountId: string) => {
@@ -133,13 +126,7 @@ function AppListItem({ key, title, iconUrl, onPress, connector, v2Session }: Pro
   };
 
   const disconnect = async () => {
-    if (v2SessionInfo) {
-      disconnectSessionV2ByTopic(v2SessionInfo.topic);
-      return;
-    }
-
-    const sessionUrl = connector?.peerMeta?.url;
-    if (!sessionUrl) {
+    if (!sessionInfo) {
       Toast.show({
         message: t('toast.missingSessionUrl'),
         emoji: 'hushed',
@@ -150,12 +137,11 @@ function AppListItem({ key, title, iconUrl, onPress, connector, v2Session }: Pro
       return;
     }
 
-    disconnectSessionByUrl(sessionUrl);
-    setVisibleWalletSwitchModal(false);
+    disconnectSessionV2ByTopic(sessionInfo.topic);
   };
 
   return (
-    <Container key={key}>
+    <Container key={v2Session?.topic?.toString()}>
       <Line />
       <TouchableContainer ref={Dropdownref} onPress={onPressButton}>
         <IconContainer>{!!iconUrl && <IconImage source={{ uri: iconUrl }} />}</IconContainer>
@@ -168,20 +154,18 @@ function AppListItem({ key, title, iconUrl, onPress, connector, v2Session }: Pro
         </TitleContainer>
 
         <RightAddOn ref={NetworkRef} onPress={onChangeNetwork}>
-          {!v2SessionInfo && <Icon name={chain} width={16} />}
-          {v2SessionInfo &&
-            v2SessionInfo?.chains?.map((v2chain, index) => {
+          {sessionInfo &&
+            sessionInfo?.chains?.map((v2chain, index) => {
               return (
-                <>
+                <SubContainer key={v2chain}>
                   <Icon name={v2chain} width={16} />
-                  {v2SessionInfo?.chains.length - 1 !== index && <VerticalLine />}
-                </>
+                  {sessionInfo?.chains.length - 1 !== index && <VerticalLine />}
+                </SubContainer>
               );
             })}
         </RightAddOn>
       </TouchableContainer>
       <ConnectedAppsMenu
-        isV2WC={false}
         visible={visibleModal}
         onHide={setVisibleModal}
         onSelect={(item: itemProps) => {
@@ -211,6 +195,8 @@ export default AppListItem;
 const Container = styled.View`
   width: 100%;
 `;
+
+const SubContainer = styled.View``;
 
 const TouchableContainer = styled.TouchableOpacity`
   flex-direction: row;

@@ -60,7 +60,7 @@ function WalletConnectCallRequestModal({ request }: Props) {
 
   const ref = React.useRef();
 
-  const { rejectCallRequest, rejectV2CallRequest } = useWalletConnect();
+  const { rejectV2CallRequest } = useWalletConnect();
 
   const type = getWalletConnectCallRequestType(request);
   const chain = chainFromChainId[request.chainId];
@@ -109,8 +109,6 @@ function WalletConnectCallRequestModal({ request }: Props) {
     ref.current?.close();
     if (request?.topic) {
       rejectV2CallRequest(request, formatJsonRpcError(request.callId, getSdkError('USER_REJECTED_METHODS').message));
-    } else {
-      rejectCallRequest(request);
     }
   };
 
