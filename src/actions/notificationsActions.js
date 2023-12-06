@@ -83,9 +83,9 @@ export const hideHomeUpdateIndicatorAction = () => ({ type: HIDE_HOME_UPDATE_IND
 
 export const fetchAllNotificationsAction = () => {
   return async (dispatch: Dispatch) => {
-    dispatch(fetchTransactionsHistoryAction());
     dispatch(fetchAllCollectiblesDataAction());
     dispatch(fetchAssetsBalancesAction(true));
+    dispatch(fetchTransactionsHistoryAction());
   };
 };
 
@@ -138,7 +138,6 @@ export const subscribeToPushNotificationsAction = () => {
         }, 500),
       );
     } else {
-      dispatch(fetchAllNotificationsAction());
       if (disabledPushNotificationsListener !== null) return;
       disabledPushNotificationsListener = setInterval(() => {
         dispatch(fetchAllNotificationsAction());
