@@ -66,8 +66,18 @@ index 0000000..28bb879
 +o/classes.jar
 diff --git a/node_modules/react-native-appearance/android/build/.transforms/3be9196c73819099f30c10023c39cd06/transformed/classes.jar b/node_modules/react-native-appearance/android/build/.transforms/3be9196c73819099f30c10023c39cd06/transformed/classes.jar
 new file mode 100644
-index 0000000..3e36061
-Binary files /dev/null and b/node_modules/react-native-appearance/android/build/.transforms/3be9196c73819099f30c10023c39cd06/transformed/classes.jar differ
+index 0000000..e69de29
+diff --git a/node_modules/react-native-appearance/android/build/.transforms/68187ff75f97c72711eaf335905158cd/results.bin b/node_modules/react-native-appearance/android/build/.transforms/68187ff75f97c72711eaf335905158cd/results.bin
+new file mode 100644
+index 0000000..0d259dd
+--- /dev/null
++++ b/node_modules/react-native-appearance/android/build/.transforms/68187ff75f97c72711eaf335905158cd/results.bin
+@@ -0,0 +1 @@
++o/classes
+diff --git a/node_modules/react-native-appearance/android/build/.transforms/68187ff75f97c72711eaf335905158cd/transformed/classes/classes.dex b/node_modules/react-native-appearance/android/build/.transforms/68187ff75f97c72711eaf335905158cd/transformed/classes/classes.dex
+new file mode 100644
+index 0000000..1fe2bba
+Binary files /dev/null and b/node_modules/react-native-appearance/android/build/.transforms/68187ff75f97c72711eaf335905158cd/transformed/classes/classes.dex differ
 diff --git a/node_modules/react-native-appearance/android/build/.transforms/ac27500372aba05d1479246c461c277c/results.bin b/node_modules/react-native-appearance/android/build/.transforms/ac27500372aba05d1479246c461c277c/results.bin
 new file mode 100644
 index 0000000..0d259dd
@@ -77,8 +87,18 @@ index 0000000..0d259dd
 +o/classes
 diff --git a/node_modules/react-native-appearance/android/build/.transforms/ac27500372aba05d1479246c461c277c/transformed/classes/classes.dex b/node_modules/react-native-appearance/android/build/.transforms/ac27500372aba05d1479246c461c277c/transformed/classes/classes.dex
 new file mode 100644
-index 0000000..a48a0a2
-Binary files /dev/null and b/node_modules/react-native-appearance/android/build/.transforms/ac27500372aba05d1479246c461c277c/transformed/classes/classes.dex differ
+index 0000000..e69de29
+diff --git a/node_modules/react-native-appearance/android/build/.transforms/dd3146dbce18e563e398e98145f5e790/results.bin b/node_modules/react-native-appearance/android/build/.transforms/dd3146dbce18e563e398e98145f5e790/results.bin
+new file mode 100644
+index 0000000..28bb879
+--- /dev/null
++++ b/node_modules/react-native-appearance/android/build/.transforms/dd3146dbce18e563e398e98145f5e790/results.bin
+@@ -0,0 +1 @@
++o/classes.jar
+diff --git a/node_modules/react-native-appearance/android/build/.transforms/dd3146dbce18e563e398e98145f5e790/transformed/classes.jar b/node_modules/react-native-appearance/android/build/.transforms/dd3146dbce18e563e398e98145f5e790/transformed/classes.jar
+new file mode 100644
+index 0000000..2e8d02f
+Binary files /dev/null and b/node_modules/react-native-appearance/android/build/.transforms/dd3146dbce18e563e398e98145f5e790/transformed/classes.jar differ
 diff --git a/node_modules/react-native-appearance/android/build/generated/source/buildConfig/debug/io/expo/appearance/BuildConfig.java b/node_modules/react-native-appearance/android/build/generated/source/buildConfig/debug/io/expo/appearance/BuildConfig.java
 new file mode 100644
 index 0000000..54acda3
@@ -155,7 +175,7 @@ index 0000000..9e26dfe
 \ No newline at end of file
 diff --git a/node_modules/react-native-appearance/android/build/intermediates/compile_library_classes_jar/debug/classes.jar b/node_modules/react-native-appearance/android/build/intermediates/compile_library_classes_jar/debug/classes.jar
 new file mode 100644
-index 0000000..f39e862
+index 0000000..9655bd2
 Binary files /dev/null and b/node_modules/react-native-appearance/android/build/intermediates/compile_library_classes_jar/debug/classes.jar differ
 diff --git a/node_modules/react-native-appearance/android/build/intermediates/compile_r_class_jar/debug/R.jar b/node_modules/react-native-appearance/android/build/intermediates/compile_r_class_jar/debug/R.jar
 new file mode 100644
@@ -2123,11 +2143,11 @@ index 0000000..5347f17
 +int xml rn_dev_preferences 0x0
 diff --git a/node_modules/react-native-appearance/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties b/node_modules/react-native-appearance/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
 new file mode 100644
-index 0000000..afac2bc
+index 0000000..3cf2183
 --- /dev/null
 +++ b/node_modules/react-native-appearance/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
 @@ -0,0 +1 @@
-+#Mon Sep 11 12:04:41 IST 2023
++#Mon Dec 18 17:56:20 IST 2023
 diff --git a/node_modules/react-native-appearance/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml b/node_modules/react-native-appearance/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml
 new file mode 100644
 index 0000000..f8d89e6
@@ -2143,11 +2163,11 @@ index 0000000..de5d105
 Binary files /dev/null and b/node_modules/react-native-appearance/android/build/intermediates/javac/debug/classes/io/expo/appearance/BuildConfig.class differ
 diff --git a/node_modules/react-native-appearance/android/build/intermediates/javac/debug/classes/io/expo/appearance/RNCAppearanceModule$1.class b/node_modules/react-native-appearance/android/build/intermediates/javac/debug/classes/io/expo/appearance/RNCAppearanceModule$1.class
 new file mode 100644
-index 0000000..56c4ba0
+index 0000000..fbedc50
 Binary files /dev/null and b/node_modules/react-native-appearance/android/build/intermediates/javac/debug/classes/io/expo/appearance/RNCAppearanceModule$1.class differ
 diff --git a/node_modules/react-native-appearance/android/build/intermediates/javac/debug/classes/io/expo/appearance/RNCAppearanceModule.class b/node_modules/react-native-appearance/android/build/intermediates/javac/debug/classes/io/expo/appearance/RNCAppearanceModule.class
 new file mode 100644
-index 0000000..54ea72a
+index 0000000..950bdb3
 Binary files /dev/null and b/node_modules/react-native-appearance/android/build/intermediates/javac/debug/classes/io/expo/appearance/RNCAppearanceModule.class differ
 diff --git a/node_modules/react-native-appearance/android/build/intermediates/javac/debug/classes/io/expo/appearance/RNCAppearancePackage.class b/node_modules/react-native-appearance/android/build/intermediates/javac/debug/classes/io/expo/appearance/RNCAppearancePackage.class
 new file mode 100644
@@ -2224,7 +2244,7 @@ index 0000000..0ec68d4
 \ No newline at end of file
 diff --git a/node_modules/react-native-appearance/android/build/intermediates/runtime_library_classes_jar/debug/classes.jar b/node_modules/react-native-appearance/android/build/intermediates/runtime_library_classes_jar/debug/classes.jar
 new file mode 100644
-index 0000000..ed0bbc2
+index 0000000..6033232
 Binary files /dev/null and b/node_modules/react-native-appearance/android/build/intermediates/runtime_library_classes_jar/debug/classes.jar differ
 diff --git a/node_modules/react-native-appearance/android/build/intermediates/symbol_list_with_package_name/debug/package-aware-r.txt b/node_modules/react-native-appearance/android/build/intermediates/symbol_list_with_package_name/debug/package-aware-r.txt
 new file mode 100644
@@ -3710,7 +3730,40 @@ index 0000000..b84c468
 +		INJECTED from /Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/src/main/AndroidManifest.xml
 +		ADDED from /Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/src/main/AndroidManifest.xml
 +		INJECTED from /Users/admin/Personal/pillarwallet/node_modules/react-native-appearance/android/src/main/AndroidManifest.xml
+diff --git a/node_modules/react-native-appearance/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/RNCAppearanceModule$1.class.uniqueId2 b/node_modules/react-native-appearance/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/RNCAppearanceModule$1.class.uniqueId2
+new file mode 100644
+index 0000000..fbedc50
+Binary files /dev/null and b/node_modules/react-native-appearance/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/RNCAppearanceModule$1.class.uniqueId2 differ
+diff --git a/node_modules/react-native-appearance/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/RNCAppearanceModule.class.uniqueId0 b/node_modules/react-native-appearance/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/RNCAppearanceModule.class.uniqueId0
+new file mode 100644
+index 0000000..950bdb3
+Binary files /dev/null and b/node_modules/react-native-appearance/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/RNCAppearanceModule.class.uniqueId0 differ
+diff --git a/node_modules/react-native-appearance/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/RNCAppearancePackage.class.uniqueId1 b/node_modules/react-native-appearance/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/RNCAppearancePackage.class.uniqueId1
+new file mode 100644
+index 0000000..6b13a60
+Binary files /dev/null and b/node_modules/react-native-appearance/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/RNCAppearancePackage.class.uniqueId1 differ
 diff --git a/node_modules/react-native-appearance/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin b/node_modules/react-native-appearance/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin
 new file mode 100644
-index 0000000..73056ad
+index 0000000..af8bba0
 Binary files /dev/null and b/node_modules/react-native-appearance/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin differ
+diff --git a/node_modules/react-native-appearance/android/src/main/java/io/expo/appearance/RNCAppearanceModule.java b/node_modules/react-native-appearance/android/src/main/java/io/expo/appearance/RNCAppearanceModule.java
+index e125121..838e170 100644
+--- a/node_modules/react-native-appearance/android/src/main/java/io/expo/appearance/RNCAppearanceModule.java
++++ b/node_modules/react-native-appearance/android/src/main/java/io/expo/appearance/RNCAppearanceModule.java
+@@ -1,5 +1,7 @@
+ package io.expo.appearance;
+ 
++import static android.content.Context.RECEIVER_NOT_EXPORTED;
++
+ import android.app.Activity;
+ import android.content.BroadcastReceiver;
+ import android.content.Context;
+@@ -122,7 +124,7 @@ public class RNCAppearanceModule extends ReactContextBaseJavaModule implements L
+             FLog.e(ReactConstants.TAG, "no activity to register receiver");
+             return;
+         }
+-        activity.registerReceiver(mBroadcastReceiver, new IntentFilter("onConfigurationChanged"));
++        activity.registerReceiver(mBroadcastReceiver, new IntentFilter("onConfigurationChanged"), RECEIVER_NOT_EXPORTED);
+ 
+         // Send updated preferences to JS when the app is resumed, because we don't receive updates
+         // when backgrounded
