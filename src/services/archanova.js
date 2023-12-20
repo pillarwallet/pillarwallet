@@ -453,7 +453,11 @@ export class ArchanovaService {
    */
   async getAccountPayments(lastSyncedId: ?number, page?: number = 0) {
     if (!this.sdkInitialized) return [];
-    const data = await this.getSdk().getConnectedAccountPayments(page).catch(this.handleError);
+    const data = await this.getSdk()
+      .getConnectedAccountPayments(page)
+      .catch((e) => {
+        if (!/disconnected/gi.exec(e)) this.handleError(e);
+      });
     if (!data) return [];
 
     const items = data.items || [];
@@ -471,7 +475,11 @@ export class ArchanovaService {
   async getAccountTransactions(lastSyncedId: ?number, page?: number = 0) {
     if (!this.sdkInitialized) return [];
     // make sure getConnectedAccountTransactions passed hash is empty string
-    const data = await this.getSdk().getConnectedAccountTransactions('', page).catch(this.handleError);
+    const data = await this.getSdk()
+      .getConnectedAccountTransactions('', page)
+      .catch((e) => {
+        if (!/disconnected/gi.exec(e)) this.handleError(e);
+      });
     if (!data) return [];
 
     const items = data.items || [];

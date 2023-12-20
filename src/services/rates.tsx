@@ -70,7 +70,7 @@ export const getExchangeTokenPrices = async (
       (async () => {
         try {
           const result = await etherspotService.fetchExchangeRates(chain, assetsContractAddresses);
-          await callBack(mapWalletAndExchangePrices(result.items));
+          if (result) await callBack(mapWalletAndExchangePrices(result.items));
         } catch (error) {
           reportErrorLog('Fetch Rates failed: request error', {
             error,
