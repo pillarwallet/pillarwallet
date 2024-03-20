@@ -30,7 +30,7 @@ import { migrate } from 'services/dataMigration';
 import { firebaseCrashlytics } from 'services/firebase';
 
 // constants
-import { IS_APP_VERSION_V3 } from 'constants/appConstants';
+import { IS_APP_VERSION_V3, WORLD_TIME_API, API_REQUEST_TIMEOUT } from 'constants/appConstants';
 import { AUTH_FLOW, ONBOARDING_FLOW, PIN_CODE_UNLOCK, MENU_SELECT_APPEARANCE } from 'constants/navigationConstants';
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import {
@@ -76,6 +76,8 @@ import { getWalletFromStorage } from 'utils/wallet';
 import { findFirstArchanovaAccount, findFirstEtherspotAccount, getAccountAddress } from 'utils/accounts';
 import NonStableTokens from 'utils/tokens/tokens.json';
 import StableTokens from 'utils/tokens/stable-tokens.json';
+import httpRequest from 'utils/httpRequest';
+import { logBreadcrumb } from 'utils/common';
 
 // selectors
 import { accountsSelector, activeAccountAddressSelector } from 'selectors';
@@ -187,11 +189,21 @@ export const initAppAndRedirectAction = () => {
       const user = storageData?.user?.user ?? {};
       dispatch({ type: SET_USER, payload: user });
 
+      const { data }: any = await httpRequest
+        .get(WORLD_TIME_API, {
+          timeout: API_REQUEST_TIMEOUT * 6,
+        })
+        .catch((error) => {
+          logBreadcrumb('WorldTimeApi', 'Failed: world time api', { error });
+          return { data: null };
+        });
+
       const { failedAttempts = {}, pinAttempt = {} } = get(storageData, 'pinAttempt', {});
-      const { numberOfFailedAttempts = 0, date = new Date() } = failedAttempts;
+      const { numberOfFailedAttempts = 0, date = data?.datetime || new Date() } = failedAttempts;
       const { pinAttemptsCount = 0 } = pinAttempt;
 
-      if (new Date(date)?.toDateString() === new Date()?.toDateString()) {
+      const today = data?.datetime ? new Date(data.datetime)?.toDateString() : new Date()?.toDateString();
+      if (new Date(date)?.toDateString() === today) {
         dispatch({
           type: UPDATE_PIN_ATTEMPTS,
           payload: {
@@ -203,7 +215,7 @@ export const initAppAndRedirectAction = () => {
           payload: {
             failedAttempts: {
               numberOfFailedAttempts,
-              date,
+              date: new Date(date),
             },
           },
         });
