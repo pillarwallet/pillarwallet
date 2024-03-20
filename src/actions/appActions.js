@@ -202,8 +202,8 @@ export const initAppAndRedirectAction = () => {
       const { numberOfFailedAttempts = 0, date = data?.datetime || new Date() } = failedAttempts;
       const { pinAttemptsCount = 0 } = pinAttempt;
 
-      const today = data?.datetime ? new Date(data.datetime)?.toDateString() : new Date()?.toDateString();
-      if (new Date(date)?.toDateString() === today) {
+      const today = data?.datetime ? new Date(data.datetime).toDateString() : new Date().toDateString();
+      if (new Date(date).toDateString() === today) {
         dispatch({
           type: UPDATE_PIN_ATTEMPTS,
           payload: {
