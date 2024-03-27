@@ -34,13 +34,7 @@ import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { firebaseRemoteConfig } from 'services/firebase';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
-import { CACHE_STATUS } from 'constants/cacheConstants';
-import {
-  EN_EXTERNAL_TEST_TRANSLATION,
-  FR_EXTERNAL_TEST_TRANSLATION,
-  TEST_TRANSLATIONS_BASE_URL,
-  TEST_TRANSLATIONS_TIME_STAMP,
-} from 'constants/localesConstants';
+import { TEST_TRANSLATIONS_BASE_URL, TEST_TRANSLATIONS_TIME_STAMP } from 'constants/localesConstants';
 
 const EN_LOCAL_TEST_TRANSLATION = 'En local translation';
 const FR_LOCAL_TEST_TRANSLATION = 'Fr local translation';
@@ -64,104 +58,6 @@ const expectedLocalTranslationInitActions = [
   },
 ];
 
-const expectedExternalTranslationInitSessionActions = [
-  {
-    type: UPDATE_SESSION,
-    payload: { fallbackLanguageVersion: TEST_TRANSLATIONS_TIME_STAMP },
-  },
-  {
-    type: UPDATE_SESSION,
-    payload: { translationsInitialised: true },
-  },
-  {
-    type: UPDATE_SESSION,
-    payload: { sessionLanguageCode: 'fr', sessionLanguageVersion: TEST_TRANSLATIONS_TIME_STAMP },
-  },
-];
-
-const expectedExternalLtTranslationsFetchFailActions = [
-  {
-    type: CACHE_STATUS.PENDING,
-    payload: {
-      url: `${TEST_TRANSLATIONS_BASE_URL}${LNG_LOCAL_ONLY}/auth_${TEST_TRANSLATIONS_TIME_STAMP}.json`,
-    },
-  },
-  {
-    type: CACHE_STATUS.PENDING,
-    payload: {
-      url: `${TEST_TRANSLATIONS_BASE_URL}${LNG_LOCAL_ONLY}/common_${TEST_TRANSLATIONS_TIME_STAMP}.json`,
-    },
-  },
-  {
-    type: CACHE_STATUS.FAILED,
-    payload: {
-      url: `${TEST_TRANSLATIONS_BASE_URL}${LNG_LOCAL_ONLY}/auth_${TEST_TRANSLATIONS_TIME_STAMP}.json`,
-    },
-  },
-  {
-    type: CACHE_STATUS.FAILED,
-    payload: {
-      url: `${TEST_TRANSLATIONS_BASE_URL}${LNG_LOCAL_ONLY}/common_${TEST_TRANSLATIONS_TIME_STAMP}.json`,
-    },
-  },
-];
-
-const expectedExternalFrTranslationsFetchActions = [
-  {
-    type: CACHE_STATUS.PENDING,
-    payload: { url: `${TEST_TRANSLATIONS_BASE_URL}fr/auth_${TEST_TRANSLATIONS_TIME_STAMP}.json` },
-  },
-  {
-    type: CACHE_STATUS.PENDING,
-    payload: { url: `${TEST_TRANSLATIONS_BASE_URL}fr/common_${TEST_TRANSLATIONS_TIME_STAMP}.json` },
-  },
-  {
-    type: CACHE_STATUS.DONE,
-    payload: {
-      url: `${TEST_TRANSLATIONS_BASE_URL}fr/auth_${TEST_TRANSLATIONS_TIME_STAMP}.json`,
-      localPath: `${TEST_TRANSLATIONS_BASE_URL}fr/auth_${TEST_TRANSLATIONS_TIME_STAMP}.json`,
-    },
-  },
-  {
-    type: CACHE_STATUS.DONE,
-    payload: {
-      url: `${TEST_TRANSLATIONS_BASE_URL}fr/common_${TEST_TRANSLATIONS_TIME_STAMP}.json`,
-      localPath: `${TEST_TRANSLATIONS_BASE_URL}fr/common_${TEST_TRANSLATIONS_TIME_STAMP}.json`,
-    },
-  },
-];
-
-const expectedExternalEnTranslationsFetchActions = [
-  {
-    type: CACHE_STATUS.PENDING,
-    payload: { url: `${TEST_TRANSLATIONS_BASE_URL}en/auth_${TEST_TRANSLATIONS_TIME_STAMP}.json` },
-  },
-  {
-    type: CACHE_STATUS.PENDING,
-    payload: { url: `${TEST_TRANSLATIONS_BASE_URL}en/common_${TEST_TRANSLATIONS_TIME_STAMP}.json` },
-  },
-  {
-    type: CACHE_STATUS.DONE,
-    payload: {
-      url: `${TEST_TRANSLATIONS_BASE_URL}en/auth_${TEST_TRANSLATIONS_TIME_STAMP}.json`,
-      localPath: `${TEST_TRANSLATIONS_BASE_URL}en/auth_${TEST_TRANSLATIONS_TIME_STAMP}.json`,
-    },
-  },
-  {
-    type: CACHE_STATUS.DONE,
-    payload: {
-      url: `${TEST_TRANSLATIONS_BASE_URL}en/common_${TEST_TRANSLATIONS_TIME_STAMP}.json`,
-      localPath: `${TEST_TRANSLATIONS_BASE_URL}en/common_${TEST_TRANSLATIONS_TIME_STAMP}.json`,
-    },
-  },
-];
-
-const expectedExternalTranslationInitActions = [
-  ...expectedExternalFrTranslationsFetchActions,
-  ...expectedExternalEnTranslationsFetchActions,
-  ...expectedExternalTranslationInitSessionActions,
-];
-
 const expectedLanguageChangeActions = [
   {
     type: 'UPDATE_APP_SETTINGS',
@@ -176,32 +72,6 @@ const expectedLanguageChangeActions = [
     payload: { sessionLanguageCode: 'fr', sessionLanguageVersion: TEST_TRANSLATIONS_TIME_STAMP },
   },
 ];
-
-const cachedFrTranslations = {
-  [`${TEST_TRANSLATIONS_BASE_URL}fr/auth_${TEST_TRANSLATIONS_TIME_STAMP}.json`]:
-    {
-      status: CACHE_STATUS.DONE,
-      localPath: `${TEST_TRANSLATIONS_BASE_URL}fr/auth_${TEST_TRANSLATIONS_TIME_STAMP}.json`,
-    },
-  [`${TEST_TRANSLATIONS_BASE_URL}fr/common_${TEST_TRANSLATIONS_TIME_STAMP}.json`]:
-    {
-      status: CACHE_STATUS.DONE,
-      localPath: `${TEST_TRANSLATIONS_BASE_URL}fr/common_${TEST_TRANSLATIONS_TIME_STAMP}.json`,
-    },
-};
-
-const cachedEnTranslations = {
-  [`${TEST_TRANSLATIONS_BASE_URL}en/auth_${TEST_TRANSLATIONS_TIME_STAMP}.json`]:
-    {
-      status: CACHE_STATUS.DONE,
-      localPath: `${TEST_TRANSLATIONS_BASE_URL}fr/auth_${TEST_TRANSLATIONS_TIME_STAMP}.json`,
-    },
-  [`${TEST_TRANSLATIONS_BASE_URL}en/common_${TEST_TRANSLATIONS_TIME_STAMP}.json`]:
-    {
-      status: CACHE_STATUS.DONE,
-      localPath: `${TEST_TRANSLATIONS_BASE_URL}fr/common_${TEST_TRANSLATIONS_TIME_STAMP}.json`,
-    },
-};
 
 const mockedFirebaseConfigGetUrlAndTimeStampString = (key) => {
   switch (key) {
@@ -228,17 +98,17 @@ describe('Localisation actions', () => {
 
   describe('Picking language to use', () => {
     beforeEach(() => {
-      RNLocalize.getLocales = jest.fn(() => ([
+      RNLocalize.getLocales = jest.fn(() => [
         {
           countryCode: 'FR',
           languageTag: 'fr-FR',
           languageCode: 'fr',
           isRTL: false,
         },
-      ]));
+      ]);
     });
 
-    it('should pick users\' preferred language if it\'s supported and no language is provided', async () => {
+    it("should pick users' preferred language if it's supported and no language is provided", async () => {
       localeConfig.supportedLanguages = { fr: 'Française' };
 
       const store = mockStore({
@@ -259,7 +129,7 @@ describe('Localisation actions', () => {
       expect(actualActions).toEqual(expect.arrayContaining(expectedAction));
     });
 
-    it('should pick default language if user\'s preferred language is not supported', async () => {
+    it("should pick default language if user's preferred language is not supported", async () => {
       localeConfig.supportedLanguages = { en: 'English' };
 
       const store = mockStore({
@@ -287,7 +157,7 @@ describe('Localisation actions', () => {
       expect(actualActions).toEqual(expect.not.arrayContaining(userPreferredAction));
     });
 
-    it('should pick default language if user\'s previously selected language is no longer supported', async () => {
+    it("should pick default language if user's previously selected language is no longer supported", async () => {
       localeConfig.supportedLanguages = { en: 'English' };
 
       const store = mockStore({
@@ -311,7 +181,8 @@ describe('Localisation actions', () => {
           payload: {
             localisation: { activeLngCode: 'en' },
           },
-        }];
+        },
+      ];
 
       await store.dispatch(getTranslationsResourcesAndSetLanguageOnAppOpenAction());
       const actualActions = store.getActions();
@@ -329,79 +200,88 @@ describe('Localisation actions', () => {
         fr: { common: {}, auth: {} },
       };
 
-      i18n.init({
-        ns: localeConfig.namespaces,
-        defaultNS: localeConfig.defaultNameSpace,
-        fallbackLng: localeConfig.defaultLanguage,
-        supportedLngs: Object.keys(localeConfig.supportedLanguages),
-        lng: localeConfig.defaultLanguage,
-        resources: {
-          [localeConfig.defaultLanguage]: {},
+      i18n.init(
+        {
+          ns: localeConfig.namespaces,
+          defaultNS: localeConfig.defaultNameSpace,
+          fallbackLng: localeConfig.defaultLanguage,
+          supportedLngs: Object.keys(localeConfig.supportedLanguages),
+          lng: localeConfig.defaultLanguage,
+          resources: {
+            [localeConfig.defaultLanguage]: {},
+          },
         },
-      }, () => {});
+        () => {},
+      );
 
       firebaseRemoteConfig.getString = mockedFirebaseConfigGetUrlAndTimeStampString;
     });
 
-    it('should use local default language translation value if translation key is not available in ' +
-      'default language external translations', async () => {
-      const store = mockStore({
-        appSettings: { data: { localisation: { activeLngCode: 'en' } } },
-        session: { data: { sessionLanguageCode: '', isOnline: true } },
-        cache: { cachedUrls: {} },
-      });
-      await store.dispatch(getAndSetFallbackLanguageResources());
-      expect(i18n.hasResourceBundle('en', 'auth')).toBeTruthy();
-      expect(i18n.hasResourceBundle('en', 'common')).toBeTruthy();
-      expect(i18n.t('test')).toEqual(EN_EXTERNAL_TEST_TRANSLATION);
-      expect(i18n.t('onlyLocal')).toEqual(ONLY_LOCAL_TRANSLATION);
-    });
+    it(
+      'should use local default language translation value if translation key is not available in ' +
+        'default language external translations',
+      async () => {
+        const store = mockStore({
+          appSettings: { data: { localisation: { activeLngCode: 'en' } } },
+          session: { data: { sessionLanguageCode: '', isOnline: true } },
+          cache: { cachedUrls: {} },
+        });
+        await store.dispatch(getAndSetFallbackLanguageResources());
+        expect(i18n.hasResourceBundle('en', 'auth')).toBeTruthy();
+        expect(i18n.hasResourceBundle('en', 'common')).toBeTruthy();
+        expect(i18n.t('onlyLocal')).toEqual(ONLY_LOCAL_TRANSLATION);
+      },
+    );
 
-    it('should use local default language translation value' +
-      'if translation key is not available nor in selected language, nor in default language external translations',
-    async () => {
-      const store = mockStore({
-        appSettings: { data: { localisation: { activeLngCode: 'fr' } } },
-        session: { data: { sessionLanguageCode: '', isOnline: true } },
-        cache: { cachedUrls: {} },
-      });
-      await store.dispatch(getTranslationsResourcesAndSetLanguageOnAppOpenAction());
-      expect(i18n.hasResourceBundle('en', 'auth')).toBeTruthy();
-      expect(i18n.hasResourceBundle('en', 'common')).toBeTruthy();
-      expect(i18n.hasResourceBundle('fr', 'auth')).toBeTruthy();
-      expect(i18n.hasResourceBundle('fr', 'common')).toBeTruthy();
-      expect(i18n.t('test')).toEqual(FR_EXTERNAL_TEST_TRANSLATION);
-      expect(i18n.t('onlyLocal')).toEqual(ONLY_LOCAL_TRANSLATION);
-    });
+    it(
+      'should use local default language translation value' +
+        'if translation key is not available nor in selected language, nor in default language external translations',
+      async () => {
+        const store = mockStore({
+          appSettings: { data: { localisation: { activeLngCode: 'fr' } } },
+          session: { data: { sessionLanguageCode: '', isOnline: true } },
+          cache: { cachedUrls: {} },
+        });
+        await store.dispatch(getTranslationsResourcesAndSetLanguageOnAppOpenAction());
+        expect(i18n.hasResourceBundle('en', 'auth')).toBeTruthy();
+        expect(i18n.hasResourceBundle('en', 'common')).toBeTruthy();
+        expect(i18n.hasResourceBundle('fr', 'auth')).toBeTruthy();
+        expect(i18n.hasResourceBundle('fr', 'common')).toBeTruthy();
+        expect(i18n.t('onlyLocal')).toEqual(ONLY_LOCAL_TRANSLATION);
+      },
+    );
   });
 
   describe('Set language on App open', () => {
     beforeEach(() => {
-      RNLocalize.getLocales = jest.fn(() => ([
+      RNLocalize.getLocales = jest.fn(() => [
         {
           countryCode: 'FR',
           languageTag: 'fr-FR',
           languageCode: 'fr',
           isRTL: false,
         },
-      ]));
+      ]);
       localeConfig.localTranslations = {
         en: { common: { test: EN_LOCAL_TEST_TRANSLATION }, auth: {} },
         fr: { common: { test: FR_LOCAL_TEST_TRANSLATION }, auth: {} },
       };
-      i18n.init({
-        ns: localeConfig.namespaces,
-        defaultNS: localeConfig.defaultNameSpace,
-        fallbackLng: localeConfig.defaultLanguage,
-        supportedLngs: Object.keys(localeConfig.supportedLanguages),
-        lng: localeConfig.defaultLanguage,
-        resources: {
-          [localeConfig.defaultLanguage]: {},
+      i18n.init(
+        {
+          ns: localeConfig.namespaces,
+          defaultNS: localeConfig.defaultNameSpace,
+          fallbackLng: localeConfig.defaultLanguage,
+          supportedLngs: Object.keys(localeConfig.supportedLanguages),
+          lng: localeConfig.defaultLanguage,
+          resources: {
+            [localeConfig.defaultLanguage]: {},
+          },
         },
-      }, () => {});
+        () => {},
+      );
     });
 
-    it('should use local EN as default language\'s translations if translations are not enabled', async () => {
+    it("should use local EN as default language's translations if translations are not enabled", async () => {
       localeConfig.isEnabled = false;
       localeConfig.supportedLanguages = { en: 'English' };
       firebaseRemoteConfig.getString = () => '';
@@ -428,16 +308,19 @@ describe('Localisation actions', () => {
           fr: { common: { test: FR_LOCAL_TEST_TRANSLATION, localOnly: FR_ONLY_LOCAL_TEST_TRANSLATION }, auth: {} },
           [LNG_LOCAL_ONLY]: { common: { test: LT_LOCAL_TEST_TRANSLATION }, auth: {} },
         };
-        i18n.init({
-          ns: localeConfig.namespaces,
-          defaultNS: localeConfig.defaultNameSpace,
-          fallbackLng: localeConfig.defaultLanguage,
-          supportedLngs: Object.keys(localeConfig.supportedLanguages),
-          lng: localeConfig.defaultLanguage,
-          resources: {
-            [localeConfig.defaultLanguage]: {},
+        i18n.init(
+          {
+            ns: localeConfig.namespaces,
+            defaultNS: localeConfig.defaultNameSpace,
+            fallbackLng: localeConfig.defaultLanguage,
+            supportedLngs: Object.keys(localeConfig.supportedLanguages),
+            lng: localeConfig.defaultLanguage,
+            resources: {
+              [localeConfig.defaultLanguage]: {},
+            },
           },
-        }, () => {});
+          () => {},
+        );
       });
       it('should initialise translations using local translations if connection is not available', async () => {
         const store = mockStore({
@@ -451,158 +334,36 @@ describe('Localisation actions', () => {
         expect(i18n.language).toEqual('fr');
         expect(i18n.t('test')).toEqual(FR_LOCAL_TEST_TRANSLATION);
       });
-
-      it('should initialise translations using external translations if baseUrl is available', async () => {
-        const store = mockStore({
-          appSettings: { data: { localisation: { activeLngCode: 'fr' } } },
-          session: { data: { sessionLanguageCode: '', isOnline: true } },
-          cache: { cachedUrls: {} },
-        });
-
-        firebaseRemoteConfig.getString = mockedFirebaseConfigGetUrlAndTimeStampString;
-
-        await store.dispatch(getTranslationsResourcesAndSetLanguageOnAppOpenAction());
-        const actualActions = store.getActions();
-        expect(actualActions).toEqual(expectedExternalTranslationInitActions);
-        expect(i18n.language).toEqual('fr');
-        expect(i18n.hasResourceBundle('fr', 'auth')).toBeTruthy();
-        expect(i18n.hasResourceBundle('fr', 'common')).toBeTruthy();
-        expect(i18n.hasResourceBundle('en', 'auth')).toBeTruthy();
-        expect(i18n.hasResourceBundle('en', 'common')).toBeTruthy();
-        expect(i18n.t('test')).toEqual(FR_EXTERNAL_TEST_TRANSLATION);
-        expect(i18n.t('localOnly')).toEqual(FR_ONLY_LOCAL_TEST_TRANSLATION);
-      });
-
-      it('should initialise translations using external translations if baseUrl is available ' +
-        'but should not fetch translations if current version is already cached', async () => {
-        const store = mockStore({
-          appSettings: { data: { localisation: { activeLngCode: 'fr' } } },
-          session: { data: { sessionLanguageCode: '', isOnline: true } },
-          cache: {
-            cachedUrls: {
-              ...cachedFrTranslations,
-              ...cachedEnTranslations,
-            },
-          },
-        });
-
-        firebaseRemoteConfig.getString = mockedFirebaseConfigGetUrlAndTimeStampString;
-
-        await store.dispatch(getTranslationsResourcesAndSetLanguageOnAppOpenAction());
-        const actualActions = store.getActions();
-        expect(actualActions).toEqual(expectedExternalTranslationInitSessionActions);
-        expect(i18n.language).toEqual('fr');
-        expect(i18n.hasResourceBundle('fr', 'auth')).toBeTruthy();
-        expect(i18n.hasResourceBundle('fr', 'common')).toBeTruthy();
-        expect(i18n.hasResourceBundle('en', 'auth')).toBeTruthy();
-        expect(i18n.hasResourceBundle('en', 'common')).toBeTruthy();
-        expect(i18n.t('test')).toEqual(FR_EXTERNAL_TEST_TRANSLATION);
-      });
-
-      it('should initialise translations using external translations if baseUrl is available ' +
-        'and refetch translations if at least one ns\' translations of that language is missing', async () => {
-        const store = mockStore({
-          appSettings: { data: { localisation: { activeLngCode: 'fr' } } },
-          session: { data: { sessionLanguageCode: '', isOnline: true } },
-          cache: {
-            cachedUrls: {
-              [`${TEST_TRANSLATIONS_BASE_URL}fr/auth_${TEST_TRANSLATIONS_TIME_STAMP}.json`]:
-                {
-                  status: CACHE_STATUS.DONE,
-                  localPath: `${TEST_TRANSLATIONS_BASE_URL}fr/auth_${TEST_TRANSLATIONS_TIME_STAMP}.json`,
-                },
-              ...cachedEnTranslations,
-            },
-          },
-        });
-
-        firebaseRemoteConfig.getString = mockedFirebaseConfigGetUrlAndTimeStampString;
-
-        await store.dispatch(getTranslationsResourcesAndSetLanguageOnAppOpenAction());
-        const actualActions = store.getActions();
-        expect(actualActions).toEqual([
-          {
-            type: CACHE_STATUS.PENDING,
-            payload: { url: `${TEST_TRANSLATIONS_BASE_URL}fr/common_${TEST_TRANSLATIONS_TIME_STAMP}.json` },
-          },
-          {
-            type: CACHE_STATUS.DONE,
-            payload: {
-              url: `${TEST_TRANSLATIONS_BASE_URL}fr/common_${TEST_TRANSLATIONS_TIME_STAMP}.json`,
-              localPath: `${TEST_TRANSLATIONS_BASE_URL}fr/common_${TEST_TRANSLATIONS_TIME_STAMP}.json`,
-            },
-          },
-          ...expectedExternalTranslationInitSessionActions,
-        ]);
-        expect(i18n.language).toEqual('fr');
-        expect(i18n.hasResourceBundle('fr', 'auth')).toBeTruthy();
-        expect(i18n.hasResourceBundle('fr', 'common')).toBeTruthy();
-        expect(i18n.hasResourceBundle('en', 'auth')).toBeTruthy();
-        expect(i18n.hasResourceBundle('en', 'common')).toBeTruthy();
-        expect(i18n.t('test')).toEqual(FR_EXTERNAL_TEST_TRANSLATION);
-      });
-
-      it('should initialise translations using local translations if baseUrl is available ' +
-        'but external translations are missing', async () => {
-        const store = mockStore({
-          appSettings: { data: { localisation: { activeLngCode: LNG_LOCAL_ONLY } } },
-          session: { data: { sessionLanguageCode: '', isOnline: true } },
-          cache: { cachedUrls: {} },
-        });
-
-        firebaseRemoteConfig.getString = mockedFirebaseConfigGetUrlAndTimeStampString;
-
-        await store.dispatch(getTranslationsResourcesAndSetLanguageOnAppOpenAction());
-        const actualActions = store.getActions();
-        expect(actualActions).toEqual([
-          ...expectedExternalLtTranslationsFetchFailActions,
-          ...expectedExternalEnTranslationsFetchActions,
-          {
-            type: UPDATE_SESSION,
-            payload: { fallbackLanguageVersion: TEST_TRANSLATIONS_TIME_STAMP },
-          },
-          {
-            type: UPDATE_SESSION,
-            payload: { translationsInitialised: true },
-          },
-          {
-            type: UPDATE_SESSION,
-            payload: { sessionLanguageCode: LNG_LOCAL_ONLY, sessionLanguageVersion: 'LOCAL' },
-          },
-        ]);
-        expect(i18n.language).toEqual(LNG_LOCAL_ONLY);
-        expect(i18n.hasResourceBundle(LNG_LOCAL_ONLY, 'auth')).toBeTruthy();
-        expect(i18n.hasResourceBundle(LNG_LOCAL_ONLY, 'common')).toBeTruthy();
-        expect(i18n.hasResourceBundle('en', 'auth')).toBeTruthy();
-        expect(i18n.hasResourceBundle('en', 'common')).toBeTruthy();
-        expect(i18n.t('test')).toEqual(LT_LOCAL_TEST_TRANSLATION);
-      });
     });
   });
 
   describe('Change language', () => {
     beforeEach(() => {
       localeConfig.supportedLanguages = {
-        en: 'English', fr: 'Française',
+        en: 'English',
+        fr: 'Française',
       };
       localeConfig.localTranslations = {
         en: { common: { test: EN_LOCAL_TEST_TRANSLATION }, auth: { test: EN_LOCAL_TEST_TRANSLATION } },
         fr: { common: { test: FR_LOCAL_TEST_TRANSLATION }, auth: {} },
       };
-      i18n.init({
-        ns: localeConfig.namespaces,
-        defaultNS: localeConfig.defaultNameSpace,
-        fallbackLng: localeConfig.defaultLanguage,
-        supportedLngs: Object.keys(localeConfig.supportedLanguages),
-        lng: localeConfig.defaultLanguage,
-        resources: {
-          [localeConfig.defaultLanguage]: {},
+      i18n.init(
+        {
+          ns: localeConfig.namespaces,
+          defaultNS: localeConfig.defaultNameSpace,
+          fallbackLng: localeConfig.defaultLanguage,
+          supportedLngs: Object.keys(localeConfig.supportedLanguages),
+          lng: localeConfig.defaultLanguage,
+          resources: {
+            [localeConfig.defaultLanguage]: {},
+          },
         },
-      }, () => {});
+        () => {},
+      );
       firebaseRemoteConfig.getString = mockedFirebaseConfigGetUrlAndTimeStampString;
     });
 
-    it('should change language in settings and in i18next if it\'s supported', async () => {
+    it("should change language in settings and in i18next if it's supported", async () => {
       localeConfig.isEnabled = true;
 
       const store = mockStore({
@@ -619,39 +380,6 @@ describe('Localisation actions', () => {
       expect(i18n.hasResourceBundle('fr', 'auth')).toBeTruthy();
       expect(i18n.hasResourceBundle('fr', 'common')).toBeTruthy();
       expect(i18n.language).toEqual('fr');
-      expect(i18n.t('test')).toEqual(FR_EXTERNAL_TEST_TRANSLATION);
-      expect(i18n.t('englishOnly')).toEqual(EN_EXTERNAL_TEST_TRANSLATION);
-    });
-
-    it('should update fallback language on language change if it\'s LOCAL and baseUrl is provided', async () => {
-      localeConfig.isEnabled = true;
-      localeConfig.supportedLanguages = {
-        en: 'English', fr: 'Française',
-      };
-      localeConfig.localTranslations = {
-        en:
-          {
-            common: { test: EN_LOCAL_TEST_TRANSLATION, englishOnly: EN_LOCAL_TEST_TRANSLATION },
-            auth: { test: EN_LOCAL_TEST_TRANSLATION },
-          },
-        fr: { common: { test: FR_LOCAL_TEST_TRANSLATION }, auth: {} },
-      };
-      firebaseRemoteConfig.getString = mockedFirebaseConfigGetUrlAndTimeStampString;
-      const store = mockStore({
-        appSettings: { data: { localisation: { activeLngCode: 'en' } } },
-        session: { data: { fallbackLanguageVersion: 'LOCAL' } },
-        cache: { cachedUrls: {} },
-      });
-
-      await store.dispatch(changeLanguageAction('fr'));
-      const actualActions = store.getActions();
-      expect(actualActions).toEqual(expectedLanguageChangeActions);
-      expect(i18n.hasResourceBundle('en', 'auth')).toBeTruthy();
-      expect(i18n.hasResourceBundle('en', 'common')).toBeTruthy();
-      expect(i18n.hasResourceBundle('fr', 'auth')).toBeTruthy();
-      expect(i18n.hasResourceBundle('fr', 'common')).toBeTruthy();
-      expect(i18n.t('test')).toEqual(FR_EXTERNAL_TEST_TRANSLATION);
-      expect(i18n.t('englishOnly')).toEqual(EN_EXTERNAL_TEST_TRANSLATION);
     });
 
     it('should not execute if translations are not enabled', async () => {
@@ -666,7 +394,7 @@ describe('Localisation actions', () => {
       expect(actualActions).toEqual(expectedActions);
     });
 
-    it('should not change language if it\'s not supported', async () => {
+    it("should not change language if it's not supported", async () => {
       localeConfig.isEnabled = true;
       localeConfig.supportedLanguages = { en: 'English' };
       const store = mockStore({

@@ -22,6 +22,7 @@ import { AppState, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
 import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import t from 'translations/translate';
+import NetInfo, { NetInfoState, NetInfoSubscription } from '@react-native-community/netinfo';
 
 // actions
 import { loginAction } from 'actions/authActions';
@@ -35,6 +36,7 @@ import { LOCK_TIME } from 'configs/walletConfig';
 
 // constants
 import { FORGOT_PIN } from 'constants/navigationConstants';
+import { WORLD_TIME_API, API_REQUEST_TIMEOUT } from 'constants/appConstants';
 
 // components
 import { Container } from 'components/legacy/Layout';
@@ -44,13 +46,14 @@ import PinCode from 'components/PinCode';
 import { Spacing } from 'components/layout/Layout';
 
 // utils
-import { addAppStateChangeListener } from 'utils/common';
+import { addAppStateChangeListener, logBreadcrumb } from 'utils/common';
 import {
   getKeychainDataObject,
   getPrivateKeyFromKeychainData,
   shouldUpdateKeychainObject,
   type KeyChainData,
 } from 'utils/keychain';
+import httpRequest from 'utils/httpRequest';
 
 // types
 import type { InitArchanovaProps } from 'models/ArchanovaWalletAccount';
@@ -86,16 +89,19 @@ type State = {
   lastAppState: ?string,
   showPin: boolean,
   showErrorMessage: boolean,
+  isOnline: boolean,
 };
 
 const { height } = Dimensions.get('window');
 class PinCodeUnlock extends React.Component<Props, State> {
   errorMessage: string;
   appStateSubscriptions: any;
+  removeNetInfoEventListener: NetInfoSubscription;
   onLoginSuccess: ?OnValidPinCallback;
   interval: IntervalID;
   timeout: any;
   state = {
+    isOnline: false,
     waitingTime: 0,
     biometricsShown: false,
     lastAppState: AppState.currentState,
@@ -126,7 +132,18 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
     if (route?.params?.forcePin) return;
 
-    this.handleLocking();
+    (async () => {
+      await NetInfo.fetch()
+        .then(async (netInfoState) => {
+          this.setState({ isOnline: netInfoState.isInternetReachable });
+          if (netInfoState.isInternetReachable) {
+            await this.handleLocking();
+          }
+        })
+        .catch(() => null);
+    })();
+
+    this.removeNetInfoEventListener = NetInfo.addEventListener(this.handleConnectivityChange);
 
     if (route?.params?.omitPin) {
       getKeychainDataObject()
@@ -154,6 +171,10 @@ class PinCodeUnlock extends React.Component<Props, State> {
     if (this.interval) {
       clearInterval(this.interval);
     }
+    if (this.removeNetInfoEventListener) {
+      this.removeNetInfoEventListener();
+      delete this.removeNetInfoEventListener;
+    }
   }
 
   triggerAuthentication = () => {
@@ -163,6 +184,10 @@ class PinCodeUnlock extends React.Component<Props, State> {
     } else {
       this.setState({ showPin: true });
     }
+  };
+
+  handleConnectivityChange = async (state: NetInfoState) => {
+    this.setState({ isOnline: state.isInternetReachable });
   };
 
   handleUnlockAction = async ({ pin, privateKey, defaultAction }: HandleUnlockActionProps) => {
@@ -196,11 +221,11 @@ class PinCodeUnlock extends React.Component<Props, State> {
     }
   };
 
-  handleAppStateChange = (nextAppState: string) => {
+  handleAppStateChange = async (nextAppState: string) => {
     const { lastAppState } = this.state;
 
     if (nextAppState === ACTIVE_APP_STATE) {
-      this.handleLocking();
+      await this.handleLocking();
     }
     if (nextAppState === ACTIVE_APP_STATE && lastAppState === BACKGROUND_APP_STATE && !this.errorMessage) {
       this.triggerAuthentication();
@@ -230,14 +255,23 @@ class PinCodeUnlock extends React.Component<Props, State> {
     });
   }
 
-  getWaitingTime = (): number => {
+  getWaitingTime = async (): Promise<number> => {
     const {
       pinAttemptsCount,
       failedAttempts: { numberOfFailedAttempts, date },
     } = this.props.wallet;
 
+    const { data } = await httpRequest
+      .get(WORLD_TIME_API, {
+        timeout: API_REQUEST_TIMEOUT,
+      })
+      .catch((error) => {
+        logBreadcrumb('WorldTimeApi', 'Failed: world time api', { error });
+        return { data: null };
+      });
+
     const lastPinAttemptTime = new Date(date);
-    const currentTime = new Date();
+    const currentTime = data?.datetime ? new Date(data.datetime) : new Date();
     const nextInterval = new Date(lastPinAttemptTime?.getTime() + (LOCK_TIME * numberOfFailedAttempts * 1000));
 
     if (pinAttemptsCount === 0 && currentTime < nextInterval) {
@@ -248,11 +282,11 @@ class PinCodeUnlock extends React.Component<Props, State> {
     return 0;
   };
 
-  handleLocking = () => {
+  handleLocking = async () => {
     if (this.interval) {
       clearInterval(this.interval);
     }
-    const waitingTime = this.getWaitingTime();
+    const waitingTime = await this.getWaitingTime();
     if (waitingTime > 0) {
       this.setState({ waitingTime }, () => {
         this.interval = setInterval(() => {
@@ -275,9 +309,9 @@ class PinCodeUnlock extends React.Component<Props, State> {
       pin,
       defaultAction: () => loginWithPin(pin, this.onLoginSuccess),
     });
-    this.timeout = setTimeout(() => {
+    this.timeout = setTimeout(async () => {
       this.setState({ showErrorMessage: true });
-      this.handleLocking();
+      await this.handleLocking();
     }, 1200);
   };
 
@@ -296,7 +330,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
       wallet: { errorMessage: walletErrorMessage },
       isAuthorizing,
     } = this.props;
-    const { showErrorMessage } = this.state;
+    const { showErrorMessage, isOnline } = this.state;
     const { waitingTime, showPin } = this.state;
     const pinError = walletErrorMessage || this.errorMessage || null;
     const showError =
@@ -329,7 +363,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
               onForgotPin={this.handleForgotPasscode}
               onPinChanged={() => this.setState({ showErrorMessage: false })}
               pinError={!!pinError && showErrorMessage}
-              isLoading={isAuthorizing}
+              isLoading={isAuthorizing || !isOnline}
               testIdTag={TAG}
               customStyle={{ flexGrow: 0.5 }}
             />

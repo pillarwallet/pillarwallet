@@ -33,11 +33,14 @@ import {
   TODAY_FAILED_ATTEMPTS,
 } from 'constants/walletConstants';
 import { MENU_SETTINGS, MENU_FLOW } from 'constants/navigationConstants';
+import { WORLD_TIME_API } from 'constants/appConstants';
 
 // Utils
 import { getSaltedPin } from 'utils/wallet';
 import { setKeychainDataObject } from 'utils/keychain';
 import { getDeviceUniqueId } from 'utils/device';
+import httpRequest from 'utils/httpRequest';
+import { logBreadcrumb } from 'utils/common';
 
 // Services
 import { navigate } from 'services/navigation';
@@ -81,7 +84,13 @@ export const updatePinAttemptsAction = (isInvalidPin: boolean) => {
 
     const { numberOfFailedAttempts, date } = failedAttempts;
 
-    const isSameDay = new Date(date)?.toDateString() === new Date()?.toDateString();
+    const { data }: any = await httpRequest.get(WORLD_TIME_API).catch((error) => {
+      logBreadcrumb('WorldTimeApi', 'Failed: world time api', { error });
+      return { data: null };
+    });
+
+    const currentTime = data.datetime ? new Date(data.datetime) : new Date();
+    const isSameDay = new Date(date)?.toDateString() === currentTime?.toDateString();
     dispatch(
       saveDbAction('pinAttempt', {
         pinAttempt: {
@@ -89,7 +98,7 @@ export const updatePinAttemptsAction = (isInvalidPin: boolean) => {
         },
         failedAttempts: {
           numberOfFailedAttempts,
-          date: isSameDay ? date : new Date(),
+          date: isSameDay ? date : currentTime,
         },
       }),
     );
@@ -100,7 +109,7 @@ export const updatePinAttemptsAction = (isInvalidPin: boolean) => {
         payload: {
           failedAttempts: {
             numberOfFailedAttempts: numberOfFailedAttempts + 1,
-            date: new Date(),
+            date: currentTime,
           },
         },
       });
@@ -111,7 +120,7 @@ export const updatePinAttemptsAction = (isInvalidPin: boolean) => {
           },
           failedAttempts: {
             numberOfFailedAttempts: numberOfFailedAttempts + 1,
-            date: new Date(),
+            date: currentTime,
           },
         }),
       );
