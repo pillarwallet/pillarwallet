@@ -19,3 +19,4 @@
 */
 
 export const UPDATE_DB = 'UPDATE_DB';
+export const ENCRYPTED_UPDATE_DB = 'ENCRYPTED_UPDATE_DB';

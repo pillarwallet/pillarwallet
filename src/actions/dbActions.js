@@ -18,21 +18,32 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import Storage from 'services/storage';
-import { UPDATE_DB } from 'constants/dbConstants';
+import EncryptedStorage from 'services/encryptedStorage';
 
-import type { DbAction } from 'models/DbAction';
+import { UPDATE_DB, ENCRYPTED_UPDATE_DB } from 'constants/dbConstants';
+
+import type { DbAction, EncryptedDbAction } from 'models/DbAction';
 
 const storage = Storage.getInstance('db');
+export const encryptedStorage = EncryptedStorage.getInstance('encryptdb');
 
-export const saveDbAction = (
-  key: string,
-  data: any,
-  forceRewrite: boolean = false,
-): DbAction => ({
+export const saveDbAction = (key: string, data: any, forceRewrite: boolean = false): DbAction => ({
   type: UPDATE_DB,
   queue: 'db', // eslint-disable-line i18next/no-literal-string
   callback: (next: () => void) => {
-    storage.save(key, data, forceRewrite)
+    storage
+      .save(key, data, forceRewrite)
+      .then(() => next()) // eslint-disable-line
+      .catch(() => {});
+  },
+});
+
+export const saveEncryptedDbAction = (key: string, data: any, forceRewrite: boolean = false): EncryptedDbAction => ({
+  type: ENCRYPTED_UPDATE_DB,
+  queue: 'encryptdb', // eslint-disable-line i18next/no-literal-string
+  callback: (next: () => void) => {
+    encryptedStorage
+      .save(key, data, forceRewrite)
       .then(() => next()) // eslint-disable-line
       .catch(() => {});
   },

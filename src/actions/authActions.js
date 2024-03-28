@@ -71,7 +71,7 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { OnValidPinCallback } from 'models/Wallet';
 
 // actions
-import { saveDbAction } from './dbActions';
+import { saveDbAction, encryptedStorage } from './dbActions';
 import { setupLoggingServicesAction } from './appActions';
 import { addAccountAction, initOnLoginArchanovaAccountAction, deployAccounts } from './accountsActions';
 import { encryptAndSaveWalletAction, checkForWalletBackupToastAction, updatePinAttemptsAction } from './walletActions';
@@ -325,7 +325,7 @@ export const changePinAction = (newPin: string, currentPin: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch({ type: SET_WALLET_IS_CHANGING_PIN, payload: true });
 
-    const { wallet: encryptedWallet } = await storage.get('wallet');
+    const { wallet: encryptedWallet } = await encryptedStorage.get('wallet');
     const {
       appSettings: {
         data: { useBiometrics },
@@ -419,6 +419,7 @@ export const resetAppServicesAction = () => {
     // reset storage, but restore previously set env
     const env = await storage.get('environment');
     await storage.removeAll();
+    await encryptedStorage.removeAll();
     if (env) await storage.save('environment', env, true);
 
     await etherspotService.logout();

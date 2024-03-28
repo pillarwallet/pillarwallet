@@ -1,6 +1,6 @@
 // @flow
 import get from 'lodash.get';
-import { saveDbAction } from 'actions/dbActions';
+import { saveDbAction, encryptedStorage } from 'actions/dbActions';
 import { normalizeWalletAddress } from 'utils/wallet';
 
 
@@ -18,7 +18,7 @@ function migrateAppSettingsToAccountsFormat(appSettings: Object, walletAddress: 
 
 export default async function (storageData: Object, dispatch: Function) {
   const { appSettings = {} } = get(storageData, 'app_settings', {});
-  const { wallet = {} } = get(storageData, 'wallet', {});
+  const { wallet = {} } = await encryptedStorage.get('wallet');
 
   if (appSettings.wallet && appSettings.lastTxSyncDatetime && wallet.address) {
     const migratedAppSettings = migrateAppSettingsToAccountsFormat(appSettings, normalizeWalletAddress(wallet.address));
