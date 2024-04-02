@@ -52,14 +52,14 @@ import type { BackupStatus } from 'reducers/walletReducer';
 
 // Actions
 import { logEventAction } from './analyticsActions';
-import { saveDbAction } from './dbActions';
+import { saveDbAction, saveEncryptedDbAction } from './dbActions';
 import { addWalletBackupEventAction } from './walletEventsActions';
 import { changeUseBiometricsAction, setDeviceUniqueIdIfNeededAction } from './appSettingsActions';
 
 export const backupWalletAction = () => {
   return (dispatch: Dispatch) => {
     dispatch({ type: UPDATE_WALLET_BACKUP_STATUS, payload: { isBackedUp: true } });
-    dispatch(saveDbAction('wallet', { wallet: { backupStatus: { isBackedUp: true } } }));
+    dispatch(saveEncryptedDbAction('wallet', { wallet: { backupStatus: { isBackedUp: true } } }));
 
     dispatch(addWalletBackupEventAction());
 
@@ -153,7 +153,7 @@ export const encryptAndSaveWalletAction = (
       .catch(() => ({}));
 
     dispatch(
-      saveDbAction('wallet', {
+      saveEncryptedDbAction('wallet', {
         wallet: {
           ...encryptedWallet,
           backupStatus,

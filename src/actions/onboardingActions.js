@@ -82,7 +82,7 @@ import etherspotService from 'services/etherspot';
 
 // actions
 import { importArchanovaAccountsIfNeededAction, managePPNInitFlagAction } from 'actions/smartWalletActions';
-import { saveDbAction } from 'actions/dbActions';
+import { saveDbAction, saveEncryptedDbAction } from 'actions/dbActions';
 import { checkForWalletBackupToastAction, encryptAndSaveWalletAction } from 'actions/walletActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
@@ -355,7 +355,7 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
     // raw private key will be removed from reducer once registration finishes
     const { address, privateKey } = ethersWallet;
 
-    dispatch(saveDbAction('wallet', { wallet: { data: { address } } }));
+    dispatch(saveEncryptedDbAction('wallet', { wallet: { data: { address } } }));
     logBreadcrumb('onboarding', 'walletSetupAction: dispatching SET_WALLET');
     dispatch({ type: SET_WALLET, payload: { address, privateKey } });
     dispatch({ type: SET_USER, payload: onboardingUsername });
