@@ -25,20 +25,15 @@ import { toBuffer, keccak256, bufferToHex } from 'ethereumjs-util';
 import { TypedDataUtils, signTypedData_v4 } from 'eth-sig-util';
 
 // actions
-import { saveDbAction } from 'actions/dbActions';
+import { saveDbAction, encryptedStorage } from 'actions/dbActions';
 
 // utils
 import { getRandomInt, printLog, reportLog, reportErrorLog, logBreadcrumb } from 'utils/common';
 import { getKeychainDataObject, setKeychainDataObject } from 'utils/keychain';
 import { defaultSortAssetOptions, isAssetOptionMatchedByQuery } from 'utils/assets';
 
-// services
-import Storage from 'services/storage';
-
 // types
 import type { Dispatch } from 'reducers/rootReducer';
-
-const storage = Storage.getInstance('db');
 
 export function generateMnemonicPhrase(mnemonicPhrase?: string) {
   return mnemonicPhrase || utils.entropyToMnemonic(utils.randomBytes(16));
@@ -170,8 +165,7 @@ export function signTypedData(
   return signTypedData_v4(toBuffer(wallet.privateKey), { data: JSON.parse(data) });
 }
 
-export async function getWalletFromStorage(storageData: Object, dispatch: Dispatch) {
-  const { wallet = {} } = get(storageData, 'wallet', {});
+export async function getWalletFromStorage(storageData: Object, wallet: Object, dispatch: Dispatch) {
   const { appSettings = {} } = get(storageData, 'app_settings', {});
   const isWalletEmpty = isEmpty(wallet);
 
@@ -210,7 +204,7 @@ export function constructWalletFromMnemonic(mnemonic: string): ethers.Wallet {
 }
 
 export async function decryptWalletFromStorage(pin: string, deviceUniqueId: ?string): Promise<ethers.Wallet> {
-  const { wallet: encryptedWallet } = await storage.get('wallet');
+  const { wallet: encryptedWallet } = await encryptedStorage.get('wallet');
   const saltedPin = await getSaltedPin(pin, deviceUniqueId);
 
   return ethers.Wallet.fromEncryptedJson(JSON.stringify(encryptedWallet), saltedPin);
