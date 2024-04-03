@@ -18,5 +18,24 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const UPDATE_DB = 'UPDATE_DB';
-export const ENCRYPTED_UPDATE_DB = 'ENCRYPTED_UPDATE_DB';
+import ntpSync from '@luneo7/react-native-ntp-sync';
+
+const options = {
+  syncDelay: 10,
+  history: 15,
+};
+export const ntp = new ntpSync(options);
+
+export const getCurrentTime = async () => {
+  try {
+    const status = await ntp.syncTime();
+
+    if (status) {
+      const currentTime = ntp.getTime();
+      return new Date(currentTime);
+    }
+    return null;
+  } catch (e) {
+    return null;
+  }
+};

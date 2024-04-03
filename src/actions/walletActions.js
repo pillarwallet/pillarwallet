@@ -33,17 +33,15 @@ import {
   TODAY_FAILED_ATTEMPTS,
 } from 'constants/walletConstants';
 import { MENU_SETTINGS, MENU_FLOW } from 'constants/navigationConstants';
-import { WORLD_TIME_API } from 'constants/appConstants';
 
 // Utils
 import { getSaltedPin } from 'utils/wallet';
 import { setKeychainDataObject } from 'utils/keychain';
 import { getDeviceUniqueId } from 'utils/device';
-import httpRequest from 'utils/httpRequest';
-import { logBreadcrumb } from 'utils/common';
 
 // Services
 import { navigate } from 'services/navigation';
+import { getCurrentTime } from 'services/ntpSync';
 
 // Types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -52,14 +50,14 @@ import type { BackupStatus } from 'reducers/walletReducer';
 
 // Actions
 import { logEventAction } from './analyticsActions';
-import { saveDbAction } from './dbActions';
+import { saveDbAction, saveEncryptedDbAction } from './dbActions';
 import { addWalletBackupEventAction } from './walletEventsActions';
 import { changeUseBiometricsAction, setDeviceUniqueIdIfNeededAction } from './appSettingsActions';
 
 export const backupWalletAction = () => {
   return (dispatch: Dispatch) => {
     dispatch({ type: UPDATE_WALLET_BACKUP_STATUS, payload: { isBackedUp: true } });
-    dispatch(saveDbAction('wallet', { wallet: { backupStatus: { isBackedUp: true } } }));
+    dispatch(saveEncryptedDbAction('wallet', { wallet: { backupStatus: { isBackedUp: true } } }));
 
     dispatch(addWalletBackupEventAction());
 
@@ -84,12 +82,8 @@ export const updatePinAttemptsAction = (isInvalidPin: boolean) => {
 
     const { numberOfFailedAttempts, date } = failedAttempts;
 
-    const { data }: any = await httpRequest.get(WORLD_TIME_API).catch((error) => {
-      logBreadcrumb('WorldTimeApi', 'Failed: world time api', { error });
-      return { data: null };
-    });
 
-    const currentTime = data.datetime ? new Date(data.datetime) : new Date();
+    const currentTime = await getCurrentTime();
     const isSameDay = new Date(date)?.toDateString() === currentTime?.toDateString();
     dispatch(
       saveDbAction('pinAttempt', {
@@ -153,7 +147,7 @@ export const encryptAndSaveWalletAction = (
       .catch(() => ({}));
 
     dispatch(
-      saveDbAction('wallet', {
+      saveEncryptedDbAction('wallet', {
         wallet: {
           ...encryptedWallet,
           backupStatus,

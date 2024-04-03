@@ -23,3 +23,9 @@ export type DbAction = {|
   queue: 'db', // no other values available
   callback: (next: () => void) => any,
 |};
+
+export type EncryptedDbAction = {|
+  type: 'ENCRYPTED_UPDATE_DB', // no other values available
+  queue: 'encryptdb', // no other values available
+  callback: (next: () => void) => any,
+|};
