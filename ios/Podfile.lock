@@ -495,9 +495,9 @@ PODS:
     - React-Core
   - react-native-splash-screen (3.3.0):
     - React-Core
-  - react-native-udp (2.7.0):
+  - react-native-udp (4.1.7):
     - CocoaAsyncSocket
-    - React
+    - React-Core
   - react-native-web-browser (1.1.0):
     - React-Core
   - react-native-webview (13.6.0):
@@ -1093,7 +1093,7 @@ SPEC CHECKSUMS:
   react-native-restart: d19a0f8d053d065fe64cd2baebb6487111c77149
   react-native-safe-area-context: 7aa8e6d9d0f3100a820efb1a98af68aa747f9284
   react-native-splash-screen: 4312f786b13a81b5169ef346d76d33bc0c6dc457
-  react-native-udp: 96a517e5a121cfe69f4b05eeeafefe00c623debf
+  react-native-udp: df79c3cb72c4e71240cd3ce4687bfb8a137140d5
   react-native-web-browser: 087b454e1e94b58b40ba73f54251d77486144d19
   react-native-webview: 669ae162965f629a8d6a4bdd3b99a304d36ef1f2
   React-NativeModulesApple: 759309419da76ef4c9f331968b840022ee2aa5b1
@@ -1153,4 +1153,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 5feadc9e32dfe0754c1fb8782fb49f19c7f31739
 
-COCOAPODS: 1.13.0
+COCOAPODS: 1.14.3

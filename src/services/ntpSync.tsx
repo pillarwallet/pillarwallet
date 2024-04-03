@@ -18,7 +18,24 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const IS_APP_VERSION_V3 = 'isAppVersionV3';
-export const API_REQUEST_TIMEOUT = 10000;
-export const DEFAULT_AXIOS_REQUEST_CONFIG = { timeout: API_REQUEST_TIMEOUT };
+import ntpSync from '@luneo7/react-native-ntp-sync';
 
+const options = {
+  syncDelay: 10,
+  history: 15,
+};
+export const ntp = new ntpSync(options);
+
+export const getCurrentTime = async () => {
+  try {
+    const status = await ntp.syncTime();
+
+    if (status) {
+      const currentTime = ntp.getTime();
+      return new Date(currentTime);
+    }
+    return null;
+  } catch (e) {
+    return null;
+  }
+};
