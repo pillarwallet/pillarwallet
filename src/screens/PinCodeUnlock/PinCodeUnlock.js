@@ -36,7 +36,7 @@ import { LOCK_TIME } from 'configs/walletConfig';
 
 // constants
 import { FORGOT_PIN } from 'constants/navigationConstants';
-import { WORLD_TIME_API, API_REQUEST_TIMEOUT } from 'constants/appConstants';
+import { UPDATE_PIN_ATTEMPTS, TODAY_FAILED_ATTEMPTS } from 'constants/walletConstants';
 
 // components
 import { Container } from 'components/legacy/Layout';
@@ -46,14 +46,17 @@ import PinCode from 'components/PinCode';
 import { Spacing } from 'components/layout/Layout';
 
 // utils
-import { addAppStateChangeListener, logBreadcrumb } from 'utils/common';
+import { addAppStateChangeListener } from 'utils/common';
 import {
   getKeychainDataObject,
   getPrivateKeyFromKeychainData,
   shouldUpdateKeychainObject,
   type KeyChainData,
 } from 'utils/keychain';
-import httpRequest from 'utils/httpRequest';
+
+// Service
+import { getCurrentTime } from 'services/ntpSync';
+import Storage from 'services/storage';
 
 // types
 import type { InitArchanovaProps } from 'models/ArchanovaWalletAccount';
@@ -63,6 +66,8 @@ import type { Route } from '@react-navigation/native';
 
 const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
+
+const storage = Storage.getInstance('db');
 
 type HandleUnlockActionProps = {
   pin?: string,
@@ -81,6 +86,8 @@ type Props = {
   switchAccount: (accountId: string) => void,
   isAuthorizing: boolean,
   removePrivateKeyFromMemory: Function,
+  updateAttempts: (payload: Object) => void,
+  todayAttempts: (payload: Object) => void,
 };
 
 type State = {
@@ -90,6 +97,7 @@ type State = {
   showPin: boolean,
   showErrorMessage: boolean,
   isOnline: boolean,
+  isLoading: boolean,
 };
 
 const { height } = Dimensions.get('window');
@@ -102,6 +110,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
   timeout: any;
   state = {
     isOnline: false,
+    isLoading: false,
     waitingTime: 0,
     biometricsShown: false,
     lastAppState: AppState.currentState,
@@ -136,9 +145,6 @@ class PinCodeUnlock extends React.Component<Props, State> {
       await NetInfo.fetch()
         .then(async (netInfoState) => {
           this.setState({ isOnline: netInfoState.isInternetReachable });
-          if (netInfoState.isInternetReachable) {
-            await this.handleLocking();
-          }
         })
         .catch(() => null);
     })();
@@ -187,7 +193,34 @@ class PinCodeUnlock extends React.Component<Props, State> {
   };
 
   handleConnectivityChange = async (state: NetInfoState) => {
-    this.setState({ isOnline: state.isInternetReachable });
+    if (this.state.isOnline === state.isInternetReachable) return;
+    this.setState({ isOnline: state.isInternetReachable }, async () => {
+      if (state.isInternetReachable) {
+        const { updateAttempts, todayAttempts } = this.props;
+
+        this.setState({ isLoading: true });
+
+        const currentTime = await getCurrentTime();
+        if (!currentTime) return;
+
+        const { failedAttempts = {}, pinAttempt = {} } = await storage.get('pinAttempt');
+        const { numberOfFailedAttempts = 0, date = new Date() } = failedAttempts;
+        const { pinAttemptsCount = 0 } = pinAttempt;
+
+        if (new Date(date).toDateString() === currentTime?.toDateString()) {
+          updateAttempts({
+            pinAttemptsCount,
+          });
+          todayAttempts({
+            failedAttempts: {
+              numberOfFailedAttempts,
+              date: new Date(date),
+            },
+          });
+        }
+        await this.handleLocking();
+      }
+    });
   };
 
   handleUnlockAction = async ({ pin, privateKey, defaultAction }: HandleUnlockActionProps) => {
@@ -224,9 +257,6 @@ class PinCodeUnlock extends React.Component<Props, State> {
   handleAppStateChange = async (nextAppState: string) => {
     const { lastAppState } = this.state;
 
-    if (nextAppState === ACTIVE_APP_STATE) {
-      await this.handleLocking();
-    }
     if (nextAppState === ACTIVE_APP_STATE && lastAppState === BACKGROUND_APP_STATE && !this.errorMessage) {
       this.triggerAuthentication();
     }
@@ -255,24 +285,17 @@ class PinCodeUnlock extends React.Component<Props, State> {
     });
   }
 
-  getWaitingTime = async (): Promise<number> => {
+  getWaitingTime = async (): Promise<number | null> => {
     const {
       pinAttemptsCount,
       failedAttempts: { numberOfFailedAttempts, date },
     } = this.props.wallet;
 
-    const { data } = await httpRequest
-      .get(WORLD_TIME_API, {
-        timeout: API_REQUEST_TIMEOUT,
-      })
-      .catch((error) => {
-        logBreadcrumb('WorldTimeApi', 'Failed: world time api', { error });
-        return { data: null };
-      });
-
     const lastPinAttemptTime = new Date(date);
-    const currentTime = data?.datetime ? new Date(data.datetime) : new Date();
+    const currentTime = await getCurrentTime();
     const nextInterval = new Date(lastPinAttemptTime?.getTime() + (LOCK_TIME * numberOfFailedAttempts * 1000));
+
+    if (!currentTime) return null;
 
     if (pinAttemptsCount === 0 && currentTime < nextInterval) {
       const pendingTime = (nextInterval - currentTime) / 1000;
@@ -286,9 +309,11 @@ class PinCodeUnlock extends React.Component<Props, State> {
     if (this.interval) {
       clearInterval(this.interval);
     }
+    this.setState({ isLoading: true });
     const waitingTime = await this.getWaitingTime();
+    if (waitingTime === null) return;
     if (waitingTime > 0) {
-      this.setState({ waitingTime }, () => {
+      this.setState({ waitingTime, isLoading: false }, () => {
         this.interval = setInterval(() => {
           if (this.state.waitingTime > 0) {
             this.setState((prev: State) => ({ waitingTime: prev.waitingTime - 1 }));
@@ -299,7 +324,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
         }, 1000);
       });
     } else {
-      this.setState({ waitingTime: 0 });
+      this.setState({ waitingTime: 0, isLoading: false });
     }
   };
 
@@ -330,7 +355,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
       wallet: { errorMessage: walletErrorMessage },
       isAuthorizing,
     } = this.props;
-    const { showErrorMessage, isOnline } = this.state;
+    const { showErrorMessage, isOnline, isLoading } = this.state;
     const { waitingTime, showPin } = this.state;
     const pinError = walletErrorMessage || this.errorMessage || null;
     const showError =
@@ -363,7 +388,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
               onForgotPin={this.handleForgotPasscode}
               onPinChanged={() => this.setState({ showErrorMessage: false })}
               pinError={!!pinError && showErrorMessage}
-              isLoading={isAuthorizing || !isOnline}
+              isLoading={isAuthorizing || !isOnline || isLoading}
               testIdTag={TAG}
               customStyle={{ flexGrow: 0.5 }}
             />
@@ -398,6 +423,12 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     dispatch(initArchanovaSdkWithPrivateKeyOrPinAction(initProps)),
   switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
   removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),
+  updateAttempts: (payload) =>
+    dispatch({
+      type: UPDATE_PIN_ATTEMPTS,
+      payload,
+    }),
+  todayAttempts: (payload) => dispatch({ type: TODAY_FAILED_ATTEMPTS, payload }),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PinCodeUnlock);

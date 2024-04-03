@@ -105,6 +105,7 @@ type Props = {
   inputColor?: string,
   theme: Theme,
   testIdTag?: string,
+  disable?: boolean
 };
 
 class KeyPad extends React.Component<Props> {
@@ -141,6 +142,7 @@ class KeyPad extends React.Component<Props> {
   renderKeys(buttons: any) {
     return buttons.map((btn: KeyPadButton) => {
       const { value, label } = btn;
+      const { disable } = this.props;
 
       const TAG = this.props.testIdTag;
 
@@ -152,6 +154,7 @@ class KeyPad extends React.Component<Props> {
         return (
           <KeyInput key={value}>
             <PinButton
+              disabled={disable}
               onPress={this.handleKeyPress(value)}
               testID={TAG && `${TAG}-button-keypad_${value}`}
               // eslint-disable-next-line i18next/no-literal-string
@@ -165,6 +168,7 @@ class KeyPad extends React.Component<Props> {
       return (
         <KeyInput key={value}>
           <TouchableNativeFeedback
+            disabled={disable}
             onPress={this.handleKeyPress(value)}
             background={TouchableNativeFeedback.SelectableBackgroundBorderless()}
             testID={TAG && `$${TAG}-button-keypad_${value}`}
