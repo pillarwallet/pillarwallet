@@ -153,7 +153,13 @@ const PinCode = ({
           />
         )}
       </PinDotsWrapperAnimated>
-      <KeyPad type="pincode" options={{ showForgotButton }} onKeyPress={handleButtonPressed} testIdTag={testIdTag} />
+      <KeyPad
+        type="pincode"
+        disable={isLoading}
+        options={{ showForgotButton }}
+        onKeyPress={handleButtonPressed}
+        testIdTag={testIdTag}
+      />
     </Container>
   );
 };

@@ -36,7 +36,7 @@ import { LOCK_TIME } from 'configs/walletConfig';
 
 // constants
 import { FORGOT_PIN } from 'constants/navigationConstants';
-import { WORLD_TIME_API, API_REQUEST_TIMEOUT } from 'constants/appConstants';
+import { UPDATE_PIN_ATTEMPTS, TODAY_FAILED_ATTEMPTS } from 'constants/walletConstants';
 
 // components
 import { Container } from 'components/legacy/Layout';
@@ -46,14 +46,17 @@ import PinCode from 'components/PinCode';
 import { Spacing } from 'components/layout/Layout';
 
 // utils
-import { addAppStateChangeListener, logBreadcrumb } from 'utils/common';
+import { addAppStateChangeListener } from 'utils/common';
 import {
   getKeychainDataObject,
   getPrivateKeyFromKeychainData,
   shouldUpdateKeychainObject,
   type KeyChainData,
 } from 'utils/keychain';
-import httpRequest from 'utils/httpRequest';
+
+// Service
+import { getCurrentTime } from 'services/ntpSync';
+import Storage from 'services/storage';
 
 // types
 import type { InitArchanovaProps } from 'models/ArchanovaWalletAccount';
@@ -63,6 +66,8 @@ import type { Route } from '@react-navigation/native';
 
 const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
+
+const storage = Storage.getInstance('db');
 
 type HandleUnlockActionProps = {
   pin?: string,
@@ -81,6 +86,8 @@ type Props = {
   switchAccount: (accountId: string) => void,
   isAuthorizing: boolean,
   removePrivateKeyFromMemory: Function,
+  updateAttempts: (payload: Object) => void,
+  todayAttempts: (payload: Object) => void,
 };
 
 type State = {
@@ -136,9 +143,6 @@ class PinCodeUnlock extends React.Component<Props, State> {
       await NetInfo.fetch()
         .then(async (netInfoState) => {
           this.setState({ isOnline: netInfoState.isInternetReachable });
-          if (netInfoState.isInternetReachable) {
-            await this.handleLocking();
-          }
         })
         .catch(() => null);
     })();
@@ -187,7 +191,31 @@ class PinCodeUnlock extends React.Component<Props, State> {
   };
 
   handleConnectivityChange = async (state: NetInfoState) => {
-    this.setState({ isOnline: state.isInternetReachable });
+    this.setState({ isOnline: state.isInternetReachable }, async () => {
+      if (state.isInternetReachable) {
+        const { updateAttempts, todayAttempts } = this.props;
+
+        const currentTime = await getCurrentTime();
+
+        const { failedAttempts = {}, pinAttempt = {} } = await storage.get('pinAttempt');
+        const { numberOfFailedAttempts = 0, date = currentTime } = failedAttempts;
+        const { pinAttemptsCount = 0 } = pinAttempt;
+
+        const today = currentTime ? currentTime?.toDateString() : new Date().toDateString();
+        if (new Date(date).toDateString() === today) {
+          updateAttempts({
+            pinAttemptsCount,
+          });
+          todayAttempts({
+            failedAttempts: {
+              numberOfFailedAttempts,
+              date: new Date(date),
+            },
+          });
+          await this.handleLocking();
+        }
+      }
+    });
   };
 
   handleUnlockAction = async ({ pin, privateKey, defaultAction }: HandleUnlockActionProps) => {
@@ -224,9 +252,6 @@ class PinCodeUnlock extends React.Component<Props, State> {
   handleAppStateChange = async (nextAppState: string) => {
     const { lastAppState } = this.state;
 
-    if (nextAppState === ACTIVE_APP_STATE) {
-      await this.handleLocking();
-    }
     if (nextAppState === ACTIVE_APP_STATE && lastAppState === BACKGROUND_APP_STATE && !this.errorMessage) {
       this.triggerAuthentication();
     }
@@ -261,17 +286,8 @@ class PinCodeUnlock extends React.Component<Props, State> {
       failedAttempts: { numberOfFailedAttempts, date },
     } = this.props.wallet;
 
-    const { data } = await httpRequest
-      .get(WORLD_TIME_API, {
-        timeout: API_REQUEST_TIMEOUT,
-      })
-      .catch((error) => {
-        logBreadcrumb('WorldTimeApi', 'Failed: world time api', { error });
-        return { data: null };
-      });
-
     const lastPinAttemptTime = new Date(date);
-    const currentTime = data?.datetime ? new Date(data.datetime) : new Date();
+    const currentTime = await getCurrentTime();
     const nextInterval = new Date(lastPinAttemptTime?.getTime() + (LOCK_TIME * numberOfFailedAttempts * 1000));
 
     if (pinAttemptsCount === 0 && currentTime < nextInterval) {
@@ -398,6 +414,12 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     dispatch(initArchanovaSdkWithPrivateKeyOrPinAction(initProps)),
   switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
   removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),
+  updateAttempts: (payload) =>
+    dispatch({
+      type: UPDATE_PIN_ATTEMPTS,
+      payload,
+    }),
+  todayAttempts: (payload) => dispatch({ type: TODAY_FAILED_ATTEMPTS, payload }),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PinCodeUnlock);
