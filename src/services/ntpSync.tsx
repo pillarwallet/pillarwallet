@@ -20,7 +20,10 @@
 
 import ntpSync from '@luneo7/react-native-ntp-sync';
 
-const options = {};
+const options = {
+  syncDelay: 10,
+  history: 15,
+};
 export const ntp = new ntpSync(options);
 
 export const getCurrentTime = async () => {
@@ -31,8 +34,8 @@ export const getCurrentTime = async () => {
       const currentTime = ntp.getTime();
       return new Date(currentTime);
     }
-    return new Date();
+    return null;
   } catch (e) {
-    return new Date();
+    return null;
   }
 };

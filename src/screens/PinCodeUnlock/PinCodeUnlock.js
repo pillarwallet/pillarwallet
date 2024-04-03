@@ -97,6 +97,7 @@ type State = {
   showPin: boolean,
   showErrorMessage: boolean,
   isOnline: boolean,
+  isLoading: boolean,
 };
 
 const { height } = Dimensions.get('window');
@@ -109,6 +110,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
   timeout: any;
   state = {
     isOnline: false,
+    isLoading: false,
     waitingTime: 0,
     biometricsShown: false,
     lastAppState: AppState.currentState,
@@ -191,18 +193,21 @@ class PinCodeUnlock extends React.Component<Props, State> {
   };
 
   handleConnectivityChange = async (state: NetInfoState) => {
+    if (this.state.isOnline === state.isInternetReachable) return;
     this.setState({ isOnline: state.isInternetReachable }, async () => {
       if (state.isInternetReachable) {
         const { updateAttempts, todayAttempts } = this.props;
 
+        this.setState({ isLoading: true });
+
         const currentTime = await getCurrentTime();
+        if (!currentTime) return;
 
         const { failedAttempts = {}, pinAttempt = {} } = await storage.get('pinAttempt');
-        const { numberOfFailedAttempts = 0, date = currentTime } = failedAttempts;
+        const { numberOfFailedAttempts = 0, date = new Date() } = failedAttempts;
         const { pinAttemptsCount = 0 } = pinAttempt;
 
-        const today = currentTime ? currentTime?.toDateString() : new Date().toDateString();
-        if (new Date(date).toDateString() === today) {
+        if (new Date(date).toDateString() === currentTime?.toDateString()) {
           updateAttempts({
             pinAttemptsCount,
           });
@@ -212,8 +217,8 @@ class PinCodeUnlock extends React.Component<Props, State> {
               date: new Date(date),
             },
           });
-          await this.handleLocking();
         }
+        await this.handleLocking();
       }
     });
   };
@@ -280,7 +285,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
     });
   }
 
-  getWaitingTime = async (): Promise<number> => {
+  getWaitingTime = async (): Promise<number | null> => {
     const {
       pinAttemptsCount,
       failedAttempts: { numberOfFailedAttempts, date },
@@ -289,6 +294,8 @@ class PinCodeUnlock extends React.Component<Props, State> {
     const lastPinAttemptTime = new Date(date);
     const currentTime = await getCurrentTime();
     const nextInterval = new Date(lastPinAttemptTime?.getTime() + (LOCK_TIME * numberOfFailedAttempts * 1000));
+
+    if (!currentTime) return null;
 
     if (pinAttemptsCount === 0 && currentTime < nextInterval) {
       const pendingTime = (nextInterval - currentTime) / 1000;
@@ -302,9 +309,11 @@ class PinCodeUnlock extends React.Component<Props, State> {
     if (this.interval) {
       clearInterval(this.interval);
     }
+    this.setState({ isLoading: true });
     const waitingTime = await this.getWaitingTime();
+    if (waitingTime === null) return;
     if (waitingTime > 0) {
-      this.setState({ waitingTime }, () => {
+      this.setState({ waitingTime, isLoading: false }, () => {
         this.interval = setInterval(() => {
           if (this.state.waitingTime > 0) {
             this.setState((prev: State) => ({ waitingTime: prev.waitingTime - 1 }));
@@ -315,7 +324,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
         }, 1000);
       });
     } else {
-      this.setState({ waitingTime: 0 });
+      this.setState({ waitingTime: 0, isLoading: false });
     }
   };
 
@@ -346,7 +355,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
       wallet: { errorMessage: walletErrorMessage },
       isAuthorizing,
     } = this.props;
-    const { showErrorMessage, isOnline } = this.state;
+    const { showErrorMessage, isOnline, isLoading } = this.state;
     const { waitingTime, showPin } = this.state;
     const pinError = walletErrorMessage || this.errorMessage || null;
     const showError =
@@ -379,7 +388,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
               onForgotPin={this.handleForgotPasscode}
               onPinChanged={() => this.setState({ showErrorMessage: false })}
               pinError={!!pinError && showErrorMessage}
-              isLoading={isAuthorizing || !isOnline}
+              isLoading={isAuthorizing || !isOnline || isLoading}
               testIdTag={TAG}
               customStyle={{ flexGrow: 0.5 }}
             />

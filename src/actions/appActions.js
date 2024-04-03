@@ -193,11 +193,10 @@ export const initAppAndRedirectAction = () => {
       const currentTime = await getCurrentTime();
 
       const { failedAttempts = {}, pinAttempt = {} } = get(storageData, 'pinAttempt', {});
-      const { numberOfFailedAttempts = 0, date = currentTime } = failedAttempts;
+      const { numberOfFailedAttempts = 0, date = new Date() } = failedAttempts;
       const { pinAttemptsCount = 0 } = pinAttempt;
 
-      const today = currentTime ? currentTime?.toDateString() : new Date().toDateString();
-      if (new Date(date).toDateString() === today) {
+      if (new Date(date)?.toDateString() === currentTime?.toDateString()) {
         dispatch({
           type: UPDATE_PIN_ATTEMPTS,
           payload: {
