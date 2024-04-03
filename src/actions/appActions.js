@@ -84,6 +84,7 @@ import { accountsSelector, activeAccountAddressSelector } from 'selectors';
 // actions
 import { getTranslationsResourcesAndSetLanguageOnAppOpenAction } from 'actions/localisationActions';
 import { fetchOfflineLocalAssets } from 'actions/assetsActions';
+import { encryptedStorage } from 'actions/dbActions';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -95,6 +96,7 @@ export const initAppAndRedirectAction = () => {
     dispatch({ type: RESET_APP_LOADED });
 
     let storageData = await storage.getAll();
+    const { wallet: encryptedWallet } = await encryptedStorage.get('wallet');
     await storage.migrateFromPouchDB(storageData);
 
     await dispatch(fetchOfflineLocalAssets());
@@ -103,7 +105,7 @@ export const initAppAndRedirectAction = () => {
     const { appSettings = {} } = get(storageData, 'app_settings', {});
 
     // $FlowFixMe
-    const { wallet, walletTimestamp } = await getWalletFromStorage(storageData, dispatch);
+    const { wallet, walletTimestamp } = await getWalletFromStorage(storageData, encryptedWallet, dispatch);
 
     if (walletTimestamp) {
       // migrations
