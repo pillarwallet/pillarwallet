@@ -28,7 +28,6 @@ import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { migrate } from 'services/dataMigration';
 import { firebaseCrashlytics } from 'services/firebase';
-import { getCurrentTime } from 'services/ntpSync';
 
 // constants
 import { IS_APP_VERSION_V3 } from 'constants/appConstants';
@@ -42,7 +41,7 @@ import {
   SET_DEFAULT_LIST,
 } from 'constants/assetsConstants';
 import { SET_ASSETS_BALANCES } from 'constants/assetsBalancesConstants';
-import { UPDATE_PIN_ATTEMPTS, TODAY_FAILED_ATTEMPTS, UPDATE_WALLET_BACKUP_STATUS } from 'constants/walletConstants';
+import { UPDATE_WALLET_BACKUP_STATUS } from 'constants/walletConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { SET_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'constants/collectiblesConstants';
 import { SET_RATES } from 'constants/ratesConstants';
@@ -96,14 +95,17 @@ export const initAppAndRedirectAction = () => {
     dispatch({ type: RESET_APP_LOADED });
 
     let storageData = await storage.getAll();
-    const { wallet: encryptedWallet } = await encryptedStorage.get('wallet');
     await storage.migrateFromPouchDB(storageData);
+
+    // Note: only wallet data migrate local stroage to encrypted storage
+    await encryptedStorage.migrateFromLocalStorage(storageData);
 
     await dispatch(fetchOfflineLocalAssets());
 
     storageData = await migrate('app_settings', storageData, dispatch, getState, 'appSettings');
     const { appSettings = {} } = get(storageData, 'app_settings', {});
 
+    const { wallet: encryptedWallet } = await encryptedStorage.get('wallet');
     // $FlowFixMe
     const { wallet, walletTimestamp } = await getWalletFromStorage(storageData, encryptedWallet, dispatch);
 
@@ -190,29 +192,29 @@ export const initAppAndRedirectAction = () => {
       const user = storageData?.user?.user ?? {};
       dispatch({ type: SET_USER, payload: user });
 
-      const currentTime = await getCurrentTime();
+      // const currentTime = await getCurrentTime();
 
-      const { failedAttempts = {}, pinAttempt = {} } = get(storageData, 'pinAttempt', {});
-      const { numberOfFailedAttempts = 0, date = new Date() } = failedAttempts;
-      const { pinAttemptsCount = 0 } = pinAttempt;
+      // const { failedAttempts = {}, pinAttempt = {} } = get(storageData, 'pinAttempt', {});
+      // const { numberOfFailedAttempts = 0, date = new Date() } = failedAttempts;
+      // const { pinAttemptsCount = 0 } = pinAttempt;
 
-      if (new Date(date)?.toDateString() === currentTime?.toDateString()) {
-        dispatch({
-          type: UPDATE_PIN_ATTEMPTS,
-          payload: {
-            pinAttemptsCount,
-          },
-        });
-        dispatch({
-          type: TODAY_FAILED_ATTEMPTS,
-          payload: {
-            failedAttempts: {
-              numberOfFailedAttempts,
-              date: new Date(date),
-            },
-          },
-        });
-      }
+      // if (new Date(date)?.toDateString() === currentTime?.toDateString()) {
+      //   dispatch({
+      //     type: UPDATE_PIN_ATTEMPTS,
+      //     payload: {
+      //       pinAttemptsCount,
+      //     },
+      //   });
+      //   dispatch({
+      //     type: TODAY_FAILED_ATTEMPTS,
+      //     payload: {
+      //       failedAttempts: {
+      //         numberOfFailedAttempts,
+      //         date: new Date(date),
+      //       },
+      //     },
+      //   });
+      // }
 
       const {
         upgradeStatus = null,

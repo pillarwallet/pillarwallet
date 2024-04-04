@@ -24,11 +24,15 @@ const options = {
   syncDelay: 10,
   history: 15,
 };
-export const ntp = new ntpSync(options);
+const ntp = new ntpSync(options);
+
+let status;
 
 export const getCurrentTime = async () => {
   try {
-    const status = await ntp.syncTime();
+    if (!status) {
+      status = await ntp.syncTime();
+    }
 
     if (status) {
       const currentTime = ntp.getTime();
