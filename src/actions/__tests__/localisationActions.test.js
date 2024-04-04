@@ -34,7 +34,11 @@ import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { firebaseRemoteConfig } from 'services/firebase';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
-import { TEST_TRANSLATIONS_BASE_URL, TEST_TRANSLATIONS_TIME_STAMP } from 'constants/localesConstants';
+import {
+  FR_EXTERNAL_TEST_TRANSLATION,
+  TEST_TRANSLATIONS_BASE_URL,
+  TEST_TRANSLATIONS_TIME_STAMP,
+} from 'constants/localesConstants';
 
 const EN_LOCAL_TEST_TRANSLATION = 'En local translation';
 const FR_LOCAL_TEST_TRANSLATION = 'Fr local translation';
@@ -247,6 +251,7 @@ describe('Localisation actions', () => {
         expect(i18n.hasResourceBundle('en', 'common')).toBeTruthy();
         expect(i18n.hasResourceBundle('fr', 'auth')).toBeTruthy();
         expect(i18n.hasResourceBundle('fr', 'common')).toBeTruthy();
+        expect(i18n.t('test')).toEqual(FR_EXTERNAL_TEST_TRANSLATION);
         expect(i18n.t('onlyLocal')).toEqual(ONLY_LOCAL_TRANSLATION);
       },
     );
