@@ -19,8 +19,16 @@
 */
 // eslint-disable-next-line import/no-extraneous-dependencies
 import RNEncryptedStorage from 'react-native-encrypted-storage';
+import get from 'lodash.get';
 import merge from 'lodash.merge';
-import { reportErrorLog, logBreadcrumb } from 'utils/common';
+import { isEmpty } from 'lodash';
+
+import { printLog, reportErrorLog, logBreadcrumb } from 'utils/common';
+
+// Local
+import Storage from './storage';
+
+const storage = Storage.getInstance('db');
 
 function EncryptedStorage(name: string) {
   this.name = name;
@@ -68,6 +76,22 @@ EncryptedStorage.prototype.save = async function (id: string, data: Object, forc
       this.activeDocs[key] = false;
     });
   return null;
+};
+
+EncryptedStorage.prototype.migrateFromLocalStorage = async function (storageData: Object) {
+  const { wallet = {} } = get(storageData, 'wallet', {});
+  if (isEmpty(wallet)) return Promise.resolve();
+
+  try {
+    printLog('Encrypted Storage migrating data');
+    // eslint-disable-next-line i18next/no-literal-string
+    await this.save('wallet', { wallet });
+    // eslint-disable-next-line i18next/no-literal-string
+    await storage.remove('wallet');
+  } catch (e) {
+    reportErrorLog('AsyncStorage migration to Encrypted Storage failed', { error: e });
+  }
+  return Promise.resolve();
 };
 
 EncryptedStorage.prototype.removeAll = async function () {
