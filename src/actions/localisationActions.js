@@ -29,7 +29,9 @@ import {
   setLanguage,
   isLanguageSupported,
 } from 'services/localisation/translations';
+import { firebaseRemoteConfig } from 'services/firebase';
 
+import { cacheUrlAction, removeUrlCacheAction } from 'actions/cacheActions';
 import {
   setSessionTranslationBundleInitialisedAction,
   setFallbackLanguageVersionAction,
@@ -42,7 +44,10 @@ import Toast from 'components/Toast';
 import type { TranslationResourcesOfLanguage } from 'models/Translations';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
-import { logBreadcrumb } from 'utils/common';
+import { reportLog, logBreadcrumb } from 'utils/common';
+import { getCachedTranslationResources } from 'utils/cache';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+import { CACHE_STATUS } from 'constants/cacheConstants';
 
 const LOCAL = 'LOCAL';
 const LANGUAGE_ERROR = {
@@ -55,6 +60,24 @@ type SetLngAndBundle = {
   resources: TranslationResourcesOfLanguage,
   onSuccess?: () => void,
 };
+
+const getTranslationData = (lng: string, baseUrl: string, version: string) =>
+  localeConfig.namespaces.map((ns) => {
+    let url = '';
+    if (baseUrl) {
+      /* eslint-disable i18next/no-literal-string */
+      if (version) {
+        url = `${baseUrl}${lng}/${ns}_${version}.json`;
+      } else {
+        url = `${baseUrl}${lng}/${ns}.json`;
+      }
+      /* eslint-enable i18next/no-literal-string */
+    }
+    return {
+      ns,
+      url,
+    };
+  });
 
 type GetTranslationResourcesProps = {
   language: string,
@@ -79,8 +102,77 @@ const getLocalTranslations = (language: string) => {
 };
 
 const getTranslationsResources = async (props: GetTranslationResourcesProps) => {
-  const { language } = props;
-  return { resources: getLocalTranslations(language), version: LOCAL };
+  const { language, dispatch, getState } = props;
+  let resources;
+  let version = firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_LOCALES_LATEST_TIMESTAMP);
+  const baseUrl = firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_LOCALES_URL);
+
+  const missingNsArray = [];
+  const translationsData = getTranslationData(language, baseUrl, version);
+
+  const {
+    session: {
+      data: { isOnline },
+    },
+  } = getState();
+
+  const relatedLocalTranslationData = localeConfig.localTranslations[language] || {};
+
+  // if translations' baseUrl is provided - use external translations. If not - local.
+  if (baseUrl) {
+    // If network is available and no cached version exists - fetch and cache newest translations
+    const {
+      cache: { cachedUrls: cachedUrlsBeforeFetching },
+    } = getState();
+
+    const translationsUrl = translationsData.map(({ url }) => url);
+    const doneCachingUrls = Object.keys(cachedUrlsBeforeFetching).filter(
+      (url) => cachedUrlsBeforeFetching[url]?.status === CACHE_STATUS.DONE,
+    );
+    const hasFullyCachedVersion = translationsUrl.every((i) => doneCachingUrls.includes(i));
+
+    if (isOnline && !hasFullyCachedVersion) {
+      // fetches to storage and set local path to cachedUrls
+      await Promise.all(translationsData.map(({ url }) => dispatch(cacheUrlAction(url))));
+    }
+
+    // get newest cached translations
+    const {
+      cache: { cachedUrls },
+    } = getState();
+    resources = await getCachedTranslationResources(
+      translationsData,
+      cachedUrls,
+      (url) => dispatch(removeUrlCacheAction(url)),
+      (e) => reportLog(LANGUAGE_ERROR.NO_TRANSLATIONS, e),
+    );
+
+    // check missing namespaces
+    const existingNameSpaces = Object.keys(resources).filter((ns) => !isEmpty(resources[ns]));
+    const missingNameSpaces = localeConfig.namespaces.filter((ns) => !existingNameSpaces.includes(ns));
+    if (missingNameSpaces.length) {
+      // found missing name spaces - add locally stored ones (if any)
+      // const relatedLocalTranslationData = localeConfig.localTranslations[language];
+      if (relatedLocalTranslationData) {
+        version = LOCAL;
+        const missingTranslationResources = missingNameSpaces.reduce((allResources, ns) => {
+          const relatedTranslations = relatedLocalTranslationData[ns];
+          if (relatedTranslations) {
+            allResources[ns] = relatedTranslations;
+          } else {
+            missingNsArray.push(ns);
+          }
+          return allResources;
+        }, {});
+        resources = { ...resources, ...missingTranslationResources };
+      }
+    }
+  } else {
+    resources = getLocalTranslations(language);
+    version = LOCAL;
+  }
+
+  return { resources, missingNsArray, version };
 };
 
 const onLanguageChangeError = () => {
@@ -170,7 +262,18 @@ export const getTranslationsResourcesAndSetLanguageOnAppOpenAction = () => {
         dispatch(setAppLanguageAction(language));
       }
 
-      const { resources, version } = await getTranslationsResources({ language, dispatch, getState });
+      const { resources, version, missingNsArray } = await getTranslationsResources({
+        language,
+        dispatch,
+        getState,
+      });
+
+      // log to Sentry if any default language name spaces are missing
+      if (language === localeConfig.defaultLanguage && missingNsArray.length) {
+        logBreadcrumb('getTranslationsResourcesAndSetLanguageOnAppOpenAction', LANGUAGE_ERROR.MISSES_NAMESPACES, {
+          missingNameSpaces: missingNsArray,
+        });
+      }
 
       await setLanguageAndTranslationBundles({ resources, language });
 
@@ -229,6 +332,47 @@ export const changeLanguageAction = (language: string) => {
         emoji: 'hushed',
         autoClose: true,
       });
+    }
+  };
+};
+
+export const updateTranslationResourceOnContextChangeAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      appSettings: {
+        isFetched,
+        data: { localisation },
+      },
+      session: {
+        data: { isOnline, fallbackLanguageVersion, translationsInitialised, sessionLanguageVersion },
+      },
+    } = getState();
+
+    if (!isFetched) return;
+
+    const baseUrl = firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_LOCALES_URL);
+
+    if (!translationsInitialised || !localeConfig.isEnabled || !baseUrl) return;
+
+    const { activeLngCode } = localisation || {};
+    const language = activeLngCode || getDefaultSupportedUserLanguage();
+
+    if (isOnline) {
+      // update fallback language translations if using local
+      if (fallbackLanguageVersion === LOCAL && language !== localeConfig.defaultLanguage) {
+        await dispatch(getAndSetFallbackLanguageResources());
+      }
+      if (sessionLanguageVersion === LOCAL && !!language) {
+        // retry fetching translations to change local ones into newest possible
+        const { resources, version } = await getTranslationsResources({ language, dispatch, getState });
+
+        const onLanguageChangeSuccess = () => {
+          dispatch(setAppLanguageAction(language));
+          dispatch(setSessionLanguageAction(language, version));
+        };
+
+        await setLanguageAndTranslationBundles({ resources, language, onSuccess: onLanguageChangeSuccess });
+      }
     }
   };
 };

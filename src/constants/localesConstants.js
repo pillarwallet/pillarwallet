@@ -25,4 +25,4 @@ export const SUFFIX_PREFIX_POSTPROCESSOR = 'suffixPrefix';
 export const EN_EXTERNAL_TEST_TRANSLATION = 'En external translation';
 export const FR_EXTERNAL_TEST_TRANSLATION = 'Fr external translation';
 export const TEST_TRANSLATIONS_BASE_URL = 'baseUrl/';
-export const TEST_TRANSLATIONS_TIME_STAMP = 'LOCAL';
+export const TEST_TRANSLATIONS_TIME_STAMP = '123456789';
