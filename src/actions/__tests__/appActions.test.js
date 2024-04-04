@@ -23,12 +23,13 @@ import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
-import { SET_CACHED_URLS } from 'constants/cacheConstants';
+import { CACHE_STATUS, SET_CACHED_URLS } from 'constants/cacheConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 import Storage from 'services/storage';
 import { initAppAndRedirectAction } from 'actions/appActions';
 import localeConfig from 'configs/localeConfig';
+import { getDefaultSupportedUserLanguage } from 'services/localisation/translations';
 import { firebaseRemoteConfig } from 'services/firebase';
 import { TEST_TRANSLATIONS_BASE_URL, TEST_TRANSLATIONS_TIME_STAMP } from 'constants/localesConstants';
 import { SET_CHAIN_SUPPORTED_ASSETS } from 'constants/assetsConstants';
@@ -76,6 +77,12 @@ describe('App actions', () => {
     firebaseRemoteConfig.getString = mockedFirebaseConfigGetString;
   });
 
+  const defaultLanguage = getDefaultSupportedUserLanguage();
+  // eslint-disable-next-line max-len
+  const authTranslationsUrl = `${TEST_TRANSLATIONS_BASE_URL}${defaultLanguage}/auth_${TEST_TRANSLATIONS_TIME_STAMP}.json`;
+  // eslint-disable-next-line max-len
+  const commonTranslationsUrl = `${TEST_TRANSLATIONS_BASE_URL}${defaultLanguage}/common_${TEST_TRANSLATIONS_TIME_STAMP}.json`;
+
   it(`initAppAndRedirectAction - should trigger the app settings updated
   with any redirection due to the empty storage`, async () => {
     await storage.save('storageSettings', { storageSettings: { pouchDBMigrated: true } });
@@ -83,6 +90,10 @@ describe('App actions', () => {
       { type: RESET_APP_LOADED },
       { type: UPDATE_APP_SETTINGS, payload: {} },
       { type: SET_CACHED_URLS, payload: {} },
+      { type: CACHE_STATUS.PENDING, payload: { url: authTranslationsUrl } },
+      { type: CACHE_STATUS.PENDING, payload: { url: commonTranslationsUrl } },
+      { type: CACHE_STATUS.DONE, payload: { url: authTranslationsUrl, localPath: authTranslationsUrl } },
+      { type: CACHE_STATUS.DONE, payload: { url: commonTranslationsUrl, localPath: commonTranslationsUrl } },
       { type: UPDATE_SESSION, payload: { fallbackLanguageVersion: TEST_TRANSLATIONS_TIME_STAMP } },
       { type: UPDATE_SESSION, payload: { translationsInitialised: true } },
       {

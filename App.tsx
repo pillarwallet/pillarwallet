@@ -51,7 +51,7 @@ import {
 } from 'actions/notificationsActions';
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
 import { setAppThemeAction, handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
-import { changeLanguageAction } from 'actions/localisationActions';
+import { changeLanguageAction, updateTranslationResourceOnContextChangeAction } from 'actions/localisationActions';
 import { initWalletConnectSessionsAction } from 'actions/walletConnectSessionsActions';
 
 // constants
@@ -121,7 +121,9 @@ interface Props extends WithTranslation {
   i18n: I18n;
   changeLanguage: (language: string) => void;
   translationsInitialised: boolean;
+  updateTranslationResourceOnContextChange: () => void;
   initialDeepLinkExecuted: boolean;
+  sessionLanguageVersion: string | null;
   logScreenView: (screenName: string) => void;
   initWalletConnectSessionsWithoutReset: () => void;
   syncReduxStateWithFirestore: () => void;
@@ -158,7 +160,12 @@ class App extends React.Component<Props, any> {
   }
 
   async componentDidMount() {
-    const { fetchAppSettingsAndRedirect, startListeningOnOpenNotification } = this.props;
+    const {
+      fetchAppSettingsAndRedirect,
+      startListeningOnOpenNotification,
+      sessionLanguageVersion,
+      updateTranslationResourceOnContextChange,
+    } = this.props;
 
     logBreadcrumb('App.js', 'Setting up environment...');
     const env = await setupEnv();
@@ -202,6 +209,10 @@ class App extends React.Component<Props, any> {
       .activate()
       .then((activationResult) => {
         logBreadcrumb('App.js', `Remote Config: Activation result was ${activationResult}`);
+        if (sessionLanguageVersion !== firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_LOCALES_LATEST_TIMESTAMP)) {
+          logBreadcrumb('App.js', 'Remote Config: Triggering i18n update...');
+          updateTranslationResourceOnContextChange();
+        }
       })
       .catch((e) => reportOrWarn('Remote Config: An error occurred while activating:', e));
     logBreadcrumb('App.js', 'Remote Config: Finished activating latest values, if any.');
@@ -293,7 +304,7 @@ class App extends React.Component<Props, any> {
   };
 
   handleConnectivityChange = (state: NetInfoState) => {
-    const { initWalletConnectSessionsWithoutReset } = this.props;
+    const { updateTranslationResourceOnContextChange, initWalletConnectSessionsWithoutReset } = this.props;
     const isOnline = state.isInternetReachable;
     this.setOnlineStatus(isOnline);
 
@@ -312,6 +323,7 @@ class App extends React.Component<Props, any> {
       if (this.offlineToastId !== null) {
         Toast.close(this.offlineToastId);
       }
+      updateTranslationResourceOnContextChange();
       initWalletConnectSessionsWithoutReset();
     }
   };
@@ -413,7 +425,7 @@ const mapStateToProps = ({
   },
   walkthroughs: { steps: activeWalkthroughSteps },
   session: {
-    data: { translationsInitialised },
+    data: { translationsInitialised, sessionLanguageVersion },
   },
   walletConnect: { isVisibleModal },
 }: RootReducerState): Partial<Props> => ({
@@ -423,6 +435,7 @@ const mapStateToProps = ({
   activeWalkthroughSteps,
   translationsInitialised,
   initialDeepLinkExecuted,
+  sessionLanguageVersion,
   isVisibleModal,
 });
 
@@ -436,6 +449,7 @@ const mapDispatchToProps = (dispatch: Dispatch): Partial<Props> => ({
   setAppTheme: (themeType: string) => dispatch(setAppThemeAction(themeType)),
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
   changeLanguage: (language) => dispatch(changeLanguageAction(language)),
+  updateTranslationResourceOnContextChange: () => dispatch(updateTranslationResourceOnContextChangeAction()),
   logScreenView: (screenName: string) => dispatch(logScreenViewAction(screenName)),
   initWalletConnectSessionsWithoutReset: () => dispatch(initWalletConnectSessionsAction(false)),
   syncReduxStateWithFirestore: () => dispatch(syncStateWithFirestore()),
