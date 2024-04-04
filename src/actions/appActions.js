@@ -232,7 +232,7 @@ export const initAppAndRedirectAction = () => {
       const { ensRegistry = {} } = get(storageData, 'ensRegistry', {});
       dispatch({ type: SET_ENS_REGISTRY_RECORDS, payload: ensRegistry });
 
-      if (wallet.backupStatus) dispatch({ type: UPDATE_WALLET_BACKUP_STATUS, payload: wallet.backupStatus });
+      if (wallet?.backupStatus) dispatch({ type: UPDATE_WALLET_BACKUP_STATUS, payload: wallet.backupStatus });
 
       if (!wallet?.pinV2 && !appSettings?.data?.hasSixDigitsPin) {
         dispatch({ type: UPDATE_APP_SETTINGS, payload: { hasSixDigitsPin: true } });
@@ -244,7 +244,7 @@ export const initAppAndRedirectAction = () => {
 
     dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
     let navAction;
-    if (walletTimestamp) {
+    if (walletTimestamp && wallet) {
       const appearanceVisible = get(storageData, 'appearance_visible');
       navAction = {
         name: AUTH_FLOW,
