@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 gem 'rake'
-gem 'fastlane', :git => 'https://github.com/fastlane/fastlane.git', :tag => '2.135.1'
+gem 'fastlane', :git => 'https://github.com/fastlane/fastlane.git', :tag => '2.220.0'
 gem 'fastlane-plugin-get_version_name'
 gem 'fastlane-plugin-property_file_read'
 gem 'fastlane-plugin-appcenter'
