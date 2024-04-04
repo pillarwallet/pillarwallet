@@ -94,6 +94,10 @@ Storage.prototype.removeAll = async function () {
   return AsyncStorage.multiRemove(keys);
 };
 
+Storage.prototype.remove = async function (id: string) {
+  return AsyncStorage.removeItem(this.getKey(id));
+};
+
 Storage.prototype.migrateFromPouchDB = async function (storageData: Object) {
   const { storageSettings = {} } = get(storageData, STORAGE_SETTINGS_KEY, {});
   if (storageSettings.pouchDBMigrated) return Promise.resolve();
