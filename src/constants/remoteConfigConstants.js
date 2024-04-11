@@ -46,7 +46,7 @@ export const REMOTE_CONFIG = {
   KEY_BASED_ASSETS_MIGRATION: 'app_assets_show_kw_migration',
   SMART_WALLET_ACTIVATION_PAID_BY_PILLAR: 'app_smart_wallet_paid_for_by_pillar',
   APP_FEES_PAID_WITH_PLR: 'app_fees_paid_with_plr',
-  APP_LOCALES_URL: 'app_locales_url',
+  APP_LOCALES_URL: '', // Right key is app_locales_url
   APP_LOCALES_LATEST_TIMESTAMP: 'app_locales_latest_timestamp',
   APP_SOCIAL_DISCORD: 'app_social_discord',
   APP_SOCIAL_TWITTER: 'app_social_twitter',
@@ -98,7 +98,7 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.FEATURE_LIQUIDITY_POOLS]: true,
   [REMOTE_CONFIG.KEY_BASED_ASSETS_MIGRATION]: true,
   [REMOTE_CONFIG.APP_FEES_PAID_WITH_PLR]: false,
-  [REMOTE_CONFIG.APP_LOCALES_URL]: 'test',
+  [REMOTE_CONFIG.APP_LOCALES_URL]: '',
   [REMOTE_CONFIG.APP_LOCALES_LATEST_TIMESTAMP]: '1',
   [REMOTE_CONFIG.APP_SOCIAL_DISCORD]: 'https://chat.pillar.fi',
   [REMOTE_CONFIG.APP_SOCIAL_TWITTER]: 'https://twitter.com/pillarwallet',

@@ -204,7 +204,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
         if (!currentTime) return;
 
         const { failedAttempts = {}, pinAttempt = {} } = await storage.get('pinAttempt');
-        const { numberOfFailedAttempts = 0, date = new Date() } = failedAttempts;
+        const { numberOfFailedAttempts = 0, date = currentTime } = failedAttempts;
         const { pinAttemptsCount = 0 } = pinAttempt;
 
         if (new Date(date).toDateString() === currentTime?.toDateString()) {
