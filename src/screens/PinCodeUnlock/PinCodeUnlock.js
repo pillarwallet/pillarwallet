@@ -217,6 +217,17 @@ class PinCodeUnlock extends React.Component<Props, State> {
               date: new Date(date),
             },
           });
+        } else {
+          // Note: Called when the app is opened for the first time on a new day
+          updateAttempts({
+            pinAttemptsCount: 0,
+          });
+          todayAttempts({
+            failedAttempts: {
+              numberOfFailedAttempts: 0,
+              date: new Date(currentTime),
+            },
+          });
         }
         await this.handleLocking();
       }
