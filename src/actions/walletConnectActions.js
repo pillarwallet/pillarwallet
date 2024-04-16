@@ -248,9 +248,7 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
         }),
       );
     };
-
     web3wallet?.on(WALLETCONNECT_EVENT.SESSION_PROPOSAL, onV2SessionProposal);
-    
   };
 };
 
