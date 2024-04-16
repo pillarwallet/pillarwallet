@@ -110,7 +110,7 @@ function WalletConnectConnectorRequestModal({ isV2WC, connector, chainId }: Prop
 
       {!!description && <Description>{description}</Description>}
 
-      <WalletConnectSwitchNetwork 
+      <WalletConnectSwitchNetwork
         isV2WC={isV2WC}
         chain={chain}
         chains={chains}

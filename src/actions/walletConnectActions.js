@@ -152,10 +152,13 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
       const allAccounts = accountsSelector(getState());
       const appName = proposal?.params?.proposer?.metadata?.name;
       const keyBasedAccount = findKeyBasedAccount(allAccounts);
-     
-      let pillarXMigrationWalletName = firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_WALLETCONNECT_MIGRATION_MATCHER);
-     
-      if (activeAccount !== keyBasedAccount && ((appName?.includes(ETHERSPOT)) || (appName === pillarXMigrationWalletName))) {
+
+      const pillarXMigrationWalletName =
+      firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_WALLETCONNECT_MIGRATION_MATCHER);
+
+      if (activeAccount !== keyBasedAccount &&
+        ((appName?.includes(ETHERSPOT)) || (appName === pillarXMigrationWalletName))
+      ) {
         if (keyBasedAccount?.id) {
           await dispatch(switchAccountAction(keyBasedAccount.id));
           dispatch(dismissSwitchAccountTooltipAction(false));
@@ -240,7 +243,7 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
 
       dispatch({ type: VISIBLE_WC_MODAL, payload: true });
 
-      
+
       navigate(
         CommonActions.navigate(APP_FLOW, {
           screen: WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
