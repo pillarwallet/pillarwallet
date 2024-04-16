@@ -43,6 +43,7 @@ import {
 } from 'constants/navigationConstants';
 import { ADD_WALLETCONNECT_V2_SESSION } from 'constants/walletConnectSessionsConstants';
 import { ETHERSPOT } from 'constants/walletConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -50,6 +51,7 @@ import Toast from 'components/Toast';
 // services
 import { navigate, updateNavigationLastScreenState } from 'services/navigation';
 import { createWeb3Wallet, web3wallet, web3WalletPair } from 'services/walletConnect';
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // actions
 import { disconnectWalletConnectV2SessionByTopicAction } from 'actions/walletConnectSessionsActions';
@@ -150,7 +152,10 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
       const allAccounts = accountsSelector(getState());
       const appName = proposal?.params?.proposer?.metadata?.name;
       const keyBasedAccount = findKeyBasedAccount(allAccounts);
-      if (activeAccount !== keyBasedAccount && appName?.includes(ETHERSPOT)) {
+     
+      let pillarXMigrationWalletName = firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_WALLETCONNECT_MIGRATION_MATCHER);
+     
+      if (activeAccount !== keyBasedAccount && ((appName?.includes(ETHERSPOT)) || (appName === pillarXMigrationWalletName))) {
         if (keyBasedAccount?.id) {
           await dispatch(switchAccountAction(keyBasedAccount.id));
           dispatch(dismissSwitchAccountTooltipAction(false));
@@ -235,6 +240,7 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
 
       dispatch({ type: VISIBLE_WC_MODAL, payload: true });
 
+      
       navigate(
         CommonActions.navigate(APP_FLOW, {
           screen: WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
@@ -244,6 +250,7 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
     };
 
     web3wallet?.on(WALLETCONNECT_EVENT.SESSION_PROPOSAL, onV2SessionProposal);
+    
   };
 };
 

@@ -42,6 +42,7 @@ import { useSupportedChains } from 'selectors/chains';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Actions
 import { switchAccountAction } from 'actions/accountsActions';
@@ -54,11 +55,15 @@ import { useDeploymentStatus } from 'hooks/deploymentStatus';
 import type { Chain } from 'models/Chain';
 import type { Account } from 'models/Account';
 
+// Services
+import { firebaseRemoteConfig } from 'services/firebase';
+
 interface Props {
   chain: Chain;
   chains?: string[];
   onChangeChain: (chain: Chain) => void;
   isV2WC?: boolean;
+  appName?: string;
 }
 
 const useChains = (): any[] => {
@@ -79,7 +84,7 @@ const useChains = (): any[] => {
   return chainTabs;
 };
 
-const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, chains: v2Chains, onChangeChain }) => {
+const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, chains: v2Chains, onChangeChain, appName }) => {
   const colors = useThemeColors();
   const chains = useChains();
   const accounts = useWalletConnectAccounts();
@@ -195,9 +200,11 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, chains: v2Chains
     });
     return chainInfo;
   }, [v2Chains, isV2WC, activeAccount]);
+     
+  let pillarXMigrationWalletName = firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_WALLETCONNECT_MIGRATION_MATCHER);
 
   const disabledSwitchAccount =
-    filterdV2Chains?.length > 1 || filterdV2Chains?.some((chainInfo) => chainInfo.chain !== CHAIN.ETHEREUM);
+    filterdV2Chains?.length > 1 || filterdV2Chains?.some((chainInfo) => chainInfo.chain !== CHAIN.ETHEREUM) || (appName == pillarXMigrationWalletName);
 
   const chainNotDeployedInV2 = isV2WC && filterdV2Chains.find((chainInfo) => !chainInfo.isDeployed);
 
