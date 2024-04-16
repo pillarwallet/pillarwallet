@@ -88,6 +88,7 @@ export const REMOTE_CONFIG = {
   MT_PELERIN_SUPPORTED_ASSETS: 'app_mt_pelerin_supported_assets',
   APP_SUPPORT_EMAIL: 'app_support_email',
   VISIBILE_WEB3_AUTH: 'feature_social_logins',
+  APP_WALLETCONNECT_MIGRATION_MATCHER: 'app_walletconnect_migration_matcher',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values
@@ -141,4 +142,5 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.MT_PELERIN_SUPPORTED_ASSETS]: JSON.stringify(pelerinSupportedAssets),
   [REMOTE_CONFIG.APP_SUPPORT_EMAIL]: 'support@pillarproject.io',
   [REMOTE_CONFIG.VISIBILE_WEB3_AUTH]: false,
+  [REMOTE_CONFIG.APP_WALLETCONNECT_MIGRATION_MATCHER]: 'PillarX: Migration',
 };
