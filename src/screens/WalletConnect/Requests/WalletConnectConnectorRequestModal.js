@@ -110,7 +110,13 @@ function WalletConnectConnectorRequestModal({ isV2WC, connector, chainId }: Prop
 
       {!!description && <Description>{description}</Description>}
 
-      <WalletConnectSwitchNetwork isV2WC={isV2WC} chain={chain} chains={chains} onChangeChain={setSelectedChain} />
+      <WalletConnectSwitchNetwork
+        isV2WC={isV2WC}
+        chain={chain}
+        chains={chains}
+        onChangeChain={setSelectedChain}
+        appName={appName}
+      />
 
       <Button
         disabled={isActiveEtherspotAccount ? !isDeployedOnChain[selectedChain] : false}
