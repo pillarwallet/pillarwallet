@@ -39,6 +39,8 @@ import { isEtherspotAccountDeployed } from 'utils/etherspot';
 
 // Selectors
 import { useSupportedChains } from 'selectors/chains';
+import { useActiveAccount, useRootSelector } from 'selectors';
+import { isDeployedOnChainSelector } from 'selectors/chains';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
@@ -71,14 +73,14 @@ const useChains = (): any[] => {
   const config = useChainsConfig();
   const accounts = useWalletConnectAccounts();
   const activeAccount: Account | any = getActiveAccount(accounts);
-
+  const isDeployedOnChain = useRootSelector(isDeployedOnChainSelector);
   const chainTabs = chains.map((chain) => ({
     key: chain,
     chain,
     value: config[chain].title,
     label: config[chain].titleShort,
     icon: config[chain].iconName,
-    isDeployed: isEtherspotAccountDeployed(activeAccount, chain),
+    isDeployed: (activeAccount.value === 'Archanova wallet') ? isDeployedOnChain : isEtherspotAccountDeployed(activeAccount, chain),
   }));
 
   return chainTabs;
@@ -97,7 +99,6 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, chains: v2Chains
   const isActiveEtherspotAccount = isEtherspotAccount(activeAccount);
   const isActiveArchanovaAccount = isArchanovaAccount(activeAccount);
   const isActiveKeyBasedAccount = isKeyBasedAccount(activeAccount);
-
   let requestedChainInfo = chains?.find((chainInfo) => chainInfo.chain === chain);
   if (!requestedChainInfo) {
     requestedChainInfo = chains?.find((chainInfo) => chainInfo.chain === CHAIN.ETHEREUM);
@@ -107,7 +108,6 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, chains: v2Chains
   const [contentHeight, setContentHeight] = React.useState(0);
   const [dropDownFromTop, setDropDownFromTop] = React.useState(getDeviceHeight());
   const [selectedNetwork, setSelectedNetwork] = React.useState(requestedChainInfo);
-
   useEffect(() => {
     setSelectedNetwork(requestedChainInfo);
     onChangeChain(requestedChainInfo.chain);
@@ -136,8 +136,8 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, chains: v2Chains
       <Text variant="big" style={{ flex: 1 }}>
         {item.label}
       </Text>
-
-      {type === 'selectedChain' && !item.isDeployed && !isActiveKeyBasedAccount && (
+      
+      {type === 'selectedChain' && (!item.isDeployed) && !isActiveKeyBasedAccount && (
         <TouchableOpacity
           onPress={() => showDeploymentInterjection(selectedNetwork.chain)}
           style={[styles.deployBtn, { backgroundColor: colors.buttonPrimaryBackground }]}
@@ -200,14 +200,13 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, chains: v2Chains
     });
     return chainInfo;
   }, [v2Chains, isV2WC, activeAccount]);
-     
+   
   let pillarXMigrationWalletName = firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_WALLETCONNECT_MIGRATION_MATCHER);
 
   const disabledSwitchAccount =
     filterdV2Chains?.length > 1 || filterdV2Chains?.some((chainInfo) => chainInfo.chain !== CHAIN.ETHEREUM) || (appName == pillarXMigrationWalletName);
 
   const chainNotDeployedInV2 = isV2WC && filterdV2Chains.find((chainInfo) => !chainInfo.isDeployed);
-
   return (
     <>
       {isActiveEtherspotAccount && (!selectedNetwork.isDeployed || chainNotDeployedInV2) && (
