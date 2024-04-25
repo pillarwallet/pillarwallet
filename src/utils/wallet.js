@@ -87,7 +87,7 @@ export function signTransaction(trx: Object, wallet: Object): Promise<string> {
 }
 
 export function encodePersonalMessage(message: string): string {
-  const data = toBuffer(convertUtf8ToHex(message));
+  const data = toBuffer(ethers.utils.hexlify(ethers.utils.toUtf8Bytes(message)));
 
   const buf = Buffer.concat([
     Buffer.from('\x19Ethereum Signed Message:\n' + data.length.toString(), 'utf8'), // eslint-disable-line
