@@ -27,6 +27,7 @@ import { formatJsonRpcError } from '@json-rpc-tools/utils';
 // Components
 import BottomModal from 'components/layout/BottomModal';
 import Toast from 'components/Toast';
+import Modal from 'components/Modal';
 
 // Constants
 import { WALLETCONNECT_PIN_CONFIRM_SCREEN, WALLETCONNECT_CALL_REQUEST_FLOW } from 'constants/navigationConstants';
@@ -58,8 +59,6 @@ function WalletConnectCallRequestModal({ request }: Props) {
   const navigation = useNavigation();
   const chainsConfig = useChainsConfig();
 
-  const ref = React.useRef();
-
   const { rejectV2CallRequest } = useWalletConnect();
 
   const type = getWalletConnectCallRequestType(request);
@@ -83,11 +82,11 @@ function WalletConnectCallRequestModal({ request }: Props) {
         supportLink: true,
       });
 
-      ref.current?.close();
+      Modal.closeAll();
       return;
     }
 
-    ref.current?.close();
+    Modal.closeAll();
     navigation.navigate(WALLETCONNECT_CALL_REQUEST_FLOW, {
       screen: WALLETCONNECT_PIN_CONFIRM_SCREEN,
       params: { callRequest: request, transactionPayload },
@@ -102,18 +101,18 @@ function WalletConnectCallRequestModal({ request }: Props) {
         supportLink: true,
       });
 
-      ref.current?.close();
+      Modal.closeAll();
       return;
     }
 
-    ref.current?.close();
+    Modal.closeAll();
     if (request?.topic) {
       rejectV2CallRequest(request, formatJsonRpcError(request.callId, getSdkError('USER_REJECTED_METHODS').message));
     }
   };
 
   return (
-    <BottomModal ref={ref} title={title}>
+    <BottomModal title={title}>
       {type === REQUEST_TYPE.MESSAGE && (
         <SignatureRequestContent
           key={SIGNATURE_KEY}

@@ -40,7 +40,8 @@ type Props = {|
 
 function WalletConnectRequestBanner({ request }: Props) {
   const showRequestModal = () => {
-    Modal.open(() => <WalletConnectRequestModal request={request.callRequest} />);
+    Modal.closeAll();
+    Modal.open(() => <WalletConnectRequestModal key={new Date().getTime().toString()} request={request.callRequest} />);
   };
 
   return (

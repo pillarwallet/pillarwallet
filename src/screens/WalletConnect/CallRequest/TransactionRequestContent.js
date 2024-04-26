@@ -171,7 +171,7 @@ function TransactionRequestContent({ request, onConfirm, onReject }: Props) {
 
       {!!errorMessage && <ErrorMessage variant="small">{errorMessage}</ErrorMessage>}
 
-      <LegacyButton disabled={!!errorMessage} title={confirmTitle} onPress={handleConfirm} warning={highFee} />
+      <LegacyButton disabled={isConfirmDisabled} title={confirmTitle} onPress={handleConfirm} warning={highFee} />
 
       {!loadFeeValue ? (
         <Button title={t('button.reject')} size="large" onPress={onReject} variant="text" style={styles.buttonStyle} />
