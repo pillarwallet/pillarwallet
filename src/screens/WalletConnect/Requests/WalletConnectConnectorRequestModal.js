@@ -28,6 +28,7 @@ import BottomModal from 'components/layout/BottomModal';
 import Button from 'components/core/Button';
 import Image from 'components/Image';
 import Text from 'components/core/Text';
+import Modal from 'components/Modal';
 
 // Hooks
 import useWalletConnect, { useWalletConnectAccounts } from 'hooks/useWalletConnect';
@@ -58,7 +59,6 @@ type Props = {|
 |};
 
 function WalletConnectConnectorRequestModal({ isV2WC, connector, chainId }: Props) {
-  const ref = React.useRef();
   const { genericToken } = useThemedImages();
   const chainsConfig = useChainsConfig();
   const chain = chainFromChainId[chainId] ?? CHAIN.ETHEREUM;
@@ -80,18 +80,17 @@ function WalletConnectConnectorRequestModal({ isV2WC, connector, chainId }: Prop
   const onApprovePress = () => {
     Keyboard.dismiss();
     approveV2ConnectorRequest(connector?.id, newNameSpace);
-    ref.current?.close();
+    Modal.closeAll();
   };
 
   const onRejectPress = () => {
     Keyboard.dismiss();
     rejectV2ConnectorRequest(connector?.id);
-    ref.current?.close();
+    Modal.closeAll();
   };
 
   return (
     <BottomModal
-      ref={ref}
       title={t('walletConnectContent.title.walletConnectRequests', {
         app: appName,
         chain: chainName,
