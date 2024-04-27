@@ -5,7 +5,7 @@ We're always on the lookout for talented and passionate developers. Check out ou
 [RECRUITMENT.md](RECRUITMENT.md) file to see how you can join us!
 
 ## Pull Request Review
-The following set of criteria and guideline has been set for code reviews
+The following set of criteria and guidelines has been set for code reviews
 [Pillar Pull Request and Code Review Guidelines](CONTRIBUTING.md)
 
 ## Requirements
@@ -21,8 +21,8 @@ The following set of criteria and guideline has been set for code reviews
 - yarn v1.10.x
 - XCode 9.4 (Please refer to notes below to understand the problem with XCode 10)
 
-_note_: XCode 10 includes CommonCrypto as part of the sdk which triggers a `Redefinition of module` because `rn-signal-protocol-messaging` declares it as dependency,
-currently there's a fix being tested to work with XCode 10 and XCode 9.4, however while this note is here please use *XCode 9.4*
+_note_: XCode 10 includes CommonCrypto as part of the sdk which triggers a `Redefinition of module` because `rn-signal-protocol-messaging` declares it as a dependency,
+currently, there's a fix being tested to work with XCode 10 and XCode 9.4, however, while this note is here please use *XCode 9.4*
 
 ## Install and Run
 To get started clone the repo and run
