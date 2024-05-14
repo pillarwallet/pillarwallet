@@ -520,7 +520,6 @@ jobs:
   prod_ios:
     executor: ios-executor
     steps:
-      - macos/install-rosetta
       - checkout
       - run: node --version
       - attach_workspace: &attach_workspace
