@@ -1,5 +1,7 @@
 source "https://rubygems.org"
 gem 'rake'
+# https://github.com/fastlane/fastlane/issues/21794
+gem 'rb-readline'
 gem "fastlane"
 gem 'fastlane-plugin-get_version_name'
 gem 'fastlane-plugin-property_file_read'
