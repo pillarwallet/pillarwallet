@@ -103,7 +103,10 @@ export default function () {
   };
 
   const isDisabled =
-    (isEmpty(tokensList) && query) || (!hasAgreedToTerms && !isEmpty(tokensList)) || isLoading || errorMessage;
+    (isEmpty(tokensList) && !isEmpty(query)) ||
+    (!hasAgreedToTerms && !isEmpty(tokensList)) ||
+    isLoading ||
+    errorMessage;
 
   const buttonTitle = isEmpty(query)
     ? t('button.paste')
