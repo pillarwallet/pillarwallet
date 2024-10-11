@@ -20177,11 +20177,6 @@ react-native-keychain@^8.1.2:
   resolved "https://registry.yarnpkg.com/react-native-keychain/-/react-native-keychain-8.1.2.tgz#34291ae472878e5124d081211af5ede7d810e64f"
   integrity sha512-bhHEui+yMp3Us41NMoRGtnWEJiBE0g8tw5VFpq4mpmXAx6XJYahuM6K3WN5CsUeUl83hYysSL9oFZNKSTPSvYw==
 
-react-native-kochava-tracker@^2.2.0:
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/react-native-kochava-tracker/-/react-native-kochava-tracker-2.5.0.tgz#e5bc91e743ecc5195c03a77fde99050f043a5d82"
-  integrity sha512-CFAqt2MSHpvM0w8Q8aQ1dQjHgED1JsjDShnHdYfILKR94xaF2cZEHQKhJgEfyrfo7jA5/QtWDzzYJWAj/M7HBA==
-
 react-native-level-fs@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/react-native-level-fs/-/react-native-level-fs-3.0.1.tgz#f3054614c2bc1a379dcb3d3ee51b6a1b66123283"
