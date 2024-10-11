@@ -18,71 +18,70 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import 'utils/setup';
-import { setupEnv, switchEnvironments, getEnv } from 'configs/envConfig';
-import React from 'react';
-import { StatusBar, Platform, Linking, UIManager, View } from 'react-native';
-import { Provider, connect } from 'react-redux';
-import * as Sentry from '@sentry/react-native';
-import styled, { ThemeProvider } from 'styled-components/native';
-import { AppearanceProvider } from 'react-native-appearance';
 import NetInfo, { NetInfoState, NetInfoSubscription } from '@react-native-community/netinfo';
-import DeviceInfo from 'react-native-device-info';
-import { WithTranslation, withTranslation } from 'react-i18next';
-import t from 'translations/translate';
 import remoteConfig from '@react-native-firebase/remote-config';
+import * as Sentry from '@sentry/react-native';
+import { getEnv, setupEnv, switchEnvironments } from 'configs/envConfig';
+import { NativeBaseProvider } from 'native-base';
+import React from 'react';
+import { WithTranslation, withTranslation } from 'react-i18next';
+import { Linking, Platform, StatusBar, UIManager } from 'react-native';
+import { AppearanceProvider } from 'react-native-appearance';
+import appsFlyer from 'react-native-appsflyer';
+import DeviceInfo from 'react-native-device-info';
+import { PlayInstallReferrer } from 'react-native-play-install-referrer';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import appsFlyer from 'react-native-appsflyer';
-import { PlayInstallReferrer } from 'react-native-play-install-referrer';
-import { KochavaTracker } from 'react-native-kochava-tracker';
-import { NativeBaseProvider } from 'native-base';
+import { Provider, connect } from 'react-redux';
+import styled, { ThemeProvider } from 'styled-components/native';
+import t from 'translations/translate';
+import 'utils/setup';
 
-import 'services/localisation/translations';
 import localeConfig from 'configs/localeConfig';
+import 'services/localisation/translations';
 
 // actions
 import { initAppAndRedirectAction } from 'actions/appActions';
-import { updateSessionNetworkStatusAction } from 'actions/sessionActions';
-import { updateOfflineQueueNetworkStatusAction } from 'actions/offlineApiActions';
+import { handleSystemDefaultThemeChangeAction, setAppThemeAction } from 'actions/appSettingsActions';
+import { executeDeepLinkAction } from 'actions/deepLinkActions';
+import { changeLanguageAction, updateTranslationResourceOnContextChangeAction } from 'actions/localisationActions';
 import {
   startListeningOnOpenNotificationAction,
   stopListeningOnOpenNotificationAction,
 } from 'actions/notificationsActions';
-import { executeDeepLinkAction } from 'actions/deepLinkActions';
-import { setAppThemeAction, handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
-import { changeLanguageAction, updateTranslationResourceOnContextChangeAction } from 'actions/localisationActions';
+import { updateOfflineQueueNetworkStatusAction } from 'actions/offlineApiActions';
+import { updateSessionNetworkStatusAction } from 'actions/sessionActions';
 import { initWalletConnectSessionsAction } from 'actions/walletConnectSessionsActions';
 
 // constants
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import { STAGING } from 'constants/envConstants';
-import { REMOTE_CONFIG, INITIAL_REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+import { INITIAL_REMOTE_CONFIG, REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // components
-import Root from 'components/Root';
-import Toast from 'components/Toast';
-import Spinner from 'components/Spinner';
-import Walkthrough from 'components/Walkthrough';
 import Button from 'components/legacy/Button';
-import PercentsInputAccessoryHolder from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
 import Modal from 'components/Modal';
+import PercentsInputAccessoryHolder from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
+import Root from 'components/Root';
+import Spinner from 'components/Spinner';
+import Toast from 'components/Toast';
+import Walkthrough from 'components/Walkthrough';
 
 // utils
-import { getThemeByType } from 'utils/themes';
+import { logBreadcrumb, reportLog, reportOrWarn } from 'utils/common';
 import { log } from 'utils/logger';
-import { logBreadcrumb, reportOrWarn, reportLog } from 'utils/common';
 import { getActiveRouteName } from 'utils/navigation';
+import { getThemeByType } from 'utils/themes';
 
 // services
-import { firebaseRemoteConfig } from 'services/firebase';
 import { logScreenViewAction } from 'actions/analyticsActions';
+import { firebaseRemoteConfig } from 'services/firebase';
 import { setRoutesState } from 'services/navigation';
 
 // types
-import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
-import type { Steps } from 'reducers/walkthroughsReducer';
 import type { I18n } from 'models/Translations';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { Steps } from 'reducers/walkthroughsReducer';
 
 // other
 import RootNavigation from 'navigation/rootNavigation';
@@ -247,16 +246,6 @@ class App extends React.Component<Props, any> {
         }
       });
     }
-
-    // Kochava init
-    if (Platform.OS === 'android') {
-      logBreadcrumb('App.js', 'Kochava: initialize android');
-      KochavaTracker.instance.registerAndroidAppGuid(getEnv().KOCHAVA_ANDROID_ID);
-    } else {
-      logBreadcrumb('App.js', 'Kochava: initialize ios');
-      KochavaTracker.instance.registerIosAppGuid(getEnv().KOCHAVA_IOS_ID);
-    }
-    KochavaTracker.instance.start();
 
     // hold the UI and wait until network status finished for later app connectivity checks
     await NetInfo.fetch()
