@@ -2,7 +2,7 @@ PODS:
   - AppsFlyerFramework (6.12.2):
     - AppsFlyerFramework/Main (= 6.12.2)
   - AppsFlyerFramework/Main (6.12.2)
-  - boost (1.76.0)
+  - boost (1.83.0)
   - BVLinearGradient (2.8.3):
     - React-Core
   - CocoaAsyncSocket (7.6.5)
@@ -422,7 +422,7 @@ PODS:
     - ReactCommon/turbomodule/core (= 0.72.4)
     - SocketRocket (= 0.6.1)
   - React-cxxreact (0.72.4):
-    - boost (= 1.76.0)
+    - boost (= 1.83.0)
     - DoubleConversion
     - glog
     - RCT-Folly (= 2021.07.22.00)
@@ -440,7 +440,7 @@ PODS:
   - React-jsc/Fabric (0.72.4):
     - React-jsi (= 0.72.4)
   - React-jsi (0.72.4):
-    - boost (= 1.76.0)
+    - boost (= 1.83.0)
     - DoubleConversion
     - glog
     - RCT-Folly (= 2021.07.22.00)
