@@ -264,19 +264,21 @@ jobs:
 
       - *yarn_install_ios
 
-      # - *node_save_cache
+      - *node_save_cache
 
-      # - *restore_gems_cache_ios
+      - *restore_gems_cache_ios
       - *install_gems_ios
-      # - *save_gems_cache_ios
+      - *save_gems_cache_ios
 
-      # - *restore_pod_cache
+      - *restore_pod_cache
       - run:
           name: Install CocoaPods
           command: |
+            ls 
+            sed -i.bak '' 's|https://boostorg\.jfrog\.io/artifactory/main/release/1\.76\.0/source/boost_1_76_0\.tar\.bz2|https://sourceforge.net/projects/boost/files/boost/1.76.0/boost_1_76_0.tar.bz2|g' node_modules/react-native/third-party-podspecs/boost.podspec
+            cat node_modules/react-native/third-party-podspecs/boost.podspec
             cd ios
             bundle exec pod cache clean --all
-            sed -i.bak '' 's|https://boostorg\.jfrog\.io/artifactory/main/release/1\.76\.0/source/boost_1_76_0\.tar\.bz2|https://sourceforge.net/projects/boost/files/boost/1.76.0/boost_1_76_0.tar.bz2|g' ../node_modules/react-native/third-party-podspecs/boost.podspec
             bundle exec pod install --verbose
       - *save_pod_cache
 
