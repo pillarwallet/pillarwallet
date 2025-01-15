@@ -242,6 +242,7 @@ jobs:
   appcenter_ios:
     executor: ios-executor
     steps:
+      - macos/install-rosetta
       - checkout
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
