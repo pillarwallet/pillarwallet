@@ -326,7 +326,6 @@ jobs:
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
-            echo $APP_BUILD_NUMBER
             cd ios && bundle exec fastlane deploy_ios_appcenter APP_BUILD_NUMBER:$APP_BUILD_NUMBER build_number:$buildNumber APP_NAME:"Pillar Staging"
       - run:
           name: prepare to archive ipa file
@@ -855,7 +854,6 @@ workflows:
                 - /.*(u|U)(i|I)(-|_).*/
                 - /.*(-|_)(u|U)(i|I).*/
                 - /.*(u|U)(i|I)\/.*/
-                - fix/executor
 
       - appcenter_ios:
           context: 
@@ -869,7 +867,6 @@ workflows:
                 - /.*(u|U)(i|I)(-|_).*/
                 - /.*(-|_)(u|U)(i|I).*/
                 - /.*(u|U)(i|I)\/.*/
-                - fix/executor
 
       - appcenter_android:
           context:
