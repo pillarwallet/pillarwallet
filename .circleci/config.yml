@@ -353,10 +353,10 @@ jobs:
               chmod +x .circleci/announceURLs.sh
               .circleci/announceURLs.sh "pillarwallet" "$CIRCLE_BRANCH" "ios" "$(cat ~/pillarwallet/ios/output/gym/ios-s3-URL-feature.txt)" "$(cat ~/pillarwallet/buildNumber.txt)"
             fi
-      # - slack/status:
-      #     fail_only: true
-      #     failure_message: "$CIRCLE_BRANCH - $(gshuf -n 1 ios_appcenter.txt) :circleci-fail:"
-      #     webhook: "${SLACK_WEBHOOK_URL}"
+      - slack/status:
+          fail_only: true
+          failure_message: "$CIRCLE_BRANCH - $(gshuf -n 1 ios_appcenter.txt) :circleci-fail:"
+          webhook: "${SLACK_WEBHOOK_URL}"
 
   appcenter_android:
     executor: android-executor
