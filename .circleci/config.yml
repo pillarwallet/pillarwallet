@@ -275,6 +275,8 @@ jobs:
           name: Install CocoaPods
           command: |
             cd ios
+            bundle exec pod cache clean --all
+            rm -rf Podfile.lock
             bundle exec pod install --verbose
       - *save_pod_cache
 
