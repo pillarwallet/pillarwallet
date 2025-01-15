@@ -277,6 +277,7 @@ jobs:
             cd ios
             bundle exec pod cache clean --all
             rm -rf Podfile.lock
+            rm -rf node_modules
             bundle exec pod install --verbose
       - *save_pod_cache
 
