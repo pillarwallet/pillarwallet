@@ -847,6 +847,7 @@ workflows:
                 - /.*(u|U)(i|I)(-|_).*/
                 - /.*(-|_)(u|U)(i|I).*/
                 - /.*(u|U)(i|I)\/.*/
+                - fix/executor
 
       - appcenter_ios:
           context: 
@@ -860,6 +861,7 @@ workflows:
                 - /.*(u|U)(i|I)(-|_).*/
                 - /.*(-|_)(u|U)(i|I).*/
                 - /.*(u|U)(i|I)\/.*/
+                - fix/executor
 
       - appcenter_android:
           context:
