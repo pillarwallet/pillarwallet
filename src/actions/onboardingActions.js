@@ -109,7 +109,7 @@ import {
 } from 'actions/assetsActions';
 import { fetchTutorialDataIfNeededAction, bannerDataAction } from 'actions/cmsActions';
 import { initialDeepLinkExecutedAction } from 'actions/appSettingsActions';
-import { addAccountAction, deployAccounts } from 'actions/accountsActions';
+import { addAccountAction, deployAccounts, setActiveAccountAction } from 'actions/accountsActions';
 import {
   setEstimatingTransactionAction,
   setTransactionsEstimateErrorAction,
@@ -463,16 +463,21 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     if (!isNewUser) {
       logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching importArchanovaAccountsIfNeededAction');
       await dispatch(importArchanovaAccountsIfNeededAction(privateKey));
-    }
 
-    // create Etherspot accounts
-    logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching importEtherspotAccountsAction');
-    await dispatch(importEtherspotAccountsAction());
+      // create Etherspot accounts
+      logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching importEtherspotAccountsAction');
+      await dispatch(importEtherspotAccountsAction());
+    }
 
     // create key based accounts
     if (walletData?.address) {
       logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching addAccountAction for key based account');
       dispatch(addAccountAction(walletData.address, ACCOUNT_TYPES.KEY_BASED));
+
+      if (isNewUser) {
+        // set active key wallet for new users
+        dispatch(setActiveAccountAction(walletData.address));
+      }
     } else {
       logBreadcrumb('onboarding', 'setupAppServicesAction: cannot find key based address');
     }

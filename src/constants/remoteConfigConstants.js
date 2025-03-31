@@ -89,6 +89,11 @@ export const REMOTE_CONFIG = {
   APP_SUPPORT_EMAIL: 'app_support_email',
   VISIBILE_WEB3_AUTH: 'feature_social_logins',
   APP_WALLETCONNECT_MIGRATION_MATCHER: 'app_walletconnect_migration_matcher',
+  APP_MIGRATION_BANNER_ENABLED: 'app_migration_banner_enabled',
+  APP_MIGRATION_BANNER_TITLE: 'app_migration_banner_title',
+  APP_MIGRATION_BANNER_CONTENT: 'app_migration_banner_content',
+  APP_MIGRATION_BANNER_CTA_NAME: 'app_migration_banner_cta_name',
+  APP_MIGRATION_BANNER_CTA_HREF: 'app_migration_banner_cta_href',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values
@@ -143,4 +148,9 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.APP_SUPPORT_EMAIL]: 'support@pillarproject.io',
   [REMOTE_CONFIG.VISIBILE_WEB3_AUTH]: false,
   [REMOTE_CONFIG.APP_WALLETCONNECT_MIGRATION_MATCHER]: 'PillarX: Migration',
+  [REMOTE_CONFIG.APP_MIGRATION_BANNER_ENABLED]: false,
+  [REMOTE_CONFIG.APP_MIGRATION_BANNER_TITLE]: '',
+  [REMOTE_CONFIG.APP_MIGRATION_BANNER_CONTENT]: '',
+  [REMOTE_CONFIG.APP_MIGRATION_BANNER_CTA_NAME]: '',
+  [REMOTE_CONFIG.APP_MIGRATION_BANNER_CTA_HREF]: '',
 };

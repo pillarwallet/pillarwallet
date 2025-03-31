@@ -35,6 +35,10 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { useChainConfig } from 'utils/uiConfig';
 import { usePoolsActivityQuery } from 'utils/etherspot';
 import { getActivityKeyExtractor } from 'utils/assets';
+import { isEtherspotAccount } from 'utils/accounts';
+
+// Selector
+import { useActiveAccount } from 'selectors';
 
 // models, types
 import type { AssetDataNavigationParam } from 'models/Asset';
@@ -48,6 +52,7 @@ import TokenAnalyticsActivityList from './components/TokenAnalyticsActivityList'
 const PoolsActivityScreen = () => {
   const navigation = useNavigation();
   const route: Route = useRoute();
+  const activeAccount = useActiveAccount();
 
   const assetData: AssetDataNavigationParam = route?.params?.assetData;
   const tokenDetails = route?.params?.tokenDetails;
@@ -101,7 +106,7 @@ const PoolsActivityScreen = () => {
 
         <Spacing h={10} />
       </Container>
-      <AnimatedFloatingActions assetData={assetData} />
+      {!isEtherspotAccount(activeAccount) && <AnimatedFloatingActions assetData={assetData} />}
     </Container>
   );
 };
