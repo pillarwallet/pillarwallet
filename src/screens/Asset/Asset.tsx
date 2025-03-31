@@ -29,7 +29,7 @@ import TokenIcon from 'components/display/TokenIcon';
 import { Spacing } from 'components/legacy/Layout';
 
 // Selectors
-import { useChainRates, useRootSelector } from 'selectors';
+import { useChainRates, useRootSelector, useActiveAccount } from 'selectors';
 import { accountAssetsBalancesSelector } from 'selectors/balances';
 
 // Utils
@@ -38,6 +38,7 @@ import { useTokenDetailsQuery, useMarketDetailsQuery, useHistoricalTokenPriceQue
 import { getAssetRateInFiat } from 'utils/rates';
 import { getBalance } from 'utils/assets';
 import { convertDecimalNumber } from 'utils/common';
+import { isEtherspotAccount } from 'utils/accounts';
 
 // Constants
 import { ONE_DAY } from 'constants/assetsConstants';
@@ -58,6 +59,7 @@ import AnimatedFloatingActions from './AnimatedFloatingActions';
 const AssetScreen = () => {
   const navigation = useNavigation();
   const route: Route = useRoute();
+  const activeAccount = useActiveAccount();
 
   const accountAssetsBalances = useRootSelector(accountAssetsBalancesSelector);
 
@@ -167,7 +169,7 @@ const AssetScreen = () => {
           <Spacing h={130} />
         </Container>
       </Content>
-      <AnimatedFloatingActions assetData={assetData} />
+      {!isEtherspotAccount(activeAccount) && <AnimatedFloatingActions assetData={assetData} />}
     </Container>
   );
 };

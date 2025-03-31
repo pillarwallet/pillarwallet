@@ -55,7 +55,12 @@ import { decryptWalletFromStorage, getDecryptedWallet } from 'utils/wallet';
 import { clearWebViewCookies } from 'utils/webview';
 import { resetKeychainDataObject } from 'utils/keychain';
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
-import { findFirstArchanovaAccount, findFirstEtherspotAccount, findKeyBasedAccount } from 'utils/accounts';
+import {
+  findFirstArchanovaAccount,
+  findFirstEtherspotAccount,
+  findKeyBasedAccount,
+  getActiveAccount,
+} from 'utils/accounts';
 import { getDeviceUniqueId } from 'utils/device';
 
 // services
@@ -73,7 +78,12 @@ import type { OnValidPinCallback } from 'models/Wallet';
 // actions
 import { saveDbAction, encryptedStorage } from './dbActions';
 import { setupLoggingServicesAction } from './appActions';
-import { addAccountAction, initOnLoginArchanovaAccountAction, deployAccounts } from './accountsActions';
+import {
+  addAccountAction,
+  initOnLoginArchanovaAccountAction,
+  deployAccounts,
+  setActiveAccountAction,
+} from './accountsActions';
 import { encryptAndSaveWalletAction, checkForWalletBackupToastAction, updatePinAttemptsAction } from './walletActions';
 import { fetchTransactionsHistoryAction } from './historyActions';
 import { setAppThemeAction, setAppLanguageAction, setDeviceUniqueIdIfNeededAction } from './appSettingsActions';
@@ -254,8 +264,14 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
 
     // create etherspot account if does not exist, this also applies as migration from old key based wallets
     const etherspotAccount = findFirstEtherspotAccount(accounts);
-    if (!etherspotAccount) {
+    if (!etherspotAccount && !isNewUser) {
       await dispatch(importEtherspotAccountsAction()); // imports and sets as active
+    }
+
+    const activeAccount = getActiveAccount(accounts);
+    if (isEmpty(activeAccount) && isNewUser) {
+      // set active key wallet for new users
+      dispatch(setActiveAccountAction(address));
     }
 
     // create key based account if does not exist

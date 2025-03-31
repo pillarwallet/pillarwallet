@@ -40,6 +40,7 @@ import UserNameAndImage from 'components/UserNameAndImage';
 import WalletConnectRequests from 'screens/WalletConnect/Requests';
 import Tooltip from 'components/Tooltip';
 import Banner from 'components/Banner/Banner';
+import MigrationBanner from 'components/Banner/MigrationBanner';
 import { Spacing } from 'components/legacy/Layout';
 import WalletConnectCamera from 'components/QRCodeScanner/WalletConnectCamera';
 
@@ -118,6 +119,7 @@ function Home() {
   const activeAccount: any = getActiveAccount(accounts);
 
   const isKeyBasedAccount = activeAccount === keyBasedAccount;
+  const isEtherspotAccount = activeAccount === etherspotAccount;
 
   const canSwitchAccount = useAccounts().length > 1;
   const ensNodeState = getEnsNodeState(etherspotAccount);
@@ -281,6 +283,8 @@ function Home() {
 
             <TransactionNotification />
 
+            <MigrationBanner />
+
             <Banner screenName={screenName} bottomPosition={false} />
 
             {/* <ChartsSection balancePerCategory={balancePerCategory} balancePerChain={balancePerChain} /> */}
@@ -298,7 +302,7 @@ function Home() {
             <AppsButton response={nativeIntegrationResponse} navigation={navigation} isShowLabel />
           </Content>
 
-          <FloatingActions />
+          {!isEtherspotAccount && <FloatingActions />}
           {isFetching && <OnboardingLoader />}
         </Container>
       </>
