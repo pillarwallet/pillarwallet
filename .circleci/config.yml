@@ -246,6 +246,14 @@ jobs:
       - checkout
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
+      - run:
+          name: Install AWS CLI
+          command: |
+            if ! command -v brew &> /dev/null; then
+              /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+              eval "$(/opt/homebrew/bin/brew shellenv)"
+            fi
+            brew install awscli
       - aws-cli/setup:
           profile-name: WEB IDENTITY PROFILE
           role-arn: '$OIDC_CIRCLE_CI_ROLE_ARN'
