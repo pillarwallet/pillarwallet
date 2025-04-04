@@ -313,8 +313,6 @@ jobs:
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_onramper_api_key_/$ONRAMPER_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_prismic_token_/$PRISMIC_TOKEN/g" ./src/configs/buildConfig.js
-            sed -i.bak "s/_kochava_ios_id_/$KOCHAVA_IOS_ID/g" ./src/configs/buildConfig.js
-            sed -i.bak "s/_kochava_android_id_/$KOCHAVA_ANDROID_ID/g" ./src/configs/buildConfig.js
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - run:
           name: Fetch App Store Connect API key
@@ -436,8 +434,6 @@ jobs:
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_onramper_api_key_/$ONRAMPER_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_prismic_token_/$PRISMIC_TOKEN/g" ./src/configs/buildConfig.js
-            sed -i.bak "s/_kochava_ios_id_/$KOCHAVA_IOS_ID/g" ./src/configs/buildConfig.js
-            sed -i.bak "s/_kochava_android_id_/$KOCHAVA_ANDROID_ID/g" ./src/configs/buildConfig.js
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - run:
           name: Initial build
@@ -564,8 +560,6 @@ jobs:
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_onramper_api_key_/$ONRAMPER_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_prismic_token_/$PRISMIC_TOKEN/g" ./src/configs/buildConfig.js
-            sed -i.bak "s/_kochava_ios_id_/$KOCHAVA_IOS_ID/g" ./src/configs/buildConfig.js
-            sed -i.bak "s/_kochava_android_id_/$KOCHAVA_ANDROID_ID/g" ./src/configs/buildConfig.js
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
 
       - restore_cache:
@@ -690,8 +684,6 @@ jobs:
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_onramper_api_key_/$ONRAMPER_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_prismic_token_/$PRISMIC_TOKEN/g" ./src/configs/buildConfig.js
-            sed -i.bak "s/_kochava_ios_id_/$KOCHAVA_IOS_ID/g" ./src/configs/buildConfig.js
-            sed -i.bak "s/_kochava_android_id_/$KOCHAVA_ANDROID_ID/g" ./src/configs/buildConfig.js
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
 
       - restore_cache:

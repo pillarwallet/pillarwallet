@@ -477,8 +477,6 @@ PODS:
     - React-Core
   - react-native-get-random-values (1.9.0):
     - React-Core
-  - react-native-kochava-tracker (2.5.0):
-    - React
   - react-native-netinfo (5.9.10):
     - React-Core
   - react-native-notifications (5.0.0):
@@ -738,7 +736,6 @@ DEPENDENCIES:
   - react-native-date-picker (from `../node_modules/react-native-date-picker`)
   - react-native-encrypted-storage (from `../node_modules/react-native-encrypted-storage`)
   - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
-  - react-native-kochava-tracker (from `../node_modules/react-native-kochava-tracker`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-notifications (from `../node_modules/react-native-notifications`)
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
@@ -899,8 +896,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-encrypted-storage"
   react-native-get-random-values:
     :path: "../node_modules/react-native-get-random-values"
-  react-native-kochava-tracker:
-    :path: "../node_modules/react-native-kochava-tracker"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-notifications:
@@ -1084,7 +1079,6 @@ SPEC CHECKSUMS:
   react-native-date-picker: 201b481c94dcb7678f4712477ad026dd7793305b
   react-native-encrypted-storage: db300a3f2f0aba1e818417c1c0a6be549038deb7
   react-native-get-random-values: dee677497c6a740b71e5612e8dbd83e7539ed5bb
-  react-native-kochava-tracker: 7ba28e1b3560739dfaf553bc6bb57ae38eaaab35
   react-native-netinfo: 30fb89fa913c342be82a887b56e96be6d71201dd
   react-native-notifications: d309f7080aad71206882dbb98d9ed788969f3b6d
   react-native-pager-view: d211379f61895b6349bd7e571b44a26d005c2975
