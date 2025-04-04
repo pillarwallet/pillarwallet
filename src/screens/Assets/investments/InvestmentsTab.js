@@ -35,11 +35,15 @@ import { Spacing } from 'components/legacy/Layout';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Spinner from 'components/Spinner';
 
+// Selector
+import { useActiveAccount } from 'selectors';
+
 // Constants
 import { WALLETCONNECT } from 'constants/navigationConstants';
 
 // Utils
 import { spacing } from 'utils/variables';
+import { isEtherspotAccount } from 'utils/accounts';
 
 // Types
 import type { AppHoldings } from 'models/Investment';
@@ -54,6 +58,8 @@ function InvestmentsTab() {
   const { totalBalanceOfHoldings, appHoldings, isFetching } = useAppHoldings();
 
   const navigateToWalletConnect = () => navigation.navigate(WALLETCONNECT);
+
+  const activeAccount = useActiveAccount();
 
   const [selectedChain, setSelectedChain] = React.useState(null);
   const [visibleHoldingsIndex, setVisibleHoldingsIndex] = React.useState(-1);
@@ -121,7 +127,7 @@ function InvestmentsTab() {
         }}
       />
 
-      <FloatingButtons items={buttons} />
+      {!isEtherspotAccount(activeAccount) && <FloatingButtons items={buttons} />}
     </Container>
   );
 }
