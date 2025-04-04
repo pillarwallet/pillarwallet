@@ -39,7 +39,7 @@ import { BRIDGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationCons
 import { useRootSelector, useIsExchangeAvailable, useActiveAccount, activeAccountAddressSelector } from 'selectors';
 
 // Utils
-import { isKeyBasedAccount } from 'utils/accounts';
+import { isKeyBasedAccount, isEtherspotAccount } from 'utils/accounts';
 import { showServiceLaunchErrorToast } from 'utils/inAppBrowser';
 
 // Local
@@ -97,7 +97,7 @@ function WalletTab({ isNavigateToHome }: Props) {
       onPress: showReceiveModal,
     },
     isExchangeAvailable &&
-      hasPositiveBalance && {
+    hasPositiveBalance && {
       title: tRoot('button.swap'),
       iconName: 'exchange',
       onPress: () => navigation.navigate(BRIDGE_FLOW),
@@ -108,7 +108,7 @@ function WalletTab({ isNavigateToHome }: Props) {
       onPress: () => navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW),
     },
     !isKeyBasedAccount(activeAccount) &&
-      !hasPositiveBalance && {
+    !hasPositiveBalance && {
       title: tRoot('button.addCash'),
       iconName: 'plus',
       onPress: () => openAddCashModal(),
@@ -122,7 +122,7 @@ function WalletTab({ isNavigateToHome }: Props) {
   return (
     <Container>
       <WalletTabScrollContent isNavigateToHome={isNavigateToHome} hasPositiveBalance={setHasPositiveBalance} />
-      <FloatingButtons items={buttons} />
+      {!isEtherspotAccount(activeAccount) && <FloatingButtons items={buttons} />}
     </Container>
   );
 }
