@@ -206,6 +206,17 @@ aliases:
       name: Install coureutils
       command: |
         brew install coreutils
+  - &awscli_install
+    run:
+      name: Install AWS CLI
+      command: |
+        if ! command -v aws &> /dev/null; then
+          echo "AWS CLI not found, installing..."
+          brew install awscli
+        else
+          echo "AWS CLI is already installed."
+        fi   
+
 jobs:
 
   build-and-test:
@@ -246,15 +257,9 @@ jobs:
       - checkout
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
-      - run:
-          name: Install AWS CLI
-          command: |
-            if ! command -v aws &> /dev/null; then
-              echo "AWS CLI not found, installing..."
-              brew install awscli
-            else
-              echo "AWS CLI is already installed."
-            fi          
+
+      - *awscli_install       
+      
       - aws-cli/setup:
           profile-name: WEB IDENTITY PROFILE
           role-arn: '$OIDC_CIRCLE_CI_ROLE_ARN'
@@ -533,15 +538,9 @@ jobs:
       - run: node --version
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
-      - run:
-          name: Install AWS CLI
-          command: |
-            if ! command -v aws &> /dev/null; then
-              echo "AWS CLI not found, installing..."
-              brew install awscli
-            else
-              echo "AWS CLI is already installed."
-            fi            
+          
+      - *awscli_install 
+
       - aws-cli/setup:
           profile-name: WEB IDENTITY PROFILE
           role-arn: '$OIDC_CIRCLE_CI_ROLE_ARN'
