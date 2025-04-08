@@ -24,7 +24,7 @@ platform :ios do
     )
 
     match(type: "appstore",
-          readonly: false,
+          readonly: true,
           git_branch: "master",
           app_identifier: "com.pillarproject.wallet",
           team_id: "J9DEY3FGPD"
