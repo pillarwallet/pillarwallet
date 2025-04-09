@@ -29,7 +29,6 @@ import type { Theme } from 'models/Theme';
 // Utils
 import { appFont, fontStyles, spacing } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
-import { openUrl } from 'utils/inAppBrowser';
 import { isValidURL } from 'utils/validators';
 import { reportOrWarn } from 'utils/common';
 import { isEtherspotAccount } from 'utils/accounts';
@@ -40,6 +39,7 @@ import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 // Services
 import { firebaseRemoteConfig } from 'services/firebase';
 import { useActiveAccount } from 'selectors';
+import { Linking } from 'react-native';
 
 interface IBanner {
   theme: Theme;
@@ -58,7 +58,7 @@ const MigrationBanner: FC<IBanner> = ({ theme }) => {
 
   const openLink = (url: string) => {
     if (isValidURL(url)) {
-      openUrl(url);
+      Linking.openURL(url);
     } else {
       reportOrWarn(`Migration Banner: navigation failed to open: ${url}`);
     }
