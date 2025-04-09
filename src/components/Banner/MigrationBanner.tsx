@@ -19,6 +19,7 @@
 */
 import React, { FC } from 'react';
 import styled, { withTheme } from 'styled-components/native';
+import { Linking } from 'react-native';
 
 // Components
 import Text from 'components/core/Text';
@@ -39,7 +40,6 @@ import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 // Services
 import { firebaseRemoteConfig } from 'services/firebase';
 import { useActiveAccount } from 'selectors';
-import { Linking } from 'react-native';
 
 interface IBanner {
   theme: Theme;
