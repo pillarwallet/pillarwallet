@@ -299,8 +299,8 @@ jobs:
           name: Set staging environment
           command: |
             cd ~/pillarwallet
-            git config --global user.email "devops@pillar.io"
-            git config --global user.name "Issabot"
+            git config user.email "devops@pillar.io"
+            git config user.name "Issabot"
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             npm --no-git-tag-version version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$APP_BUILD_NUMBER
             if [ "$CIRCLE_BRANCH" = "develop" ]; then
@@ -420,8 +420,8 @@ jobs:
           name: Set staging environment
           command: |
             cd ~/pillarwallet
-            git config --global user.email "devops@pillar.io"
-            git config --global user.name "Issabot"
+            git config user.email "devops@pillar.io"
+            git config user.name "Issabot"
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             npm --no-git-tag-version version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$APP_BUILD_NUMBER
             if [ "$CIRCLE_BRANCH" = "develop" ]; then
@@ -556,8 +556,8 @@ jobs:
       - run:
           name: Set production environment
           command: |
-            git config --global user.email "devops@pillar.io"
-            git config --global user.name "Issabot"
+            git config user.email "devops@pillar.io"
+            git config user.name "Issabot"
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             export buildNumber="$(cat /tmp/workspace/build-num/app_version.txt)"
             sed -i.bak "s/_build_type_/production/g" .env
@@ -680,8 +680,8 @@ jobs:
           name: Set production environment
           command: |
             cd ~/pillarwallet
-            git config --global user.email "devops@pillar.io"
-            git config --global user.name "Issabot"
+            git config user.email "devops@pillar.io"
+            git config user.name "Issabot"
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             export buildNumber="$(cat /tmp/workspace/build-num/app_version.txt)"
             sed -i.bak "s/_build_type_/production/g" .env
