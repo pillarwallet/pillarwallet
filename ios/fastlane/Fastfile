@@ -23,6 +23,9 @@ platform :ios do
       in_house: false,
     )
 
+    sh "git config --global user.email 'devops@pillar.io'"
+    sh "git config --global user.name 'Issabot'"
+
     match(type: "appstore",
           readonly: false,
           git_branch: "master",
@@ -79,6 +82,9 @@ platform :ios do
       key_filepath: "./AuthKey.p8",
       in_house: false,
     )
+
+    sh "git config --global user.email 'devops@pillar.io'"
+    sh "git config --global user.name 'Issabot'"
 
     #register_devices(devices_file: "./devices.txt")
     register_devices(
