@@ -19,6 +19,7 @@
 */
 import React, { FC } from 'react';
 import styled, { withTheme } from 'styled-components/native';
+import { Linking } from 'react-native';
 
 // Components
 import Text from 'components/core/Text';
@@ -29,7 +30,6 @@ import type { Theme } from 'models/Theme';
 // Utils
 import { appFont, fontStyles, spacing } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
-import { openUrl } from 'utils/inAppBrowser';
 import { isValidURL } from 'utils/validators';
 import { reportOrWarn } from 'utils/common';
 import { isEtherspotAccount } from 'utils/accounts';
@@ -58,7 +58,7 @@ const MigrationBanner: FC<IBanner> = ({ theme }) => {
 
   const openLink = (url: string) => {
     if (isValidURL(url)) {
-      openUrl(url);
+      Linking.openURL(url);
     } else {
       reportOrWarn(`Migration Banner: navigation failed to open: ${url}`);
     }
