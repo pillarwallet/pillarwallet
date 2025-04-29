@@ -205,6 +205,11 @@ jest.setMock('react-native-background-timer', {
   stopBackgroundTimer: () => {},
 });
 
+jest.setMock('@etherspot/modular-sdk', {
+  EtherspotBundler: jest.fn(),
+  ModularSdk: jest.fn(),
+});
+
 export const mockDeviceUniqueId = '1x1x1x1x1x1x1';
 
 jest.setMock('react-native-device-info', {
