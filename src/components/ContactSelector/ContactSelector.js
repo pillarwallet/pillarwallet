@@ -183,7 +183,7 @@ const ContactSelector = ({
 
   const onPressSelectPill = () => {
     if (selectedContact && !isKeyBasedAccount) {
-      onSelectContact(null);
+      onSelectContact?.(undefined);
       return;
     }
     openOptions();
@@ -192,12 +192,12 @@ const ContactSelector = ({
   const onSelectKeyWallet = () => {
     const ethAddress = keyBasedAccount?.id;
     const name = t('contactSelector.button.keyWallet');
-    onSelectContact({ ethAddress, name, icon: pllIcon });
+    onSelectContact?.({ ethAddress, name, icon: pllIcon });
   };
 
   const onSelectPillarXWallet = () => {
     const name = t('contactSelector.button.pillarXWallet');
-    onSelectContact({ ethAddress: pillarXAddress, name, icon: plrXLogo });
+    onSelectContact?.({ ethAddress: pillarXAddress, name, icon: plrXLogo });
   };
 
   const selectorList = [
@@ -246,7 +246,7 @@ const ContactSelector = ({
     }
 
     const icon = selectedContact?.icon;
-    const name = selectedContact.name || selectedContact.ensName || selectedContact.ethAddress;
+    const name = selectedContact?.name || selectedContact?.ensName || selectedContact?.ethAddress;
     const textProps = isValidAddress(name) ? { tiny: true } : { medium: true };
 
     return (

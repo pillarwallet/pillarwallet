@@ -26,4 +26,5 @@ export type Contact = {
   hash?: string,
   label?: string,
   state?: any,
+  icon?: any,
 };
