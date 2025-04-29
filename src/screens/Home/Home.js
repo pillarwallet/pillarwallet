@@ -119,7 +119,6 @@ function Home() {
   const activeAccount: any = getActiveAccount(accounts);
 
   const isKeyBasedAccount = activeAccount === keyBasedAccount;
-  const isEtherspotAccount = activeAccount === etherspotAccount;
 
   const canSwitchAccount = useAccounts().length > 1;
   const ensNodeState = getEnsNodeState(etherspotAccount);
@@ -302,7 +301,7 @@ function Home() {
             <AppsButton response={nativeIntegrationResponse} navigation={navigation} isShowLabel />
           </Content>
 
-          {!isEtherspotAccount && <FloatingActions />}
+          <FloatingActions />
           {isFetching && <OnboardingLoader />}
         </Container>
       </>

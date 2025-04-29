@@ -102,4 +102,5 @@ export default {
   darkViolet: '#54207d',
   darkBlackViolet: '#230636',
   red: '#FF0000',
+  violet: '#9D2AFF'
 };

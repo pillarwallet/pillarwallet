@@ -67,6 +67,10 @@ const copyIconDark = require('assets/icons/icon_copy_dark.png');
 const pillarIcon = require('assets/icons/pillar_icon.png');
 const plrStakingBg = require('assets/images/plr-staking-bg.png');
 const plrLogo = require('assets/images/logo.png');
+const plrXLogo = require('assets/icons/pillarX.png');
+const copyIcon = require('assets/icons/copy.png');
+const pllIcon = require('assets/icons/pll.png');
+const pencilIcon = require('assets/icons/pencil.png');
 
 // Patterns
 const landingPattern = require('assets/images/patterns/onboarding_pattern_top.png');
@@ -142,6 +146,10 @@ export const images = (theme: Theme) => {
       lightTheme: copyIconLight,
       darkTheme: copyIconDark,
     }),
+    copyIcon: getImageByTheme(currentTheme, {
+      lightTheme: copyIcon,
+      darkTheme: copyIcon,
+    }),
     pillarIcon: getImageByTheme(currentTheme, {
       lightTheme: pillarIcon,
       darkTheme: pillarIcon,
@@ -153,6 +161,18 @@ export const images = (theme: Theme) => {
     plrLogo: getImageByTheme(currentTheme, {
       lightTheme: plrLogo,
       darkTheme: plrLogo,
+    }),
+    plrXLogo: getImageByTheme(currentTheme, {
+      lightTheme: plrXLogo,
+      darkTheme: plrXLogo,
+    }),
+    pllIcon: getImageByTheme(currentTheme, {
+      lightTheme: pllIcon,
+      darkTheme: pllIcon,
+    }),
+    pencilIcon: getImageByTheme(currentTheme, {
+      lightTheme: pencilIcon,
+      darkTheme: pencilIcon,
     }),
   };
 };

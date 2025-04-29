@@ -41,6 +41,7 @@ export const buildEnvironment = {
   WEB3_AUTH_CLIENT_ID: '_web3_auth_client_id_',
   // eslint-disable-next-line i18next/no-literal-string
   WEB3_AUTH_TESTNET_CLIENT_ID: '_web3_auth_testnet_client_id_',
+  BUNDLER_API_KEY: '_bundler_api_key_',
 };
 
 // Optional Developer variables are fixed for both environment contexts, undefined by default

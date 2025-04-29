@@ -39,7 +39,7 @@ import { BRIDGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationCons
 import { useRootSelector, useIsExchangeAvailable, useActiveAccount, activeAccountAddressSelector } from 'selectors';
 
 // Utils
-import { isKeyBasedAccount, isEtherspotAccount } from 'utils/accounts';
+import { isKeyBasedAccount } from 'utils/accounts';
 import { showServiceLaunchErrorToast } from 'utils/inAppBrowser';
 
 // Local
@@ -90,6 +90,14 @@ function WalletTab({ isNavigateToHome }: Props) {
     setAddCashUrl(null);
   };
 
+  const sendButton = [
+    hasPositiveBalance && {
+      title: tRoot('button.send'),
+      iconName: 'send',
+      onPress: () => navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW),
+    },
+  ];
+
   const buttons = [
     hasPositiveBalance && {
       title: tRoot('button.receive'),
@@ -122,7 +130,7 @@ function WalletTab({ isNavigateToHome }: Props) {
   return (
     <Container>
       <WalletTabScrollContent isNavigateToHome={isNavigateToHome} hasPositiveBalance={setHasPositiveBalance} />
-      {!isEtherspotAccount(activeAccount) && <FloatingButtons items={buttons} />}
+      <FloatingButtons items={isKeyBasedAccount(activeAccount) ? buttons : sendButton} />
     </Container>
   );
 }
