@@ -181,7 +181,7 @@ const ContactSelector = ({
     }
   };
 
-  const onPressSelectPill = () => {
+  const onSelectPill = () => {
     if (selectedContact && !isKeyBasedAccount) {
       onSelectContact?.(undefined);
       return;
@@ -298,7 +298,7 @@ const ContactSelector = ({
   }
 
   return (
-    <SelectorPill onPress={onPressSelectPill} disabled={disabled}>
+    <SelectorPill onPress={onSelectPill} disabled={disabled}>
       {renderContact()}
     </SelectorPill>
   );
