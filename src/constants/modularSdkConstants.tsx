@@ -17,14 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export type Contact = {
-  name: string,
-  ethAddress: string,
-  ensName?: ?string,
-  zone?: 'UNS' | 'ENS' | 'FIO',
-  address?: string,
-  hash?: string,
-  label?: string,
-  state?: any,
-  icon?: any,
-};
+
+export const SET_PILLARX_ADDRESS = 'SET_PILLARX_ADDRESS';
+export const RESET_PILLARX_ADDRESS = 'RESET_PILLARX_ADDRESS';

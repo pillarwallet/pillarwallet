@@ -799,7 +799,14 @@
     "title": "发给",
     "button": {
       "addContact": "加至地址簿",
-      "skip": "跳过并发送"
+      "skip": "跳过并发送",
+      "pillarXWallet": "PillarX钱包",
+      "recommented": "受到推崇的",
+      "pillarXDescription": "将您的资产发送至此，立即享受 PillarX 带来的收益。通过交易赚取积分",
+      "keyWallet": "基于密钥的钱包 - EOA",
+      "keyWalletDescription": "将您的资产发送到您的基于密钥的钱包，稍后您将能够在 PillarX 中使用此帐户",
+      "customAddress": "自定义钱包地址",
+      "customAddressDescription": "手动输入任意以太坊地址。请确保地址正确，以免资金损失。"
     },
     "error": {
       "incorrectAddress": "地址不正确",

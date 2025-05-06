@@ -17,14 +17,39 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export type Contact = {
-  name: string,
-  ethAddress: string,
-  ensName?: ?string,
-  zone?: 'UNS' | 'ENS' | 'FIO',
-  address?: string,
-  hash?: string,
-  label?: string,
-  state?: any,
-  icon?: any,
+import { SET_PILLARX_ADDRESS, RESET_PILLARX_ADDRESS } from 'constants/modularSdkConstants';
+
+export type ModularSdkReducerState = {
+  pillarXAddress: string;
 };
+
+export type ModularSdkReducerAction = {
+  type: string;
+  payload: any;
+};
+
+const initialState = {
+  pillarXAddress: '',
+};
+
+const modularSdkReducer = (
+  state: ModularSdkReducerState = initialState,
+  action: ModularSdkReducerAction,
+): ModularSdkReducerState => {
+  switch (action.type) {
+    case SET_PILLARX_ADDRESS:
+      return {
+        ...state,
+        pillarXAddress: action.payload,
+      };
+    case RESET_PILLARX_ADDRESS:
+      return {
+        ...state,
+        pillarXAddress: '',
+      };
+    default:
+      return state;
+  }
+};
+
+export default modularSdkReducer;
