@@ -78,6 +78,15 @@ function FloatingActions() {
     }
   };
 
+  const sendItem = [
+    {
+      title: t('send'),
+      iconName: 'send',
+      onPress: () => navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW),
+      disabled: !isSendEnabled || isFetching,
+    },
+  ];
+
   const items = [
     {
       title: t('receive'),
@@ -109,7 +118,7 @@ function FloatingActions() {
     navigation.navigate(CONNECT_FLOW);
   };
 
-  return <FloatingButtons items={items} />;
+  return <FloatingButtons items={isKeyBasedAccount(activeAccount) ? items : sendItem} />;
 }
 
 const useEnabledActions = () => {

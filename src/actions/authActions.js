@@ -48,6 +48,7 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { NFT_FLAG } from 'constants/assetsConstants';
 import { SET_NEW_USER } from 'constants/onboardingConstants';
 import { REMOVE_APP_HOLDINGS } from 'constants/appsHoldingsConstants';
+import { RESET_PILLARX_ADDRESS } from 'constants/modularSdkConstants';
 
 // utils
 import { logBreadcrumb, reportLog } from 'utils/common';
@@ -70,6 +71,7 @@ import { firebaseAuth, firebaseMessaging, firebaseRemoteConfig } from 'services/
 import etherspotService from 'services/etherspot';
 import archanovaService from 'services/archanova';
 import { logoutWeb3Auth } from 'services/web3Auth';
+import { fetchPillarXAddress } from 'services/modularSDK';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -183,6 +185,8 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
     } else {
       dispatch({ type: SET_WALLET, payload: unlockedWallet });
     }
+
+    dispatch(fetchPillarXAddress(decryptedPrivateKey));
 
     const visibleNFTs = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_NFTS);
     logBreadcrumb('onboarding', 'finishOnboardingAction: dispatching app nfts flag');
@@ -459,6 +463,7 @@ export const logoutAction = () => {
     await dispatch(resetAppServicesAction());
 
     dispatch({ type: REMOVE_APP_HOLDINGS });
+    dispatch({ type: RESET_PILLARX_ADDRESS });
 
     // reset reducer state
     const { isOnline, translationsInitialised, fallbackLanguageVersion, sessionLanguageCode, sessionLanguageVersion } =

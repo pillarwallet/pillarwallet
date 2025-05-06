@@ -71,6 +71,7 @@ import addTokensReducer from './addTokensReducer';
 import addCustomTokensReducer from './addCustomTokensReducer';
 import defaultTokensReducer from './defaultTokensReducer';
 import manageExchangeGasFeeReducer from './exchangeGasFeeReducer';
+import modularSdkReducer from './modularSdkReducer';
 
 // local types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
@@ -122,6 +123,7 @@ import type { AddTokensReducerAction, AddTokensReducerState } from './addTokensR
 import type { AddCustomTokensReducerState, AddCustomTokensReducerAction } from './addCustomTokensReducer';
 import type { DefaultTokensReducerState, TokensAction } from './defaultTokensReducer';
 import type { ExchangeGasFeeReducerState, ExchangeGasFeeReducerAction } from './exchangeGasFeeReducer';
+import type { ModularSdkReducerState, ModularSdkReducerAction } from './modularSdkReducer';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -167,6 +169,7 @@ export type RootReducerState = {|
   customTokensList: AddCustomTokensReducerState,
   defaultTokens: DefaultTokensReducerState,
   exchangeGasFee: ExchangeGasFeeReducerState,
+  modularSdk: ModularSdkReducerState,
 |};
 
 type RootReducerAction =
@@ -203,7 +206,8 @@ type RootReducerAction =
   | DeployAccountsAction
   | AddTokensReducerAction
   | AddCustomTokensReducerAction
-  | ExchangeGasFeeReducerAction;
+  | ExchangeGasFeeReducerAction
+  | ModularSdkReducerAction;
 
 export type GetState = () => RootReducerState;
 export type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
@@ -257,6 +261,7 @@ const appReducer = combineReducers({
   customTokensList: addCustomTokensReducer,
   defaultTokens: defaultTokensReducer,
   exchangeGasFee: manageExchangeGasFeeReducer,
+  modularSdk: modularSdkReducer,
 });
 
 export const initialState = appReducer(undefined, {});

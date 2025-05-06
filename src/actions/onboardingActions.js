@@ -79,6 +79,7 @@ import { navigate } from 'services/navigation';
 import { firebaseMessaging, firebaseRemoteConfig } from 'services/firebase';
 import { getExistingServicesAccounts, isUsernameTaken } from 'services/onboarding';
 import etherspotService from 'services/etherspot';
+import { fetchPillarXAddress } from 'services/modularSDK';
 
 // actions
 import { importArchanovaAccountsIfNeededAction, managePPNInitFlagAction } from 'actions/smartWalletActions';
@@ -704,6 +705,8 @@ export const importWalletFromPrivateKeyAction = (privKey: string) => {
       payload: { mnemonic: mnemonic?.phrase?.mnemonic, address, privateKey, encrypt },
     });
 
+    dispatch(fetchPillarXAddress(privateKey));
+
     logBreadcrumb('onboarding', 'importWalletFromPrivateKeyAction: wallet imported from Mnemonic Action');
     dispatch(logEventAction('wallet_imported', { method: 'Social login' }));
     isLogV2AppEvents() && dispatch(logEventAction('v2_account_imported', { method: 'Social login' }));
@@ -770,6 +773,8 @@ export const importWalletFromMnemonicAction = (mnemonicInput: string) => {
       address,
       privateKey,
     } = importedWallet;
+
+    dispatch(fetchPillarXAddress(privateKey));
 
     logBreadcrumb('onboarding', 'importWalletFromMnemonicAction: dispatching SET_ONBOARDING_WALLET');
     dispatch({ type: SET_ONBOARDING_WALLET, payload: { mnemonic, address, privateKey } });

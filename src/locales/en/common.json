@@ -863,7 +863,14 @@
     "button": {
       "addContact": "Add to address book",
       "skip": "Skip and just send",
-      "sendingToExchangeWarning": "I'm not sending to an exchange"
+      "sendingToExchangeWarning": "I'm not sending to an exchange",
+      "pillarXWallet": "PillarX Wallet",
+      "recommented": "Recommended",
+      "pillarXDescription": "Send your assets here,\nbenefit NOW from PillarX. Earn points with trading",
+      "keyWallet": "Keybased Wallet - EOA",
+      "keyWalletDescription": "Send your assets to your keybased wallet, you will be able to use this account with PillarX at a later stage",
+      "customAddress": "Custom Wallet Address",
+      "customAddressDescription": "Enter any Ethereum address manually. Ensure it's correct to avoid loss of funds."
     },
     "error": {
       "incorrectAddress": "Incorrect address",

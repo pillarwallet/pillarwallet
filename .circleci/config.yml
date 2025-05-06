@@ -322,6 +322,7 @@ jobs:
             sed -i.bak "s#_sentry_dsn_#$SENTRY_DSN#g" ./src/configs/buildConfig.js
             sed -i.bak "s#_sentry_dsn_#$SENTRY_DSN#g" .env
             sed -i.bak "s/_wallet_connect_id_/$WALLETCONNECT_PROJECT_ID/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_bundler_api_key_/$BUNDLER_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_web3_auth_testnet_client_id_/$WEB3_AUTH_TESTNET_CLIENT_ID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
@@ -443,6 +444,7 @@ jobs:
             sed -i.bak "s#_sentry_dsn_#$SENTRY_DSN#g" ./src/configs/buildConfig.js
             sed -i.bak "s#_sentry_dsn_#$SENTRY_DSN#g" .env
             sed -i.bak "s/_wallet_connect_id_/$WALLETCONNECT_PROJECT_ID/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_bundler_api_key_/$BUNDLER_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_web3_auth_testnet_client_id_/$WEB3_AUTH_TESTNET_CLIENT_ID/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
@@ -570,6 +572,7 @@ jobs:
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
             sed -i.bak "s/_wallet_connect_id_/$WALLETCONNECT_PROJECT_ID/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_bundler_api_key_/$BUNDLER_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s#_sentry_dsn_#$SENTRY_DSN#g" ./src/configs/buildConfig.js
             sed -i.bak "s#_sentry_dsn_#$SENTRY_DSN#g" .env
             sed -i.bak "s/_web3_auth_client_id_/$WEB3_AUTH_CLIENT_ID/g" ./src/configs/buildConfig.js
@@ -694,6 +697,7 @@ jobs:
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
             sed -i.bak "s/_wallet_connect_id_/$WALLETCONNECT_PROJECT_ID/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_bundler_api_key_/$BUNDLER_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s#_sentry_dsn_#$SENTRY_DSN#g" ./src/configs/buildConfig.js
             sed -i.bak "s#_sentry_dsn_#$SENTRY_DSN#g" .env
             sed -i.bak "s/_web3_auth_client_id_/$WEB3_AUTH_CLIENT_ID/g" ./src/configs/buildConfig.js
