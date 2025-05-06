@@ -225,6 +225,7 @@
     "util": "~0.10.3",
     "uuid": "^3.3.2",
     "victory-native": "^35.3.1",
+    "viem": "^2.29.0",
     "vm-browserify": "0.0.4",
     "wallet-address-validator": "^0.2.4",
     "yup": "^0.32.9"
