@@ -235,7 +235,7 @@
     "@babel/plugin-transform-flow-strip-types": "^7.22.5",
     "@babel/preset-env": "^7.22.10",
     "@babel/preset-react": "^7.22.5",
-    "@babel/runtime": "^7.22.11",
+    "@babel/runtime": "^7.26.10",
     "@cfaester/enzyme-adapter-react-18": "^0.7.0",
     "@react-native/metro-config": "^0.72.11",
     "@storybook/addon-actions": "^5.3.12",
