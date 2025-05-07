@@ -64,7 +64,7 @@ platform :ios do
   desc "Release to adhoc TestFlight"
   lane :deploy_ios_appcenter do |options|
 
-    xcversion(version: "15.3.0")
+    xcversion(version: "16.2.0")
     MY_APP_ID = "com.pillarproject.wallet.staging"
     MY_PROFILE = "match AdHoc com.pillarproject.wallet.staging"
 
