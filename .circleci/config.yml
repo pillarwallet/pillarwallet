@@ -18,6 +18,7 @@ executors:
       _JAVA_OPTIONS: "-Xms128m -Xmx3024m"
       GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx1248m -XX:+HeapDumpOnOutOfMemoryError"'
       HOMEBREW_NO_AUTO_UPDATE: 1
+      DEVELOPER_DIR: "/Applications/Xcode-16.2.app/Contents/Developer"
 
     shell: /bin/bash --login -o pipefail
 
