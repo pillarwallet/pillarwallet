@@ -45,9 +45,6 @@ target 'pillarwallet' do
   pod 'Permission-PhotoLibrary', :path => "#{permissions_path}/PhotoLibrary.podspec"
   pod 'Permission-FaceID', :path => "#{permissions_path}/FaceID.podspec"
   
-  # Specify Sentry version compatible with Xcode 16.2
-  pod 'Sentry', '~> 8.9.0'
-  
   post_install do |installer|
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
