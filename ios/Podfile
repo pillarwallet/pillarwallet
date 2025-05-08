@@ -44,6 +44,9 @@ target 'pillarwallet' do
   pod 'Permission-Camera', :path => "#{permissions_path}/Camera.podspec"
   pod 'Permission-PhotoLibrary', :path => "#{permissions_path}/PhotoLibrary.podspec"
   pod 'Permission-FaceID', :path => "#{permissions_path}/FaceID.podspec"
+
+
+  pod 'Sentry', '~> 8.5.0'
   
   post_install do |installer|
     installer.pods_project.targets.each do |target|
