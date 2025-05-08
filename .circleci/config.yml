@@ -297,6 +297,7 @@ jobs:
             rm -rf Pods
             rm -rf Podfile.lock
             pod install --verbose
+            pod repo update
       - *save_pod_cache
 
       - run:
@@ -615,6 +616,7 @@ jobs:
             rm -rf Pods
             rm -rf Podfile.lock
             pod install --verbose
+            pod repo update
       - *save_pod_cache
 
       - run:

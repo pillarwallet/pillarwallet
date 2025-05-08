@@ -46,7 +46,7 @@ target 'pillarwallet' do
   pod 'Permission-FaceID', :path => "#{permissions_path}/FaceID.podspec"
   
   # Specify Sentry version compatible with Xcode 16.2 and React Native Sentry
-  pod 'Sentry', '7.22.0'
+  pod 'Sentry', '8.9.0'
   
   post_install do |installer|
     installer.pods_project.targets.each do |target|
