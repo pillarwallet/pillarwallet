@@ -42,7 +42,7 @@ import {
   WALLETCONNECT_CALL_REQUEST_SCREEN,
 } from 'constants/navigationConstants';
 import { ADD_WALLETCONNECT_V2_SESSION } from 'constants/walletConnectSessionsConstants';
-import { ETHERSPOT } from 'constants/walletConstants';
+import { ETHERSPOT, PILLARX } from 'constants/walletConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // components
@@ -112,6 +112,8 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
     // Disable for tx, sign request
     if (!isV2URI) return;
 
+    dispatch({ type: VISIBLE_WC_MODAL, payload: true });
+
     const toastId = Toast.show({
       message: t('toast.waitingForWalletConnectConnection'),
       emoji: 'zap',
@@ -157,11 +159,13 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
       firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_WALLETCONNECT_MIGRATION_MATCHER);
 
       if (activeAccount !== keyBasedAccount &&
-        ((appName?.includes(ETHERSPOT)) || (appName === pillarXMigrationWalletName))
+        (appName?.includes(ETHERSPOT) || (appName === pillarXMigrationWalletName) || appName?.includes(PILLARX))
       ) {
         if (keyBasedAccount?.id) {
           await dispatch(switchAccountAction(keyBasedAccount.id));
-          dispatch(dismissSwitchAccountTooltipAction(false));
+          if (appName?.includes(ETHERSPOT)) {
+            dispatch(dismissSwitchAccountTooltipAction(false));
+          }
         }
       }
 

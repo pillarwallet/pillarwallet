@@ -38,3 +38,4 @@ export const TOKENS = 'Tokens';
 export const STABLES = 'Stables';
 export const ALL = 'All';
 export const TODAY_FAILED_ATTEMPTS = 'TODAY_FAILED_ATTEMPTS';
+export const PILLARX = 'PillarX';
