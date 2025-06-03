@@ -66,9 +66,14 @@ import { accountAssetsPerChainSelector } from 'selectors/assets';
 
 // utils
 import { isNavigationAllowed } from 'utils/navigation';
-import { getAccountAddress, findKeyBasedAccount } from 'utils/accounts';
+import { getAccountAddress, findKeyBasedAccount, getActiveAccount } from 'utils/accounts';
 import { chainFromChainId, isTestnetChainId, isMainnetChainId, getSupportedChains } from 'utils/chains';
-import { isSupportedDappUrl, mapCallRequestToTransactionPayload, pickPeerIcon } from 'utils/walletConnect';
+import {
+  isSupportedDappUrl,
+  mapCallRequestToTransactionPayload,
+  pickPeerIcon,
+  getPillarXNameSpaces,
+} from 'utils/walletConnect';
 import { reportErrorLog } from 'utils/common';
 import { isProdEnv } from 'utils/environment';
 
@@ -155,11 +160,13 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
       const appName = proposal?.params?.proposer?.metadata?.name;
       const keyBasedAccount = findKeyBasedAccount(allAccounts);
 
-      const pillarXMigrationWalletName =
-      firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_WALLETCONNECT_MIGRATION_MATCHER);
+      const pillarXMigrationWalletName = firebaseRemoteConfig.getString(
+        REMOTE_CONFIG.APP_WALLETCONNECT_MIGRATION_MATCHER,
+      );
 
-      if (activeAccount !== keyBasedAccount &&
-        (appName?.includes(ETHERSPOT) || (appName === pillarXMigrationWalletName) || appName?.includes(PILLARX))
+      if (
+        activeAccount !== keyBasedAccount &&
+        (appName?.includes(ETHERSPOT) || appName === pillarXMigrationWalletName || appName?.includes(PILLARX))
       ) {
         if (keyBasedAccount?.id) {
           await dispatch(switchAccountAction(keyBasedAccount.id));
@@ -224,6 +231,11 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
           events: requiredNamespaces[key].events,
         };
       });
+
+      if (appName?.includes(PILLARX) && isEmpty(namespaces)) {
+        namespaces.eip155 = getPillarXNameSpaces(accountAddress);
+        chainId = '1';
+      }
 
       if (isEmpty(namespaces)) {
         return;
@@ -363,6 +375,7 @@ export const updateSessionV2Action = (updatedSession: Object, pairingTopic: stri
 export const approveWalletConnectV2ConnectorRequestAction = (id: number, namespaces: ?BaseNamespace | any) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
+      accounts: { data: accounts },
       walletConnect: { currentProposal },
     } = getState();
 
@@ -375,14 +388,23 @@ export const approveWalletConnectV2ConnectorRequestAction = (id: number, namespa
       dispatch(setWalletConnectErrorAction(t('error.walletConnect.invalidSession')));
       return;
     }
+    const activeAccount: any = getActiveAccount(accounts);
+    const accountAddress = getAccountAddress(activeAccount);
 
     const { relays, pairingTopic } = currentProposal.params;
+
+    const appName = currentProposal?.params?.proposer?.metadata?.name;
+
+    let newNamespace = namespaces;
+    if (appName?.includes(PILLARX) && isEmpty(namespaces)) {
+      newNamespace = { eip155: getPillarXNameSpaces(accountAddress) };
+    }
 
     try {
       await web3wallet?.approveSession({
         id,
         relayProtocol: relays[0].protocol,
-        namespaces,
+        namespaces: newNamespace,
       });
 
       const activeSessions: any = await web3wallet?.getActiveSessions();
