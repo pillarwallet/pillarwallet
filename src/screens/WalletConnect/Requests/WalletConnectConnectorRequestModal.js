@@ -110,7 +110,7 @@ function WalletConnectConnectorRequestModal({ isV2WC, connector, chainId }: Prop
 
       {!!description && <Description>{description}</Description>}
 
-      {!appName.includes(PILLARX) && (
+      {!appName?.includes(PILLARX) && (
         <WalletConnectSwitchNetwork
           isV2WC={isV2WC}
           chain={chain}
