@@ -191,16 +191,16 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, chains: v2Chains
   );
 
   const filterdV2Chains = useMemo(() => {
-    if (!isV2WC || !chain) return [];
+    if (!isV2WC || !v2Chains) return [];
     const chainInfo = [];
-    (v2Chains ?? ['eip155:1']).map((v2chain) => {
+    v2Chains.map((v2chain) => {
       const chainId = v2chain.split(':')?.[1];
       const v2ChainFromChainId = chainFromChainId[Number(chainId)];
       const requestedChainInfo = chains?.find((chainInfo) => chainInfo.chain === v2ChainFromChainId);
       if (!!requestedChainInfo) chainInfo.push(requestedChainInfo);
     });
     return chainInfo;
-  }, [v2Chains, isV2WC, activeAccount, chain]);
+  }, [v2Chains, isV2WC, activeAccount]);
    
   let pillarXMigrationWalletName = firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_WALLETCONNECT_MIGRATION_MATCHER);
 

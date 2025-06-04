@@ -48,6 +48,7 @@ import { getActiveAccount, isEtherspotAccount } from 'utils/accounts';
 
 // Constants
 import { CHAIN } from 'constants/chainConstants';
+import { PILLARX } from 'constants/walletConstants';
 
 // Local
 import WalletConnectSwitchNetwork from './WalletConnectSwitchNetwork';
@@ -109,13 +110,15 @@ function WalletConnectConnectorRequestModal({ isV2WC, connector, chainId }: Prop
 
       {!!description && <Description>{description}</Description>}
 
-      <WalletConnectSwitchNetwork
-        isV2WC={isV2WC}
-        chain={chain}
-        chains={chains}
-        onChangeChain={setSelectedChain}
-        appName={appName}
-      />
+      {!appName.includes(PILLARX) && (
+        <WalletConnectSwitchNetwork
+          isV2WC={isV2WC}
+          chain={chain}
+          chains={chains}
+          onChangeChain={setSelectedChain}
+          appName={appName}
+        />
+      )}
 
       <Button
         disabled={isActiveEtherspotAccount ? !isDeployedOnChain[selectedChain] : false}
