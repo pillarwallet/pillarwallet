@@ -268,3 +268,14 @@ export const getNewNamespace = (requiredNamespaces: Object, activeAccount: ?Acco
 
   return namespaces;
 };
+
+export const getPillarXNameSpaces = (accountAddress: string) => {
+  return {
+    // eslint-disable-next-line i18next/no-literal-string
+    accounts: [`eip155:1:${accountAddress}`],
+    // eslint-disable-next-line i18next/no-literal-string
+    events: ['chainChanged', 'accountsChanged'],
+    // eslint-disable-next-line i18next/no-literal-string
+    methods: ['eth_sendTransaction', 'personal_sign'],
+  };
+};

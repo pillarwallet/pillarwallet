@@ -2130,10 +2130,10 @@
   resolved "https://registry.yarnpkg.com/@etherspot/contracts/-/contracts-1.9.9.tgz#2947e4de7c383519e3223ec23f2a14783e04004a"
   integrity sha512-n53Z39VNmRxPR7XWZ8gkj+gmeMrJka6RfJLRWCDUbVGyKd1sLixd+8e2qqobrpcBYn4uazqAvzWokfqLp5wxRw==
 
-"@etherspot/modular-sdk@^5.1.1":
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/@etherspot/modular-sdk/-/modular-sdk-5.1.1.tgz#2c9cf9381fb0f4150f49169b70ba1a1a86d7546f"
-  integrity sha512-U0f2/Pf/SFv+uNz6uBoStsScevbfqcoHPLmpq+tUqH94aTSUMYBF51w25lEHJsuvd9Hw5Be5indDvNJb1XcqUw==
+"@etherspot/modular-sdk@^6.1.0":
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/@etherspot/modular-sdk/-/modular-sdk-6.1.0.tgz#993b1873c83b01c0683cab258aea7081b8b32372"
+  integrity sha512-3SFM9V9gWxSNfelLlcUBs4MpdeF6kdY6L2VknFxEezhHx8/3Qya9viv3Dfr5pWgjbS2mXrkhjZw3VuAw25yDeQ==
   dependencies:
     "@lifi/sdk" "2.5.0"
     "@thehubbleproject/bls" "0.5.1"
