@@ -72,7 +72,7 @@ import {
   isSupportedDappUrl,
   mapCallRequestToTransactionPayload,
   pickPeerIcon,
-  getPillarXNameSpaces,
+  getRequiredNameSpaces,
 } from 'utils/walletConnect';
 import { reportErrorLog } from 'utils/common';
 import { isProdEnv } from 'utils/environment';
@@ -232,8 +232,8 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
         };
       });
 
-      if (appName?.includes(PILLARX) && isEmpty(namespaces)) {
-        namespaces.eip155 = getPillarXNameSpaces(accountAddress);
+      if (isEmpty(namespaces)) {
+        namespaces.eip155 = getRequiredNameSpaces(accountAddress);
         chainId = '1';
       }
 
@@ -393,11 +393,9 @@ export const approveWalletConnectV2ConnectorRequestAction = (id: number, namespa
 
     const { relays, pairingTopic } = currentProposal.params;
 
-    const appName = currentProposal?.params?.proposer?.metadata?.name;
-
     let newNamespace = namespaces;
-    if (appName?.includes(PILLARX) && isEmpty(namespaces)) {
-      newNamespace = { eip155: getPillarXNameSpaces(accountAddress) };
+    if (isEmpty(namespaces)) {
+      newNamespace = { eip155: getRequiredNameSpaces(accountAddress) };
     }
 
     try {

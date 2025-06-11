@@ -22,6 +22,7 @@ import React, { FC, ReactElement, useRef, useEffect, useMemo } from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View, Modal as RNModal } from 'react-native';
 import { useTranslationWithPrefix } from 'translations/translate';
 import { useDispatch } from 'react-redux';
+import { isEmpty } from 'lodash';
 
 // Components
 import Text from 'components/core/Text';
@@ -244,6 +245,7 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, chains: v2Chains
         keyExtractor={(item) => item.id}
       />
 
+      {!isEmpty(filterdV2Chains) &&
       <View
         ref={btnRef}
         onLayout={(event) => {
@@ -259,6 +261,7 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, chains: v2Chains
 
         {showList && <View style={[styles.line, { backgroundColor: colors.basic050 }]} />}
       </View>
+      }
 
       <ListModal />
     </>
