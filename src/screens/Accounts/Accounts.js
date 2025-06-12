@@ -169,7 +169,7 @@ const AccountsModal = ({
               {`${address.substring(0, 4)}...${address.substring(address.length - 4)}${
                 isActive && username ? ` (${username})` : ''
               }`}
-              <TextContent style={[addressText, { color: colors.basic001 }]}> - {t('button.copy')}</TextContent>
+              <TextContent style={[addressText, { color: colors.basic000 }]}> - {t('button.copy')}</TextContent>
             </TextContent>
           </TextButton>
         </ContainerView>
