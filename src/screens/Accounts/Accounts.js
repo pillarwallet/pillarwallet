@@ -164,7 +164,10 @@ const AccountsModal = ({
             </TitleContainer>
             <Value style={isActive && { fontFamily: appFont.medium }}>{balance}</Value>
           </RowContainer>
-          <TextButton onPress={() => handleCopyToClipboard(address)}>
+          <TextButton
+            style={[isActive && username && { width: '100%' }]}
+            onPress={() => handleCopyToClipboard(address)}
+          >
             <TextContent style={addressText} numberOfLines={1}>
               {`${address.substring(0, 4)}...${address.substring(address.length - 4)}${
                 isActive && username ? ` (${username})` : ''
@@ -263,7 +266,7 @@ const TextContent = styled(Text)`
 
 
 const TextButton = styled(TouchableOpacity)`
-  width: 50%;
+  width: 190px;
 `;
 
 const mapStateToProps = ({
