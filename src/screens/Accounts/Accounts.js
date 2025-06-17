@@ -23,23 +23,24 @@ import { connect, useDispatch } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { sortBy } from 'lodash';
 import t from 'translations/translate';
+import Clipboard from '@react-native-community/clipboard';
+import { TouchableOpacity } from 'react-native';
 
 // components
 import SlideModal from 'components/Modals/SlideModal';
 import Text from 'components/core/Text';
-import Icon from 'components/core/Icon';
 import RadioButton from 'components/RadioButton';
+import Toast from 'components/Toast';
 
 // utils
 import { getAccountName, isEtherspotAccount } from 'utils/accounts';
 import { calculateTotalBalance } from 'utils/totalBalances';
 import { fontStyles, appFont, spacing, borderRadiusSizes } from 'utils/variables';
 import { images } from 'utils/images';
-import { useTheme, getThemeColors, useIsDarkTheme } from 'utils/themes';
+import { useTheme, getThemeColors } from 'utils/themes';
 import { formatFiat, getEnsPrefix } from 'utils/common';
 
 // constants
-import { KEY_BASED_ASSET_TRANSFER_INTRO, ENS_MIGRATION_CONFIRM } from 'constants/navigationConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -108,7 +109,6 @@ const AccountsModal = ({
   const theme = useTheme();
   const dispatch = useDispatch();
   const colors = getThemeColors(theme);
-  const isDarkTheme = useIsDarkTheme();
   const fiatCurrency = useFiatCurrency();
   const isEnsMigrationNeeded = useRootSelector(isEnsMigrationNeededSelector);
   const modalRef = useRef(null);
@@ -129,6 +129,11 @@ const AccountsModal = ({
     navigation.goBack(null);
   };
 
+  const handleCopyToClipboard = (address: string) => {
+    Clipboard.setString(address);
+    Toast.show({ message: t('toast.addressCopiedToClipboard'), emoji: 'ok_hand', autoClose: true });
+  };
+
   const renderListItem = (item) => {
     const {
       title,
@@ -136,10 +141,8 @@ const AccountsModal = ({
       mainAction,
       isActive,
       id,
-      showKeyBasedAssetMigrationButton,
       address,
       username,
-      showEnsMigrationBanner,
     } = item;
 
     return (
@@ -161,37 +164,17 @@ const AccountsModal = ({
             </TitleContainer>
             <Value style={isActive && { fontFamily: appFont.medium }}>{balance}</Value>
           </RowContainer>
-          <TextContent style={addressText} numberOfLines={1}>
-            {`${address.substring(0, 4)}...${address.substring(address.length - 4)}${
-              isActive && username ? ` (${username})` : ''
-            }`}
-          </TextContent>
-          <MigrationButtons>
-            {showKeyBasedAssetMigrationButton && (
-              <RowContainer>
-                <IconContainer
-                  name={isDarkTheme ? 'asset-migration-dark' : 'asset-migration'}
-                  onPress={() => navigation.navigate(KEY_BASED_ASSET_TRANSFER_INTRO)}
-                />
-                <BannerText color={colors.link} onPress={() => navigation.navigate(KEY_BASED_ASSET_TRANSFER_INTRO)}>
-                  {' '}
-                  {t('label.assetMigrate', { mediumText: true, color: colors.link })}
-                </BannerText>
-              </RowContainer>
-            )}
-            {showEnsMigrationBanner && (
-              <RowContainer>
-                <IconContainer
-                  name={isDarkTheme ? 'ens-migration-dark' : 'ens-migration'}
-                  onPress={() => navigation.navigate(ENS_MIGRATION_CONFIRM)}
-                />
-                <BannerText color={colors.link} onPress={() => navigation.navigate(ENS_MIGRATION_CONFIRM)}>
-                  {' '}
-                  {t('label.ensMigrate', { mediumText: true, color: colors.link })}
-                </BannerText>
-              </RowContainer>
-            )}
-          </MigrationButtons>
+          <TextButton
+            style={[isActive && username && { width: '100%' }]}
+            onPress={() => handleCopyToClipboard(address)}
+          >
+            <TextContent style={addressText} numberOfLines={1}>
+              {`${address.substring(0, 4)}...${address.substring(address.length - 4)}${
+                isActive && username ? ` (${username})` : ''
+              }`}
+              <TextContent style={[addressText, { color: colors.basic000 }]}> - {t('button.copy')}</TextContent>
+            </TextContent>
+          </TextButton>
         </ContainerView>
       </Container>
     );
@@ -281,18 +264,9 @@ const TextContent = styled(Text)`
   padding: 0 ${spacing.medium}px 0 ${0}px;
 `;
 
-const BannerText = styled(Text)`
-  ${fontStyles.medium};
-  padding-left: ${spacing.extraSmall}px;
-`;
 
-const IconContainer = styled(Icon)``;
-
-const MigrationButtons = styled.View`
-  flex-direction: column;
-  margin-left: 32px;
-  align-items: flex-start;
-  justify-content: flex-start;
+const TextButton = styled(TouchableOpacity)`
+  width: 190px;
 `;
 
 const mapStateToProps = ({
