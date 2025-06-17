@@ -29,12 +29,7 @@ import type { Route } from '@react-navigation/native';
 // Components
 import { Container, Content } from 'components/layout/Layout';
 import HeaderBlock from 'components/HeaderBlock';
-import MigrateEnsBanner from 'components/Banners/MigrateEnsBanner';
-import MigrateWalletBanner from 'components/Banners/MigrateWalletBanner';
 import Banner from 'components/Banner/Banner';
-
-// Screens
-import WalletMigrationArchanovaBanner from 'screens/WalletMigrationArchanova/Banner';
 
 // Constants
 import { MENU_SETTINGS, CONTACTS_FLOW, STORYBOOK, ADD_TOKENS } from 'constants/navigationConstants';
@@ -50,7 +45,6 @@ import { emailSupport } from 'services/emailSupport';
 
 // Utils
 import { useIsDarkTheme, useThemeColors } from 'utils/themes';
-import { spacing } from 'utils/variables';
 
 // Assets
 import PillarLogo from 'assets/images/pillar-logo-small.svg';
@@ -148,12 +142,6 @@ const Menu = ({ route }: Props) => {
 
         <Banner screenName={screenName} bottomPosition />
 
-        <BannersContainer>
-          <MigrateEnsBanner style={styles.banner} />
-          <WalletMigrationArchanovaBanner style={styles.banner} />
-          <MigrateWalletBanner style={styles.banner} />
-        </BannersContainer>
-
         <FlexSpacer />
         <MenuFooter />
       </Content>
@@ -162,16 +150,6 @@ const Menu = ({ route }: Props) => {
 };
 
 export default Menu;
-
-const styles = {
-  banner: {
-    marginTop: spacing.medium,
-  },
-};
-
-const BannersContainer = styled.View`
-  padding: ${spacing.medium}px ${spacing.large}px ${spacing.large}px;
-`;
 
 const FlexSpacer = styled.View`
   flex-grow: 1;
