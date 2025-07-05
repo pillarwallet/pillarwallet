@@ -19,7 +19,7 @@
 */
 
 import React, { useEffect } from 'react';
-import { Keyboard, Dimensions } from 'react-native';
+import { Keyboard, PermissionsAndroid, Dimensions, Platform } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
@@ -67,6 +67,16 @@ function GetNotifincations() {
   };
 
   const onNotificationRequest = async () => {
+    if (Platform.OS === 'android' && Platform.Version >= 33) {
+      const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+      if (granted == PermissionsAndroid.RESULTS.GRANTED) {
+        await setNotificationsVisibleStatus(dispatch, true);
+        navigation.navigate(nextRoute);
+      } else {
+        errorToast();
+      }
+      return;
+    }
     const authorizationStatus = await messaging().requestPermission();
     if (authorizationStatus) {
       if (await hasFCMPermission()) {
