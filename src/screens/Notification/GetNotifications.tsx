@@ -19,7 +19,7 @@
 */
 
 import React, { useEffect } from 'react';
-import { Keyboard, Dimensions } from 'react-native';
+import { Keyboard, PermissionsAndroid, Dimensions, Platform } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
@@ -38,7 +38,7 @@ import Toast from 'components/Toast';
 // Utils
 import { spacing, fontStyles } from 'utils/variables';
 import { useDispatch } from 'react-redux';
-import { setNotificationsVisibleStatus } from 'utils/getNotification';
+import { setNotificationsVisibleStatus, setNotificationsPermission } from 'utils/getNotification';
 import { useThemeColors } from 'utils/themes';
 
 // Actions
@@ -67,7 +67,19 @@ function GetNotifincations() {
   };
 
   const onNotificationRequest = async () => {
+    if (Platform.OS === 'android' && Platform.Version >= 33) {
+      const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+      setNotificationsPermission(dispatch, granted);
+      if (granted == PermissionsAndroid.RESULTS.GRANTED) {
+        await setNotificationsVisibleStatus(dispatch, true);
+        navigation.navigate(nextRoute);
+      } else {
+        errorToast();
+      }
+      return;
+    }
     const authorizationStatus = await messaging().requestPermission();
+    setNotificationsPermission(dispatch, authorizationStatus);
     if (authorizationStatus) {
       if (await hasFCMPermission()) {
         await setNotificationsVisibleStatus(dispatch, true);
