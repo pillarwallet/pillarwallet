@@ -29,6 +29,10 @@ import Toast from 'components/Toast';
 // Local
 import Storage from 'services/storage';
 
+// Type
+import type { Dispatch } from 'reducers/rootReducer';
+
+
 export async function getNotificationsVisibleStatus() {
   const storage: any = Storage.getInstance('db');
   const status: any = await storage.get('get_notifications');
@@ -47,4 +51,14 @@ export async function setNotificationsVisibleStatus(dispatch: any, status: boole
       emoji: 'call_me_hand',
     });
   }
+}
+
+export function setNotificationsPermission(dispatch: Dispatch, status: any) {
+    dispatch(saveDbAction('notifications_permission', { status }));
+}
+
+export async function getNotificationsPermission() {
+  const storage: any = Storage.getInstance('db');
+  const permission: any = await storage.get('notifications_permission');
+  return permission?.status;
 }

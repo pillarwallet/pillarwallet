@@ -19,12 +19,13 @@
 */
 
 import * as React from 'react';
-import { BackHandler } from 'react-native';
+import { BackHandler, PermissionsAndroid, Platform } from 'react-native';
 import { useNavigation, useFocusEffect, useRoute } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'translations/translate';
 import { ENSNodeStates } from 'etherspot';
 import Swiper from 'react-native-swiper';
+import messaging from '@react-native-firebase/messaging';
 
 // Actions
 import { fetchAllAccountsAssetsBalancesAction } from 'actions/assetsActions';
@@ -67,6 +68,12 @@ import { calculateTotalBalancePerCategory } from 'utils/totalBalances';
 import { useThemeColors } from 'utils/themes';
 import { getEnsNodeState, getActiveAccount, findKeyBasedAccount } from 'utils/accounts';
 import { getActiveScreenName } from 'utils/navigation';
+import { reportLog, logBreadcrumb } from 'utils/common';
+import {
+  setNotificationsVisibleStatus,
+  setNotificationsPermission,
+  getNotificationsPermission,
+} from 'utils/getNotification';
 
 // Hooks
 import useWalletConnect from 'hooks/useWalletConnect';
@@ -138,6 +145,36 @@ function Home() {
     callVisibleBalanceFunction();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  React.useEffect(() => {
+    // if (status === 'denied' || status === 'granted') return;
+    (async () => {
+      const status = await getNotificationsPermission();
+      if (['never_ask_again', 'granted', 0, 1, '1', '0'].includes(status)) return;
+      try {
+        if (Platform.OS === 'android' && Platform.Version >= 33) {
+          const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+          await setNotificationsPermission(dispatch, granted);
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            logBreadcrumb('Notification permission granted', granted);
+            await setNotificationsVisibleStatus(dispatch, true);
+          } else {
+            logBreadcrumb('Notification permission denied', granted);
+          }
+          return;
+        }
+        const authStatus = await messaging().requestPermission();
+        const enabled =
+          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+          authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+        setNotificationsPermission(dispatch, authStatus);
+        if (enabled) await setNotificationsVisibleStatus(dispatch, true);
+        logBreadcrumb('Firebase messaging permission:', enabled ? 'granted' : 'denied');
+      } catch (error) {
+        reportLog('Failed to request notification permissions:', error);
+      }
+    })();
+  }, [dispatch]);
 
   useFocusEffect(
     React.useCallback(() => {

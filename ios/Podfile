@@ -1,13 +1,25 @@
-# Resolve react_native_pods.rb with node to allow for hoisting
+ def node_require(script)
+   # Resolve script with node to allow for hoisting
+   require Pod::Executable.execute_command('node', ['-p',
+     "require.resolve(
+       '#{script}',
+       {paths: [process.argv[1]]},
+     )", __dir__]).strip
+ end
 
-require Pod::Executable.execute_command('node', ['-p',
-  'require.resolve(
-    "react-native/scripts/react_native_pods.rb",
-    {paths: [process.argv[1]]},
-  )', __dir__]).strip
+# Use it to require both react-native's and this package's scripts:
+ node_require('react-native/scripts/react_native_pods.rb')
+ node_require('react-native-permissions/scripts/setup.rb')
 
 platform :ios, 13
 prepare_react_native_project!
+
+setup_permissions([
+  'Camera',
+  'FaceID',
+  'Notifications',
+  'PhotoLibrary',
+])
 
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
@@ -20,6 +32,9 @@ target 'pillarwallet' do
 
   # Flags change depending on the env values.
   flags = get_default_flags()
+
+  use_frameworks! :linkage => :static
+  $RNFirebaseAsStaticFramework = true
 
   use_react_native!(
     :path => config[:reactNativePath],
@@ -38,12 +53,6 @@ target 'pillarwallet' do
   ### Custom Pods
   # pod for splash gif
   pod 'SwiftyGif', :git => 'https://github.com/kirualex/SwiftyGif'
-  
-  # react-native-permissions:
-  permissions_path = '../node_modules/react-native-permissions/ios'
-  pod 'Permission-Camera', :path => "#{permissions_path}/Camera.podspec"
-  pod 'Permission-PhotoLibrary', :path => "#{permissions_path}/PhotoLibrary.podspec"
-  pod 'Permission-FaceID', :path => "#{permissions_path}/FaceID.podspec"
   
   post_install do |installer|
     installer.pods_project.targets.each do |target|
