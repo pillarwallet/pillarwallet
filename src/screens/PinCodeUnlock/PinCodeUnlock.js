@@ -18,11 +18,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { AppState, Dimensions } from 'react-native';
+import { AppState, Dimensions, PermissionsAndroid, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import t from 'translations/translate';
 import NetInfo, { NetInfoState, NetInfoSubscription } from '@react-native-community/netinfo';
+import messaging from '@react-native-firebase/messaging';
 
 // actions
 import { loginAction } from 'actions/authActions';
@@ -46,7 +47,7 @@ import PinCode from 'components/PinCode';
 import { Spacing } from 'components/layout/Layout';
 
 // utils
-import { addAppStateChangeListener } from 'utils/common';
+import { addAppStateChangeListener, reportLog, logBreadcrumb } from 'utils/common';
 import {
   getKeychainDataObject,
   getPrivateKeyFromKeychainData,
@@ -140,6 +141,27 @@ class PinCodeUnlock extends React.Component<Props, State> {
     const { lastAppState } = this.state;
 
     if (route?.params?.forcePin) return;
+
+    (async () => {
+      try {
+        if (Platform.OS === 'android' && Platform.Version >= 33) {
+          const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            logBreadcrumb('Notification permission granted', granted);
+          } else {
+            logBreadcrumb('Notification permission denied', granted);
+          }
+          return;
+        }
+        const authStatus = await messaging().requestPermission();
+        const enabled =
+          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+          authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+        logBreadcrumb('Firebase messaging permission:', enabled ? 'granted' : 'denied');
+      } catch (error) {
+        reportLog('Failed to request notification permissions:', error);
+      }
+    })();
 
     (async () => {
       await NetInfo.fetch()
