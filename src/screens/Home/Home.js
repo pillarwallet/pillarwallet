@@ -19,12 +19,13 @@
 */
 
 import * as React from 'react';
-import { BackHandler } from 'react-native';
+import { BackHandler, PermissionsAndroid, Platform } from 'react-native';
 import { useNavigation, useFocusEffect, useRoute } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'translations/translate';
 import { ENSNodeStates } from 'etherspot';
 import Swiper from 'react-native-swiper';
+import messaging from '@react-native-firebase/messaging';
 
 // Actions
 import { fetchAllAccountsAssetsBalancesAction } from 'actions/assetsActions';
@@ -136,6 +137,14 @@ function Home() {
   React.useEffect(() => {
     dispatch(fetchNativeIntegration());
     callVisibleBalanceFunction();
+
+    (async () => {
+      if (Platform.OS === 'android' && Platform.Version >= 33) {
+        await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+        return;
+      }
+      await messaging().requestPermission();
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
