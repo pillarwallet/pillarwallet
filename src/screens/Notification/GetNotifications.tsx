@@ -38,7 +38,7 @@ import Toast from 'components/Toast';
 // Utils
 import { spacing, fontStyles } from 'utils/variables';
 import { useDispatch } from 'react-redux';
-import { setNotificationsVisibleStatus } from 'utils/getNotification';
+import { setNotificationsVisibleStatus, setNotificationsPermission } from 'utils/getNotification';
 import { useThemeColors } from 'utils/themes';
 
 // Actions
@@ -69,6 +69,7 @@ function GetNotifincations() {
   const onNotificationRequest = async () => {
     if (Platform.OS === 'android' && Platform.Version >= 33) {
       const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+      setNotificationsPermission(dispatch, granted);
       if (granted == PermissionsAndroid.RESULTS.GRANTED) {
         await setNotificationsVisibleStatus(dispatch, true);
         navigation.navigate(nextRoute);
@@ -78,6 +79,7 @@ function GetNotifincations() {
       return;
     }
     const authorizationStatus = await messaging().requestPermission();
+    setNotificationsPermission(dispatch, authorizationStatus);
     if (authorizationStatus) {
       if (await hasFCMPermission()) {
         await setNotificationsVisibleStatus(dispatch, true);
