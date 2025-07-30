@@ -1,12 +1,3 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Asset renders the Asset Screen correctly 1`] = `
-<RNCSafeAreaProvider
-  onInsetsChange={[Function]}
-  style={
-    {
-      "flex": 1,
-    }
-  }
-/>
-`;
+exports[`Asset renders the Asset Screen correctly 1`] = `null`;

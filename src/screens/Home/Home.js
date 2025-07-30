@@ -191,9 +191,9 @@ function Home() {
         return true;
       };
 
-      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
 
-      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+      return () => backHandler.remove();
     }, [currentSwiperIndex]),
   );
 

@@ -21,8 +21,6 @@
 // This script runs at the beginning of all unit tests
 import 'react-native-gesture-handler/jestSetup';
 import React from 'react';
-import Enzyme from 'enzyme';
-import Adapter from '@cfaester/enzyme-adapter-react-18';
 import { JSDOM } from 'jsdom';
 import { BN } from 'ethereumjs-util'; // same BigNumber library as in Archanova SDK
 import { View as mockView } from 'react-native';
@@ -63,11 +61,12 @@ function copyProps(src, target) {
   });
 }
 
+// $FlowFixMe[prop-missing]
+global.window = window;
 global.document = window.document;
 
 copyProps(window, global);
 
-Enzyme.configure({ adapter: new Adapter() });
 
 // Ignore React Web errors when using React Native
 (console: any).error = (message) => {
@@ -80,6 +79,11 @@ const MockAsyncStorage = new StorageMock(storageCache);
 jest.mock('@react-native-async-storage/async-storage', () => MockAsyncStorage);
 
 jest.mock('react-native-safe-area-view', () => ({ children }) => <>{children}</>);
+
+jest.mock('@react-native-clipboard/clipboard', () => ({
+  getString: jest.fn(() => Promise.resolve('mocked clipboard text')),
+  setString: jest.fn(),
+}));
 
 // Source: https://reactnavigation.org/docs/testing/#mocking-native-modules
 // jest.mock('react-native-reanimated', () => {

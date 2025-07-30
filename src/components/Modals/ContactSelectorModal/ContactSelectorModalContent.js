@@ -21,7 +21,7 @@
 import * as React from 'react';
 import { Keyboard, KeyboardAvoidingView, FlatList } from 'react-native';
 import { useDispatch } from 'react-redux';
-import Clipboard from '@react-native-community/clipboard';
+import Clipboard from '@react-native-clipboard/clipboard';
 import SafeAreaView from 'react-native-safe-area-view';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';

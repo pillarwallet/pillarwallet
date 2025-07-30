@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { SvgCssUri } from 'react-native-svg';
+import { SvgCssUri } from 'react-native-svg/css';
 
 // Components
 import Image from 'components/Image';
@@ -67,7 +67,7 @@ const TouchableContainer = styled.TouchableOpacity`
   margin: ${spacing.extraSmall}px;
   padding: 16px;
   border-radius: 10px;
-  background-color: ${({ theme }) => theme.colors.basic050}};
+  background-color: ${({ theme }) => theme.colors.basic050};
 `;
 
 const IconContainer = styled.View`

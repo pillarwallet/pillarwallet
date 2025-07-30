@@ -117,9 +117,9 @@ const styles = {
 };
 
 const Container = styled.View`
-  margin-top: 13px
+  margin-top: 13px;
   padding: 32px 22px;
-  padding-top: ${Platform.OS === 'android' ? 5 : 0}
+  padding-top: ${Platform.OS === 'android' ? 5 : 0}px;
 `;
 
 const PlacerholderContainer = styled.View`

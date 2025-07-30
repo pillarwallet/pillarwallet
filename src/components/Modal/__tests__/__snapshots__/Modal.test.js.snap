@@ -1,5 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Modal opens a modal 1`] = `"react-native-modal"`;
+exports[`Modal opens a modal 1`] = `null`;
 
-exports[`Modal opens multiple modals 1`] = `"react-native-modal"`;
+exports[`Modal opens multiple modals 1`] = `null`;

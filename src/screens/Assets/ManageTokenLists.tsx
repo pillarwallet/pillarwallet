@@ -23,7 +23,7 @@ import { Keyboard } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'translations/translate';
 import styled from 'styled-components/native';
-import Clipboard from '@react-native-community/clipboard';
+import Clipboard from '@react-native-clipboard/clipboard';
 import { useDispatch } from 'react-redux';
 import { isEmpty } from 'lodash';
 import { useDebounce } from 'use-debounce';

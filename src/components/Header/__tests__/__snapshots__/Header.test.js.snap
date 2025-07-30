@@ -3,45 +3,39 @@
 exports[`Header should render Header correctly 1`] = `
 <View
   style={
-    [
-      {
-        "borderBottomWidth": 0,
-        "paddingBottom": 0,
-        "paddingLeft": 16,
-        "paddingRight": 16,
-        "paddingTop": 0,
-        "zIndex": 10,
-      },
-    ]
+    {
+      "borderBottomWidth": 0,
+      "paddingBottom": 0,
+      "paddingLeft": 16,
+      "paddingRight": 16,
+      "paddingTop": 0,
+      "zIndex": 10,
+    }
   }
 >
   <View
     style={
-      [
-        {
-          "alignItems": "flex-end",
-          "flexDirection": "row",
-          "height": 50,
-          "justifyContent": "flex-end",
-          "marginBottom": 4,
-          "marginTop": 20,
-        },
-      ]
+      {
+        "alignItems": "flex-end",
+        "flexDirection": "row",
+        "height": 50,
+        "justifyContent": "flex-end",
+        "marginBottom": 4,
+        "marginTop": 20,
+      }
     }
   >
     <View
       flex={1}
       showTitleLeft={false}
       style={
-        [
-          {
-            "alignItems": "flex-end",
-            "flexBasis": 0,
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-start",
-          },
-        ]
+        {
+          "alignItems": "flex-end",
+          "flexBasis": 0,
+          "flexGrow": 1,
+          "flexShrink": 1,
+          "justifyContent": "flex-start",
+        }
       }
     >
       <View
@@ -112,16 +106,14 @@ exports[`Header should render Header correctly 1`] = `
       flex={1}
       onClose={[Function]}
       style={
-        [
-          {
-            "alignItems": "flex-end",
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-        ]
+        {
+          "alignItems": "flex-end",
+          "flexBasis": 0,
+          "flexDirection": "row",
+          "flexGrow": 1,
+          "flexShrink": 1,
+          "justifyContent": "flex-end",
+        }
       }
     />
   </View>

@@ -72,16 +72,16 @@ describe('Offline middleware', () => {
         type: 'USERINFO',
       };
       offlineMiddleware({ getState, dispatch: dispatchMock })(next)(action);
-      expect(next).toBeCalledWith(action);
-      expect(dispatchMock).not.toBeCalled();
+      expect(next).toHaveBeenCalledWith(action);
+      expect(dispatchMock).not.toHaveBeenCalled();
     });
 
     it('should dispatch nothing on ONLINE or additionalTriggers actions when the queue is empty', () => {
       const actions = [ONLINE, ...middlewareConfig.additionalTriggers];
       actions.forEach(action => {
         offlineMiddleware({ getState, dispatch: dispatchMock })(next)(action);
-        expect(next).toBeCalledWith(action);
-        expect(dispatchMock).not.toBeCalled();
+        expect(next).toHaveBeenCalledWith(action);
+        expect(dispatchMock).not.toHaveBeenCalled();
       });
     });
 
@@ -97,9 +97,9 @@ describe('Offline middleware', () => {
         },
       };
       offlineMiddleware({ getState, dispatch: dispatchMock })(next)(action);
-      expect(dispatchMock).toBeCalled();
-      expect(offlineApiActions.makeApiCall).toBeCalledWith(action);
-      expect(next).toBeCalledWith(action);
+      expect(dispatchMock).toHaveBeenCalled();
+      expect(offlineApiActions.makeApiCall).toHaveBeenCalledWith(action);
+      expect(next).toHaveBeenCalledWith(action);
     });
 
     it('should put action in a queue when user is offline', () => {
@@ -123,9 +123,9 @@ describe('Offline middleware', () => {
         },
       };
       offlineMiddleware({ getState, dispatch: dispatchMock })(next)(action);
-      expect(dispatchMock).toBeCalledWith(actionToQueue);
-      expect(dbActions.saveDbAction).toBeCalled();
-      expect(next).toBeCalledWith(action);
+      expect(dispatchMock).toHaveBeenCalledWith(actionToQueue);
+      expect(dbActions.saveDbAction).toHaveBeenCalled();
+      expect(next).toHaveBeenCalledWith(action);
     });
 
     it('should execute the stored action when user goes online', async () => {
@@ -149,9 +149,9 @@ describe('Offline middleware', () => {
       dispatchMock.mockResolvedValue({});
 
       await offlineMiddleware({ getState, dispatch: dispatchMock })(next)(onlineAction);
-      expect(offlineApiActions.makeApiCall).toBeCalledWith(actionInQueue);
+      expect(offlineApiActions.makeApiCall).toHaveBeenCalledWith(actionInQueue);
       expect(dispatchMock.mock.calls[1][0]).toEqual({ type: REMOVE_FROM_QUEUE, payload: actionInQueue });
-      expect(dbActions.saveDbAction).toBeCalled();
+      expect(dbActions.saveDbAction).toHaveBeenCalled();
     });
   });
 });

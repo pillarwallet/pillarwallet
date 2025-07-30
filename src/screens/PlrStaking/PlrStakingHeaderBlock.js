@@ -206,7 +206,7 @@ const TextButton = styled.TouchableOpacity`
 `;
 
 const ButtonLabel = styled(BaseText)`
-  ${fontStyles.regular}px;
+  ${fontStyles.regular};
   color: ${({ theme }) => theme.colors.basic000};
 `;
 

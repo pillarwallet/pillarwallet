@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import Clipboard from '@react-native-community/clipboard';
+import Clipboard from '@react-native-clipboard/clipboard';
 import styled from 'styled-components/native';
 
 // components
