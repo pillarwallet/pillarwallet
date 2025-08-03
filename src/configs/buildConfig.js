@@ -36,12 +36,12 @@ export const buildEnvironment = {
   PRISMIC_TOKEN: '_prismic_token_',
   KOCHAVA_IOS_ID: '_kochava_ios_id_',
   KOCHAVA_ANDROID_ID: '_kochava_android_id_',
-  WALLETCONNECT_PROJECT_ID: '8cd73867503f6c393d8da7faa115f91b',
+  WALLETCONNECT_PROJECT_ID: '_wallet_connect_id_',
   // eslint-disable-next-line i18next/no-literal-string
   WEB3_AUTH_CLIENT_ID: '_web3_auth_client_id_',
   // eslint-disable-next-line i18next/no-literal-string
   WEB3_AUTH_TESTNET_CLIENT_ID: '_web3_auth_testnet_client_id_',
-  BUNDLER_API_KEY: 'etherspot_3ZkzBrNzyrNmiAyPWQZMg4EK',
+  BUNDLER_API_KEY: '_bundler_api_key_',
 };
 
 // Optional Developer variables are fixed for both environment contexts, undefined by default

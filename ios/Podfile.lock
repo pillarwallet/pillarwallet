@@ -1963,7 +1963,7 @@ PODS:
     - React-Core
   - react-native-restart (0.0.17):
     - React
-  - react-native-safe-area-context (4.14.1):
+  - react-native-safe-area-context (5.5.2):
     - React-Core
   - react-native-splash-screen (3.3.0):
     - React-Core
@@ -3191,7 +3191,7 @@ SPEC CHECKSUMS:
   react-native-randombytes: 4eeddad82d1fd57adda1cd5beffe67d041c9d6de
   react-native-render-html: fc0eadab8b59ec87f34ea2355232a89b6c70364d
   react-native-restart: 15745544c1b2548db8baa27e5389cee5d7b83bf7
-  react-native-safe-area-context: 758e894ca5a9bd1868d2a9cfbca7326a2b6bf9dc
+  react-native-safe-area-context: 0f7bf11598f9a61b7ceac8dc3f59ef98697e99e1
   react-native-splash-screen: 95994222cc95c236bd3cdc59fe45ed5f27969594
   react-native-udp: 7e484efc89db2214f7501ac946781d3205b2c6a0
   react-native-web-browser: bc106e2b98f1fc95d12aa5c5c36180481efbbf23
