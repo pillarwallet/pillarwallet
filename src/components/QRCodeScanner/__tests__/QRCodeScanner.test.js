@@ -17,14 +17,27 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
-import { shallow } from 'enzyme';
+import React from 'react';
+import { render } from '@testing-library/react-native';
+
+import Modal from 'components/Modal';
+
 import QRCodeScanner from '../QRCodeScanner';
+import WalletConnectCamera from '../WalletConnectCamera'; // mock this
+
+jest.mock('components/Modal', () => {
+  return jest.fn(({ children }) => <>{children}</>);
+});
+
+jest.mock('../WalletConnectCamera', () => {
+  return jest.fn(() => null);
+});
 
 describe('QR code scanner', () => {
-  xit('should ask for permissions on component mount', () => {
-    const wrapper = shallow(<QRCodeScanner />);
-    const spy = jest.spyOn(wrapper.instance(), 'askPermissions');
-    expect(spy).toBeCalled();
+  it('should render WalletConnectCamera inside Modal', () => {
+    render(<QRCodeScanner />);
+
+    expect(Modal).toHaveBeenCalled();
+    expect(WalletConnectCamera).toHaveBeenCalled();
   });
 });

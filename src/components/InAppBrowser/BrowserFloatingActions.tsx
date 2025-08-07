@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import { View } from 'react-native';
-import SafeAreaView, { ForceInsetProp } from 'react-native-safe-area-view';
 import styled from 'styled-components/native';
 
 // Utils
@@ -17,7 +16,7 @@ interface IBrowserFloatingActions {
 }
 
 const BrowserFloatingActions: FC<IBrowserFloatingActions> = ({ canGoBack, canGoForward, goBack, goForward }) => {
-  const forcedInset: ForceInsetProp = { bottom: 'always' };
+  const forcedInset = { bottom: 'always' };
   return (
     <FloatingActions forceInset={forcedInset}>
       <ActionsContainer>

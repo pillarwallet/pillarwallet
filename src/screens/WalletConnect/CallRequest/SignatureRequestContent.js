@@ -64,7 +64,7 @@ function SignatureRequestContent({ request, onConfirm, onReject }: Props) {
 
   const isSignTypedData = method === ETH_SIGN_TYPED_DATA || method === ETH_SIGN_TYPED_DATA_V4;
 
-  const { message, primaryType } =
+  const { message, primaryType }: any =
     isSignTypedData && !isEmpty(params?.[1]) ? JSON.parse(params[1]) : { message: null, primaryType: null };
 
   const messageText = React.useMemo(() => {
@@ -77,7 +77,7 @@ function SignatureRequestContent({ request, onConfirm, onReject }: Props) {
 
     return values.map((value) => {
       const key = value?.[0];
-      const description = value?.[1];
+      const description: any = value?.[1];
 
       if (!key) return '';
 
@@ -91,7 +91,7 @@ function SignatureRequestContent({ request, onConfirm, onReject }: Props) {
         // eslint-disable-next-line i18next/no-literal-string
         if (isEmpty(descObject)) return `${label}\n\n`;
 
-        const descMap = descObject.map((descValues, index) => {
+        const descMap: any = descObject.map((descValues: any, index) => {
           return `${index !== 0 ? '\n' : ''} ${descValues[0]}: ${JSON.stringify(descValues[1])}`;
         });
         // eslint-disable-next-line i18next/no-literal-string

@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { Image as RNImage } from 'react-native';
-import { SvgCssUri } from 'react-native-svg';
+import { SvgCssUri } from 'react-native-svg/css';
 
 // Utils
 import { isSvgImage } from 'utils/images';

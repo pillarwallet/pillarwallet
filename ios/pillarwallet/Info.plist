@@ -67,6 +67,8 @@
 	<string>Give Pillar Wallet permission to save photos to temporarily store your profile pictures.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Give Pillar Wallet permission to access your photos to allow you set your profile picture.</string>
+	<key>RCTNewArchEnabled</key>
+	<false/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>EuclidCircularB-Bold.otf</string>

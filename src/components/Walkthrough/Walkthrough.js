@@ -3,7 +3,6 @@ import * as React from 'react';
 import { Dimensions, StyleSheet, SafeAreaView, Platform } from 'react-native';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
-import ExtraDimensions from 'react-native-extra-dimensions-android';
 import { CommonActions } from '@react-navigation/native';
 import t from 'translations/translate';
 import { getNavigationPathAndParamsState, navigate } from 'services/navigation';
@@ -19,11 +18,7 @@ import { themedColors } from 'utils/themes';
 import { hexToRgba } from 'utils/ui';
 import { WalkthroughTooltip } from './WalkthroughTooltip';
 
-const { width, height: windowHeight } = Dimensions.get('window');
-const height =
-  Platform.OS === 'android'
-    ? ExtraDimensions.get('REAL_WINDOW_HEIGHT') - ExtraDimensions.getSoftMenuBarHeight()
-    : windowHeight;
+const { width, height } = Dimensions.get('window');
 
 type Props = {
   steps: Steps,

@@ -23,7 +23,7 @@ import { connect, useDispatch } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { sortBy } from 'lodash';
 import t from 'translations/translate';
-import Clipboard from '@react-native-community/clipboard';
+import Clipboard from '@react-native-clipboard/clipboard';
 import { TouchableOpacity } from 'react-native';
 
 // components

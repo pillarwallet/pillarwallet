@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-native-swipeout/dist/index.js b/node_modules/react-native-swipeout/dist/index.js
+index d4a976c..d052884 100644
+--- a/node_modules/react-native-swipeout/dist/index.js
++++ b/node_modules/react-native-swipeout/dist/index.js
+@@ -123,7 +123,7 @@ var Swipeout = (0, _createReactClass2.default)({
+     onClose: _propTypes2.default.func,
+     right: _propTypes2.default.array,
+     scroll: _propTypes2.default.func,
+-    style: (_reactNative.ViewPropTypes || _reactNative.View.propTypes).style,
++    style: _propTypes2.default.any,
+     sensitivity: _propTypes2.default.number,
+     buttonWidth: _propTypes2.default.number,
+     disabled: _propTypes2.default.bool

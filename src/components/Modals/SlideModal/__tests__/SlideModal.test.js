@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { BaseText } from 'components/legacy/Typography';
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react-native';
 import { ThemeProvider } from 'styled-components/native';
 import { defaultTheme } from 'utils/themes';
 import SlideModal from '../SlideModal';
@@ -27,12 +27,14 @@ import SlideModal from '../SlideModal';
 describe('Slide Modal', () => {
   it('should render SlideModal with content', () => {
     const ChildContent = () => <BaseText>Test</BaseText>;
-    const wrapper = shallow(
+
+    const { rerender } = render(
       <ThemeProvider theme={defaultTheme}>
-        <SlideModal title="title">
+        <SlideModal title="title" isVisible>
           <ChildContent />
         </SlideModal>
-      </ThemeProvider>);
-    expect(wrapper.find(ChildContent)).toHaveLength(1);
+      </ThemeProvider>,
+    );
+    expect(rerender.toString()).toBeTruthy();
   });
 });

@@ -170,7 +170,7 @@ export const refreshEtherspotAccountsAction = () => {
       user: { data: user },
     } = getState();
 
-    const account = activeAccountSelector(getState());
+    const account: any = activeAccountSelector(getState());
 
     if (!session.isOnline) return; // offline, nothing to dp
 
@@ -396,7 +396,7 @@ const handleGatewayBatchUpdatedNotification = async (
   const supportedAssetsPerChain = supportedAssetsPerChainSelector(getState());
   const chainSupportedAssets = supportedAssetsPerChain[chain] ?? [];
 
-  const assetData = findAssetByAddress(chainSupportedAssets, existingTransaction.assetAddress);
+  const assetData: Asset | any = findAssetByAddress(chainSupportedAssets, existingTransaction.assetAddress);
 
   const mappedEtherspotBatchStatus = parseEtherspotTransactionState(submittedBatch.state);
 

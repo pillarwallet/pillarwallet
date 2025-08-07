@@ -100,5 +100,5 @@ const IconContainer = styled.View`
   height: ${({ size }) => size};
   width: ${({ size }) => size};
   background-color: ${({ theme }) => theme.colors.basic050};
-  border-radius: ${({ size }) => size / 2};
+  border-radius: ${({ size }) => size}px;
 `;

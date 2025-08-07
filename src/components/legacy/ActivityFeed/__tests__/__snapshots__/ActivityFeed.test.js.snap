@@ -1,15 +1,13 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ActivityFeed does not fail for invalid values 1`] = `
 <View
   style={
-    [
-      {
-        "flexBasis": 0,
-        "flexGrow": 1,
-        "flexShrink": 1,
-      },
-    ]
+    {
+      "flexBasis": 0,
+      "flexGrow": 1,
+      "flexShrink": 1,
+    }
   }
 >
   <RCTScrollView
@@ -61,21 +59,19 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
     onScrollEndDrag={[Function]}
     removeClippedSubviews={false}
     renderItem={[Function]}
-    scrollEventThrottle={50}
+    scrollEventThrottle={0.0001}
     stickyHeaderIndices={
       [
         1,
       ]
     }
     style={
-      [
-        {
-          "flexBasis": 0,
-          "flexGrow": 1,
-          "flexShrink": 1,
-          "width": "100%",
-        },
-      ]
+      {
+        "flexBasis": 0,
+        "flexGrow": 1,
+        "flexShrink": 1,
+        "width": "100%",
+      }
     }
     viewabilityConfigCallbackPairs={[]}
   >
@@ -96,36 +92,28 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
         style={null}
       >
         <View
-          style={
-            [
-              {},
-            ]
-          }
+          style={{}}
         >
           <View
             style={
-              [
-                {
-                  "paddingBottom": 8,
-                  "paddingLeft": 20,
-                  "paddingRight": 20,
-                  "paddingTop": 8,
-                  "width": "100%",
-                },
-              ]
+              {
+                "paddingBottom": 8,
+                "paddingLeft": 20,
+                "paddingRight": 20,
+                "paddingTop": 8,
+                "width": "100%",
+              }
             }
           >
             <Text
               style={
-                [
-                  {
-                    "color": "#0A1427",
-                    "fontFamily": "EuclidCircularB-Regular",
-                    "fontSize": 14,
-                    "lineHeight": 22,
-                    "textAlignVertical": "center",
-                  },
-                ]
+                {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "fontSize": 14,
+                  "lineHeight": 22,
+                  "textAlignVertical": "center",
+                }
               }
             >
               Sep 9 2019
@@ -139,20 +127,14 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
         style={null}
       >
         <View
-          style={
-            [
-              {},
-            ]
-          }
+          style={{}}
         >
           <View
             style={
-              [
-                {
-                  "flexDirection": "column",
-                  "width": "100%",
-                },
-              ]
+              {
+                "flexDirection": "column",
+                "width": "100%",
+              }
             }
           >
             <View
@@ -199,44 +181,41 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
             >
               <View
                 style={
-                  [
-                    {
-                      "alignItems": "center",
-                      "justifyContent": "center",
-                      "paddingRight": 12,
-                    },
-                  ]
+                  {
+                    "alignItems": "center",
+                    "justifyContent": "center",
+                    "paddingRight": 12,
+                  }
                 }
               >
                 <View
                   backgroundColor={null}
                   diameter={48}
                   style={
-                    [
-                      {
-                        "alignItems": "center",
-                        "backgroundColor": "#EBF0F6",
-                        "borderColor": "#EBF0F6",
-                        "borderRadius": 24,
-                        "borderWidth": 0,
-                        "height": 48,
-                        "justifyContent": "center",
-                        "overflow": "hidden",
-                        "textAlign": "center",
-                        "width": 48,
-                      },
-                    ]
+                    {
+                      "alignItems": "center",
+                      "backgroundColor": "#EBF0F6",
+                      "borderBottomLeftRadius": 24,
+                      "borderBottomRightRadius": 24,
+                      "borderColor": "#EBF0F6",
+                      "borderTopLeftRadius": 24,
+                      "borderTopRightRadius": 24,
+                      "borderWidth": 0,
+                      "height": 48,
+                      "justifyContent": "center",
+                      "overflow": "hidden",
+                      "textAlign": "center",
+                      "width": 48,
+                    }
                   }
                 >
                   <View
                     name="sent"
                     style={
-                      [
-                        {
-                          "color": "#BD573A",
-                          "fontSize": 48,
-                        },
-                      ]
+                      {
+                        "color": "#BD573A",
+                        "fontSize": 48,
+                      }
                     }
                   />
                 </View>
@@ -250,14 +229,12 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
               >
                 <View
                   style={
-                    [
-                      {
-                        "alignItems": "center",
-                        "flexDirection": "row",
-                        "justifyContent": "space-between",
-                        "width": "100%",
-                      },
-                    ]
+                    {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "justifyContent": "space-between",
+                      "width": "100%",
+                    }
                   }
                   type="ACTION"
                 >
@@ -282,29 +259,25 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                   >
                     <View
                       style={
-                        [
-                          {
-                            "alignItems": "center",
-                            "flexDirection": "row",
-                            "justifyContent": "space-between",
-                          },
-                        ]
+                        {
+                          "alignItems": "center",
+                          "flexDirection": "row",
+                          "justifyContent": "space-between",
+                        }
                       }
                     >
                       <Text
                         ellipsizeMode="tail"
                         numberOfLines={2}
                         style={
-                          [
-                            {
-                              "color": "#0A1427",
-                              "fontFamily": "EuclidCircularB-Medium",
-                              "fontSize": 18,
-                              "lineHeight": 28,
-                              "textAlignVertical": "center",
-                              "width": "100%",
-                            },
-                          ]
+                          {
+                            "color": "#0A1427",
+                            "fontFamily": "EuclidCircularB-Medium",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "textAlignVertical": "center",
+                            "width": "100%",
+                          }
                         }
                         type="ACTION"
                       >
@@ -363,16 +336,14 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                           ellipsizeMode="tail"
                           numberOfLines={2}
                           style={
-                            [
-                              {
-                                "color": "#0A1427",
-                                "fontFamily": "EuclidCircularB-Regular",
-                                "fontSize": 18,
-                                "lineHeight": 28,
-                                "textAlign": "right",
-                                "textAlignVertical": "center",
-                              },
-                            ]
+                            {
+                              "color": "#0A1427",
+                              "fontFamily": "EuclidCircularB-Regular",
+                              "fontSize": 18,
+                              "lineHeight": 28,
+                              "textAlign": "right",
+                              "textAlignVertical": "center",
+                            }
                           }
                         >
                           tokenValue
@@ -394,13 +365,11 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
 exports[`ActivityFeed renders the Asset correctly 1`] = `
 <View
   style={
-    [
-      {
-        "flexBasis": 0,
-        "flexGrow": 1,
-        "flexShrink": 1,
-      },
-    ]
+    {
+      "flexBasis": 0,
+      "flexGrow": 1,
+      "flexShrink": 1,
+    }
   }
 >
   <RCTScrollView
@@ -452,21 +421,19 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
     onScrollEndDrag={[Function]}
     removeClippedSubviews={false}
     renderItem={[Function]}
-    scrollEventThrottle={50}
+    scrollEventThrottle={0.0001}
     stickyHeaderIndices={
       [
         1,
       ]
     }
     style={
-      [
-        {
-          "flexBasis": 0,
-          "flexGrow": 1,
-          "flexShrink": 1,
-          "width": "100%",
-        },
-      ]
+      {
+        "flexBasis": 0,
+        "flexGrow": 1,
+        "flexShrink": 1,
+        "width": "100%",
+      }
     }
     viewabilityConfigCallbackPairs={[]}
   >
@@ -487,36 +454,28 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
         style={null}
       >
         <View
-          style={
-            [
-              {},
-            ]
-          }
+          style={{}}
         >
           <View
             style={
-              [
-                {
-                  "paddingBottom": 8,
-                  "paddingLeft": 20,
-                  "paddingRight": 20,
-                  "paddingTop": 8,
-                  "width": "100%",
-                },
-              ]
+              {
+                "paddingBottom": 8,
+                "paddingLeft": 20,
+                "paddingRight": 20,
+                "paddingTop": 8,
+                "width": "100%",
+              }
             }
           >
             <Text
               style={
-                [
-                  {
-                    "color": "#0A1427",
-                    "fontFamily": "EuclidCircularB-Regular",
-                    "fontSize": 14,
-                    "lineHeight": 22,
-                    "textAlignVertical": "center",
-                  },
-                ]
+                {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "fontSize": 14,
+                  "lineHeight": 22,
+                  "textAlignVertical": "center",
+                }
               }
             >
               Sep 9 2019
@@ -530,20 +489,14 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
         style={null}
       >
         <View
-          style={
-            [
-              {},
-            ]
-          }
+          style={{}}
         >
           <View
             style={
-              [
-                {
-                  "flexDirection": "column",
-                  "width": "100%",
-                },
-              ]
+              {
+                "flexDirection": "column",
+                "width": "100%",
+              }
             }
           >
             <View
@@ -590,44 +543,41 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
             >
               <View
                 style={
-                  [
-                    {
-                      "alignItems": "center",
-                      "justifyContent": "center",
-                      "paddingRight": 12,
-                    },
-                  ]
+                  {
+                    "alignItems": "center",
+                    "justifyContent": "center",
+                    "paddingRight": 12,
+                  }
                 }
               >
                 <View
                   backgroundColor={null}
                   diameter={48}
                   style={
-                    [
-                      {
-                        "alignItems": "center",
-                        "backgroundColor": "#EBF0F6",
-                        "borderColor": "#EBF0F6",
-                        "borderRadius": 24,
-                        "borderWidth": 0,
-                        "height": 48,
-                        "justifyContent": "center",
-                        "overflow": "hidden",
-                        "textAlign": "center",
-                        "width": 48,
-                      },
-                    ]
+                    {
+                      "alignItems": "center",
+                      "backgroundColor": "#EBF0F6",
+                      "borderBottomLeftRadius": 24,
+                      "borderBottomRightRadius": 24,
+                      "borderColor": "#EBF0F6",
+                      "borderTopLeftRadius": 24,
+                      "borderTopRightRadius": 24,
+                      "borderWidth": 0,
+                      "height": 48,
+                      "justifyContent": "center",
+                      "overflow": "hidden",
+                      "textAlign": "center",
+                      "width": 48,
+                    }
                   }
                 >
                   <View
                     name="sent"
                     style={
-                      [
-                        {
-                          "color": "#BD573A",
-                          "fontSize": 48,
-                        },
-                      ]
+                      {
+                        "color": "#BD573A",
+                        "fontSize": 48,
+                      }
                     }
                   />
                 </View>
@@ -641,14 +591,12 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
               >
                 <View
                   style={
-                    [
-                      {
-                        "alignItems": "center",
-                        "flexDirection": "row",
-                        "justifyContent": "space-between",
-                        "width": "100%",
-                      },
-                    ]
+                    {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "justifyContent": "space-between",
+                      "width": "100%",
+                    }
                   }
                   type="ACTION"
                 >
@@ -673,29 +621,25 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                   >
                     <View
                       style={
-                        [
-                          {
-                            "alignItems": "center",
-                            "flexDirection": "row",
-                            "justifyContent": "space-between",
-                          },
-                        ]
+                        {
+                          "alignItems": "center",
+                          "flexDirection": "row",
+                          "justifyContent": "space-between",
+                        }
                       }
                     >
                       <Text
                         ellipsizeMode="tail"
                         numberOfLines={2}
                         style={
-                          [
-                            {
-                              "color": "#0A1427",
-                              "fontFamily": "EuclidCircularB-Medium",
-                              "fontSize": 18,
-                              "lineHeight": 28,
-                              "textAlignVertical": "center",
-                              "width": "100%",
-                            },
-                          ]
+                          {
+                            "color": "#0A1427",
+                            "fontFamily": "EuclidCircularB-Medium",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "textAlignVertical": "center",
+                            "width": "100%",
+                          }
                         }
                         type="ACTION"
                       >
@@ -754,16 +698,14 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                           ellipsizeMode="tail"
                           numberOfLines={2}
                           style={
-                            [
-                              {
-                                "color": "#0A1427",
-                                "fontFamily": "EuclidCircularB-Regular",
-                                "fontSize": 18,
-                                "lineHeight": 28,
-                                "textAlign": "right",
-                                "textAlignVertical": "center",
-                              },
-                            ]
+                            {
+                              "color": "#0A1427",
+                              "fontFamily": "EuclidCircularB-Regular",
+                              "fontSize": 18,
+                              "lineHeight": 28,
+                              "textAlign": "right",
+                              "textAlignVertical": "center",
+                            }
                           }
                         >
                           tokenValue

@@ -1,14 +1,12 @@
 // @flow
 import * as React from 'react';
-import { Dimensions, Platform } from 'react-native';
+import { Dimensions, Platform, StatusBar } from 'react-native';
 import styled from 'styled-components/native';
-import ExtraDimensions from 'react-native-extra-dimensions-android';
 import t from 'translations/translate';
 
 import Button from 'components/legacy/Button';
 import { Paragraph, MediumText } from 'components/legacy/Typography';
 import { spacing, fontStyles } from 'utils/variables';
-import { getiOSNavbarHeight } from 'utils/common';
 import { themedColors } from 'utils/themes';
 import { hexToRgba } from 'utils/ui';
 import type { Measurements } from 'reducers/walkthroughsReducer';
@@ -23,20 +21,16 @@ type Props = {
   title?: string,
 }
 
-const { width, height: h } = Dimensions.get('window');
-
-const height = Platform.OS === 'android'
-  ? ExtraDimensions.get('REAL_WINDOW_HEIGHT') - ExtraDimensions.getSoftMenuBarHeight()
-  : h - getiOSNavbarHeight();
+const { width, height } = Dimensions.get('window');
 
 const TooltipTitle = styled(MediumText)`
   color: ${themedColors.control};
-  ${fontStyles.regular}px;
+  ${fontStyles.regular};
 `;
 
 const TooltipParagraph = styled(Paragraph)`
   color: ${themedColors.control};
-  ${fontStyles.regular}px;
+  ${fontStyles.regular};
   margin: 0;
 `;
 
@@ -99,7 +93,7 @@ export const WalkthroughTooltip = (props: Props) => {
 
   const { x: xOverwrite, y: yOverwrite } = posOverwrites;
 
-  const adjustedY = Platform.OS === 'ios' ? stepYPos : stepYPos + ExtraDimensions.getStatusBarHeight();
+  const adjustedY = Platform.OS === 'ios' ? stepYPos : stepYPos + StatusBar.currentHeight;
   const positionTop = stepYPos > height / 2;
 
   const horizontalPos = {};

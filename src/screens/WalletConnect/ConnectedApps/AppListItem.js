@@ -57,7 +57,7 @@ type Props = {|
   chain?: Chain,
   onPress?: () => void,
   iconUrl: ?string,
-  v2Session?: ?WalletConnectV2Session,
+  v2Session: WalletConnectV2Session,
 |};
 
 function AppListItem({ title, iconUrl, onPress, v2Session }: Props) {
@@ -73,8 +73,8 @@ function AppListItem({ title, iconUrl, onPress, v2Session }: Props) {
 
     if (!namespaces || !requiredNamespaces) return null;
 
-    const eipAccounts = Object.values(namespaces)?.[0];
-    const eipChainIds = Object.values(requiredNamespaces)?.[0];
+    const eipAccounts: any = Object.values(namespaces)?.[0];
+    const eipChainIds: any = Object.values(requiredNamespaces)?.[0];
 
     if (isEmpty(eipAccounts) || isEmpty(eipChainIds)) return null;
 

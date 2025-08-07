@@ -20,7 +20,7 @@
 
 import React from 'react';
 import { Image } from 'react-native';
-import Clipboard from '@react-native-community/clipboard';
+import Clipboard from '@react-native-clipboard/clipboard';
 import SafeAreaView from 'react-native-safe-area-view';
 import { connect } from 'react-redux';
 import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';

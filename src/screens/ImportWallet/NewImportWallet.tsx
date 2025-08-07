@@ -23,7 +23,7 @@ import { Keyboard, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
 import t from 'translations/translate';
-import Clipboard from '@react-native-community/clipboard';
+import Clipboard from '@react-native-clipboard/clipboard';
 
 // actions
 import { resetWalletImportErrorAction, importWalletFromMnemonicAction } from 'actions/onboardingActions';

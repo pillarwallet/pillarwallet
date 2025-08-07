@@ -37,17 +37,17 @@ describe('Analytics Actions', () => {
   });
 
   afterEach(() => {
-    (dispatch: any).mockClear();
-    (getState: any).mockClear();
+    firebaseAnalytics.logEvent.mockClear();
+    firebaseAnalytics.logScreenView.mockClear();
   });
 
   describe('logEventAction', () => {
     describe('when not opted out tracking', () => {
-      beforeEach(() => optOutTracking(false));
+      optOutTracking(false);
 
       it('calls firebaseAnalytics().logEvent', () => {
         logEventAction('test', { property: 'value' })(dispatch, getState);
-        expect(firebaseAnalytics.logEvent).toBeCalledWith('test', { property: 'value' });
+        expect(firebaseAnalytics.logEvent).toHaveBeenCalledWith('test', { property: 'value' });
       });
     });
 
@@ -56,7 +56,7 @@ describe('Analytics Actions', () => {
 
       it('does not call firebaseAnalytics().logEvent', () => {
         logEventAction('test', { property: 'value' })(dispatch, getState);
-        expect(firebaseAnalytics.logEvent).not.toBeCalled();
+        expect(firebaseAnalytics.logEvent).not.toHaveBeenCalled();
       });
     });
   });
@@ -67,7 +67,7 @@ describe('Analytics Actions', () => {
 
       it('calls firebaseAnalytics().logScreenView', () => {
         logScreenViewAction('name')(dispatch, getState);
-        expect(firebaseAnalytics.logScreenView).toBeCalledWith(
+        expect(firebaseAnalytics.logScreenView).toHaveBeenCalledWith(
           expect.objectContaining({
             screen_name: 'name',
             screen_class: 'name',
@@ -82,7 +82,7 @@ describe('Analytics Actions', () => {
 
       it('does not call firebaseAnalytics().logScreenView', () => {
         logScreenViewAction('name')(dispatch, getState);
-        expect(firebaseAnalytics.logScreenView).not.toBeCalled();
+        expect(firebaseAnalytics.logScreenView).not.toHaveBeenCalledWith();
       });
     });
   });

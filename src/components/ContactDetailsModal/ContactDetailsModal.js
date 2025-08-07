@@ -159,7 +159,7 @@ const ContactDetailsModal = ({ chain, contact, onSave, title, contacts, showQRSc
 
   const openScanner = () => Modal.open(() => <AddressScanner onRead={handleScannerRead} />);
 
-  const errorMessage = errors.address?.message ?? errors.name?.message;
+  const errorMessage = errors?.address?.message ?? errors?.name?.message;
 
   return (
     <ModalBox ref={modalRef} onModalHide={onModalHide} showModalClose noBoxMinHeight>

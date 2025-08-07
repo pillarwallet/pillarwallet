@@ -40,7 +40,7 @@ executors:
   node20-executor:
     working_directory: ~/pillarwallet
     docker:
-      - image: cimg/node:20.6.1
+      - image: cimg/node:20.18.1
         auth:
           username: $DOCKERHUB_USER
           password: $DOCKERHUB_PASSWORD

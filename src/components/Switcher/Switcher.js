@@ -60,7 +60,7 @@ const SwitcherTouchable = styled.TouchableOpacity`
   height: ${TOGGLE_DIAMETER + 3}px;
   background-color: ${({ isOn }) => isOn
     ? css`${getColorByTheme({ lightKey: 'basic020', darkKey: 'primaryAccent280' })}`
-    : css`${getColorByTheme({ lightKey: 'basic080', darkKey: 'basic030' })}`};};
+    : css`${getColorByTheme({ lightKey: 'basic080', darkKey: 'basic030' })}`};
   ${({ disabled }) => disabled && 'opacity: 0.4;'}
 `;
 

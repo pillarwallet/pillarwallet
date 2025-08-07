@@ -113,7 +113,7 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { TransactionPayload, TransactionResult, TransactionStatus } from 'models/Transaction';
 import type { WalletAssetsBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
-import type { Asset, AddTokensItem } from 'models/Asset';
+import type { Asset, AddTokensItem, AssetOption } from 'models/Asset';
 
 // actions
 import { saveDbAction } from './dbActions';
@@ -710,7 +710,7 @@ export const fetchSupportedAssetsAction = () => {
     await Promise.all(
       Object.keys(CHAIN).map(async (chainKey) => {
         const chain = CHAIN[chainKey];
-        const chainSupportedAssets = await etherspotService.getSupportedAssets(chain);
+        const chainSupportedAssets: AssetOption[] | any = await etherspotService.getSupportedAssets(chain);
         const defaultTokens = DefaultTokens.concat(DefaultStableTokens);
 
         // nothing to do if returned empty
@@ -718,7 +718,7 @@ export const fetchSupportedAssetsAction = () => {
 
         const filteredCustomAssets = filteredWithDefaultAssets(chainSupportedAssets, customTokensList, chain);
 
-        let totalSupportedAssets = [...chainSupportedAssets, ...filteredCustomAssets];
+        let totalSupportedAssets: any = [...chainSupportedAssets, ...filteredCustomAssets];
 
         const filteredDefaultAssets = filteredWithDefaultAssets(totalSupportedAssets, defaultTokens, chain);
 
