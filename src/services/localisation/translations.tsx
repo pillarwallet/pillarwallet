@@ -77,11 +77,8 @@ export const setLanguage = async (lng: string) => {
     .catch(() => Promise.reject());
 };
 
-export const getDefaultSupportedUserLanguage = () => {
-  console.log("TTTTTTTTT 80", getLocales());
-  
+export const getDefaultSupportedUserLanguage = () => {  
   const userPreferredLocales = getLocales();
-  console.log("TTTTTTTTT 82", userPreferredLocales);
   
   const userPreferredLanguages = userPreferredLocales?.map(({ languageCode }) => languageCode);
 
