@@ -24,7 +24,7 @@ executors:
   android-executor:
     working_directory: ~/pillarwallet
     docker:
-      - image: cimg/android:2025.1.1-node
+      - image: cimg/android:2025.01.1-node
         auth:
           username: $DOCKERHUB_USER
           password: $DOCKERHUB_PASSWORD
