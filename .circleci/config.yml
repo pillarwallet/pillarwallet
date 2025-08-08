@@ -386,8 +386,10 @@ jobs:
       - run:
           name: Install Ninja, CMake, NDK
           command: |
+            set -euo pipefail
             sudo apt-get update
-            sudo apt-get install -y ninja-build
+            sudo apt-get install -y --no-install-recommends ninja-build
+            yes | sdkmanager --licenses >/dev/null
             sdkmanager --install "cmake;3.22.1" "ndk;27.1.12297006"
       - run:
           name: Set slack message
