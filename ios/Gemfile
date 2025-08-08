@@ -1,4 +1,7 @@
 source "https://rubygems.org"
+
+require 'logger'
+
 gem 'rake'
 # https://github.com/fastlane/fastlane/issues/21794
 gem 'rb-readline'
