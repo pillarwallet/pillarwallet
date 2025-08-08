@@ -156,15 +156,22 @@ android {
             buildConfigField "String", "CODEPUSH_KEY", '"com.pillarproject.wallet"'
             applicationIdSuffix ".staging"
             signingConfig signingConfigs.staging
-            minifyEnabled true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             zipAlignEnabled true
-            matchingFallbacks = ['release']            
+            matchingFallbacks = ['release']
+            if (file("../keystores/staging-key.keystore").exists()) {
+                signingConfig signingConfigs.staging
+            } else {
+                signingConfig signingConfigs.debug
+            }
         }
         release {
             buildConfigField "String", "CODEPUSH_KEY", '"com.pillarproject.wallet"'          
 
-            minifyEnabled true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             zipAlignEnabled true
             signingConfig signingConfigs.release
