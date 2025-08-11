@@ -18,7 +18,7 @@
 */
 
 import i18n from 'i18next';
-import * as RNLocalize from 'react-native-localize';
+import {getLocales} from 'react-native-localize';
 import { initReactI18next } from 'react-i18next';
 
 import localeConfig from 'configs/localeConfig';
@@ -77,8 +77,9 @@ export const setLanguage = async (lng: string) => {
     .catch(() => Promise.reject());
 };
 
-export const getDefaultSupportedUserLanguage = () => {
-  const userPreferredLocales = RNLocalize.getLocales();
+export const getDefaultSupportedUserLanguage = () => {  
+  const userPreferredLocales = getLocales();
+  
   const userPreferredLanguages = userPreferredLocales?.map(({ languageCode }) => languageCode);
 
   const userPreferredSupportedLanguage = userPreferredLanguages?.find((languageCode) =>

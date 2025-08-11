@@ -21,7 +21,7 @@
 import * as React from 'react';
 import { Keyboard, LayoutAnimation, View, TextInput as RNTextInput } from 'react-native';
 import styled, { useTheme } from 'styled-components/native';
-import Clipboard from '@react-native-community/clipboard';
+import Clipboard from '@react-native-clipboard/clipboard';
 import t from 'translations/translate';
 
 // Components

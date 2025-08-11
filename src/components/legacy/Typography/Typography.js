@@ -224,6 +224,6 @@ export const TextLink: React.ComponentType<BaseTextProps> = styled(BaseText)`
 `;
 
 export const Label: React.ComponentType<BaseTextProps> = styled(MediumText)`
-  ${(props) => (props.small ? fontStyles.medium : fontStyles.regular)}px;
+  ${(props) => (props.small ? fontStyles.medium : fontStyles.regular)};
   color: ${({ color, theme }) => color || theme.colors.basic020};
 `;

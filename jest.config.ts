@@ -4,7 +4,6 @@ import type { Config } from '@jest/types';
 const config: Config.InitialOptions = {
   preset: 'react-native',
   modulePaths: ['<rootDir>/src/'],
-  testEnvironment: 'jsdom',
   testRegex: '\\.test\\.js$',
   testResultsProcessor: './node_modules/jest-html-reporter',
   collectCoverageFrom: ['**/*.{js,jsx}', '!**/node_modules/**', '!**/reports/**'],

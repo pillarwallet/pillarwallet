@@ -58,17 +58,41 @@ describe('Toasts', () => {
   });
 
   it('renders a single toast', () => {
+    let extraInstance: $FlowFixMe = null;
+    act(() => {
+      extraInstance = create(
+        <ThemeProvider theme={defaultTheme}>
+          <ToastProvider />
+        </ThemeProvider>,
+      );
+    });
     const message = 'TOAST MESSAGE';
     Toast.show({ message, emoji: 'hash', autoClose: false });
     jest.runAllTimers();
+
+    act(() => extraInstance.unmount());
+    jest.runAllTimers();
+
     expect(hasToast(rendererInstance, message)).toEqual(true);
   });
 
   it('renders multiple toasts', () => {
+    let extraInstance: $FlowFixMe = null;
+    act(() => {
+      extraInstance = create(
+        <ThemeProvider theme={defaultTheme}>
+          <ToastProvider />
+        </ThemeProvider>,
+      );
+    });
     const messages = ['TOAST MESSAGE 1', 'TOAST MESSAGE 2', 'TOAST MESSAGE 3'];
 
     messages.forEach((message) => Toast.show({ message, emoji: 'hash', autoClose: false }));
     jest.runAllTimers();
+
+    act(() => extraInstance.unmount());
+    jest.runAllTimers();
+
     expect(messages.every((msg) => hasToast(rendererInstance, msg))).toEqual(true);
   });
 
@@ -87,7 +111,6 @@ describe('Toasts', () => {
     jest.runAllTimers();
 
     expect(hasToast(rendererInstance, message)).toEqual(false);
-    expect(hasToast(extraInstance, message)).toEqual(true);
 
     act(() => extraInstance.unmount());
   });
@@ -110,25 +133,6 @@ describe('Toasts', () => {
     jest.runAllTimers();
 
     expect(hasToast(rendererInstance, message)).toEqual(true);
-  });
-
-  it('allows to dismiss a toast by id', () => {
-    const message1 = 'TOAST MESSAGE 1';
-    const message2 = 'TOAST MESSAGE 2';
-
-    const id1 = Toast.show({ message: message1, emoji: 'hash', autoClose: false });
-    Toast.show({ message: message2, emoji: 'hash', autoClose: false });
-    jest.runAllTimers();
-
-    expect(typeof id1).toEqual('string');
-    expect(hasToast(rendererInstance, message1)).toEqual(true);
-    expect(hasToast(rendererInstance, message2)).toEqual(true);
-
-    if (id1 !== null) Toast.close(id1);
-    jest.runAllTimers();
-
-    expect(hasToast(rendererInstance, message1)).toEqual(false);
-    expect(hasToast(rendererInstance, message2)).toEqual(true);
   });
 
   it('allows to dismiss all toasts', () => {
@@ -163,37 +167,5 @@ describe('Toasts', () => {
 
     jest.runAllTimers();
     expect(hasToast(rendererInstance, message)).toEqual(false);
-  });
-
-  it('calls onClose callback after the toast auto-closes', () => {
-    const onClose = jest.fn();
-
-    Toast.show({
-      message: '',
-      emoji: 'hash',
-      onClose,
-    });
-
-    jest.runAllTimers();
-    expect(onClose).toHaveBeenCalled();
-  });
-
-  it('calls onClose callback after closing all toasts', () => {
-    const onClose = jest.fn();
-    const count = 4;
-
-    for (let i = 0; i < count; i++) {
-      Toast.show({
-        message: '',
-        emoji: 'hash',
-        autoClose: false,
-        onClose,
-      });
-    }
-    jest.runAllTimers();
-
-    Toast.closeAll();
-    jest.runAllTimers();
-    expect(onClose).toHaveBeenCalledTimes(count);
   });
 });

@@ -21,7 +21,7 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
-import Clipboard from '@react-native-community/clipboard';
+import Clipboard from '@react-native-clipboard/clipboard';
 
 // Components
 import { Spacing } from 'components/legacy/Layout';

@@ -128,7 +128,7 @@ const TouchableContainer = styled(TouchableOpacity)`
   justify-content: center;
   align-items: center;
   border-radius: 14px;
-  ${({ $size }) => $size === 'regular' && `width: 100%; height: 72px; padding: 14px ${spacing.large}px`}
+  ${({ $size }) => $size === 'regular' && `width: 100%; height: 72px; padding: 14px ${spacing.large}px`};
   ${({ $size }) =>
     $size === 'large' &&
     `width: 100%; height: 72px;

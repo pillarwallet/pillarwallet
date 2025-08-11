@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { Image } from 'react-native';
-import Clipboard from '@react-native-community/clipboard';
+import Clipboard from '@react-native-clipboard/clipboard';
 import { useTranslation } from 'react-i18next';
 import styled, { withTheme } from 'styled-components/native';
 

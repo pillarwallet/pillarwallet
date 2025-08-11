@@ -19,6 +19,7 @@
 */
 import * as React from 'react';
 import { StatusBar, View, TouchableOpacity, Animated } from 'react-native';
+import { isEmpty } from 'lodash';
 
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import styled, { ThemeProvider, withTheme } from 'styled-components/native';
@@ -105,11 +106,7 @@ const HeaderContentWrapper = styled.View`
 
 const SafeArea = styled(SafeAreaView)`
   ${({ noPaddingTop, androidStatusbarHeight }) =>
-    !noPaddingTop &&
-    androidStatusbarHeight &&
-    `
-    margin-top: ${androidStatusbarHeight}px;
-  `}
+    !noPaddingTop && isEmpty(androidStatusbarHeight) && `margin-top: ${androidStatusbarHeight}px;`}
 `;
 
 const HeaderRow = styled.View`
@@ -184,7 +181,7 @@ const TextButton = styled.TouchableOpacity`
 `;
 
 const ButtonLabel = styled(BaseText)`
-  ${fontStyles.regular}px;
+  ${fontStyles.regular};
   color: ${({ theme }) => theme.colors.basic000};
 `;
 

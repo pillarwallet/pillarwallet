@@ -53,9 +53,20 @@ type State = {
 };
 
 class ImportWalletLegals extends React.Component<Props, State> {
+  backHandler: any;
   state = {
     hasAgreedToTerms: false,
     hasAgreedToPolicy: false,
+  };
+
+  handleBackAction = () => {
+    const { navigation, route } = this.props;
+    const navigateTo = route?.params?.navigateTo || null;
+    if (navigateTo) {
+      navigation.navigate(AUTH_FLOW, { screen: navigateTo });
+    } else {
+      navigation.goBack();
+    }
   };
 
   physicalBackAction = () => {
@@ -68,25 +79,15 @@ class ImportWalletLegals extends React.Component<Props, State> {
     const navigateTo = route?.params?.navigateTo || null;
 
     if (Platform.OS === 'android' && navigateTo) {
-      BackHandler.addEventListener('hardwareBackPress', this.physicalBackAction);
+      this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.physicalBackAction);
     }
   }
 
   componentWillUnmount() {
-    if (Platform.OS === 'android') {
-      BackHandler.removeEventListener('hardwareBackPress', this.physicalBackAction);
+    if (Platform.OS === 'android' && this.backHandler) {
+      this.backHandler.remove();
     }
   }
-
-  handleBackAction = () => {
-    const { navigation, route } = this.props;
-    const navigateTo = route?.params?.navigateTo || null;
-    if (navigateTo) {
-      navigation.navigate(AUTH_FLOW, { screen: navigateTo });
-    } else {
-      navigation.goBack();
-    }
-  };
 
   openLegalScreen = (documentId: string, documentName: string) => {
     const { navigation } = this.props;

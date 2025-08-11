@@ -18,6 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import { Buffer } from 'buffer';
+
 import 'react-native-gesture-handler';
 import '@ethersproject/shims';
 import '@walletconnect/react-native-compat';
@@ -26,6 +28,11 @@ import 'react-native-get-random-values';
 import { AppRegistry, LogBox } from 'react-native';
 import App from './App';
 import { name as appName } from './app.json';
+
+// $FlowFixMe[prop-missing]
+global.Buffer = Buffer;
+// $FlowFixMe[prop-missing]
+global.process = require('process');
 
 LogBox.ignoreAllLogs(true);
 

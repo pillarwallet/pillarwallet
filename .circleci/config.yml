@@ -24,7 +24,7 @@ executors:
   android-executor:
     working_directory: ~/pillarwallet
     docker:
-      - image: cimg/android:2022.07.1-node
+      - image: cimg/android:2025.01.1-node
         auth:
           username: $DOCKERHUB_USER
           password: $DOCKERHUB_PASSWORD
@@ -40,7 +40,7 @@ executors:
   node20-executor:
     working_directory: ~/pillarwallet
     docker:
-      - image: cimg/node:20.6.1
+      - image: cimg/node:20.18.1
         auth:
           username: $DOCKERHUB_USER
           password: $DOCKERHUB_PASSWORD
@@ -384,6 +384,9 @@ jobs:
           role-session-name: CircleCI
           aws-region: AWS_DEFAULT_REGION
       - run:
+          name: Install Ninja
+          command: sudo apt-get update && sudo apt-get install -y ninja-build
+      - run:
           name: Set slack message
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/android_appcenter.txt .
@@ -667,6 +670,9 @@ jobs:
           role-arn: '$OIDC_CIRCLE_CI_ROLE_ARN'
           role-session-name: CircleCI
           aws-region: AWS_DEFAULT_REGION
+      - run:
+          name: Install Ninja
+          command: sudo apt-get update && sudo apt-get install -y ninja-build
       - run:
           name: Set slack message
           command: |

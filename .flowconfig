@@ -16,6 +16,8 @@
 <PROJECT_ROOT>/node_modules/@storybook/core/node_modules/resolve/test/resolver/malformed_package_json/package.json
 <PROJECT_ROOT>/node_modules/rechoir/node_modules/resolve/test/resolver/malformed_package_json/package.json
 <PROJECT_ROOT>/node_modules/tape/node_modules/resolve/test/resolver/malformed_package_json/package.json
+ <PROJECT_ROOT>/node_modules/metro-cache/src/stores/HttpStore.js.flow
+.*/__tests__/.*
 ; We fork some components by platform
 .*/*[.]android.js
 
@@ -42,6 +44,8 @@ node_modules/warning/.*
 
 ; ;;; custom untyped start ;;;
 <PROJECT_ROOT>/metro.config.js
+<PROJECT_ROOT>/node_modules/react-native/.*
+<PROJECT_ROOT>/node_modules/@babel/eslint-parser/.*
 <PROJECT_ROOT>/node_modules/react-native-vector-icons/dist/index.js.flow
 <PROJECT_ROOT>/node_modules/react-native-camera/.*
 <PROJECT_ROOT>/node_modules/react-native-image-view/.*
@@ -65,6 +69,15 @@ node_modules/warning/.*
 <PROJECT_ROOT>/node_modules/hermes-parser/.*
 <PROJECT_ROOT>/node_modules/hermes-estree/.*
 <PROJECT_ROOT>/node_modules/@react-native/.*
+<PROJECT_ROOT>/node_modules/metro-babel-transformer/.*
+<PROJECT_ROOT>/node_modules/metro-transform-worker/.*
+<PROJECT_ROOT>/node_modules/metro-cache/.*
+<PROJECT_ROOT>/node_modules/@types/react-native/.*
+<PROJECT_ROOT>/node_modules/metro-source-map/.*
+<PROJECT_ROOT>/node_modules/metro-babel-transformer/.*
+<PROJECT_ROOT>/node_modules/metro-symbolicate/.*
+<PROJECT_ROOT>/node_modules/metro-transform-plugins/.*
+<PROJECT_ROOT>/node_modules/metro-transform-worker/.*
 <PROJECT_ROOT>/node_modules/@react-native-community/cli-plugin-metro/node_modules/metro-react-native-babel-transformer/.*
 ; ;;; custom untyped end ;;;
 

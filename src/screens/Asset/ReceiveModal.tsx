@@ -19,7 +19,7 @@
 */
 
 import React, { FC, useState } from 'react';
-import Clipboard from '@react-native-community/clipboard';
+import Clipboard from '@react-native-clipboard/clipboard';
 import SafeAreaView from 'react-native-safe-area-view';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
@@ -250,7 +250,7 @@ const ReceiveTitle = styled.Text`
 `;
 
 const DeployInfoWrapper = styled.View`
-  width: 100%
+  width: 100%;
   background-color: ${({ theme }) => theme.colors.basic060};
   padding: ${spacing.large}px ${spacing.small}px;
   border-radius: ${borderRadiusSizes.defaultButton}px;

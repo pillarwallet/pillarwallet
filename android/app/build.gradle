@@ -1,8 +1,8 @@
 apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
+apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: 'com.google.gms.google-services' // @react-native-firebase/app init, react-native-notification
 apply plugin: 'com.google.firebase.crashlytics' // react-native-firebase/crashlytics
-apply plugin: "io.fabric" // react-native-firebase/crashlytics
 apply plugin: 'com.google.firebase.firebase-perf'
 
 /**
@@ -11,14 +11,14 @@ apply plugin: 'com.google.firebase.firebase-perf'
  */
 react {
     /* Folders */
-    //   The root of your project, i.e. where "package.json" lives. Default is '..'
-    // root = file("../")
-    //   The folder where the react-native NPM package is. Default is ../node_modules/react-native
-    // reactNativeDir = file("../node_modules/react-native")
-    //   The folder where the react-native Codegen package is. Default is ../node_modules/@react-native/codegen
-    // codegenDir = file("../node_modules/@react-native/codegen")
-    //   The cli.js file which is the React Native CLI entrypoint. Default is ../node_modules/react-native/cli.js
-    // cliFile = file("../node_modules/react-native/cli.js")
+    //   The root of your project, i.e. where "package.json" lives. Default is '../..'
+    // root = file("../../")
+    //   The folder where the react-native NPM package is. Default is ../../node_modules/react-native
+    // reactNativeDir = file("../../node_modules/react-native")
+    //   The folder where the react-native Codegen package is. Default is ../../node_modules/@react-native/codegen
+    // codegenDir = file("../../node_modules/@react-native/codegen")
+    //   The cli.js file which is the React Native CLI entrypoint. Default is ../../node_modules/react-native/cli.js
+    // cliFile = file("../../node_modules/react-native/cli.js")
     /* Variants */
     //   The list of variants to that are debuggable. For those we're going to
     //   skip the bundling of the JS bundle and the assets. By default is just 'debug'.
@@ -49,6 +49,9 @@ react {
     //
     //   The list of flags to pass to the Hermes compiler. By default is "-O", "-output-source-map"
     // hermesFlags = ["-O", "-output-source-map"]
+
+    /* Autolinking */
+    autolinkLibrariesWithApp()
 }
 
 project.ext.react = [
@@ -62,7 +65,6 @@ project.ext.react = [
     bundleCommand: "ram-bundle",
 ]
 
-apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -83,14 +85,14 @@ def enableProguardInReleaseBuilds = false
  * The preferred build flavor of JavaScriptCore (JSC)
  *
  * For example, to use the international variant, you can use:
- * `def jscFlavor = 'org.webkit:android-jsc-intl:+'`
+ * `def jscFlavor = io.github.react-native-community:jsc-android-intl:2026004.+`
  *
  * The international variant includes ICU i18n library and necessary data
  * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
  * give correct results when using with locales other than en-US.  Note that
  * this variant is about 6MiB larger per architecture than default.
  */
-def jscFlavor = 'org.webkit:android-jsc:+'
+def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
 
 /**
  * Whether to enable the Hermes VM.
@@ -107,6 +109,7 @@ def keystoreProperties = new Properties()
 if (keystorePropertiesFile.exists()) keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
+    buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     signingConfigs {
@@ -139,6 +142,9 @@ android {
         multiDexEnabled true
         missingDimensionStrategy 'react-native-camera', 'general' // react-native-camera
         vectorDrawables.useSupportLibrary = true  // react-native-image-crop-picker
+        buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", "false"
+        buildConfigField "boolean", "IS_HERMES_ENABLED", "false"
+
     }
 
     buildTypes {
@@ -150,15 +156,22 @@ android {
             buildConfigField "String", "CODEPUSH_KEY", '"com.pillarproject.wallet"'
             applicationIdSuffix ".staging"
             signingConfig signingConfigs.staging
-            minifyEnabled true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             zipAlignEnabled true
-            matchingFallbacks = ['release']            
+            matchingFallbacks = ['release']
+            if (file("../keystores/staging-key.keystore").exists()) {
+                signingConfig signingConfigs.staging
+            } else {
+                signingConfig signingConfigs.debug
+            }
         }
         release {
             buildConfigField "String", "CODEPUSH_KEY", '"com.pillarproject.wallet"'          
 
-            minifyEnabled true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             zipAlignEnabled true
             signingConfig signingConfigs.release
@@ -181,8 +194,13 @@ dependencies {
         implementation jscFlavor
     }
 
-    implementation 'com.facebook.fresco:fresco:2.0.0'
-    implementation 'com.facebook.fresco:animated-gif:2.0.0'
+   configurations.all {
+       exclude group: 'com.crashlytics.sdk.android', module: 'crashlytics'
+       exclude group: 'io.fabric.sdk.android', module: 'fabric'
+   }
+
+    implementation 'com.facebook.fresco:fresco:3.6.0'
+    implementation 'com.facebook.fresco:animated-gif:3.6.0'
 
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support:recyclerview-v7:28.0.0'  
@@ -191,14 +209,13 @@ dependencies {
     // Custom deps
     implementation 'com.android.support.constraint:constraint-layout:2.0.4'
     implementation project(':react-native-notifications')
-    implementation 'com.google.firebase:firebase-core:20.0.0' // react-native-notifications
-    implementation 'com.google.firebase:firebase-messaging:23.2.0' // react-native-notifications override for Intercom PN handler implementation
+    implementation 'com.google.firebase:firebase-core:21.1.1' // react-native-notifications
+    implementation 'com.google.firebase:firebase-messaging:24.1.2' // react-native-notifications override for Intercom PN handler implementation
     implementation 'com.google.firebase:firebase-iid:21.1.0'
+    implementation 'com.google.firebase:firebase-crashlytics:20.0.0'
     implementation "androidx.multidex:multidex:${rootProject.ext.multidex_version}" // custom: support multidex builds
-	implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1' // ads identifier
+	implementation 'com.google.android.gms:play-services-ads-identifier:18.2.0' // ads identifier
 	implementation 'com.android.installreferrer:installreferrer:2.2' // install referrer
-	implementation 'com.google.android.gms:play-services-appset:16.0.2' // play services appset
+	implementation 'com.google.android.gms:play-services-appset:16.1.0' // play services appset
 }
-
-apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
 

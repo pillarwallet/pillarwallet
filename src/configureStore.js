@@ -28,7 +28,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { persistStore, persistReducer, createMigrate } from 'redux-persist';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import thunk from 'redux-thunk';
-import createSagaMiddleware from 'redux-saga';
+// import createSagaMiddleware from 'redux-saga';
 import ReduxAsyncQueue from 'redux-async-queue';
 import rootSaga from 'redux/sagas/root-saga';
 import offlineMiddleware from 'utils/offlineMiddleware';
@@ -37,6 +37,9 @@ import rootReducer from './reducers/rootReducer';
 import { composeWithDevTools } from '@redux-devtools/extension';
 
 import migrations from './redux-migrations/migrations';
+
+// // eslint-disable-next-line @typescript-eslint/no-require-imports
+const createSagaMiddleware = require('redux-saga').default;
 
 // migration example
 /*

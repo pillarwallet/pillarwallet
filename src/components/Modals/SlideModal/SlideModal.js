@@ -399,7 +399,7 @@ const HandleBar = styled.View`
 
 const BackgroundWrapper = styled.View`
   width: 100%;
-  height: 100%
+  height: 100%;
   padding-top: ${Platform.OS === 'ios' ? spacing.large : 0}px;
   padding-bottom: ${({ modalHeight }) => modalHeight || 0}px;
 

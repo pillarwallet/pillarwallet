@@ -40,7 +40,7 @@ describe('Offline api Actions', () => {
         },
       };
       await makeApiCall(action)(dispatchMock, getState, api);
-      expect(api.userInfo).toBeCalledWith(1, 2);
+      expect(api.userInfo).toHaveBeenCalledWith(1, 2);
     });
   });
 
