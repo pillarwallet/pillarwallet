@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>pillarwallet</string>
+			</array>
+		</dict>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>whatsapp</string>
+		<string>mailto</string>
+	</array>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Pillar Wallet uses the local network to connect to the development server during debugging.</string>
+	<key>NSBonjourServices</key>
+	<array>
+  		<string>_http._tcp</string>
+	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>Allow Pillar Wallet to use your camera to take your profile picture or scan QR codes.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Allow Pillar Wallet to access your contacts.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Enabling Face ID allows you quick and secure access to your account.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Allow Pillar Wallet to use your location.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Give Pillar Wallet permission to access your microphone to allow you to attach voice notes with bug reports.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Give Pillar Wallet permission to save photos to temporarily store your profile pictures.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Give Pillar Wallet permission to access your photos to allow you set your profile picture.</string>
+	<key>RCTNewArchEnabled</key>
+	<false/>
+	<key>UIAppFonts</key>
+	<array>
+		<string>EuclidCircularB-Bold.otf</string>
+		<string>EuclidCircularB-Light.otf</string>
+		<string>EuclidCircularB-Medium.otf</string>
+		<string>EuclidCircularB-Regular.otf</string>
+		<string>SpaceGrotesk-Medium.ttf</string>
+		<string>PillarIcons.ttf</string>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
+	<key>UILaunchStoryboardName</key>
+	<string>Launch</string>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>arm64</string>
+	</array>
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleDefault</string>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	<key>UIUserInterfaceStyle</key>
+	<string>Automatic</string>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+</dict>
+</plist>
