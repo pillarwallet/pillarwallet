@@ -108,17 +108,17 @@ const BalanceSection: FC<IBalanceSection> = ({ balanceInFiat, changeInFiat, show
     setTimeout(() => openBrowser(addCashUrl), 500);
   }, [addCashUrl]);
 
-  const openAddCashModal = () => {
-    Modal.open(() => <AddCashModal setAddCashUrl={setAddCashUrl} />);
-  };
+  // const openAddCashModal = () => {
+  //   Modal.open(() => <AddCashModal setAddCashUrl={setAddCashUrl} />);
+  // };
 
-  const onAddCashPress = () => {
-    if (viewedReceiveTokensWarning) {
-      openAddCashModal();
-    } else {
-      navigation.navigate(RECEIVE_TOKENS_WARNING, { onContinue: openAddCashModal });
-    }
-  };
+  // const onAddCashPress = () => {
+  //   if (viewedReceiveTokensWarning) {
+  //     openAddCashModal();
+  //   } else {
+  //     navigation.navigate(RECEIVE_TOKENS_WARNING, { onContinue: openAddCashModal });
+  //   }
+  // };
 
   return (
     <>
@@ -141,11 +141,11 @@ const BalanceSection: FC<IBalanceSection> = ({ balanceInFiat, changeInFiat, show
           )}
         </FirstColumn>
 
-        {!isKeyBasedAccount(activeAccount) && (
+        {/* {!isKeyBasedAccount(activeAccount) && (
           <SecondColumn>
             <SpecialButton title={tRoot('button.buyTokens')} iconName="add-cash" onPress={onAddCashPress} />
           </SecondColumn>
-        )}
+        )} */}
       </Container>
     </>
   );

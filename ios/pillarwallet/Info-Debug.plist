@@ -47,6 +47,12 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Pillar Wallet uses the local network to connect to the development server during debugging.</string>
+	<key>NSBonjourServices</key>
+	<array>
+  		<string>_http._tcp</string>
+	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>Allow Pillar Wallet to use your camera to take your profile picture or scan QR codes.</string>
 	<key>NSContactsUsageDescription</key>
