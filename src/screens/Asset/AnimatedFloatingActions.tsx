@@ -27,24 +27,20 @@ import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-n
 
 // Constants
 import { BRIDGE_TAB, BRIDGE_FLOW, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+// import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
-import { useIsExchangeAvailable, accountsSelector, useRootSelector, useSupportedAssetsPerChain } from 'selectors';
+import { useIsExchangeAvailable } from 'selectors';
 
 // Components
 import FloatingButtons from 'components/FloatingButtons';
 
 // Services
-import { firebaseRemoteConfig } from 'services/firebase';
-
-// Config
-import { ETHERSPOT_RAMP_CURRENCY_TOKENS } from 'configs/rampConfig';
+// import { firebaseRemoteConfig } from 'services/firebase';
 
 // Utils
-import { onRamperWidgetUrl, pelerinWidgetUrl } from 'utils/fiatToCrypto';
+import { pelerinWidgetUrl } from 'utils/fiatToCrypto';
 import { showServiceLaunchErrorToast } from 'utils/inAppBrowser';
-import { getActiveAccount } from 'utils/accounts';
 
 const AnimatedFloatingActions = ({ assetData }) => {
   const navigation: NavigationScreenProp<any> = useNavigation();
@@ -55,9 +51,9 @@ const AnimatedFloatingActions = ({ assetData }) => {
 
   const { contractAddress, token, chain } = assetData;
 
-  const accounts = useRootSelector(accountsSelector);
-  const activeAccount = getActiveAccount(accounts);
-  const supportedAssets = useSupportedAssetsPerChain();
+  // const accounts = useRootSelector(accountsSelector);
+  // const activeAccount = getActiveAccount(accounts);
+  // const supportedAssets = useSupportedAssetsPerChain();
 
   const flipAnimation = useRef(new Animated.Value(0)).current;
   let flipRotation = 0;
@@ -108,15 +104,17 @@ const AnimatedFloatingActions = ({ assetData }) => {
     await openInAppBrowser(url);
   };
 
-  const buyOnPelerin = async () => {
-    const url = await pelerinWidgetUrl(false, null, null, null, 'buy', token, chain);
-    await openInAppBrowser(url);
-  };
+  // const buyOnPelerin = async () => {
+  //   const url = await pelerinWidgetUrl(false, null, null, null, 'buy', token, chain);
+  //   console.log("urllll", url);
+    
+  //   await openInAppBrowser(url);
+  // };
 
-  const buyOnRamp = async () => {
-    const url = onRamperWidgetUrl(activeAccount, supportedAssets);
-    await openInAppBrowser(url);
-  };
+  // const buyOnRamp = async () => {
+  //   const url = onRamperWidgetUrl(activeAccount, supportedAssets);
+  //   await openInAppBrowser(url);
+  // };
 
   const openInAppBrowser = async (url) => {
     const isAvailable = await InAppBrowser.isAvailable();
@@ -133,17 +131,18 @@ const AnimatedFloatingActions = ({ assetData }) => {
     } else showServiceLaunchErrorToast();
   };
 
-  const mtPelerinSupportedAssetsInString = firebaseRemoteConfig.getString(REMOTE_CONFIG.MT_PELERIN_SUPPORTED_ASSETS);
-  const isPelerinSupported = JSON.parse(mtPelerinSupportedAssetsInString).supportedAssets.includes(token);
+  // const mtPelerinSupportedAssetsInString = firebaseRemoteConfig.getString(REMOTE_CONFIG.MT_PELERIN_SUPPORTED_ASSETS);
+  
+  // const isPelerinSupported = JSON.parse(mtPelerinSupportedAssetsInString).supportedAssets.includes(token);
 
-  const isRampSupported = ETHERSPOT_RAMP_CURRENCY_TOKENS.includes(token || chain.toUpperCase() + '_' + token);
+  // const isRampSupported = ETHERSPOT_RAMP_CURRENCY_TOKENS.includes(token || chain.toUpperCase() + '_' + token);
 
   const buttons = [
-    (isPelerinSupported || isRampSupported) && {
-      title: t('label.buy'),
-      iconName: isDarkTheme ? 'buy' : 'buy-light',
-      onPress: isPelerinSupported ? buyOnPelerin : buyOnRamp,
-    },
+    // (isPelerinSupported || isRampSupported) && {
+    //   title: t('label.buy'),
+    //   iconName: isDarkTheme ? 'buy' : 'buy-light',
+    //   onPress: isPelerinSupported ? buyOnPelerin : buyOnRamp,
+    // },
     isExchangeAvailable && {
       title: t('button.swap'),
       iconName: 'exchange',
@@ -157,11 +156,11 @@ const AnimatedFloatingActions = ({ assetData }) => {
       iconName: 'send',
       onPress: () => navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData }),
     },
-    isPelerinSupported && {
-      title: t('label.sell'),
-      iconName: isDarkTheme ? 'sell' : 'sell-light',
-      onPress: sellOnPelerin,
-    },
+    // isPelerinSupported && {
+    //   title: t('label.sell'),
+    //   iconName: isDarkTheme ? 'sell' : 'sell-light',
+    //   onPress: sellOnPelerin,
+    // },
   ];
 
   const exchangeButtons = [

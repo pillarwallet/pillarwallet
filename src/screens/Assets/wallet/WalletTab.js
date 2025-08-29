@@ -27,7 +27,7 @@ import InAppBrowser from 'react-native-inappbrowser-reborn';
 // Components
 import FloatingButtons from 'components/FloatingButtons';
 import Modal from 'components/Modal';
-import AddCashModal from 'screens/AddCash/modal/AddCashModal';
+// import AddCashModal from 'screens/AddCash/modal/AddCashModal';
 
 // Screens
 import ReceiveModal from 'screens/Asset/ReceiveModal';
@@ -115,17 +115,17 @@ function WalletTab({ isNavigateToHome }: Props) {
       iconName: 'send',
       onPress: () => navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW),
     },
-    !isKeyBasedAccount(activeAccount) &&
-    !hasPositiveBalance && {
-      title: tRoot('button.addCash'),
-      iconName: 'plus',
-      onPress: () => openAddCashModal(),
-    },
+    // !isKeyBasedAccount(activeAccount) &&
+    // !hasPositiveBalance && {
+    //   title: tRoot('button.addCash'),
+    //   iconName: 'plus',
+    //   onPress: () => openAddCashModal(),
+    // },
   ];
 
-  const openAddCashModal = () => {
-    Modal.open(() => <AddCashModal setAddCashUrl={setAddCashUrl} />);
-  };
+  // const openAddCashModal = () => {
+  //   Modal.open(() => <AddCashModal setAddCashUrl={setAddCashUrl} />);
+  // };
 
   return (
     <Container>
