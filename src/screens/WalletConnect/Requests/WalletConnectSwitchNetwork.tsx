@@ -40,7 +40,7 @@ import { isEtherspotAccountDeployed } from 'utils/etherspot';
 
 // Selectors
 import { useSupportedChains } from 'selectors/chains';
-import { useActiveAccount, useRootSelector } from 'selectors';
+import { useRootSelector } from 'selectors';
 import { isDeployedOnChainSelector } from 'selectors/chains';
 
 // Constants
@@ -66,7 +66,6 @@ interface Props {
   chain: Chain;
   chains?: string[];
   onChangeChain: (chain: Chain) => void;
-  isV2WC?: boolean;
   appName?: string;
 }
 
@@ -88,7 +87,7 @@ const useChains = (): any[] => {
   return chainTabs;
 };
 
-const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, chains: v2Chains, onChangeChain, appName }) => {
+const WalletConnectSwitchNetwork: FC<Props> = ({ chain, chains: v2Chains, onChangeChain, appName }) => {
   const colors = useThemeColors();
   const chains = useChains();
   const accounts = useWalletConnectAccounts();
@@ -124,7 +123,7 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, chains: v2Chains
 
   const renderItem = ({ item, type }): ReactElement<any, any> => (
     <TouchableOpacity
-      disabled={!isActiveEtherspotAccount || isV2WC}
+      disabled={true}
       style={type === 'selectedChain' ? styles.selectedChainContainer : styles.btnContainer}
       onPress={() => {
         setShowList(!showList);
@@ -159,12 +158,6 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, chains: v2Chains
           </Text>
         </>
       )}
-      {type === 'selectedChain' && isActiveEtherspotAccount && !isV2WC && (
-        <Icon
-          style={[styles.upDnIcon, { backgroundColor: colors.basic050 }]}
-          name={!showList ? 'chevron-down' : 'chevron-up'}
-        />
-      )}
     </TouchableOpacity>
   );
 
@@ -192,7 +185,7 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, chains: v2Chains
   );
 
   const filterdV2Chains = useMemo(() => {
-    if (!isV2WC || !v2Chains) return [];
+    if (!v2Chains) return [];
     const chainInfo = [];
     v2Chains.map((v2chain) => {
       const chainId = v2chain.split(':')?.[1];
@@ -201,14 +194,14 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, chains: v2Chains
       if (!!requestedChainInfo) chainInfo.push(requestedChainInfo);
     });
     return chainInfo;
-  }, [v2Chains, isV2WC, activeAccount]);
+  }, [v2Chains, activeAccount]);
    
   let pillarXMigrationWalletName = firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_WALLETCONNECT_MIGRATION_MATCHER);
 
   const disabledSwitchAccount =
     filterdV2Chains?.length > 1 || filterdV2Chains?.some((chainInfo) => chainInfo.chain !== CHAIN.ETHEREUM) || (appName == pillarXMigrationWalletName) || (appName?.includes(PILLARX));
 
-  const chainNotDeployedInV2 = isV2WC && filterdV2Chains.find((chainInfo) => !chainInfo.isDeployed);
+  const chainNotDeployedInV2 = filterdV2Chains?.find((chainInfo) => !chainInfo.isDeployed);
   return (
     <>
       {isActiveEtherspotAccount && (!selectedNetwork.isDeployed || chainNotDeployedInV2) && (
@@ -254,10 +247,8 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ isV2WC, chain, chains: v2Chains
         }}
         style={[styles.container, { backgroundColor: colors.basic070 }, !showList && styles.bottomRadius]}
       >
-        {!isV2WC && renderItem({ item: selectedNetwork, type: 'selectedChain' })}
-        {isV2WC &&
-          filterdV2Chains &&
-          filterdV2Chains.map((chainInfo) => renderItem({ item: chainInfo, type: 'selectedChain' }))}
+        {filterdV2Chains &&
+          filterdV2Chains?.map((chainInfo) => renderItem({ item: chainInfo, type: 'selectedChain' }))}
 
         {showList && <View style={[styles.line, { backgroundColor: colors.basic050 }]} />}
       </View>

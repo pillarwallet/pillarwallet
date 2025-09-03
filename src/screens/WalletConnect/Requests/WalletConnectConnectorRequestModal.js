@@ -56,10 +56,9 @@ import WalletConnectSwitchNetwork from './WalletConnectSwitchNetwork';
 type Props = {|
   connector: WalletConnectV2Proposal,
   chainId: number,
-  isV2WC?: ?boolean,
 |};
 
-function WalletConnectConnectorRequestModal({ isV2WC, connector, chainId }: Props) {
+function WalletConnectConnectorRequestModal({ connector, chainId }: Props) {
   const { genericToken } = useThemedImages();
   const chainsConfig = useChainsConfig();
   const chain = chainFromChainId[chainId] ?? CHAIN.ETHEREUM;
@@ -112,7 +111,6 @@ function WalletConnectConnectorRequestModal({ isV2WC, connector, chainId }: Prop
 
       {!appName?.includes(PILLARX) && (
         <WalletConnectSwitchNetwork
-          isV2WC={isV2WC}
           chain={chain}
           chains={chains}
           onChangeChain={setSelectedChain}
