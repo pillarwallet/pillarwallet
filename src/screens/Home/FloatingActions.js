@@ -29,12 +29,7 @@ import Modal from 'components/Modal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 
 // Constants
-import {
-  CONNECT_FLOW,
-  BRIDGE_FLOW,
-  SEND_TOKEN_FROM_HOME_FLOW,
-  RECEIVE_TOKENS_WARNING,
-} from 'constants/navigationConstants';
+import { CONNECT_FLOW, BRIDGE_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';
 
 // Utils
 import { isArchanovaAccount, isKeyBasedAccount } from 'utils/accounts';
@@ -71,10 +66,6 @@ function FloatingActions() {
   const onReceivePress = () => {
     if (viewedReceiveTokensWarning || isKeyBasedAccount(activeAccount)) {
       showReceiveModal();
-    } else {
-      navigation.navigate(RECEIVE_TOKENS_WARNING, {
-        onContinue: showReceiveModal,
-      });
     }
   };
 
