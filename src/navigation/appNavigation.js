@@ -120,7 +120,6 @@ import NIWarningScreen from 'screens/NativeIntegration/NIWarning';
 import AddTokensScreen from 'screens/Assets/AddTokens';
 import TokenWithToggles from 'screens/Assets/TokensWithToggles';
 import ManageTokenLists from 'screens/Assets/ManageTokenLists';
-import ReceiveTokensWarning from 'screens/Home/ReceiveTokensWarning';
 import PlrStaking from 'screens/PlrStaking/PlrStaking';
 import PlrStakingValidator from 'screens/PlrStaking/PlrStakingValidator';
 import PoolsActivityScreen from 'screens/Asset/PoolsActivity';
