@@ -38,18 +38,17 @@ function WalletConnectConnectorRequestScreen() {
   const dispatch = useDispatch();
   const connector = route?.params?.connector;
   const chainId = route?.params?.chainId;
-  const isV2WC = route?.params?.isV2;
 
   React.useLayoutEffect(() => {
     navigation.goBack(null);
     if (!connector) return;
-    Modal.open(() => <WalletConnectRequestModal isV2WC={isV2WC} connector={connector} chainId={chainId} />);
+    Modal.open(() => <WalletConnectRequestModal connector={connector} chainId={chainId} />);
 
     setTimeout(() => {
       dispatch({ type: VISIBLE_WC_MODAL, payload: false });
     }, 5000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connector, navigation, chainId, isV2WC]);
+  }, [connector, navigation, chainId]);
 
   return null;
 }

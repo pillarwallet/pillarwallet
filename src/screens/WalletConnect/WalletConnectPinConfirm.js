@@ -83,7 +83,7 @@ const WalletConnectPinConfirmScreeen = ({ resetIncorrectPassword, useBiometrics,
   const callRequest = route?.params?.callRequest;
   const transactionPayload = route?.params?.transactionPayload;
 
-  const isV2CallRequest = !!callRequest?.topic;
+  if (!callRequest?.topic) return null;
 
   const dismissScreen = () => {
     resetIncorrectPassword();
@@ -138,16 +138,16 @@ const WalletConnectPinConfirmScreeen = ({ resetIncorrectPassword, useBiometrics,
       switch (method) {
         case PERSONAL_SIGN:
           const messageRes = await signPersonalMessage(message, wallet, isLegacyEip1271);
-          result = isV2CallRequest ? formatJsonRpcResult(callRequest.callId, messageRes) : messageRes;
+          result = formatJsonRpcResult(callRequest.callId, messageRes);
           break;
         case ETH_SIGN_TYPED_DATA:
         case ETH_SIGN_TYPED_DATA_V4:
           const signedData = await signTypedData(message, wallet, isLegacyEip1271);
-          result = isV2CallRequest ? formatJsonRpcResult(callRequest.callId, signedData) : signedData;
+          result = formatJsonRpcResult(callRequest.callId, signedData);
           break;
         default:
           const signMessageRes = await signMessage(message, wallet);
-          result = isV2CallRequest ? formatJsonRpcResult(callRequest.callId, signMessageRes) : signMessageRes;
+          result = formatJsonRpcResult(callRequest.callId, signMessageRes);
       }
     } catch (error) {
       reportErrorLog('WalletConnectPinConfirmScreeen -> handleSignMessage failed', { message, callRequest, error });

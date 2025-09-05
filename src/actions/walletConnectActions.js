@@ -251,7 +251,7 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
           lastActiveScreen: APP_FLOW,
           lastActiveScreenParams: {
             screen: WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
-            params: { connector: { ...proposal, namespaces }, isV2: true, chainId },
+            params: { connector: { ...proposal, namespaces }, chainId },
           },
         });
         return;
@@ -263,7 +263,7 @@ export const connectToWalletConnectConnectorAction = (uri: string) => {
       navigate(
         CommonActions.navigate(APP_FLOW, {
           screen: WALLETCONNECT_CONNECTOR_REQUEST_SCREEN,
-          params: { connector: { ...proposal, namespaces }, isV2: true, chainId },
+          params: { connector: { ...proposal, namespaces }, chainId },
         }),
       );
     };
