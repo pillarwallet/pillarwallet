@@ -31,7 +31,6 @@ import { CardStyleInterpolators } from '@react-navigation/stack';
 
 // screens
 import AssetsScreen from 'screens/Assets';
-import AssetScreen from 'screens/Asset';
 import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
@@ -117,8 +116,6 @@ import TokenWithToggles from 'screens/Assets/TokensWithToggles';
 import ManageTokenLists from 'screens/Assets/ManageTokenLists';
 import PlrStaking from 'screens/PlrStaking/PlrStaking';
 import PlrStakingValidator from 'screens/PlrStaking/PlrStakingValidator';
-import PoolsActivityScreen from 'screens/Asset/PoolsActivity';
-import TradingActivityScreen from 'screens/Asset/TradingActivity';
 
 // components
 import Toast from 'components/Toast';
@@ -136,9 +133,6 @@ import { initWalletConnectSessionsAction } from 'actions/walletConnectSessionsAc
 // constants
 import {
   ASSETS,
-  ASSET,
-  POOLS_ACTIVITY,
-  TRADING_ACTIVITY,
   SERVICES_FLOW,
   EXCHANGE_CONFIRM,
   HOME,
@@ -315,17 +309,6 @@ function AssetsFlow() {
       <assetsFlowNavigator.Screen name={TOKENS_WITH_TOGGLES} component={TokenWithToggles} />
       <assetsFlowNavigator.Screen name={MANAGE_TOKEN_LISTS} component={ManageTokenLists} />
     </assetsFlowNavigator.Navigator>
-  );
-}
-
-const assetFlowNavigator = createNativeStackNavigator();
-function AssetFlow() {
-  return (
-    <assetFlowNavigator.Navigator screenOptions={StackNavigatorConfigDisableGesture}>
-      <assetFlowNavigator.Screen name={ASSET} component={AssetScreen} />
-      <assetFlowNavigator.Screen name={POOLS_ACTIVITY} component={PoolsActivityScreen} />
-      <assetFlowNavigator.Screen name={TRADING_ACTIVITY} component={TradingActivityScreen} />
-    </assetFlowNavigator.Navigator>
   );
 }
 
@@ -726,7 +709,6 @@ function AppFlowNavigation() {
       <AppFlowStackNavigator.Screen name={TANK_FUND_FLOW} component={TankFundFlow} />
       <AppFlowStackNavigator.Screen name={TANK_WITHDRAWAL_FLOW} component={TankWithdrawalFlow} />
       <AppFlowStackNavigator.Screen name={WALLETCONNECT_FLOW} component={WalletConnectFlow} />
-      <AppFlowStackNavigator.Screen name={ASSET} component={AssetFlow} />
       <AppFlowStackNavigator.Screen name={PILLAR_NETWORK_INTRO} component={PillarNetworkIntro} />
       <AppFlowStackNavigator.Screen name={LOGOUT_PENDING} component={LogoutPendingScreen} />
       <AppFlowStackNavigator.Screen name={MENU_FLOW} component={MenuFlow} />
