@@ -120,7 +120,6 @@ import NIWarningScreen from 'screens/NativeIntegration/NIWarning';
 import AddTokensScreen from 'screens/Assets/AddTokens';
 import TokenWithToggles from 'screens/Assets/TokensWithToggles';
 import ManageTokenLists from 'screens/Assets/ManageTokenLists';
-import ReceiveTokensWarning from 'screens/Home/ReceiveTokensWarning';
 import PlrStaking from 'screens/PlrStaking/PlrStaking';
 import PlrStakingValidator from 'screens/PlrStaking/PlrStakingValidator';
 import PoolsActivityScreen from 'screens/Asset/PoolsActivity';
@@ -262,7 +261,6 @@ import {
   ADD_TOKENS,
   TOKENS_WITH_TOGGLES,
   MANAGE_TOKEN_LISTS,
-  RECEIVE_TOKENS_WARNING,
   PILLAR_STAKING_FLOW,
   PLR_STAKING,
   PLR_STAKING_VALIDATOR,
@@ -425,7 +423,6 @@ function HomeFlow() {
       <homeFlowNavigator.Screen name={SEND_TOKEN_PIN_CONFIRM} component={SendTokenPinConfirmScreen} />
       <homeFlowNavigator.Screen name={SEND_TOKEN_TRANSACTION} component={SendTokenTransactionScreen} />
       <homeFlowNavigator.Screen name={REGISTER_ENS} component={RegisterENSScreen} />
-      <homeFlowNavigator.Screen name={RECEIVE_TOKENS_WARNING} component={ReceiveTokensWarning} />
     </homeFlowNavigator.Navigator>
   );
 }

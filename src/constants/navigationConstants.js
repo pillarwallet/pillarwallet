@@ -113,7 +113,6 @@ export const CONTACT = 'CONTACT';
 export const HOME_FLOW = 'HOME_FLOW';
 export const HOME = 'HOME';
 export const HOME_HISTORY = 'HOME_HISTORY';
-export const RECEIVE_TOKENS_WARNING = 'RECEIVE_TOKENS_WARNING';
 
 // EXCHANGE FLOW
 export const EXCHANGE_FLOW = 'EXCHANGE_FLOW';
