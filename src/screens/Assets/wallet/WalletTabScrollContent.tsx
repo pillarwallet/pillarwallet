@@ -45,7 +45,7 @@ import SearchBar from 'components/SearchBar';
 import Text from 'components/core/Text';
 
 // Constants
-import { ASSET, ADD_TOKENS } from 'constants/navigationConstants';
+import { ADD_TOKENS } from 'constants/navigationConstants';
 import { TOKENS, STABLES, ALL, WALLET_DROPDOWN_REF } from 'constants/walletConstants';
 
 // Selectors
@@ -101,11 +101,6 @@ function WalletTabScrollContent({ isNavigateToHome, hasPositiveBalance }: Props)
   const isPillarPaySupported = useIsPillarPaySupported();
 
   const searchItems = getMatchingTokens(assets, query);
-
-  const navigateToAssetDetails = (category: any, chain: Chain) => {
-    const assetData = buildAssetDataNavigationParam(category, chain);
-    navigation.navigate(ASSET, { screen: ASSET, params: { assetData, isNavigateToHome } });
-  };
 
   React.useEffect(() => {
     DeviceEventEmitter.emit(WALLET_DROPDOWN_REF, ref);
@@ -172,9 +167,7 @@ function WalletTabScrollContent({ isNavigateToHome, hasPositiveBalance }: Props)
         name={token.name}
         iconUrl={token.iconUrl}
         balance={wrapBigNumberOrNil(token.balance?.balance)}
-        onPress={async () => {
-          navigateToAssetDetails(token, token.chain);
-        }}
+        onPress={async () => {}}
       />
     );
   };

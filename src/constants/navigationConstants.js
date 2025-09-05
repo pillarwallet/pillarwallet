@@ -31,7 +31,6 @@ export const ADD_CASH_BROWSER = 'ADD_CASH_BROWSER';
 export const GET_NOTIFICATIONS = 'GET_NOTIFICATIONS';
 export const SERVICES_FLOW = 'SERVICES_FLOW';
 export const ME_TAB = 'ME_TAB';
-export const ASSET = 'ASSET';
 export const MARKET = 'MARKET';
 export const CONTACT_INFO = 'CONTACT_INFO';
 export const REVEAL_BACKUP_PHRASE = 'REVEAL_BACKUP_PHRASE';
