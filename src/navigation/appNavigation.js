@@ -112,11 +112,6 @@ import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
 import WalletConnectBrowser from 'screens/WalletConnect/WalletConnectBrowser';
 import RegisterENSScreen from 'screens/RegisterENS';
 import BridgeTabScreen from 'screens/Bridge/BridgeTab';
-import NIServices from 'screens/NativeIntegration/NIServices';
-import NIInputService from 'screens/NativeIntegration/NIInputService';
-import NIViewService from 'screens/NativeIntegration/NIViewService';
-import NITransactionSubmitted from 'screens/NativeIntegration/NITransactionSubmitted';
-import NIWarningScreen from 'screens/NativeIntegration/NIWarning';
 import AddTokensScreen from 'screens/Assets/AddTokens';
 import TokenWithToggles from 'screens/Assets/TokensWithToggles';
 import ManageTokenLists from 'screens/Assets/ManageTokenLists';
@@ -252,12 +247,6 @@ import {
   REGISTER_ENS,
   BRIDGE_FLOW,
   BRIDGE_TAB,
-  NI_SERVICES,
-  NI_VIEW_SERVICE,
-  NI_INPUT_SERVICE,
-  NI_WARNING,
-  NATIVE_INTEGRATION_FLOW,
-  NI_TRANSACTION_COMPLETED,
   ADD_TOKENS,
   TOKENS_WITH_TOGGLES,
   MANAGE_TOKEN_LISTS,
@@ -390,20 +379,6 @@ function WalletConnectFlow() {
       />
       <walletConnectFlowNavigator.Screen name={WALLETCONNECT_BROWSER} component={WalletConnectBrowser} />
     </walletConnectFlowNavigator.Navigator>
-  );
-}
-
-// NATIVE INTEGRATION FLOW
-const nativeIntegrationFlowNavigator = createNativeStackNavigator();
-function NativeIntegrationFlow() {
-  return (
-    <nativeIntegrationFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
-      <nativeIntegrationFlowNavigator.Screen name={NI_WARNING} component={NIWarningScreen} />
-      <nativeIntegrationFlowNavigator.Screen name={NI_SERVICES} component={NIServices} />
-      <nativeIntegrationFlowNavigator.Screen name={NI_INPUT_SERVICE} component={NIInputService} />
-      <nativeIntegrationFlowNavigator.Screen name={NI_VIEW_SERVICE} component={NIViewService} />
-      <nativeIntegrationFlowNavigator.Screen name={NI_TRANSACTION_COMPLETED} component={NITransactionSubmitted} />
-    </nativeIntegrationFlowNavigator.Navigator>
   );
 }
 
@@ -789,7 +764,6 @@ function AppFlowNavigation() {
       <AppFlowStackNavigator.Screen name={LEGAL_SCREEN} component={LegalScreen} />
       <AppFlowStackNavigator.Screen name={IMPORT_FLOW_FROM_SETTINGS} component={ImportFlowFromSettings} />
       <AppFlowStackNavigator.Screen name={BRIDGE_FLOW} component={BridgeFlow} />
-      <AppFlowStackNavigator.Screen name={NATIVE_INTEGRATION_FLOW} component={NativeIntegrationFlow} />
       <AppFlowStackNavigator.Screen name={PILLAR_STAKING_FLOW} component={PlrStakingFlow} />
     </AppFlowStackNavigator.Navigator>
   );
