@@ -35,7 +35,6 @@ import { TokenLoader } from 'components/SkeletonLoader/OnboardingLoaders';
 
 // Constants
 import { TOKENS, STABLES } from 'constants/walletConstants';
-import { ASSETS } from 'constants/navigationConstants';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
@@ -110,12 +109,7 @@ export default function () {
       <Spacing h={10} />
 
       {listOfAssets?.length > 5 && (
-        <TouchableOpacity
-          style={[styles.btn, { backgroundColor: colors.basic050 }]}
-          onPress={() => {
-            navigation.navigate(ASSETS);
-          }}
-        >
+        <TouchableOpacity style={[styles.btn, { backgroundColor: colors.basic050 }]} onPress={() => {}}>
           <Icon name={'down-arrow'} color={colors.text} width={16} height={16} />
         </TouchableOpacity>
       )}

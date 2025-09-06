@@ -30,7 +30,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { CardStyleInterpolators } from '@react-navigation/stack';
 
 // screens
-import AssetsScreen from 'screens/Assets';
 import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
@@ -44,7 +43,6 @@ import SendCollectibleConfirmScreen from 'screens/SendCollectible/SendCollectibl
 import PPNSendTokenAmountScreen from 'screens/Tank/SendToken/PPNSendTokenAmount';
 import HistoryScreen from 'screens/History';
 import HomeScreen from 'screens/Home';
-import CollectibleScreen from 'screens/Collectible';
 import WalletConnectHomeScreen from 'screens/WalletConnect/Home';
 import WalletConnectConnectedAppsScreen from 'screens/WalletConnect/ConnectedApps';
 import WalletConnectConnectorRequestScreen from 'screens/WalletConnect/WalletConnectConnectorRequest';
@@ -153,7 +151,6 @@ import {
   BACKUP_WALLET_INTRO,
   BACKUP_PHRASE_VALIDATE,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
-  COLLECTIBLE,
   SEND_COLLECTIBLE_FROM_ASSET_FLOW,
   SEND_COLLECTIBLE_CONFIRM,
   WALLETCONNECT_FLOW,
@@ -303,8 +300,6 @@ const assetsFlowNavigator = createNativeStackNavigator();
 function AssetsFlow() {
   return (
     <assetsFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
-      <assetsFlowNavigator.Screen name={ASSETS} component={AssetsScreen} />
-      <assetsFlowNavigator.Screen name={COLLECTIBLE} component={CollectibleScreen} />
       <assetsFlowNavigator.Screen name={ADD_TOKENS} component={AddTokensScreen} />
       <assetsFlowNavigator.Screen name={TOKENS_WITH_TOGGLES} component={TokenWithToggles} />
       <assetsFlowNavigator.Screen name={MANAGE_TOKEN_LISTS} component={ManageTokenLists} />
@@ -375,7 +370,6 @@ function HomeFlow() {
       <homeFlowNavigator.Screen name={TOKENS_WITH_TOGGLES} component={TokenWithToggles} />
       <homeFlowNavigator.Screen name={MANAGE_TOKEN_LISTS} component={ManageTokenLists} />
       <homeFlowNavigator.Screen name={HOME_HISTORY} component={HistoryScreen} />
-      <homeFlowNavigator.Screen name={COLLECTIBLE} component={CollectibleScreen} />
       {/* <homeFlowNavigator.Screen name={STORYBOOK} component={StorybookScreen} /> */}
       <homeFlowNavigator.Screen name={SEND_TOKEN_AMOUNT} component={SendTokenAmountScreen} />
       <homeFlowNavigator.Screen name={SEND_TOKEN_PIN_CONFIRM} component={SendTokenPinConfirmScreen} />

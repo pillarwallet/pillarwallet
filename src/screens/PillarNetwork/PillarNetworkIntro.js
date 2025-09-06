@@ -32,7 +32,6 @@ import Image from 'components/Image';
 import Button from 'components/legacy/Button';
 import { LabelBadge } from 'components/LabelBadge';
 
-import { ASSETS } from 'constants/navigationConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 
@@ -133,14 +132,8 @@ class PillarNetworkIntro extends React.Component<Props, State> {
   };
 
   goToPLRTank = async () => {
-    const {
-      ensureArchanovaAccountConnected,
-      navigation,
-      accounts,
-      switchAccount,
-      setPLRTankAsInit,
-      setActiveBlockchainNetwork,
-    } = this.props;
+    const { ensureArchanovaAccountConnected, accounts, switchAccount, setPLRTankAsInit, setActiveBlockchainNetwork } =
+      this.props;
     this.setState({ processingCreate: true });
     const smartAccount = accounts.find((acc) => acc.type === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET);
     if (!smartAccount) {
@@ -153,7 +146,6 @@ class PillarNetworkIntro extends React.Component<Props, State> {
     ensureArchanovaAccountConnected()
       .then(() => {
         this.setState({ processingCreate: false }, () => {
-          navigation.navigate(ASSETS);
           setPLRTankAsInit();
         });
       })

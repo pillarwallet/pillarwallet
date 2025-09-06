@@ -28,7 +28,6 @@ import type { Route } from '@react-navigation/native';
 import { estimateWithdrawFromVirtualAccountAction, withdrawFromVirtualAccountAction } from 'actions/smartWalletActions';
 
 // constants
-import { ASSETS } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // components
@@ -85,7 +84,6 @@ class TankWithdrawalConfirm extends React.Component<Props, State> {
 
   handleFormSubmit = async () => {
     const {
-      navigation,
       route,
       withdrawFromVirtualAccount,
       useGasToken,
@@ -95,7 +93,7 @@ class TankWithdrawalConfirm extends React.Component<Props, State> {
     const amount = route?.params?.amount || '0';
     const payForGasWithToken = !!getGasToken(useGasToken, feeInfo);
     await withdrawFromVirtualAccount(amount, payForGasWithToken);
-    this.setState({ buttonSubmitted: false }, () => navigation.navigate(ASSETS));
+    this.setState({ buttonSubmitted: false });
   };
 
   render() {
