@@ -28,7 +28,6 @@ import t from 'translations/translate';
 import { estimateTopUpVirtualAccountAction, topUpVirtualAccountAction } from 'actions/smartWalletActions';
 
 // constants
-import { ASSETS } from 'constants/navigationConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // components
@@ -85,7 +84,6 @@ class FundConfirm extends React.Component<Props, State> {
 
   handleFormSubmit = async () => {
     const {
-      navigation,
       route,
       topUpVirtualAccount,
       useGasToken,
@@ -95,7 +93,7 @@ class FundConfirm extends React.Component<Props, State> {
     const amount = route?.params?.amount || '0';
     const payForGasWithToken = !!getGasToken(useGasToken, feeInfo);
     await topUpVirtualAccount(amount, payForGasWithToken);
-    this.setState({ topUpButtonSubmitted: false }, () => navigation.navigate(ASSETS));
+    this.setState({ topUpButtonSubmitted: false });
   };
 
   render() {

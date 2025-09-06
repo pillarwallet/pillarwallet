@@ -27,7 +27,6 @@ import t from 'translations/translate';
 import { fontStyles, objectFontStyles } from 'utils/variables';
 import { BaseText, MediumText } from 'components/legacy/Typography';
 import type { Theme } from 'models/Theme';
-import { ASSETS } from 'constants/navigationConstants';
 import Button from 'components/legacy/Button';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import { images } from 'utils/images';
@@ -43,7 +42,7 @@ type Props = {
   accounts: Account[],
   isChanging: boolean,
   switchAccount: (id: string) => void,
-}
+};
 
 const Title = styled(MediumText)`
   ${fontStyles.large};
@@ -63,7 +62,7 @@ const ButtonWrapper = styled.View`
 
 class WalletActivated extends React.PureComponent<Props> {
   handleNavigate = async () => {
-    const { navigation, accounts, switchAccount } = this.props;
+    const { accounts, switchAccount } = this.props;
     const activeAccountType = getActiveAccountType(accounts);
     if (activeAccountType !== ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET) {
       const smartWallet = findFirstArchanovaAccount(accounts);
@@ -71,8 +70,7 @@ class WalletActivated extends React.PureComponent<Props> {
         await switchAccount(smartWallet.id);
       }
     }
-    navigation.navigate(ASSETS);
-  }
+  };
 
   render() {
     const { theme, navigation, isChanging } = this.props;
@@ -86,10 +84,7 @@ class WalletActivated extends React.PureComponent<Props> {
           close: true,
         }}
       >
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          style={{ flex: 1 }}
-        >
+        <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
           <Title>{t('smartWalletContent.title.smartWalletIsActivated')}</Title>
           <Image source={swActivated} style={{ height: 137, width: '100%' }} resizeMode="stretch" />
           <Text>{t('smartWalletContent.paragraph.walletIsActivated')}</Text>
@@ -108,9 +103,7 @@ class WalletActivated extends React.PureComponent<Props> {
   }
 }
 
-const mapStateToProps = ({
-  accounts: { data: accounts, isChanging },
-}: RootReducerState): $Shape<Props> => ({
+const mapStateToProps = ({ accounts: { data: accounts, isChanging } }: RootReducerState): $Shape<Props> => ({
   accounts,
   isChanging,
 });

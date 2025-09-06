@@ -39,7 +39,6 @@ import { Spacing } from 'components/legacy/Layout';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // constants
-import { ASSETS } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { CHAIN } from 'constants/chainConstants';
@@ -86,14 +85,7 @@ const Centered = styled.View`
   align-items: center;
 `;
 
-const SWActivationModal = ({
-  theme,
-  navigation,
-  deploymentEstimate,
-  gettingDeploymentEstimate,
-  balances,
-  isOnline,
-}: Props) => {
+const SWActivationModal = ({ theme, deploymentEstimate, gettingDeploymentEstimate, balances, isOnline }: Props) => {
   const paidByPillar = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.SMART_WALLET_ACTIVATION_PAID_BY_PILLAR);
   const dispatch = useDispatch();
 
@@ -126,7 +118,6 @@ const SWActivationModal = ({
   const onSubmitPress = () => {
     if (submitButtonDisabled) return;
     dispatch(deploySmartWalletAction());
-    navigation.navigate(ASSETS);
   };
 
   return (
