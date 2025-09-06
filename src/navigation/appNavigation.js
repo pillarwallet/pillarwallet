@@ -108,7 +108,6 @@ import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
 import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
 import WalletConnectBrowser from 'screens/WalletConnect/WalletConnectBrowser';
 import RegisterENSScreen from 'screens/RegisterENS';
-import BridgeTabScreen from 'screens/Bridge/BridgeTab';
 import AddTokensScreen from 'screens/Assets/AddTokens';
 import TokenWithToggles from 'screens/Assets/TokensWithToggles';
 import ManageTokenLists from 'screens/Assets/ManageTokenLists';
@@ -236,8 +235,6 @@ import {
   PIN_CODE_CONFIRMATION,
   IMPORT_FLOW_FROM_SETTINGS,
   REGISTER_ENS,
-  BRIDGE_FLOW,
-  BRIDGE_TAB,
   ADD_TOKENS,
   TOKENS_WITH_TOGGLES,
   MANAGE_TOKEN_LISTS,
@@ -602,16 +599,6 @@ function ContactsFlow() {
   );
 }
 
-// BRIDGE TAB (Exchange and Cross-chain)
-const bridgeFlowNavigator = createNativeStackNavigator();
-function BridgeFlow() {
-  return (
-    <bridgeFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
-      <bridgeFlowNavigator.Screen name={BRIDGE_TAB} component={BridgeTabScreen} />
-    </bridgeFlowNavigator.Navigator>
-  );
-}
-
 const ensMigrationFlowNavigator = createNativeStackNavigator();
 function EnsMigrationFlow() {
   return (
@@ -739,7 +726,6 @@ function AppFlowNavigation() {
       <AppFlowStackNavigator.Screen name={WEB_VIEW} component={WebViewScreen} />
       <AppFlowStackNavigator.Screen name={LEGAL_SCREEN} component={LegalScreen} />
       <AppFlowStackNavigator.Screen name={IMPORT_FLOW_FROM_SETTINGS} component={ImportFlowFromSettings} />
-      <AppFlowStackNavigator.Screen name={BRIDGE_FLOW} component={BridgeFlow} />
       <AppFlowStackNavigator.Screen name={PILLAR_STAKING_FLOW} component={PlrStakingFlow} />
     </AppFlowStackNavigator.Navigator>
   );
