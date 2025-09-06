@@ -41,7 +41,6 @@ import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 import SendTokenTransactionScreen from 'screens/SendToken/SendTokenTransaction';
 import SendCollectibleConfirmScreen from 'screens/SendCollectible/SendCollectibleConfirm';
 import PPNSendTokenAmountScreen from 'screens/Tank/SendToken/PPNSendTokenAmount';
-import HistoryScreen from 'screens/History';
 import HomeScreen from 'screens/Home';
 import WalletConnectHomeScreen from 'screens/WalletConnect/Home';
 import WalletConnectConnectedAppsScreen from 'screens/WalletConnect/ConnectedApps';
@@ -134,7 +133,6 @@ import {
   EXCHANGE_CONFIRM,
   HOME,
   HOME_FLOW,
-  HOME_HISTORY,
   ETHERSPOT_DEPLOYMENT_INTERJECTION,
   CHANGE_PIN_FLOW,
   CHANGE_PIN_CURRENT_PIN,
@@ -366,7 +364,6 @@ function HomeFlow() {
       <homeFlowNavigator.Screen name={ADD_TOKENS} component={AddTokensScreen} />
       <homeFlowNavigator.Screen name={TOKENS_WITH_TOGGLES} component={TokenWithToggles} />
       <homeFlowNavigator.Screen name={MANAGE_TOKEN_LISTS} component={ManageTokenLists} />
-      <homeFlowNavigator.Screen name={HOME_HISTORY} component={HistoryScreen} />
       {/* <homeFlowNavigator.Screen name={STORYBOOK} component={StorybookScreen} /> */}
       <homeFlowNavigator.Screen name={SEND_TOKEN_AMOUNT} component={SendTokenAmountScreen} />
       <homeFlowNavigator.Screen name={SEND_TOKEN_PIN_CONFIRM} component={SendTokenPinConfirmScreen} />
