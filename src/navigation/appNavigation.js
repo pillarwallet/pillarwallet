@@ -59,7 +59,6 @@ import PillarNetworkIntro from 'screens/PillarNetwork/PillarNetworkIntro';
 import UnsettledAssetsScreen from 'screens/UnsettledAssets';
 import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount';
 import LogoutPendingScreen from 'screens/LogoutPending';
-import PPNHomeScreen from 'screens/PPNHome/PPNHome';
 import ServicesScreen from 'screens/Services';
 // import StorybookScreen from 'screens/Storybook';
 import MenuScreen from 'screens/Menu/Menu';
@@ -178,7 +177,6 @@ import {
   LOGOUT_PENDING,
   UNSETTLED_ASSETS_FLOW,
   SERVICES,
-  PPN_HOME,
   // STORYBOOK,
   CONNECT_FLOW,
   SEND_TOKEN_FROM_HOME_FLOW,
@@ -630,7 +628,6 @@ function AppFlowNavigation() {
       <AppFlowStackNavigator.Screen name={SEND_TOKEN_FROM_HOME_FLOW} component={SendTokenFlow} />
       <AppFlowStackNavigator.Screen name={CONNECT_FLOW} component={WalletConnectFlow} />
       <AppFlowStackNavigator.Screen name={SERVICES_FLOW} component={ServicesFlow} />
-      <AppFlowStackNavigator.Screen name={PPN_HOME} component={PPNHomeScreen} />
       <AppFlowStackNavigator.Screen name={SEND_TOKEN_FROM_ASSET_FLOW} component={SendTokenFlow} />
       <AppFlowStackNavigator.Screen name={PPN_SEND_TOKEN_FROM_ASSET_FLOW} component={PpnSendTokenFromAssetFlow} />
       <AppFlowStackNavigator.Screen name={PPN_SEND_SYNTHETIC_ASSET_FLOW} component={PpnSendSyntheticAssetFlow} />
