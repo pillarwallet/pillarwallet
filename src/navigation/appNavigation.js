@@ -35,7 +35,6 @@ import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
 import ChangePinConfirmNewPinScreen from 'screens/ChangePin/ConfirmNewPin';
 import RevealBackupPhraseScreen from 'screens/RevealBackupPhrase';
-import SendTokenAmountScreen from 'screens/SendToken/SendTokenAmount';
 import SendTokenPinConfirmScreen from 'screens/SendToken/SendTokenPinConfirmScreen';
 import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 import SendTokenTransactionScreen from 'screens/SendToken/SendTokenTransaction';
@@ -70,12 +69,6 @@ import MenuSystemInformationScreen from 'screens/Menu/SystemInformation';
 import WebViewScreen from 'screens/WebView/WebViewScreen';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import WalletActivatedScreen from 'screens/WalletActivated';
-import KeyBasedAssetTransferIntroScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferIntro';
-import KeyBasedAssetTransferChooseScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferChoose';
-import KeyBasedAssetTransferEditAmountScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferEditAmount';
-import KeyBasedAssetTransferConfirmScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferConfirm';
-import KeyBasedAssetTransferUnlockScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferUnlock';
-import KeyBasedAssetTransferStatusScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferStatus';
 import ContactsListScreen from 'screens/Contacts/ContactsList';
 import LiquidityPoolDashboardScreen from 'screens/LiquidityPools/LiquidityPoolDashboard';
 import LiquidityPoolsAddLiquidityScreen from 'screens/LiquidityPools/AddLiquidity';
@@ -130,7 +123,6 @@ import {
   CHANGE_PIN_CURRENT_PIN,
   CHANGE_PIN_NEW_PIN,
   CHANGE_PIN_CONFIRM_NEW_PIN,
-  SEND_TOKEN_AMOUNT,
   SEND_TOKEN_CONFIRM,
   SEND_TOKEN_TRANSACTION,
   SEND_TOKEN_FROM_ASSET_FLOW,
@@ -181,13 +173,6 @@ import {
   SEND_TOKEN_FROM_HOME_FLOW,
   PIN_CODE,
   WALLET_ACTIVATED,
-  KEY_BASED_ASSET_TRANSFER_INTRO,
-  KEY_BASED_ASSET_TRANSFER_CHOOSE,
-  KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT,
-  KEY_BASED_ASSET_TRANSFER_CONFIRM,
-  KEY_BASED_ASSET_TRANSFER_UNLOCK,
-  KEY_BASED_ASSET_TRANSFER_FLOW,
-  KEY_BASED_ASSET_TRANSFER_STATUS,
   CONTACTS_LIST,
   CONTACTS_FLOW,
   EXCHANGE_FLOW,
@@ -348,7 +333,6 @@ function HomeFlow() {
       <homeFlowNavigator.Screen name={TOKENS_WITH_TOGGLES} component={TokenWithToggles} />
       <homeFlowNavigator.Screen name={MANAGE_TOKEN_LISTS} component={ManageTokenLists} />
       {/* <homeFlowNavigator.Screen name={STORYBOOK} component={StorybookScreen} /> */}
-      <homeFlowNavigator.Screen name={SEND_TOKEN_AMOUNT} component={SendTokenAmountScreen} />
       <homeFlowNavigator.Screen name={SEND_TOKEN_PIN_CONFIRM} component={SendTokenPinConfirmScreen} />
       <homeFlowNavigator.Screen name={SEND_TOKEN_TRANSACTION} component={SendTokenTransactionScreen} />
     </homeFlowNavigator.Navigator>
@@ -360,7 +344,6 @@ const sendTokenFlowNavigator = createNativeStackNavigator();
 function SendTokenFlow() {
   return (
     <sendTokenFlowNavigator.Navigator screenOptions={StackNavigatorModalConfig}>
-      <sendTokenFlowNavigator.Screen name={SEND_TOKEN_AMOUNT} component={SendTokenAmountScreen} />
       <sendTokenFlowNavigator.Screen name={SEND_COLLECTIBLE_CONFIRM} component={SendCollectibleConfirmScreen} />
       <sendTokenFlowNavigator.Screen name={SEND_TOKEN_CONFIRM} component={SendTokenConfirmScreen} />
       <sendTokenFlowNavigator.Screen name={SEND_TOKEN_PIN_CONFIRM} component={SendTokenPinConfirmScreen} />
@@ -419,7 +402,6 @@ function PpnSendSyntheticAssetFlow() {
       <ppnSendSyntheticAssetFlowNavigator.Screen name={SEND_SYNTHETIC_AMOUNT} component={SendSyntheticAmountScreen} />
       <ppnSendSyntheticAssetFlowNavigator.Screen name={SEND_TOKEN_PIN_CONFIRM} component={SendTokenPinConfirmScreen} />
       <ppnSendSyntheticAssetFlowNavigator.Screen name={SEND_TOKEN_TRANSACTION} component={SendTokenTransactionScreen} />
-      <ppnSendSyntheticAssetFlowNavigator.Screen name={SEND_TOKEN_AMOUNT} component={SendTokenAmountScreen} />
       <ppnSendSyntheticAssetFlowNavigator.Screen name={SEND_TOKEN_CONFIRM} component={SendTokenConfirmScreen} />
       <ppnSendSyntheticAssetFlowNavigator.Screen name={SEND_TOKEN_PIN_CONFIRM} component={SendTokenPinConfirmScreen} />
     </ppnSendSyntheticAssetFlowNavigator.Navigator>
@@ -508,35 +490,6 @@ function ImportFlowFromSettings() {
       <importFlowFromSettingsNavigator.Screen name={SET_WALLET_PIN_CODE} component={SetWalletPinCodeScreen} />
       <importFlowFromSettingsNavigator.Screen name={PIN_CODE_CONFIRMATION} component={PinCodeConfirmationScreen} />
     </importFlowFromSettingsNavigator.Navigator>
-  );
-}
-
-const keyBasedAssetTransferFlowNavigator = createNativeStackNavigator();
-function KeyBasedAssetTransferFlow() {
-  return (
-    <keyBasedAssetTransferFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
-      <keyBasedAssetTransferFlowNavigator.Screen
-        name={KEY_BASED_ASSET_TRANSFER_INTRO}
-        component={KeyBasedAssetTransferIntroScreen}
-      />
-      <keyBasedAssetTransferFlowNavigator.Screen
-        name={KEY_BASED_ASSET_TRANSFER_CHOOSE}
-        component={KeyBasedAssetTransferChooseScreen}
-      />
-      <keyBasedAssetTransferFlowNavigator.Screen
-        name={KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT}
-        component={KeyBasedAssetTransferEditAmountScreen}
-      />
-      <keyBasedAssetTransferFlowNavigator.Screen
-        name={KEY_BASED_ASSET_TRANSFER_CONFIRM}
-        component={KeyBasedAssetTransferConfirmScreen}
-      />
-      <keyBasedAssetTransferFlowNavigator.Screen
-        name={KEY_BASED_ASSET_TRANSFER_UNLOCK}
-        component={KeyBasedAssetTransferUnlockScreen}
-      />
-      <keyBasedAssetTransferFlowNavigator.Screen name={SEND_TOKEN_TRANSACTION} component={SendTokenTransactionScreen} />
-    </keyBasedAssetTransferFlowNavigator.Navigator>
   );
 }
 
@@ -644,11 +597,6 @@ function AppFlowNavigation() {
       <AppFlowStackNavigator.Screen name={MENU_FLOW} component={MenuFlow} />
       <AppFlowStackNavigator.Screen name={PIN_CODE} component={PinCodeUnlockScreen} />
       <AppFlowStackNavigator.Screen name={WALLET_ACTIVATED} component={WalletActivatedScreen} />
-      <AppFlowStackNavigator.Screen name={KEY_BASED_ASSET_TRANSFER_FLOW} component={KeyBasedAssetTransferFlow} />
-      <AppFlowStackNavigator.Screen
-        name={KEY_BASED_ASSET_TRANSFER_STATUS}
-        component={KeyBasedAssetTransferStatusScreen}
-      />
       <AppFlowStackNavigator.Screen name={CONTACTS_FLOW} component={ContactsFlow} />
       <AppFlowStackNavigator.Screen name={EXCHANGE_FLOW} component={ExchangeFlow} />
       <AppFlowStackNavigator.Screen name={LIQUIDITY_POOLS_FLOW} component={LiquidityPoolsFlow} />
