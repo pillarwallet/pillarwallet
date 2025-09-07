@@ -71,12 +71,6 @@ import MenuSystemInformationScreen from 'screens/Menu/SystemInformation';
 import WebViewScreen from 'screens/WebView/WebViewScreen';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import WalletActivatedScreen from 'screens/WalletActivated';
-import WalletMigrationArchanovaIntroScreen from 'screens/WalletMigrationArchanova/Intro';
-import WalletMigrationArchanovaStatusScreen from 'screens/WalletMigrationArchanova/Status';
-import WalletMigrationArchanovaSelectAssetsScreen from 'screens/WalletMigrationArchanova/SelectAssets';
-import WalletMigrationArchanovaSetAmountScreen from 'screens/WalletMigrationArchanova/SetAmount';
-import WalletMigrationArchanovaReviewScreen from 'screens/WalletMigrationArchanova/Review';
-import WalletMigrationArchanovaPinConfirmScreen from 'screens/WalletMigrationArchanova/PinConfirm';
 import KeyBasedAssetTransferIntroScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferIntro';
 import KeyBasedAssetTransferChooseScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferChoose';
 import KeyBasedAssetTransferEditAmountScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferEditAmount';
@@ -197,13 +191,6 @@ import {
   KEY_BASED_ASSET_TRANSFER_UNLOCK,
   KEY_BASED_ASSET_TRANSFER_FLOW,
   KEY_BASED_ASSET_TRANSFER_STATUS,
-  WALLET_MIGRATION_ARCHANOVA_FLOW,
-  WALLET_MIGRATION_ARCHANOVA_INTRO,
-  WALLET_MIGRATION_ARCHANOVA_STATUS,
-  WALLET_MIGRATION_ARCHANOVA_SELECT_ASSETS,
-  WALLET_MIGRATION_ARCHANOVA_SET_AMOUNT,
-  WALLET_MIGRATION_ARCHANOVA_REVIEW,
-  WALLET_MIGRATION_ARCHANOVA_PIN_CONFIRM,
   CONTACTS_LIST,
   CONTACTS_FLOW,
   EXCHANGE_FLOW,
@@ -558,35 +545,6 @@ function KeyBasedAssetTransferFlow() {
   );
 }
 
-const walletMigrationFlowNavigator = createNativeStackNavigator();
-function WalletMigrationFlow() {
-  return (
-    <walletMigrationFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
-      <walletMigrationFlowNavigator.Screen
-        name={WALLET_MIGRATION_ARCHANOVA_INTRO}
-        component={WalletMigrationArchanovaIntroScreen}
-      />
-      <walletMigrationFlowNavigator.Screen
-        name={WALLET_MIGRATION_ARCHANOVA_SELECT_ASSETS}
-        component={WalletMigrationArchanovaSelectAssetsScreen}
-      />
-      <walletMigrationFlowNavigator.Screen
-        name={WALLET_MIGRATION_ARCHANOVA_SET_AMOUNT}
-        component={WalletMigrationArchanovaSetAmountScreen}
-      />
-      <walletMigrationFlowNavigator.Screen
-        name={WALLET_MIGRATION_ARCHANOVA_REVIEW}
-        component={WalletMigrationArchanovaReviewScreen}
-      />
-      <walletMigrationFlowNavigator.Screen
-        name={WALLET_MIGRATION_ARCHANOVA_PIN_CONFIRM}
-        component={WalletMigrationArchanovaPinConfirmScreen}
-      />
-      <walletMigrationFlowNavigator.Screen name={SEND_TOKEN_TRANSACTION} component={SendTokenTransactionScreen} />
-    </walletMigrationFlowNavigator.Navigator>
-  );
-}
-
 const contactsFlowNavigator = createNativeStackNavigator();
 function ContactsFlow() {
   return (
@@ -692,11 +650,6 @@ function AppFlowNavigation() {
       <AppFlowStackNavigator.Screen name={MENU_FLOW} component={MenuFlow} />
       <AppFlowStackNavigator.Screen name={PIN_CODE} component={PinCodeUnlockScreen} />
       <AppFlowStackNavigator.Screen name={WALLET_ACTIVATED} component={WalletActivatedScreen} />
-      <AppFlowStackNavigator.Screen name={WALLET_MIGRATION_ARCHANOVA_FLOW} component={WalletMigrationFlow} />
-      <AppFlowStackNavigator.Screen
-        name={WALLET_MIGRATION_ARCHANOVA_STATUS}
-        component={WalletMigrationArchanovaStatusScreen}
-      />
       <AppFlowStackNavigator.Screen name={KEY_BASED_ASSET_TRANSFER_FLOW} component={KeyBasedAssetTransferFlow} />
       <AppFlowStackNavigator.Screen
         name={KEY_BASED_ASSET_TRANSFER_STATUS}
