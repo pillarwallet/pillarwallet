@@ -99,7 +99,6 @@ import ImportWalletScreen from 'screens/ImportWallet';
 import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
 import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
 import WalletConnectBrowser from 'screens/WalletConnect/WalletConnectBrowser';
-import RegisterENSScreen from 'screens/RegisterENS';
 import AddTokensScreen from 'screens/Assets/AddTokens';
 import TokenWithToggles from 'screens/Assets/TokensWithToggles';
 import ManageTokenLists from 'screens/Assets/ManageTokenLists';
@@ -217,7 +216,6 @@ import {
   IMPORT_WALLET,
   PIN_CODE_CONFIRMATION,
   IMPORT_FLOW_FROM_SETTINGS,
-  REGISTER_ENS,
   ADD_TOKENS,
   TOKENS_WITH_TOGGLES,
   MANAGE_TOKEN_LISTS,
@@ -353,7 +351,6 @@ function HomeFlow() {
       <homeFlowNavigator.Screen name={SEND_TOKEN_AMOUNT} component={SendTokenAmountScreen} />
       <homeFlowNavigator.Screen name={SEND_TOKEN_PIN_CONFIRM} component={SendTokenPinConfirmScreen} />
       <homeFlowNavigator.Screen name={SEND_TOKEN_TRANSACTION} component={SendTokenTransactionScreen} />
-      <homeFlowNavigator.Screen name={REGISTER_ENS} component={RegisterENSScreen} />
     </homeFlowNavigator.Navigator>
   );
 }
