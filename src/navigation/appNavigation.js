@@ -83,8 +83,6 @@ import WalletConnectBrowser from 'screens/WalletConnect/WalletConnectBrowser';
 import AddTokensScreen from 'screens/Assets/AddTokens';
 import TokenWithToggles from 'screens/Assets/TokensWithToggles';
 import ManageTokenLists from 'screens/Assets/ManageTokenLists';
-import PlrStaking from 'screens/PlrStaking/PlrStaking';
-import PlrStakingValidator from 'screens/PlrStaking/PlrStakingValidator';
 
 // components
 import Toast from 'components/Toast';
@@ -179,9 +177,6 @@ import {
   ADD_TOKENS,
   TOKENS_WITH_TOGGLES,
   MANAGE_TOKEN_LISTS,
-  PILLAR_STAKING_FLOW,
-  PLR_STAKING,
-  PLR_STAKING_VALIDATOR,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -487,16 +482,6 @@ function EnsMigrationFlow() {
   );
 }
 
-const plrStakingFlowNavigator = createNativeStackNavigator();
-function PlrStakingFlow() {
-  return (
-    <plrStakingFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
-      <plrStakingFlowNavigator.Screen name={PLR_STAKING} component={PlrStaking} />
-      <plrStakingFlowNavigator.Screen name={PLR_STAKING_VALIDATOR} component={PlrStakingValidator} />
-    </plrStakingFlowNavigator.Navigator>
-  );
-}
-
 // Below screens/flows will appear as modals
 const AppFlowStackNavigator = createNativeStackNavigator();
 function AppFlowNavigation() {
@@ -546,7 +531,6 @@ function AppFlowNavigation() {
       <AppFlowStackNavigator.Screen name={WEB_VIEW} component={WebViewScreen} />
       <AppFlowStackNavigator.Screen name={LEGAL_SCREEN} component={LegalScreen} />
       <AppFlowStackNavigator.Screen name={IMPORT_FLOW_FROM_SETTINGS} component={ImportFlowFromSettings} />
-      <AppFlowStackNavigator.Screen name={PILLAR_STAKING_FLOW} component={PlrStakingFlow} />
     </AppFlowStackNavigator.Navigator>
   );
 }
