@@ -39,7 +39,6 @@ import SendTokenPinConfirmScreen from 'screens/SendToken/SendTokenPinConfirmScre
 import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 import SendTokenTransactionScreen from 'screens/SendToken/SendTokenTransaction';
 import SendCollectibleConfirmScreen from 'screens/SendCollectible/SendCollectibleConfirm';
-import PPNSendTokenAmountScreen from 'screens/Tank/SendToken/PPNSendTokenAmount';
 import HomeScreen from 'screens/Home';
 import WalletConnectHomeScreen from 'screens/WalletConnect/Home';
 import WalletConnectConnectedAppsScreen from 'screens/WalletConnect/ConnectedApps';
@@ -56,7 +55,6 @@ import TankWithdrawalConfirmScreen from 'screens/Tank/TankWithdrawalConfirm';
 import AccountsScreen from 'screens/Accounts';
 import PillarNetworkIntro from 'screens/PillarNetwork/PillarNetworkIntro';
 import UnsettledAssetsScreen from 'screens/UnsettledAssets';
-import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount';
 import LogoutPendingScreen from 'screens/LogoutPending';
 import ServicesScreen from 'screens/Services';
 // import StorybookScreen from 'screens/Storybook';
@@ -143,14 +141,11 @@ import {
   MENU_SELECT_APPEARANCE,
   MENU_SELECT_CURRENCY,
   MENU_SYSTEM_INFORMATION,
-  PPN_SEND_TOKEN_AMOUNT,
-  PPN_SEND_TOKEN_FROM_ASSET_FLOW,
   PPN_SEND_SYNTHETIC_ASSET_FLOW,
   UNSETTLED_ASSETS,
   TANK_WITHDRAWAL_FLOW,
   TANK_WITHDRAWAL,
   TANK_WITHDRAWAL_CONFIRM,
-  SEND_SYNTHETIC_AMOUNT,
   LOGOUT_PENDING,
   UNSETTLED_ASSETS_FLOW,
   SERVICES,
@@ -354,22 +349,11 @@ function TutorialFlow() {
   );
 }
 
-// PPN SEND TOKEN FROM ASSET FLOW
-const ppnSendTokenFromAssetFlowNavigator = createNativeStackNavigator();
-function PpnSendTokenFromAssetFlow() {
-  return (
-    <ppnSendTokenFromAssetFlowNavigator.Navigator screenOptions={StackNavigatorModalConfig}>
-      <ppnSendTokenFromAssetFlowNavigator.Screen name={PPN_SEND_TOKEN_AMOUNT} component={PPNSendTokenAmountScreen} />
-    </ppnSendTokenFromAssetFlowNavigator.Navigator>
-  );
-}
-
 // PPN SEND SYNTHETIC ASSET FULL FLOW
 const ppnSendSyntheticAssetFlowNavigator = createNativeStackNavigator();
 function PpnSendSyntheticAssetFlow() {
   return (
     <ppnSendSyntheticAssetFlowNavigator.Navigator screenOptions={StackNavigatorModalConfig}>
-      <ppnSendSyntheticAssetFlowNavigator.Screen name={SEND_SYNTHETIC_AMOUNT} component={SendSyntheticAmountScreen} />
       <ppnSendSyntheticAssetFlowNavigator.Screen name={SEND_TOKEN_PIN_CONFIRM} component={SendTokenPinConfirmScreen} />
       <ppnSendSyntheticAssetFlowNavigator.Screen name={SEND_TOKEN_TRANSACTION} component={SendTokenTransactionScreen} />
       <ppnSendSyntheticAssetFlowNavigator.Screen name={SEND_TOKEN_CONFIRM} component={SendTokenConfirmScreen} />
@@ -493,7 +477,6 @@ function AppFlowNavigation() {
       <AppFlowStackNavigator.Screen name={CONNECT_FLOW} component={WalletConnectFlow} />
       <AppFlowStackNavigator.Screen name={SERVICES_FLOW} component={ServicesFlow} />
       <AppFlowStackNavigator.Screen name={SEND_TOKEN_FROM_ASSET_FLOW} component={SendTokenFlow} />
-      <AppFlowStackNavigator.Screen name={PPN_SEND_TOKEN_FROM_ASSET_FLOW} component={PpnSendTokenFromAssetFlow} />
       <AppFlowStackNavigator.Screen name={PPN_SEND_SYNTHETIC_ASSET_FLOW} component={PpnSendSyntheticAssetFlow} />
       <AppFlowStackNavigator.Screen name={SEND_TOKEN_FROM_CONTACT_FLOW} component={SendTokenFlow} />
       <AppFlowStackNavigator.Screen name={SEND_COLLECTIBLE_FROM_ASSET_FLOW} component={SendTokenFlow} />
