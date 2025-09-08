@@ -36,18 +36,10 @@ import Spinner from 'components/Spinner';
 // Utils
 import { fontSizes, spacing, objectFontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
-import { isLiquidityPoolsTransactionTag } from 'utils/liquidityPools';
 import { useChainConfig } from 'utils/uiConfig';
 
 // Constants
-import { SEND_TOKEN_CONFIRM, SEND_COLLECTIBLE_CONFIRM, LIQUIDITY_POOL_DASHBOARD } from 'constants/navigationConstants';
-import {
-  LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION,
-  LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION,
-  LIQUIDITY_POOLS_STAKE_TRANSACTION,
-  LIQUIDITY_POOLS_UNSTAKE_TRANSACTION,
-  LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
-} from 'constants/liquidityPoolsConstants';
+import { SEND_TOKEN_CONFIRM, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
 import { ASSET_TYPES } from 'constants/assetsConstants';
 import { TRANSACTION_TYPE, ERROR_TYPE } from 'constants/transactionsConstants';
 import { CHAIN } from 'constants/chainConstants';
@@ -145,36 +137,6 @@ function SendTokenTransaction() {
   };
 
   const handleDismissal = () => {
-    const txTag = transactionPayload?.tag || '';
-
-    if (isLiquidityPoolsTransactionTag(txTag)) {
-      let toastMessage = null;
-      const { extra: { amount, pool } = {} } = transactionPayload;
-      navigation.navigate(LIQUIDITY_POOL_DASHBOARD, { pool });
-      if (txTag === LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION) {
-        toastMessage = t('toast.liquidityPoolsAddLiquidity', { value: amount, token: pool.symbol });
-      } else if (txTag === LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION) {
-        toastMessage = t('toast.liquidityPoolsRemoveLiquidity', { value: amount, token: pool.symbol });
-      } else if (txTag === LIQUIDITY_POOLS_STAKE_TRANSACTION) {
-        toastMessage = t('toast.liquidityPoolsStake', { value: amount, token: pool.symbol });
-      } else if (txTag === LIQUIDITY_POOLS_UNSTAKE_TRANSACTION) {
-        toastMessage = t('toast.liquidityPoolsUnstake', { value: amount, token: pool.symbol });
-      } else if (txTag === LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION) {
-        toastMessage = t('toast.liquidityPoolsClaimRewards', {
-          value: amount,
-          token: pool.rewards[0].symbol,
-        });
-      }
-      if (toastMessage) {
-        Toast.show({
-          message: toastMessage,
-          emoji: 'ok_hand',
-          autoClose: true,
-        });
-      }
-      return;
-    }
-
     if (goBackDismiss) {
       navigation.goBack(null);
     } else {

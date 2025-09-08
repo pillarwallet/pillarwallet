@@ -29,7 +29,6 @@ import { ListCard } from 'components/legacy/ListItem/ListCard';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 
 // constants
-import { LIQUIDITY_POOLS } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
@@ -102,7 +101,7 @@ class ServicesScreen extends React.Component<Props> {
         body: t('servicesContent.liquidityPools.description'),
         disabled: servicesDisabled,
         label: servicesLabel,
-        action: () => this.navigateToRouteIfArchanovaWalletActivated(LIQUIDITY_POOLS),
+        action: () => {},
       });
     }
 
