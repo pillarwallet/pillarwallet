@@ -109,7 +109,6 @@ import {
   SEND_TOKEN_FROM_CONTACT_FLOW,
   TANK_FUND_FLOW,
   SEND_TOKEN_FROM_HOME_FLOW,
-  SEND_SYNTHETIC_AMOUNT,
   SETTLE_BALANCE,
   TANK_WITHDRAWAL_FLOW,
 } from 'constants/navigationConstants';
@@ -537,13 +536,14 @@ export class EventDetail extends React.Component<Props> {
   };
 
   sendSynthetic = (relatedAddress: string) => {
-    const { navigation, ensRegistry } = this.props;
+    const { ensRegistry } = this.props;
     const contactFromAddress = relatedAddress && {
       ethAddress: relatedAddress,
       username: ensRegistry[relatedAddress] || relatedAddress,
     };
     const contact = contactFromAddress;
-    navigation.navigate(SEND_SYNTHETIC_AMOUNT, { contact });
+    logBreadcrumb('call sendSynthetic', 'contact', { contact });
+    // navigation.navigate(SEND_SYNTHETIC_AMOUNT, { contact });
   };
 
   settle = () => {
