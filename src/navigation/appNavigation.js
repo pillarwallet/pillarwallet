@@ -70,18 +70,6 @@ import WebViewScreen from 'screens/WebView/WebViewScreen';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import WalletActivatedScreen from 'screens/WalletActivated';
 import ContactsListScreen from 'screens/Contacts/ContactsList';
-import LiquidityPoolDashboardScreen from 'screens/LiquidityPools/LiquidityPoolDashboard';
-import LiquidityPoolsAddLiquidityScreen from 'screens/LiquidityPools/AddLiquidity';
-import LiquidityPoolsAddLiquidityReviewScreen from 'screens/LiquidityPools/AddLiquidityReview';
-import LiquidityPoolsStakeTokensScreen from 'screens/LiquidityPools/StakeTokens';
-import LiquidityPoolsStakeTokensReviewScreen from 'screens/LiquidityPools/StakeTokensReview';
-import LiquidityPoolsUnstakeTokensScreen from 'screens/LiquidityPools/UnstakeTokens';
-import LiquidityPoolsUnstakeTokensReviewScreen from 'screens/LiquidityPools/UnstakeTokensReview';
-import LiquidityPoolsRemoveLiquidityScreen from 'screens/LiquidityPools/RemoveLiquidity';
-import LiquidityPoolsRemoveLiquidityReviewScreen from 'screens/LiquidityPools/RemoveLiquidityReview';
-import LiquidityPoolsClaimRewardsReviewScreen from 'screens/LiquidityPools/ClaimRewardsReview';
-import LiquidityPoolsScreen from 'screens/LiquidityPools/LiquidityPools';
-import LiquidityPoolsInfoScreen from 'screens/LiquidityPools/LiquidityPoolsInfo';
 import TutorialScreen from 'screens/Tutorial';
 import EnsMigrationConfirmScreen from 'screens/EnsMigrationConfirm';
 import LegalScreen from 'screens/LegalScreen/LegalScreen';
@@ -177,19 +165,6 @@ import {
   CONTACTS_FLOW,
   EXCHANGE_FLOW,
   WALLETCONNECT_CALL_REQUEST_FLOW,
-  LIQUIDITY_POOLS_FLOW,
-  LIQUIDITY_POOLS,
-  LIQUIDITY_POOL_DASHBOARD,
-  LIQUIDITY_POOLS_ADD_LIQUIDITY,
-  LIQUIDITY_POOLS_ADD_LIQUIDITY_REVIEW,
-  LIQUIDITY_POOLS_STAKE,
-  LIQUIDITY_POOLS_STAKE_REVIEW,
-  LIQUIDITY_POOLS_UNSTAKE,
-  LIQUIDITY_POOLS_UNSTAKE_REVIEW,
-  LIQUIDITY_POOLS_REMOVE_LIQUIDITY,
-  LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW,
-  LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW,
-  LIQUIDITY_POOLS_INFO,
   TUTORIAL,
   TUTORIAL_FLOW,
   ENS_MIGRATION_CONFIRM,
@@ -512,52 +487,6 @@ function EnsMigrationFlow() {
   );
 }
 
-const liquidityPoolsFlowNavigator = createNativeStackNavigator();
-function LiquidityPoolsFlow() {
-  return (
-    <liquidityPoolsFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
-      <liquidityPoolsFlowNavigator.Screen name={LIQUIDITY_POOLS} component={LiquidityPoolsScreen} />
-      <liquidityPoolsFlowNavigator.Screen name={LIQUIDITY_POOL_DASHBOARD} component={LiquidityPoolDashboardScreen} />
-      <liquidityPoolsFlowNavigator.Screen
-        name={LIQUIDITY_POOLS_ADD_LIQUIDITY}
-        component={LiquidityPoolsAddLiquidityScreen}
-      />
-      <liquidityPoolsFlowNavigator.Screen
-        name={LIQUIDITY_POOLS_ADD_LIQUIDITY_REVIEW}
-        component={LiquidityPoolsAddLiquidityReviewScreen}
-      />
-      <liquidityPoolsFlowNavigator.Screen name={LIQUIDITY_POOLS_STAKE} component={LiquidityPoolsStakeTokensScreen} />
-      <liquidityPoolsFlowNavigator.Screen
-        name={LIQUIDITY_POOLS_STAKE_REVIEW}
-        component={LiquidityPoolsStakeTokensReviewScreen}
-      />
-      <liquidityPoolsFlowNavigator.Screen
-        name={LIQUIDITY_POOLS_UNSTAKE}
-        component={LiquidityPoolsUnstakeTokensScreen}
-      />
-      <liquidityPoolsFlowNavigator.Screen
-        name={LIQUIDITY_POOLS_UNSTAKE_REVIEW}
-        component={LiquidityPoolsUnstakeTokensReviewScreen}
-      />
-      <liquidityPoolsFlowNavigator.Screen
-        name={LIQUIDITY_POOLS_REMOVE_LIQUIDITY}
-        component={LiquidityPoolsRemoveLiquidityScreen}
-      />
-      <liquidityPoolsFlowNavigator.Screen
-        name={LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW}
-        component={LiquidityPoolsRemoveLiquidityReviewScreen}
-      />
-      <liquidityPoolsFlowNavigator.Screen
-        name={LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW}
-        component={LiquidityPoolsClaimRewardsReviewScreen}
-      />
-      <liquidityPoolsFlowNavigator.Screen name={LIQUIDITY_POOLS_INFO} component={LiquidityPoolsInfoScreen} />
-      <liquidityPoolsFlowNavigator.Screen name={SEND_TOKEN_PIN_CONFIRM} component={SendTokenPinConfirmScreen} />
-      <liquidityPoolsFlowNavigator.Screen name={SEND_TOKEN_TRANSACTION} component={SendTokenTransactionScreen} />
-    </liquidityPoolsFlowNavigator.Navigator>
-  );
-}
-
 const plrStakingFlowNavigator = createNativeStackNavigator();
 function PlrStakingFlow() {
   return (
@@ -599,7 +528,6 @@ function AppFlowNavigation() {
       <AppFlowStackNavigator.Screen name={WALLET_ACTIVATED} component={WalletActivatedScreen} />
       <AppFlowStackNavigator.Screen name={CONTACTS_FLOW} component={ContactsFlow} />
       <AppFlowStackNavigator.Screen name={EXCHANGE_FLOW} component={ExchangeFlow} />
-      <AppFlowStackNavigator.Screen name={LIQUIDITY_POOLS_FLOW} component={LiquidityPoolsFlow} />
       <AppFlowStackNavigator.Screen name={TUTORIAL_FLOW} component={TutorialFlow} />
       <AppFlowStackNavigator.Screen
         name={WALLETCONNECT_CONNECTOR_REQUEST_SCREEN}

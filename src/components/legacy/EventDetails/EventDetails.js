@@ -55,6 +55,7 @@ import {
   findEnsNameCaseInsensitive,
   getDecimalPlaces,
   parseTimestamp,
+  logBreadcrumb,
 } from 'utils/common';
 import {
   groupPPNTransactions,
@@ -111,7 +112,6 @@ import {
   SEND_SYNTHETIC_AMOUNT,
   SETTLE_BALANCE,
   TANK_WITHDRAWAL_FLOW,
-  LIQUIDITY_POOL_DASHBOARD,
 } from 'constants/navigationConstants';
 import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/transactionsConstants';
 import { POOLTOGETHER_DEPOSIT_TRANSACTION, POOLTOGETHER_WITHDRAW_TRANSACTION } from 'constants/poolTogetherConstants';
@@ -551,16 +551,16 @@ export class EventDetail extends React.Component<Props> {
     navigation.navigate(SETTLE_BALANCE);
   };
 
-  goToLiquidityPool = (pool: LiquidityPool) => {
-    this.props.navigation.navigate(LIQUIDITY_POOL_DASHBOARD, { pool });
+  goToLiquidityPool = () => {
   };
 
   getLiquidityEventButtons = (buttonTitle: string, pool: LiquidityPool) => {
+    logBreadcrumb('Liquidity pool', '', { pool });
     return [
       {
         secondary: true,
         title: buttonTitle,
-        onPress: () => this.goToLiquidityPool(pool),
+        onPress: () => this.goToLiquidityPool(),
       },
     ];
   };
