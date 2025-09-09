@@ -46,15 +46,7 @@ import WalletConnectConnectorRequestScreen from 'screens/WalletConnect/WalletCon
 import WalletConnectCallRequestScreen from 'screens/WalletConnect/CallRequest/WalletConnectCallRequestScreen';
 import WalletConnectPinConfirm from 'screens/WalletConnect/WalletConnectPinConfirm';
 import EtherspotDeploymentInterjection from 'screens/EtherspotDeploymentInterjection';
-import FundTankScreen from 'screens/Tank/FundTank';
-import FundConfirmScreen from 'screens/Tank/FundConfirm';
-import SettleBalanceScreen from 'screens/Tank/SettleBalance';
-import SettleBalanceConfirmScreen from 'screens/Tank/SettleBalanceConfirm';
-import TankWithdrawalScreen from 'screens/Tank/TankWithdrawal';
-import TankWithdrawalConfirmScreen from 'screens/Tank/TankWithdrawalConfirm';
 import AccountsScreen from 'screens/Accounts';
-import PillarNetworkIntro from 'screens/PillarNetwork/PillarNetworkIntro';
-import UnsettledAssetsScreen from 'screens/UnsettledAssets';
 import LogoutPendingScreen from 'screens/LogoutPending';
 import ServicesScreen from 'screens/Services';
 // import StorybookScreen from 'screens/Storybook';
@@ -125,15 +117,8 @@ import {
   WALLETCONNECT_CALL_REQUEST_SCREEN,
   WALLETCONNECT_PIN_CONFIRM_SCREEN,
   WALLETCONNECT_BROWSER,
-  TANK_SETTLE_FLOW,
-  TANK_FUND_FLOW,
-  FUND_TANK,
-  FUND_CONFIRM,
-  SETTLE_BALANCE,
-  SETTLE_BALANCE_CONFIRM,
   MANAGE_WALLETS_FLOW,
   ACCOUNTS,
-  PILLAR_NETWORK_INTRO,
   MENU_FLOW,
   MENU,
   MENU_SETTINGS,
@@ -142,12 +127,7 @@ import {
   MENU_SELECT_CURRENCY,
   MENU_SYSTEM_INFORMATION,
   PPN_SEND_SYNTHETIC_ASSET_FLOW,
-  UNSETTLED_ASSETS,
-  TANK_WITHDRAWAL_FLOW,
-  TANK_WITHDRAWAL,
-  TANK_WITHDRAWAL_CONFIRM,
   LOGOUT_PENDING,
-  UNSETTLED_ASSETS_FLOW,
   SERVICES,
   // STORYBOOK,
   CONNECT_FLOW,
@@ -368,51 +348,7 @@ function ManageWalletsFlow() {
   return (
     <manageWalletsFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
       <manageWalletsFlowNavigator.Screen name={ACCOUNTS} component={AccountsScreen} />
-      <manageWalletsFlowNavigator.Screen name={FUND_CONFIRM} component={FundConfirmScreen} />
     </manageWalletsFlowNavigator.Navigator>
-  );
-}
-
-// TANK FLOWS
-const tankSettleFlowNavigator = createNativeStackNavigator();
-function TankSettleFlow() {
-  return (
-    <tankSettleFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
-      <tankSettleFlowNavigator.Screen name={SETTLE_BALANCE} component={SettleBalanceScreen} />
-      <tankSettleFlowNavigator.Screen name={SETTLE_BALANCE_CONFIRM} component={SettleBalanceConfirmScreen} />
-    </tankSettleFlowNavigator.Navigator>
-  );
-}
-
-// UNSETTLED ASSETS FLOW
-const unsettledAssetsFlowNavigator = createNativeStackNavigator();
-function UnsettledAssetsFlow() {
-  return (
-    <unsettledAssetsFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
-      <unsettledAssetsFlowNavigator.Screen name={UNSETTLED_ASSETS} component={UnsettledAssetsScreen} />
-      <unsettledAssetsFlowNavigator.Screen name={SETTLE_BALANCE} component={SettleBalanceScreen} />
-      <unsettledAssetsFlowNavigator.Screen name={SETTLE_BALANCE_CONFIRM} component={SettleBalanceConfirmScreen} />
-    </unsettledAssetsFlowNavigator.Navigator>
-  );
-}
-
-const tankFundFlowNavigator = createNativeStackNavigator();
-function TankFundFlow() {
-  return (
-    <tankFundFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
-      <tankFundFlowNavigator.Screen name={FUND_TANK} component={FundTankScreen} />
-      <tankFundFlowNavigator.Screen name={FUND_CONFIRM} component={FundConfirmScreen} />
-    </tankFundFlowNavigator.Navigator>
-  );
-}
-
-const tankWithdrawalFlowNavigator = createNativeStackNavigator();
-function TankWithdrawalFlow() {
-  return (
-    <tankWithdrawalFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
-      <tankWithdrawalFlowNavigator.Screen name={TANK_WITHDRAWAL} component={TankWithdrawalScreen} />
-      <tankWithdrawalFlowNavigator.Screen name={TANK_WITHDRAWAL_CONFIRM} component={TankWithdrawalConfirmScreen} />
-    </tankWithdrawalFlowNavigator.Navigator>
   );
 }
 
@@ -484,12 +420,7 @@ function AppFlowNavigation() {
       <AppFlowStackNavigator.Screen name={REVEAL_BACKUP_PHRASE} component={RevealBackupPhraseScreen} />
       <AppFlowStackNavigator.Screen name={BACKUP_WALLET_IN_SETTINGS_FLOW} component={BackupWalletFlow} />
       <AppFlowStackNavigator.Screen name={MANAGE_WALLETS_FLOW} component={ManageWalletsFlow} />
-      <AppFlowStackNavigator.Screen name={TANK_SETTLE_FLOW} component={TankSettleFlow} />
-      <AppFlowStackNavigator.Screen name={UNSETTLED_ASSETS_FLOW} component={UnsettledAssetsFlow} />
-      <AppFlowStackNavigator.Screen name={TANK_FUND_FLOW} component={TankFundFlow} />
-      <AppFlowStackNavigator.Screen name={TANK_WITHDRAWAL_FLOW} component={TankWithdrawalFlow} />
       <AppFlowStackNavigator.Screen name={WALLETCONNECT_FLOW} component={WalletConnectFlow} />
-      <AppFlowStackNavigator.Screen name={PILLAR_NETWORK_INTRO} component={PillarNetworkIntro} />
       <AppFlowStackNavigator.Screen name={LOGOUT_PENDING} component={LogoutPendingScreen} />
       <AppFlowStackNavigator.Screen name={MENU_FLOW} component={MenuFlow} />
       <AppFlowStackNavigator.Screen name={PIN_CODE} component={PinCodeUnlockScreen} />
