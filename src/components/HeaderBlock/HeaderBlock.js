@@ -39,7 +39,6 @@ import type { IconName as SvgIconName } from 'components/core/Icon';
 
 // partials
 import HeaderTitleText from './HeaderTitleText';
-import HeaderActionButton from './HeaderActionButton';
 
 type NavItem = {|
   title?: string,
@@ -381,9 +380,6 @@ class HeaderBlock extends React.Component<Props> {
           />
         </View>
       );
-    }
-    if (item.actionButton) {
-      return <HeaderActionButton {...item.actionButton} wrapperStyle={[commonStyle, itemStyle]} />;
     }
     if (item.custom) {
       return (

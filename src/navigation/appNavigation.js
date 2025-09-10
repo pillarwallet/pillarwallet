@@ -61,7 +61,6 @@ import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import WalletActivatedScreen from 'screens/WalletActivated';
 import ContactsListScreen from 'screens/Contacts/ContactsList';
 import TutorialScreen from 'screens/Tutorial';
-import EnsMigrationConfirmScreen from 'screens/EnsMigrationConfirm';
 import LegalScreen from 'screens/LegalScreen/LegalScreen';
 import BackupWalletIntro from 'screens/BackupWallet/Intro';
 import BackupPhraseValidateScreen from 'screens/BackupWallet/BackupPhraseValidate';
@@ -140,7 +139,6 @@ import {
   WALLETCONNECT_CALL_REQUEST_FLOW,
   TUTORIAL,
   TUTORIAL_FLOW,
-  ENS_MIGRATION_CONFIRM,
   WEB_VIEW,
   ENS_MIGRATION_FLOW,
   LEGAL_SCREEN,
@@ -396,7 +394,6 @@ const ensMigrationFlowNavigator = createNativeStackNavigator();
 function EnsMigrationFlow() {
   return (
     <ensMigrationFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
-      <ensMigrationFlowNavigator.Screen name={ENS_MIGRATION_CONFIRM} component={EnsMigrationConfirmScreen} />
       <ensMigrationFlowNavigator.Screen name={SEND_TOKEN_TRANSACTION} component={SendTokenTransactionScreen} />
     </ensMigrationFlowNavigator.Navigator>
   );
