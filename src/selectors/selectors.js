@@ -80,10 +80,6 @@ export const historySelector = ({ history }: RootReducerState) => history.data;
 export const onboardingFetchingSelector = ({ onboarding }: RootReducerState) => onboarding.isFetching;
 export const onboardingLoaderMessageSelector = ({ onboarding }: RootReducerState) => onboarding.loaderMessage;
 
-export const appsHoldingsSelector = ({ appsHoldings }: RootReducerState) => appsHoldings;
-
-export const useAppHoldings = () => useRootSelector((root) => root.appsHoldings);
-
 export const defaultTokensSelector = ({ defaultTokens }: RootReducerState) => defaultTokens;
 
 export const addTokensListSelector = ({ addTokensList }: RootReducerState) => addTokensList;

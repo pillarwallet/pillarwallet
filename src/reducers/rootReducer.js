@@ -65,7 +65,6 @@ import liquidityPoolsReducer from './liquidityPoolsReducer';
 import totalBalancesReducer from './totalBalancesReducer';
 import transactionNotificationReducer from './transactionNotificationReducer';
 import nftFlagReducer from './nftFlagReducer';
-import appsHoldingsReducer from './appsHoldingsReducer';
 import deployAccountsReducer from './deployAccountsReducer';
 import addTokensReducer from './addTokensReducer';
 import addCustomTokensReducer from './addCustomTokensReducer';
@@ -117,7 +116,6 @@ import type { LiquidityPoolsReducerState, LiquidityPoolsReducerAction } from './
 import type { TotalBalancesReducerState, TotalBalancesReducerAction } from './totalBalancesReducer';
 import type { TransactionNotificationState, TransactionNotificationAction } from './transactionNotificationReducer.tsx';
 import type { NFTFlagReducerAction, NFTFlagReducerState } from './nftFlagReducer';
-import type { AppsHoldingsReducerState, AppsHoldingsReducerAction } from './appsHoldingsReducer';
 import type { DeployAccountsAction, DeployAccountsReducerState } from './deployAccountsReducer';
 import type { AddTokensReducerAction, AddTokensReducerState } from './addTokensReducer';
 import type { AddCustomTokensReducerState, AddCustomTokensReducerAction } from './addCustomTokensReducer';
@@ -163,7 +161,6 @@ export type RootReducerState = {|
   nativeIntegration: IReduxNativeIntegrationState,
   transactionNotification: TransactionNotificationState,
   nftFlag: NFTFlagReducerState,
-  appsHoldings: AppsHoldingsReducerState,
   deployAccounts: DeployAccountsReducerState,
   addTokensList: AddTokensReducerState,
   customTokensList: AddCustomTokensReducerState,
@@ -200,7 +197,6 @@ type RootReducerAction =
   | TotalBalancesReducerAction
   | RatesReducerAction
   | NFTFlagReducerAction
-  | AppsHoldingsReducerAction
   | TokensAction
   | TransactionNotificationAction
   | DeployAccountsAction
@@ -251,7 +247,6 @@ const appReducer = combineReducers({
   liquidityPools: liquidityPoolsReducer,
   totalBalances: totalBalancesReducer,
   nftFlag: nftFlagReducer,
-  appsHoldings: appsHoldingsReducer,
   firestore: firestoreReducer,
   gasThreshold: gasThresholdReducer,
   nativeIntegration: nativeIntegrationReducer,
