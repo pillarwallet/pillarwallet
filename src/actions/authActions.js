@@ -47,7 +47,6 @@ import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { NFT_FLAG } from 'constants/assetsConstants';
 import { SET_NEW_USER } from 'constants/onboardingConstants';
-import { REMOVE_APP_HOLDINGS } from 'constants/appsHoldingsConstants';
 import { RESET_PILLARX_ADDRESS } from 'constants/modularSdkConstants';
 
 // utils
@@ -104,7 +103,6 @@ import { fetchAllAccountsAssetsBalancesAction, fetchAllAccountsTotalBalancesActi
 import { finishOnboardingAction, setViewedReceiveTokensWarning } from './onboardingActions';
 import { addMissingWalletEventsIfNeededAction } from './walletEventsActions';
 import { fetchAllCollectiblesDataAction } from './collectiblesActions';
-import { fetchAppsHoldingsAction } from './appsHoldingsActions';
 
 const storage = Storage.getInstance('db');
 
@@ -292,7 +290,6 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
     dispatch(fetchAllAccountsTotalBalancesAction());
     dispatch(fetchAllAccountsAssetsBalancesAction());
     dispatch(fetchAllCollectiblesDataAction());
-    dispatch(fetchAppsHoldingsAction());
     if (!__DEV__) dispatch(deployAccounts());
   };
 };
@@ -461,8 +458,6 @@ export const logoutAction = () => {
 
     // reset services
     await dispatch(resetAppServicesAction());
-
-    dispatch({ type: REMOVE_APP_HOLDINGS });
     dispatch({ type: RESET_PILLARX_ADDRESS });
 
     // reset reducer state

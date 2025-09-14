@@ -27,7 +27,6 @@ import loadAndMigrateRates from './rates';
 import loadAndMigrateAddTokens from './addTokens';
 import loadAndMigrateCustomTokens from './customTokens';
 import loadAndMigrateDefaultTokens from './defaultTokens';
-import loadAndMigrateAppsHoldings from './appsHoldings';
 
 export async function migrate(
   collection: string,
@@ -74,10 +73,6 @@ export async function migrate(
 
     case 'customTokensList':
       data = loadAndMigrateCustomTokens(storageData);
-      break;
-
-    case 'appsHoldings':
-      data = loadAndMigrateAppsHoldings(storageData);
       break;
 
     default:

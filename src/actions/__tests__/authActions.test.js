@@ -31,7 +31,6 @@ import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import { NFT_FLAG } from 'constants/assetsConstants';
 import { SET_FETCHING_ASSETS_BALANCES } from 'constants/assetsBalancesConstants';
 import { SET_FETCHING_HISTORY } from 'constants/historyConstants';
-import { SET_FETCHING_HOLDINGS } from 'constants/appsHoldingsConstants';
 
 // actions
 import { loginAction } from 'actions/authActions';
@@ -115,7 +114,6 @@ describe('Auth actions', () => {
       assetsBalances: { data: {} },
       blockchainNetwork: { data: [] },
       rates: { isFetching: false },
-      appsHoldings: { isFetching: false },
       user: { data: { username: 'test-username' } },
       walletEvents: { data: {} },
       stableTokens: { data: mockStableAssets },
@@ -151,8 +149,6 @@ describe('Auth actions', () => {
       { type: UPDATE_ACCOUNTS, payload: [mockActiveSmartWalletAccount, mockNewKeyBasedAccount] },
 
       { type: SET_FETCHING_HISTORY, payload: true },
-
-      { type: SET_FETCHING_HOLDINGS, payload: true },
 
       { type: SET_FETCHING_ASSETS_BALANCES, payload: true },
     ];
