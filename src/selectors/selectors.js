@@ -105,8 +105,6 @@ export const activeAccountAddressSelector = createSelector(activeAccountSelector
   activeAccount ? getAccountAddress(activeAccount) : '',
 );
 
-export const syntheticAssetsSelector = ({ synthetics }: RootReducerState) => synthetics.data;
-
 export const supportedAssetsPerChainSelector = (root: RootReducerState): AssetsPerChain =>
   root.assets?.supportedAssets ?? EMPTY_OBJECT;
 
