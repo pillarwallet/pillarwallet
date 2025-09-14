@@ -52,7 +52,6 @@ import blockchainNetworkReducer from './blockchainNetworkReducer';
 import userSettingsReducer from './userSettingsReducer';
 import walletEventsReducer from './walletEventsReducer';
 import walkthroughsReducer from './walkthroughsReducer';
-import syntheticsReducer from './syntheticsReducer';
 import ensRegistryReducer from './ensRegistryReducer';
 import insightsReducer from './insightsReducer';
 import keyBasedAssetTransferReducer from './keyBasedAssetTransferReducer';
@@ -97,7 +96,6 @@ import type { BlockchainNetworkAction, BlockchainNetworkReducerState } from './b
 import type { UserSettingsReducerAction, UserSettingsReducerState } from './userSettingsReducer';
 import type { WalletEventsReducerAction, WalletEventsReducerState } from './walletEventsReducer';
 import type { WalkthroughsReducerAction, WalkthroughsReducerState } from './walkthroughsReducer';
-import type { SyntheticsReducerAction, SyntheticsReducerState } from './syntheticsReducer';
 import type { EnsRegistryReducerAction, EnsRegistryReducerState } from './ensRegistryReducer';
 import type { InsightsReducerAction, InsightsReducerState } from './insightsReducer';
 import type {
@@ -145,7 +143,6 @@ export type RootReducerState = {|
   userSettings: UserSettingsReducerState,
   walletEvents: WalletEventsReducerState,
   walkthroughs: WalkthroughsReducerState,
-  synthetics: SyntheticsReducerState,
   ensRegistry: EnsRegistryReducerState,
   insights: InsightsReducerState,
   keyBasedAssetTransfer: KeyBasedAssetTransferReducerState,
@@ -184,7 +181,6 @@ type RootReducerAction =
   | WalletEventsReducerAction
   | WalkthroughsReducerAction
   | DbAction
-  | SyntheticsReducerAction
   | EnsRegistryReducerAction
   | InsightsReducerAction
   | KeyBasedAssetTransferReducerAction
@@ -235,7 +231,6 @@ const appReducer = combineReducers({
   userSettings: userSettingsReducer,
   walletEvents: walletEventsReducer,
   walkthroughs: walkthroughsReducer,
-  synthetics: syntheticsReducer,
   ensRegistry: ensRegistryReducer,
   insights: insightsReducer,
   keyBasedAssetTransfer: keyBasedAssetTransferReducer,
