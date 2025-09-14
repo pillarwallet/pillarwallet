@@ -28,7 +28,6 @@ import type { DbAction } from 'models/DbAction';
 // reducers - absolte imports
 import firestoreReducer, { IReduxFirestoreState } from 'redux/reducers/firestore-reducer';
 import gasThresholdReducer, { IReduxGasThresholdState } from 'redux/reducers/gas-threshold-reducer';
-import nativeIntegrationReducer, { IReduxNativeIntegrationState } from 'redux/reducers/native-integration-reducer';
 
 // reducers
 import offlineQueueReducer from './offlineQueueReducer';
@@ -155,7 +154,6 @@ export type RootReducerState = {|
   totalBalances: TotalBalancesReducerState,
   firestore: IReduxFirestoreState,
   gasThreshold: IReduxGasThresholdState,
-  nativeIntegration: IReduxNativeIntegrationState,
   transactionNotification: TransactionNotificationState,
   nftFlag: NFTFlagReducerState,
   deployAccounts: DeployAccountsReducerState,
@@ -244,7 +242,6 @@ const appReducer = combineReducers({
   nftFlag: nftFlagReducer,
   firestore: firestoreReducer,
   gasThreshold: gasThresholdReducer,
-  nativeIntegration: nativeIntegrationReducer,
   transactionNotification: transactionNotificationReducer,
   deployAccounts: deployAccountsReducer,
   addTokensList: addTokensReducer,
