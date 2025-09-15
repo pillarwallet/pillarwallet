@@ -35,10 +35,8 @@ import {
   getInactiveUserAccounts,
   getAccountAddress,
   getAccountTypeByAddress,
-  isArchanovaAccount,
 } from './accounts';
 import { addressesEqual } from './assets';
-
 
 export function mapTransactionsHistory(
   history: Object[],
@@ -57,10 +55,10 @@ export function mapTransactionsHistory(
     .map(({ ...rest }) => ({ ...rest, type: eventType }))
     .map(({ to, from, ...rest }) => {
       // apply to wallet accounts only if received from other account address
-      const account = eventType !== COLLECTIBLE_TRANSACTION
-        && (findAccountByAddress(from, getInactiveUserAccounts(accounts))
-          || findAccountByAddress(to, getInactiveUserAccounts(accounts))
-        );
+      const account =
+        eventType !== COLLECTIBLE_TRANSACTION &&
+        (findAccountByAddress(from, getInactiveUserAccounts(accounts)) ||
+          findAccountByAddress(to, getInactiveUserAccounts(accounts)));
 
       const accountType = account ? account.type : null;
 
@@ -79,22 +77,25 @@ export function mapTransactionsHistory(
 
   const historyWithTrxBetweenAcc = ascendingHistory.reduce((alteredHistory, historyItem) => {
     const { from: fromAddress, to: toAddress, hash } = historyItem;
-    const isTransactionFromUsersAccount = accountsAddresses
-      .some((userAddress) => addressesEqual(fromAddress, userAddress));
-    const isTransactionToUsersAccount = accountsAddresses
-      .some((userAddress) => addressesEqual(toAddress, userAddress));
+    const isTransactionFromUsersAccount = accountsAddresses.some((userAddress) =>
+      addressesEqual(fromAddress, userAddress),
+    );
+    const isTransactionToUsersAccount = accountsAddresses.some((userAddress) => addressesEqual(toAddress, userAddress));
     const eventWithSameHashExists = alteredHistory.some((item) => item.hash === hash);
 
     if (eventWithSameHashExists) {
       if (isTransactionFromUsersAccount && isTransactionToUsersAccount) {
-        return [...alteredHistory, {
-          ...historyItem,
-          accountType: getAccountTypeByAddress(toAddress, accounts),
-          isReceived: true,
-          betweenAccTrxDuplicate: true,
-          _id: `${historyItem._id}_duplicate`,
-          createdAt: historyItem.createdAt + 1,
-        }];
+        return [
+          ...alteredHistory,
+          {
+            ...historyItem,
+            accountType: getAccountTypeByAddress(toAddress, accounts),
+            isReceived: true,
+            betweenAccTrxDuplicate: true,
+            _id: `${historyItem._id}_duplicate`,
+            createdAt: historyItem.createdAt + 1,
+          },
+        ];
       }
       return alteredHistory;
     } else if (duplicatePPN) {
@@ -123,13 +124,12 @@ export type TransactionsGroup = {
 };
 
 export function groupPPNTransactions(ppnTransactions: Object[]): TransactionsGroup[] {
-  const transactionsByAsset: {[string]: TransactionsGroup} = {};
+  const transactionsByAsset: { [string]: TransactionsGroup } = {};
   if (!ppnTransactions.length) return [];
 
   ppnTransactions.forEach((trx) => {
     const { symbol: _symbol, assetSymbol, value: rawValue } = trx;
     const symbol = _symbol || assetSymbol;
-
 
     const value = new BigNumber(rawValue);
     if (!transactionsByAsset[symbol]) {
@@ -154,11 +154,6 @@ export const isFailedTransaction = ({ status }: Object) => {
 
 export const isTimedOutTransaction = ({ status }: Object) => {
   return status === TX_TIMEDOUT_STATUS;
-};
-
-export const isArchanovaAccountAddress = (address: string, accounts: Account[]) => {
-  const account = findAccountByAddress(address, accounts);
-  return !!account && isArchanovaAccount(account);
 };
 
 export const isSmartWalletAccountAddress = (address: string, accounts: Account[]) => {

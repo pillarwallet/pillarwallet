@@ -82,7 +82,6 @@ import etherspotService from 'services/etherspot';
 import { fetchPillarXAddress } from 'services/modularSDK';
 
 // actions
-import { importArchanovaAccountsIfNeededAction, managePPNInitFlagAction } from 'actions/smartWalletActions';
 import { saveDbAction, saveEncryptedDbAction } from 'actions/dbActions';
 import { checkForWalletBackupToastAction, encryptAndSaveWalletAction } from 'actions/walletActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
@@ -462,9 +461,6 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.creatingAccounts') });
     // create Archanova accounts if needed
     if (!isNewUser) {
-      logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching importArchanovaAccountsIfNeededAction');
-      await dispatch(importArchanovaAccountsIfNeededAction(privateKey));
-
       // create Etherspot accounts
       logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching importEtherspotAccountsAction');
       await dispatch(importEtherspotAccountsAction());
@@ -503,9 +499,6 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.fetchingPrices') });
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching rates action: fetchAssetsRatesAction');
     await dispatch(fetchAssetsRatesAction());
-
-    logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching managePPNInitFlagAction');
-    dispatch(managePPNInitFlagAction());
 
     // add wallet created / imported events
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching getWalletsCreationEventsAction');

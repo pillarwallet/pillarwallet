@@ -7,7 +7,6 @@ function loadStories() {
 	require('../src/components/Banner/Banner.stories');
 	require('../src/components/ContactSelector/ContactSelector.stories');
 	require('../src/components/DetailModal/DetailModal.stories');
-	require('../src/components/FeeLabelToggle/FeeLabelToggle.stories');
 	require('../src/components/FloatingButtons/FloatingButtons.stories');
 	require('../src/components/Graph/ValueOverTimeGraph.stories');
 	require('../src/components/HeaderBlock/HeaderBlock.stories');
@@ -32,7 +31,6 @@ const stories = [
 	'../src/components/Banner/Banner.stories',
 	'../src/components/ContactSelector/ContactSelector.stories',
 	'../src/components/DetailModal/DetailModal.stories',
-	'../src/components/FeeLabelToggle/FeeLabelToggle.stories',
 	'../src/components/FloatingButtons/FloatingButtons.stories',
 	'../src/components/Graph/ValueOverTimeGraph.stories',
 	'../src/components/HeaderBlock/HeaderBlock.stories',

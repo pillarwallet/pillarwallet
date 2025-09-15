@@ -38,7 +38,6 @@ import type { EthereumTransaction, TransactionPayload } from 'models/Transaction
 
 // Services
 import etherspotService from 'services/etherspot';
-import archanovaService from 'services/archanova';
 import { firebaseRemoteConfig as remoteConfig } from 'services/firebase';
 
 // Utils
@@ -382,17 +381,6 @@ export const getBalanceForAddress = async (chain: string, address: string, accou
     return tokenBalance.balance;
   } catch {
     //
-  }
-
-  return null;
-};
-
-export const sendArchanovaTransaction = async (transaction: TransactionPayload, address: string) => {
-  try {
-    const tx = await archanovaService.sendTransaction(transaction, address);
-    if (tx) return tx;
-  } catch (e) {
-    reportErrorLog('sendArchanovaTransaction error', e);
   }
 
   return null;

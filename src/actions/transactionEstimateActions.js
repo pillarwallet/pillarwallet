@@ -30,12 +30,10 @@ import { fetchGasInfoAction } from 'actions/historyActions';
 import Toast from 'components/Toast';
 
 // services
-import archanovaService from 'services/archanova';
 import etherspotService from 'services/etherspot';
 
 // utils
 import { reportErrorLog, logBreadcrumb, getEthereumProvider } from 'utils/common';
-import { buildArchanovaTxFeeInfo } from 'utils/archanova';
 import { buildEthereumTransaction } from 'utils/transactions';
 import { buildEtherspotTxFeeInfo } from 'utils/etherspot';
 import { getAccountAddress, getAccountType, isKeyBasedAccount } from 'utils/accounts';
@@ -267,21 +265,6 @@ export const estimateTransactionsAction = (transactionsToEstimate: TransactionTo
           useGasToken,
         });
         feeInfo = buildEtherspotTxFeeInfo(estimated, useGasToken);
-        break;
-      case ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET:
-        logBreadcrumb('Send Flow', 'account type: archanvova smart wallet, estimateAccountTransactions', {
-          transactions,
-        });
-        estimated = await archanovaService.estimateAccountTransactions(transactions).catch((error) => {
-          reportErrorLog('estimateTransactionsAction failed: failed to estimate account transaction', { error });
-          errorMessage = error?.message;
-          return null;
-        });
-        logBreadcrumb('Send Flow', 'account type: archanvova smart wallet, buildEtherspotTxFeeInfo', {
-          estimated,
-          useGasToken,
-        });
-        feeInfo = buildArchanovaTxFeeInfo(estimated, useGasToken);
         break;
       default:
         logBreadcrumb('estimateTransactionsAction', 'failed: unsupported account type', { activeAccount });

@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { sdkConstants } from '@smartwallet/sdk';
 import { isEqual } from 'lodash';
 
 // constants
@@ -28,9 +27,7 @@ import {
   DEPLOY_ACCOUNTS,
   DEPLOY_ACCOUNTS_FETCHING,
 } from 'constants/accountsConstants';
-import { ARCHANOVA_WALLET_UPGRADE_STATUSES } from 'constants/archanovaConstants';
-import { PIN_CODE } from 'constants/navigationConstants';
-import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
+import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // actions
@@ -38,32 +35,20 @@ import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { saveDbAction } from 'actions/dbActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
-import {
-  connectArchanovaAccountAction,
-  initArchanovaSdkAction,
-  setSmartWalletUpgradeStatusAction,
-  fetchVirtualAccountBalanceAction,
-} from 'actions/smartWalletActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { connectEtherspotAccountAction } from 'actions/etherspotActions';
 
 // utils
 import {
   findAccountById,
-  findFirstArchanovaAccount,
   getAccountId,
-  getActiveAccountType,
-  isArchanovaAccount,
   getActiveAccount,
   isEtherspotAccount,
   findFirstEtherspotAccount,
 } from 'utils/accounts';
-import { isSupportedBlockchain } from 'utils/blockchainNetworks';
 import { logBreadcrumb, isCaseInsensitiveMatch } from 'utils/common';
-import { patchArchanovaAccountExtra } from 'utils/archanova';
 
 // services
-import { navigate } from 'services/navigation';
 import etherspotServices from 'services/etherspot';
 
 // selectors
@@ -79,13 +64,10 @@ export const addAccountAction = (accountAddress: string, type: AccountTypes, acc
       accounts: { data: accounts },
     } = getState();
 
-    const patchedAccountExtra =
-      type === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET ? patchArchanovaAccountExtra(accountExtra, accounts) : accountExtra;
-
     const newAccount = {
       id: accountAddress,
       type,
-      extra: patchedAccountExtra,
+      extra: accountExtra,
       isActive: false,
     };
 
@@ -94,7 +76,7 @@ export const addAccountAction = (accountAddress: string, type: AccountTypes, acc
 
     if (existingAccount) {
       // $FlowFixMe: flow gets confused here
-      updatedAccounts.push({ ...existingAccount, extra: patchedAccountExtra });
+      updatedAccounts.push({ ...existingAccount, extra: accountExtra });
     } else {
       // $FlowFixMe: flow gets confused here
       updatedAccounts.push(newAccount);
@@ -115,9 +97,7 @@ export const updateAccountExtraIfNeededAction = (accountId: string, accountExtra
     const accountToUpdate = findAccountById(accountId, accounts);
     if (!accountToUpdate) return;
 
-    const patchedAccountExtra = isArchanovaAccount(accountToUpdate)
-      ? patchArchanovaAccountExtra(accountExtra, accounts)
-      : accountExtra;
+    const patchedAccountExtra = accountExtra;
 
     const accountExtraNeedsUpdate = !isEqual(accountToUpdate?.extra, patchedAccountExtra);
     if (!accountExtraNeedsUpdate) return;
@@ -157,7 +137,6 @@ export const setActiveAccountAction = (accountId: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
-      smartWallet: { connectedAccount = {}, upgrade },
     } = getState();
 
     const account = accounts.find((acc) => acc.id === accountId);
@@ -169,22 +148,6 @@ export const setActiveAccountAction = (accountId: string) => {
       payload: updatedAccounts,
     });
     dispatch(saveDbAction('accounts', { accounts: updatedAccounts }, true));
-
-    if (account.type !== ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET || !account.extra) return;
-
-    const { state = '' } = connectedAccount;
-    if (state === sdkConstants.AccountStates.Deployed) {
-      dispatch(setSmartWalletUpgradeStatusAction(ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
-      return;
-    }
-    if (
-      [ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYING, ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE].includes(
-        upgrade?.status,
-      )
-    ) {
-      return;
-    }
-    dispatch(setSmartWalletUpgradeStatusAction(ARCHANOVA_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED));
   };
 };
 
@@ -192,21 +155,13 @@ export const switchAccountAction = (accountId: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
-      smartWallet: { sdkInitialized },
     } = getState();
 
     const activeAccount = accounts.find((account) => getAccountId(account) === accountId);
 
     dispatch({ type: CHANGING_ACCOUNT, payload: true });
 
-    if (activeAccount?.type === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET) {
-      if (!sdkInitialized) {
-        navigate(PIN_CODE, { initSmartWalletSdk: true, switchToAcc: accountId });
-        return;
-      }
-
-      await dispatch(connectArchanovaAccountAction(accountId));
-    } else if (activeAccount?.type === ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET) {
+    if (activeAccount?.type === ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET) {
       dispatch(connectEtherspotAccountAction(accountId));
     }
 
@@ -216,57 +171,6 @@ export const switchAccountAction = (accountId: string) => {
     dispatch(fetchCollectiblesAction());
     dispatch(fetchTransactionsHistoryAction());
     dispatch({ type: CHANGING_ACCOUNT, payload: false });
-  };
-};
-
-export const initOnLoginArchanovaAccountAction = (privateKey: string) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      appSettings: {
-        data: { blockchainNetwork },
-      },
-      accounts: { data: accounts },
-    } = getState();
-
-    const smartWalletAccount = findFirstArchanovaAccount(accounts);
-    if (!smartWalletAccount) return;
-
-    const smartWalletAccountId = getAccountId(smartWalletAccount);
-    // Note: Disabled forceInit here, because of gets Account disconnect error
-    await dispatch(initArchanovaSdkAction(privateKey));
-
-    const activeAccountType = getActiveAccountType(accounts);
-    const setAccountActive = activeAccountType !== ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET; // set to active routine
-    await dispatch(connectArchanovaAccountAction(smartWalletAccountId));
-    dispatch(fetchVirtualAccountBalanceAction());
-
-    if (setAccountActive && blockchainNetwork) {
-      const shouldChangeNetwork = !isSupportedBlockchain(blockchainNetwork);
-      dispatch({
-        type: SET_ACTIVE_NETWORK,
-        payload: shouldChangeNetwork ? BLOCKCHAIN_NETWORK_TYPES.ETHEREUM : blockchainNetwork,
-      });
-    }
-  };
-};
-
-/**
- * Switch active account to archanova.
- */
-export const switchToArchanovaAccountIfNeededAction = () => {
-  return (dispatch: Dispatch, getState: GetState) => {
-    const accounts = accountsSelector(getState());
-
-    const activeAccount = getActiveAccount(accounts);
-    if (isArchanovaAccount(activeAccount)) return;
-
-    const archanovaAccount = findFirstArchanovaAccount(accounts);
-    if (!archanovaAccount) {
-      logBreadcrumb('switchToArchanovaAccountIfNeededAction', 'no archanova account found', { accounts });
-      return;
-    }
-
-    dispatch(switchAccountAction(getAccountId(archanovaAccount)));
   };
 };
 

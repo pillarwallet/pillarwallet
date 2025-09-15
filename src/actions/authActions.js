@@ -55,12 +55,7 @@ import { decryptWalletFromStorage, getDecryptedWallet } from 'utils/wallet';
 import { clearWebViewCookies } from 'utils/webview';
 import { resetKeychainDataObject } from 'utils/keychain';
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
-import {
-  findFirstArchanovaAccount,
-  findFirstEtherspotAccount,
-  findKeyBasedAccount,
-  getActiveAccount,
-} from 'utils/accounts';
+import { findFirstEtherspotAccount, findKeyBasedAccount, getActiveAccount } from 'utils/accounts';
 import { getDeviceUniqueId } from 'utils/device';
 
 // services
@@ -68,7 +63,6 @@ import Storage from 'services/storage';
 import { navigate, getNavigationState, getLastRouteState } from 'services/navigation';
 import { firebaseAuth, firebaseMessaging, firebaseRemoteConfig } from 'services/firebase';
 import etherspotService from 'services/etherspot';
-import archanovaService from 'services/archanova';
 import { logoutWeb3Auth } from 'services/web3Auth';
 import { fetchPillarXAddress } from 'services/modularSDK';
 
@@ -79,12 +73,7 @@ import type { OnValidPinCallback } from 'models/Wallet';
 // actions
 import { saveDbAction, encryptedStorage } from './dbActions';
 import { setupLoggingServicesAction } from './appActions';
-import {
-  addAccountAction,
-  initOnLoginArchanovaAccountAction,
-  deployAccounts,
-  setActiveAccountAction,
-} from './accountsActions';
+import { addAccountAction, deployAccounts, setActiveAccountAction } from './accountsActions';
 import { encryptAndSaveWalletAction, checkForWalletBackupToastAction, updatePinAttemptsAction } from './walletActions';
 import { fetchTransactionsHistoryAction } from './historyActions';
 import { setAppThemeAction, setAppLanguageAction, setDeviceUniqueIdIfNeededAction } from './appSettingsActions';
@@ -254,12 +243,6 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
 
     // init Etherspot SDK
     await dispatch(initEtherspotServiceAction(decryptedPrivateKey));
-
-    // init Archanova SDK if needed
-    const archanovaAccount = findFirstArchanovaAccount(accounts);
-    if (archanovaAccount) {
-      await dispatch(initOnLoginArchanovaAccountAction(decryptedPrivateKey));
-    }
 
     // Dispatch action to try and get the latest remote config values...
     dispatch(loadRemoteConfigWithUserPropertiesAction());
@@ -440,7 +423,6 @@ export const resetAppServicesAction = () => {
     if (env) await storage.save('environment', env, true);
 
     await etherspotService.logout();
-    await archanovaService.reset();
     await logoutWeb3Auth();
 
     // reset data stored in keychain

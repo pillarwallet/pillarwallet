@@ -33,7 +33,7 @@ import RadioButton from 'components/RadioButton';
 import Toast from 'components/Toast';
 
 // utils
-import { getAccountName, isEtherspotAccount } from 'utils/accounts';
+import { getAccountName } from 'utils/accounts';
 import { calculateTotalBalance } from 'utils/totalBalances';
 import { fontStyles, appFont, spacing, borderRadiusSizes } from 'utils/variables';
 import { images } from 'utils/images';
@@ -51,10 +51,9 @@ import { fetchAllAccountsTotalBalancesAction } from 'actions/assetsActions';
 import { logEventAction } from 'actions/analyticsActions';
 
 // selectors
-import { useFiatCurrency, useRootSelector } from 'selectors';
+import { useFiatCurrency } from 'selectors';
 import { keyBasedWalletHasPositiveBalanceSelector } from 'selectors/balances';
 import { totalBalancesPerAccountSelector } from 'selectors/totalBalances';
-import { isEnsMigrationNeededSelector } from 'selectors/archanova';
 
 // services
 import { firebaseRemoteConfig } from 'services/firebase';
@@ -110,7 +109,6 @@ const AccountsModal = ({
   const dispatch = useDispatch();
   const colors = getThemeColors(theme);
   const fiatCurrency = useFiatCurrency();
-  const isEnsMigrationNeeded = useRootSelector(isEnsMigrationNeededSelector);
   const modalRef = useRef(null);
 
   useEffect(() => {
@@ -135,15 +133,7 @@ const AccountsModal = ({
   };
 
   const renderListItem = (item) => {
-    const {
-      title,
-      balance,
-      mainAction,
-      isActive,
-      id,
-      address,
-      username,
-    } = item;
+    const { title, balance, mainAction, isActive, id, address, username } = item;
 
     return (
       <Container
@@ -203,7 +193,7 @@ const AccountsModal = ({
       showKeyBasedAssetMigrationButton: isKeyBasedAssetsMigrationEnabled && keyBasedWalletHasPositiveBalance,
       address: id,
       username: name ? `${name}${getEnsPrefix()}` : '',
-      showEnsMigrationBanner: isEtherspotAccount(account) && isEnsMigrationNeeded,
+      showEnsMigrationBanner: false,
     };
   });
 
@@ -263,7 +253,6 @@ const TextContent = styled(Text)`
   ${fontStyles.big};
   padding: 0 ${spacing.medium}px 0 ${0}px;
 `;
-
 
 const TextButton = styled(TouchableOpacity)`
   width: 190px;

@@ -21,25 +21,12 @@
 import { orderBy, mapValues } from 'lodash';
 import { createSelector } from 'reselect';
 
-// utils
-import { findFirstArchanovaAccount, getAccountId } from 'utils/accounts';
-
-// constants
-import { CHAIN } from 'constants/chainConstants';
-
 // types
-import type { RootReducerState, Selector } from 'reducers/rootReducer';
 import type { ChainRecord } from 'models/Chain';
 import type { Transaction } from 'models/Transaction';
 
 // selectors
-import {
-  historySelector,
-  activeAccountIdSelector,
-  activeBlockchainSelector,
-  accountsSelector,
-} from './selectors';
-
+import { historySelector, activeAccountIdSelector, activeBlockchainSelector } from './selectors';
 
 export const accountHistorySelector = createSelector(
   historySelector,
@@ -47,30 +34,6 @@ export const accountHistorySelector = createSelector(
   activeBlockchainSelector,
   (history, activeAccountId): ChainRecord<Transaction[]> => {
     if (!activeAccountId) return { ethereum: [] };
-    return mapValues(
-      history[activeAccountId],
-      (transactions) => orderBy(transactions || [], ['createdAt'], ['desc']),
-    );
+    return mapValues(history[activeAccountId], (transactions) => orderBy(transactions || [], ['createdAt'], ['desc']));
   },
 );
-
-export const archanovaAccountEthereumHistorySelector: Selector<Transaction[]> = createSelector(
-  historySelector,
-  accountsSelector,
-  (history, accounts): Transaction[] => {
-    const archanovaAccount = findFirstArchanovaAccount(accounts);
-    if (!archanovaAccount) return [];
-
-    const archanovaAccountId = getAccountId(archanovaAccount);
-    if (!archanovaAccountId) return [];
-
-    const accountEthereumHistory = history[archanovaAccountId]?.[CHAIN.ETHEREUM] ?? [];
-
-    // $FlowFixMe: fix later?
-    return orderBy(accountEthereumHistory, ['createdAt'], ['desc']);
-  },
-);
-
-export function isFetchingHistorySelector(root: RootReducerState) {
-  return root.history.isFetching;
-}

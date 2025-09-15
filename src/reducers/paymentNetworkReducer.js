@@ -29,7 +29,6 @@ import {
   RESET_PAYMENT_NETWORK,
   SET_AVAILABLE_TO_SETTLE_TX,
   START_FETCHING_AVAILABLE_TO_SETTLE_TX,
-  MARK_PLR_TANK_INITIALISED,
   SET_ESTIMATED_WITHDRAWAL_FEE,
   RESET_ESTIMATED_SETTLE_TX_FEE,
   RESET_ESTIMATED_WITHDRAWAL_FEE,
@@ -49,7 +48,6 @@ export type PaymentNetworkReducerState = {
     data: Object[],
     isFetched: boolean,
   },
-  isTankInitialised: boolean,
 };
 
 export type PaymentNetworkAction = {
@@ -77,7 +75,6 @@ export const initialState = {
     data: [],
     isFetched: false,
   },
-  isTankInitialised: false,
 };
 
 export default function paymentNetworkReducer(
@@ -105,12 +102,10 @@ export default function paymentNetworkReducer(
       return merge({}, state, { settleTxFee: { feeInfo: action.payload, isFetched: true } });
     case PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS:
       return merge({}, state, { txToListen: [...state.txToListen, action.payload] });
-    case MARK_PLR_TANK_INITIALISED:
-      return merge({}, state, { isTankInitialised: true });
     case PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS:
       return {
         ...state,
-        txToListen: state.txToListen.filter(hash => hash.toLowerCase() !== action.payload.toLowerCase()),
+        txToListen: state.txToListen.filter((hash) => hash.toLowerCase() !== action.payload.toLowerCase()),
       };
     case RESET_PAYMENT_NETWORK:
       return { ...initialState };

@@ -33,7 +33,7 @@ import Icon from 'components/core/Icon';
 import { useThemeColors } from 'utils/themes';
 import { useChainsConfig } from 'utils/uiConfig';
 import { getDeviceHeight, getDeviceWidth } from 'utils/common';
-import { getActiveAccount, isEtherspotAccount, isKeyBasedAccount, isArchanovaAccount } from 'utils/accounts';
+import { getActiveAccount, isEtherspotAccount, isKeyBasedAccount } from 'utils/accounts';
 import { objectFontStyles } from 'utils/variables';
 import { chainFromChainId } from 'utils/chains';
 import { isEtherspotAccountDeployed } from 'utils/etherspot';
@@ -81,7 +81,8 @@ const useChains = (): any[] => {
     value: config[chain].title,
     label: config[chain].titleShort,
     icon: config[chain].iconName,
-    isDeployed: (activeAccount.value === 'Archanova wallet') ? isDeployedOnChain : isEtherspotAccountDeployed(activeAccount, chain),
+    isDeployed:
+      activeAccount.value === 'Archanova wallet' ? isDeployedOnChain : isEtherspotAccountDeployed(activeAccount, chain),
   }));
 
   return chainTabs;
@@ -98,7 +99,6 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ chain, chains: v2Chains, onChan
 
   const activeAccount: Account | any = getActiveAccount(accounts);
   const isActiveEtherspotAccount = isEtherspotAccount(activeAccount);
-  const isActiveArchanovaAccount = isArchanovaAccount(activeAccount);
   const isActiveKeyBasedAccount = isKeyBasedAccount(activeAccount);
   let requestedChainInfo = chains?.find((chainInfo) => chainInfo.chain === chain);
   if (!requestedChainInfo) {
@@ -137,8 +137,8 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ chain, chains: v2Chains, onChan
       <Text variant="big" style={{ flex: 1 }}>
         {item.label}
       </Text>
-      
-      {type === 'selectedChain' && (!item.isDeployed) && !isActiveKeyBasedAccount && (
+
+      {type === 'selectedChain' && !item.isDeployed && !isActiveKeyBasedAccount && (
         <TouchableOpacity
           onPress={() => showDeploymentInterjection(selectedNetwork.chain)}
           style={[styles.deployBtn, { backgroundColor: colors.buttonPrimaryBackground }]}
@@ -195,11 +195,14 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ chain, chains: v2Chains, onChan
     });
     return chainInfo;
   }, [v2Chains, activeAccount]);
-   
+
   let pillarXMigrationWalletName = firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_WALLETCONNECT_MIGRATION_MATCHER);
 
   const disabledSwitchAccount =
-    filterdV2Chains?.length > 1 || filterdV2Chains?.some((chainInfo) => chainInfo.chain !== CHAIN.ETHEREUM) || (appName == pillarXMigrationWalletName) || (appName?.includes(PILLARX));
+    filterdV2Chains?.length > 1 ||
+    filterdV2Chains?.some((chainInfo) => chainInfo.chain !== CHAIN.ETHEREUM) ||
+    appName == pillarXMigrationWalletName ||
+    appName?.includes(PILLARX);
 
   const chainNotDeployedInV2 = filterdV2Chains?.find((chainInfo) => !chainInfo.isDeployed);
   return (
@@ -210,10 +213,6 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ chain, chains: v2Chains, onChan
           <Text style={{ color: colors.tertiaryText }}>{t('paragraph.deploy_manager')}</Text>
           {t('paragraph.undeploy_warning_2')}
         </Text>
-      )}
-
-      {isActiveArchanovaAccount && (
-        <Text style={[styles.warning, { color: colors.helpIcon }]}>{t('paragraph.archanova_warning')}</Text>
       )}
 
       <FlatList
@@ -238,21 +237,21 @@ const WalletConnectSwitchNetwork: FC<Props> = ({ chain, chains: v2Chains, onChan
         keyExtractor={(item) => item.id}
       />
 
-      {!isEmpty(filterdV2Chains) &&
-      <View
-        ref={btnRef}
-        onLayout={(event) => {
-          const { height } = event.nativeEvent.layout;
-          if (contentHeight !== height) setContentHeight(height);
-        }}
-        style={[styles.container, { backgroundColor: colors.basic070 }, !showList && styles.bottomRadius]}
-      >
-        {filterdV2Chains &&
-          filterdV2Chains?.map((chainInfo) => renderItem({ item: chainInfo, type: 'selectedChain' }))}
+      {!isEmpty(filterdV2Chains) && (
+        <View
+          ref={btnRef}
+          onLayout={(event) => {
+            const { height } = event.nativeEvent.layout;
+            if (contentHeight !== height) setContentHeight(height);
+          }}
+          style={[styles.container, { backgroundColor: colors.basic070 }, !showList && styles.bottomRadius]}
+        >
+          {filterdV2Chains &&
+            filterdV2Chains?.map((chainInfo) => renderItem({ item: chainInfo, type: 'selectedChain' }))}
 
-        {showList && <View style={[styles.line, { backgroundColor: colors.basic050 }]} />}
-      </View>
-      }
+          {showList && <View style={[styles.line, { backgroundColor: colors.basic050 }]} />}
+        </View>
+      )}
 
       <ListModal />
     </>

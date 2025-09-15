@@ -21,11 +21,6 @@ import ReduxAsyncQueue from 'redux-async-queue';
 // constants
 import { UPDATE_PIN_ATTEMPTS, SET_WALLET_IS_DECRYPTING, SET_WALLET } from 'constants/walletConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
-import {
-  SET_ARCHANOVA_WALLET_CONNECTED_ACCOUNT,
-  SET_ARCHANOVA_SDK_INIT,
-  ARCHANOVA_WALLET_UPGRADE_STATUSES,
-} from 'constants/archanovaConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import { NFT_FLAG } from 'constants/assetsConstants';
@@ -44,7 +39,6 @@ import {
   mockEtherspotAccount,
   mockEtherspotApiAccount,
   mockArchanovaAccount,
-  mockArchanovaConnectedAccount,
   mockEtherspotAccountExtra,
   mockDeviceUniqueId,
   mockStableAssets,
@@ -106,9 +100,6 @@ describe('Auth actions', () => {
       appSettings: { data: { hasSeenTutorial: true, deviceUniqueId: mockDeviceUniqueId } },
       onboarding: { tutorialData: null },
       session: { data: { isOnline: true } },
-      smartWallet: {
-        upgrade: { status: ARCHANOVA_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE },
-      },
       keyBasedAssetTransfer: { data: [], availableBalances: {}, availableCollectibles: [] },
       totalBalances: { isFetching: false },
       assetsBalances: { data: {} },
@@ -138,9 +129,6 @@ describe('Auth actions', () => {
 
       { type: UPDATE_SESSION, payload: { isAuthorizing: false } },
       { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
-
-      { type: SET_ARCHANOVA_SDK_INIT, payload: true },
-      { type: SET_ARCHANOVA_WALLET_CONNECTED_ACCOUNT, payload: mockArchanovaConnectedAccount },
 
       // appends new Etherspot account to reducer
       { type: UPDATE_ACCOUNTS, payload: [mockActiveSmartWalletAccount, mockNewEtherspotAccount] },
