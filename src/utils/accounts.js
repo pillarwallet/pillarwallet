@@ -214,9 +214,6 @@ export const getInitials = (fullName: string = '') => {
     .toUpperCase();
 };
 
-export const isArchanovaAccountAddress = (address: string, accounts: Account[]): boolean =>
-  getAccountTypeByAddress(address, accounts) === ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET;
-
 export const getSmartWalletAccountCreatedAtTimestamp = (account: Account): ?number => {
   let createdAt;
   switch (getAccountType(account)) {

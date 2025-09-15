@@ -43,7 +43,6 @@ import {
 } from 'constants/assetsBalancesConstants';
 import { ADD_HISTORY_TRANSACTION, TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
 import { ADD_COLLECTIBLE_HISTORY_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
-import { PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS } from 'constants/paymentNetworkConstants';
 import { ERROR_TYPE } from 'constants/transactionsConstants';
 import {
   SET_ACCOUNT_CATEGORY_CHAIN_TOTAL_BALANCE,
@@ -54,7 +53,6 @@ import { CHAIN } from 'constants/chainConstants';
 
 // services
 import etherspotService from 'services/etherspot';
-import archanovaService from 'services/archanova';
 import KeyBasedWallet from 'services/keyBasedWallet';
 
 // utils
@@ -68,14 +66,7 @@ import {
 } from 'utils/chains';
 import { BigNumber, parseTokenAmount, reportErrorLog, logBreadcrumb, fetchUrl } from 'utils/common';
 import { buildHistoryTransaction, parseFeeWithGasToken } from 'utils/history';
-import {
-  getActiveAccount,
-  getAccountAddress,
-  getAccountId,
-  isArchanovaAccount,
-  isEtherspotAccount,
-  getAccountType,
-} from 'utils/accounts';
+import { getActiveAccount, getAccountAddress, getAccountId, isEtherspotAccount, getAccountType } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
 import {
@@ -118,7 +109,6 @@ import type { Asset, AddTokensItem, AssetOption } from 'models/Asset';
 // actions
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
-import { fetchVirtualAccountBalanceAction } from './smartWalletActions';
 import { fetchAssetsRatesAction } from './ratesActions';
 import { addEnsRegistryRecordAction } from './ensRegistryActions';
 
@@ -281,14 +271,6 @@ export const sendAssetAction = (
           } = getState();
           transactionResult = await keyBasedWallet.sendTransaction(transaction, accountAddress, feeInfo);
           break;
-        case ACCOUNT_TYPES.ARCHANOVA_SMART_WALLET:
-          logBreadcrumb('Send Flow', 'sendAssetAction: account type: archanova smart wallet sending transaction', {
-            transaction,
-            accountAddress,
-            usePPN,
-          });
-          transactionResult = await archanovaService.sendTransaction(transaction, accountAddress, usePPN);
-          break;
         case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
           logBreadcrumb('Send Flow', 'sendAssetAction: account type: etherspot smart wallet sending transaction', {
             transaction,
@@ -405,15 +387,6 @@ export const sendAssetAction = (
         icon: collectibleInfo?.icon,
         assetData: collectibleInfo,
       };
-    }
-
-    if (isArchanovaAccount(activeAccount) && !usePPN && transactionHash) {
-      logBreadcrumb(
-        'Send Flow',
-        'sendAssetAction: archanova account:- dispatching PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS ',
-        { hash: transactionHash },
-      );
-      dispatch({ type: PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS, payload: transactionHash });
     }
 
     // update transaction history
@@ -638,10 +611,6 @@ export const fetchAssetsBalancesAction = (isRefreshingPart?: boolean) => {
 
     dispatch(fetchAccountWalletBalancesAction(activeAccount));
 
-    if (isArchanovaAccount(activeAccount)) {
-      dispatch(fetchVirtualAccountBalanceAction());
-    }
-
     dispatch({ type: SET_FETCHING_ASSETS_BALANCES, payload: false });
   };
 };
@@ -685,10 +654,6 @@ export const fetchAllAccountsAssetsBalancesAction = (isRefreshingPart?: boolean)
     );
 
     dispatch(fetchAssetsRatesAction());
-
-    if (isArchanovaAccount(activeAccount)) {
-      dispatch(fetchVirtualAccountBalanceAction());
-    }
 
     dispatch({ type: SET_FETCHING_ASSETS_BALANCES, payload: false });
   };

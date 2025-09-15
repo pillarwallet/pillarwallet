@@ -48,7 +48,6 @@ import WalletConnectPinConfirm from 'screens/WalletConnect/WalletConnectPinConfi
 import EtherspotDeploymentInterjection from 'screens/EtherspotDeploymentInterjection';
 import AccountsScreen from 'screens/Accounts';
 import LogoutPendingScreen from 'screens/LogoutPending';
-import ServicesScreen from 'screens/Services';
 // import StorybookScreen from 'screens/Storybook';
 import MenuScreen from 'screens/Menu/Menu';
 import MenuSettingsScreen from 'screens/Menu/Settings';
@@ -58,7 +57,6 @@ import MenuSelectCurrencyScreen from 'screens/Menu/SelectCurrency';
 import MenuSystemInformationScreen from 'screens/Menu/SystemInformation';
 import WebViewScreen from 'screens/WebView/WebViewScreen';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
-import WalletActivatedScreen from 'screens/WalletActivated';
 import ContactsListScreen from 'screens/Contacts/ContactsList';
 import TutorialScreen from 'screens/Tutorial';
 import LegalScreen from 'screens/LegalScreen/LegalScreen';
@@ -83,13 +81,11 @@ import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 import { endWalkthroughAction } from 'actions/walkthroughsActions';
 import { handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
 import { handleSystemLanguageChangeAction } from 'actions/sessionActions';
-import { checkArchanovaSessionIfNeededAction } from 'actions/smartWalletActions';
 import { initWalletConnectSessionsAction } from 'actions/walletConnectSessionsActions';
 
 // constants
 import {
   ASSETS,
-  SERVICES_FLOW,
   EXCHANGE_CONFIRM,
   HOME,
   HOME_FLOW,
@@ -127,12 +123,10 @@ import {
   MENU_SYSTEM_INFORMATION,
   PPN_SEND_SYNTHETIC_ASSET_FLOW,
   LOGOUT_PENDING,
-  SERVICES,
   // STORYBOOK,
   CONNECT_FLOW,
   SEND_TOKEN_FROM_HOME_FLOW,
   PIN_CODE,
-  WALLET_ACTIVATED,
   CONTACTS_LIST,
   CONTACTS_FLOW,
   EXCHANGE_FLOW,
@@ -169,7 +163,6 @@ import type { BackupStatus } from 'reducers/walletReducer';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 const SLEEP_TIMEOUT = 20000;
-const SMART_WALLET_SESSION_CHECK_INTERVAL = 30 * 60000; // 30 min
 const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
@@ -221,16 +214,6 @@ function ExchangeFlow() {
       <exchangeFlowNavigator.Screen name={SEND_TOKEN_PIN_CONFIRM} component={SendTokenPinConfirmScreen} />
       <exchangeFlowNavigator.Screen name={SEND_TOKEN_TRANSACTION} component={SendTokenTransactionScreen} />
     </exchangeFlowNavigator.Navigator>
-  );
-}
-
-// SERVICES FLOW
-const servicesFlowNavigator = createNativeStackNavigator();
-function ServicesFlow() {
-  return (
-    <servicesFlowNavigator.Navigator screenOptions={StackNavigatorConfig}>
-      <servicesFlowNavigator.Screen name={SERVICES} component={ServicesScreen} />
-    </servicesFlowNavigator.Navigator>
   );
 }
 
@@ -408,7 +391,6 @@ function AppFlowNavigation() {
       <AppFlowStackNavigator.Screen name={ASSETS} component={AssetsFlow} />
       <AppFlowStackNavigator.Screen name={SEND_TOKEN_FROM_HOME_FLOW} component={SendTokenFlow} />
       <AppFlowStackNavigator.Screen name={CONNECT_FLOW} component={WalletConnectFlow} />
-      <AppFlowStackNavigator.Screen name={SERVICES_FLOW} component={ServicesFlow} />
       <AppFlowStackNavigator.Screen name={SEND_TOKEN_FROM_ASSET_FLOW} component={SendTokenFlow} />
       <AppFlowStackNavigator.Screen name={PPN_SEND_SYNTHETIC_ASSET_FLOW} component={PpnSendSyntheticAssetFlow} />
       <AppFlowStackNavigator.Screen name={SEND_TOKEN_FROM_CONTACT_FLOW} component={SendTokenFlow} />
@@ -421,7 +403,6 @@ function AppFlowNavigation() {
       <AppFlowStackNavigator.Screen name={LOGOUT_PENDING} component={LogoutPendingScreen} />
       <AppFlowStackNavigator.Screen name={MENU_FLOW} component={MenuFlow} />
       <AppFlowStackNavigator.Screen name={PIN_CODE} component={PinCodeUnlockScreen} />
-      <AppFlowStackNavigator.Screen name={WALLET_ACTIVATED} component={WalletActivatedScreen} />
       <AppFlowStackNavigator.Screen name={CONTACTS_FLOW} component={ContactsFlow} />
       <AppFlowStackNavigator.Screen name={EXCHANGE_FLOW} component={ExchangeFlow} />
       <AppFlowStackNavigator.Screen name={TUTORIAL_FLOW} component={TutorialFlow} />
@@ -466,7 +447,6 @@ type Props = {
   i18n: I18n,
   onboardingUsernameRegistrationFailed: boolean,
   handleSystemLanguageChange: () => void,
-  checkArchanovaSession: () => void,
 };
 
 type State = {
@@ -474,7 +454,6 @@ type State = {
 };
 
 let lockTimer;
-let smartWalletSessionCheckInterval;
 
 class AppFlow extends React.Component<Props, State> {
   appStateSubscriptions;
@@ -483,15 +462,10 @@ class AppFlow extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { startListeningNotifications, initWalletConnectSessions, checkArchanovaSession } = this.props;
+    const { startListeningNotifications, initWalletConnectSessions } = this.props;
 
     startListeningNotifications();
     this.appStateSubscriptions = addAppStateChangeListener(this.handleAppStateChange);
-
-    smartWalletSessionCheckInterval = BackgroundTimer.setInterval(
-      checkArchanovaSession,
-      SMART_WALLET_SESSION_CHECK_INTERVAL,
-    );
 
     initWalletConnectSessions(true);
   }
@@ -511,7 +485,6 @@ class AppFlow extends React.Component<Props, State> {
 
     stopListeningNotifications();
     if (this.appStateSubscriptions) this.appStateSubscriptions.remove();
-    BackgroundTimer.clearInterval(smartWalletSessionCheckInterval);
   }
 
   handleAppStateChange = (nextAppState: string) => {
@@ -522,7 +495,6 @@ class AppFlow extends React.Component<Props, State> {
       endWalkthrough,
       handleSystemDefaultThemeChange,
       handleSystemLanguageChange,
-      checkArchanovaSession,
       initWalletConnectSessions,
     } = this.props;
     const { lastAppState } = this.state;
@@ -539,7 +511,6 @@ class AppFlow extends React.Component<Props, State> {
       setLastRouteState();
       handleSystemDefaultThemeChange();
       handleSystemLanguageChange();
-      checkArchanovaSession();
       initWalletConnectSessions(false);
     }
     this.setState({ lastAppState: nextAppState });
@@ -611,7 +582,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   endWalkthrough: () => dispatch(endWalkthroughAction()),
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
   handleSystemLanguageChange: () => dispatch(handleSystemLanguageChangeAction()),
-  checkArchanovaSession: () => dispatch(checkArchanovaSessionIfNeededAction()),
 });
 
 const ConnectedAppFlow = withTranslation()(connect(mapStateToProps, mapDispatchToProps)(AppFlow));

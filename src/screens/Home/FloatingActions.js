@@ -20,7 +20,6 @@
 
 import * as React from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { isEmpty } from 'lodash';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
@@ -32,7 +31,7 @@ import ReceiveModal from 'screens/Asset/ReceiveModal';
 import { CONNECT_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';
 
 // Utils
-import { isArchanovaAccount, isKeyBasedAccount } from 'utils/accounts';
+import { isKeyBasedAccount } from 'utils/accounts';
 import { sumRecord } from 'utils/bigNumber';
 
 // Selectors
@@ -45,7 +44,6 @@ import {
   useOnboardingFetchingSelector,
 } from 'selectors';
 import { accountWalletBalancePerChainSelector } from 'selectors/totalBalances';
-import { useArchanovaWalletStatus } from 'selectors/archanova';
 
 function FloatingActions() {
   const { t } = useTranslationWithPrefix('home.actions');
@@ -114,11 +112,7 @@ function FloatingActions() {
 
 const useEnabledActions = () => {
   const walletTotalBalance = sumRecord(useRootSelector(accountWalletBalancePerChainSelector));
-  const activeAccount = useActiveAccount();
-  const smartWalletState = useArchanovaWalletStatus();
-
-  const isEnabled =
-    walletTotalBalance.gt(0) && (!isArchanovaAccount(activeAccount) || isEmpty(smartWalletState.sendingBlockedMessage));
+  const isEnabled = walletTotalBalance.gt(0);
 
   return {
     isSendEnabled: true,

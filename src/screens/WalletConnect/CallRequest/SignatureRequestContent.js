@@ -38,12 +38,11 @@ import { chainFromChainId } from 'utils/chains';
 import { spacing } from 'utils/variables';
 import { parsePeerName } from 'utils/walletConnect';
 import { isEtherspotAccountDeployed } from 'utils/etherspot';
-import { isArchanovaAccount, isEtherspotAccount, isKeyBasedAccount } from 'utils/accounts';
+import { isEtherspotAccount, isKeyBasedAccount } from 'utils/accounts';
 import { useThemeColors } from 'utils/themes';
 
 // Selectors
-import { useActiveAccount, useRootSelector } from 'selectors';
-import { isArchanovaAccountDeployedSelector } from 'selectors/archanova';
+import { useActiveAccount } from 'selectors';
 
 // Types
 import type { WalletConnectCallRequest } from 'models/WalletConnect';
@@ -58,7 +57,6 @@ function SignatureRequestContent({ request, onConfirm, onReject }: Props) {
   const { t } = useTranslation();
   const activeAccount = useActiveAccount();
   const colors = useThemeColors();
-  const isArchanovaAccountDeployed = useRootSelector(isArchanovaAccountDeployedSelector);
 
   const { title, iconUrl, chain, method, params } = getViewData(request);
 
@@ -110,7 +108,6 @@ function SignatureRequestContent({ request, onConfirm, onReject }: Props) {
    * Etherspot account needs to be deployed for signature type call requests only.
    */
   const requiresDeployedAccount =
-    (isArchanovaAccount(activeAccount) && !isArchanovaAccountDeployed) ||
     (isEtherspotAccount(activeAccount) && !isEtherspotAccountDeployed(activeAccount, chain)) ||
     (isKeyBasedAccount(activeAccount) && chain !== CHAIN.ETHEREUM);
 

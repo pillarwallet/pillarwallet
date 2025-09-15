@@ -32,7 +32,6 @@ import gasThresholdReducer, { IReduxGasThresholdState } from 'redux/reducers/gas
 // reducers
 import offlineQueueReducer from './offlineQueueReducer';
 import walletReducer from './walletReducer';
-import smartWalletReducer from './smartWalletReducer';
 import walletConnectReducer from './walletConnectReducer';
 import walletConnectSessionsReducer from './walletConnectSessionsReducer';
 import assetsReducer from './assetsReducer';
@@ -73,7 +72,6 @@ import modularSdkReducer from './modularSdkReducer';
 // local types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
 import type { WalletReducerState } from './walletReducer';
-import type { SmartWalletReducerState, SmartWalletReducerAction } from './smartWalletReducer';
 import type { WalletConnectReducerState, WalletConnectReducerAction } from './walletConnectReducer';
 import type {
   WalletConnectSessionsReducerAction,
@@ -123,7 +121,6 @@ import type { ModularSdkReducerState, ModularSdkReducerAction } from './modularS
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
   wallet: WalletReducerState,
-  smartWallet: SmartWalletReducerState,
   walletConnect: WalletConnectReducerState,
   walletConnectSessions: WalletConnectSessionsReducerState,
   assets: AssetsReducerState,
@@ -172,7 +169,6 @@ type RootReducerAction =
   | CollectiblesAction
   | HistoryAction
   | PaymentNetworkAction
-  | SmartWalletReducerAction
   | WalletConnectReducerAction
   | WalletConnectSessionsReducerAction
   | UserSettingsReducerAction
@@ -210,7 +206,6 @@ export type Selector<T> = (state: RootReducerState) => T;
 const appReducer = combineReducers({
   offlineQueue: offlineQueueReducer,
   wallet: walletReducer,
-  smartWallet: smartWalletReducer,
   walletConnect: walletConnectReducer,
   walletConnectSessions: walletConnectSessionsReducer,
   assets: assetsReducer,

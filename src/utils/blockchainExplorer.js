@@ -26,10 +26,9 @@ import { upperFirst } from 'lodash';
 import Toast from 'components/Toast';
 
 // Utils
-import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
+import { isEtherspotAccount } from 'utils/accounts';
 
 // Services
-import archanovaService from 'services/archanova';
 import etherspotService from 'services/etherspot';
 import { navigate } from 'services/navigation';
 
@@ -64,9 +63,7 @@ export async function viewTransactionOnBlockchain(chain: Chain, transaction: Vie
   if (!hash && batchHash && isEtherspotAccount(fromAccount)) {
     explorerLink = await etherspotService.getTransactionExplorerLinkByBatch(chain, batchHash);
   } else if (hash) {
-    explorerLink = isArchanovaAccount(fromAccount)
-      ? archanovaService.getConnectedAccountTransactionExplorerLink(hash)
-      : etherspotService.getTransactionExplorerLink(chain, hash);
+    etherspotService.getTransactionExplorerLink(chain, hash);
   }
 
   if (!explorerLink) {

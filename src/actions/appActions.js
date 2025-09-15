@@ -47,19 +47,8 @@ import { SET_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'constant
 import { SET_RATES } from 'constants/ratesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
-import {
-  SET_ARCHANOVA_WALLET_ACCOUNTS,
-  SET_ARCHANOVA_WALLET_DEPLOYMENT_DATA,
-  SET_ARCHANOVA_WALLET_UPGRADE_STATUS,
-  SET_ARCHANOVA_WALLET_LAST_SYNCED_PAYMENT_ID,
-  SET_ARCHANOVA_WALLET_LAST_SYNCED_TRANSACTION_ID,
-} from 'constants/archanovaConstants';
 import { SET_INSIGHTS_STATE } from 'constants/insightsConstants';
-import {
-  UPDATE_PAYMENT_NETWORK_BALANCES,
-  UPDATE_PAYMENT_NETWORK_STAKED,
-  MARK_PLR_TANK_INITIALISED,
-} from 'constants/paymentNetworkConstants';
+import { UPDATE_PAYMENT_NETWORK_BALANCES, UPDATE_PAYMENT_NETWORK_STAKED } from 'constants/paymentNetworkConstants';
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
 import { SET_WALLET_EVENTS } from 'constants/walletEventsConstants';
 import { SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
@@ -159,9 +148,6 @@ export const initAppAndRedirectAction = () => {
       const { paymentNetworkStaked = '' } = get(storageData, 'paymentNetworkStaked', {});
       dispatch({ type: UPDATE_PAYMENT_NETWORK_STAKED, payload: paymentNetworkStaked });
 
-      const { isPLRTankInitialised = false } = get(storageData, 'isPLRTankInitialised', {});
-      if (isPLRTankInitialised) dispatch({ type: MARK_PLR_TANK_INITIALISED });
-
       const { offlineQueue = [] } = get(storageData, 'offlineQueue', {});
       dispatch({ type: UPDATE_OFFLINE_QUEUE, payload: offlineQueue });
       dispatch({ type: START_OFFLINE_QUEUE });
@@ -210,20 +196,6 @@ export const initAppAndRedirectAction = () => {
       //     },
       //   });
       // }
-
-      const {
-        upgradeStatus = null,
-        accounts: smartAccounts = [],
-        deploymentData = {},
-        lastSyncedPaymentId = null,
-        lastSyncedTransactionId = null,
-      } = get(storageData, 'smartWallet', {});
-      dispatch({ type: SET_ARCHANOVA_WALLET_UPGRADE_STATUS, payload: upgradeStatus });
-      dispatch({ type: SET_ARCHANOVA_WALLET_ACCOUNTS, payload: smartAccounts });
-      dispatch({ type: SET_ARCHANOVA_WALLET_DEPLOYMENT_DATA, payload: deploymentData });
-      dispatch({ type: SET_ARCHANOVA_WALLET_LAST_SYNCED_PAYMENT_ID, payload: lastSyncedPaymentId });
-      dispatch({ type: SET_ARCHANOVA_WALLET_LAST_SYNCED_TRANSACTION_ID, payload: lastSyncedTransactionId });
-
       const { ensRegistry = {} } = get(storageData, 'ensRegistry', {});
       dispatch({ type: SET_ENS_REGISTRY_RECORDS, payload: ensRegistry });
 

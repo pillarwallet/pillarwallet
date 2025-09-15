@@ -22,7 +22,6 @@
 import 'react-native-gesture-handler/jestSetup';
 import React from 'react';
 import { JSDOM } from 'jsdom';
-import { BN } from 'ethereumjs-util'; // same BigNumber library as in Archanova SDK
 import { View as mockView } from 'react-native';
 import { utils, BigNumber as EthersBigNumber, constants as ethersConstants, Wallet as EthersWallet } from 'ethers';
 import mocktract from 'mocktract';
@@ -66,7 +65,6 @@ global.window = window;
 global.document = window.document;
 
 copyProps(window, global);
-
 
 // Ignore React Web errors when using React Native
 (console: any).error = (message) => {
@@ -300,69 +298,10 @@ export const mockArchanovaAccount = {
   extra: mockArchanovaAccountApiData,
 };
 
-export const mockArchanovaConnectedAccount = {
-  ...mockArchanovaAccountApiData,
-  activeDeviceAddress: '0x0',
-  devices: [],
-};
-
 const mockArchanovaSdkInstance = {
   setConfig: () => mockArchanovaSdkInstance,
   extendConfig: () => mockArchanovaSdkInstance,
 };
-
-jest.setMock('@smartwallet/sdk', {
-  sdkConstants: {
-    AccountStates: {
-      Created: 'Created',
-      Updated: 'Updated',
-    },
-    GasPriceStrategies: {
-      Avg: 'Avg',
-      Fast: 'Fast',
-    },
-  },
-  sdkModules: {
-    Device: {
-      StorageKeys: {
-        PrivateKey: 'PrivateKey',
-      },
-    },
-  },
-  Sdk: {
-    StorageNamespaces: {
-      Device: 'Device',
-    },
-  },
-  SdkEnvironmentNames: {
-    Rinkeby: 'Rinkeby',
-    Kovan: 'Kovan',
-  },
-  getSdkEnvironment: () => mockArchanovaSdkInstance,
-  createSdk: () => ({
-    initialize: () => Promise.resolve(),
-    getConnectedAccounts: () => Promise.resolve({ items: [mockArchanovaAccountApiData] }),
-    createAccount: () => Promise.resolve(mockArchanovaAccountApiData),
-    connectAccount: () => Promise.resolve(mockArchanovaAccountApiData),
-    event$: {
-      subscribe: jest.fn(),
-      next: jest.fn(),
-    },
-    estimateAccountTransaction: () =>
-      Promise.resolve({
-        gasFee: new BN(70000),
-        signedGasPrice: { gasPrice: new BN(5000000000) },
-      }),
-    reset: () => Promise.resolve(),
-    getConnectedAccountDevices: () => Promise.resolve([]),
-    state: {
-      account: mockArchanovaAccountApiData,
-      accountDevice: { device: { address: '0x0' } },
-    },
-    getConnectedAccountPayments: () => Promise.resolve([]),
-    getConnectedAccountTransactions: () => Promise.resolve([]),
-  }),
-});
 
 jest.setMock('react-native-keychain', {
   setGenericPassword: jest.fn().mockResolvedValue(),

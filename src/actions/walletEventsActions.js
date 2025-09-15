@@ -21,19 +21,13 @@
 // constants
 import { ADD_WALLET_EVENT } from 'constants/walletEventsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { CHAIN } from 'constants/chainConstants';
 import { EVENT_TYPE } from 'models/History';
 
 // actions
 import { saveDbAction } from 'actions/dbActions';
 
 // utils
-import {
-  getAccountId,
-  getSmartWalletAccountCreatedAtTimestamp,
-  isAccountType,
-  isArchanovaAccount,
-} from 'utils/accounts';
+import { getAccountId, getSmartWalletAccountCreatedAtTimestamp, isAccountType } from 'utils/accounts';
 import { logBreadcrumb } from 'utils/common';
 import { getSupportedChains } from 'utils/chains';
 
@@ -44,10 +38,11 @@ import { accountsSelector } from 'selectors';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
 
-
 export const addWalletCreationEventIfNeededAction = (account: Account) => {
   return (dispatch: Dispatch, getState: GetState) => {
-    const { walletEvents: { data: walletEvents } } = getState();
+    const {
+      walletEvents: { data: walletEvents },
+    } = getState();
 
     // key based creation date not supported
     if (isAccountType(account, ACCOUNT_TYPES.KEY_BASED)) return;
@@ -67,9 +62,9 @@ export const addWalletCreationEventIfNeededAction = (account: Account) => {
     getSupportedChains(account).forEach((chain) => {
       const chainWalletEventsForAccount = walletEvents?.[accountId]?.[chain] ?? [];
 
-      const isWalletCreatedEventMissing = !chainWalletEventsForAccount.some(({
-        type,
-      }) => type === EVENT_TYPE.WALLET_CREATED);
+      const isWalletCreatedEventMissing = !chainWalletEventsForAccount.some(
+        ({ type }) => type === EVENT_TYPE.WALLET_CREATED,
+      );
       if (!isWalletCreatedEventMissing) return;
 
       const walletCreatedEvent = {
@@ -83,26 +78,6 @@ export const addWalletCreationEventIfNeededAction = (account: Account) => {
         payload: { accountId, chain, walletEvent: walletCreatedEvent },
       });
     });
-
-    const accountEthereumWalletEvents = walletEvents?.[accountId]?.ethereum ?? [];
-
-    if (isArchanovaAccount(account)) {
-      const isPpnCreatedEventMissing = !accountEthereumWalletEvents.some(({
-        type,
-      }) => type === EVENT_TYPE.PPN_INITIALIZED);
-      if (isPpnCreatedEventMissing) {
-        const ppnCreatedEvent = {
-          id: `${accountId}-ethereum-${EVENT_TYPE.PPN_INITIALIZED}`,
-          type: EVENT_TYPE.PPN_INITIALIZED,
-          date: new Date(+accountCreatedAt + 1), // +1 to list it after smart wallet is created
-        };
-
-        dispatch({
-          type: ADD_WALLET_EVENT,
-          payload: { accountId, chain: CHAIN.ETHEREUM, walletEvent: ppnCreatedEvent },
-        });
-      }
-    }
 
     const updatedWalletEvents = getState().walletEvents.data;
     dispatch(saveDbAction('walletEvents', { walletEvents: updatedWalletEvents }, true));
