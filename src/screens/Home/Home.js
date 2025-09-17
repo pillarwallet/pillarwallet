@@ -33,6 +33,7 @@ import {
   setNotificationsPermission,
   getNotificationsPermission,
 } from 'utils/getNotification';
+import MenuFooter from '../Menu/Menu/components/MenuFooter';
 
 function Home() {
   const dispatch = useDispatch();
@@ -91,6 +92,7 @@ function Home() {
         style={{ backgroundColor: '#121116' }}
         bounces={false}
       />
+      <MenuFooter />
     </SafeAreaView>
   );
 }

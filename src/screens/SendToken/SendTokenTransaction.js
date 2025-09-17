@@ -29,7 +29,6 @@ import { Container, Wrapper } from 'components/legacy/Layout';
 import { Paragraph, MediumText } from 'components/legacy/Typography';
 import Title from 'components/legacy/Title';
 import Button from 'components/core/Button';
-import Animation from 'components/Animation';
 import Toast from 'components/Toast';
 import Spinner from 'components/Spinner';
 
@@ -56,9 +55,6 @@ import { useRootSelector, activeAccountAddressSelector } from 'selectors';
 
 // Services
 import etherspotService from 'services/etherspot';
-
-const animationSuccess = require('assets/animations/transactionSentConfirmationAnimation.json');
-const animationFailure = require('assets/animations/transactionFailureAnimation.json');
 
 const getTransactionErrorMessage = (error: ?string): string => {
   if (error) {
@@ -194,7 +190,6 @@ function SendTokenTransaction() {
     );
   };
 
-  const animationSource = isSuccess ? animationSuccess : animationFailure;
   const transactionStatusText = isSuccess
     ? getTransactionSuccessMessage(transactionType, chainConfig.titleShort)
     : getTransactionErrorMessage(error);
@@ -207,7 +202,6 @@ function SendTokenTransaction() {
   return (
     <Container>
       <Wrapper flex={1} center regularPadding>
-        <Animation source={animationSource} />
         <Title fullWidth title={transactionStatusTitle} align="center" noBlueDot titleStyles={titleStyle} noMargin />
         <Paragraph light center style={textStyle}>
           {transactionStatusText}
