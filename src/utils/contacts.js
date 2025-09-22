@@ -26,12 +26,6 @@ import Toast from 'components/Toast';
 import type { Contact } from 'models/Contact';
 import type { Chain } from 'models/Chain';
 
-// Services
-import etherspotService from 'services/etherspot';
-
-// Constants
-import { CHAIN } from 'constants/chainConstants';
-
 // utils
 import { resolveEnsName } from './common';
 import { isValidAddress } from './validators';
@@ -84,34 +78,6 @@ export const resolveContact = async (
   }
 
   return null;
-};
-
-export const getReceiverWithEnsName = async (
-  ethAddressOrEnsName: ?string,
-  showNotification: boolean = true,
-): Promise<?{ receiverEnsName?: string, receiver: ?string }> => {
-  if (!ethAddressOrEnsName) return null;
-
-  const recivedENSInfo = await etherspotService.resolveName(CHAIN.ETHEREUM, ethAddressOrEnsName);
-
-  if (recivedENSInfo?.[0]) {
-    const resolvedAddress = await resolveEnsName(ethAddressOrEnsName);
-
-    if (!resolvedAddress && showNotification) {
-      Toast.show({
-        message: t('toast.ensNameNotFound'),
-        emoji: 'woman-shrugging',
-      });
-      return null;
-    }
-
-    return {
-      receiverEnsName: ethAddressOrEnsName,
-      receiver: resolvedAddress,
-    };
-  }
-
-  return { receiver: ethAddressOrEnsName };
 };
 
 const isMatchingContact = (contact: Contact, query: ?string) => {

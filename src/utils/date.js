@@ -19,7 +19,6 @@
 */
 
 import * as DateFns from 'date-fns';
-import t from 'translations/translate';
 
 /**
  * This files encapsulates Date FNS library as well as provides custom implementations for some
@@ -32,9 +31,6 @@ import t from 'translations/translate';
  */
 
 export * from 'date-fns';
-
-const USER_FULL_DATE_FORMAT = 'MMM d yyyy';
-const USER_MONTH_DAY_FORMAT = 'MMM d';
 
 export const isSameDay = (first: Date, second: Date): boolean => {
   // eslint-disable-next-line i18next/no-literal-string
@@ -55,17 +51,6 @@ export const formatDate = (date: ?Date, format?: string): string => {
   if (!format) return '';
 
   return DateFns.format(date, format);
-};
-
-export const humanizeDateString = (date: Date): string => {
-  if (!date) return '';
-
-  if (isToday(date)) return t('label.today');
-  if (isYesterday(date)) return t('label.yesterday');
-
-  // Don't show the year if the date is current year
-  const dateFormat = DateFns.isThisYear(date) ? USER_MONTH_DAY_FORMAT : USER_FULL_DATE_FORMAT;
-  return DateFns.format(date, dateFormat);
 };
 
 export const currentDate = (): string => {

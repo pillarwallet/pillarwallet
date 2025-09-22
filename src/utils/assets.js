@@ -20,20 +20,9 @@
 import { BigNumber as EthersBigNumber, utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { get, isEmpty, mapValues, orderBy } from 'lodash';
-import t from 'translations/translate';
 
 // constants
-import {
-  defaultFiatCurrency,
-  ETH,
-  PLR,
-  ASSET_TYPES,
-  ONE_DAY,
-  ONE_WEEK,
-  ONE_MONTH,
-  ONE_YEAR,
-} from 'constants/assetsConstants';
-import { CHAIN } from 'constants/chainConstants';
+import { defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
 
 // utils
 import {
@@ -57,17 +46,7 @@ import etherspotService from 'services/etherspot';
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 
 // types
-import type {
-  Asset,
-  AssetByAddress,
-  AssetData,
-  AssetOption,
-  AssetOptionBalance,
-  AssetsPerChain,
-  TokenData,
-  MarketDetails,
-  TokenDetails,
-} from 'models/Asset';
+import type { Asset, AssetByAddress, AssetOption, AssetOptionBalance, AssetsPerChain } from 'models/Asset';
 import type { GasToken } from 'models/Transaction';
 import type { WalletAssetBalance, WalletAssetsBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
@@ -216,21 +195,6 @@ export const isSupportedAssetAddress = (supportedAssets: Asset[], addressToCheck
 export const findAssetByAddress = (assets: ?(Asset[]), addressToFind: ?string): ?Asset =>
   assets?.find((asset) => addressesEqual(asset.address, addressToFind));
 
-export const mapAssetToAssetData = ({
-  symbol: token,
-  address: contractAddress,
-  name,
-  decimals,
-  iconUrl,
-}: Asset): AssetData => ({
-  token,
-  contractAddress,
-  name,
-  decimals,
-  tokenType: ASSET_TYPES.TOKEN,
-  icon: iconUrl,
-});
-
 export const getBalanceInFiat = (
   baseFiatCurrency: ?Currency,
   assetBalance: ?Value,
@@ -313,36 +277,6 @@ export const isAssetOptionMatchedByQuery = (option: AssetOption, query: ?string)
     caseInsensitiveIncludes(option.symbol, query) ||
     caseInsensitiveIncludes(option.address, query)
   );
-};
-
-export const mapAssetDataToAsset = (assetData: TokenData, chain: Chain): Asset => {
-  return {
-    chain,
-    address: assetData.contractAddress,
-    symbol: assetData.token,
-    decimals: assetData.decimals,
-    name: assetData.name ?? assetData.token ?? '',
-    iconUrl: assetData?.icon ?? '',
-  };
-};
-
-export const mapAssetDataToAssetOption = (
-  assetData: TokenData,
-  balances?: ?WalletAssetsBalances,
-  rates?: ?RatesByAssetAddress,
-  fiatCurrency?: ?Currency,
-): AssetOption => {
-  return {
-    symbol: assetData.token,
-    address: assetData.contractAddress,
-    decimals: assetData.decimals,
-    name: assetData.name ?? '',
-    imageUrl: assetData.icon,
-    tokenType: assetData.tokenType ?? ASSET_TYPES.TOKEN,
-    balance: getAssetOptionBalance(assetData.token, assetData.contractAddress, balances, rates, fiatCurrency),
-    chain: CHAIN.ETHEREUM,
-    iconUrl: assetData?.icon ?? '',
-  };
 };
 
 /**
@@ -442,53 +376,6 @@ export const isTokenAvailableInList = (tokensList: Asset[], token: Asset): boole
   return tokensList?.some((tokenA) => isSameAsset(token, tokenA));
 };
 
-export const getGraphPeriod = (period?: string) => {
-  const durationList = [
-    {
-      id: ONE_DAY,
-      label: t('button.twentyfour_hour'),
-      balanceLabel: t('button.today'),
-    },
-    {
-      id: ONE_WEEK,
-      label: t('button.seven_day'),
-      balanceLabel: t('button.last_week'),
-    },
-    {
-      id: ONE_MONTH,
-      label: t('button.one_month'),
-      balanceLabel: t('button.last_month'),
-    },
-    {
-      id: ONE_YEAR,
-      label: t('button.one_year'),
-      balanceLabel: t('button.last_year'),
-    },
-  ];
-
-  if (!period) return durationList;
-  return durationList.find((periodInfo) => periodInfo.id === period);
-};
-
-export const getPriceChangePercentage = (
-  period: string,
-  marketData: MarketDetails,
-  tokenDetailsData?: TokenDetails,
-) => {
-  const zeroValue = 0;
-
-  if (period === ONE_DAY) {
-    return marketData?.priceChangePercentage24h || tokenDetailsData?.priceChangePercentage24h || zeroValue;
-  }
-  if (period === ONE_WEEK) {
-    return marketData?.priceChangePercentage7d || zeroValue;
-  }
-  if (period === ONE_MONTH) {
-    return marketData?.priceChangePercentage1m || zeroValue;
-  }
-  return marketData?.priceChangePercentage1y || zeroValue;
-};
-
 export const getAssetsToAddress = async (chain: Chain, contractAddress: string) => {
   try {
     const erc20Contract = etherspotService.getContract<?EtherspotErc20Interface>(
@@ -538,37 +425,3 @@ export const getChainsAssetsToAddress = async (supportedChains: Chain[], contrac
   });
   return assets ? assets?.filter((asset) => !!asset) : [];
 };
-
-export const getUrlToSymbol = (
-  chain: Chain,
-  supportedChains: Chain[],
-  supportedChainAssets: AssetsPerChain,
-  symbol: string,
-) => {
-  if (!symbol) return null;
-  const assetData = getAssetToSymbol(chain, supportedChainAssets, symbol);
-  if (assetData) return assetData.iconUrl;
-
-  const isWrappedToken = symbol.charAt(0) === 'W';
-  if (isWrappedToken) {
-    const wrappedAssetData = getAssetToSymbol(chain, supportedChainAssets, symbol.slice(1));
-    if (wrappedAssetData) return wrappedAssetData.iconUrl;
-  }
-
-  const assets = supportedChains?.map((supportedChain) =>
-    getAssetToSymbol(supportedChain, supportedChainAssets, symbol),
-  );
-
-  const assetDataPerChain = assets.find((asset) => !!asset);
-
-  if (assetDataPerChain) return assetDataPerChain.iconUrl;
-
-  return null;
-};
-
-const getAssetToSymbol = (chain: Chain, supportedChainAssets: AssetsPerChain, symbol: string) => {
-  const supportedAssets = supportedChainAssets[chain];
-  return supportedAssets?.find((asset: Asset) => asset.symbol === symbol);
-};
-
-export const getActivityKeyExtractor = (item: any, index: number) => item.amm + index.toString();

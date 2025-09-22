@@ -24,7 +24,7 @@ import { isNaN } from 'lodash';
 // Utils
 import { nativeAssetPerChain } from 'utils/chains';
 import { wrapBigNumber } from 'utils/bigNumber';
-import { valueForAddress, getCurrencySymbol, numberWithCommas } from 'utils/common';
+import { valueForAddress, getCurrencySymbol } from 'utils/common';
 
 // Constans
 import { CHAIN } from 'constants/chainConstants';
@@ -33,7 +33,6 @@ import { USD } from 'constants/assetsConstants';
 // Types
 import type { Value } from 'models/Value';
 import type { Currency, RatesByAssetAddress, RatesPerChain } from 'models/Rates';
-import type { Chain } from 'models/Chain';
 
 export const getFiatValueFromUsd = (valueInUsd: ?BigNumber | string, usdToFiatRate: ?number): ?BigNumber => {
   if (!valueInUsd || usdToFiatRate == null) return null;
@@ -70,21 +69,6 @@ export const getAssetPriceInFiat = (assetAddress: ?string, rates: RatesByAssetAd
   return ` • ${currencySymbol}${rate?.toFixed(2)}`;
 };
 
-export const getATokenValueInFiat = (
-  assetAddress: ?string,
-  rates: RatesByAssetAddress,
-  currency: Currency,
-): ?string => {
-  if (!assetAddress) return null;
-
-  const currencySymbol = getCurrencySymbol(currency);
-
-  const rate = getAssetRateInFiat(rates, assetAddress, currency);
-  if (!rate) return `${currencySymbol}0.0`;
-
-  return `${currencySymbol}${rate?.toFixed(2)}`;
-};
-
 export const getAssetValueFromFiat = (
   fiatValue: ?Value,
   assetAddress: ?string,
@@ -108,54 +92,4 @@ export const fiatInvestmentBalance = (balance: BigNumber, rates: RatesPerChain, 
   const fiatAmount = (parseFloat(assetBalance) * nativeAssetRate?.[currency]) / nativeAssetRate?.[USD];
 
   return isNaN(fiatAmount) ? 0 : fiatAmount?.toFixed(2);
-};
-
-export const fiatTokenValue = (
-  tokenValueInUSD: number,
-  rates: RatesPerChain,
-  currency: Currency,
-  formatter?: any,
-  decimals?: number,
-) => {
-  if (isNaN(tokenValueInUSD)) return '';
-  const nativeAssetRate = rates?.[nativeAssetPerChain[CHAIN.ETHEREUM].address];
-  const currencySymbol = getCurrencySymbol(currency);
-
-  const fiatAmount = (tokenValueInUSD * nativeAssetRate?.[currency]) / nativeAssetRate?.[USD];
-
-  const decimalsFiatValue = fiatAmount?.toFixed(decimals ?? (fiatAmount > 1 ? 2 : 4));
-
-  const formattedNumber = formatter ? formatter(fiatAmount) : numberWithCommas(decimalsFiatValue) ?? 0;
-
-  return `${currencySymbol + (isNaN(fiatAmount) ? '0' : formattedNumber.toString())}`;
-};
-
-export const poolsTokenValue = (
-  chain: Chain,
-  tokenAddress: string,
-  usdValue: number,
-  ratesPerChain: RatesByAssetAddress,
-) => {
-  if (!chain || !tokenAddress || isNaN(usdValue)) {
-    return { tokenValue: null, nativeValue: null };
-  }
-  const address = tokenAddress.toLowerCase();
-  const rates = ratesPerChain[chain];
-  const nativeAssetRate = rates[nativeAssetPerChain[chain].address];
-  const tokenRate = rates[address];
-
-  let tokenValue;
-  if (tokenRate?.[USD]) {
-    tokenValue = usdValue / tokenRate?.[USD];
-  }
-
-  const nativeValue = usdValue / nativeAssetRate?.[USD];
-
-  const decimalsTokenValue = tokenValue ? tokenValue?.toFixed(tokenValue > 1 ? 2 : 4) : null;
-  const decimalsNativeValue = nativeValue?.toFixed(nativeValue > 1 ? 2 : 4);
-
-  return {
-    nativeValue: numberWithCommas(decimalsNativeValue),
-    tokenValue: numberWithCommas(decimalsTokenValue),
-  };
 };

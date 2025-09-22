@@ -19,7 +19,6 @@
 */
 import { BigNumber } from 'bignumber.js';
 import { useTranslation } from 'translations/translate';
-import { isEmpty } from 'lodash';
 
 // services
 import { firebaseRemoteConfig } from 'services/firebase';
@@ -34,8 +33,8 @@ import { useIsDarkTheme } from 'utils/themes';
 
 // Types
 import type { ImageSource } from 'utils/types/react-native';
-import type { AssetOption, Asset } from 'models/Asset';
-import type { ExchangeProvider, ExchangeFeeInfo, ExchangeOffer } from 'models/Exchange';
+import type { AssetOption } from 'models/Asset';
+import type { ExchangeProvider } from 'models/Exchange';
 import type { Chain } from 'models/Chain';
 
 // Images
@@ -202,24 +201,5 @@ export const getCaptureFeeDestinationAddress = (chain: Chain): ?string => {
     return firebaseRemoteConfig.getString(REMOTE_CONFIG.EXCHANGE_FEE_ARBITRUM_CAPTURE_ADDRESS);
   }
 
-  return null;
-};
-
-export const getFeeInfoFromList = (
-  feeList: ExchangeFeeInfo[],
-  offer: ExchangeOffer,
-  gasFeeAsset: Asset | AssetOption,
-) => {
-  if (isEmpty(feeList) || !offer) return null;
-  const { provider, chain, toAsset, fromAsset } = offer;
-  const gasFeeInfo = feeList?.find(
-    (feeInfo) =>
-      feeInfo.provider === provider &&
-      feeInfo.chain === chain &&
-      feeInfo.gasFeeAsset === gasFeeAsset &&
-      feeInfo.toAddress === toAsset.address &&
-      feeInfo.fromAddress === fromAsset.address,
-  );
-  if (gasFeeInfo) return gasFeeInfo;
   return null;
 };

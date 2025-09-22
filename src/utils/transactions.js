@@ -263,20 +263,6 @@ export const getGasSymbol = (chain: Chain, gasToken: ?GasToken): string => {
   return chainNativeAsset.symbol;
 };
 
-/**
- * Standard check to allow transfer: value value, greater than zero & less than or equal to balance.
- */
-export const isValidValueForTransfer = (value: ?BigNumber, balance: BigNumber): boolean %checks => {
-  return !!value && value.isFinite() && value.gt(0) && value.lte(balance);
-};
-
-/**
- * Standard check to trigger not enough balance error message. Treats null value as zero.
- */
-export const isLessThanOrEqualToBalance = (value: ?BigNumber, maxValue: BigNumber): boolean %checks => {
-  return value?.lte(maxValue) ?? true;
-};
-
 export const showTransactionRevertedToast = () => {
   const transactionRevertedAricleURL = firebaseRemoteConfig.getString(REMOTE_CONFIG.TRANSACTION_REVERTED_ARTICLE_URL);
   Toast.show({
