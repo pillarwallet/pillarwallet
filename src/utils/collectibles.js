@@ -21,7 +21,6 @@
 import { orderBy } from 'lodash';
 
 // Utils
-import { addressesEqual } from 'utils/assets';
 import { addressAsKey } from 'utils/common';
 import { caseInsensitiveIncludes } from 'utils/strings';
 
@@ -47,14 +46,4 @@ export function defaultSortCollectibles(collectibles: Collectible[]): Collectibl
 export function isCollectibleMatchedByQuery(collectible: Collectible, query: ?string): boolean {
   if (!query) return true;
   return caseInsensitiveIncludes(collectible.name, query);
-}
-
-export function findCollectible(
-  collectibles: ?(Collectible[]),
-  contractAddressToFind: string,
-  idToFind: string,
-): ?Collectible {
-  return collectibles?.find(
-    ({ contractAddress, id }) => addressesEqual(contractAddress, contractAddressToFind) && id === idToFind,
-  );
 }

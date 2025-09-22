@@ -40,16 +40,8 @@ export const fromBaseUnit = (value: BigNumber | number | string, decimals: numbe
   return BigNumber(value).shiftedBy(-decimals);
 };
 
-export const toBaseUnit = (value: BigNumber | number | string, decimals: number): BigNumber => {
-  return BigNumber(value).shiftedBy(decimals);
-};
-
 export const fromEthersBigNumber = (value: EthersBigNumber, decimals: number): BigNumber => {
   return BigNumber(utils.formatUnits(value, decimals));
-};
-
-export const toEthersBigNumber = (value: BigNumber, decimals: number): EthersBigNumber => {
-  return utils.parseUnits(value.toString(), decimals);
 };
 
 export const truncateDecimalPlaces = (value: BigNumber, decimals: ?number): BigNumber => {
@@ -75,15 +67,6 @@ export function sum(values: BigNumber[] | (?BigNumber)[]): BigNumber {
   });
 
   return total;
-}
-
-/**
- * Returns sum of nullable BigNumbers.
- *
- * It returns null when input is empty or contain only nulls.
- */
-export function sumOrNull(values: (?BigNumber)[]): BigNumber | null {
-  return values.some((v) => v != null) ? sum(values) : null;
 }
 
 export function sumRecord(valuesRecord: ?Record<BigNumber>) {

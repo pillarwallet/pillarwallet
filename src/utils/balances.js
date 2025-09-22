@@ -26,9 +26,6 @@ import { addressesEqual } from 'utils/assets';
 import { mapChainRecordValues } from 'utils/chains';
 import { valueForAddress } from 'utils/common';
 
-// Configs
-import { getPlrAddressForChain } from 'configs/assetsConfig';
-
 // Types
 import type {
   AccountAssetBalances,
@@ -37,8 +34,7 @@ import type {
   ServiceAssetBalance,
   CategoryAssetsBalances,
 } from 'models/Balances';
-import type { ChainRecord, Chain } from 'models/Chain';
-
+import type { ChainRecord } from 'models/Chain';
 
 export const getChainWalletAssetsBalances = (
   assetsBalances: ?AccountAssetBalances,
@@ -46,21 +42,6 @@ export const getChainWalletAssetsBalances = (
   mapChainRecordValues(assetsBalances ?? {}, (categoryBalances) =>
     filterNonZeroAssetBalances(categoryBalances?.wallet ?? {}),
   );
-
-export const getChainDepositAssetsBalances = (
-  assetsBalances: ?AccountAssetBalances,
-): ChainRecord<ServiceAssetBalance[]> =>
-  mapChainRecordValues(assetsBalances ?? {}, (categoryBalances) => categoryBalances?.deposits ?? []);
-
-export const getChainLiquidityPoolAssetsBalances = (
-  assetsBalances: ?AccountAssetBalances,
-): ChainRecord<ServiceAssetBalance[]> =>
-  mapChainRecordValues(assetsBalances ?? {}, (categoryBalances) => categoryBalances?.liquidityPools ?? []);
-
-export const getChainInvestmentAssetsBalances = (
-  assetsBalances: ?AccountAssetBalances,
-): ChainRecord<ServiceAssetBalance[]> =>
-  mapChainRecordValues(assetsBalances ?? {}, (categoryBalances) => categoryBalances?.investments ?? []);
 
 export const filterNonZeroAssetBalances = (balances: WalletAssetsBalances): WalletAssetsBalances => {
   return pickBy(balances, ({ balance }: WalletAssetBalance) => !!balance && !BigNumber(balance).isZero());
@@ -77,24 +58,16 @@ export const findServiceAssetBalance = (
 export const hasServiceAssetBalanceForAddress = (
   assetBalances: CategoryAssetsBalances,
   assetAddress: string,
-): boolean => !!(
-  findServiceAssetBalance(assetBalances.deposits, assetAddress)
-    ?? findServiceAssetBalance(assetBalances.investments, assetAddress)
-    ?? findServiceAssetBalance(assetBalances.liquidityPools, assetAddress)
-);
+): boolean =>
+  !!(
+    findServiceAssetBalance(assetBalances.deposits, assetAddress) ??
+    findServiceAssetBalance(assetBalances.investments, assetAddress) ??
+    findServiceAssetBalance(assetBalances.liquidityPools, assetAddress)
+  );
 
 export const getWalletBalanceForAsset = (balances: ?WalletAssetsBalances, assetAddress: ?string): BigNumber => {
   if (!balances || !assetAddress) return BigNumber(0);
 
   const balance = valueForAddress(balances, assetAddress)?.balance;
   return BigNumber(balance ?? 0);
-};
-
-export const getWalletPlrBalance = (balances: ?AccountAssetBalances, chains: ?Chain[]): Array<BigNumber> => {
-  if (!balances || !chains) return [];
-  const plrBalance = chains.map(chain => {
-    const walletBalances = balances[chain]?.wallet;
-    return getWalletBalanceForAsset(walletBalances, getPlrAddressForChain(chain));
-  });
-  return plrBalance;
 };

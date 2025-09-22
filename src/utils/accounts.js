@@ -194,26 +194,6 @@ export const getAccountEnsName = (account: ?Account): ?string => {
   }
 };
 
-export const getEnsNodeState = (account: ?Account): ?string => {
-  if (!account) return null;
-  if (isEtherspotAccount(account)) {
-    return account.extra?.[CHAIN.ETHEREUM]?.ensNode?.state;
-  }
-  return '';
-};
-
-const getSupportedAccountTypes = () => Object.values(ACCOUNT_TYPES);
-
-export const isSupportedAccountType = (accountType: string) => getSupportedAccountTypes().includes(accountType);
-
-export const getInitials = (fullName: string = '') => {
-  return fullName
-    .split(' ')
-    .map((name) => name.substring(0, 1))
-    .join('')
-    .toUpperCase();
-};
-
 export const getSmartWalletAccountCreatedAtTimestamp = (account: Account): ?number => {
   let createdAt;
   switch (getAccountType(account)) {
@@ -230,16 +210,4 @@ export const getSmartWalletAccountCreatedAtTimestamp = (account: Account): ?numb
   }
 
   return createdAt ? +createdAt : null;
-};
-
-/**
- * Checks accounts for migrated ENS in following order:
- * 1. First checks Etherspot account in case ENS already migrated and was updated on Etherspot back-end.
- * 2. If there's no ENS yet on Etherspot account or transaction is pending then it checks on Archanova
- */
-export const getMigratedEnsName = (accounts: Account[]): string => {
-  const etherspotAccount = findFirstEtherspotAccount(accounts);
-  const archanovaAccount = findFirstArchanovaAccount(accounts);
-
-  return getAccountEnsName(etherspotAccount) ?? getAccountEnsName(archanovaAccount) ?? '';
 };

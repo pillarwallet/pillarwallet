@@ -19,7 +19,6 @@
 */
 
 import { BigNumber } from 'bignumber.js';
-import { BigNumber as EthersBigNumber } from 'ethers';
 import t from 'translations/translate';
 
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
@@ -73,58 +72,6 @@ export function formatPercentValue(value: ?BigNumber, options?: FormatValueOptio
 }
 
 /**
- * Format percent change with +/- sign.
- * By defaults outputs 2 decimal places, without stripping zeros.
- *
- * Examples:
- *   0.5 => '+50.00%'
- *   -0.01234 => '-1.23%'
- *
- */
-export function formatPercentChange(value: ?BigNumber, options?: FormatValueOptions) {
-  if (!value || !value.isFinite()) return null;
-
-  return value.gte(0)
-    ? t('positivePercentValue', { value: formatValue(value.multipliedBy(100), { decimalPlaces: 2, ...options }) })
-    : t('percentValue', { value: formatValue(value.multipliedBy(100), { decimalPlaces: 2, ...options }) });
-}
-
-/**
- * Format value with K, M, B units if needed.
- * By defaults outputs 2 decimal places, without stripping zeros.
- *
- * Examples:
- *   1000 => '1.00K'
- *   1234000 => '1.23M'
- *
- */
-export function formatValueWithUnit(value: ?BigNumber | number, options?: FormatValueOptions) {
-  value = wrapBigNumberOrNil(value);
-
-  if (!value || !value.isFinite()) return null;
-
-  const threshold = 0.85;
-
-  if (value.gte(threshold * 1e12)) {
-    return t('units.1e12', { value: formatValue(value.dividedBy(1e12), { decimalPlaces: 2, ...options }) });
-  }
-
-  if (value.gte(threshold * 1e9)) {
-    return t('units.1e9', { value: formatValue(value.dividedBy(1e9), { decimalPlaces: 2, ...options }) });
-  }
-
-  if (value.gte(threshold * 1e6)) {
-    return t('units.1e6', { value: formatValue(value.dividedBy(1e6), { decimalPlaces: 2, ...options }) });
-  }
-
-  if (value.gte(threshold * 1e3)) {
-    return t('units.1e3', { value: formatValue(value.dividedBy(1e3), { decimalPlaces: 2, ...options }) });
-  }
-
-  return formatValue(value, { decimalPlaces: 2, ...options });
-}
-
-/**
  * Format fiat value, for use cases such as balance.
  */
 export function formatFiatValue(value: ?BigNumber | number, currency?: string, options?: FormatValueOptions) {
@@ -151,33 +98,6 @@ export function formatFiatChange(change: ?BigNumber, currency?: string, options?
   return change?.gte(0)
     ? t('positiveValue', { value: formattedAbsValue })
     : t('negativeValue', { value: formattedAbsValue });
-}
-
-/**
- * Formats profit as `+10.00% ($100.00)`.
- *
- * Handles edge cases of missing change and/or balance values.
- */
-export function formatFiatChangeExtended(change: ?BigNumber, initialBalance: ?BigNumber, currency: string) {
-  if (!change || !change.isFinite()) return null;
-
-  // Special case zero change.
-  if (change.isZero()) return formatPercentChange(BigNumber(0));
-
-  const formattedChangeInFiat = formatFiatValue(change, currency);
-
-  // Special case missing/incorrect/negative balance.
-  if (!initialBalance || !initialBalance.isFinite() || !initialBalance.gte(0)) return formattedChangeInFiat;
-
-  const formattedChangeInPercent = formatPercentChange(change.dividedBy(initialBalance), { stripTrailingZeros: true });
-
-  if (formattedChangeInFiat && formattedChangeInPercent) {
-    return `${formattedChangeInPercent} (${formattedChangeInFiat})`;
-  }
-
-  if (formattedChangeInFiat) return formattedChangeInFiat;
-
-  return null;
 }
 
 /**
@@ -223,12 +143,6 @@ export function formatTokenChange(value: ?BigNumber, symbol?: string, options?: 
     : t('negativeTokenValue', { value: formattedValue, token: symbol });
 }
 
-export function formatHexAddress(address: string) {
-  if (address?.length <= 12) return address;
-
-  return t('ellipsedMiddleString', { stringStart: address.slice(0, 6), stringEnd: address.slice(-6) });
-}
-
 export function formatExchangeRate(
   rate: ?BigNumber | number,
   fromSymbol: string,
@@ -265,57 +179,3 @@ export function formatExchangeRateWithoutSymbol(rate: ?BigNumber | number) {
 
   return '<0.00001';
 }
-
-/**
- * Format liquidity pool share.
- *
- * Input number is expressed as a fraction, i.e. 0.5 == 50%
- */
-export function formatLiquidityPoolShare(value: ?BigNumber | string) {
-  value = wrapBigNumberOrNil(value);
-  if (!value) return null;
-
-  if (value.lte(0.000001)) return '<0.0001%'; // note: 0.000001 * 100 = 0.0001%
-
-  return formatPercentValue(value, { decimalPlaces: 4, stripTrailingZeros: true });
-}
-
-export const formatAmountDisplay = (
-  amountRaw: string | number,
-  leftSymbol?: string,
-  minimumFractionDigits?: number,
-): string => {
-  const amount = typeof amountRaw === 'number' ? `${amountRaw}` : amountRaw;
-
-  // check string to avoid underflow
-  if ((amount !== '0.01' && amount.startsWith('0.01')) || amount.startsWith('0.00')) {
-    const [, fraction] = amount.split('.');
-    let smallAmount = `~${leftSymbol ?? ''}0.`;
-
-    [...fraction].every((digitString) => {
-      if (digitString === '0') {
-        smallAmount = `${smallAmount}0`;
-        return true;
-      }
-      smallAmount = `${smallAmount}${digitString}`;
-      return false;
-    });
-
-    return smallAmount;
-  }
-
-  return `${leftSymbol ?? ''}${new Intl.NumberFormat('en-US', {
-    maximumFractionDigits: 2,
-    minimumFractionDigits,
-  }).format(+amount)}`;
-};
-
-/**
- * Convert values to BigNumber from bignumber.js, as we use both across the app
- *
- * Accepts string, number or BigNumber from ethers.js
- */
-export const convertToBigNumberJs = (value: string | number | EthersBigNumber): BigNumber => {
-  const valueToConvert = value.toString() || '0';
-  return new BigNumber(valueToConvert);
-};
