@@ -27,8 +27,6 @@ import {
   SET_HISTORY,
   SET_GAS_INFO,
   TX_PENDING_STATUS,
-  ADD_HISTORY_TRANSACTION,
-  SET_UPDATING_TRANSACTION,
   SET_ACCOUNT_HISTORY_LAST_SYNC_ID,
   SET_FETCHING_HISTORY,
 } from 'constants/historyConstants';
@@ -38,7 +36,7 @@ import { CHAIN } from 'constants/chainConstants';
 import { updateAccountHistoryForChain, updateHistoryRecord } from 'utils/history';
 import { getAccountAddress, getAccountId, findFirstEtherspotAccount, findAccountByAddress } from 'utils/accounts';
 import { reportLog, uniqBy } from 'utils/common';
-import { parseEtherspotTransactions, parseEtherspotTransactionStatus } from 'utils/etherspot';
+import { parseEtherspotTransactions } from 'utils/etherspot';
 import { viewTransactionOnBlockchain } from 'utils/blockchainExplorer';
 import { getSupportedChains } from 'utils/chains';
 
@@ -46,7 +44,7 @@ import { getSupportedChains } from 'utils/chains';
 import etherspotService from 'services/etherspot';
 
 // selectors
-import { accountsSelector, activeAccountSelector, historySelector, supportedAssetsPerChainSelector } from 'selectors';
+import { accountsSelector, historySelector, supportedAssetsPerChainSelector } from 'selectors';
 
 // models, types
 import type { Transaction } from 'models/Transaction';
@@ -55,10 +53,8 @@ import type { Event } from 'models/History';
 import type { Chain } from 'models/Chain';
 
 // actions
-import { fetchAssetsBalancesAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
-import { fetchCollectiblesHistoryAction } from './collectiblesActions';
 
 export const syncAccountHistoryAction = (
   apiHistory: Transaction[],
@@ -143,7 +139,7 @@ export const fetchEtherspotTransactionsHistoryAction = () => {
       }),
     );
 
-    await dispatch(fetchCollectiblesHistoryAction(etherspotAccount));
+    // await dispatch(fetchCollectiblesHistoryAction(etherspotAccount));
 
     dispatch(setFetchingHistoryAction(false));
   };
@@ -180,87 +176,6 @@ export const fetchGasInfoAction = (chain: Chain) => {
     }
 
     dispatch({ type: SET_GAS_INFO, payload: { gasPrice, chain } });
-  };
-};
-
-const setUpdatingTransactionAction = (hash: ?string) => ({
-  type: SET_UPDATING_TRANSACTION,
-  payload: hash,
-});
-
-export const updateTransactionStatusAction = (chain: Chain, hash: string) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      session: {
-        data: { isOnline },
-      },
-    } = getState();
-
-    if (!isOnline) return;
-
-    const activeAccount = activeAccountSelector(getState());
-    if (!activeAccount) return;
-
-    dispatch(setUpdatingTransactionAction(hash));
-
-    const transactionInfo = await etherspotService.getTransaction(chain, hash);
-    const transactionStatus = transactionInfo ? parseEtherspotTransactionStatus(transactionInfo.status) : null;
-
-    // NOTE: when trxInfo is null, that means transaction status is still pending or timed out
-    const stillPending = !transactionStatus;
-
-    if (stillPending) {
-      dispatch(setUpdatingTransactionAction(null));
-      return;
-    }
-
-    let gasPrice;
-    let gasUsed;
-    let status;
-    let feeWithGasToken;
-
-    if (transactionInfo) {
-      status = transactionStatus;
-      ({ gasPrice, gasUsed } = transactionInfo);
-    }
-
-    const {
-      history: { data: currentHistory },
-    } = getState();
-    const { updatedHistory } = updateHistoryRecord(currentHistory, hash, (transaction) => ({
-      ...transaction,
-      status,
-      gasPrice: gasPrice ? gasPrice.toNumber() : transaction.gasPrice,
-      gasUsed: gasUsed ?? transaction.gasUsed,
-      feeWithGasToken: feeWithGasToken || transaction.feeWithGasToken,
-    }));
-
-    dispatch({
-      type: SET_HISTORY,
-      payload: updatedHistory,
-    });
-
-    dispatch(saveDbAction('history', { history: updatedHistory }, true));
-    dispatch(fetchAssetsBalancesAction());
-  };
-};
-
-export const insertTransactionAction = (transaction: Transaction, accountId: string, chain: Chain) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    dispatch({
-      type: ADD_HISTORY_TRANSACTION,
-      payload: {
-        accountId,
-        transaction,
-        chain,
-      },
-    });
-
-    // get the updated state and save it into the storage
-    const {
-      history: { data: currentHistory },
-    } = getState();
-    await dispatch(saveDbAction('history', { history: currentHistory }, true));
   };
 };
 

@@ -47,9 +47,6 @@ import { SET_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'constant
 import { SET_RATES } from 'constants/ratesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
-import { SET_INSIGHTS_STATE } from 'constants/insightsConstants';
-import { UPDATE_PAYMENT_NETWORK_BALANCES, UPDATE_PAYMENT_NETWORK_STAKED } from 'constants/paymentNetworkConstants';
-import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
 import { SET_WALLET_EVENTS } from 'constants/walletEventsConstants';
 import { SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
 import { SET_KEY_BASED_ASSETS_TO_TRANSFER } from 'constants/keyBasedAssetTransferConstants';
@@ -142,24 +139,12 @@ export const initAppAndRedirectAction = () => {
       const { collectiblesHistory = {} } = get(storageData, 'collectiblesHistory', {});
       dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: collectiblesHistory });
 
-      const { paymentNetworkBalances = {} } = get(storageData, 'paymentNetworkBalances', {});
-      dispatch({ type: UPDATE_PAYMENT_NETWORK_BALANCES, payload: paymentNetworkBalances });
-
-      const { paymentNetworkStaked = '' } = get(storageData, 'paymentNetworkStaked', {});
-      dispatch({ type: UPDATE_PAYMENT_NETWORK_STAKED, payload: paymentNetworkStaked });
-
       const { offlineQueue = [] } = get(storageData, 'offlineQueue', {});
       dispatch({ type: UPDATE_OFFLINE_QUEUE, payload: offlineQueue });
       dispatch({ type: START_OFFLINE_QUEUE });
 
-      const { userSettings = {} } = get(storageData, 'userSettings', {});
-      dispatch({ type: SET_USER_SETTINGS, payload: userSettings });
-
       const walletEvents = storageData?.walletEvents?.walletEvents ?? {};
       dispatch({ type: SET_WALLET_EVENTS, payload: walletEvents });
-
-      const { insights = {} } = get(storageData, 'insights', {});
-      dispatch({ type: SET_INSIGHTS_STATE, payload: insights });
 
       const { keyBasedAssetsToTransfer = [] } = get(storageData, 'keyBasedAssetTransfer', []);
       dispatch({ type: SET_KEY_BASED_ASSETS_TO_TRANSFER, payload: keyBasedAssetsToTransfer });
@@ -172,30 +157,6 @@ export const initAppAndRedirectAction = () => {
 
       const user = storageData?.user?.user ?? {};
       dispatch({ type: SET_USER, payload: user });
-
-      // const currentTime = await getCurrentTime();
-
-      // const { failedAttempts = {}, pinAttempt = {} } = get(storageData, 'pinAttempt', {});
-      // const { numberOfFailedAttempts = 0, date = new Date() } = failedAttempts;
-      // const { pinAttemptsCount = 0 } = pinAttempt;
-
-      // if (new Date(date)?.toDateString() === currentTime?.toDateString()) {
-      //   dispatch({
-      //     type: UPDATE_PIN_ATTEMPTS,
-      //     payload: {
-      //       pinAttemptsCount,
-      //     },
-      //   });
-      //   dispatch({
-      //     type: TODAY_FAILED_ATTEMPTS,
-      //     payload: {
-      //       failedAttempts: {
-      //         numberOfFailedAttempts,
-      //         date: new Date(date),
-      //       },
-      //     },
-      //   });
-      // }
       const { ensRegistry = {} } = get(storageData, 'ensRegistry', {});
       dispatch({ type: SET_ENS_REGISTRY_RECORDS, payload: ensRegistry });
 

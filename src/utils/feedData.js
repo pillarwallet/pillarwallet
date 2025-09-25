@@ -19,12 +19,10 @@
 */
 
 import orderBy from 'lodash.orderby';
-import get from 'lodash.get';
 
 import type { Account } from 'models/Account';
 
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
-import { PAYMENT_NETWORK_ACCOUNT_TOPUP } from 'constants/paymentNetworkConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
 import { findAccountByAddress, getInactiveUserAccounts, getAccountAddress, getAccountTypeByAddress } from './accounts';
@@ -91,16 +89,6 @@ export function mapTransactionsHistory(
       }
       return alteredHistory;
     } else if (duplicatePPN) {
-      const itemTag = get(historyItem, 'tag');
-      if (itemTag && itemTag === PAYMENT_NETWORK_ACCOUNT_TOPUP) {
-        const duplicate = {
-          ...historyItem,
-          smartWalletEvent: true,
-          _id: `${historyItem._id}_duplicate`,
-          createdAt: historyItem.createdAt - 1,
-        };
-        return [...alteredHistory, duplicate, historyItem];
-      }
       return [...alteredHistory, historyItem];
     }
     return [...alteredHistory, historyItem];

@@ -23,9 +23,6 @@ import { UPDATE_PIN_ATTEMPTS, SET_WALLET_IS_DECRYPTING, SET_WALLET } from 'const
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
-import { NFT_FLAG } from 'constants/assetsConstants';
-import { SET_FETCHING_ASSETS_BALANCES } from 'constants/assetsBalancesConstants';
-import { SET_FETCHING_HISTORY } from 'constants/historyConstants';
 
 // actions
 import { loginAction } from 'actions/authActions';
@@ -36,10 +33,8 @@ import etherspotService from 'services/etherspot';
 
 // test utils
 import {
-  mockEtherspotAccount,
   mockEtherspotApiAccount,
   mockArchanovaAccount,
-  mockEtherspotAccountExtra,
   mockDeviceUniqueId,
   mockStableAssets,
 } from 'testUtils/jestSetup';
@@ -62,7 +57,6 @@ const mockFailedAttempts = {
   date: new Date(),
 };
 
-const mockNewEtherspotAccount = { ...mockEtherspotAccount, extra: mockEtherspotAccountExtra };
 const mockNewKeyBasedAccount = {
   id: '0x9c',
   type: ACCOUNT_TYPES.KEY_BASED,
@@ -121,8 +115,6 @@ describe('Auth actions', () => {
       { type: SET_WALLET, payload: mockWallet },
       { type: SET_WALLET, payload: { address: mockWallet.address } },
 
-      { type: NFT_FLAG, payload: undefined },
-
       { type: UPDATE_PIN_ATTEMPTS, payload: { pinAttemptsCount: 0 } },
 
       { type: UPDATE_APP_SETTINGS, payload: { initialDeepLinkExecuted: true } },
@@ -130,15 +122,8 @@ describe('Auth actions', () => {
       { type: UPDATE_SESSION, payload: { isAuthorizing: false } },
       { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
 
-      // appends new Etherspot account to reducer
-      { type: UPDATE_ACCOUNTS, payload: [mockActiveSmartWalletAccount, mockNewEtherspotAccount] },
-
       // appends new key based account to reducer
       { type: UPDATE_ACCOUNTS, payload: [mockActiveSmartWalletAccount, mockNewKeyBasedAccount] },
-
-      { type: SET_FETCHING_HISTORY, payload: true },
-
-      { type: SET_FETCHING_ASSETS_BALANCES, payload: true },
     ];
 
     const pin = '123456';

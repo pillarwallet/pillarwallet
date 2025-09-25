@@ -108,7 +108,6 @@ import type { Asset, AddTokensItem, AssetOption } from 'models/Asset';
 
 // actions
 import { saveDbAction } from './dbActions';
-import { fetchCollectiblesAction } from './collectiblesActions';
 import { fetchAssetsRatesAction } from './ratesActions';
 import { addEnsRegistryRecordAction } from './ensRegistryActions';
 
@@ -215,7 +214,6 @@ export const sendAssetAction = (
       logBreadcrumb('Send Flow', 'sendAssetAction: collectible transaction dispatching fetchCollectiblesAction', {
         type: logTransactionType,
       });
-      await dispatch(fetchCollectiblesAction());
     } else {
       logTransactionType = symbol === ETH ? 'ETH' : 'ERC20'; // eslint-disable-line i18next/no-literal-string
     }
@@ -524,8 +522,6 @@ export const fetchAllAccountsTotalBalancesAction = () => {
 
     await Promise.all(
       accounts.map(async (account) => {
-        dispatch(fetchCollectiblesAction(account));
-
         const accountId = getAccountId(account);
         const accountAddress = getAccountAddress(account);
 

@@ -46,8 +46,6 @@ const keyWalletIconDark = require('assets/icons/key_wallet_dark.png');
 const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
 const smartWalletIconDark = require('assets/icons/icon_smart_wallet_dark.png');
 const PPNIcon = require('assets/icons/icon_PPN.png');
-const swActivatedLight = require('assets/images/swActivatedLight.png');
-const swActivatedDark = require('assets/images/swActivatedDark.png');
 const phoneIconLight = require('assets/icons/icon_phone_light.png');
 const phoneIconDark = require('assets/icons/icon_circle_phone_device.png');
 const walletIconLight = require('assets/icons/iconRoundedWalletLight.png');
@@ -101,10 +99,6 @@ export const images = (theme: Theme) => {
     PPNIcon: getImageByTheme(currentTheme, {
       lightTheme: PPNIcon,
       darkTheme: PPNIcon,
-    }),
-    swActivated: getImageByTheme(currentTheme, {
-      lightTheme: swActivatedLight,
-      darkTheme: swActivatedDark,
     }),
     roundedPhoneIcon: getImageByTheme(currentTheme, {
       lightTheme: phoneIconLight,

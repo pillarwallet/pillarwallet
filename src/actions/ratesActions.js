@@ -36,7 +36,6 @@ import { assetsBalancesPerAccountSelector } from 'selectors/balances';
 
 // models, types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type { Chain } from 'models/Chain';
 import type { RatesByAssetAddress } from 'models/Rates';
 
 // actions
@@ -111,36 +110,6 @@ export const fetchAssetsRatesAction = () => {
         reportErrorLog('fetchAssetsRatesAction failed', { error, chain, chainAssetsByAddress });
       }
     });
-
-    dispatch(setIsFetchingRatesAction(false));
-  };
-};
-
-export const fetchSingleChainAssetRatesAction = (chain: Chain, asset: Object) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      rates: { isFetching },
-      session: {
-        data: { isOnline },
-      },
-    } = getState();
-
-    if (isFetching || !isOnline) return;
-
-    dispatch(setIsFetchingRatesAction(true));
-
-    try {
-      await getExchangeRates(chain, [asset], async (rates) => {
-        if (isEmpty(rates)) {
-          dispatch(setIsFetchingRatesAction(false));
-        } else {
-          dispatch(setIsFetchingRatesAction(false));
-          await dispatch(updateRatesAction(chain, rates));
-        }
-      });
-    } catch (error) {
-      reportErrorLog('fetchAssetsRatesAction failed', { error, chain, asset });
-    }
 
     dispatch(setIsFetchingRatesAction(false));
   };

@@ -20,31 +20,20 @@
 
 import { createSelector } from 'reselect';
 import { BigNumber } from 'bignumber.js';
-import { getPlrAddressForChain } from 'configs/assetsConfig';
-
-// Constants
-import { CHAIN } from 'constants/chainConstants';
 
 // Utils
-import { isEtherspotAccount } from 'utils/accounts';
 import { getChainWalletAssetsBalances, getWalletBalanceForAsset } from 'utils/balances';
-import { valueForAddress } from 'utils/common';
 
 // Selectors
 import {
   useRootSelector,
-  fiatCurrencySelector,
-  ratesPerChainSelector,
   activeAccountIdSelector,
-  activeAccountSelector,
 } from 'selectors';
 
 // Types
 import type { RootReducerState, Selector } from 'reducers/rootReducer';
-import type { Account } from 'models/Account';
 import type { WalletAssetsBalances, AccountAssetBalances, AssetBalancesPerAccount } from 'models/Balances';
 import type { Chain, ChainRecord } from 'models/Chain';
-import type { RatesPerChain } from 'models/Rates';
 
 export const assetsBalancesPerAccountSelector = ({ assetsBalances }: RootReducerState) => assetsBalances.data;
 
@@ -70,23 +59,6 @@ export const accountEthereumWalletAssetsBalancesSelector = createSelector(
 export const keyBasedWalletHasPositiveBalanceSelector = createSelector(
   ({ keyBasedAssetTransfer }: RootReducerState) => keyBasedAssetTransfer?.hasPositiveBalance,
   (hasPositiveBalance) => !!hasPositiveBalance,
-);
-
-export const paymentNetworkTotalBalanceSelector: (RootReducerState) => BigNumber = createSelector(
-  activeAccountSelector,
-  ({ paymentNetwork }) => paymentNetwork.availableStake,
-  ratesPerChainSelector,
-  fiatCurrencySelector,
-  (activeAccount: Account, ppnBalance: number, ratesPerChain: RatesPerChain, currency: string) => {
-    // currently not supported by Etherspot
-    if (isEtherspotAccount(activeAccount)) return BigNumber(0);
-
-    const plrAddress = getPlrAddressForChain(CHAIN.ETHEREUM);
-
-    const plrToFiatRate = valueForAddress(ratesPerChain.ethereum, plrAddress)?.[currency] ?? 0;
-
-    return BigNumber(plrToFiatRate * ppnBalance);
-  },
 );
 
 export const useWalletAssetBalance = (chain: ?Chain, assetAddress: ?string): BigNumber => {

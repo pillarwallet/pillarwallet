@@ -45,7 +45,6 @@ import { SET_CACHED_URLS } from 'constants/cacheConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { NFT_FLAG } from 'constants/assetsConstants';
 import { SET_NEW_USER } from 'constants/onboardingConstants';
 import { RESET_PILLARX_ADDRESS } from 'constants/modularSdkConstants';
 
@@ -55,7 +54,7 @@ import { decryptWalletFromStorage, getDecryptedWallet } from 'utils/wallet';
 import { clearWebViewCookies } from 'utils/webview';
 import { resetKeychainDataObject } from 'utils/keychain';
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
-import { findFirstEtherspotAccount, findKeyBasedAccount, getActiveAccount } from 'utils/accounts';
+import { findKeyBasedAccount, getActiveAccount } from 'utils/accounts';
 import { getDeviceUniqueId } from 'utils/device';
 
 // services
@@ -63,8 +62,6 @@ import Storage from 'services/storage';
 import { navigate, getNavigationState, getLastRouteState } from 'services/navigation';
 import { firebaseAuth, firebaseMessaging, firebaseRemoteConfig } from 'services/firebase';
 import etherspotService from 'services/etherspot';
-import { logoutWeb3Auth } from 'services/web3Auth';
-import { fetchPillarXAddress } from 'services/modularSDK';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -75,23 +72,14 @@ import { saveDbAction, encryptedStorage } from './dbActions';
 import { setupLoggingServicesAction } from './appActions';
 import { addAccountAction, deployAccounts, setActiveAccountAction } from './accountsActions';
 import { encryptAndSaveWalletAction, checkForWalletBackupToastAction, updatePinAttemptsAction } from './walletActions';
-import { fetchTransactionsHistoryAction } from './historyActions';
 import { setAppThemeAction, setAppLanguageAction, setDeviceUniqueIdIfNeededAction } from './appSettingsActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { loadRemoteConfigWithUserPropertiesAction } from './remoteConfigActions';
 import { checkInitialDeepLinkAction } from './deepLinkActions';
-import {
-  checkIfKeyBasedWalletHasPositiveBalanceAction,
-  checkKeyBasedAssetTransferTransactionsAction,
-} from './keyBasedAssetTransferActions';
 import { setSessionTranslationBundleInitialisedAction } from './sessionActions';
-import { importEtherspotAccountsAction, initEtherspotServiceAction, fetchDefaultTokensRates } from './etherspotActions';
-import { setEnsNameIfNeededAction } from './ensRegistryActions';
-import { fetchTutorialDataIfNeededAction, bannerDataAction } from './cmsActions';
-import { fetchAllAccountsAssetsBalancesAction, fetchAllAccountsTotalBalancesAction } from './assetsActions';
+import { fetchTutorialDataIfNeededAction } from './cmsActions';
 import { finishOnboardingAction, setViewedReceiveTokensWarning } from './onboardingActions';
 import { addMissingWalletEventsIfNeededAction } from './walletEventsActions';
-import { fetchAllCollectiblesDataAction } from './collectiblesActions';
 
 const storage = Storage.getInstance('db');
 
@@ -119,7 +107,7 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
       },
       accounts: { data: accounts },
       user: { data: user },
-      onboarding: { bannerData, isNewUser: isNewUserState },
+      onboarding: { isNewUser: isNewUserState },
     } = getState();
 
     const viewedReceiveTokensWarningDb = await storage.get('viewed_receive_tokens_warning');
@@ -173,11 +161,11 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
       dispatch({ type: SET_WALLET, payload: unlockedWallet });
     }
 
-    dispatch(fetchPillarXAddress(decryptedPrivateKey));
+    // dispatch(fetchPillarXAddress(decryptedPrivateKey));
 
-    const visibleNFTs = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_NFTS);
-    logBreadcrumb('onboarding', 'finishOnboardingAction: dispatching app nfts flag');
-    dispatch({ type: NFT_FLAG, payload: visibleNFTs });
+    // const visibleNFTs = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_NFTS);
+    // logBreadcrumb('onboarding', 'finishOnboardingAction: dispatching app nfts flag');
+    // dispatch({ type: NFT_FLAG, payload: visibleNFTs });
 
     dispatch(setupLoggingServicesAction());
     dispatch(updatePinAttemptsAction(false));
@@ -201,7 +189,7 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
       if (tutorialData) navigateAction = { screen: TUTORIAL_FLOW };
     }
 
-    if (!bannerData) dispatch(bannerDataAction());
+    // if (!bannerData) dispatch(bannerDataAction());
 
     let navigateToAppAction = CommonActions.reset({
       index: 0,
@@ -242,16 +230,16 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
     await dispatch(updateFcmTokenAction());
 
     // init Etherspot SDK
-    await dispatch(initEtherspotServiceAction(decryptedPrivateKey));
+    // await dispatch(initEtherspotServiceAction(decryptedPrivateKey));
 
     // Dispatch action to try and get the latest remote config values...
     dispatch(loadRemoteConfigWithUserPropertiesAction());
 
     // create etherspot account if does not exist, this also applies as migration from old key based wallets
-    const etherspotAccount = findFirstEtherspotAccount(accounts);
-    if (!etherspotAccount && !isNewUser) {
-      await dispatch(importEtherspotAccountsAction()); // imports and sets as active
-    }
+    // const etherspotAccount = findFirstEtherspotAccount(accounts);
+    // if (!etherspotAccount && !isNewUser) {
+    //   await dispatch(importEtherspotAccountsAction()); // imports and sets as active
+    // }
 
     const activeAccount = getActiveAccount(accounts);
     if (isEmpty(activeAccount) && isNewUser) {
@@ -264,15 +252,14 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
     if (!keyBasedAccount) dispatch(addAccountAction(address, ACCOUNT_TYPES.KEY_BASED));
 
     // by default fetch default tokens
-    dispatch(fetchDefaultTokensRates());
+    // dispatch(fetchDefaultTokensRates());
 
-    dispatch(fetchTransactionsHistoryAction());
-    dispatch(setEnsNameIfNeededAction());
-    dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
-    dispatch(checkKeyBasedAssetTransferTransactionsAction());
-    dispatch(fetchAllAccountsTotalBalancesAction());
-    dispatch(fetchAllAccountsAssetsBalancesAction());
-    dispatch(fetchAllCollectiblesDataAction());
+    // dispatch(fetchTransactionsHistoryAction());
+    // dispatch(setEnsNameIfNeededAction());
+    // dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
+    // dispatch(checkKeyBasedAssetTransferTransactionsAction());
+    // dispatch(fetchAllAccountsTotalBalancesAction());
+    // dispatch(fetchAllAccountsAssetsBalancesAction());
     if (!__DEV__) dispatch(deployAccounts());
   };
 };
@@ -423,7 +410,7 @@ export const resetAppServicesAction = () => {
     if (env) await storage.save('environment', env, true);
 
     await etherspotService.logout();
-    await logoutWeb3Auth();
+    // await logoutWeb3Auth();
 
     // reset data stored in keychain
     await resetKeychainDataObject();

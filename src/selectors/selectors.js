@@ -91,7 +91,6 @@ export const bannerDataSelector = ({ onboarding }: RootReducerState) => onboardi
 export const viewedReceiveTokensWarningSelector = ({ onboarding }: RootReducerState) =>
   onboarding.viewedReceiveTokensWarning;
 
-export const paymentNetworkBalancesSelector = ({ paymentNetwork }: RootReducerState) => paymentNetwork.balances;
 
 export const accountsSelector = ({ accounts }: RootReducerState) => accounts.data;
 
@@ -107,10 +106,6 @@ export const activeAccountAddressSelector = createSelector(activeAccountSelector
 
 export const supportedAssetsPerChainSelector = (root: RootReducerState): AssetsPerChain =>
   root.assets?.supportedAssets ?? EMPTY_OBJECT;
-
-export const exchangeGasFeeSelector = (root: RootReducerState) => root.exchangeGasFee.data;
-
-export const useExchangeGasFee = () => useRootSelector(exchangeGasFeeSelector);
 
 export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>
   get(appSettings, 'data.blockchainNetwork', 'Ethereum');

@@ -32,7 +32,6 @@ import { CHAIN } from 'constants/chainConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Utils
-import { getBalance } from 'utils/assets';
 import { fromEthersBigNumber } from 'utils/bigNumber';
 import { nativeAssetPerChain, mapChainToChainId } from 'utils/chains';
 import { logBreadcrumb, getFormattedTransactionFeeValue } from 'utils/common';
@@ -53,7 +52,6 @@ import ERC721_CONTRACT_ABI from 'abi/erc721.json';
 import type { AssetType } from 'models/Asset';
 import type { FeeInfo } from 'models/PaymentNetwork';
 import type { EthereumTransaction, GasToken, TransactionPayload } from 'models/Transaction';
-import type { WalletAssetsBalances } from 'models/Balances';
 import type { Chain } from 'models/Chain';
 import type { Currency, RatesByAssetAddress } from 'models/Rates';
 
@@ -70,22 +68,6 @@ export const getGasToken = (useGasToken: boolean, feeInfo: ?FeeInfo): ?GasToken 
   return useGasToken ? get(feeInfo, 'gasToken', null) : null;
 };
 
-// note: returns negative if total balance is lower
-export const calculateETHTransactionAmountAfterFee = (
-  ethAmount: BigNumber,
-  balances: WalletAssetsBalances,
-  totalFeeInEth: BigNumber,
-): BigNumber => {
-  const ethBalance = new BigNumber(getBalance(balances, nativeAssetPerChain.ethereum.address));
-  const ethBalanceLeftAfterTransaction = ethBalance.minus(totalFeeInEth).minus(ethAmount);
-
-  // check if not enough ETH left to cover fees and adjust ETH amount by calculating max available after fees
-  if (!ethBalanceLeftAfterTransaction.isPositive()) {
-    return ethBalance.minus(totalFeeInEth);
-  }
-
-  return ethAmount;
-};
 
 export const buildEthereumTransaction = async (
   to: string,

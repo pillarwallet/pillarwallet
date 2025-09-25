@@ -22,7 +22,6 @@ DerivedData
 *.ipa
 *.xcuserstate
 **/Pods/
-**/assets/
 **/.xcode.env.local
 /vendor/bundle/
 # Temporary files created by Metro to check the health of the file watcher
