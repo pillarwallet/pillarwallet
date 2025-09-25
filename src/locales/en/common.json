@@ -679,7 +679,7 @@
       "title": "Your device is not supported",
       "nonEtherspotMessage": "Due to security concerns, we don’t support devices with disabled keychain access.",
       "etherspotMessage": "\n\nYour Etherspot wallet address: {{address}}",
-      "exitButtonText": "Exit",
+      "cancelButtonText": "Cancel",
       "supportButtonText": "Support"
     }
   },
