@@ -27,15 +27,10 @@ import {
   DEPLOY_ACCOUNTS,
   DEPLOY_ACCOUNTS_FETCHING,
 } from 'constants/accountsConstants';
-import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { CHAIN } from 'constants/chainConstants';
 
 // actions
-import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { saveDbAction } from 'actions/dbActions';
-import { fetchTransactionsHistoryAction } from 'actions/historyActions';
-import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { connectEtherspotAccountAction } from 'actions/etherspotActions';
 
 // utils
@@ -166,10 +161,9 @@ export const switchAccountAction = (accountId: string) => {
     }
 
     dispatch(setActiveAccountAction(accountId));
-    dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
-    dispatch(fetchAssetsBalancesAction());
-    dispatch(fetchCollectiblesAction());
-    dispatch(fetchTransactionsHistoryAction());
+    // dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
+    // dispatch(fetchAssetsBalancesAction());
+    // dispatch(fetchTransactionsHistoryAction());
     dispatch({ type: CHANGING_ACCOUNT, payload: false });
   };
 };

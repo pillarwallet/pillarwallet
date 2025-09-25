@@ -45,15 +45,11 @@ import txCountReducer from './txCountReducer';
 import collectiblesReducer from './collectiblesReducer';
 import accountsReducer from './accountsReducer';
 import assetsBalancesReducer from './assetsBalancesReducer';
-import paymentNetworkReducer from './paymentNetworkReducer';
 import blockchainNetworkReducer from './blockchainNetworkReducer';
-import userSettingsReducer from './userSettingsReducer';
 import walletEventsReducer from './walletEventsReducer';
 import walkthroughsReducer from './walkthroughsReducer';
 import ensRegistryReducer from './ensRegistryReducer';
-import insightsReducer from './insightsReducer';
 import keyBasedAssetTransferReducer from './keyBasedAssetTransferReducer';
-import walletMigrationArchanovaReducer from './walletMigrationArchanovaReducer';
 import contactsReducer from './contactsReducer';
 import onboardingReducer from './onboardingReducer';
 import cacheReducer from './cacheReducer';
@@ -66,7 +62,6 @@ import deployAccountsReducer from './deployAccountsReducer';
 import addTokensReducer from './addTokensReducer';
 import addCustomTokensReducer from './addCustomTokensReducer';
 import defaultTokensReducer from './defaultTokensReducer';
-import manageExchangeGasFeeReducer from './exchangeGasFeeReducer';
 import modularSdkReducer from './modularSdkReducer';
 
 // local types
@@ -88,21 +83,14 @@ import type { TxCountReducerState } from './txCountReducer';
 import type { CollectiblesReducerState, CollectiblesAction } from './collectiblesReducer';
 import type { AccountsReducerState, AccountsAction } from './accountsReducer';
 import type { AssetsBalancesReducerState, AssetsBalancesReducerAction } from './assetsBalancesReducer';
-import type { PaymentNetworkReducerState, PaymentNetworkAction } from './paymentNetworkReducer';
 import type { BlockchainNetworkAction, BlockchainNetworkReducerState } from './blockchainNetworkReducer';
-import type { UserSettingsReducerAction, UserSettingsReducerState } from './userSettingsReducer';
 import type { WalletEventsReducerAction, WalletEventsReducerState } from './walletEventsReducer';
 import type { WalkthroughsReducerAction, WalkthroughsReducerState } from './walkthroughsReducer';
 import type { EnsRegistryReducerAction, EnsRegistryReducerState } from './ensRegistryReducer';
-import type { InsightsReducerAction, InsightsReducerState } from './insightsReducer';
 import type {
   KeyBasedAssetTransferReducerAction,
   KeyBasedAssetTransferReducerState,
 } from './keyBasedAssetTransferReducer';
-import type {
-  WalletMigrationArchanovaReducerState,
-  WalletMigrationArchanovaReducerAction,
-} from './walletMigrationArchanovaReducer';
 import type { ContactsReducerAction, ContactsReducerState } from './contactsReducer';
 import type { CacheAction, CacheReducerState } from './cacheReducer';
 import type { OnboardingReducerAction, OnboardingReducerState } from './onboardingReducer.js';
@@ -115,7 +103,6 @@ import type { DeployAccountsAction, DeployAccountsReducerState } from './deployA
 import type { AddTokensReducerAction, AddTokensReducerState } from './addTokensReducer';
 import type { AddCustomTokensReducerState, AddCustomTokensReducerAction } from './addCustomTokensReducer';
 import type { DefaultTokensReducerState, TokensAction } from './defaultTokensReducer';
-import type { ExchangeGasFeeReducerState, ExchangeGasFeeReducerAction } from './exchangeGasFeeReducer';
 import type { ModularSdkReducerState, ModularSdkReducerAction } from './modularSdkReducer';
 
 export type RootReducerState = {|
@@ -134,15 +121,11 @@ export type RootReducerState = {|
   collectibles: CollectiblesReducerState,
   accounts: AccountsReducerState,
   assetsBalances: AssetsBalancesReducerState,
-  paymentNetwork: PaymentNetworkReducerState,
   blockchainNetwork: BlockchainNetworkReducerState,
-  userSettings: UserSettingsReducerState,
   walletEvents: WalletEventsReducerState,
   walkthroughs: WalkthroughsReducerState,
   ensRegistry: EnsRegistryReducerState,
-  insights: InsightsReducerState,
   keyBasedAssetTransfer: KeyBasedAssetTransferReducerState,
-  walletMigrationArchanova: WalletMigrationArchanovaReducerState,
   contacts: ContactsReducerState,
   onboarding: OnboardingReducerState,
   cache: CacheReducerState,
@@ -157,7 +140,6 @@ export type RootReducerState = {|
   addTokensList: AddTokensReducerState,
   customTokensList: AddCustomTokensReducerState,
   defaultTokens: DefaultTokensReducerState,
-  exchangeGasFee: ExchangeGasFeeReducerState,
   modularSdk: ModularSdkReducerState,
 |};
 
@@ -168,17 +150,13 @@ type RootReducerAction =
   | BlockchainNetworkAction
   | CollectiblesAction
   | HistoryAction
-  | PaymentNetworkAction
   | WalletConnectReducerAction
   | WalletConnectSessionsReducerAction
-  | UserSettingsReducerAction
   | WalletEventsReducerAction
   | WalkthroughsReducerAction
   | DbAction
   | EnsRegistryReducerAction
-  | InsightsReducerAction
   | KeyBasedAssetTransferReducerAction
-  | WalletMigrationArchanovaReducerAction
   | ContactsReducerAction
   | OnboardingReducerAction
   | CacheAction
@@ -192,7 +170,6 @@ type RootReducerAction =
   | DeployAccountsAction
   | AddTokensReducerAction
   | AddCustomTokensReducerAction
-  | ExchangeGasFeeReducerAction
   | ModularSdkReducerAction;
 
 export type GetState = () => RootReducerState;
@@ -219,15 +196,11 @@ const appReducer = combineReducers({
   collectibles: collectiblesReducer,
   accounts: accountsReducer,
   assetsBalances: assetsBalancesReducer,
-  paymentNetwork: paymentNetworkReducer,
   blockchainNetwork: blockchainNetworkReducer,
-  userSettings: userSettingsReducer,
   walletEvents: walletEventsReducer,
   walkthroughs: walkthroughsReducer,
   ensRegistry: ensRegistryReducer,
-  insights: insightsReducer,
   keyBasedAssetTransfer: keyBasedAssetTransferReducer,
-  walletMigrationArchanova: walletMigrationArchanovaReducer,
   contacts: contactsReducer,
   onboarding: onboardingReducer,
   cache: cacheReducer,
@@ -242,7 +215,6 @@ const appReducer = combineReducers({
   addTokensList: addTokensReducer,
   customTokensList: addCustomTokensReducer,
   defaultTokens: defaultTokensReducer,
-  exchangeGasFee: manageExchangeGasFeeReducer,
   modularSdk: modularSdkReducer,
 });
 
