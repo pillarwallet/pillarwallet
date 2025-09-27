@@ -19,7 +19,6 @@
 */
 import merge from 'lodash.merge';
 import { UPDATE_APP_SETTINGS, RESET_APP_SETTINGS, RESET_APP_LOADED } from 'constants/appSettingsConstants';
-import { SIMPLIFIED } from 'constants/assetsLayoutConstants';
 
 import type { LocalisationOptions } from 'models/Translations';
 import type { Currency } from 'models/Rates';
@@ -27,9 +26,6 @@ import type { Currency } from 'models/Rates';
 export type AppSettingsReducerState = {
   data: {
     lastTxSyncDatetimes: Object,
-    appearanceSettings: {
-      assetsLayout: string,
-    },
     blockchainNetwork: ?string,
     baseFiatCurrency: ?Currency,
     transactionSpeed: ?string,
@@ -63,9 +59,6 @@ export type AppSettingsReducerAction = {
 export const initialState: AppSettingsReducerState = {
   data: {
     lastTxSyncDatetimes: {},
-    appearanceSettings: {
-      assetsLayout: SIMPLIFIED,
-    },
     blockchainNetwork: null,
     baseFiatCurrency: null,
     transactionSpeed: null,
