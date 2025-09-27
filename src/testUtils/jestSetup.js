@@ -147,8 +147,6 @@ jest.setMock('react-native-encrypted-storage', {});
 
 jest.setMock('@toruslabs/react-native-web-browser', {});
 
-jest.setMock('react-native-scrypt', () => Promise.resolve('xxxx'));
-
 jest.setMock('react-native-permissions', {
   request: () => Promise.resolve('AUTHORIZED'),
 });
@@ -334,8 +332,6 @@ jest.setMock('@sentry/react-native', {
 jest.setMock('react-native-notifications');
 
 jest.setMock('@react-native-community/netinfo');
-
-jest.setMock('rn-swipe-button');
 
 jest.setMock('react-native-appearance', {});
 
