@@ -23,7 +23,6 @@ import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 import { getEnv } from 'configs/envConfig';
-import RNExitApp from 'react-native-exit-app';
 
 // constants
 import { STAGING } from 'constants/envConstants';
