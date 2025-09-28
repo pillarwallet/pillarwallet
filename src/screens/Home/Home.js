@@ -26,11 +26,15 @@ import { useDispatch } from 'react-redux';
 import messaging from '@react-native-firebase/messaging';
 import WebView from 'react-native-webview';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import styled from 'styled-components';
 
+// Selectors
 import { useRootSelector } from 'selectors';
 
+// Components
 import Loader from 'components/Loader';
 
+// Utils
 import { reportLog, logBreadcrumb } from 'utils/common';
 import {
   setNotificationsVisibleStatus,
@@ -98,7 +102,7 @@ function Home() {
   );
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#121116' }}>
+    <SafeArea>
       <WebView
         ref={webviewRef}
         source={{
@@ -109,8 +113,13 @@ function Home() {
         onLoadEnd={() => setLoading(false)}
       />
       {loading && <Loader />}
-    </SafeAreaView>
+    </SafeArea>
   );
 }
+
+const SafeArea = styled(SafeAreaView)`
+  flex: 1;
+  background-color: ${({ theme }) => theme.colors.grayPrimary};
+`;
 
 export default Home;
