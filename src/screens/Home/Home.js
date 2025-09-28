@@ -26,17 +26,38 @@ import { useDispatch } from 'react-redux';
 import messaging from '@react-native-firebase/messaging';
 import WebView from 'react-native-webview';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import styled from 'styled-components';
 
+// Selectors
+import { useRootSelector } from 'selectors';
+
+// Components
+import Loader from 'components/Loader';
+
+// Utils
 import { reportLog, logBreadcrumb } from 'utils/common';
 import {
   setNotificationsVisibleStatus,
   setNotificationsPermission,
   getNotificationsPermission,
 } from 'utils/getNotification';
-import MenuFooter from '../Menu/Menu/components/MenuFooter';
+import { getKeychainDataObject } from 'utils/keychain';
 
 function Home() {
   const dispatch = useDispatch();
+  const [pk, setPk] = React.useState('');
+  const webviewRef = React.useRef(null);
+  const [loading, setLoading] = React.useState(true);
+  const wallet = useRootSelector((root) => root.onboarding.wallet);
+
+  React.useEffect(() => {
+    (async () => {
+      const keychainData = await getKeychainDataObject();
+      if (wallet?.privateKey || keychainData?.privateKey) {
+        setPk(wallet?.privateKey ?? keychainData?.privateKey ?? '');
+      }
+    })();
+  }, [wallet]);
 
   React.useEffect(() => {
     // if (status === 'denied' || status === 'granted') return;
@@ -81,20 +102,24 @@ function Home() {
   );
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#121116' }}>
+    <SafeArea>
       <WebView
+        ref={webviewRef}
         source={{
-          uri: 'https://pillarx.app/',
-          headers: {
-            pk: '',
-          },
+          uri: `https://pillarx.app/?pk=${pk}`,
         }}
-        style={{ backgroundColor: '#121116' }}
         bounces={false}
+        onLoadStart={() => setLoading(true)}
+        onLoadEnd={() => setLoading(false)}
       />
-      <MenuFooter />
-    </SafeAreaView>
+      {loading && <Loader />}
+    </SafeArea>
   );
 }
+
+const SafeArea = styled(SafeAreaView)`
+  flex: 1;
+  background-color: ${({ theme }) => theme.colors.grayPrimary};
+`;
 
 export default Home;
