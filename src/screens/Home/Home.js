@@ -46,7 +46,6 @@ import { getKeychainDataObject } from 'utils/keychain';
 function Home() {
   const dispatch = useDispatch();
   const [pk, setPk] = React.useState('');
-  const webviewRef = React.useRef(null);
   const [loading, setLoading] = React.useState(true);
   const wallet = useRootSelector((root) => root.onboarding.wallet);
 
@@ -104,15 +103,13 @@ function Home() {
   return (
     <SafeArea>
       <WebView
-        ref={webviewRef}
         source={{
           uri: `https://pillarx.app/?pk=${pk}`,
         }}
         bounces={false}
-        onLoadStart={() => setLoading(true)}
         onLoadEnd={() => setLoading(false)}
       />
-      {loading && <Loader />}
+      {(loading || !pk) && <Loader />}
     </SafeArea>
   );
 }
