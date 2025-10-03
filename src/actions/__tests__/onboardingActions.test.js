@@ -26,19 +26,16 @@ import { SET_WALLET, UPDATE_WALLET_BACKUP_STATUS, SET_WALLET_IS_ENCRYPTING } fro
 import { SET_ONBOARDING_USERNAME_REGISTRATION_FAILED, SET_REGISTERING_USER } from 'constants/onboardingConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { SET_USER } from 'constants/userConstants';
-import { SET_CHAIN_SUPPORTED_ASSETS } from 'constants/assetsConstants';
-import { CHAIN } from 'constants/chainConstants';
 
 // actions
-import { setupAppServicesAction, setupUserAction, setupWalletAction } from 'actions/onboardingActions';
-import { localAssets } from 'actions/assetsActions';
+import { setupUserAction, setupWalletAction } from 'actions/onboardingActions';
 
 // services
 import etherspotService from 'services/etherspot';
 import { firebaseAnalytics } from 'services/firebase';
 
 // test utils
-import { mockEtherspotApiAccount, mockArchanovaAccount, mockDeviceUniqueId } from 'testUtils/jestSetup';
+import { mockEtherspotApiAccount, mockDeviceUniqueId } from 'testUtils/jestSetup';
 
 // types
 import type { EthereumWallet } from 'models/Wallet';
@@ -78,7 +75,6 @@ const mockBackupStatus: Object = {
 };
 
 const mockFcmToken = '12x2342x212';
-const randomPrivateKey = '0x09e910621c2e988e9f7f6ffcd7024f54ec1461fa6e86a4b545e9e1fe21c28866';
 
 describe('Onboarding actions', () => {
   let store;
@@ -178,30 +174,6 @@ describe('Onboarding actions', () => {
     return store.dispatch(setupUserAction(mockUser.username)).then(() => {
       const actualActions = store.getActions();
       expect(actualActions).toEqual(expectedActions);
-    });
-  });
-
-  it(`should expect series of actions with payload to be
-  dispatched on setupAppServicesAction execution when network is offline`, () => {
-    store = mockStore({
-      session: { data: { isOnline: false } },
-      wallet: {
-        backupStatus: mockBackupStatus,
-        data: mockImportedWallet,
-      },
-      user: { data: mockUser },
-      assets: { supportedAssets: { ethereum: localAssets(CHAIN.ETHEREUM) } },
-      onboarding: mockOnboarding,
-      accounts: { data: [mockArchanovaAccount] },
-    });
-
-    const expectedActions = [
-      { type: SET_CHAIN_SUPPORTED_ASSETS, payload: { chain: CHAIN.ETHEREUM, assets: localAssets(CHAIN.ETHEREUM) } },
-    ];
-
-    return store.dispatch(setupAppServicesAction(randomPrivateKey)).then(() => {
-      const actualActions = store.getActions();
-      expect(actualActions).toEqual(expect.arrayContaining(expectedActions));
     });
   });
 });

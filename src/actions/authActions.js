@@ -36,13 +36,11 @@ import {
   HOME_FLOW,
   PIN_CODE_UNLOCK,
   LOGOUT_PENDING,
-  TUTORIAL_FLOW,
 } from 'constants/navigationConstants';
 import { RESET_APP_STATE } from 'constants/authConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { SET_CACHED_URLS } from 'constants/cacheConstants';
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { SET_NEW_USER } from 'constants/onboardingConstants';
@@ -60,7 +58,7 @@ import { getDeviceUniqueId } from 'utils/device';
 // services
 import Storage from 'services/storage';
 import { navigate, getNavigationState, getLastRouteState } from 'services/navigation';
-import { firebaseAuth, firebaseMessaging, firebaseRemoteConfig } from 'services/firebase';
+import { firebaseAuth, firebaseMessaging } from 'services/firebase';
 import etherspotService from 'services/etherspot';
 
 // types
@@ -70,15 +68,14 @@ import type { OnValidPinCallback } from 'models/Wallet';
 // actions
 import { saveDbAction, encryptedStorage } from './dbActions';
 import { setupLoggingServicesAction } from './appActions';
-import { addAccountAction, deployAccounts, setActiveAccountAction } from './accountsActions';
+import { addAccountAction, setActiveAccountAction } from './accountsActions';
 import { encryptAndSaveWalletAction, checkForWalletBackupToastAction, updatePinAttemptsAction } from './walletActions';
 import { setAppThemeAction, setAppLanguageAction, setDeviceUniqueIdIfNeededAction } from './appSettingsActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { loadRemoteConfigWithUserPropertiesAction } from './remoteConfigActions';
 import { checkInitialDeepLinkAction } from './deepLinkActions';
 import { setSessionTranslationBundleInitialisedAction } from './sessionActions';
-import { fetchTutorialDataIfNeededAction } from './cmsActions';
-import { finishOnboardingAction, setViewedReceiveTokensWarning } from './onboardingActions';
+import { finishOnboardingAction } from './onboardingActions';
 import { addMissingWalletEventsIfNeededAction } from './walletEventsActions';
 
 const storage = Storage.getInstance('db');
@@ -110,16 +107,16 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
       onboarding: { isNewUser: isNewUserState },
     } = getState();
 
-    const viewedReceiveTokensWarningDb = await storage.get('viewed_receive_tokens_warning');
-    logBreadcrumb('loginAction', 'checking if warning viewed', viewedReceiveTokensWarningDb);
-    if (viewedReceiveTokensWarningDb?.viewedReceiveTokensWarning) {
-      logBreadcrumb(
-        'loginAction',
-        'flagging warning as viewed',
-        viewedReceiveTokensWarningDb.viewedReceiveTokensWarning,
-      );
-      dispatch(setViewedReceiveTokensWarning(viewedReceiveTokensWarningDb.viewedReceiveTokensWarning));
-    }
+    // const viewedReceiveTokensWarningDb = await storage.get('viewed_receive_tokens_warning');
+    // logBreadcrumb('loginAction', 'checking if warning viewed', viewedReceiveTokensWarningDb);
+    // if (viewedReceiveTokensWarningDb?.viewedReceiveTokensWarning) {
+    //   logBreadcrumb(
+    //     'loginAction',
+    //     'flagging warning as viewed',
+    //     viewedReceiveTokensWarningDb.viewedReceiveTokensWarning,
+    //   );
+    //   dispatch(setViewedReceiveTokensWarning(viewedReceiveTokensWarningDb.viewedReceiveTokensWarning));
+    // }
 
     const isNewUserDb = await storage.get('is_new_user');
     const isNewUser = !!isNewUserDb?.isNewUser ?? !!isNewUserState;
@@ -174,20 +171,20 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
 
     const route = getLastRouteState();
 
-    let navigateAction = {
+    const navigateAction = {
       // current active screen will be always AUTH_FLOW due to login/logout
       screen: lastActiveScreen || HOME_FLOW,
       params: lastActiveScreenParams,
     };
 
-    const enableOnboardingTutorial = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ONBOARDING_TUTORIAL);
-    if (enableOnboardingTutorial) {
-      await dispatch(fetchTutorialDataIfNeededAction());
-      const {
-        onboarding: { tutorialData },
-      } = getState();
-      if (tutorialData) navigateAction = { screen: TUTORIAL_FLOW };
-    }
+    // const enableOnboardingTutorial = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ONBOARDING_TUTORIAL);
+    // if (enableOnboardingTutorial) {
+    //   await dispatch(fetchTutorialDataIfNeededAction());
+    //   const {
+    //     onboarding: { tutorialData },
+    //   } = getState();
+    //   if (tutorialData) navigateAction = { screen: TUTORIAL_FLOW };
+    // }
 
     // if (!bannerData) dispatch(bannerDataAction());
 
@@ -260,7 +257,7 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
     // dispatch(checkKeyBasedAssetTransferTransactionsAction());
     // dispatch(fetchAllAccountsTotalBalancesAction());
     // dispatch(fetchAllAccountsAssetsBalancesAction());
-    if (!__DEV__) dispatch(deployAccounts());
+    // if (!__DEV__) dispatch(deployAccounts());
   };
 };
 

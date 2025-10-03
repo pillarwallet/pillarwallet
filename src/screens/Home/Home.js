@@ -31,9 +31,6 @@ import styled from 'styled-components';
 // Selectors
 import { useRootSelector } from 'selectors';
 
-// Components
-import Loader from 'components/Loader';
-
 // Utils
 import { reportLog, logBreadcrumb } from 'utils/common';
 import {
@@ -43,10 +40,12 @@ import {
 } from 'utils/getNotification';
 import { getKeychainDataObject } from 'utils/keychain';
 
+// Translations
+import t from 'translations/translate';
+
 function Home() {
   const dispatch = useDispatch();
   const [pk, setPk] = React.useState('');
-  const [loading, setLoading] = React.useState(true);
   const wallet = useRootSelector((root) => root.onboarding.wallet);
 
   React.useEffect(() => {
@@ -102,14 +101,19 @@ function Home() {
 
   return (
     <SafeArea>
-      <WebView
-        source={{
-          uri: `https://pillarx.app/?pk=${pk}`,
-        }}
-        bounces={false}
-        onLoadEnd={() => setLoading(false)}
-      />
-      {(loading || !pk) && <Loader />}
+      {pk ? (
+        <WebView
+          source={{
+            uri: `https://pillarx.app/?pk=${pk}`,
+          }}
+          bounces={false}
+          style={{ backgroundColor: 'transparent' }}
+        />
+      ) : (
+        <LoadingContainer>
+          <LoadingText>{t('home.loading')}</LoadingText>
+        </LoadingContainer>
+      )}
     </SafeArea>
   );
 }
@@ -117,6 +121,19 @@ function Home() {
 const SafeArea = styled(SafeAreaView)`
   flex: 1;
   background-color: ${({ theme }) => theme.colors.grayPrimary};
+`;
+
+const LoadingContainer = styled.View`
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+`;
+
+const LoadingText = styled.Text`
+  font-size: 16px;
+  color: white;
+  font-weight: 600;
 `;
 
 export default Home;

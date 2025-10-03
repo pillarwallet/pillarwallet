@@ -92,8 +92,6 @@ import {
   resetAndStartImportWalletAction,
 } from 'actions/authActions';
 import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedAssetTransferActions';
-import { initEtherspotServiceAction } from 'actions/etherspotActions';
-import { fetchOfflineLocalAssets } from 'actions/assetsActions';
 import { fetchTutorialDataIfNeededAction } from 'actions/cmsActions';
 import { initialDeepLinkExecutedAction } from 'actions/appSettingsActions';
 import { addAccountAction, setActiveAccountAction } from 'actions/accountsActions';
@@ -349,21 +347,21 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
     dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.encryptingKeys') });
     // encrypt and store
     logBreadcrumb('onboarding', 'walletSetupAction: dispatching encryptAndSaveWalletAction');
-    await dispatch(encryptAndSaveWalletAction(pinCode, ethersWallet, backupStatus, enableBiometrics));
+    dispatch(encryptAndSaveWalletAction(pinCode, ethersWallet, backupStatus, enableBiometrics));
 
     logBreadcrumb('onboarding', 'walletSetupAction: dispatching saveDbAction for saving app settings');
     dispatch(saveDbAction('app_settings', { appSettings: { wallet: +new Date() } }));
 
     dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.initEtherspot') });
     if (onboardingUsername) {
-      await dispatch(setupUserAction(onboardingUsername?.username));
+      dispatch(setupUserAction(onboardingUsername?.username));
     } else {
       logBreadcrumb('onboarding', 'walletSetupAction: dispatching setupAddressAction');
-      await dispatch(setupAddressAction());
+      dispatch(setupAddressAction());
     }
 
     logBreadcrumb('onboarding', 'walletSetupAction: dispatching setupAppServicesAction');
-    await dispatch(setupAppServicesAction(privateKey));
+    dispatch(setupAppServicesAction(privateKey));
 
     logBreadcrumb('onboarding', 'walletSetupAction: dispatching initialDeepLinkExecutedAction');
     dispatch(initialDeepLinkExecutedAction());
@@ -380,10 +378,12 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
 
     dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.ready') });
 
-    setTimeout(() => {
-      dispatch({ type: SET_FETCHING, payload: false });
-      dispatch({ type: SET_LOADING_MESSAGE, payload: '' });
-    }, 0);
+    dispatch({ type: SET_FETCHING, payload: false });
+    dispatch({ type: SET_LOADING_MESSAGE, payload: '' });
+    // setTimeout(() => {
+    //   dispatch({ type: SET_FETCHING, payload: false });
+    //   dispatch({ type: SET_LOADING_MESSAGE, payload: '' });
+    // }, 0);
   };
 };
 
@@ -415,7 +415,7 @@ export const setupAppServicesAction = (privateKey: ?string) => {
       return;
     }
 
-    await dispatch(fetchOfflineLocalAssets());
+    // await dispatch(fetchOfflineLocalAssets());
 
     logBreadcrumb('onboarding', 'onboardingAction.js: checking user is online or not');
 
@@ -430,8 +430,8 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     await dispatch(updateFcmTokenAction());
 
     // active Etherspot service is required to proceed
-    logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching initEtherspotServiceAction');
-    await dispatch(initEtherspotServiceAction(privateKey));
+    // logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching initEtherspotServiceAction');
+    // await dispatch(initEtherspotServiceAction(privateKey));
 
     // user might not be registered at this point
     // dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.fetchingTokens') });

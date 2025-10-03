@@ -485,7 +485,7 @@
     "last_month": "Last Month",
     "last_year": "Last Year",
     "token_analytics": "Token Analytics",
-     "signin":"Sign in"
+    "signin": "Sign in"
   },
 
   "paragraph": {
@@ -685,6 +685,7 @@
   },
 
   "home": {
+    "loading": "Loading...",
     "balance": {
       "lastWeek": "Last week"
     },
