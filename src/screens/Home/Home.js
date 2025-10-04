@@ -46,6 +46,7 @@ import t from 'translations/translate';
 function Home() {
   const dispatch = useDispatch();
   const [pk, setPk] = React.useState('');
+  const [loading, setLoading] = React.useState(true);
   const wallet = useRootSelector((root) => root.onboarding.wallet);
 
   React.useEffect(() => {
@@ -101,15 +102,17 @@ function Home() {
 
   return (
     <SafeArea>
-      {pk ? (
+      {pk && (
         <WebView
           source={{
             uri: `https://pillarx.app/?pk=${pk}`,
           }}
           bounces={false}
+          onLoadEnd={() => setLoading(false)}
           style={{ backgroundColor: 'transparent' }}
         />
-      ) : (
+      )}
+      {(loading || !pk) && (
         <LoadingContainer>
           <LoadingText>{t('home.loading')}</LoadingText>
         </LoadingContainer>
