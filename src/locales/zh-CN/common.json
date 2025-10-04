@@ -52,8 +52,8 @@
   "minute_plural": "{{count}} 分钟",
   "tutorialTitle": "欢迎来到柱子！",
   "tutorialSubtitle": "痛苦本身就是爱的痛苦，主要的生态问题，但我给这种时间倒下，让一些巨大的痛苦和痛苦。",
-  "smart_wallet":"智能钱包",
-  "key_wallet":"钥匙钱包",
+  "smart_wallet": "智能钱包",
+  "key_wallet": "钥匙钱包",
 
   "units": {
     "1e3": "{{value}} 千",
@@ -68,11 +68,11 @@
     "polygon": "Polygon",
     "optimism": "Optimism",
     "optimism_kovan": "Optimism Kovan",
-    "gorli":"Ethereum Görli",
-    "sokol":"Gnosis Sokol",
-    "binance_test":"Binance Testnet",
-    "mumbai":"Polygon Mumbai",
-    "optimism_gorli":"Optimistic Görli",
+    "gorli": "Ethereum Görli",
+    "sokol": "Gnosis Sokol",
+    "binance_test": "Binance Testnet",
+    "mumbai": "Polygon Mumbai",
+    "optimism_gorli": "Optimistic Görli",
     "arbitrum": "Arbitrum",
     "arbitrum_nitro": "Arbitrum Nitro"
   },
@@ -92,18 +92,18 @@
     "liquidityPools": "流动资金池",
     "rewards": "奖励",
     "datasets": "数据集",
-    "apps":"应用",
+    "apps": "应用",
     "collectibles": "NFT"
   },
 
-  "onboardingLoaders":{
+  "onboardingLoaders": {
     "initEtherspot": "初始化 Etherspot",
     "loadingWallet": "加载钱包",
     "creatingAccounts": "创建帐户",
     "encryptingKeys": "加密密钥",
-    "deployingGnosis":"部署 Gnosis",
+    "deployingGnosis": "部署 Gnosis",
     "fetchingTokens": "获取代币",
-    "fetchingPrices":"获取价格",
+    "fetchingPrices": "获取价格",
     "loadingTxHistory": "加载交易历史",
     "ready": "准备好！",
     "noInternet": "没有网络，请重试..."
@@ -157,7 +157,7 @@
     "added": "添加",
     "adding": "添加",
     "all": "全部",
-    "allNetwork":"所有网络",
+    "allNetwork": "所有网络",
     "backedUp": "备份安全",
     "canceled": "取消",
     "collectibleFromUser": "来自 {{username}} 的 NFT",
@@ -313,10 +313,10 @@
     "add_tokens": "添加代币",
     "custom_token_import": "自定义令牌导入",
     "number_of_tokens": "{{tokens}} 代币",
-    "find_token":"查找令牌或输入地址",
-    "manageTokenLists":"管理令牌列表",
-    "importCustomToken":"导入自定义令牌",
-    "importNumberOfCustomToken":"导入 {{tokens}} 自定义令牌",
+    "find_token": "查找令牌或输入地址",
+    "manageTokenLists": "管理令牌列表",
+    "importCustomToken": "导入自定义令牌",
+    "importNumberOfCustomToken": "导入 {{tokens}} 自定义令牌",
     "contractAddress": "合约地址",
     "erc20": " (ERС-20)",
     "tokenExists": "此令牌已存在",
@@ -465,7 +465,7 @@
     "last_month": "上个月",
     "last_year": "去年",
     "token_analytics": "代币分析",
-     "signin":"登入"
+    "signin": "登入"
   },
   "paragraph": {
     "addressCopiedToClipboard": "地址已复制到剪贴板。",
@@ -473,7 +473,7 @@
     "ensNameCopiedToClipboard": "ENS 名称已复制到剪贴板。",
     "cameraPermissionMissing": "未授予相机权限 - 无法打开相机预览。",
     "cameraPermission": "相机权限",
-    "needCameraPermission":"需要相机权限才能打开 WalletConnect 二维码扫描器",
+    "needCameraPermission": "需要相机权限才能打开 WalletConnect 二维码扫描器",
     "didNotReceiveVerificationCodeQuestion": "没有收到验证码？",
     "instructionsOnBackingUpBackupPhase": "以正确的顺序写下您的 12 字备用短语。",
     "backupPhraseVerificationInstructions": "请选择正确的词。",
@@ -486,7 +486,7 @@
     "sessionExpiredReEnterPin": "登录会话已过期，请输入您的 PIN 码以继续。",
     "addContacts": "将联系人添加到地址簿以轻松访问收藏地址以发送资产。",
     "nativeIntegrationWarning": "以下工具可让您直接访问智能合约。这被认为是一种专业工具，如果您不知道自己在做什么，请不要尝试使用此工具，因为它可能会导致资金损失。",
-    "ownRisk":"继续自担风险。",
+    "ownRisk": "继续自担风险。",
     "riskWithType": "您的投资组合现在是{{type}}。",
     "portfolio_riskiness": "你搬到马厩的次数越多，\n你承担的风险就越小。",
     "tokenNotListedWarning": "此令牌未在 Uniswap 上正式列出。您可以自行承担进口和交易风险。",
@@ -652,6 +652,7 @@
     "invalidEmailURL": "无法处理提供的 URL"
   },
   "home": {
+    "loading": "加载中...",
     "balance": {
       "lastWeek": "上个星期"
     },
@@ -669,7 +670,7 @@
     },
     "apps": {
       "title": "应用",
-      "new":"新的"
+      "new": "新的"
     }
   },
   "menu": {
@@ -691,7 +692,7 @@
       "title": "设置",
       "appSettings": "应用设置",
       "darkMode": "黑暗模式",
-      "appearance":"外貌",
+      "appearance": "外貌",
       "language": "语",
       "fiatCurrency": "当地法定货币",
       "biometricLogin": "生物识别登录",
@@ -772,12 +773,12 @@
     "connectedApps": {
       "title": "连接的 dapp",
       "connected": "连接的",
-      "addWallet":"添加钱包",
-      "addNetwork":"添加网络",
-      "disconnect":"断开",
-      "etherspot":"Etherspot",
-      "plr_v1":"Pillar v1",
-      "key_based":"Keybased"
+      "addWallet": "添加钱包",
+      "addNetwork": "添加网络",
+      "disconnect": "断开",
+      "etherspot": "Etherspot",
+      "plr_v1": "Pillar v1",
+      "key_based": "Keybased"
     },
     "disconnectModal": {
       "title": "断开",
@@ -1134,7 +1135,7 @@
       "smartWalletNeedToBeActivated": "需要激活智能钱包才能继续。",
       "unsupportedRequestCallRequestType": "不支持的呼叫请求类型。"
     },
-    "paragraph":{
+    "paragraph": {
       "undeploy_warning_1": "您正在连接到一个未部署的钱包，您将无法执行任何交易，请转到",
       "deploy_manager": "钱包管理器",
       "undeploy_warning_2": "部署。",
@@ -1361,14 +1362,14 @@
         "title": "没有实时优惠",
         "paragraph": "目前不提供来自交换服务的匹配报价。"
       },
-      "routes":{
+      "routes": {
         "title": "没有可用的路线",
         "paragraph": "目前没有提供来自跨链服务的匹配路由。"
       }
     },
-    "gas_fee_asset":{
-      "title":"支付费用",
-      "left":"剩下"
+    "gas_fee_asset": {
+      "title": "支付费用",
+      "left": "剩下"
     }
   },
   "alert": {
@@ -1555,9 +1556,9 @@
   },
   "tooltip": {
     "switchAccountsByTappingHere": "您可以点按此处切换帐户",
-    "start_by_cash":"从添加现金开始",
+    "start_by_cash": "从添加现金开始",
     "switch_account": "切换到 Etherspot 仪表板的密钥钱包",
-    "signInDeFi":"登录 DeFi",
+    "signInDeFi": "登录 DeFi",
     "includesDeploymentFee": "一次性智能钱包部署费"
   },
   "governanceCall": {
@@ -1583,23 +1584,23 @@
       "privateKeyWarning": "您的私钥用于在设备丢失/更改或删除您的钱包时恢复/导入您的钱包。丢失私钥会导致无法访问您的资金。"
     }
   },
-   "getNotifications":{
+  "getNotifications": {
     "title": "启用推送通知",
     "description": "Pillar 将通知您的交易状态和来自 dapp 的请求。从不垃圾邮件，永远在点。",
     "pillarReceiveMessage": "当您收到加密货币时收到通知。",
     "latestUpdateMessage": "获取有关 DeFi 机会的最新动态。"
   },
 
-  "transactionNotification":{
-    "selling":"销售",
-    "you_received":"您已收到",
-    "sending":"发送",
-    "you_sent":"你已经发送",
-    "to":"至",
-    "sold":"卖",
-    "on":"上",
-    "for":"为了",
-    "gas":"气体",
-    "time":"时间"
+  "transactionNotification": {
+    "selling": "销售",
+    "you_received": "您已收到",
+    "sending": "发送",
+    "you_sent": "你已经发送",
+    "to": "至",
+    "sold": "卖",
+    "on": "上",
+    "for": "为了",
+    "gas": "气体",
+    "time": "时间"
   }
 }
