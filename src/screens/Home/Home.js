@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { BackHandler, PermissionsAndroid, Platform } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 
 import messaging from '@react-native-firebase/messaging';
@@ -29,7 +29,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import styled from 'styled-components';
 
 // Selectors
-import { useRootSelector } from 'selectors';
+import { useActiveAccount, useRootSelector } from 'selectors';
 
 // Utils
 import { reportLog, logBreadcrumb } from 'utils/common';
@@ -43,8 +43,17 @@ import { getKeychainDataObject } from 'utils/keychain';
 // Translations
 import t from 'translations/translate';
 
+// Constants
+import { MENU_FLOW } from 'constants/navigationConstants';
+
+// Config
+import { getEnv } from 'configs/envConfig';
+
 function Home() {
+  const navigation = useNavigation();
   const dispatch = useDispatch();
+  const activeAccount = useActiveAccount();
+  const webviewRef = React.useRef<any>(null);
   const [pk, setPk] = React.useState('');
   const [loading, setLoading] = React.useState(true);
   const wallet = useRootSelector((root) => root.onboarding.wallet);
@@ -100,14 +109,29 @@ function Home() {
     }, []),
   );
 
+  const onWebViewMessage = (event) => {
+    const data = JSON.parse(event?.nativeEvent?.data) || null;
+
+    if (data?.type === 'pillarXAuthRequest' && data?.value === 'pk') {
+      webviewRef.current.postMessage(JSON.stringify({ type: 'pillarWalletPkResponse', value: { pk } }), '*');
+    }
+    if (data?.type === 'pillarXAuthRequest' && data?.value === 'settings') {
+      // Open Menu
+      navigation.navigate(MENU_FLOW);
+    }
+  };
+
   return (
     <SafeArea>
       {pk && (
         <WebView
+          ref={webviewRef}
           source={{
-            uri: `https://pillarx.app/?pk=${pk}`,
+            // eslint-disable-next-line i18next/no-literal-string
+            uri: `${getEnv().PILLARX_ENDPOINT}?devicePlatform=${Platform.OS}&eoaAddress=${activeAccount?.id || ''}`,
           }}
           bounces={false}
+          onMessage={onWebViewMessage}
           onLoadEnd={() => setLoading(false)}
           style={{ backgroundColor: 'transparent' }}
         />
