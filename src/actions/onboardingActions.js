@@ -450,10 +450,7 @@ export const setupAppServicesAction = (privateKey: ?string) => {
       logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching addAccountAction for key based account');
       dispatch(addAccountAction(walletData.address, ACCOUNT_TYPES.KEY_BASED));
 
-      if (isNewUser) {
-        // set active key wallet for new users
-        dispatch(setActiveAccountAction(walletData.address));
-      }
+      dispatch(setActiveAccountAction(walletData.address));
     } else {
       logBreadcrumb('onboarding', 'setupAppServicesAction: cannot find key based address');
     }

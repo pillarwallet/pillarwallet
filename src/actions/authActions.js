@@ -239,7 +239,7 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
     // }
 
     const activeAccount = getActiveAccount(accounts);
-    if (isEmpty(activeAccount) && isNewUser) {
+    if (isEmpty(activeAccount)) {
       // set active key wallet for new users
       dispatch(setActiveAccountAction(address));
     }
