@@ -72,9 +72,9 @@ const Menu = ({ route }: Props) => {
   const knowledgebaseUrl = firebaseRemoteConfig.getString(REMOTE_CONFIG.KNOWLEDGEBASE_URL);
 
   const goToSettings = () => navigation.navigate(MENU_SETTINGS);
-  const goToInviteFriends = () => navigation.navigate(CONTACTS_FLOW);
+  // const goToInviteFriends = () => navigation.navigate(CONTACTS_FLOW);
   const goToStorybook = () => navigation.navigate(STORYBOOK);
-  const goToManageTokenLists = () => navigation.navigate(ADD_TOKENS);
+  // const goToManageTokenLists = () => navigation.navigate(ADD_TOKENS);
 
   const goToKnowledgebase = () => Linking.openURL(knowledgebaseUrl);
   const goToEmailSupport = () => emailSupport(accounts);

@@ -50,13 +50,13 @@ import type { Route } from '@react-navigation/native';
 
 // Local
 import AppearanceSetting from './components/AppearanceSetting';
-import LanguageSetting from './components/LanguageSetting';
-import CurrencySetting from './components/CurrencySetting';
+// import LanguageSetting from './components/LanguageSetting';
+// import CurrencySetting from './components/CurrencySetting';
 import BiometricLoginSetting from './components/BiometricLoginSetting';
 import ChangePinSetting from './components/ChangePinSetting';
 import ViewBackupPhraseSetting from './components/ViewBackupPhraseSetting';
 import BackupWalletSetting from './components/BackupWalletSetting';
-import ImportFlowSetting from './components/ImportFlowSetting';
+// import ImportFlowSetting from './components/ImportFlowSetting';
 
 interface Props {
   route: Route,
