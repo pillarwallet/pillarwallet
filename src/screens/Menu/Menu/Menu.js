@@ -32,7 +32,7 @@ import HeaderBlock from 'components/HeaderBlock';
 import Banner from 'components/Banner/Banner';
 
 // Constants
-import { MENU_SETTINGS, CONTACTS_FLOW, STORYBOOK, ADD_TOKENS } from 'constants/navigationConstants';
+import { MENU_SETTINGS, STORYBOOK } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
