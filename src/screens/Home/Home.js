@@ -29,7 +29,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import styled from 'styled-components';
 
 // Selectors
-import { useActiveAccount, useRootSelector } from 'selectors';
+import { useActiveAccount } from 'selectors';
 
 // Utils
 import { reportLog, logBreadcrumb } from 'utils/common';
@@ -56,16 +56,48 @@ function Home() {
   const webviewRef = React.useRef<any>(null);
   const [pk, setPk] = React.useState('');
   const [loading, setLoading] = React.useState(true);
-  const wallet = useRootSelector((root) => root.onboarding.wallet);
+  const [retryCount, setRetryCount] = React.useState(0);
 
   React.useEffect(() => {
+    let isMounted = true;
+    let timeoutId;
+
     (async () => {
-      const keychainData = await getKeychainDataObject();
-      if (wallet?.privateKey || keychainData?.privateKey) {
-        setPk(wallet?.privateKey ?? keychainData?.privateKey ?? '');
+      try {
+        logBreadcrumb('Home', 'Attempting to load private key from keychain', { attempt: retryCount + 1 });
+        const keychainData = await getKeychainDataObject(() => null); // Pass custom error handler to prevent alert
+        if (!isMounted) return;
+
+        const privateKey = keychainData?.privateKey ?? '';
+
+        if (privateKey) {
+          logBreadcrumb('Home', 'Private key successfully loaded from keychain');
+          setPk(privateKey);
+        } else {
+          // Keychain doesn't have private key yet - retry up to 5 times with 500ms delay
+          logBreadcrumb('Home', 'No private key found in keychain', { retryCount });
+          if (retryCount < 5) {
+            timeoutId = setTimeout(() => {
+              if (isMounted) {
+                setRetryCount((prev) => prev + 1);
+              }
+            }, 500);
+          } else {
+            reportLog('Home: Failed to load private key after 5 attempts');
+          }
+        }
+      } catch (error) {
+        if (isMounted) {
+          reportLog('Home: Failed to get keychain data', error);
+        }
       }
     })();
-  }, [wallet]);
+
+    return () => {
+      isMounted = false;
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [retryCount]);
 
   React.useEffect(() => {
     // if (status === 'denied' || status === 'granted') return;
@@ -136,7 +168,7 @@ function Home() {
           style={{ backgroundColor: 'transparent' }}
         />
       )}
-      {(loading || !pk) && (
+      {(!pk || loading) && (
         <LoadingContainer>
           <LoadingText>{t('home.loading')}</LoadingText>
         </LoadingContainer>

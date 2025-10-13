@@ -90,15 +90,15 @@ const Settings = ({ route }: Props) => {
           <View>
             <Header>{t('walletBackup')}</Header>
             <BackupWalletSetting wallet={wallet} />
-            <ImportFlowSetting wallet={wallet} />
+            {/* <ImportFlowSetting wallet={wallet} /> */}
           </View>
         )}
 
         <Header>{t('appSettings')}</Header>
 
         <AppearanceSetting />
-        <LanguageSetting />
-        <CurrencySetting />
+        {/* <LanguageSetting /> */}
+        {/* <CurrencySetting /> */}
         <BiometricLoginSetting wallet={wallet} pin={pin} />
         <ChangePinSetting />
 
@@ -108,7 +108,7 @@ const Settings = ({ route }: Props) => {
           <View>
             <Header>{t('walletBackup')}</Header>
             <ViewBackupPhraseSetting wallet={wallet} />
-            <ImportFlowSetting wallet={wallet} />
+            {/* <ImportFlowSetting wallet={wallet} /> */}
           </View>
         )}
         <Banner screenName={screenName} />

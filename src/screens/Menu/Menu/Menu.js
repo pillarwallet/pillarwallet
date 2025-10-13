@@ -109,8 +109,8 @@ const Menu = ({ route }: Props) => {
           // eslint-disable-next-line i18next/no-literal-string
           accessibilityLabel={`${TAG}-button-settings`}
         />
-        <MenuItem title={t('item.tokens')} icon="tokens" onPress={goToManageTokenLists} />
-        <MenuItem title={t('item.addressBook')} icon="contacts" onPress={goToInviteFriends} />
+        {/* <MenuItem title={t('item.tokens')} icon="tokens" onPress={goToManageTokenLists} /> */}
+        {/* <MenuItem title={t('item.addressBook')} icon="contacts" onPress={goToInviteFriends} /> */}
         <MenuItem
           title={t('item.emailSupport')}
           icon="message"
