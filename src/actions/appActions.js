@@ -31,7 +31,7 @@ import { firebaseCrashlytics } from 'services/firebase';
 
 // constants
 import { IS_APP_VERSION_V3 } from 'constants/appConstants';
-import { AUTH_FLOW, ONBOARDING_FLOW, PIN_CODE_UNLOCK, MENU_SELECT_APPEARANCE } from 'constants/navigationConstants';
+import { AUTH_FLOW, ONBOARDING_FLOW, PIN_CODE_UNLOCK } from 'constants/navigationConstants';
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import {
   SET_SUPPORTED_ASSETS,

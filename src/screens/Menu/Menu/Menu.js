@@ -32,7 +32,7 @@ import HeaderBlock from 'components/HeaderBlock';
 import Banner from 'components/Banner/Banner';
 
 // Constants
-import { MENU_SETTINGS, STORYBOOK } from 'constants/navigationConstants';
+import { MENU_SETTINGS } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
@@ -73,7 +73,7 @@ const Menu = ({ route }: Props) => {
 
   const goToSettings = () => navigation.navigate(MENU_SETTINGS);
   // const goToInviteFriends = () => navigation.navigate(CONTACTS_FLOW);
-  const goToStorybook = () => navigation.navigate(STORYBOOK);
+  // const goToStorybook = () => navigation.navigate(STORYBOOK);
   // const goToManageTokenLists = () => navigation.navigate(ADD_TOKENS);
 
   const goToKnowledgebase = () => Linking.openURL(knowledgebaseUrl);
