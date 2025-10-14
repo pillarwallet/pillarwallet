@@ -127,7 +127,7 @@ const Menu = ({ route }: Props) => {
           // eslint-disable-next-line i18next/no-literal-string
           accessibilityLabel={`${TAG}-button-knowledge_base`}
         />
-        {__DEV__ && (
+        {/* {__DEV__ && (
           <MenuItem
             title={t('item.storybook')}
             icon="lifebuoy"
@@ -136,7 +136,7 @@ const Menu = ({ route }: Props) => {
             // eslint-disable-next-line i18next/no-literal-string
             accessibilityLabel={`${TAG}-button-storybook`}
           />
-        )}
+        )} */}
 
         <SocialMediaLinks />
 

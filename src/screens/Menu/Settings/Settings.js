@@ -49,7 +49,7 @@ import type { WalletObject } from 'models/Wallet';
 import type { Route } from '@react-navigation/native';
 
 // Local
-import AppearanceSetting from './components/AppearanceSetting';
+// import AppearanceSetting from './components/AppearanceSetting';
 // import LanguageSetting from './components/LanguageSetting';
 // import CurrencySetting from './components/CurrencySetting';
 import BiometricLoginSetting from './components/BiometricLoginSetting';
@@ -96,7 +96,7 @@ const Settings = ({ route }: Props) => {
 
         <Header>{t('appSettings')}</Header>
 
-        <AppearanceSetting />
+        {/* <AppearanceSetting /> */}
         {/* <LanguageSetting /> */}
         {/* <CurrencySetting /> */}
         <BiometricLoginSetting wallet={wallet} pin={pin} />

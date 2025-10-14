@@ -173,11 +173,11 @@ export const initAppAndRedirectAction = () => {
     dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
     let navAction;
     if (walletTimestamp && wallet) {
-      const appearanceVisible = get(storageData, 'appearance_visible');
+      // const appearanceVisible = get(storageData, 'appearance_visible');
       navAction = {
         name: AUTH_FLOW,
         params: {
-          screen: !appearanceVisible ? MENU_SELECT_APPEARANCE : PIN_CODE_UNLOCK,
+          screen: PIN_CODE_UNLOCK, // Always go to PIN unlock, skip appearance selection
           params: {
             omitPin: appSettings.omitPinOnLogin,
             next_pin_unlock: true,

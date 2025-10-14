@@ -52,7 +52,7 @@
   "hour_plural": "{{count}} hours",
   "minute": "{{count}} minute",
   "minute_plural": "{{count}} minutes",
-  "tutorialTitle": "Welcome to Pillar!",
+  "tutorialTitle": "Welcome to PillarX!",
   "tutorialSubtitle": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
   "smart_wallet": "Smart Wallet",
   "key_wallet": "Key Wallet",
@@ -151,7 +151,7 @@
     "privateKey": "Private key",
     "exchange": "Exchange",
     "unlockWithBiometrics": "Unlock with biometric sensor",
-    "welcome": "Welcome to Pillar Wallet!",
+    "welcome": "Welcome to PillarX!",
     "seedPhrase": "12 words seed phrase",
     "registerEnsName": "Register ENS name",
     "portfolio_riskiness": "Portfolio Riskiness",
@@ -685,7 +685,7 @@
   },
 
   "home": {
-    "loading": "Loading...",
+    "loading": "Just a moment, getting your wallet ready...",
     "balance": {
       "lastWeek": "Last week"
     },

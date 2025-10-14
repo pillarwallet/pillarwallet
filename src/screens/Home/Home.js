@@ -166,6 +166,16 @@ function Home() {
           onMessage={onWebViewMessage}
           onLoadEnd={() => setLoading(false)}
           style={{ backgroundColor: 'transparent' }}
+          scalesPageToFit={false}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+          // eslint-disable-next-line i18next/no-literal-string
+          injectedJavaScript={`
+            const meta = document.createElement('meta');
+            meta.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
+            meta.setAttribute('name', 'viewport');
+            document.getElementsByTagName('head')[0].appendChild(meta);
+          `}
         />
       )}
       {(!pk || loading) && (
