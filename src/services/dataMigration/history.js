@@ -27,27 +27,16 @@ import { CHAIN } from 'constants/chainConstants';
 import { saveDbAction } from 'actions/dbActions';
 
 // utils
-import {
-  getActiveAccount,
-  getActiveAccountAddress,
-  getActiveAccountId,
-  isArchanovaAccount,
-} from 'utils/accounts';
-import { addressesEqual } from 'utils/assets';
-import {
-  transactionStoreHasOldStructure,
-  updateAccountHistoryForChain,
-} from 'utils/history';
+import { transactionStoreHasOldStructure } from 'utils/history';
 import { logBreadcrumb } from 'utils/common';
-
 
 export default async function (storageData: Object, dispatch: Function, getState: Function) {
   const isMigratedToReduxPersist = !!storageData?.dataMigration?.migratedToReduxPersist?.history;
-  const accounts = storageData?.accounts?.accounts ?? []; // not a mistype
   let history = storageData?.history?.history ?? {}; // not a mistype
 
-  const { history: { data: stateHistory } } = getState();
-  const activeAccount = getActiveAccount(accounts || []);
+  const {
+    history: { data: stateHistory },
+  } = getState();
 
   // check if the data was migrated, but the current state is empty and history from storage is not empty
   if (isMigratedToReduxPersist && isEmpty(stateHistory) && !isEmpty(history)) {
@@ -55,13 +44,13 @@ export default async function (storageData: Object, dispatch: Function, getState
   }
 
   if (transactionStoreHasOldStructure(history)) {
-    history = Object.keys(history).reduce((
-      updated,
-      accountId,
-    ) => ({
-      ...updated,
-      [accountId]: { ethereum: history[accountId] ?? [] },
-    }), {});
+    history = Object.keys(history).reduce(
+      (updated, accountId) => ({
+        ...updated,
+        [accountId]: { ethereum: history[accountId] ?? [] },
+      }),
+      {},
+    );
     dispatch({ type: SET_HISTORY, payload: history });
     dispatch(saveDbAction('history', { history }, true));
   }
@@ -76,10 +65,7 @@ export default async function (storageData: Object, dispatch: Function, getState
     history = Object.keys(history).reduce((fixedHistory, accountId) => {
       const accountHistory = history[accountId] ?? {};
 
-      const fixedAccountHistory = Object.keys(accountHistory).reduce((
-        fixedChainsHistory,
-        chainKey,
-      ) => {
+      const fixedAccountHistory = Object.keys(accountHistory).reduce((fixedChainsHistory, chainKey) => {
         // drop key if it's not chain
         if (!chainsKeys.includes(chainKey)) return fixedChainsHistory;
 
@@ -91,23 +77,6 @@ export default async function (storageData: Object, dispatch: Function, getState
     }, {});
     dispatch({ type: SET_HISTORY, payload: history });
     dispatch(saveDbAction('history', { history }, true));
-  }
-
-  // legacy cleanup migration used by Archanova accounts
-  if (activeAccount && isArchanovaAccount(activeAccount)) {
-    const accountAddress = getActiveAccountAddress(accounts);
-    const accountId = getActiveAccountId(accounts);
-    const accountHistoryItems = history[accountId] && Array.isArray(history[accountId])
-      ? history[accountId]
-      : [];
-    const cleanedHistoryItems = accountHistoryItems
-      .filter(tx => addressesEqual(tx.to, accountAddress) || addressesEqual(tx.from, accountAddress));
-
-    if (accountHistoryItems.length !== cleanedHistoryItems.length) {
-      history = updateAccountHistoryForChain(history, accountId, CHAIN.ETHEREUM, cleanedHistoryItems);
-      dispatch(saveDbAction('history', { history }, true));
-      dispatch({ type: SET_HISTORY, payload: history });
-    }
   }
 
   // data migrated, no need to do anything

@@ -31,7 +31,7 @@ import { firebaseCrashlytics } from 'services/firebase';
 
 // constants
 import { IS_APP_VERSION_V3 } from 'constants/appConstants';
-import { AUTH_FLOW, ONBOARDING_FLOW, PIN_CODE_UNLOCK, MENU_SELECT_APPEARANCE } from 'constants/navigationConstants';
+import { AUTH_FLOW, ONBOARDING_FLOW, PIN_CODE_UNLOCK } from 'constants/navigationConstants';
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import {
   SET_SUPPORTED_ASSETS,
@@ -47,20 +47,6 @@ import { SET_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'constant
 import { SET_RATES } from 'constants/ratesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
-import {
-  SET_ARCHANOVA_WALLET_ACCOUNTS,
-  SET_ARCHANOVA_WALLET_DEPLOYMENT_DATA,
-  SET_ARCHANOVA_WALLET_UPGRADE_STATUS,
-  SET_ARCHANOVA_WALLET_LAST_SYNCED_PAYMENT_ID,
-  SET_ARCHANOVA_WALLET_LAST_SYNCED_TRANSACTION_ID,
-} from 'constants/archanovaConstants';
-import { SET_INSIGHTS_STATE } from 'constants/insightsConstants';
-import {
-  UPDATE_PAYMENT_NETWORK_BALANCES,
-  UPDATE_PAYMENT_NETWORK_STAKED,
-  MARK_PLR_TANK_INITIALISED,
-} from 'constants/paymentNetworkConstants';
-import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
 import { SET_WALLET_EVENTS } from 'constants/walletEventsConstants';
 import { SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
 import { SET_KEY_BASED_ASSETS_TO_TRANSFER } from 'constants/keyBasedAssetTransferConstants';
@@ -69,7 +55,6 @@ import { SET_CACHED_URLS } from 'constants/cacheConstants';
 import { SET_HISTORY_LAST_SYNC_IDS } from 'constants/historyConstants';
 import { SET_TOTAL_BALANCES } from 'constants/totalsBalancesConstants';
 import { SET_USER } from 'constants/userConstants';
-import { SET_APP_HOLDINGS } from 'constants/appsHoldingsConstants';
 
 // utils
 import { getWalletFromStorage } from 'utils/wallet';
@@ -116,7 +101,6 @@ export const initAppAndRedirectAction = () => {
       storageData = await migrate('history', storageData, dispatch, getState);
       storageData = await migrate('supportedAssets', storageData, dispatch, getState);
       storageData = await migrate('rates', storageData, dispatch, getState);
-      storageData = await migrate('appsHoldings', storageData, dispatch, getState);
       storageData = await migrate('addTokensList', storageData, dispatch, getState);
       storageData = await migrate('customTokensList', storageData, dispatch, getState);
       storageData = await migrate('defaultTokens', storageData, dispatch, getState);
@@ -146,9 +130,6 @@ export const initAppAndRedirectAction = () => {
       const rates = storageData?.rates?.rates ?? {};
       dispatch({ type: SET_RATES, payload: rates });
 
-      const appsHoldings = storageData?.appsHoldings?.appsHoldings ?? {};
-      dispatch({ type: SET_APP_HOLDINGS, payload: appsHoldings });
-
       const { txCount = {} } = get(storageData, 'txCount', {});
       dispatch({ type: UPDATE_TX_COUNT, payload: txCount });
 
@@ -158,27 +139,12 @@ export const initAppAndRedirectAction = () => {
       const { collectiblesHistory = {} } = get(storageData, 'collectiblesHistory', {});
       dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: collectiblesHistory });
 
-      const { paymentNetworkBalances = {} } = get(storageData, 'paymentNetworkBalances', {});
-      dispatch({ type: UPDATE_PAYMENT_NETWORK_BALANCES, payload: paymentNetworkBalances });
-
-      const { paymentNetworkStaked = '' } = get(storageData, 'paymentNetworkStaked', {});
-      dispatch({ type: UPDATE_PAYMENT_NETWORK_STAKED, payload: paymentNetworkStaked });
-
-      const { isPLRTankInitialised = false } = get(storageData, 'isPLRTankInitialised', {});
-      if (isPLRTankInitialised) dispatch({ type: MARK_PLR_TANK_INITIALISED });
-
       const { offlineQueue = [] } = get(storageData, 'offlineQueue', {});
       dispatch({ type: UPDATE_OFFLINE_QUEUE, payload: offlineQueue });
       dispatch({ type: START_OFFLINE_QUEUE });
 
-      const { userSettings = {} } = get(storageData, 'userSettings', {});
-      dispatch({ type: SET_USER_SETTINGS, payload: userSettings });
-
       const walletEvents = storageData?.walletEvents?.walletEvents ?? {};
       dispatch({ type: SET_WALLET_EVENTS, payload: walletEvents });
-
-      const { insights = {} } = get(storageData, 'insights', {});
-      dispatch({ type: SET_INSIGHTS_STATE, payload: insights });
 
       const { keyBasedAssetsToTransfer = [] } = get(storageData, 'keyBasedAssetTransfer', []);
       dispatch({ type: SET_KEY_BASED_ASSETS_TO_TRANSFER, payload: keyBasedAssetsToTransfer });
@@ -191,44 +157,6 @@ export const initAppAndRedirectAction = () => {
 
       const user = storageData?.user?.user ?? {};
       dispatch({ type: SET_USER, payload: user });
-
-      // const currentTime = await getCurrentTime();
-
-      // const { failedAttempts = {}, pinAttempt = {} } = get(storageData, 'pinAttempt', {});
-      // const { numberOfFailedAttempts = 0, date = new Date() } = failedAttempts;
-      // const { pinAttemptsCount = 0 } = pinAttempt;
-
-      // if (new Date(date)?.toDateString() === currentTime?.toDateString()) {
-      //   dispatch({
-      //     type: UPDATE_PIN_ATTEMPTS,
-      //     payload: {
-      //       pinAttemptsCount,
-      //     },
-      //   });
-      //   dispatch({
-      //     type: TODAY_FAILED_ATTEMPTS,
-      //     payload: {
-      //       failedAttempts: {
-      //         numberOfFailedAttempts,
-      //         date: new Date(date),
-      //       },
-      //     },
-      //   });
-      // }
-
-      const {
-        upgradeStatus = null,
-        accounts: smartAccounts = [],
-        deploymentData = {},
-        lastSyncedPaymentId = null,
-        lastSyncedTransactionId = null,
-      } = get(storageData, 'smartWallet', {});
-      dispatch({ type: SET_ARCHANOVA_WALLET_UPGRADE_STATUS, payload: upgradeStatus });
-      dispatch({ type: SET_ARCHANOVA_WALLET_ACCOUNTS, payload: smartAccounts });
-      dispatch({ type: SET_ARCHANOVA_WALLET_DEPLOYMENT_DATA, payload: deploymentData });
-      dispatch({ type: SET_ARCHANOVA_WALLET_LAST_SYNCED_PAYMENT_ID, payload: lastSyncedPaymentId });
-      dispatch({ type: SET_ARCHANOVA_WALLET_LAST_SYNCED_TRANSACTION_ID, payload: lastSyncedTransactionId });
-
       const { ensRegistry = {} } = get(storageData, 'ensRegistry', {});
       dispatch({ type: SET_ENS_REGISTRY_RECORDS, payload: ensRegistry });
 
@@ -245,11 +173,11 @@ export const initAppAndRedirectAction = () => {
     dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
     let navAction;
     if (walletTimestamp && wallet) {
-      const appearanceVisible = get(storageData, 'appearance_visible');
+      // const appearanceVisible = get(storageData, 'appearance_visible');
       navAction = {
         name: AUTH_FLOW,
         params: {
-          screen: !appearanceVisible ? MENU_SELECT_APPEARANCE : PIN_CODE_UNLOCK,
+          screen: PIN_CODE_UNLOCK, // Always go to PIN unlock, skip appearance selection
           params: {
             omitPin: appSettings.omitPinOnLogin,
             next_pin_unlock: true,

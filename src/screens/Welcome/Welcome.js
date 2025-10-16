@@ -19,7 +19,7 @@
 */
 
 import React from 'react';
-import { Dimensions, ScrollView, FlatList } from 'react-native';
+import { Dimensions, ScrollView, FlatList, Image } from 'react-native';
 import { useDispatch } from 'react-redux';
 import styled, { ThemeProvider } from 'styled-components/native';
 import t from 'translations/translate';
@@ -33,7 +33,6 @@ import { resetOnboardingAndNavigateAction } from 'actions/onboardingActions';
 import { Spacing } from 'components/legacy/Layout';
 import Button from 'components/legacy/Button';
 import Icon from 'components/core/Icon';
-import IconWithBackgroundGif from 'components/Gif/IconWithBackgroundGif';
 import { MediumText } from 'components/legacy/Typography';
 import Text from 'components/core/Text';
 import Spinner from 'components/Spinner';
@@ -56,6 +55,9 @@ import { useRootSelector } from 'selectors';
 import { NEW_IMPORT_WALLET, GET_NOTIFICATIONS, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+
+// Assets
+const pillarXLogo = require('assets/images/pillarx-logo.png');
 
 const Welcome = () => {
   const darkTheme = getThemeByType(DARK_THEME);
@@ -116,9 +118,11 @@ const Welcome = () => {
   return (
     <ThemeProvider theme={darkTheme}>
       <Background>
-        <ScrollView>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <Spacing h={height * 0.04} />
-          <IconWithBackgroundGif size={width * 0.3} />
+          <LogoContainer>
+            <Logo source={pillarXLogo} resizeMode="contain" />
+          </LogoContainer>
 
           <MediumText color={colors.basic000} fontSize={24} style={{ textAlign: 'center' }}>
             {t('auth:title.welcomeToPillarGetStarted')}
@@ -160,7 +164,9 @@ const Welcome = () => {
           ) : (
             <Spacing h={height * 0.3} />
           )}
+        </ScrollView>
 
+        <ButtonsContainer>
           <SubContainer>
             <Icon name="button-border-color" style={{ position: 'absolute' }} width={width * 0.9} />
             <Button
@@ -184,7 +190,8 @@ const Welcome = () => {
               transparent
             />
           </SubContainer>
-        </ScrollView>
+        </ButtonsContainer>
+
         {isImportingWallet && (
           <LoaderContainer>
             <Spinner size={40} />
@@ -235,4 +242,22 @@ const LoaderContainer = styled.View`
   align-items: center;
   justify-content: center;
   background-color: ${({ theme }) => `${theme.colors.basic050}60`};
+`;
+
+const LogoContainer = styled.View`
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  margin-top: 100px;
+  margin-bottom: 30px;
+`;
+
+const Logo = styled(Image)`
+  height: 60px;
+  width: 200px;
+`;
+
+const ButtonsContainer = styled.View`
+  width: 100%;
+  padding-bottom: ${spacing.layoutSides}px;
 `;

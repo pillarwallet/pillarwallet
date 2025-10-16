@@ -23,7 +23,6 @@ import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 import { getEnv } from 'configs/envConfig';
-import RNExitApp from 'react-native-exit-app';
 
 // constants
 import { STAGING } from 'constants/envConstants';
@@ -37,7 +36,6 @@ import { emailSupport } from 'services/emailSupport';
 import { getThemeColors } from 'utils/themes';
 import { reportErrorLog } from 'utils/common';
 
-
 const KEYCHAIN_SERVICE = `com.pillarproject.wallet${getEnv().BUILD_TYPE === STAGING ? '.staging' : ''}`;
 
 const KEYCHAIN_DATA_KEY = 'data';
@@ -49,15 +47,15 @@ export type KeyChainData = {
   pin?: ?string,
 };
 
-export const handleCatch = (accountAddress: ?string, error: ?any[]) => {
+export const handleCatch = (accountAddress: ?string, error: ?(any[])) => {
   const msg = error ? error.toString() : '';
   if (msg && !/cancel/gi.exec(msg)) {
     reportErrorLog('Exception caught on keychain: ', msg);
     const colors = getThemeColors();
     const buttons = [];
     buttons.push({
-      text: t('error.failedKeychain.exitButtonText'),
-      onPress: () => RNExitApp.exitApp(),
+      text: t('error.failedKeychain.cancelButtonText'),
+      onPress: () => {},
     });
     accountAddress = accountAddress ?? etherspotService?.getAccountAddress(CHAIN.ETHEREUM);
     if (accountAddress) {
@@ -106,8 +104,9 @@ export const setKeychainDataObject = async (data: KeyChainData, biometry?: ?bool
 
   const options = biometry ? { ...basicOptions, ...biometryOptions } : basicOptions;
 
-  return Keychain.setGenericPassword(KEYCHAIN_DATA_KEY, JSON.stringify(data), options)
-    .catch((error) => handleCatch(null, error));
+  return Keychain.setGenericPassword(KEYCHAIN_DATA_KEY, JSON.stringify(data), options).catch((error) =>
+    handleCatch(null, error),
+  );
 };
 
 export const getKeychainDataObject = (errorHandler?: Function): Promise<KeyChainData> =>
@@ -135,12 +134,4 @@ export const getPrivateKeyFromKeychainData = (data?: KeyChainData) => {
 
 export const shouldUpdateKeychainObject = (data: KeyChainData) => {
   return !data || !data.pin || !data.privateKey || !Object.keys(data).includes('mnemonic');
-};
-
-// check biometrics because we don't want users with BM on to trigger getKeychainDataObject
-// during migration or when providing pin as fallback after failed/rejected BM check
-export const canLoginWithPkFromPin = async (useBiometrics: boolean) => {
-  if (useBiometrics) return false;
-  const keychainData = await getKeychainDataObject();
-  return !!keychainData?.pin;
 };

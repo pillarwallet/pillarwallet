@@ -23,43 +23,19 @@ import ReduxAsyncQueue from 'redux-async-queue';
 
 // constants
 import { SET_WALLET, UPDATE_WALLET_BACKUP_STATUS, SET_WALLET_IS_ENCRYPTING } from 'constants/walletConstants';
-import {
-  SET_ONBOARDING_USERNAME_REGISTRATION_FAILED,
-  SET_REGISTERING_USER,
-  SET_LOADING_MESSAGE,
-} from 'constants/onboardingConstants';
+import { SET_ONBOARDING_USERNAME_REGISTRATION_FAILED, SET_REGISTERING_USER } from 'constants/onboardingConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { SET_USER } from 'constants/userConstants';
-import { SET_ARCHANOVA_WALLET_ACCOUNTS, SET_ARCHANOVA_SDK_INIT } from 'constants/archanovaConstants';
-import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
-import { ETH, PLR, SET_CHAIN_SUPPORTED_ASSETS, NFT_FLAG } from 'constants/assetsConstants';
-import { SET_FETCHING_HISTORY } from 'constants/historyConstants';
-import { SET_FETCHING_RATES } from 'constants/ratesConstants';
-import { CHAIN } from 'constants/chainConstants';
-import { SET_FETCHING_TOTAL_BALANCES } from 'constants/totalsBalancesConstants';
 
 // actions
-import { setupAppServicesAction, setupUserAction, setupWalletAction } from 'actions/onboardingActions';
-import { localAssets } from 'actions/assetsActions';
+import { setupUserAction, setupWalletAction } from 'actions/onboardingActions';
 
 // services
 import etherspotService from 'services/etherspot';
-import archanovaService from 'services/archanova';
 import { firebaseAnalytics } from 'services/firebase';
 
 // test utils
-import {
-  mockEtherspotAccount,
-  mockEtherspotApiAccount,
-  mockArchanovaAccount,
-  mockArchanovaAccountApiData,
-  mockArchanovaConnectedAccount,
-  mockSupportedAssets,
-  mockEtherspotAccountExtra,
-  mockEthAddress,
-  mockPlrAddress,
-  mockDeviceUniqueId,
-} from 'testUtils/jestSetup';
+import { mockEtherspotApiAccount, mockDeviceUniqueId } from 'testUtils/jestSetup';
 
 // types
 import type { EthereumWallet } from 'models/Wallet';
@@ -67,8 +43,6 @@ import type { EthereumWallet } from 'models/Wallet';
 jest.setTimeout(20000);
 
 const mockUser = { username: 'snow' };
-
-const mockMessage = 'onboardingLoaders.initEtherspot';
 
 jest.spyOn(etherspotService, 'getAccounts').mockImplementation(() => [mockEtherspotApiAccount]);
 
@@ -101,23 +75,6 @@ const mockBackupStatus: Object = {
 };
 
 const mockFcmToken = '12x2342x212';
-const randomPrivateKey = '0x09e910621c2e988e9f7f6ffcd7024f54ec1461fa6e86a4b545e9e1fe21c28866';
-
-const mockNewArchanovaAccount = { ...mockArchanovaAccount, extra: mockArchanovaAccountApiData };
-const mockNewEtherspotAccount = { ...mockEtherspotAccount, extra: mockEtherspotAccountExtra };
-
-const mockAssetsBalancesStore = {
-  data: {
-    [mockEtherspotAccount.id]: {
-      ethereum: {
-        wallet: {
-          [mockEthAddress]: { balance: '1', symbol: ETH, address: mockEthAddress },
-          [mockPlrAddress]: { balance: '1', symbol: PLR, address: mockPlrAddress },
-        },
-      },
-    },
-  },
-};
 
 describe('Onboarding actions', () => {
   let store;
@@ -217,143 +174,6 @@ describe('Onboarding actions', () => {
     return store.dispatch(setupUserAction(mockUser.username)).then(() => {
       const actualActions = store.getActions();
       expect(actualActions).toEqual(expectedActions);
-    });
-  });
-
-  it(`should expect series of actions with payload to be
-  dispatched on setupAppServicesAction execution when network is online
-  and Archanova account does not exist`, () => {
-    jest.spyOn(archanovaService, 'getAccounts').mockReturnValueOnce([]);
-
-    store = mockStore({
-      session: { data: { isOnline: true } },
-      wallet: {
-        backupStatus: mockBackupStatus,
-        data: mockImportedWallet,
-      },
-      user: { data: mockUser },
-      accounts: { data: [] },
-      smartWallet: {},
-      assets: { supportedAssets: { ethereum: mockSupportedAssets } },
-      history: { data: {} },
-      assetsBalances: mockAssetsBalancesStore,
-      rates: { data: {} },
-      badges: { data: [] },
-      totalBalances: {},
-      onboarding: mockOnboarding,
-    });
-
-    const expectedActions = [
-      { type: UPDATE_SESSION, payload: { fcmToken: mockFcmToken } },
-      {
-        type: SET_CHAIN_SUPPORTED_ASSETS,
-        payload: { chain: CHAIN.ETHEREUM, assets: mockSupportedAssets },
-      },
-      { type: SET_ARCHANOVA_SDK_INIT, payload: true }, // archanova init for account check
-
-      // etherspot
-      { type: UPDATE_ACCOUNTS, payload: [mockNewEtherspotAccount] },
-
-      { payload: true, type: SET_FETCHING_TOTAL_BALANCES },
-      { payload: false, type: SET_FETCHING_TOTAL_BALANCES },
-
-      { type: SET_FETCHING_HISTORY, payload: true },
-      { type: SET_FETCHING_RATES, payload: true },
-      { type: SET_FETCHING_HISTORY, payload: false },
-      { type: SET_FETCHING_RATES, payload: false },
-
-      // TODO: etherspot history update tba with separate PR
-    ];
-
-    return store.dispatch(setupAppServicesAction(randomPrivateKey)).then(() => {
-      const actualActions = store.getActions();
-      expect(actualActions).toEqual(expect.arrayContaining(expectedActions));
-    });
-  });
-
-  it(`should expect series of actions with payload to be
-  dispatched on setupAppServicesAction execution when network is online
-  and Archanova account exists`, () => {
-    store = mockStore({
-      session: { data: { isOnline: true } },
-      wallet: {
-        backupStatus: mockBackupStatus,
-        data: mockImportedWallet,
-      },
-      user: { data: mockUser },
-      accounts: { data: [mockArchanovaAccount] },
-      smartWallet: {
-        connectedAccount: mockArchanovaConnectedAccount,
-        upgrade: { status: '' },
-      },
-      assets: { supportedAssets: { ethereum: mockSupportedAssets } },
-      history: { data: {} },
-      assetsBalances: mockAssetsBalancesStore,
-      rates: { data: {} },
-      badges: { data: [] },
-      walletEvents: { data: [] },
-      totalBalances: {},
-      onboarding: mockOnboarding,
-    });
-
-    const expectedActions = [
-      { type: UPDATE_SESSION, payload: { fcmToken: mockFcmToken } },
-      {
-        type: SET_CHAIN_SUPPORTED_ASSETS,
-        payload: { chain: CHAIN.ETHEREUM, assets: mockSupportedAssets },
-      },
-      {
-        type: SET_LOADING_MESSAGE,
-        payload: mockMessage,
-      },
-      { type: SET_ARCHANOVA_SDK_INIT, payload: true }, // archanova init for account check
-
-      // archanova
-      { type: SET_ARCHANOVA_WALLET_ACCOUNTS, payload: [mockArchanovaAccountApiData] },
-      { type: UPDATE_ACCOUNTS, payload: [mockNewArchanovaAccount] },
-
-      // etherspot
-      { type: UPDATE_ACCOUNTS, payload: [mockNewArchanovaAccount, mockNewEtherspotAccount] },
-
-      { payload: true, type: SET_FETCHING_TOTAL_BALANCES },
-
-      { type: SET_FETCHING_HISTORY, payload: true },
-      { type: SET_FETCHING_RATES, payload: true },
-
-      { type: SET_FETCHING_RATES, payload: false },
-
-      { type: NFT_FLAG, payload: undefined },
-
-      // TODO: etherspot history update tba with separate PR
-    ];
-
-    return store.dispatch(setupAppServicesAction(randomPrivateKey)).then(() => {
-      const actualActions = store.getActions();
-      expect(actualActions).toEqual(expect.arrayContaining(expectedActions));
-    });
-  });
-
-  it(`should expect series of actions with payload to be
-  dispatched on setupAppServicesAction execution when network is offline`, () => {
-    store = mockStore({
-      session: { data: { isOnline: false } },
-      wallet: {
-        backupStatus: mockBackupStatus,
-        data: mockImportedWallet,
-      },
-      user: { data: mockUser },
-      assets: { supportedAssets: { ethereum: localAssets(CHAIN.ETHEREUM) } },
-      onboarding: mockOnboarding,
-      accounts: { data: [mockArchanovaAccount] },
-    });
-
-    const expectedActions = [
-      { type: SET_CHAIN_SUPPORTED_ASSETS, payload: { chain: CHAIN.ETHEREUM, assets: localAssets(CHAIN.ETHEREUM) } },
-    ];
-
-    return store.dispatch(setupAppServicesAction(randomPrivateKey)).then(() => {
-      const actualActions = store.getActions();
-      expect(actualActions).toEqual(expect.arrayContaining(expectedActions));
     });
   });
 });

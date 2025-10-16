@@ -36,18 +36,14 @@ import {
   HOME_FLOW,
   PIN_CODE_UNLOCK,
   LOGOUT_PENDING,
-  TUTORIAL_FLOW,
 } from 'constants/navigationConstants';
 import { RESET_APP_STATE } from 'constants/authConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { SET_CACHED_URLS } from 'constants/cacheConstants';
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { NFT_FLAG } from 'constants/assetsConstants';
 import { SET_NEW_USER } from 'constants/onboardingConstants';
-import { REMOVE_APP_HOLDINGS } from 'constants/appsHoldingsConstants';
 import { RESET_PILLARX_ADDRESS } from 'constants/modularSdkConstants';
 
 // utils
@@ -56,22 +52,14 @@ import { decryptWalletFromStorage, getDecryptedWallet } from 'utils/wallet';
 import { clearWebViewCookies } from 'utils/webview';
 import { resetKeychainDataObject } from 'utils/keychain';
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
-import {
-  findFirstArchanovaAccount,
-  findFirstEtherspotAccount,
-  findKeyBasedAccount,
-  getActiveAccount,
-} from 'utils/accounts';
+import { findKeyBasedAccount, getActiveAccount } from 'utils/accounts';
 import { getDeviceUniqueId } from 'utils/device';
 
 // services
 import Storage from 'services/storage';
 import { navigate, getNavigationState, getLastRouteState } from 'services/navigation';
-import { firebaseAuth, firebaseMessaging, firebaseRemoteConfig } from 'services/firebase';
+import { firebaseAuth, firebaseMessaging } from 'services/firebase';
 import etherspotService from 'services/etherspot';
-import archanovaService from 'services/archanova';
-import { logoutWeb3Auth } from 'services/web3Auth';
-import { fetchPillarXAddress } from 'services/modularSDK';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -80,31 +68,15 @@ import type { OnValidPinCallback } from 'models/Wallet';
 // actions
 import { saveDbAction, encryptedStorage } from './dbActions';
 import { setupLoggingServicesAction } from './appActions';
-import {
-  addAccountAction,
-  initOnLoginArchanovaAccountAction,
-  deployAccounts,
-  setActiveAccountAction,
-} from './accountsActions';
+import { addAccountAction, setActiveAccountAction } from './accountsActions';
 import { encryptAndSaveWalletAction, checkForWalletBackupToastAction, updatePinAttemptsAction } from './walletActions';
-import { fetchTransactionsHistoryAction } from './historyActions';
 import { setAppThemeAction, setAppLanguageAction, setDeviceUniqueIdIfNeededAction } from './appSettingsActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { loadRemoteConfigWithUserPropertiesAction } from './remoteConfigActions';
 import { checkInitialDeepLinkAction } from './deepLinkActions';
-import {
-  checkIfKeyBasedWalletHasPositiveBalanceAction,
-  checkKeyBasedAssetTransferTransactionsAction,
-} from './keyBasedAssetTransferActions';
 import { setSessionTranslationBundleInitialisedAction } from './sessionActions';
-import { importEtherspotAccountsAction, initEtherspotServiceAction, fetchDefaultTokensRates } from './etherspotActions';
-import { setEnsNameIfNeededAction } from './ensRegistryActions';
-import { fetchTutorialDataIfNeededAction, bannerDataAction } from './cmsActions';
-import { fetchAllAccountsAssetsBalancesAction, fetchAllAccountsTotalBalancesAction } from './assetsActions';
-import { finishOnboardingAction, setViewedReceiveTokensWarning } from './onboardingActions';
+import { finishOnboardingAction } from './onboardingActions';
 import { addMissingWalletEventsIfNeededAction } from './walletEventsActions';
-import { fetchAllCollectiblesDataAction } from './collectiblesActions';
-import { fetchAppsHoldingsAction } from './appsHoldingsActions';
 
 const storage = Storage.getInstance('db');
 
@@ -132,19 +104,19 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
       },
       accounts: { data: accounts },
       user: { data: user },
-      onboarding: { bannerData, isNewUser: isNewUserState },
+      onboarding: { isNewUser: isNewUserState },
     } = getState();
 
-    const viewedReceiveTokensWarningDb = await storage.get('viewed_receive_tokens_warning');
-    logBreadcrumb('loginAction', 'checking if warning viewed', viewedReceiveTokensWarningDb);
-    if (viewedReceiveTokensWarningDb?.viewedReceiveTokensWarning) {
-      logBreadcrumb(
-        'loginAction',
-        'flagging warning as viewed',
-        viewedReceiveTokensWarningDb.viewedReceiveTokensWarning,
-      );
-      dispatch(setViewedReceiveTokensWarning(viewedReceiveTokensWarningDb.viewedReceiveTokensWarning));
-    }
+    // const viewedReceiveTokensWarningDb = await storage.get('viewed_receive_tokens_warning');
+    // logBreadcrumb('loginAction', 'checking if warning viewed', viewedReceiveTokensWarningDb);
+    // if (viewedReceiveTokensWarningDb?.viewedReceiveTokensWarning) {
+    //   logBreadcrumb(
+    //     'loginAction',
+    //     'flagging warning as viewed',
+    //     viewedReceiveTokensWarningDb.viewedReceiveTokensWarning,
+    //   );
+    //   dispatch(setViewedReceiveTokensWarning(viewedReceiveTokensWarningDb.viewedReceiveTokensWarning));
+    // }
 
     const isNewUserDb = await storage.get('is_new_user');
     const isNewUser = !!isNewUserDb?.isNewUser ?? !!isNewUserState;
@@ -186,11 +158,11 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
       dispatch({ type: SET_WALLET, payload: unlockedWallet });
     }
 
-    dispatch(fetchPillarXAddress(decryptedPrivateKey));
+    // dispatch(fetchPillarXAddress(decryptedPrivateKey));
 
-    const visibleNFTs = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_NFTS);
-    logBreadcrumb('onboarding', 'finishOnboardingAction: dispatching app nfts flag');
-    dispatch({ type: NFT_FLAG, payload: visibleNFTs });
+    // const visibleNFTs = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_NFTS);
+    // logBreadcrumb('onboarding', 'finishOnboardingAction: dispatching app nfts flag');
+    // dispatch({ type: NFT_FLAG, payload: visibleNFTs });
 
     dispatch(setupLoggingServicesAction());
     dispatch(updatePinAttemptsAction(false));
@@ -199,22 +171,22 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
 
     const route = getLastRouteState();
 
-    let navigateAction = {
+    const navigateAction = {
       // current active screen will be always AUTH_FLOW due to login/logout
       screen: lastActiveScreen || HOME_FLOW,
       params: lastActiveScreenParams,
     };
 
-    const enableOnboardingTutorial = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ONBOARDING_TUTORIAL);
-    if (enableOnboardingTutorial) {
-      await dispatch(fetchTutorialDataIfNeededAction());
-      const {
-        onboarding: { tutorialData },
-      } = getState();
-      if (tutorialData) navigateAction = { screen: TUTORIAL_FLOW };
-    }
+    // const enableOnboardingTutorial = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ONBOARDING_TUTORIAL);
+    // if (enableOnboardingTutorial) {
+    //   await dispatch(fetchTutorialDataIfNeededAction());
+    //   const {
+    //     onboarding: { tutorialData },
+    //   } = getState();
+    //   if (tutorialData) navigateAction = { screen: TUTORIAL_FLOW };
+    // }
 
-    if (!bannerData) dispatch(bannerDataAction());
+    // if (!bannerData) dispatch(bannerDataAction());
 
     let navigateToAppAction = CommonActions.reset({
       index: 0,
@@ -255,25 +227,19 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
     await dispatch(updateFcmTokenAction());
 
     // init Etherspot SDK
-    await dispatch(initEtherspotServiceAction(decryptedPrivateKey));
-
-    // init Archanova SDK if needed
-    const archanovaAccount = findFirstArchanovaAccount(accounts);
-    if (archanovaAccount) {
-      await dispatch(initOnLoginArchanovaAccountAction(decryptedPrivateKey));
-    }
+    // await dispatch(initEtherspotServiceAction(decryptedPrivateKey));
 
     // Dispatch action to try and get the latest remote config values...
     dispatch(loadRemoteConfigWithUserPropertiesAction());
 
     // create etherspot account if does not exist, this also applies as migration from old key based wallets
-    const etherspotAccount = findFirstEtherspotAccount(accounts);
-    if (!etherspotAccount && !isNewUser) {
-      await dispatch(importEtherspotAccountsAction()); // imports and sets as active
-    }
+    // const etherspotAccount = findFirstEtherspotAccount(accounts);
+    // if (!etherspotAccount && !isNewUser) {
+    //   await dispatch(importEtherspotAccountsAction()); // imports and sets as active
+    // }
 
     const activeAccount = getActiveAccount(accounts);
-    if (isEmpty(activeAccount) && isNewUser) {
+    if (isEmpty(activeAccount)) {
       // set active key wallet for new users
       dispatch(setActiveAccountAction(address));
     }
@@ -283,17 +249,15 @@ export const loginAction = (pin: ?string, privateKey: ?string, onLoginSuccess: ?
     if (!keyBasedAccount) dispatch(addAccountAction(address, ACCOUNT_TYPES.KEY_BASED));
 
     // by default fetch default tokens
-    dispatch(fetchDefaultTokensRates());
+    // dispatch(fetchDefaultTokensRates());
 
-    dispatch(fetchTransactionsHistoryAction());
-    dispatch(setEnsNameIfNeededAction());
-    dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
-    dispatch(checkKeyBasedAssetTransferTransactionsAction());
-    dispatch(fetchAllAccountsTotalBalancesAction());
-    dispatch(fetchAllAccountsAssetsBalancesAction());
-    dispatch(fetchAllCollectiblesDataAction());
-    dispatch(fetchAppsHoldingsAction());
-    if (!__DEV__) dispatch(deployAccounts());
+    // dispatch(fetchTransactionsHistoryAction());
+    // dispatch(setEnsNameIfNeededAction());
+    // dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
+    // dispatch(checkKeyBasedAssetTransferTransactionsAction());
+    // dispatch(fetchAllAccountsTotalBalancesAction());
+    // dispatch(fetchAllAccountsAssetsBalancesAction());
+    // if (!__DEV__) dispatch(deployAccounts());
   };
 };
 
@@ -403,7 +367,7 @@ export const resetAppStateAction = (stateAfterReset: Object) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const {
       appSettings: {
-        data: { localisation: savedLocalisation, themeType: savedThemeType },
+        data: { localisation: savedLocalisation },
       },
       cache: { cachedUrls },
     } = getState();
@@ -411,7 +375,7 @@ export const resetAppStateAction = (stateAfterReset: Object) => {
     dispatch({ type: RESET_APP_STATE, payload: stateAfterReset });
 
     // set and store theme after reset
-    dispatch(setAppThemeAction(savedThemeType));
+    dispatch(setAppThemeAction());
 
     // manage language settings (from onboarding) as those are overwritten
     if (savedLocalisation && savedLocalisation.activeLngCode) {
@@ -443,8 +407,7 @@ export const resetAppServicesAction = () => {
     if (env) await storage.save('environment', env, true);
 
     await etherspotService.logout();
-    await archanovaService.reset();
-    await logoutWeb3Auth();
+    // await logoutWeb3Auth();
 
     // reset data stored in keychain
     await resetKeychainDataObject();
@@ -461,8 +424,6 @@ export const logoutAction = () => {
 
     // reset services
     await dispatch(resetAppServicesAction());
-
-    dispatch({ type: REMOVE_APP_HOLDINGS });
     dispatch({ type: RESET_PILLARX_ADDRESS });
 
     // reset reducer state

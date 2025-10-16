@@ -19,7 +19,7 @@
 */
 
 import React from 'react';
-import { Linking } from 'react-native';
+import { Linking, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
@@ -32,7 +32,7 @@ import HeaderBlock from 'components/HeaderBlock';
 import Banner from 'components/Banner/Banner';
 
 // Constants
-import { MENU_SETTINGS, CONTACTS_FLOW, STORYBOOK, ADD_TOKENS } from 'constants/navigationConstants';
+import { MENU_SETTINGS } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
@@ -44,16 +44,15 @@ import { firebaseRemoteConfig } from 'services/firebase';
 import { emailSupport } from 'services/emailSupport';
 
 // Utils
-import { useIsDarkTheme, useThemeColors } from 'utils/themes';
-
-// Assets
-import PillarLogo from 'assets/images/pillar-logo-small.svg';
-import PillarLogoDark from 'assets/images/pillar-logo-small-dark.svg';
+import { useThemeColors } from 'utils/themes';
 
 // Local
 import MenuItem from './components/MenuItem';
 import MenuFooter from './components/MenuFooter';
 import SocialMediaLinks from './components/SocialMediaLinks';
+
+// Assets
+const pillarXLogo = require('assets/images/pillarx-logo.png');
 
 interface Props {
   route: Route,
@@ -61,7 +60,6 @@ interface Props {
 
 const Menu = ({ route }: Props) => {
   const { t, tRoot } = useTranslationWithPrefix('menu');
-  const isDarkTheme = useIsDarkTheme();
   const navigation = useNavigation();
   const colors = useThemeColors();
   const isBackedUp = useIsWalletBackedUp();
@@ -72,9 +70,9 @@ const Menu = ({ route }: Props) => {
   const knowledgebaseUrl = firebaseRemoteConfig.getString(REMOTE_CONFIG.KNOWLEDGEBASE_URL);
 
   const goToSettings = () => navigation.navigate(MENU_SETTINGS);
-  const goToInviteFriends = () => navigation.navigate(CONTACTS_FLOW);
-  const goToStorybook = () => navigation.navigate(STORYBOOK);
-  const goToManageTokenLists = () => navigation.navigate(ADD_TOKENS);
+  // const goToInviteFriends = () => navigation.navigate(CONTACTS_FLOW);
+  // const goToStorybook = () => navigation.navigate(STORYBOOK);
+  // const goToManageTokenLists = () => navigation.navigate(ADD_TOKENS);
 
   const goToKnowledgebase = () => Linking.openURL(knowledgebaseUrl);
   const goToEmailSupport = () => emailSupport(accounts);
@@ -93,7 +91,12 @@ const Menu = ({ route }: Props) => {
     <Container>
       <HeaderBlock
         leftItems={[{ close: true }]}
-        centerItems={[{ custom: isDarkTheme ? <PillarLogoDark /> : <PillarLogo />, onPress: handleSecretClick }]}
+        centerItems={[
+          {
+            custom: <Logo source={pillarXLogo} resizeMode="contain" />,
+            onPress: handleSecretClick,
+          },
+        ]}
         navigation={navigation}
         noPaddingTop
       />
@@ -109,8 +112,8 @@ const Menu = ({ route }: Props) => {
           // eslint-disable-next-line i18next/no-literal-string
           accessibilityLabel={`${TAG}-button-settings`}
         />
-        <MenuItem title={t('item.tokens')} icon="tokens" onPress={goToManageTokenLists} />
-        <MenuItem title={t('item.addressBook')} icon="contacts" onPress={goToInviteFriends} />
+        {/* <MenuItem title={t('item.tokens')} icon="tokens" onPress={goToManageTokenLists} /> */}
+        {/* <MenuItem title={t('item.addressBook')} icon="contacts" onPress={goToInviteFriends} /> */}
         <MenuItem
           title={t('item.emailSupport')}
           icon="message"
@@ -127,7 +130,7 @@ const Menu = ({ route }: Props) => {
           // eslint-disable-next-line i18next/no-literal-string
           accessibilityLabel={`${TAG}-button-knowledge_base`}
         />
-        {__DEV__ && (
+        {/* {__DEV__ && (
           <MenuItem
             title={t('item.storybook')}
             icon="lifebuoy"
@@ -136,7 +139,7 @@ const Menu = ({ route }: Props) => {
             // eslint-disable-next-line i18next/no-literal-string
             accessibilityLabel={`${TAG}-button-storybook`}
           />
-        )}
+        )} */}
 
         <SocialMediaLinks />
 
@@ -153,6 +156,11 @@ export default Menu;
 
 const FlexSpacer = styled.View`
   flex-grow: 1;
+`;
+
+const Logo = styled(Image)`
+  height: 24px;
+  width: 120px;
 `;
 
 const TAG = 'Menu';

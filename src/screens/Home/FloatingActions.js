@@ -20,7 +20,6 @@
 
 import * as React from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { isEmpty } from 'lodash';
 import { useTranslationWithPrefix } from 'translations/translate';
 
 // Components
@@ -29,15 +28,10 @@ import Modal from 'components/Modal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 
 // Constants
-import {
-  CONNECT_FLOW,
-  BRIDGE_FLOW,
-  SEND_TOKEN_FROM_HOME_FLOW,
-  RECEIVE_TOKENS_WARNING,
-} from 'constants/navigationConstants';
+import { CONNECT_FLOW, SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';
 
 // Utils
-import { isArchanovaAccount, isKeyBasedAccount } from 'utils/accounts';
+import { isKeyBasedAccount } from 'utils/accounts';
 import { sumRecord } from 'utils/bigNumber';
 
 // Selectors
@@ -50,7 +44,6 @@ import {
   useOnboardingFetchingSelector,
 } from 'selectors';
 import { accountWalletBalancePerChainSelector } from 'selectors/totalBalances';
-import { useArchanovaWalletStatus } from 'selectors/archanova';
 
 function FloatingActions() {
   const { t } = useTranslationWithPrefix('home.actions');
@@ -71,10 +64,6 @@ function FloatingActions() {
   const onReceivePress = () => {
     if (viewedReceiveTokensWarning || isKeyBasedAccount(activeAccount)) {
       showReceiveModal();
-    } else {
-      navigation.navigate(RECEIVE_TOKENS_WARNING, {
-        onContinue: showReceiveModal,
-      });
     }
   };
 
@@ -97,7 +86,7 @@ function FloatingActions() {
     isExchangeAvailable && {
       title: t('swap'),
       iconName: 'exchange',
-      onPress: () => navigation.navigate(BRIDGE_FLOW),
+      onPress: () => {},
       disabled: !isExchangeEnabled || isFetching,
     },
     {
@@ -123,11 +112,7 @@ function FloatingActions() {
 
 const useEnabledActions = () => {
   const walletTotalBalance = sumRecord(useRootSelector(accountWalletBalancePerChainSelector));
-  const activeAccount = useActiveAccount();
-  const smartWalletState = useArchanovaWalletStatus();
-
-  const isEnabled =
-    walletTotalBalance.gt(0) && (!isArchanovaAccount(activeAccount) || isEmpty(smartWalletState.sendingBlockedMessage));
+  const isEnabled = walletTotalBalance.gt(0);
 
   return {
     isSendEnabled: true,

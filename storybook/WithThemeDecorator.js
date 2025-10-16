@@ -66,7 +66,7 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  setAppTheme: (themeType: string) => dispatch(setAppThemeAction(themeType)),
+  setAppTheme: () => dispatch(setAppThemeAction()),
 });
 
 const StoryWrapperWithState = connect(mapStateToProps, mapDispatchToProps)(StoryWrapper);

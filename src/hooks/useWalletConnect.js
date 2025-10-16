@@ -33,7 +33,6 @@ import {
   rejectWalletConnectV2ConnectorRequestAction,
   approveWalletConnectV2CallRequestAction,
   rejectWalletConnectV2CallRequestAction,
-  fetchV2ActiveSessionsAction,
 } from 'actions/walletConnectActions';
 
 // Constants
@@ -49,7 +48,6 @@ type UseWalletConnectResult = {|
   callRequests: WalletConnectCallRequest[],
   connectToConnector: (url: string) => void,
   estimateCallRequestTransaction: (callRequest: WalletConnectCallRequest) => void,
-  fetchV2ActiveSessions: () => void,
   approveV2ConnectorRequest: (id: number, namespaces: ?BaseNamespace | any) => void,
   rejectV2ConnectorRequest: (id: number) => void,
   rejectV2CallRequest: (callRequest: WalletConnectCallRequest, message: any) => void,
@@ -96,8 +94,6 @@ const useWalletConnect = (): UseWalletConnectResult => {
     [dispatch],
   );
 
-  const fetchV2ActiveSessions = useCallback(() => dispatch(fetchV2ActiveSessionsAction()), [dispatch]);
-
   const estimateCallRequestTransaction = useCallback(
     (callRequest: WalletConnectCallRequest) => dispatch(estimateWalletConnectCallRequestTransactionAction(callRequest)),
     [dispatch],
@@ -112,7 +108,6 @@ const useWalletConnect = (): UseWalletConnectResult => {
       estimateCallRequestTransaction,
       approveV2CallRequest,
       rejectV2CallRequest,
-      fetchV2ActiveSessions,
       disconnectSessionV2ByTopic,
     }),
     [
@@ -123,7 +118,6 @@ const useWalletConnect = (): UseWalletConnectResult => {
       estimateCallRequestTransaction,
       approveV2CallRequest,
       rejectV2CallRequest,
-      fetchV2ActiveSessions,
       disconnectSessionV2ByTopic,
     ],
   );

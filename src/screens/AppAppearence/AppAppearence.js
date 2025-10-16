@@ -73,13 +73,13 @@ const AppAppearence = ({ navigation, route }: Props) => {
   const onPressLightTheme = () => {
     setLightThemePressed(true);
     setDarkThemePressed(false);
-    dispatch(setAppThemeAction(LIGHT_THEME, true));
+    dispatch(setAppThemeAction());
   };
 
   const onPressDarkTheme = () => {
     setDarkThemePressed(true);
     setLightThemePressed(false);
-    dispatch(setAppThemeAction(DARK_THEME, true));
+    dispatch(setAppThemeAction());
   };
 
   const onConfirm = async () => {

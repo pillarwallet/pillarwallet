@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { isEmpty, mapValues } from 'lodash';
+import { isEmpty } from 'lodash';
 
 // Constants
 import { ASSET_TYPES } from 'constants/assetsConstants';
@@ -26,7 +26,6 @@ import { CHAIN } from 'constants/chainConstants';
 import {
   SET_COLLECTIBLES_TRANSACTION_HISTORY,
   COLLECTIBLE_TRANSACTION,
-  SET_UPDATING_COLLECTIBLE_TRANSACTION,
   SET_ACCOUNT_COLLECTIBLES,
 } from 'constants/collectiblesConstants';
 
@@ -43,8 +42,7 @@ import {
   getActiveAccountId,
   isEtherspotAccount,
 } from 'utils/accounts';
-import { isCaseInsensitiveMatch, logBreadcrumb } from 'utils/common';
-import { parseEtherspotTransactionStatus } from 'utils/etherspot';
+import { logBreadcrumb } from 'utils/common';
 import { getSupportedChains } from 'utils/chains';
 
 // Selectors
@@ -102,13 +100,6 @@ export const parseCollectibleFromEtherspot = (chain: Chain, asset: NftList): Col
     tokenType: ASSET_TYPES.COLLECTIBLE,
     chain,
     isLegacy: asset.nftVersion === '1.0',
-  };
-};
-
-const collectibleTransactionUpdate = (hash: string) => {
-  return {
-    type: SET_UPDATING_COLLECTIBLE_TRANSACTION,
-    payload: hash,
   };
 };
 
@@ -262,79 +253,3 @@ export const fetchCollectiblesHistoryAction = (account?: Account) => {
   };
 };
 
-export const fetchAllAccountsCollectiblesAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      accounts: { data: accounts },
-    } = getState();
-
-    const promises = accounts.map(async (account) => {
-      await dispatch(fetchCollectiblesAction(account));
-    });
-    await Promise.all(promises).catch((_) => _);
-  };
-};
-
-export const fetchAllAccountsCollectiblesHistoryAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      accounts: { data: accounts },
-    } = getState();
-
-    const promises = accounts.map(async (account) => {
-      await dispatch(fetchCollectiblesHistoryAction(account));
-    });
-    await Promise.all(promises).catch((_) => _);
-  };
-};
-
-export const fetchAllCollectiblesDataAction = () => {
-  return async (dispatch: Dispatch) => {
-    await dispatch(fetchCollectiblesAction());
-    await dispatch(fetchCollectiblesHistoryAction());
-  };
-};
-
-export const updateCollectibleTransactionAction = (chain: Chain, hash: string) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      session: {
-        data: { isOnline },
-      },
-      collectibles: { transactionHistory: collectiblesHistory },
-    } = getState();
-    if (!isOnline) return;
-
-    dispatch(collectibleTransactionUpdate(hash));
-    const transactionInfo = await etherspotService.getTransaction(chain, hash);
-    if (!transactionInfo) {
-      dispatch(collectibleTransactionUpdate(''));
-      return;
-    }
-
-    const status = parseEtherspotTransactionStatus(transactionInfo.status);
-    const { gasPrice, gasUsed } = transactionInfo;
-
-    const accounts = Object.keys(collectiblesHistory);
-    const updatedHistory = accounts.reduce((history, accountId) => {
-      const accountHistory = mapValues(collectiblesHistory[accountId] ?? {}, (transactions = []) =>
-        transactions.map((transaction) => {
-          if (!transaction?.hash || !isCaseInsensitiveMatch(transaction?.hash, hash)) {
-            return transaction;
-          }
-
-          return {
-            ...transaction,
-            status,
-            gasPrice: gasPrice ? gasPrice.toNumber() : transaction.gasPrice,
-            gasUsed: gasUsed ?? transaction.gasUsed,
-          };
-        }),
-      );
-      return { ...history, [accountId]: accountHistory };
-    }, {});
-
-    dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: updatedHistory }, true));
-    dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: updatedHistory });
-  };
-};

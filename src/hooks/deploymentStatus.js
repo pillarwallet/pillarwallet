@@ -21,10 +21,6 @@
 import * as React from 'react';
 import { useNavigation } from '@react-navigation/native';
 
-// Components
-import Modal from 'components/Modal';
-import SWActivationModal from 'components/SWActivationModal';
-
 // Constants
 import { ETHERSPOT_DEPLOYMENT_INTERJECTION } from 'constants/navigationConstants';
 
@@ -33,7 +29,7 @@ import { useRootSelector, useActiveAccount } from 'selectors';
 import { isDeployedOnChainSelector } from 'selectors/chains';
 
 // Utils
-import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
+import { isEtherspotAccount } from 'utils/accounts';
 
 // Types
 import { type Chain } from 'models/Chain';
@@ -48,9 +44,10 @@ export function useDeploymentStatus() {
     (chain: Chain) => {
       if (isEtherspotAccount(activeAccount)) {
         navigation.navigate(ETHERSPOT_DEPLOYMENT_INTERJECTION, { chain });
-      } else if (isArchanovaAccount(activeAccount)) {
-        Modal.open(() => <SWActivationModal navigation={navigation} />);
       }
+      // else if (isArchanovaAccount(activeAccount)) {
+      //   Modal.open(() => <SWActivationModal navigation={navigation} />);
+      // }
     },
     [navigation, activeAccount],
   );

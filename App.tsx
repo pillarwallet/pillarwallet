@@ -22,7 +22,6 @@ import NetInfo, { NetInfoState, NetInfoSubscription } from '@react-native-commun
 import remoteConfig from '@react-native-firebase/remote-config';
 import * as Sentry from '@sentry/react-native';
 import { getEnv, setupEnv, switchEnvironments } from 'configs/envConfig';
-import { NativeBaseProvider } from 'native-base';
 import React from 'react';
 import { WithTranslation, withTranslation } from 'react-i18next';
 import { Linking, Platform, StatusBar, UIManager } from 'react-native';
@@ -450,13 +449,11 @@ const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(with
 
 const AppRoot = () => (
   <SafeAreaProvider>
-    <NativeBaseProvider>
       <Provider store={store}>
         <QueryClientProvider client={queryClient}>
           <AppWithNavigationState />
         </QueryClientProvider>
       </Provider>
-    </NativeBaseProvider>
   </SafeAreaProvider>
 );
 

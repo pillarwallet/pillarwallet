@@ -80,10 +80,6 @@ export const historySelector = ({ history }: RootReducerState) => history.data;
 export const onboardingFetchingSelector = ({ onboarding }: RootReducerState) => onboarding.isFetching;
 export const onboardingLoaderMessageSelector = ({ onboarding }: RootReducerState) => onboarding.loaderMessage;
 
-export const appsHoldingsSelector = ({ appsHoldings }: RootReducerState) => appsHoldings;
-
-export const useAppHoldings = () => useRootSelector((root) => root.appsHoldings);
-
 export const defaultTokensSelector = ({ defaultTokens }: RootReducerState) => defaultTokens;
 
 export const addTokensListSelector = ({ addTokensList }: RootReducerState) => addTokensList;
@@ -95,7 +91,6 @@ export const bannerDataSelector = ({ onboarding }: RootReducerState) => onboardi
 export const viewedReceiveTokensWarningSelector = ({ onboarding }: RootReducerState) =>
   onboarding.viewedReceiveTokensWarning;
 
-export const paymentNetworkBalancesSelector = ({ paymentNetwork }: RootReducerState) => paymentNetwork.balances;
 
 export const accountsSelector = ({ accounts }: RootReducerState) => accounts.data;
 
@@ -109,14 +104,8 @@ export const activeAccountAddressSelector = createSelector(activeAccountSelector
   activeAccount ? getAccountAddress(activeAccount) : '',
 );
 
-export const syntheticAssetsSelector = ({ synthetics }: RootReducerState) => synthetics.data;
-
 export const supportedAssetsPerChainSelector = (root: RootReducerState): AssetsPerChain =>
   root.assets?.supportedAssets ?? EMPTY_OBJECT;
-
-export const exchangeGasFeeSelector = (root: RootReducerState) => root.exchangeGasFee.data;
-
-export const useExchangeGasFee = () => useRootSelector(exchangeGasFeeSelector);
 
 export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>
   get(appSettings, 'data.blockchainNetwork', 'Ethereum');

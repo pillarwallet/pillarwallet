@@ -20,22 +20,11 @@
 
 import { appFont, fontSizes, lineHeights } from 'utils/variables';
 
-const isMatchingSearch = (query, text) => query && text && text.toUpperCase().includes(query.toUpperCase());
-
-const isCaseInsensitiveMatch = (query, text) => query && text && text.toLowerCase() === query.toLowerCase();
-
 export const resolveAssetSource = (uri: ?(string | number)) => {
   if (!uri) return { uri: null };
   if (typeof uri === 'number') return uri;
   return { uri };
 };
-
-// filter by search query and sort exact matches (case insensitve) first (-1) or keep existing order (0)
-export const getMatchingSortedData: (data: Object[], query: ?string) => Object[] = (data, query) => data
-  .filter(({ value: val, name }) => isMatchingSearch(query, val) || isMatchingSearch(query, name))
-  .sort(
-    ({ value: val, name }) => isCaseInsensitiveMatch(query, val) || isCaseInsensitiveMatch(query, name) ? -1 : 0,
-  );
 
 export const getFontSize = (value: ?string | number, numeric?: boolean) => {
   if (numeric) return fontSizes.large;

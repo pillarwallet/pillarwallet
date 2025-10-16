@@ -19,7 +19,7 @@
 */
 
 import React from 'react';
-import { Dimensions } from 'react-native';
+import { Dimensions, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
@@ -27,7 +27,6 @@ import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-n
 
 // Components
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
-import IconWithBackgroundGif from 'components/Gif/IconWithBackgroundGif';
 import { Spacing } from 'components/legacy/Layout';
 import { MediumText } from 'components/legacy/Typography';
 
@@ -37,6 +36,9 @@ import { useThemeColors } from 'utils/themes';
 
 // Hooks
 import { useBioMetricsPopup } from 'hooks/biometrics';
+
+// Assets
+const pillarXLogo = require('assets/images/pillarx-logo.png');
 
 const { height } = Dimensions.get('window');
 
@@ -50,7 +52,10 @@ function GetNotifincations() {
   return (
     <ContainerWithHeader headerProps={{ noBack: true }}>
       <ContentWrapper contentContainerStyle={{ padding: spacing.large, flexGrow: 1 }}>
-        <IconWithBackgroundGif iconName="face-id" />
+        <Spacing h={height * 0.1} />
+        <LogoContainer>
+          <Logo source={pillarXLogo} resizeMode="contain" />
+        </LogoContainer>
         <Spacing h={height * 0.05} />
         <MediumText color={colors.basic000} fontSize={24} style={{ textAlign: 'center' }}>
           {t('enableBiometric')}
@@ -64,4 +69,15 @@ export default GetNotifincations;
 
 const ContentWrapper = styled.ScrollView`
   flex: 1;
+`;
+
+const LogoContainer = styled.View`
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+`;
+
+const Logo = styled(Image)`
+  height: 60px;
+  width: 200px;
 `;

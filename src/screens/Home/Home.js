@@ -20,131 +20,85 @@
 
 import * as React from 'react';
 import { BackHandler, PermissionsAndroid, Platform } from 'react-native';
-import { useNavigation, useFocusEffect, useRoute } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
-import { useTranslation } from 'translations/translate';
-import { ENSNodeStates } from 'etherspot';
-import Swiper from 'react-native-swiper';
+
 import messaging from '@react-native-firebase/messaging';
-
-// Actions
-import { fetchAllAccountsAssetsBalancesAction } from 'actions/assetsActions';
-import { refreshEtherspotAccountsAction } from 'actions/etherspotActions';
-import { fetchAppsHoldingsAction } from 'actions/appsHoldingsActions';
-
-// Components
-import { Container, Content } from 'components/layout/Layout';
-import FloatingButtons from 'components/FloatingButtons';
-import HeaderBlock from 'components/HeaderBlock';
-import RefreshControl from 'components/RefreshControl';
-import UserNameAndImage from 'components/UserNameAndImage';
-import WalletConnectRequests from 'screens/WalletConnect/Requests';
-import Tooltip from 'components/Tooltip';
-import Banner from 'components/Banner/Banner';
-import MigrationBanner from 'components/Banner/MigrationBanner';
-import { Spacing } from 'components/legacy/Layout';
-import WalletConnectCamera from 'components/QRCodeScanner/WalletConnectCamera';
-
-// Constants
-import { MENU_FLOW, HOME_HISTORY, REGISTER_ENS, CONNECT_FLOW } from 'constants/navigationConstants';
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+import WebView from 'react-native-webview';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import styled from 'styled-components';
 
 // Selectors
-import { useRootSelector, useAccounts, activeAccountAddressSelector, useOnboardingFetchingSelector } from 'selectors';
-import { accountTotalBalancesSelector } from 'selectors/totalBalances';
-import { useUser } from 'selectors/user';
-import { etherspotAccountSelector } from 'selectors/accounts';
-import { nativeIntegrationSelector } from 'redux/selectors/native-integration-selector';
-
-// Services
-import { firebaseRemoteConfig } from 'services/firebase';
-
-// Screens
-import GovernanceCallBanner from 'screens/GovernanceCall/GovernanceCallBanner';
+import { useActiveAccount } from 'selectors';
 
 // Utils
-import { sumRecord } from 'utils/bigNumber';
-import { calculateTotalBalancePerCategory } from 'utils/totalBalances';
-import { useThemeColors } from 'utils/themes';
-import { getEnsNodeState, getActiveAccount, findKeyBasedAccount } from 'utils/accounts';
-import { getActiveScreenName } from 'utils/navigation';
 import { reportLog, logBreadcrumb } from 'utils/common';
 import {
   setNotificationsVisibleStatus,
   setNotificationsPermission,
   getNotificationsPermission,
 } from 'utils/getNotification';
+import { getKeychainDataObject } from 'utils/keychain';
 
-// Hooks
-import useWalletConnect from 'hooks/useWalletConnect';
+// Translations
+import t from 'translations/translate';
 
-// Local
-import BalanceSection from './BalanceSection';
-import AssetsSection from './AssetsSection';
-import FloatingActions from './FloatingActions';
-import InvestmentsSection from './InvestmentsSection';
-import { useAccountCollectibleCounts } from './utils';
-import AppsButton from './AppsButton';
-import TransactionNotification from './components/TransactionNotification';
-import OnboardingLoader from './components/OnboardingLoader';
-
-// Redux
-import { fetchNativeIntegration } from '../../redux/actions/native-integration-actions';
+// Constants
+import { MENU_FLOW } from 'constants/navigationConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Services
-import visibleBalanceSession from '../../services/visibleBalance';
-
-// Actions
-import { saveDbAction } from '../../actions/dbActions';
-import Assets from '../Assets/Assets';
-import PlrStakingBanner from './PlrStakingBanner';
+import { firebaseRemoteConfig } from 'services/firebase';
 
 function Home() {
   const navigation = useNavigation();
-  const route = useRoute();
-  const colors = useThemeColors();
-  const { t } = useTranslation();
-  const swiperRef = React.useRef(null);
-  const isFetching = useOnboardingFetchingSelector();
-
-  const accountTotalBalances = useRootSelector(accountTotalBalancesSelector);
-  const accountCollectibleCounts = useAccountCollectibleCounts();
-  const user = useUser();
   const dispatch = useDispatch();
-  const etherspotAccount = useRootSelector(etherspotAccountSelector);
-  const accountAddress = useRootSelector(activeAccountAddressSelector);
-  const { switchAccountTooltipDismissed } = useRootSelector(({ appSettings }) => appSettings.data);
-
-  const { connectToConnector } = useWalletConnect();
-
-  const [showENSTooltip, setShowENSSwitchTooltip] = React.useState(false);
-  const [balanceVisible, setBalanceVisible] = React.useState(true);
-  const [currentSwiperIndex, setCurrentSwiperIndex] = React.useState(1);
-
-  const accounts = useAccounts();
-  const keyBasedAccount: any = findKeyBasedAccount(accounts);
-  const activeAccount: any = getActiveAccount(accounts);
-
-  const isKeyBasedAccount = activeAccount === keyBasedAccount;
-
-  const canSwitchAccount = useAccounts().length > 1;
-  const ensNodeState = getEnsNodeState(etherspotAccount);
-  const isEnsNodeCliamed = ensNodeState === ENSNodeStates.Claimed;
-  const featureOnboardingENS = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ONBOARDING_ENS);
-  const showEnsTooltip = featureOnboardingENS && !isEnsNodeCliamed;
-  const nativeIntegrationResponse = useRootSelector(nativeIntegrationSelector);
-
-  const balancePerCategory = calculateTotalBalancePerCategory(accountTotalBalances);
-  const totalBalance = sumRecord(balancePerCategory);
-  const screenName = getActiveScreenName(navigation);
-
-  const isRefreshing = useRootSelector(({ assetsBalances }) => !!assetsBalances.isFetching);
+  const activeAccount = useActiveAccount();
+  const webviewRef = React.useRef<any>(null);
+  const [pk, setPk] = React.useState('');
+  const [loading, setLoading] = React.useState(true);
+  const [retryCount, setRetryCount] = React.useState(0);
 
   React.useEffect(() => {
-    dispatch(fetchNativeIntegration());
-    callVisibleBalanceFunction();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    let isMounted = true;
+    let timeoutId;
+
+    (async () => {
+      try {
+        logBreadcrumb('Home', 'Attempting to load private key from keychain', { attempt: retryCount + 1 });
+        const keychainData = await getKeychainDataObject(() => null); // Pass custom error handler to prevent alert
+        if (!isMounted) return;
+
+        const privateKey = keychainData?.privateKey ?? '';
+
+        if (privateKey) {
+          logBreadcrumb('Home', 'Private key successfully loaded from keychain');
+          setPk(privateKey);
+        } else {
+          // Keychain doesn't have private key yet - retry up to 5 times with 500ms delay
+          logBreadcrumb('Home', 'No private key found in keychain', { retryCount });
+          if (retryCount < 5) {
+            timeoutId = setTimeout(() => {
+              if (isMounted) {
+                setRetryCount((prev) => prev + 1);
+              }
+            }, 500);
+          } else {
+            reportLog('Home: Failed to load private key after 5 attempts');
+          }
+        }
+      } catch (error) {
+        if (isMounted) {
+          reportLog('Home: Failed to get keychain data', error);
+        }
+      }
+    })();
+
+    return () => {
+      isMounted = false;
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [retryCount]);
 
   React.useEffect(() => {
     // if (status === 'denied' || status === 'granted') return;
@@ -179,176 +133,79 @@ function Home() {
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        if (currentSwiperIndex === 0) {
-          swiperRef.current?.scrollBy(1);
-        }
-        if (currentSwiperIndex === 1) {
-          return false;
-        }
-        if (currentSwiperIndex === 2) {
-          swiperRef.current?.scrollBy(-1);
-        }
         return true;
       };
 
       const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
 
       return () => backHandler.remove();
-    }, [currentSwiperIndex]),
+    }, []),
   );
 
-  const callVisibleBalanceFunction = async () => {
-    const response = await visibleBalanceSession();
-    if (response !== undefined) setBalanceVisible(response);
-  };
+  const onWebViewMessage = (event) => {
+    const data = JSON.parse(event?.nativeEvent?.data) || null;
 
-  React.useEffect(() => {
-    if (canSwitchAccount) {
-      setTimeout(() => {
-        setShowENSSwitchTooltip(true);
-      }, 4000);
+    if (data?.type === 'pillarXAuthRequest' && data?.value === 'pk') {
+      webviewRef.current.postMessage(JSON.stringify({ type: 'pillarWalletPkResponse', value: { pk } }), '*');
     }
-  }, [canSwitchAccount]);
-
-  const onRefresh = () => {
-    dispatch(fetchAllAccountsAssetsBalancesAction());
-    dispatch(refreshEtherspotAccountsAction());
-    dispatch(fetchAppsHoldingsAction());
+    if (data?.type === 'pillarXAuthRequest' && data?.value === 'settings') {
+      // Open Menu
+      navigation.navigate(MENU_FLOW);
+    }
   };
 
-  const onBalanceClick = async () => {
-    await dispatch(saveDbAction('visible_balance', { visible: !balanceVisible }));
-    setBalanceVisible(!balanceVisible);
-  };
-
-  const validateUri = (uri: string): boolean => {
-    return uri.startsWith('wc:');
-  };
-
-  const handleUri = (uri: string) => {
-    if (!uri.startsWith('wc:')) return;
-    connectToConnector(uri);
-  };
-
-  const onNavigateWallet = () => {
-    navigation.navigate(CONNECT_FLOW);
-  };
+  const pillarXEndpoint = firebaseRemoteConfig.getString(REMOTE_CONFIG.PILLARX_ENDPOINT);
 
   return (
-    <Swiper
-      scrollEnabled={!isFetching}
-      ref={swiperRef}
-      loop={false}
-      showsPagination={false}
-      index={1}
-      onIndexChanged={(newIndex) => {
-        setTimeout(() => {
-          setCurrentSwiperIndex(newIndex);
-        }, 1);
-      }}
-    >
-      {/* Left Scanner Content */}
-      <WalletConnectCamera
-        visibleCamera={currentSwiperIndex === 0}
-        validator={validateUri}
-        onRead={handleUri}
-        onClose={() => swiperRef.current?.scrollBy(1)}
-        onNavigateWallet={onNavigateWallet}
-      />
-
-      {/* Center Home Content */}
-      <>
-        <Container>
-          <HeaderBlock
-            leftItems={[
-              {
-                svgIcon: 'menu',
-                color: colors.basic020,
-                onPress: () => navigation.navigate(MENU_FLOW),
-                testID: `${TAG}-button-header_menu`, // eslint-disable-line i18next/no-literal-string
-                accessibilityLabel: `${TAG}-button-header_menu`, // eslint-disable-line i18next/no-literal-string
-              },
-            ]}
-            centerItems={[
-              {
-                custom: <UserNameAndImage user={user?.username} address={accountAddress} />,
-              },
-            ]}
-            rightItems={[
-              {
-                svgIcon: 'history',
-                color: colors.basic020,
-                onPress: () => navigation.navigate(HOME_HISTORY),
-                testID: `${TAG}-button-header_history`, // eslint-disable-line i18next/no-literal-string
-                accessibilityLabel: `${TAG}-button-header_history`, // eslint-disable-line i18next/no-literal-string
-              },
-            ]}
-            navigation={navigation}
-            noPaddingTop
-            testIdTag={TAG}
-          />
-
-          <Tooltip
-            isVisible={!switchAccountTooltipDismissed && isKeyBasedAccount}
-            body={t('tooltip.switch_account')}
-            wrapperStyle={{ zIndex: 9999, top: -10, position: 'relative' }}
-          />
-
-          {showEnsTooltip && (
-            <Tooltip
-              isVisible={!user?.username && showENSTooltip}
-              body={t('tooltip.registerENS')}
-              wrapperStyle={{ zIndex: 9999, top: -10, position: 'relative' }}
-              onPress={() => navigation.navigate(REGISTER_ENS)}
-            />
-          )}
-          <Content
-            contentContainerStyle={{ paddingBottom: FloatingButtons.SCROLL_VIEW_BOTTOM_INSET }}
-            paddingHorizontal={0}
-            refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
-          >
-            <BalanceSection balanceInFiat={totalBalance} showBalance={balanceVisible} onBalanceClick={onBalanceClick} />
-
-            <PlrStakingBanner />
-
-            <WalletConnectRequests />
-
-            <Spacing h={13} />
-
-            <GovernanceCallBanner />
-
-            <TransactionNotification />
-
-            <MigrationBanner />
-
-            <Banner screenName={screenName} bottomPosition={false} />
-
-            {/* <ChartsSection balancePerCategory={balancePerCategory} balancePerChain={balancePerChain} /> */}
-
-            <AssetsSection
-              visibleBalance={balanceVisible}
-              accountTotalBalances={accountTotalBalances}
-              accountCollectibleCounts={accountCollectibleCounts}
-            />
-
-            <InvestmentsSection />
-
-            <Banner screenName={screenName} bottomPosition />
-
-            <AppsButton response={nativeIntegrationResponse} navigation={navigation} isShowLabel />
-          </Content>
-
-          <FloatingActions />
-          {isFetching && <OnboardingLoader />}
-        </Container>
-      </>
-
-      {/* Right Side Assets content */}
-      <Assets onBackPress={() => swiperRef.current?.scrollBy(-1)} navigation={navigation} route={route} />
-    </Swiper>
+    <SafeArea>
+      {pk && (
+        <WebView
+          ref={webviewRef}
+          source={{
+            // eslint-disable-next-line i18next/no-literal-string
+            uri: `${pillarXEndpoint}?devicePlatform=${Platform.OS}&eoaAddress=${activeAccount?.id || ''}`,
+          }}
+          bounces={false}
+          onMessage={onWebViewMessage}
+          onLoadEnd={() => setLoading(false)}
+          style={{ backgroundColor: 'transparent' }}
+          scalesPageToFit={false}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+          // eslint-disable-next-line i18next/no-literal-string
+          injectedJavaScript={`
+            const meta = document.createElement('meta');
+            meta.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
+            meta.setAttribute('name', 'viewport');
+            document.getElementsByTagName('head')[0].appendChild(meta);
+          `}
+        />
+      )}
+      {(!pk || loading) && (
+        <LoadingContainer>
+          <LoadingText>{t('home.loading')}</LoadingText>
+        </LoadingContainer>
+      )}
+    </SafeArea>
   );
 }
 
-export default Home;
+const SafeArea = styled(SafeAreaView)`
+  flex: 1;
+  background-color: ${({ theme }) => theme.colors.grayPrimary};
+`;
 
-const TAG = 'Home';
+const LoadingContainer = styled.View`
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+`;
+
+const LoadingText = styled.Text`
+  font-size: 16px;
+  color: white;
+  font-weight: 600;
+`;
+
+export default Home;

@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React, { useEffect, useState } from 'react';
-import { Dimensions } from 'react-native';
+import { Dimensions, Image } from 'react-native';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
@@ -27,7 +27,6 @@ import t from 'translations/translate';
 import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import PinCode from 'components/PinCode';
 import { MediumText } from 'components/legacy/Typography';
-import IconWithBackgroundGif from 'components/Gif/IconWithBackgroundGif';
 import { Spacing } from 'components/legacy/Layout';
 
 // Constants
@@ -47,6 +46,9 @@ import { logEventAction } from 'actions/analyticsActions';
 
 // Types
 import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
+
+// Assets
+const pillarXLogo = require('assets/images/pillarx-logo.png');
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -83,7 +85,10 @@ const SetWalletPinCode = ({ navigation }: Props) => {
       }}
     >
       <ContentWrapper contentContainerStyle={{ padding: spacing.large, flexGrow: 1 }}>
-        <IconWithBackgroundGif />
+        <Spacing h={height * 0.1} />
+        <LogoContainer>
+          <Logo source={pillarXLogo} resizeMode="contain" />
+        </LogoContainer>
         <Spacing h={height * 0.05} />
 
         <MediumText color={colors.basic000} fontSize={24} center>
@@ -106,6 +111,17 @@ export default SetWalletPinCode;
 
 const ContentWrapper = styled.ScrollView`
   flex: 1;
+`;
+
+const LogoContainer = styled.View`
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+`;
+
+const Logo = styled(Image)`
+  height: 60px;
+  width: 200px;
 `;
 
 const TAG = 'SetWalletPinCode';

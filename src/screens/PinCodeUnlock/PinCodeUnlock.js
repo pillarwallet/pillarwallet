@@ -26,7 +26,6 @@ import NetInfo, { NetInfoState, NetInfoSubscription } from '@react-native-commun
 
 // actions
 import { loginAction } from 'actions/authActions';
-import { initArchanovaSdkWithPrivateKeyOrPinAction } from 'actions/smartWalletActions';
 import { switchAccountAction } from 'actions/accountsActions';
 import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 
@@ -59,7 +58,6 @@ import { getCurrentTime } from 'services/ntpSync';
 import Storage from 'services/storage';
 
 // types
-import type { InitArchanovaProps } from 'models/ArchanovaWalletAccount';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { OnValidPinCallback } from 'models/Wallet';
 import type { Route } from '@react-navigation/native';
@@ -82,7 +80,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   route: Route,
   useBiometrics: ?boolean,
-  initSmartWalletSdkWithPrivateKeyOrPin: (initProps: InitArchanovaProps) => void,
   switchAccount: (accountId: string) => void,
   isAuthorizing: boolean,
   removePrivateKeyFromMemory: Function,
@@ -234,13 +231,12 @@ class PinCodeUnlock extends React.Component<Props, State> {
     });
   };
 
-  handleUnlockAction = async ({ pin, privateKey, defaultAction }: HandleUnlockActionProps) => {
-    const { navigation, route, switchAccount, initSmartWalletSdkWithPrivateKeyOrPin } = this.props;
+  handleUnlockAction = async ({ defaultAction }: HandleUnlockActionProps) => {
+    const { navigation, route, switchAccount } = this.props;
     const shouldInitSmartWalletSdk = route?.params?.initSmartWalletSdk;
     const accountIdToSwitchTo = route?.params?.switchToAcc;
 
     if (shouldInitSmartWalletSdk) {
-      await initSmartWalletSdkWithPrivateKeyOrPin({ privateKey, pin });
       if (accountIdToSwitchTo) switchAccount(accountIdToSwitchTo);
       navigation.goBack();
     } else {
@@ -430,8 +426,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   loginWithPin: (pin: string, callback: ?OnValidPinCallback) => dispatch(loginAction(pin, null, callback)),
   loginWithPrivateKey: (privateKey: string, callback: ?OnValidPinCallback) =>
     dispatch(loginAction(null, privateKey, callback)),
-  initSmartWalletSdkWithPrivateKeyOrPin: (initProps: InitArchanovaProps) =>
-    dispatch(initArchanovaSdkWithPrivateKeyOrPinAction(initProps)),
   switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
   removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),
   updateAttempts: (payload) =>

@@ -19,14 +19,12 @@
 */
 import { BigNumber } from 'bignumber.js';
 import { useTranslation } from 'translations/translate';
-import { isEmpty } from 'lodash';
 
 // services
 import { firebaseRemoteConfig } from 'services/firebase';
 
 // Constants
 import { EXCHANGE_PROVIDER as PROVIDER } from 'constants/exchangeConstants';
-import { CHAIN } from 'constants/chainConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Utils
@@ -34,9 +32,8 @@ import { useIsDarkTheme } from 'utils/themes';
 
 // Types
 import type { ImageSource } from 'utils/types/react-native';
-import type { AssetOption, Asset } from 'models/Asset';
-import type { ExchangeProvider, ExchangeFeeInfo, ExchangeOffer } from 'models/Exchange';
-import type { Chain } from 'models/Chain';
+import type { AssetOption } from 'models/Asset';
+import type { ExchangeProvider } from 'models/Exchange';
 
 // Images
 const uniswapLightVertical = require('assets/images/exchangeProviders/uniswapLightVertical.png');
@@ -51,12 +48,6 @@ const oneInchLightMonochrome = require('assets/images/exchangeProviders/oneinchL
 const oneInchDarkVertical = require('assets/images/exchangeProviders/oneinchDarkVertical.png');
 const oneInchDarkHorizontal = require('assets/images/exchangeProviders/oneinchDarkHorizontal.png');
 const oneInchDarkMonochrome = require('assets/images/exchangeProviders/oneinchDarkMonochrome.png');
-const synthetixLightVertical = require('assets/images/exchangeProviders/synthetixLightVertical.png');
-const synthetixLightHorizontal = require('assets/images/exchangeProviders/synthetixLightHorizontal.png');
-const synthetixLightMonochrome = require('assets/images/exchangeProviders/synthetixLightMonochrome.png');
-const synthetixDarkVertical = require('assets/images/exchangeProviders/synthetixDarkVertical.png');
-const synthetixDarkHorizontal = require('assets/images/exchangeProviders/synthetixDarkHorizontal.png');
-const synthetixDarkMonochrome = require('assets/images/exchangeProviders/synthetixDarkMonochrome.png');
 const sushiswapLightHorizontal = require('assets/images/exchangeProviders/sushiswapLightHorizontal.png');
 const sushiswapLightVertical = require('assets/images/exchangeProviders/sushiswapLightVertical.png');
 const sushiswapLightMonochrome = require('assets/images/exchangeProviders/sushiswapLightMonochrome.png');
@@ -120,14 +111,6 @@ export function useProvidersConfig(): { [key: ExchangeProvider]: ProviderConfig 
       iconUrl:
         'https://firebasestorage.googleapis.com/v0/b/pillar-project-1506420699556.appspot.com/o/app%2Fdefi%2F1inch.png?alt=media&token=04ce9d14-6261-4738-bcf7-dc1382281abf',
     },
-    [PROVIDER.SYNTHETIX]: {
-      title: t('exchangeContent.providers.synthetix'),
-      iconVertical: isDarkTheme ? synthetixDarkVertical : synthetixLightVertical,
-      iconHorizontal: isDarkTheme ? synthetixDarkHorizontal : synthetixLightHorizontal,
-      iconMonochrome: isDarkTheme ? synthetixDarkMonochrome : synthetixLightMonochrome,
-      iconUrl:
-        'https://console.firebase.google.com/u/2/project/pillar-project-1506420699556/storage/pillar-project-1506420699556.appspot.com/files/~2Fapp~2Fdefi',
-    },
     [PROVIDER.SUSHISWAP]: {
       title: t('exchangeContent.providers.sushiswap'),
       iconVertical: isDarkTheme ? sushiswapDarkVertical : sushiswapLightVertical,
@@ -177,49 +160,3 @@ export const getCaptureFee = (fromAmount: BigNumber): BigNumber => {
   return new BigNumber(0);
 };
 
-export const getCaptureFeeDestinationAddress = (chain: Chain): ?string => {
-  if (chain === CHAIN.ETHEREUM) {
-    return firebaseRemoteConfig.getString(REMOTE_CONFIG.EXCHANGE_FEE_MAINNET_CAPTURE_ADDRESS);
-  }
-
-  if (chain === CHAIN.XDAI) {
-    return firebaseRemoteConfig.getString(REMOTE_CONFIG.EXCHANGE_FEE_XDAI_CAPTURE_ADDRESS);
-  }
-
-  if (chain === CHAIN.POLYGON) {
-    return firebaseRemoteConfig.getString(REMOTE_CONFIG.EXCHANGE_FEE_POLYGON_CAPTURE_ADDRESS);
-  }
-
-  if (chain === CHAIN.BINANCE) {
-    return firebaseRemoteConfig.getString(REMOTE_CONFIG.EXCHANGE_FEE_BSC_CAPTURE_ADDRESS);
-  }
-
-  if (chain === CHAIN.OPTIMISM) {
-    return firebaseRemoteConfig.getString(REMOTE_CONFIG.EXCHANGE_FEE_OPTIMISM_CAPTURE_ADDRESS);
-  }
-
-  if (chain === CHAIN.ARBITRUM) {
-    return firebaseRemoteConfig.getString(REMOTE_CONFIG.EXCHANGE_FEE_ARBITRUM_CAPTURE_ADDRESS);
-  }
-
-  return null;
-};
-
-export const getFeeInfoFromList = (
-  feeList: ExchangeFeeInfo[],
-  offer: ExchangeOffer,
-  gasFeeAsset: Asset | AssetOption,
-) => {
-  if (isEmpty(feeList) || !offer) return null;
-  const { provider, chain, toAsset, fromAsset } = offer;
-  const gasFeeInfo = feeList?.find(
-    (feeInfo) =>
-      feeInfo.provider === provider &&
-      feeInfo.chain === chain &&
-      feeInfo.gasFeeAsset === gasFeeAsset &&
-      feeInfo.toAddress === toAsset.address &&
-      feeInfo.fromAddress === fromAsset.address,
-  );
-  if (gasFeeInfo) return gasFeeInfo;
-  return null;
-};

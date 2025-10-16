@@ -20,12 +20,10 @@
 
 import * as Sentry from '@sentry/react-native';
 import isEmpty from 'lodash.isempty';
-import orderBy from 'lodash.orderby';
 import { BigNumber } from 'bignumber.js';
-import { Dimensions, Platform, Linking, PixelRatio, AppState, StatusBar } from 'react-native';
+import { Dimensions, Platform, Linking, AppState, StatusBar } from 'react-native';
 import { providers, utils, BigNumber as EthersBigNumber } from 'ethers';
 import { CardStyleInterpolators } from '@react-navigation/stack';
-import t from 'translations/translate';
 import { getEnv } from 'configs/envConfig';
 
 // constants
@@ -55,7 +53,6 @@ import type { Record } from 'utils/object';
 import type { SeverityLevel } from '@sentry/types';
 
 // local
-import { humanizeDateString, formatDate } from './date';
 import { isProdEnv, isTest } from './environment';
 
 export { BigNumber } from 'bignumber.js';
@@ -276,10 +273,6 @@ export const hasTooMuchDecimals = (value: Value, decimals: ?number): boolean => 
 export const formatTokenAmount = (amount: Value, assetSymbol: ?string): string =>
   formatAmount(amount, getDecimalPlaces(assetSymbol));
 
-export const formatFullAmount = (amount: string | number): string => {
-  return new BigNumber(amount).toFixed(); // strip trailing zeros
-};
-
 export const parseTokenBigNumberAmount = (amount: number | string, decimals: ?number): utils.BigNumber => {
   let formatted = amount.toString();
   const [whole, fraction] = formatted.split('.');
@@ -323,37 +316,10 @@ export const formatFiat = (value: Value, baseFiatCurrency?: ?string, options?: {
     : `${getCurrencySymbol(fiatCurrency)}${formatFiatValue(value, options)}`;
 };
 
-export const partial = (fn: Function, ...fixedArgs: any) => {
-  return (...rest: any) => {
-    return fn.apply(null, [...fixedArgs, ...rest]);
-  };
-};
-
 export const uniqBy = (collection: Object[] = [], key: string): Object[] => {
   return collection.filter((item, i, arr) => {
     return arr.map((it) => it[key]).indexOf(item[key]) === i;
   });
-};
-
-export const getiOSNavbarHeight = (): number => {
-  const { height, width } = Dimensions.get('window');
-
-  // for iPhone X and iPhone XS
-  const X_WIDTH = 375;
-  const X_HEIGHT = 812;
-
-  // for iPhone XS Max and iPhone XR
-  const XSMAX_WIDTH = 414;
-  const XSMAX_HEIGHT = 896;
-
-  if (Platform.OS === 'ios') {
-    if ((width === X_WIDTH && height === X_HEIGHT) || (width === XSMAX_WIDTH && height === XSMAX_HEIGHT)) {
-      return 44;
-    }
-    return 20;
-  }
-
-  return 0;
 };
 
 export const modalTransition = {
@@ -376,13 +342,6 @@ export const handleUrlPress = (url: string) => {
 };
 
 export const addAppStateChangeListener = (callback: Function) => AppState.addEventListener('change', callback);
-
-export const smallScreen = () => {
-  if (Platform.OS === 'ios') {
-    return Dimensions.get('window').width * PixelRatio.get() < 650;
-  }
-  return Dimensions.get('window').width < 410;
-};
 
 export const getEthereumProvider = (network: string) => {
   // Connect to INFURA
@@ -438,40 +397,6 @@ export const formatUnits = (val: Value = '0', decimals: number): string => {
   return formattedUnits;
 };
 
-type SectionData = {|
-  title: string,
-  data: any[],
-|};
-
-// all default values makes common sense and usage
-export const groupSectionsByDate = (
-  data: any[],
-  timestampMultiplier: number = 1000,
-  dateField: string = 'createdAt',
-  sortDirection: string = 'desc',
-): SectionData[] => {
-  const sections: { [string]: SectionData } = {};
-
-  orderBy(data, [dateField], [sortDirection]).forEach((item) => {
-    const safeTimestamp = parseTimestamp(item[dateField]);
-    const date = new Date(safeTimestamp * timestampMultiplier);
-    const key = formatDate(date, 'yyyy-MM-dd');
-
-    const existingSection = sections[key];
-    if (!existingSection) {
-      sections[key] = {
-        title: humanizeDateString(date),
-        data: [{ ...item }],
-      };
-    } else {
-      existingSection.data.push({ ...item });
-    }
-  });
-
-  // $FlowFixMe: should be fine
-  return Object.values(sections);
-};
-
 export const fetchUrl = (url: string): Promise<any> =>
   fetch(url, { cache: 'force-cache' }).catch((error) => {
     reportErrorLog('fetchUrl failed!', { url, error });
@@ -512,38 +437,6 @@ export const getFormattedTransactionFeeValue = (chain: Chain, feeInWei: ?Value, 
   return formatAmount(utils.formatUnits(parsedFeeInWei, nativeAssetDecimals));
 };
 
-export const formatTransactionFee = (
-  chain: Chain,
-  feeInWei: ?BigNumber | string | number,
-  gasToken: ?GasToken,
-): string => {
-  if (!feeInWei) return '';
-
-  const token = gasToken?.symbol || nativeAssetPerChain[chain].symbol;
-  const value = getFormattedTransactionFeeValue(chain, feeInWei, gasToken);
-
-  return t('tokenValue', { value, token });
-};
-
-export const humanizeHexString = (hexString: ?string) => {
-  if (!hexString) return '';
-
-  const startCharsCount = 6;
-  const endCharsCount = 4;
-  const separator = '...';
-  const totalTruncatedSum = startCharsCount + endCharsCount + separator.length;
-
-  const words = hexString.toString().split(' ');
-  const firstWord = words[0];
-
-  if (words.length === 1) {
-    if (firstWord.length <= totalTruncatedSum) return firstWord;
-    return `${firstWord.slice(0, startCharsCount)}${separator}${firstWord.slice(-endCharsCount)}`;
-  }
-
-  return hexString;
-};
-
 export const findEnsNameCaseInsensitive = (ensRegistry: EnsRegistry, address: string): ?string => {
   const addressMixedCase = Object.keys(ensRegistry).find((key) => isCaseInsensitiveMatch(key, address));
   if (!addressMixedCase) return null;
@@ -582,94 +475,12 @@ export const truncateAddress = (address: string) => {
   return `${address.substring(0, 6)}...${address.substring(address.length - 6)}`;
 };
 
-export const formatBigAmount = (value: Value) => {
-  const _value = wrapBigNumber(value);
-
-  if (_value.gte(1e12)) {
-    // eslint-disable-next-line i18next/no-literal-string
-    return `${_value.dividedBy(1e12).toFixed(2)}T`;
-  }
-
-  if (_value.gte(1e9)) {
-    // eslint-disable-next-line i18next/no-literal-string
-    return `${_value.dividedBy(1e9).toFixed(2)}B`;
-  }
-
-  if (_value.gte(1e6)) {
-    // eslint-disable-next-line i18next/no-literal-string
-    return `${_value.dividedBy(1e6).toFixed(2)}M`;
-  }
-
-  if (_value.gte(1e3)) {
-    // eslint-disable-next-line i18next/no-literal-string
-    return `${_value.dividedBy(1e3).toFixed(2)}K`;
-  }
-
-  return _value.toFixed(2);
-};
-
-export function nFormatter(num: ?number, decimals?: number) {
-  if (!num) return 0;
-  if (num >= 1000000000) {
-    // eslint-disable-next-line prefer-template
-    return (num / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B';
-  }
-  if (num >= 1000000) {
-    // eslint-disable-next-line prefer-template
-    return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
-  }
-  if (num >= 1000) {
-    // eslint-disable-next-line prefer-template
-    return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
-  }
-  return num?.toFixed(decimals ?? 2);
-}
-
-export const convertDecimalNumber = (value: number) => value?.toFixed(value < 1 ? 4 : 2) || 0;
-
-export const formatBigFiatAmount = (value: Value, fiatCurrency: string) => {
-  const currencySymbol = getCurrencySymbol(fiatCurrency);
-  return `${currencySymbol}${formatBigAmount(value)}`;
-};
-
 export const numberWithCommas = (value: ?string) => {
   if (!value) return null;
   const parts = value.toString().split('.');
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   return parts.join('.');
 };
-
-export function getDateDiff(startDate: Object, endDate: Object) {
-  // For min diff
-  const msInMinute = 60 * 1000;
-  const minDiff = Math.round(Math.abs(endDate - startDate) / msInMinute);
-  // eslint-disable-next-line prefer-template, i18next/no-literal-string
-  if (minDiff < 60) return minDiff + 'min.';
-
-  // For hour diff
-  const msInHour = 1000 * 60 * 60;
-  const hourDiff = Math.round(Math.abs(endDate.getTime() - startDate.getTime()) / msInHour);
-  // eslint-disable-next-line prefer-template, i18next/no-literal-string
-  if (hourDiff < 24) return hourDiff + 'h.';
-
-  // For day diff
-  const msInDay = 24 * 60 * 60 * 1000;
-  const dayDiff = Math.round(Math.abs(endDate - startDate) / msInDay);
-  // eslint-disable-next-line prefer-template, i18next/no-literal-string
-  if (dayDiff < 7) return dayDiff + 'd.';
-
-  // For week diff
-  const msInWeek = 1000 * 60 * 60 * 24 * 7;
-  const weekDiff = Math.round(Math.abs(endDate - startDate) / msInWeek);
-  // eslint-disable-next-line prefer-template, i18next/no-literal-string
-  if (weekDiff < 4) return weekDiff + 'wk.';
-
-  // For month diff
-  // eslint-disable-next-line no-mixed-operators
-  const monthDiff = endDate.getMonth() - startDate.getMonth() + 12 * (endDate.getFullYear() - startDate.getFullYear());
-  // eslint-disable-next-line prefer-template, i18next/no-literal-string
-  return monthDiff + 'mo.';
-}
 
 export const getEnsName = (username: string) => `${username}${getEnsPrefix()}`;
 

@@ -18,25 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import t from 'translations/translate';
-import { formatTokenAmount } from './common';
-
-type FormattedValueOptions = {|
-  isPositive?: boolean,
-  noSymbol?: boolean
-|}
-
 export const capitalize = (str: string): string => {
   if (typeof str !== 'string') return '';
   return str.charAt(0).toUpperCase() + str.slice(1);
-};
-
-export const getFormattedValue = (tokenValue: string, token: string, options: ?FormattedValueOptions) => {
-  const { isPositive, noSymbol } = options || {};
-  const value = formatTokenAmount(tokenValue, token);
-  if (noSymbol || typeof isPositive === 'undefined') return t('tokenValue', { value, token });
-  if (isPositive) return t('positiveTokenValue', { value, token });
-  return t('negativeTokenValue', { value, token });
 };
 
 export const caseInsensitiveIncludes = (baseString: ?string, stringToFind: ?string) =>
