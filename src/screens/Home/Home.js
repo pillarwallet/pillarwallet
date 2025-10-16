@@ -163,7 +163,7 @@ function Home() {
           ref={webviewRef}
           source={{
             // eslint-disable-next-line i18next/no-literal-string
-            uri: `http://localhost:5176?devicePlatform=${Platform.OS}&eoaAddress=${activeAccount?.id || ''}`,
+            uri: `${pillarXEndpoint}?devicePlatform=${Platform.OS}&eoaAddress=${activeAccount?.id || ''}`,
           }}
           bounces={false}
           onMessage={onWebViewMessage}

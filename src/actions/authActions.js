@@ -367,7 +367,7 @@ export const resetAppStateAction = (stateAfterReset: Object) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const {
       appSettings: {
-        data: { localisation: savedLocalisation, themeType: savedThemeType },
+        data: { localisation: savedLocalisation },
       },
       cache: { cachedUrls },
     } = getState();
@@ -375,7 +375,7 @@ export const resetAppStateAction = (stateAfterReset: Object) => {
     dispatch({ type: RESET_APP_STATE, payload: stateAfterReset });
 
     // set and store theme after reset
-    dispatch(setAppThemeAction(savedThemeType));
+    dispatch(setAppThemeAction());
 
     // manage language settings (from onboarding) as those are overwritten
     if (savedLocalisation && savedLocalisation.activeLngCode) {
