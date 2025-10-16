@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { View } from 'react-native';
+import { View, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
@@ -58,6 +58,9 @@ import ViewBackupPhraseSetting from './components/ViewBackupPhraseSetting';
 import BackupWalletSetting from './components/BackupWalletSetting';
 // import ImportFlowSetting from './components/ImportFlowSetting';
 
+// Assets
+const pillarXLogo = require('assets/images/pillarx-logo.png');
+
 interface Props {
   route: Route,
 }
@@ -83,7 +86,15 @@ const Settings = ({ route }: Props) => {
 
   return (
     <Container>
-      <HeaderBlock centerItems={[{ title: t('title') }]} navigation={navigation} noPaddingTop />
+      <HeaderBlock
+        centerItems={[
+          {
+            custom: <Logo source={pillarXLogo} resizeMode="contain" />,
+          },
+        ]}
+        navigation={navigation}
+        noPaddingTop
+      />
 
       <Content paddingHorizontal={0}>
         {!isBackedUp && (
@@ -165,4 +176,9 @@ const Header = styled(Text)`
   margin: 12px ${spacing.large}px ${spacing.small}px;
   font-family: ${appFont.medium};
   ${fontStyles.big};
+`;
+
+const Logo = styled(Image)`
+  height: 24px;
+  width: 120px;
 `;

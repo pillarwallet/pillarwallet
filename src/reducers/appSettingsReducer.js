@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import merge from 'lodash.merge';
-import { UPDATE_APP_SETTINGS, RESET_APP_SETTINGS, RESET_APP_LOADED } from 'constants/appSettingsConstants';
+import { UPDATE_APP_SETTINGS, RESET_APP_SETTINGS, RESET_APP_LOADED, DARK_THEME } from 'constants/appSettingsConstants';
 
 import type { LocalisationOptions } from 'models/Translations';
 import type { Currency } from 'models/Rates';
@@ -62,7 +62,7 @@ export const initialState: AppSettingsReducerState = {
     blockchainNetwork: null,
     baseFiatCurrency: null,
     transactionSpeed: null,
-    themeType: '',
+    themeType: DARK_THEME,
     isManualThemeSelection: false,
     useBiometrics: false,
     hasSeenTutorial: false,

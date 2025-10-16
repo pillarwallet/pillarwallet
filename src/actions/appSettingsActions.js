@@ -100,10 +100,11 @@ export const changeUseBiometricsAction = (value: boolean, data: KeyChainData, no
 
 export const setAppThemeAction = (themeType: string, isManualThemeSelection?: boolean) => {
   return (dispatch: Dispatch) => {
-    dispatch(saveDbAction('app_settings', { appSettings: { themeType, isManualThemeSelection } }));
+    // App is locked to dark theme only, ignore any theme change requests
+    dispatch(saveDbAction('app_settings', { appSettings: { themeType: DARK_THEME, isManualThemeSelection: false } }));
     dispatch({
       type: UPDATE_APP_SETTINGS,
-      payload: { themeType, isManualThemeSelection },
+      payload: { themeType: DARK_THEME, isManualThemeSelection: false },
     });
   };
 };

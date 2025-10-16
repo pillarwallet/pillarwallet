@@ -19,7 +19,7 @@
 */
 
 import React from 'react';
-import { Linking } from 'react-native';
+import { Linking, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
@@ -44,16 +44,15 @@ import { firebaseRemoteConfig } from 'services/firebase';
 import { emailSupport } from 'services/emailSupport';
 
 // Utils
-import { useIsDarkTheme, useThemeColors } from 'utils/themes';
-
-// Assets
-import PillarLogo from 'assets/images/pillar-logo-small.svg';
-import PillarLogoDark from 'assets/images/pillar-logo-small-dark.svg';
+import { useThemeColors } from 'utils/themes';
 
 // Local
 import MenuItem from './components/MenuItem';
 import MenuFooter from './components/MenuFooter';
 import SocialMediaLinks from './components/SocialMediaLinks';
+
+// Assets
+const pillarXLogo = require('assets/images/pillarx-logo.png');
 
 interface Props {
   route: Route,
@@ -61,7 +60,6 @@ interface Props {
 
 const Menu = ({ route }: Props) => {
   const { t, tRoot } = useTranslationWithPrefix('menu');
-  const isDarkTheme = useIsDarkTheme();
   const navigation = useNavigation();
   const colors = useThemeColors();
   const isBackedUp = useIsWalletBackedUp();
@@ -93,7 +91,12 @@ const Menu = ({ route }: Props) => {
     <Container>
       <HeaderBlock
         leftItems={[{ close: true }]}
-        centerItems={[{ custom: isDarkTheme ? <PillarLogoDark /> : <PillarLogo />, onPress: handleSecretClick }]}
+        centerItems={[
+          {
+            custom: <Logo source={pillarXLogo} resizeMode="contain" />,
+            onPress: handleSecretClick,
+          },
+        ]}
         navigation={navigation}
         noPaddingTop
       />
@@ -153,6 +156,11 @@ export default Menu;
 
 const FlexSpacer = styled.View`
   flex-grow: 1;
+`;
+
+const Logo = styled(Image)`
+  height: 24px;
+  width: 120px;
 `;
 
 const TAG = 'Menu';

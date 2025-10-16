@@ -315,23 +315,16 @@ export const themedColors = {
   }),
 };
 
-export const defaultTheme = {
-  current: LIGHT_THEME,
-  colors: { ...lightThemeColors, ...semanticLightThemeColors },
-};
-
 const darkTheme = {
   current: DARK_THEME,
   colors: { ...darkThemeColors, ...semanticDarkThemeColors },
 };
 
+export const defaultTheme = darkTheme;
+
 export function getThemeByType(themeType?: string) {
-  switch (themeType) {
-    case DARK_THEME:
-      return darkTheme;
-    default:
-      return defaultTheme;
-  }
+  // Always return dark theme
+  return darkTheme;
 }
 
 export function useTheme(): Theme {

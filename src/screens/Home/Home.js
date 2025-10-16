@@ -45,9 +45,10 @@ import t from 'translations/translate';
 
 // Constants
 import { MENU_FLOW } from 'constants/navigationConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
-// Config
-import { getEnv } from 'configs/envConfig';
+// Services
+import { firebaseRemoteConfig } from 'services/firebase';
 
 function Home() {
   const navigation = useNavigation();
@@ -153,6 +154,8 @@ function Home() {
     }
   };
 
+  const pillarXEndpoint = firebaseRemoteConfig.getString(REMOTE_CONFIG.PILLARX_ENDPOINT);
+
   return (
     <SafeArea>
       {pk && (
@@ -160,7 +163,7 @@ function Home() {
           ref={webviewRef}
           source={{
             // eslint-disable-next-line i18next/no-literal-string
-            uri: `${getEnv().PILLARX_ENDPOINT}?devicePlatform=${Platform.OS}&eoaAddress=${activeAccount?.id || ''}`,
+            uri: `http://localhost:5176?devicePlatform=${Platform.OS}&eoaAddress=${activeAccount?.id || ''}`,
           }}
           bounces={false}
           onMessage={onWebViewMessage}
