@@ -328,7 +328,7 @@ export function getThemeByType(themeType?: string) {
 }
 
 export function useTheme(): Theme {
-  return useThemeSC();
+  return useThemeSC() as Theme;
 }
 
 export function useIsDarkTheme(): boolean {
