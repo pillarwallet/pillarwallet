@@ -35,12 +35,10 @@ import { TokenLoader } from 'components/SkeletonLoader/OnboardingLoaders';
 
 // Constants
 import { TOKENS, STABLES } from 'constants/walletConstants';
-import { ASSET, ASSETS } from 'constants/navigationConstants';
 
 // Utils
 import { useThemeColors } from 'utils/themes';
 import { wrapBigNumberOrNil } from 'utils/bigNumber';
-import { buildAssetDataNavigationParam } from 'screens/Assets/utils';
 
 // Selectors
 import { useOnboardingFetchingSelector } from 'selectors';
@@ -78,17 +76,9 @@ export default function () {
         iconUrl={item.iconUrl}
         balance={wrapBigNumberOrNil(item.balance?.balance)}
         style={{ paddingLeft: 0, paddingRight: 0 }}
-        onPress={() => {
-          onNavigate(item, item.chain);
-        }}
+        onPress={() => {}}
       />
     );
-  };
-
-  const onNavigate = (category, chain) => {
-    const assetData = buildAssetDataNavigationParam(category, chain);
-    assetData.backDashboad = true;
-    navigation.navigate(ASSET, { screen: ASSET, params: { assetData, isNavigateToHome: true } });
   };
 
   return (
@@ -119,12 +109,7 @@ export default function () {
       <Spacing h={10} />
 
       {listOfAssets?.length > 5 && (
-        <TouchableOpacity
-          style={[styles.btn, { backgroundColor: colors.basic050 }]}
-          onPress={() => {
-            navigation.navigate(ASSETS);
-          }}
-        >
+        <TouchableOpacity style={[styles.btn, { backgroundColor: colors.basic050 }]} onPress={() => {}}>
           <Icon name={'down-arrow'} color={colors.text} width={16} height={16} />
         </TouchableOpacity>
       )}

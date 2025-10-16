@@ -55,8 +55,6 @@ import {
 } from 'constants/onboardingConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { CHAIN } from 'constants/chainConstants';
-import { NFT_FLAG } from 'constants/assetsConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -70,7 +68,7 @@ import {
   extractUsernameFromEnsName,
   getEthereumProvider,
 } from 'utils/common';
-import { getAccountEnsName, findFirstEtherspotAccount } from 'utils/accounts';
+import { getAccountEnsName } from 'utils/accounts';
 import { isLogV2AppEvents } from 'utils/environment';
 
 // services
@@ -78,18 +76,15 @@ import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { firebaseMessaging, firebaseRemoteConfig } from 'services/firebase';
 import { getExistingServicesAccounts, isUsernameTaken } from 'services/onboarding';
-import etherspotService from 'services/etherspot';
 import { fetchPillarXAddress } from 'services/modularSDK';
 
 // actions
-import { importArchanovaAccountsIfNeededAction, managePPNInitFlagAction } from 'actions/smartWalletActions';
 import { saveDbAction, saveEncryptedDbAction } from 'actions/dbActions';
-import { checkForWalletBackupToastAction, encryptAndSaveWalletAction } from 'actions/walletActions';
+import { encryptAndSaveWalletAction } from 'actions/walletActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
 import { addMissingWalletEventsIfNeededAction } from 'actions/walletEventsActions';
 import { loadRemoteConfigWithUserPropertiesAction } from 'actions/remoteConfigActions';
-import { fetchAssetsRatesAction } from 'actions/ratesActions';
 import {
   resetAppServicesAction,
   resetAppStateAction,
@@ -97,28 +92,9 @@ import {
   resetAndStartImportWalletAction,
 } from 'actions/authActions';
 import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedAssetTransferActions';
-import {
-  importEtherspotAccountsAction,
-  initEtherspotServiceAction,
-  fetchDefaultTokensRates,
-} from 'actions/etherspotActions';
-import {
-  fetchSupportedAssetsAction,
-  fetchOfflineLocalAssets,
-  fetchAllAccountsTotalBalancesAction,
-  fetchAllAccountsAssetsBalancesAction,
-} from 'actions/assetsActions';
-import { fetchTutorialDataIfNeededAction, bannerDataAction } from 'actions/cmsActions';
+import { fetchTutorialDataIfNeededAction } from 'actions/cmsActions';
 import { initialDeepLinkExecutedAction } from 'actions/appSettingsActions';
-import { addAccountAction, deployAccounts, setActiveAccountAction } from 'actions/accountsActions';
-import {
-  setEstimatingTransactionAction,
-  setTransactionsEstimateErrorAction,
-  setTransactionsEstimateFeeAction,
-} from 'actions/transactionEstimateActions';
-
-// Selectors
-import { accountsSelector } from 'selectors';
+import { addAccountAction, setActiveAccountAction } from 'actions/accountsActions';
 
 // Config
 import { getEnv } from 'configs/envConfig';
@@ -371,30 +347,30 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
     dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.encryptingKeys') });
     // encrypt and store
     logBreadcrumb('onboarding', 'walletSetupAction: dispatching encryptAndSaveWalletAction');
-    await dispatch(encryptAndSaveWalletAction(pinCode, ethersWallet, backupStatus, enableBiometrics));
+    dispatch(encryptAndSaveWalletAction(pinCode, ethersWallet, backupStatus, enableBiometrics));
 
     logBreadcrumb('onboarding', 'walletSetupAction: dispatching saveDbAction for saving app settings');
     dispatch(saveDbAction('app_settings', { appSettings: { wallet: +new Date() } }));
 
     dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.initEtherspot') });
     if (onboardingUsername) {
-      await dispatch(setupUserAction(onboardingUsername?.username));
+      dispatch(setupUserAction(onboardingUsername?.username));
     } else {
       logBreadcrumb('onboarding', 'walletSetupAction: dispatching setupAddressAction');
-      await dispatch(setupAddressAction());
+      dispatch(setupAddressAction());
     }
 
     logBreadcrumb('onboarding', 'walletSetupAction: dispatching setupAppServicesAction');
-    await dispatch(setupAppServicesAction(privateKey));
+    dispatch(setupAppServicesAction(privateKey));
 
     logBreadcrumb('onboarding', 'walletSetupAction: dispatching initialDeepLinkExecutedAction');
     dispatch(initialDeepLinkExecutedAction());
 
-    dispatch(bannerDataAction());
+    // dispatch(bannerDataAction());
 
-    dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.deployingGnosis') });
-    logBreadcrumb('onboarding', 'walletSetupAction: dispatching deployAccounts');
-    if (!__DEV__) dispatch(deployAccounts());
+    // dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.deployingGnosis') });
+    // logBreadcrumb('onboarding', 'walletSetupAction: dispatching deployAccounts');
+    // if (!__DEV__) dispatch(deployAccounts());
 
     logBreadcrumb('onboarding', 'walletSetupAction: completed, dispatching SET_FINISHING_ONBOARDING');
     isLogV2AppEvents() && dispatch(logEventAction('v2_account_sign_up_completed'));
@@ -402,10 +378,12 @@ export const walletSetupAction = (enableBiometrics?: boolean) => {
 
     dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.ready') });
 
-    setTimeout(() => {
-      dispatch({ type: SET_FETCHING, payload: false });
-      dispatch({ type: SET_LOADING_MESSAGE, payload: '' });
-    }, 0);
+    dispatch({ type: SET_FETCHING, payload: false });
+    dispatch({ type: SET_LOADING_MESSAGE, payload: '' });
+    // setTimeout(() => {
+    //   dispatch({ type: SET_FETCHING, payload: false });
+    //   dispatch({ type: SET_LOADING_MESSAGE, payload: '' });
+    // }, 0);
   };
 };
 
@@ -437,7 +415,7 @@ export const setupAppServicesAction = (privateKey: ?string) => {
       return;
     }
 
-    await dispatch(fetchOfflineLocalAssets());
+    // await dispatch(fetchOfflineLocalAssets());
 
     logBreadcrumb('onboarding', 'onboardingAction.js: checking user is online or not');
 
@@ -452,60 +430,51 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     await dispatch(updateFcmTokenAction());
 
     // active Etherspot service is required to proceed
-    logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching initEtherspotServiceAction');
-    await dispatch(initEtherspotServiceAction(privateKey));
+    // logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching initEtherspotServiceAction');
+    // await dispatch(initEtherspotServiceAction(privateKey));
 
     // user might not be registered at this point
-    dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.fetchingTokens') });
-    await dispatch(fetchSupportedAssetsAction());
+    // dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.fetchingTokens') });
+    // await dispatch(fetchSupportedAssetsAction());
 
     dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.creatingAccounts') });
     // create Archanova accounts if needed
-    if (!isNewUser) {
-      logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching importArchanovaAccountsIfNeededAction');
-      await dispatch(importArchanovaAccountsIfNeededAction(privateKey));
-
-      // create Etherspot accounts
-      logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching importEtherspotAccountsAction');
-      await dispatch(importEtherspotAccountsAction());
-    }
+    // if (!isNewUser) {
+    //   // create Etherspot accounts
+    //   logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching importEtherspotAccountsAction');
+    //   await dispatch(importEtherspotAccountsAction());
+    // }
 
     // create key based accounts
     if (walletData?.address) {
       logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching addAccountAction for key based account');
       dispatch(addAccountAction(walletData.address, ACCOUNT_TYPES.KEY_BASED));
 
-      if (isNewUser) {
-        // set active key wallet for new users
-        dispatch(setActiveAccountAction(walletData.address));
-      }
+      dispatch(setActiveAccountAction(walletData.address));
     } else {
       logBreadcrumb('onboarding', 'setupAppServicesAction: cannot find key based address');
     }
 
-    if (!isNewUser) {
-      dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.loadingWallet') });
-      await dispatch(fetchAllAccountsAssetsBalancesAction());
-    }
+    // if (!isNewUser) {
+    //   dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.loadingWallet') });
+    //   await dispatch(fetchAllAccountsAssetsBalancesAction());
+    // }
 
     // by default fetch default tokens
-    dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.fetchingPrices') });
-    logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching fetchDefaultTokensRates');
-    dispatch(fetchDefaultTokensRates());
+    // dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.fetchingPrices') });
+    // logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching fetchDefaultTokensRates');
+    // dispatch(fetchDefaultTokensRates());
 
-    logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching fetchAllAccountsTotalBalancesAction');
-    dispatch(fetchAllAccountsTotalBalancesAction());
+    // logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching fetchAllAccountsTotalBalancesAction');
+    // dispatch(fetchAllAccountsTotalBalancesAction());
 
     dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.loadingTxHistory') });
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching fetchTransactionsHistoryAction');
     dispatch(fetchTransactionsHistoryAction());
 
-    dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.fetchingPrices') });
-    logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching rates action: fetchAssetsRatesAction');
-    await dispatch(fetchAssetsRatesAction());
-
-    logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching managePPNInitFlagAction');
-    dispatch(managePPNInitFlagAction());
+    // dispatch({ type: SET_LOADING_MESSAGE, payload: t('onboardingLoaders.fetchingPrices') });
+    // logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching rates action: fetchAssetsRatesAction');
+    // await dispatch(fetchAssetsRatesAction());
 
     // add wallet created / imported events
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching getWalletsCreationEventsAction');
@@ -520,13 +489,13 @@ export const setupAppServicesAction = (privateKey: ?string) => {
       dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
     }
 
-    const visibleNFTs = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_NFTS);
-    logBreadcrumb('onboarding', 'finishOnboardingAction: dispatching app nfts flag');
-    dispatch({ type: NFT_FLAG, payload: visibleNFTs });
+    // const visibleNFTs = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_NFTS);
+    // logBreadcrumb('onboarding', 'finishOnboardingAction: dispatching app nfts flag');
+    // dispatch({ type: NFT_FLAG, payload: visibleNFTs });
 
     // check if wallet backup warning toast needed, balance can only be retrieved online
-    logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching checkForWalletBackupToastAction');
-    dispatch(checkForWalletBackupToastAction());
+    // logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching checkForWalletBackupToastAction');
+    // dispatch(checkForWalletBackupToastAction());
 
     logBreadcrumb('onboarding', 'setupAppServicesAction: dispatching loadRemoteConfigWithUserPropertiesAction');
     dispatch(loadRemoteConfigWithUserPropertiesAction());
@@ -857,41 +826,6 @@ export const checkUsernameAvailabilityAction = (username: string) => {
       type: SET_ONBOARDING_USER,
       payload: { username },
     });
-  };
-};
-
-export const claimENSNameAction = (username: string) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const accounts = accountsSelector(getState());
-
-    const etherspotAccount = findFirstEtherspotAccount(accounts);
-    if (!etherspotAccount) {
-      logBreadcrumb('claimENSNameAction', 'failed: no Etherspot account found');
-      return;
-    }
-    const reserved = await etherspotService.reserveEnsName(username);
-    if (!reserved) {
-      logBreadcrumb('reserveEtherspotENSNameAction', 'reserveENSName failed', { username });
-    } else {
-      dispatch({ type: SET_USER, payload: { username } });
-      dispatch(saveDbAction('user', { user: { data: { username } } }));
-    }
-    let errorMessage;
-    let feeInfo;
-    dispatch(setEstimatingTransactionAction(true));
-    try {
-      feeInfo = await etherspotService.estimateENSTransactionFee(CHAIN.ETHEREUM);
-      dispatch(setEstimatingTransactionAction(false));
-      dispatch(setTransactionsEstimateFeeAction(feeInfo));
-    } catch (error) {
-      errorMessage = error?.message;
-    }
-    if (!feeInfo || errorMessage) {
-      logBreadcrumb('estimateEnsMigrationFromArchanovaToEtherspotAction', 'estimateAccountRawTransactions failed', {
-        errorMessage,
-      });
-      dispatch(setTransactionsEstimateErrorAction(errorMessage || t('toast.transactionFeeEstimationFailed')));
-    }
   };
 };
 

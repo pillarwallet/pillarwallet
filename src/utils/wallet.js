@@ -28,7 +28,7 @@ import { TypedDataUtils, signTypedData_v4 } from 'eth-sig-util';
 import { saveDbAction, encryptedStorage } from 'actions/dbActions';
 
 // utils
-import { getRandomInt, printLog, reportLog, reportErrorLog, logBreadcrumb } from 'utils/common';
+import { printLog, reportLog, reportErrorLog, logBreadcrumb } from 'utils/common';
 import { getKeychainDataObject, setKeychainDataObject } from 'utils/keychain';
 import { defaultSortAssetOptions, isAssetOptionMatchedByQuery } from 'utils/assets';
 
@@ -37,17 +37,6 @@ import type { Dispatch } from 'reducers/rootReducer';
 
 export function generateMnemonicPhrase(mnemonicPhrase?: string) {
   return mnemonicPhrase || utils.entropyToMnemonic(utils.randomBytes(16));
-}
-
-export function generateWordsToValidate(numWordsToGenerate: number, maxWords: number) {
-  const chosenWords = [];
-  while (chosenWords.length < numWordsToGenerate) {
-    const randomNumber = getRandomInt(1, maxWords);
-    if (chosenWords.includes(randomNumber)) continue; // eslint-disable-line
-    chosenWords.push(randomNumber);
-  }
-  chosenWords.sort((a, b) => a - b);
-  return chosenWords;
 }
 
 export async function getSaltedPin(pin: string, deviceUniqueId: ?string): Promise<string> {

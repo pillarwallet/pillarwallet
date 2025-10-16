@@ -22,7 +22,6 @@ import styled from 'styled-components/native';
 import { fontSizes } from 'utils/variables';
 import { MediumText } from 'components/legacy/Typography';
 import Icon from 'components/legacy/Icon';
-import Animation from 'components/Animation';
 import { getColorByTheme } from 'utils/themes';
 
 // types
@@ -66,9 +65,8 @@ const StatusIcon = styled.View`
   height: 8px;
   width: 8px;
   border-radius: 4px;
-  background-color: ${({ isActive, theme }) => isActive
-    ? theme.colors.secondaryAccent140
-    : theme.colors.secondaryAccent240};
+  background-color: ${({ isActive, theme }) =>
+    isActive ? theme.colors.secondaryAccent140 : theme.colors.secondaryAccent240};
 `;
 
 const StatusIndicatorHolder = styled.View`
@@ -78,50 +76,26 @@ const StatusIndicatorHolder = styled.View`
   justify-content: center;
 `;
 
-const AnimationWrapper = styled.View`
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-`;
-
-const StyledAnimation = styled(Animation)`
-  width: 22px;
-  height: 22px;
-`;
-
-const animationSource = require('assets/animations/livePulsatingAnimation.json');
-
 const Status = ({ isActive }) => {
   return (
     <StatusIndicatorHolder>
-      {!!isActive && <AnimationWrapper><StyledAnimation source={animationSource} loop speed={0.9} /></AnimationWrapper>}
       <StatusIcon isActive={isActive} />
     </StatusIndicatorHolder>
   );
 };
 
 const HeaderActionButton = (props: Props) => {
-  const {
-    label,
-    onPress,
-    hasChevron,
-    isActive,
-    wrapperStyle,
-    backgroundColor,
-    color,
-    style,
-  } = props;
+  const { label, onPress, hasChevron, isActive, wrapperStyle, backgroundColor, color, style } = props;
 
   return (
     <HeaderButtonRounded onPress={onPress} backgroundColor={backgroundColor} style={[wrapperStyle, style]}>
       {isActive !== undefined && <Status isActive={isActive} />}
-      <RoundedButtonLabel isLight={!!backgroundColor} color={color}>{label}</RoundedButtonLabel>
+      <RoundedButtonLabel isLight={!!backgroundColor} color={color}>
+        {label}
+      </RoundedButtonLabel>
       {!!hasChevron && <ChevronIcon name="chevron-right" isLight={!!backgroundColor} color={color} />}
     </HeaderButtonRounded>
   );
 };
 
 export default HeaderActionButton;
-

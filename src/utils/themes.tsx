@@ -55,6 +55,7 @@ const commonColors = {
   lightPrimarySkalaton: 'rgba(235, 240, 246, 0.1)',
   lightSecondarySkalaton: 'rgba(252, 253, 255, 0.1)',
   purpleHeat: '#6f34a1',
+  grayPrimary: '#121116',
 };
 
 export const semanticLightThemeColors = {
@@ -314,27 +315,20 @@ export const themedColors = {
   }),
 };
 
-export const defaultTheme = {
-  current: LIGHT_THEME,
-  colors: { ...lightThemeColors, ...semanticLightThemeColors },
-};
-
 const darkTheme = {
   current: DARK_THEME,
   colors: { ...darkThemeColors, ...semanticDarkThemeColors },
 };
 
+export const defaultTheme = darkTheme;
+
 export function getThemeByType(themeType?: string) {
-  switch (themeType) {
-    case DARK_THEME:
-      return darkTheme;
-    default:
-      return defaultTheme;
-  }
+  // Always return dark theme
+  return darkTheme;
 }
 
 export function useTheme(): Theme {
-  return useThemeSC();
+  return useThemeSC() as Theme;
 }
 
 export function useIsDarkTheme(): boolean {

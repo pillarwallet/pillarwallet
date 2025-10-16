@@ -23,7 +23,7 @@ import { isProdEnv } from 'utils/environment';
 
 // Constants
 import { ETH, MATIC, BNB, XDAI, ADDRESS_ZERO } from 'constants/assetsConstants';
-import { CHAIN, CHAIN_ID, CHAIN_NAMES } from 'constants/chainConstants';
+import { CHAIN, CHAIN_ID } from 'constants/chainConstants';
 
 // Utils
 import { isEtherspotAccount } from 'utils/accounts';
@@ -108,18 +108,6 @@ export function getSupportedChains(account: ?Account): Chain[] {
 
   return [CHAIN.POLYGON, CHAIN.BINANCE, CHAIN.XDAI, CHAIN.ETHEREUM, CHAIN.OPTIMISM, CHAIN.ARBITRUM];
 }
-
-export const mapChainNameToChain = (chain: string): Chain => {
-  if (chain === CHAIN_NAMES.ETHEREUM) return CHAIN.ETHEREUM;
-  if (chain === CHAIN_NAMES.POLYGON) return CHAIN.POLYGON;
-  if (chain === CHAIN_NAMES.BINANCE) return CHAIN.BINANCE;
-  if (chain === CHAIN_NAMES.XDAI) return CHAIN.XDAI;
-  if (chain === CHAIN_NAMES.OPTIMISM) return CHAIN.OPTIMISM;
-  if (chain === CHAIN_NAMES.ARBITRUM) return CHAIN.ARBITRUM;
-
-  // Default to Ethereum, should not happen as above check is exhaustive.
-  return CHAIN.ETHEREUM;
-};
 
 /* eslint-disable i18next/no-literal-string */
 export const nativeAssetPerChain = {

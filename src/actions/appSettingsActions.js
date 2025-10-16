@@ -74,35 +74,6 @@ export const updateAppSettingsAction = (path: string, fieldValue: any) => {
   };
 };
 
-export const updateAssetsLayoutAction = (layoutId: string) => {
-  return (dispatch: Dispatch) => {
-    const settings = { appearanceSettings: { assetsLayout: layoutId } };
-
-    dispatch(saveDbAction('app_settings', { appSettings: settings }));
-    dispatch(logEventAction('assets_layout_changed'));
-    dispatch(logUserPropertyAction('assets_layout', layoutId));
-    dispatch({ type: UPDATE_APP_SETTINGS, payload: settings });
-  };
-};
-
-export const handleImagePickAction = (isPickingImage: boolean) => {
-  return (dispatch: Dispatch) => {
-    dispatch({
-      type: UPDATE_APP_SETTINGS,
-      payload: {
-        isPickingImage,
-      },
-    });
-  };
-};
-
-export const setBrowsingWebViewAction = (isBrowsingWebView: boolean) => ({
-  type: UPDATE_APP_SETTINGS,
-  payload: {
-    isBrowsingWebView,
-  },
-});
-
 export const changeUseBiometricsAction = (value: boolean, data: KeyChainData, noToast?: boolean) => {
   return async (dispatch: Dispatch) => {
     await setKeychainDataObject(data, value);
@@ -127,12 +98,13 @@ export const changeUseBiometricsAction = (value: boolean, data: KeyChainData, no
   };
 };
 
-export const setAppThemeAction = (themeType: string, isManualThemeSelection?: boolean) => {
+export const setAppThemeAction = () => {
   return (dispatch: Dispatch) => {
-    dispatch(saveDbAction('app_settings', { appSettings: { themeType, isManualThemeSelection } }));
+    // App is locked to dark theme only, ignore any theme change requests
+    dispatch(saveDbAction('app_settings', { appSettings: { themeType: DARK_THEME, isManualThemeSelection: false } }));
     dispatch({
       type: UPDATE_APP_SETTINGS,
-      payload: { themeType, isManualThemeSelection },
+      payload: { themeType: DARK_THEME, isManualThemeSelection: false },
     });
   };
 };
@@ -152,7 +124,7 @@ export const handleSystemDefaultThemeChangeAction = () => {
 
     if (themeToSet === themeType) return;
 
-    dispatch(setAppThemeAction(themeToSet));
+    dispatch(setAppThemeAction());
   };
 };
 
@@ -176,55 +148,12 @@ export const toggleBalanceAction = () => {
   };
 };
 
-export const dismissConnectAppsIntroAction = () => {
-  return (dispatch: Dispatch) => {
-    dispatch(saveDbAction('app_settings', { appSettings: { hasDismissedConnectAppsIntro: true } }));
-    dispatch({ type: UPDATE_APP_SETTINGS, payload: { hasDismissedConnectAppsIntro: true } });
-  };
-};
-
-export const setPreferredGasTokenAction = (preferredGasToken: string) => {
-  return (dispatch: Dispatch) => {
-    dispatch(saveDbAction('app_settings', { appSettings: { preferredGasToken } }));
-    dispatch({
-      type: UPDATE_APP_SETTINGS,
-      payload: { preferredGasToken },
-    });
-  };
-};
-
 export const initialDeepLinkExecutedAction = () => {
   return (dispatch: Dispatch) => {
     dispatch({
       type: UPDATE_APP_SETTINGS,
       payload: { initialDeepLinkExecuted: true },
     });
-  };
-};
-
-export const toggleOmitPinOnLoginAction = () => {
-  return (dispatch: Dispatch, getState: GetState) => {
-    const {
-      appSettings: {
-        data: { omitPinOnLogin },
-      },
-    } = getState();
-    dispatch(saveDbAction('app_settings', { appSettings: { omitPinOnLogin: !omitPinOnLogin } }));
-    dispatch({ type: UPDATE_APP_SETTINGS, payload: { omitPinOnLogin: !omitPinOnLogin } });
-  };
-};
-
-export const toggleLiquidityPoolsAction = () => {
-  return (dispatch: Dispatch, getState: GetState) => {
-    const {
-      appSettings: {
-        data: { hideLiquidityPools },
-      },
-    } = getState();
-    const newLiquidityPoolsState = !hideLiquidityPools;
-
-    dispatch(saveDbAction('app_settings', { appSettings: { hideLiquidityPools: newLiquidityPoolsState } }));
-    dispatch({ type: UPDATE_APP_SETTINGS, payload: { hideLiquidityPools: newLiquidityPoolsState } });
   };
 };
 

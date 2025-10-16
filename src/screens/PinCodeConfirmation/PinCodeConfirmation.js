@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React, { useState } from 'react';
-import { Dimensions } from 'react-native';
+import { Dimensions, Image } from 'react-native';
 import { connect, useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NativeStackNavigationProp as NavigationScreenProp } from '@react-navigation/native-stack';
@@ -33,7 +33,6 @@ import ContainerWithHeader from 'components/legacy/Layout/ContainerWithHeader';
 import PinCode from 'components/PinCode';
 import ErrorMessage from 'components/ErrorMessage';
 import { MediumText } from 'components/legacy/Typography';
-import IconWithBackgroundGif from 'components/Gif/IconWithBackgroundGif';
 import { Spacing } from 'components/legacy/Layout';
 
 // Constants
@@ -52,6 +51,9 @@ import { useThemeColors } from 'utils/themes';
 
 // Types
 import type { Dispatch } from 'reducers/rootReducer';
+
+// Assets
+const pillarXLogo = require('assets/images/pillarx-logo.png');
 
 type Props = {
   beginOnboarding: () => void,
@@ -107,7 +109,10 @@ const PinCodeConfirmation = ({ setOnboardingPinCode, navigation, route }) => {
   return (
     <ContainerWithHeader headerProps={{ noBack: false }}>
       <ContentWrapper contentContainerStyle={{ padding: spacing.large, flexGrow: 1 }}>
-        <IconWithBackgroundGif />
+        <Spacing h={height * 0.1} />
+        <LogoContainer>
+          <Logo source={pillarXLogo} resizeMode="contain" />
+        </LogoContainer>
         <Spacing h={height * 0.05} />
 
         <MediumText color={colors.basic000} fontSize={24} center>
@@ -136,6 +141,17 @@ export default connect(null, mapDispatchToProps)(PinCodeConfirmation);
 
 const ContentWrapper = styled.ScrollView`
   flex: 1;
+`;
+
+const LogoContainer = styled.View`
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+`;
+
+const Logo = styled(Image)`
+  height: 60px;
+  width: 200px;
 `;
 
 const TAG = 'PinCodeConfirmation';

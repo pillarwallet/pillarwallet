@@ -25,10 +25,9 @@ import { CHAIN } from 'constants/chainConstants';
 
 // Selectors
 import { activeAccountSelector, useRootSelector } from 'selectors';
-import { isArchanovaAccountDeployedSelector } from 'selectors/archanova';
 
 // utils
-import { isArchanovaAccount, isEtherspotAccount } from 'utils/accounts';
+import { isEtherspotAccount } from 'utils/accounts';
 import { getSupportedChains } from 'utils/chains';
 import { isEtherspotAccountDeployed } from 'utils/etherspot';
 
@@ -47,8 +46,7 @@ export const useSupportedChains = (): Chain[] => useRootSelector(supportedChains
 // Note: createSelector is used to memoize the result
 export const isDeployedOnChainSelector: Selector<ChainRecord<boolean>> = createSelector(
   activeAccountSelector,
-  isArchanovaAccountDeployedSelector,
-  (account: ?Account, isArchanovaDeployed): ChainRecord<boolean> => {
+  (account: ?Account): ChainRecord<boolean> => {
     if (isEtherspotAccount(account)) {
       return {
         ethereum: isEtherspotAccountDeployed(account, CHAIN.ETHEREUM),
@@ -58,12 +56,6 @@ export const isDeployedOnChainSelector: Selector<ChainRecord<boolean>> = createS
         polygon: isEtherspotAccountDeployed(account, CHAIN.POLYGON),
         // Note: hardcoded due to business requirements
         xdai: true,
-      };
-    }
-
-    if (isArchanovaAccount(account)) {
-      return {
-        ethereum: isArchanovaDeployed,
       };
     }
 

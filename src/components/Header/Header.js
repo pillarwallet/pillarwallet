@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Center } from 'native-base';
 import styled, { withTheme } from 'styled-components/native';
 import { TextLink, BaseText } from 'components/legacy/Typography';
 import Title from 'components/legacy/Title';
@@ -121,7 +120,7 @@ const HeaderLeft = styled.View`
   align-items: flex-end;
 `;
 
-const HeaderBody = styled(Center)`
+const HeaderBody = styled.View`
   flex: ${(props) => (props.onCloseText ? 2 : 5)};
 `;
 

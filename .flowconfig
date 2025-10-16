@@ -51,7 +51,6 @@ node_modules/warning/.*
 <PROJECT_ROOT>/node_modules/react-native-image-view/.*
 <PROJECT_ROOT>/node_modules/react-native-keyboard-aware-scroll-view/.*
 <PROJECT_ROOT>/node_modules/react-native-share/.*
-<PROJECT_ROOT>/node_modules/react-native-swiper/.*
 <PROJECT_ROOT>/node_modules/react-native-image-view/.*
 <PROJECT_ROOT>/node_modules/polished/.*
 <PROJECT_ROOT>/node_modules/react-native-device-info/.*

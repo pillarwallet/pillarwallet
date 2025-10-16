@@ -27,7 +27,6 @@ import messaging from '@react-native-firebase/messaging';
 // Actions
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import {
   subscribeToEtherspotNotificationsAction,
   unsubscribeToEtherspotNotificationsAction,
@@ -83,7 +82,6 @@ export const hideHomeUpdateIndicatorAction = () => ({ type: HIDE_HOME_UPDATE_IND
 
 export const fetchAllNotificationsAction = () => {
   return async (dispatch: Dispatch) => {
-    dispatch(fetchAllCollectiblesDataAction());
     dispatch(fetchAssetsBalancesAction(true));
     dispatch(fetchTransactionsHistoryAction());
   };
@@ -102,10 +100,6 @@ const onFirebaseMessageAction = (message: FirebaseMessage) => {
 
     if ([FCM_DATA_TYPE.BCX, FCM_DATA_TYPE.PPN, FCM_DATA_TYPE.SMART_WALLET].includes(type)) {
       dispatch(fetchAllNotificationsAction());
-    }
-
-    if (type === FCM_DATA_TYPE.COLLECTIBLE) {
-      dispatch(fetchAllCollectiblesDataAction());
     }
 
     if (message.notification) {
@@ -229,9 +223,6 @@ export const startListeningOnOpenNotificationAction = () => {
         if (type === BCX) {
           dispatch(fetchTransactionsHistoryAction());
           dispatch(fetchAssetsBalancesAction(true));
-        }
-        if (type === COLLECTIBLE) {
-          dispatch(fetchAllCollectiblesDataAction());
         }
 
         const routeName = notificationRoute || HOME_FLOW;

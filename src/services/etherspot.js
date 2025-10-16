@@ -669,24 +669,6 @@ export class EtherspotService {
     });
   }
 
-  async getAccountInvestments(chain: Chain, address: string): any {
-    const sdk = this.getSdkForChain(chain);
-    if (!sdk) {
-      logBreadcrumb('getSubmittedBatchByHash', 'failed: no SDK for chain set', { chain });
-      return null;
-    }
-
-    try {
-      const listsOfHoldings = await sdk.getAccountInvestments({
-        account: address,
-      });
-      return listsOfHoldings;
-    } catch (error) {
-      reportErrorLog('getAccountInvestments -> Apps holdings failed', { address, chain, error });
-      return null;
-    }
-  }
-
   async getTokenDetails(token: AssetDataNavigationParam) {
     const { chain, contractAddress } = token;
 

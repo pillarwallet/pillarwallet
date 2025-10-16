@@ -46,7 +46,6 @@ import {
 } from 'selectors';
 import { accountAssetsPerChainSelector } from 'selectors/assets';
 import { accountAssetsBalancesSelector } from 'selectors/balances';
-import { isArchanovaAccountDeployedSelector } from 'selectors/archanova';
 import { gasThresholdsSelector } from 'redux/selectors/gas-threshold-selector';
 
 // Hooks
@@ -239,7 +238,6 @@ const useTransactionFee = (request: WalletConnectCallRequest) => {
 const useViewData = (request: WalletConnectCallRequest) => {
   const { t } = useTranslation();
   const activeAccount = useActiveAccount();
-  const isArchanovaAccountDeployed = useRootSelector(isArchanovaAccountDeployedSelector);
 
   const isArchanovaAccountActive = isArchanovaAccount(activeAccount);
 
@@ -255,16 +253,8 @@ const useViewData = (request: WalletConnectCallRequest) => {
 
   const estimationErrorMessage = useRootSelector((root) => root.transactionEstimate.errorMessage);
 
-  /**
-   * Archanova account needs to be deployed for all types call requests.
-   * Etherspot account doesn't need to be deployed for transaction type call requests only.
-   */
-  const requiresDeployedAccount = isArchanovaAccountActive && !isArchanovaAccountDeployed;
-
   if (!errorMessage) {
-    errorMessage = requiresDeployedAccount
-      ? t('walletConnectContent.error.smartWalletNeedToBeActivated')
-      : estimationErrorMessage;
+    errorMessage = estimationErrorMessage;
   }
 
   const title = parsePeerName(request.name);
