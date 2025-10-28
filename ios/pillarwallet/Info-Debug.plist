@@ -46,27 +46,63 @@
 		<false/>
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>localhost</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSExceptionRequiresForwardSecrecy</key>
+				<false/>
+				<key>NSExceptionMinimumTLSVersion</key>
+				<string>TLSv1.0</string>
+			</dict>
+			<key>10.0.2.2</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSExceptionRequiresForwardSecrecy</key>
+				<false/>
+				<key>NSExceptionMinimumTLSVersion</key>
+				<string>TLSv1.0</string>
+			</dict>
+			<key>127.0.0.1</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSExceptionRequiresForwardSecrecy</key>
+				<false/>
+				<key>NSExceptionMinimumTLSVersion</key>
+				<string>TLSv1.0</string>
+			</dict>
+		</dict>
 	</dict>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>Pillar Wallet uses the local network to connect to the development server during debugging.</string>
+	<string>PillarX uses the local network to connect to the development server during debugging.</string>
 	<key>NSBonjourServices</key>
 	<array>
   		<string>_http._tcp</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
-	<string>Allow Pillar Wallet to use your camera to take your profile picture or scan QR codes.</string>
+	<string>Allow PillarX to use your camera to take your profile picture or scan QR codes.</string>
 	<key>NSContactsUsageDescription</key>
-	<string>Allow Pillar Wallet to access your contacts.</string>
+	<string>Allow PillarX to access your contacts.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Enabling Face ID allows you quick and secure access to your account.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Allow Pillar Wallet to use your location.</string>
+	<string>Allow PillarX to use your location.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Give Pillar Wallet permission to access your microphone to allow you to attach voice notes with bug reports.</string>
+	<string>Give PillarX permission to access your microphone to allow you to attach voice notes with bug reports.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Give Pillar Wallet permission to save photos to temporarily store your profile pictures.</string>
+	<string>Give PillarX permission to save photos to temporarily store your profile pictures.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Give Pillar Wallet permission to access your photos to allow you set your profile picture.</string>
+	<string>Give PillarX permission to access your photos to allow you set your profile picture.</string>
 	<key>RCTNewArchEnabled</key>
 	<false/>
 	<key>UIAppFonts</key>
