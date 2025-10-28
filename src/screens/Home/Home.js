@@ -156,7 +156,11 @@ function Home() {
 
   const pillarXEndpoint = firebaseRemoteConfig.getString(REMOTE_CONFIG.PILLARX_ENDPOINT);
   // eslint-disable-next-line i18next/no-literal-string
-  const webviewUrl = `https://${pillarXEndpoint}?devicePlatform=${Platform.OS}&eoaAddress=${activeAccount?.id || ''}`;
+  const baseUrl = /^https?:\/\//i.test(pillarXEndpoint) ? pillarXEndpoint : `https://${pillarXEndpoint}`;
+  const devicePlatform = encodeURIComponent(Platform.OS);
+  const eoaAddress = encodeURIComponent(activeAccount?.id || '');
+  // eslint-disable-next-line i18next/no-literal-string
+  const webviewUrl = `${baseUrl}?devicePlatform=${devicePlatform}&eoaAddress=${eoaAddress}`;
 
   return (
     <SafeArea>
