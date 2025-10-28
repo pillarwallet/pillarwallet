@@ -35,7 +35,9 @@
         android:fullBackupContent="true"
         tools:replace="android:fullBackupContent"
         android:theme="@style/AppTheme"
-        android:supportsRtl="true">
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="true"
+        android:networkSecurityConfig="@xml/network_security_config">
 
         <activity
                 android:exported="true"
@@ -101,7 +103,7 @@
         <!-- react-native-notifications custom push notification icon -->
         <meta-data
                 android:name="com.google.firebase.messaging.default_notification_icon"
-                android:resource="@mipmap/ic_notification" />
+                android:resource="@mipmap/ic_launcher" />
 
         <!-- disable Sentry ANR reports -->
         <meta-data android:name="io.sentry.anr.enable" android:value="false" />
