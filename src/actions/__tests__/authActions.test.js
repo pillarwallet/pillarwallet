@@ -86,6 +86,7 @@ describe('Auth actions', () => {
         data: mockWallet,
         backupStatus: { isBackedUp: false, isImported: false },
         failedAttempts: mockFailedAttempts,
+        pinAttemptsCount: 0,
       },
       connectionKeyPairs: { data: [], lastConnectionKeyIndex: -1 },
       accounts: { data: [mockActiveSmartWalletAccount] },
