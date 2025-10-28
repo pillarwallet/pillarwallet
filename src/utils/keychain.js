@@ -100,6 +100,10 @@ export const setKeychainDataObject = async (data: KeyChainData, biometry?: ?bool
       ios: Keychain.ACCESS_CONTROL.BIOMETRY_ANY_OR_DEVICE_PASSCODE,
       android: Keychain.ACCESS_CONTROL.BIOMETRY_ANY,
     }),
+    authenticationType: Platform.select({
+      ios: Keychain.AUTHENTICATION_TYPE.BIOMETRICS,
+      android: Keychain.AUTHENTICATION_TYPE.DEVICE_PASSCODE_OR_BIOMETRICS,
+    }),
   };
 
   const options = biometry ? { ...basicOptions, ...biometryOptions } : basicOptions;
@@ -117,6 +121,10 @@ export const getKeychainDataObject = (errorHandler?: Function): Promise<KeyChain
       subtitle: '', // required as empty
       description: '', // required as empty
     },
+    authenticationType: Platform.select({
+      ios: Keychain.AUTHENTICATION_TYPE.BIOMETRICS,
+      android: Keychain.AUTHENTICATION_TYPE.DEVICE_PASSCODE_OR_BIOMETRICS,
+    }),
   })
     .then(({ password = '{}' }) => JSON.parse(password))
     .catch(errorHandler || ((error) => handleCatch(null, error)));

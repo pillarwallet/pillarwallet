@@ -252,7 +252,7 @@ class App extends React.Component<Props, any> {
       .catch(() => null);
     this.removeNetInfoEventListener = NetInfo.addEventListener(this.handleConnectivityChange);
     fetchAppSettingsAndRedirect();
-    StatusBar.setBarStyle('dark-content');
+    StatusBar.setBarStyle('light-content');
     if (Platform.OS === 'android') {
       StatusBar.setTranslucent(true);
       StatusBar.setBackgroundColor('transparent');

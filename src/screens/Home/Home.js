@@ -155,6 +155,12 @@ function Home() {
   };
 
   const pillarXEndpoint = firebaseRemoteConfig.getString(REMOTE_CONFIG.PILLARX_ENDPOINT);
+  // eslint-disable-next-line i18next/no-literal-string
+  const baseUrl = /^https?:\/\//i.test(pillarXEndpoint) ? pillarXEndpoint : `https://${pillarXEndpoint}`;
+  const devicePlatform = encodeURIComponent(Platform.OS);
+  const eoaAddress = encodeURIComponent(activeAccount?.id || '');
+  // eslint-disable-next-line i18next/no-literal-string
+  const webviewUrl = `${baseUrl}?devicePlatform=${devicePlatform}&eoaAddress=${eoaAddress}`;
 
   return (
     <SafeArea>
@@ -163,15 +169,28 @@ function Home() {
           ref={webviewRef}
           source={{
             // eslint-disable-next-line i18next/no-literal-string
-            uri: `${pillarXEndpoint}?devicePlatform=${Platform.OS}&eoaAddress=${activeAccount?.id || ''}`,
+            uri: webviewUrl,
           }}
           bounces={false}
           onMessage={onWebViewMessage}
           onLoadEnd={() => setLoading(false)}
+          onError={(syntheticEvent) => {
+            const { nativeEvent } = syntheticEvent;
+            logBreadcrumb('WebView error', nativeEvent);
+            reportLog('WebView failed to load', nativeEvent);
+          }}
+          onHttpError={(syntheticEvent) => {
+            const { nativeEvent } = syntheticEvent;
+            logBreadcrumb('WebView HTTP error', nativeEvent);
+          }}
           style={{ backgroundColor: 'transparent' }}
           scalesPageToFit={false}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
+          // Allow self-signed certificates in development only
+          onShouldStartLoadWithRequest={() => {
+            return true;
+          }}
           // eslint-disable-next-line i18next/no-literal-string
           injectedJavaScript={`
             const meta = document.createElement('meta');

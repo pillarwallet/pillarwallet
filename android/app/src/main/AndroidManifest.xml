@@ -101,7 +101,7 @@
         <!-- react-native-notifications custom push notification icon -->
         <meta-data
                 android:name="com.google.firebase.messaging.default_notification_icon"
-                android:resource="@mipmap/ic_notification" />
+                android:resource="@mipmap/ic_launcher" />
 
         <!-- disable Sentry ANR reports -->
         <meta-data android:name="io.sentry.anr.enable" android:value="false" />
