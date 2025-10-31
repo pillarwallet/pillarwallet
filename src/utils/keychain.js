@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Platform, Alert } from 'react-native';
+import { Platform } from 'react-native';
 import * as Keychain from 'react-native-keychain';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
@@ -33,7 +33,6 @@ import etherspotService from 'services/etherspot';
 import { emailSupport } from 'services/emailSupport';
 
 // utils
-import { getThemeColors } from 'utils/themes';
 import { reportErrorLog } from 'utils/common';
 
 const KEYCHAIN_SERVICE = `com.pillarproject.wallet${getEnv().BUILD_TYPE === STAGING ? '.staging' : ''}`;
@@ -51,7 +50,6 @@ export const handleCatch = (accountAddress: ?string, error: ?(any[])) => {
   const msg = error ? error.toString() : '';
   if (msg && !/cancel/gi.exec(msg)) {
     reportErrorLog('Exception caught on keychain: ', msg);
-    const colors = getThemeColors();
     const buttons = [];
     buttons.push({
       text: t('error.failedKeychain.cancelButtonText'),
@@ -64,21 +62,6 @@ export const handleCatch = (accountAddress: ?string, error: ?(any[])) => {
         onPress: () => emailSupport([{ type: ACTIVE_ACCOUNT, id: accountAddress }]),
       });
     }
-
-    Alert.alert(
-      t('error.failedKeychain.title', {
-        color: colors.basic010,
-      }),
-      `${t('error.failedKeychain.nonEtherspotMessage', {
-        color: colors.basic030,
-      })}${(
-        accountAddress ? t('error.failedKeychain.etherspotMessage', {
-          color: colors.basic030,
-          address: accountAddress,
-        }) : ''
-      )}`,
-      buttons,
-    );
   }
 };
 
@@ -113,8 +96,8 @@ export const setKeychainDataObject = async (data: KeyChainData, biometry?: ?bool
   );
 };
 
-export const getKeychainDataObject = (errorHandler?: Function): Promise<KeyChainData> =>
-  Keychain.getGenericPassword({
+export const getKeychainDataObject = async (errorHandler?: Function): Promise<KeyChainData> => {
+  const options = {
     service: KEYCHAIN_SERVICE,
     authenticationPrompt: {
       title: t('title.unlockWithBiometrics'),
@@ -125,9 +108,24 @@ export const getKeychainDataObject = (errorHandler?: Function): Promise<KeyChain
       ios: Keychain.AUTHENTICATION_TYPE.BIOMETRICS,
       android: Keychain.AUTHENTICATION_TYPE.DEVICE_PASSCODE_OR_BIOMETRICS,
     }),
-  })
-    .then(({ password = '{}' }) => JSON.parse(password))
-    .catch(errorHandler || ((error) => handleCatch(null, error)));
+  };
+
+  // Keep requesting authentication until it succeeds. Users cannot proceed otherwise.
+  // Intentionally unlimited retries on both cancel and failure.
+  const attempt = (): Promise<KeyChainData> =>
+    Keychain.getGenericPassword(options)
+      .then((res) => {
+        const { password = '{}' } = res || {};
+        return JSON.parse(password);
+      })
+      .catch((error) => {
+        if (errorHandler) errorHandler(error);
+        handleCatch(null, error);
+        return attempt();
+      });
+
+  return attempt();
+};
 
 export const getSupportedBiometryType = (resHandler: (biometryType?: string) => void, errorHandler?: Function) => {
   Keychain.getSupportedBiometryType()

@@ -685,7 +685,7 @@
   },
 
   "home": {
-    "loading": "Just a moment, getting your wallet ready...",
+    "loading": "Just a moment, \nGetting your wallet ready...",
     "balance": {
       "lastWeek": "Last week"
     },
