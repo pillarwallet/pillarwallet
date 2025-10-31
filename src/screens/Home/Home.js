@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { BackHandler, PermissionsAndroid, Platform } from 'react-native';
+import { BackHandler, PermissionsAndroid, Platform, Animated, Easing } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 
@@ -49,6 +49,58 @@ import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Services
 import { firebaseRemoteConfig } from 'services/firebase';
+
+function FadeInOut({ isVisible, children, onHidden }) {
+  const [shouldRender, setShouldRender] = React.useState(false);
+  const opacity = React.useRef(new Animated.Value(0)).current;
+
+  React.useEffect(() => {
+    if (isVisible) {
+      setShouldRender(true);
+      opacity.setValue(0);
+      requestAnimationFrame(() => {
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 500,
+          easing: Easing.in(Easing.ease),
+          useNativeDriver: true,
+        }).start();
+      });
+    } else {
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 500,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start(({ finished }) => {
+        if (finished) {
+          setShouldRender(false);
+          if (onHidden) onHidden();
+        }
+      });
+    }
+  }, [isVisible, opacity, onHidden]);
+
+  if (!shouldRender) return null;
+
+  return (
+    <Animated.View
+      style={{
+        opacity,
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+        zIndex: 100,
+        elevation: 1,
+      }}
+      pointerEvents="none"
+    >
+      {children}
+    </Animated.View>
+  );
+}
 
 function Home() {
   const navigation = useNavigation();
@@ -162,6 +214,13 @@ function Home() {
   // eslint-disable-next-line i18next/no-literal-string
   const webviewUrl = `${baseUrl}?devicePlatform=${devicePlatform}&eoaAddress=${eoaAddress}`;
 
+  const overlayVisible = !pk || loading;
+  const [webViewVisible, setWebViewVisible] = React.useState(false);
+
+  React.useEffect(() => {
+    if (overlayVisible) setWebViewVisible(false);
+  }, [overlayVisible]);
+
   return (
     <SafeArea>
       {pk && (
@@ -183,7 +242,7 @@ function Home() {
             const { nativeEvent } = syntheticEvent;
             logBreadcrumb('WebView HTTP error', nativeEvent);
           }}
-          style={{ backgroundColor: 'transparent' }}
+          style={{ flex: 1, backgroundColor: 'transparent', opacity: webViewVisible ? 1 : 0 }}
           scalesPageToFit={false}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
@@ -200,11 +259,11 @@ function Home() {
           `}
         />
       )}
-      {(!pk || loading) && (
-        <LoadingContainer>
+      <FadeInOut isVisible={overlayVisible} onHidden={() => setWebViewVisible(true)}>
+        <LoadingContainer pointerEvents="none">
           <LoadingText>{t('home.loading')}</LoadingText>
         </LoadingContainer>
-      )}
+      </FadeInOut>
     </SafeArea>
   );
 }
@@ -217,6 +276,7 @@ const SafeArea = styled(SafeAreaView)`
 const LoadingContainer = styled.View`
   width: 100%;
   height: 100%;
+  background-color: ${({ theme }) => theme.colors.grayPrimary};
   justify-content: center;
   align-items: center;
 `;
@@ -225,6 +285,7 @@ const LoadingText = styled.Text`
   font-size: 16px;
   color: white;
   font-weight: 600;
+  text-align: center;
 `;
 
 export default Home;
