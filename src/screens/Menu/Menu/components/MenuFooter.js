@@ -29,7 +29,7 @@ import { useTranslationWithPrefix } from 'translations/translate';
 import Button from 'components/core/Button';
 
 // Constants
-import { MENU_SYSTEM_INFORMATION, BACKUP_WALLET_IN_SETTINGS_FLOW, LEGAL_SCREEN } from 'constants/navigationConstants';
+import { BACKUP_WALLET_IN_SETTINGS_FLOW, LEGAL_SCREEN } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // Selectors
@@ -55,8 +55,6 @@ const MenuFooter = () => {
 
   const privacyPolicyDocumentId = firebaseRemoteConfig.getString(REMOTE_CONFIG.PRISMIC_PRIVACY_POLICY_DOCUMENT_ID);
   const termsOfServiceDocumentId = firebaseRemoteConfig.getString(REMOTE_CONFIG.PRISMIC_TERMS_OF_POLICY_DOCUMENT_ID);
-
-  const goToSystemInformation = () => navigation.navigate(MENU_SYSTEM_INFORMATION);
 
   const openLegalScreen = (documentId: string, documentName: string) =>
     navigation.navigate(LEGAL_SCREEN, { prismicDocumentId: documentId, prismicDocumentName: documentName });
@@ -110,18 +108,7 @@ const MenuFooter = () => {
           // eslint-disable-next-line i18next/no-literal-string
           accessibilityLabel={`${TAG}-button-terms_of_service`}
         />
-        <Button
-          title={t('systemInformation')}
-          onPress={goToSystemInformation}
-          variant="text"
-          size="compact"
-          style={styles.button}
-          titleStyle={styles.buttonTitle}
-          titleColor={colors.secondaryText}
-          testID={`${TAG}-button-system_information`}
-          // eslint-disable-next-line i18next/no-literal-string
-          accessibilityLabel={`${TAG}-button-system_information`}
-        />
+
       </LeftColumn>
 
       <RightColumn>
