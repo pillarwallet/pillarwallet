@@ -21,12 +21,12 @@
 // constants
 import { SET_WALLET } from 'constants/walletConstants';
 
-// reducers
-import reducer from 'reducers/walletReducer';
-
 // types
 import type { BackupStatus } from 'reducers/walletReducer';
 import type { EthereumWallet } from 'models/Wallet';
+
+// reducers will be required after mocking time to stabilize date in initialState
+let reducer;
 
 const mockWallet: EthereumWallet = {
   address: '0xaddr',
@@ -34,7 +34,8 @@ const mockWallet: EthereumWallet = {
   mnemonic: undefined,
 };
 
-const mockDate = new Date();
+const FIXED_TIME = new Date('2020-01-01T00:00:00.000Z').getTime();
+const mockDate = new Date(FIXED_TIME);
 
 const mockFailedAttempts = {
   numberOfFailedAttempts: 0,
@@ -47,6 +48,22 @@ const mockBackupStatus: BackupStatus = {
 };
 
 describe('Wallet reducer', () => {
+  beforeAll(() => {
+    jest.useFakeTimers();
+    // $FlowFixMe[prop-missing] - setSystemTime is available in Jest modern timers
+    // $FlowFixMe[incompatible-call]
+    jest.setSystemTime(FIXED_TIME);
+    jest.isolateModules(() => {
+      // $FlowFixMe[cannot-resolve-name]
+      // $FlowFixMe[unclear-type]
+      // eslint-disable-next-line import/no-dynamic-require, global-require
+      reducer = require('reducers/walletReducer').default;
+    });
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
   it('should handle SET_WALLET', () => {
     const updateAction = { type: SET_WALLET, payload: mockWallet };
 

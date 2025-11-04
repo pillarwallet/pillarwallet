@@ -54,7 +54,6 @@ import MenuSettingsScreen from 'screens/Menu/Settings';
 import MenuSelectLanguageScreen from 'screens/Menu/SelectLanguage';
 import MenuSelectAppearanceScreen from 'screens/AppAppearence';
 import MenuSelectCurrencyScreen from 'screens/Menu/SelectCurrency';
-import MenuSystemInformationScreen from 'screens/Menu/SystemInformation';
 import WebViewScreen from 'screens/WebView/WebViewScreen';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import ContactsListScreen from 'screens/Contacts/ContactsList';
@@ -120,7 +119,6 @@ import {
   MENU_SELECT_LANGUAGE,
   MENU_SELECT_APPEARANCE,
   MENU_SELECT_CURRENCY,
-  MENU_SYSTEM_INFORMATION,
   PPN_SEND_SYNTHETIC_ASSET_FLOW,
   LOGOUT_PENDING,
   // STORYBOOK,
@@ -343,7 +341,6 @@ function MenuFlow() {
       <menuFlowNavigator.Screen name={MENU_SELECT_LANGUAGE} component={MenuSelectLanguageScreen} />
       <menuFlowNavigator.Screen name={MENU_SELECT_APPEARANCE} component={MenuSelectAppearanceScreen} />
       <menuFlowNavigator.Screen name={MENU_SELECT_CURRENCY} component={MenuSelectCurrencyScreen} />
-      <menuFlowNavigator.Screen name={MENU_SYSTEM_INFORMATION} component={MenuSystemInformationScreen} />
       <menuFlowNavigator.Screen name={IMPORT_WALLET} component={ImportWalletScreen} />
       <menuFlowNavigator.Screen name={WELCOME_BACK} component={WelcomeBackScreen} />
       <menuFlowNavigator.Screen name={SET_WALLET_PIN_CODE} component={SetWalletPinCodeScreen} />
