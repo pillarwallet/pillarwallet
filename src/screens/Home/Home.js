@@ -27,6 +27,13 @@ import messaging from '@react-native-firebase/messaging';
 import WebView from 'react-native-webview';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styled from 'styled-components';
+import {
+  privateKeyToAddress,
+  toAccount,
+  signMessage as viemSignMessage,
+  signTransaction as viemSignTransaction,
+  signTypedData as viemSignTypedData,
+} from 'viem/accounts';
 
 // Selectors
 import { useActiveAccount } from 'selectors';
@@ -194,15 +201,148 @@ function Home() {
     }, []),
   );
 
+  const handleSigningRequest = React.useCallback(
+    async (signingType: string, signingData: any) => {
+      if (!pk) {
+        logBreadcrumb('Home', 'Signing request failed: no private key available');
+        webviewRef.current?.postMessage(
+          JSON.stringify({
+            type: 'pillarWalletSigningResponse',
+            value: { error: 'Private key not available' },
+          }),
+          '*',
+        );
+        return;
+      }
+
+      try {
+        const address = privateKeyToAddress(pk);
+        const account = toAccount({
+          address,
+          async signMessage({ message }) {
+            return viemSignMessage({ message, privateKey: pk });
+          },
+          async signTransaction(transaction, { serializer }) {
+            return viemSignTransaction({ privateKey: pk, transaction, serializer });
+          },
+          async signTypedData(typedData) {
+            return viemSignTypedData({ ...typedData, privateKey: pk });
+          },
+        });
+
+        let signedResult;
+
+        switch (signingType) {
+          case 'signMessage': {
+            // signingData should be { message: string | { raw: Hex } }
+            signedResult = await account.signMessage(signingData);
+            break;
+          }
+          case 'signTransaction': {
+            // signingData should be transaction parameters like { chainId, to, value, gas, etc. }
+            signedResult = await account.signTransaction(signingData);
+            break;
+          }
+          case 'signTypedData': {
+            // signingData should be { domain, types, primaryType, message }
+            signedResult = await account.signTypedData(signingData);
+            break;
+          }
+          default:
+            throw new Error(`Unknown signing type: ${signingType}`);
+        }
+
+        logBreadcrumb('Home', `Signing request successful: ${signingType}`);
+        webviewRef.current?.postMessage(
+          JSON.stringify({
+            type: 'pillarWalletSigningResponse',
+            value: { result: signedResult },
+          }),
+          '*',
+        );
+      } catch (error) {
+        logBreadcrumb('Home', `Signing request failed: ${signingType}`, { error: error.message });
+        reportLog(`Home: Signing request failed for ${signingType}`, error);
+        webviewRef.current?.postMessage(
+          JSON.stringify({
+            type: 'pillarWalletSigningResponse',
+            value: { error: error.message || 'Signing failed' },
+          }),
+          '*',
+        );
+      }
+    },
+    [pk],
+  );
+
   const onWebViewMessage = (event) => {
     const data = JSON.parse(event?.nativeEvent?.data) || null;
 
+    /** Top level Authentication Requests */
     if (data?.type === 'pillarXAuthRequest' && data?.value === 'pk') {
       webviewRef.current.postMessage(JSON.stringify({ type: 'pillarWalletPkResponse', value: { pk } }), '*');
     }
     if (data?.type === 'pillarXAuthRequest' && data?.value === 'settings') {
       // Open Menu
       navigation.navigate(MENU_FLOW);
+    }
+
+    /** Signing Requests */
+    if (data?.type === 'pillarXSigningRequest') {
+      let signingType;
+      let signingData;
+
+      try {
+        // The signing data can be in data.value (as stringified JSON) or in a separate field
+        // First, check if data.value is a stringified JSON containing both type and data
+        if (typeof data?.value === 'string' && data.value.trim().startsWith('{')) {
+          try {
+            const parsedValue = JSON.parse(data.value);
+            if (parsedValue && typeof parsedValue === 'object' && parsedValue.type && parsedValue.data) {
+              signingType = parsedValue.type;
+              signingData = parsedValue.data;
+              if (['signMessage', 'signTransaction', 'signTypedData'].includes(signingType)) {
+                handleSigningRequest(signingType, signingData);
+                return;
+              }
+            }
+          } catch {
+            // If parsing fails, treat data.value as the signing type
+          }
+        }
+
+        // Otherwise, data.value is the signing type string
+        signingType = data?.value;
+
+        // Parse the signing data from data.data or data.params
+        if (typeof data?.data === 'string') {
+          signingData = JSON.parse(data.data);
+        } else if (typeof data?.params === 'string') {
+          signingData = JSON.parse(data.params);
+        } else if (data?.data) {
+          signingData = data.data;
+        } else if (data?.params) {
+          signingData = data.params;
+        } else {
+          throw new Error('No signing data provided');
+        }
+
+        if (['signMessage', 'signTransaction', 'signTypedData'].includes(signingType)) {
+          handleSigningRequest(signingType, signingData);
+        } else {
+          throw new Error(`Invalid signing type: ${signingType}`);
+        }
+      } catch (error) {
+        logBreadcrumb('Home', 'Failed to parse signing request', { error: error.message });
+        reportLog('Home: Failed to parse signing request', error);
+        webviewRef.current?.postMessage(
+          JSON.stringify({
+            type: 'pillarWalletSigningResponse',
+            value: { error: error.message || 'Invalid signing request' },
+          }),
+          '*',
+        );
+      }
     }
   };
 
