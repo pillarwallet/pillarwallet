@@ -220,7 +220,7 @@
     "@babel/preset-typescript": "^7.27.1",
     "@babel/runtime": "^7.27.6",
     "@cfaester/enzyme-adapter-react-18": "^0.8.0",
-    "@react-native-community/cli": "19.1.0",
+    "@react-native-community/cli": "20.0.0",
     "@react-native-community/cli-platform-android": "18.0.0",
     "@react-native-community/cli-platform-ios": "18.0.0",
     "@react-native/babel-preset": "^0.80.2",
