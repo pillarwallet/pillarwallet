@@ -29,11 +29,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import styled from 'styled-components';
 import {
   privateKeyToAccount,
-  privateKeyToAddress,
-  toAccount,
-  signMessage as viemSignMessage,
-  signTransaction as viemSignTransaction,
-  signTypedData as viemSignTypedData,
 } from 'viem/accounts';
 
 // Selectors
@@ -203,15 +198,15 @@ function Home() {
   );
 
   // BigInt replacer for JSON.stringify to handle BigInt values in signing responses
-  const bigIntReplacer = React.useCallback((_key: string, value: any) => {
-    if (typeof value === 'bigint') {
+  const bigIntReplacer = React.useCallback((_key, value) => {
+    if (Object.prototype.toString.call(value) === '[object BigInt]') {
       return value.toString();
     }
     return value;
   }, []);
 
   const handleSigningRequest = React.useCallback(
-    async (signingType: string, signingData: any) => {
+    async (signingType, signingData) => {
       if (!pk) {
         logBreadcrumb('Home', 'Signing request failed: no private key available');
         webviewRef.current?.postMessage(
@@ -363,7 +358,7 @@ function Home() {
   const devicePlatform = encodeURIComponent(Platform.OS);
   const eoaAddress = encodeURIComponent(activeAccount?.id || '');
   // eslint-disable-next-line i18next/no-literal-string
-  const webviewUrl = `https://192.168.1.176:5173?devicePlatform=${devicePlatform}&eoaAddress=${eoaAddress}`;
+  const webviewUrl = `${baseUrl}?devicePlatform=${devicePlatform}&eoaAddress=${eoaAddress}`;
 
   const overlayVisible = !pk || loading;
   const [webViewVisible, setWebViewVisible] = React.useState(false);
