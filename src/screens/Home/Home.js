@@ -28,6 +28,7 @@ import WebView from 'react-native-webview';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styled from 'styled-components';
 import {
+  privateKeyToAccount,
   privateKeyToAddress,
   toAccount,
   signMessage as viemSignMessage,
@@ -201,6 +202,14 @@ function Home() {
     }, []),
   );
 
+  // BigInt replacer for JSON.stringify to handle BigInt values in signing responses
+  const bigIntReplacer = React.useCallback((_key: string, value: any) => {
+    if (typeof value === 'bigint') {
+      return value.toString();
+    }
+    return value;
+  }, []);
+
   const handleSigningRequest = React.useCallback(
     async (signingType: string, signingData: any) => {
       if (!pk) {
@@ -216,36 +225,30 @@ function Home() {
       }
 
       try {
-        const address = privateKeyToAddress(pk);
-        const account = toAccount({
-          address,
-          async signMessage({ message }) {
-            return viemSignMessage({ message, privateKey: pk });
-          },
-          async signTransaction(transaction, { serializer }) {
-            return viemSignTransaction({ privateKey: pk, transaction, serializer });
-          },
-          async signTypedData(typedData) {
-            return viemSignTypedData({ ...typedData, privateKey: pk });
-          },
-        });
-
+        const pkAccount = privateKeyToAccount(pk);
         let signedResult;
 
         switch (signingType) {
           case 'signMessage': {
             // signingData should be { message: string | { raw: Hex } }
-            signedResult = await account.signMessage(signingData);
+            signedResult = await pkAccount.signMessage(signingData);
+            // signedResult = await viemSignMessage({ message: signingData, privateKey: pk });
             break;
           }
           case 'signTransaction': {
             // signingData should be transaction parameters like { chainId, to, value, gas, etc. }
-            signedResult = await account.signTransaction(signingData);
+            signedResult = await pkAccount.signTransaction(signingData);
             break;
           }
           case 'signTypedData': {
             // signingData should be { domain, types, primaryType, message }
-            signedResult = await account.signTypedData(signingData);
+            signedResult = await pkAccount.signTypedData(signingData);
+            break;
+          }
+          case 'signAuthorization': {
+            // For signAuthorization, the result contains BigInt values (v field)
+            // that need to be serialized as strings
+            signedResult = await pkAccount.signAuthorization(signingData);
             break;
           }
           default:
@@ -253,11 +256,22 @@ function Home() {
         }
 
         logBreadcrumb('Home', `Signing request successful: ${signingType}`);
+
+        // For signAuthorization, stringify the result separately with BigInt replacer
+        // since it contains BigInt values that can't be stringified directly
+        const resultValue =
+          signingType === 'signAuthorization' ? JSON.stringify(signedResult, bigIntReplacer) : signedResult;
+
+        // Use bigIntReplacer on the outer JSON.stringify to handle any BigInt values
+        // that might be in non-signAuthorization responses (e.g., transaction values)
         webviewRef.current?.postMessage(
-          JSON.stringify({
-            type: 'pillarWalletSigningResponse',
-            value: { result: signedResult },
-          }),
+          JSON.stringify(
+            {
+              type: 'pillarWalletSigningResponse',
+              value: { result: resultValue },
+            },
+            bigIntReplacer,
+          ),
           '*',
         );
       } catch (error) {
@@ -272,7 +286,7 @@ function Home() {
         );
       }
     },
-    [pk],
+    [pk, bigIntReplacer],
   );
 
   const onWebViewMessage = (event) => {
@@ -289,6 +303,7 @@ function Home() {
 
     /** Signing Requests */
     if (data?.type === 'pillarXSigningRequest') {
+      alert('Pillar Wallet: Signing request received');
       let signingType;
       let signingData;
 
@@ -301,7 +316,7 @@ function Home() {
             if (parsedValue && typeof parsedValue === 'object' && parsedValue.type && parsedValue.data) {
               signingType = parsedValue.type;
               signingData = parsedValue.data;
-              if (['signMessage', 'signTransaction', 'signTypedData'].includes(signingType)) {
+              if (['signMessage', 'signTransaction', 'signTypedData', 'signAuthorization'].includes(signingType)) {
                 handleSigningRequest(signingType, signingData);
                 return;
               }
@@ -327,7 +342,7 @@ function Home() {
           throw new Error('No signing data provided');
         }
 
-        if (['signMessage', 'signTransaction', 'signTypedData'].includes(signingType)) {
+        if (['signMessage', 'signTransaction', 'signTypedData', 'signAuthorization'].includes(signingType)) {
           handleSigningRequest(signingType, signingData);
         } else {
           throw new Error(`Invalid signing type: ${signingType}`);
@@ -352,7 +367,7 @@ function Home() {
   const devicePlatform = encodeURIComponent(Platform.OS);
   const eoaAddress = encodeURIComponent(activeAccount?.id || '');
   // eslint-disable-next-line i18next/no-literal-string
-  const webviewUrl = `${baseUrl}?devicePlatform=${devicePlatform}&eoaAddress=${eoaAddress}`;
+  const webviewUrl = `https://192.168.1.176:5173?devicePlatform=${devicePlatform}&eoaAddress=${eoaAddress}`;
 
   const overlayVisible = !pk || loading;
   const [webViewVisible, setWebViewVisible] = React.useState(false);
