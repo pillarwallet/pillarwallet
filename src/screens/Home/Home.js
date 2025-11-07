@@ -293,9 +293,6 @@ function Home() {
     const data = JSON.parse(event?.nativeEvent?.data) || null;
 
     /** Top level Authentication Requests */
-    if (data?.type === 'pillarXAuthRequest' && data?.value === 'pk') {
-      webviewRef.current.postMessage(JSON.stringify({ type: 'pillarWalletPkResponse', value: { pk } }), '*');
-    }
     if (data?.type === 'pillarXAuthRequest' && data?.value === 'settings') {
       // Open Menu
       navigation.navigate(MENU_FLOW);
@@ -303,7 +300,6 @@ function Home() {
 
     /** Signing Requests */
     if (data?.type === 'pillarXSigningRequest') {
-      alert('Pillar Wallet: Signing request received');
       let signingType;
       let signingData;
 
