@@ -32,7 +32,6 @@ import {
 } from 'viem/accounts';
 
 // Selectors
-import { useActiveAccount } from 'selectors';
 
 // Utils
 import { reportLog, logBreadcrumb } from 'utils/common';
@@ -108,7 +107,6 @@ function FadeInOut({ isVisible, children, onHidden }) {
 function Home() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const activeAccount = useActiveAccount();
   const webviewRef = React.useRef<any>(null);
   const [pk, setPk] = React.useState('');
   const [loading, setLoading] = React.useState(true);
@@ -356,7 +354,16 @@ function Home() {
   // eslint-disable-next-line i18next/no-literal-string
   const baseUrl = /^https?:\/\//i.test(pillarXEndpoint) ? pillarXEndpoint : `https://${pillarXEndpoint}`;
   const devicePlatform = encodeURIComponent(Platform.OS);
-  const eoaAddress = encodeURIComponent(activeAccount?.id || '');
+  const eoaAddress = React.useMemo(() => {
+    if (!pk) return '';
+    try {
+      const pkAccount = privateKeyToAccount(pk);
+      return encodeURIComponent(pkAccount.address || '');
+    } catch (error) {
+      logBreadcrumb('Home', 'Failed to derive EOA address from private key', { error: error.message });
+      return '';
+    }
+  }, [pk]);
   // eslint-disable-next-line i18next/no-literal-string
   const webviewUrl = `${baseUrl}?devicePlatform=${devicePlatform}&eoaAddress=${eoaAddress}`;
 
