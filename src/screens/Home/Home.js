@@ -53,25 +53,30 @@ import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { firebaseRemoteConfig } from 'services/firebase';
 
 function FadeInOut({ isVisible, children, onHidden }) {
-  const [shouldRender, setShouldRender] = React.useState(false);
-  const opacity = React.useRef(new Animated.Value(0)).current;
+  // Render immediately on first mount if visible, so there's no blank screen before the text appears.
+  const [shouldRender, setShouldRender] = React.useState(isVisible);
+  const opacity = React.useRef(new Animated.Value(isVisible ? 1 : 0)).current;
+  const previousIsVisible = React.useRef(isVisible);
 
   React.useEffect(() => {
     if (isVisible) {
       setShouldRender(true);
-      opacity.setValue(0);
-      requestAnimationFrame(() => {
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 500,
-          easing: Easing.in(Easing.ease),
-          useNativeDriver: true,
-        }).start();
-      });
+
+      // Only animate from 0 on subsequent show transitions; on initial mount we already start at 1.
+      if (!previousIsVisible.current) {
+        opacity.setValue(0);
+      }
+
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 300,
+        easing: Easing.in(Easing.ease),
+        useNativeDriver: true,
+      }).start();
     } else {
       Animated.timing(opacity, {
         toValue: 0,
-        duration: 500,
+        duration: 300,
         easing: Easing.out(Easing.ease),
         useNativeDriver: true,
       }).start(({ finished }) => {
@@ -81,6 +86,8 @@ function FadeInOut({ isVisible, children, onHidden }) {
         }
       });
     }
+
+    previousIsVisible.current = isVisible;
   }, [isVisible, opacity, onHidden]);
 
   if (!shouldRender) return null;

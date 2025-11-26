@@ -200,7 +200,6 @@ PODS:
   - PromisesObjC (2.4.0)
   - PromisesSwift (2.4.0):
     - PromisesObjC (= 2.4.0)
-  - QBImagePickerController (3.4.0)
   - RCT-Folly (2024.11.18.00):
     - boost
     - DoubleConversion
@@ -2515,15 +2514,100 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - RNImageCropPicker (0.26.2):
-    - QBImagePickerController
+  - RNImageCropPicker (0.51.1):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
     - React-RCTImage
-    - RSKImageCropper
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - RNImageCropPicker/QBImagePickerController (= 0.51.1)
+    - SocketRocket
+    - TOCropViewController (~> 2.8.0)
+    - Yoga
+  - RNImageCropPicker/QBImagePickerController (0.51.1):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-RCTImage
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SocketRocket
+    - TOCropViewController (~> 2.8.0)
+    - Yoga
   - RNInAppBrowser (3.4.0):
     - React
-  - RNKeychain (8.2.0):
+  - RNKeychain (10.0.0):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SocketRocket
+    - Yoga
   - RNLocalize (3.5.2):
     - React-Core
   - RNOS (1.2.6):
@@ -2623,10 +2707,9 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - RSKImageCropper (5.0.1)
-  - SDWebImage (5.21.1):
-    - SDWebImage/Core (= 5.21.1)
-  - SDWebImage/Core (5.21.1)
+  - SDWebImage (5.21.3):
+    - SDWebImage/Core (= 5.21.3)
+  - SDWebImage/Core (5.21.3)
   - SDWebImageWebPCoder (0.6.1):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.7)
@@ -2636,6 +2719,7 @@ PODS:
   - TcpSockets (3.3.2):
     - CocoaAsyncSocket
     - React
+  - TOCropViewController (2.8.0)
   - toolbar-android (0.2.1):
     - React
   - Yoga (0.0.0)
@@ -2792,13 +2876,12 @@ SPEC REPOS:
     - nanopb
     - PromisesObjC
     - PromisesSwift
-    - QBImagePickerController
     - RecaptchaInterop
-    - RSKImageCropper
     - SDWebImage
     - SDWebImageWebPCoder
     - Sentry
     - SocketRocket
+    - TOCropViewController
 
 EXTERNAL SOURCES:
   boost:
@@ -3083,7 +3166,6 @@ SPEC CHECKSUMS:
   nanopb: 438bc412db1928dac798aa6fd75726007be04262
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
-  QBImagePickerController: d54cf93db6decf26baf6ed3472f336ef35cae022
   RCT-Folly: 846fda9475e61ec7bcbf8a3fe81edfcaeb090669
   RCTDeprecation: efa5010912100e944a7ac9a93a157e1def1988fe
   RCTRequired: bbc4cf999ddc4a4b076e076c74dd1d39d0254630
@@ -3182,9 +3264,9 @@ SPEC CHECKSUMS:
   RNFBPerf: 1975169ab21b01c8bfe006a2a15b052e345eb314
   RNFBRemoteConfig: 2af832c678d0bf4d3a7b83dbef8b316e2b10dae3
   RNGestureHandler: dce58d13d761cb562d71f81b7023bdd808463303
-  RNImageCropPicker: 75af9d3e7a59b5fc73e3865ced6cbe19fc01c8ee
+  RNImageCropPicker: 8609c966a09b0dd0ced48319376465dd301c6527
   RNInAppBrowser: f8b145b73b845703f33a2d00de4f22d3648f5879
-  RNKeychain: bbe2f6d5cc008920324acb49ef86ccc03d3b38e4
+  RNKeychain: 9d125a61b2258663cd5ab8cba5196093f990d8b6
   RNLocalize: 3c4d0abd777a546fa77bdb6caef85a87fb9ea349
   RNOS: d07e5090b5060c6f2b83116d740a32cfdb33afe3
   RNPermissions: 0970192ec450a29cc3230565a04ffe4f589f1f9a
@@ -3193,13 +3275,13 @@ SPEC CHECKSUMS:
   RNShare: 1a20ef57eb0ac9a0c386f4e8aff11cba45120bb2
   RNSVG: 9b2a36fa9fa22f131af7e2adb26160bd9a5645ed
   RNVectorIcons: 44a18958f24151edaab5dcd4dd3416981a6670b2
-  RSKImageCropper: 491da8092d56e110435276fdb44917161f40b78e
-  SDWebImage: f29024626962457f3470184232766516dee8dfea
+  SDWebImage: 16309af6d214ba3f77a7c6f6fdda888cb313a50a
   SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
   Sentry: 1e4e974d45f09d153af4b30b42acfb1c79e957d3
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   SwiftyGif: 706c60cf65fa2bc5ee0313beece843c8eb8194d4
   TcpSockets: 6f304a519884e6e8b1336c64e362c4ad10acd63d
+  TOCropViewController: 797deaf39c90e6e9ddd848d88817f6b9a8a09888
   toolbar-android: c426ed5bd3dcccfed20fd79533efc0d1ae0ef018
   Yoga: 2b7a0cd38b4b0b4fdd7f353017fde11914148f98
 
