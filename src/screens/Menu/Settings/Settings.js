@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { View, Image } from 'react-native';
+import { View, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components/native';
@@ -43,6 +43,9 @@ import { resetIncorrectPasswordAction } from 'actions/authActions';
 // Utils
 import { getKeychainDataObject } from 'utils/keychain';
 import { appFont, fontStyles, spacing } from 'utils/variables';
+
+// Constants
+import { MENU_HOME_SCREEN_URL } from 'constants/navigationConstants';
 
 // Types
 import type { WalletObject } from 'models/Wallet';
@@ -72,6 +75,38 @@ const Settings = ({ route }: Props) => {
   const screenName = route.name;
 
   const { showPinModal, pin, wallet, onPinValid } = useWalletData();
+
+  const longPressTimerRef = React.useRef<?TimeoutID>(null);
+  const longPressStartTimeRef = React.useRef<?number>(null);
+
+  const handleAppSettingsLongPress = () => {
+    navigation.navigate(MENU_HOME_SCREEN_URL);
+  };
+
+  const handleAppSettingsPressIn = () => {
+    longPressStartTimeRef.current = Date.now();
+    longPressTimerRef.current = setTimeout(() => {
+      if (longPressStartTimeRef.current && Date.now() - longPressStartTimeRef.current >= 5000) {
+        handleAppSettingsLongPress();
+      }
+    }, 5000);
+  };
+
+  const handleAppSettingsPressOut = () => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+    longPressStartTimeRef.current = null;
+  };
+
+  React.useEffect(() => {
+    return () => {
+      if (longPressTimerRef.current) {
+        clearTimeout(longPressTimerRef.current);
+      }
+    };
+  }, []);
 
   if (showPinModal) {
     return (
@@ -105,7 +140,13 @@ const Settings = ({ route }: Props) => {
           </View>
         )}
 
-        <Header>{t('appSettings')}</Header>
+        <HeaderTouchable
+          onPressIn={handleAppSettingsPressIn}
+          onPressOut={handleAppSettingsPressOut}
+          activeOpacity={1}
+        >
+          <Header>{t('appSettings')}</Header>
+        </HeaderTouchable>
 
         {/* <AppearanceSetting /> */}
         {/* <LanguageSetting /> */}
@@ -171,6 +212,8 @@ const useWalletData = () => {
 
   return { showPinModal, pin, wallet, onPinValid };
 };
+
+const HeaderTouchable = styled(TouchableOpacity)``;
 
 const Header = styled(Text)`
   margin: 12px ${spacing.large}px ${spacing.small}px;

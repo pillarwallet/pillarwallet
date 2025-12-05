@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { BackHandler, PermissionsAndroid, Platform, Animated, Easing } from 'react-native';
+import { BackHandler, PermissionsAndroid, Platform, Animated, Easing, TouchableOpacity } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 
@@ -41,6 +41,7 @@ import {
   getNotificationsPermission,
 } from 'utils/getNotification';
 import { getKeychainDataObject } from 'utils/keychain';
+import { getHomeScreenUrlOverride, PRESET_URLS } from 'utils/homeScreenUrl';
 
 // Translations
 import t from 'translations/translate';
@@ -357,7 +358,45 @@ function Home() {
     }
   };
 
-  const pillarXEndpoint = firebaseRemoteConfig.getString(REMOTE_CONFIG.PILLARX_ENDPOINT);
+  const [customUrl, setCustomUrl] = React.useState<?string>(null);
+  const [isLoadingUrl, setIsLoadingUrl] = React.useState(true);
+
+  const loadCustomUrl = React.useCallback(async () => {
+    try {
+      setIsLoadingUrl(true);
+      const override = await getHomeScreenUrlOverride();
+      setCustomUrl(override);
+    } catch (error) {
+      logBreadcrumb('Home', 'Failed to load custom URL override', { error: error.message });
+    } finally {
+      setIsLoadingUrl(false);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    loadCustomUrl();
+  }, [loadCustomUrl]);
+
+  // Reload URL when screen comes into focus (e.g., returning from settings)
+  useFocusEffect(
+    React.useCallback(() => {
+      loadCustomUrl();
+    }, [loadCustomUrl]),
+  );
+
+  const pillarXEndpoint = React.useMemo(() => {
+    // If we haven't loaded the custom URL yet, use Firebase Remote Config as fallback
+    if (isLoadingUrl || customUrl === null) {
+      return firebaseRemoteConfig.getString(REMOTE_CONFIG.PILLARX_ENDPOINT);
+    }
+    // If customUrl is an empty string, it means "use default" (Firebase Remote Config)
+    if (customUrl === '') {
+      return firebaseRemoteConfig.getString(REMOTE_CONFIG.PILLARX_ENDPOINT);
+    }
+    // Otherwise, use the custom URL
+    return customUrl;
+  }, [customUrl, isLoadingUrl]);
+
   // eslint-disable-next-line i18next/no-literal-string
   const baseUrl = /^https?:\/\//i.test(pillarXEndpoint) ? pillarXEndpoint : `https://${pillarXEndpoint}`;
   const devicePlatform = encodeURIComponent(Platform.OS);
@@ -374,12 +413,62 @@ function Home() {
   // eslint-disable-next-line i18next/no-literal-string
   const webviewUrl = `${baseUrl}?devicePlatform=${devicePlatform}&eoaAddress=${eoaAddress}`;
 
-  const overlayVisible = !pk || loading;
+  const overlayVisible = !pk || loading || isLoadingUrl;
   const [webViewVisible, setWebViewVisible] = React.useState(false);
 
   React.useEffect(() => {
     if (overlayVisible) setWebViewVisible(false);
   }, [overlayVisible]);
+
+  // Check if current URL is a custom URL (not production, staging, or default)
+  const isCustomUrl = React.useMemo(() => {
+    if (isLoadingUrl || customUrl === null || customUrl === '') {
+      return false;
+    }
+    // Check if it's not one of the preset URLs (check base URL without query params)
+    const baseCustomUrl = customUrl.split('?')[0].replace(/\/$/, '');
+    const baseProduction = PRESET_URLS.PRODUCTION.replace(/\/$/, '');
+    const baseStaging = PRESET_URLS.STAGING.replace(/\/$/, '');
+    
+    return baseCustomUrl !== baseProduction && baseCustomUrl !== baseStaging;
+  }, [customUrl, isLoadingUrl]);
+
+  // Long press handler for Settings access when custom URL is set
+  const settingsLongPressTimerRef = React.useRef<?TimeoutID>(null);
+  const settingsLongPressStartTimeRef = React.useRef<?number>(null);
+
+  const handleSettingsLongPress = React.useCallback(() => {
+    navigation.navigate(MENU_FLOW);
+  }, [navigation]);
+
+  const handleSettingsPressIn = React.useCallback(() => {
+    if (!isCustomUrl) return;
+    settingsLongPressStartTimeRef.current = Date.now();
+    settingsLongPressTimerRef.current = setTimeout(() => {
+      if (
+        settingsLongPressStartTimeRef.current &&
+        Date.now() - settingsLongPressStartTimeRef.current >= 5000
+      ) {
+        handleSettingsLongPress();
+      }
+    }, 5000);
+  }, [isCustomUrl, handleSettingsLongPress]);
+
+  const handleSettingsPressOut = React.useCallback(() => {
+    if (settingsLongPressTimerRef.current) {
+      clearTimeout(settingsLongPressTimerRef.current);
+      settingsLongPressTimerRef.current = null;
+    }
+    settingsLongPressStartTimeRef.current = null;
+  }, []);
+
+  React.useEffect(() => {
+    return () => {
+      if (settingsLongPressTimerRef.current) {
+        clearTimeout(settingsLongPressTimerRef.current);
+      }
+    };
+  }, []);
 
   return (
     <SafeArea>
@@ -419,6 +508,13 @@ function Home() {
           `}
         />
       )}
+      {isCustomUrl && pk && !overlayVisible && (
+        <SettingsAccessOverlay
+          onPressIn={handleSettingsPressIn}
+          onPressOut={handleSettingsPressOut}
+          activeOpacity={1}
+        />
+      )}
       <FadeInOut isVisible={overlayVisible} onHidden={() => setWebViewVisible(true)}>
         <LoadingContainer pointerEvents="none">
           <LoadingText>{t('home.loading')}</LoadingText>
@@ -446,6 +542,17 @@ const LoadingText = styled.Text`
   color: white;
   font-weight: 600;
   text-align: center;
+`;
+
+const SettingsAccessOverlay = styled(TouchableOpacity)`
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 80px;
+  height: 80px;
+  z-index: 1000;
+  elevation: 1000;
+  background-color: transparent;
 `;
 
 export default Home;
