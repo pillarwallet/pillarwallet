@@ -756,7 +756,21 @@
       "viewPrivateKey": "View Private Key",
       "backupNotFinishedWarning": "Security warning",
       "backupComplete": "Backup complete",
-      "importWallet": "Import Wallet"
+      "importWallet": "Import Wallet",
+      "homeScreenUrl": {
+        "title": "Home Screen URL",
+        "description": "Override the webview URL that is loaded on the home screen",
+        "urlInput": "URL",
+        "urlPlaceholder": "Enter custom URL",
+        "presets": {
+          "production": "Production",
+          "staging": "Staging",
+          "default": "Default",
+          "custom": "Custom"
+        },
+        "save": "Save",
+        "cancel": "Cancel"
+      }
     },
     "selectLanguage": {
       "title": "Language"
