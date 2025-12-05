@@ -86,7 +86,8 @@ const Settings = ({ route }: Props) => {
   const handleAppSettingsPressIn = () => {
     longPressStartTimeRef.current = Date.now();
     longPressTimerRef.current = setTimeout(() => {
-      if (longPressStartTimeRef.current && Date.now() - longPressStartTimeRef.current >= 5000) {
+      const startTime = longPressStartTimeRef.current;
+      if (startTime && Date.now() - startTime >= 5000) {
         handleAppSettingsLongPress();
       }
     }, 5000);

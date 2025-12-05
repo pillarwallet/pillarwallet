@@ -398,7 +398,12 @@ function Home() {
   }, [customUrl, isLoadingUrl]);
 
   // eslint-disable-next-line i18next/no-literal-string
-  const baseUrl = /^https?:\/\//i.test(pillarXEndpoint) ? pillarXEndpoint : `https://${pillarXEndpoint}`;
+  const baseUrl = React.useMemo(() => {
+    if (!pillarXEndpoint) {
+      return '';
+    }
+    return /^https?:\/\//i.test(pillarXEndpoint) ? pillarXEndpoint : `https://${pillarXEndpoint}`;
+  }, [pillarXEndpoint]);
   const devicePlatform = encodeURIComponent(Platform.OS);
   const eoaAddress = React.useMemo(() => {
     if (!pk) return '';
@@ -422,14 +427,14 @@ function Home() {
 
   // Check if current URL is a custom URL (not production, staging, or default)
   const isCustomUrl = React.useMemo(() => {
-    if (isLoadingUrl || customUrl === null || customUrl === '') {
+    if (isLoadingUrl || !customUrl || customUrl === '') {
       return false;
     }
     // Check if it's not one of the preset URLs (check base URL without query params)
     const baseCustomUrl = customUrl.split('?')[0].replace(/\/$/, '');
     const baseProduction = PRESET_URLS.PRODUCTION.replace(/\/$/, '');
     const baseStaging = PRESET_URLS.STAGING.replace(/\/$/, '');
-    
+
     return baseCustomUrl !== baseProduction && baseCustomUrl !== baseStaging;
   }, [customUrl, isLoadingUrl]);
 
@@ -445,10 +450,8 @@ function Home() {
     if (!isCustomUrl) return;
     settingsLongPressStartTimeRef.current = Date.now();
     settingsLongPressTimerRef.current = setTimeout(() => {
-      if (
-        settingsLongPressStartTimeRef.current &&
-        Date.now() - settingsLongPressStartTimeRef.current >= 5000
-      ) {
+      const startTime = settingsLongPressStartTimeRef.current;
+      if (startTime && Date.now() - startTime >= 5000) {
         handleSettingsLongPress();
       }
     }, 5000);

@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { View, Image } from 'react-native';
+import { Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import styled from 'styled-components/native';
 import { useTranslationWithPrefix } from 'translations/translate';
@@ -38,6 +38,14 @@ import { getHomeScreenUrlOverride, setHomeScreenUrlOverride, PRESET_URLS } from 
 // Assets
 const pillarXLogo = require('assets/images/pillarx-logo.png');
 
+// Preset constants
+const PRESET_TYPES = {
+  PRODUCTION: 'production',
+  STAGING: 'staging',
+  DEFAULT: 'default',
+  CUSTOM: 'custom',
+};
+
 function HomeScreenUrlSettings() {
   const { t } = useTranslationWithPrefix('menu.settings');
   const navigation = useNavigation();
@@ -52,14 +60,14 @@ function HomeScreenUrlSettings() {
         setUrl(savedUrl);
         // Check if it matches a preset
         if (savedUrl === PRESET_URLS.PRODUCTION) {
-          setSelectedPreset('production');
+          setSelectedPreset(PRESET_TYPES.PRODUCTION);
         } else if (savedUrl === PRESET_URLS.STAGING) {
-          setSelectedPreset('staging');
+          setSelectedPreset(PRESET_TYPES.STAGING);
         } else {
-          setSelectedPreset('custom');
+          setSelectedPreset(PRESET_TYPES.CUSTOM);
         }
       } else {
-        setSelectedPreset('default');
+        setSelectedPreset(PRESET_TYPES.DEFAULT);
         setUrl('');
       }
     };
@@ -68,13 +76,13 @@ function HomeScreenUrlSettings() {
 
   const handlePresetSelect = (preset: string) => {
     setSelectedPreset(preset);
-    if (preset === 'production') {
+    if (preset === PRESET_TYPES.PRODUCTION) {
       setUrl(PRESET_URLS.PRODUCTION);
-    } else if (preset === 'staging') {
+    } else if (preset === PRESET_TYPES.STAGING) {
       setUrl(PRESET_URLS.STAGING);
-    } else if (preset === 'default') {
+    } else if (preset === PRESET_TYPES.DEFAULT) {
       setUrl('');
-    } else if (preset === 'custom') {
+    } else if (preset === PRESET_TYPES.CUSTOM) {
       // Keep current URL if it exists, otherwise clear
       if (!url || url === PRESET_URLS.PRODUCTION || url === PRESET_URLS.STAGING) {
         setUrl('');
@@ -83,20 +91,20 @@ function HomeScreenUrlSettings() {
   };
 
   const handleSave = async () => {
-    if (selectedPreset === 'default') {
+    if (selectedPreset === PRESET_TYPES.DEFAULT) {
       await setHomeScreenUrlOverride(null);
-    } else if (selectedPreset === 'production') {
+    } else if (selectedPreset === PRESET_TYPES.PRODUCTION) {
       await setHomeScreenUrlOverride(PRESET_URLS.PRODUCTION);
-    } else if (selectedPreset === 'staging') {
+    } else if (selectedPreset === PRESET_TYPES.STAGING) {
       await setHomeScreenUrlOverride(PRESET_URLS.STAGING);
-    } else if (selectedPreset === 'custom' && url && url.trim()) {
+    } else if (selectedPreset === PRESET_TYPES.CUSTOM && url && url.trim()) {
       // Ensure URL has protocol
       let finalUrl = url.trim();
       if (!/^https?:\/\//i.test(finalUrl)) {
         finalUrl = `https://${finalUrl}`;
       }
       await setHomeScreenUrlOverride(finalUrl);
-    } else if (selectedPreset === 'custom') {
+    } else if (selectedPreset === PRESET_TYPES.CUSTOM) {
       // Custom selected but no URL - clear the override
       await setHomeScreenUrlOverride(null);
     }
@@ -127,37 +135,37 @@ function HomeScreenUrlSettings() {
 
         <PresetContainer>
           <PresetButton
-            $selected={selectedPreset === 'production'}
-            onPress={() => handlePresetSelect('production')}
+            $selected={selectedPreset === PRESET_TYPES.PRODUCTION}
+            onPress={() => handlePresetSelect(PRESET_TYPES.PRODUCTION)}
           >
-            <PresetText $selected={selectedPreset === 'production'}>
+            <PresetText $selected={selectedPreset === PRESET_TYPES.PRODUCTION}>
               {t('homeScreenUrl.presets.production')}
             </PresetText>
           </PresetButton>
 
           <PresetButton
-            $selected={selectedPreset === 'staging'}
-            onPress={() => handlePresetSelect('staging')}
+            $selected={selectedPreset === PRESET_TYPES.STAGING}
+            onPress={() => handlePresetSelect(PRESET_TYPES.STAGING)}
           >
-            <PresetText $selected={selectedPreset === 'staging'}>
+            <PresetText $selected={selectedPreset === PRESET_TYPES.STAGING}>
               {t('homeScreenUrl.presets.staging')}
             </PresetText>
           </PresetButton>
 
           <PresetButton
-            $selected={selectedPreset === 'default'}
-            onPress={() => handlePresetSelect('default')}
+            $selected={selectedPreset === PRESET_TYPES.DEFAULT}
+            onPress={() => handlePresetSelect(PRESET_TYPES.DEFAULT)}
           >
-            <PresetText $selected={selectedPreset === 'default'}>
+            <PresetText $selected={selectedPreset === PRESET_TYPES.DEFAULT}>
               {t('homeScreenUrl.presets.default')}
             </PresetText>
           </PresetButton>
 
           <PresetButton
-            $selected={selectedPreset === 'custom'}
-            onPress={() => handlePresetSelect('custom')}
+            $selected={selectedPreset === PRESET_TYPES.CUSTOM}
+            onPress={() => handlePresetSelect(PRESET_TYPES.CUSTOM)}
           >
-            <PresetText $selected={selectedPreset === 'custom'}>
+            <PresetText $selected={selectedPreset === PRESET_TYPES.CUSTOM}>
               {t('homeScreenUrl.presets.custom')}
             </PresetText>
           </PresetButton>
@@ -172,7 +180,11 @@ function HomeScreenUrlSettings() {
             value={url}
             onChangeText={setUrl}
             placeholder={t('homeScreenUrl.urlPlaceholder')}
-            editable={selectedPreset === 'custom' || selectedPreset === 'production' || selectedPreset === 'staging'}
+            editable={
+              selectedPreset === PRESET_TYPES.CUSTOM ||
+              selectedPreset === PRESET_TYPES.PRODUCTION ||
+              selectedPreset === PRESET_TYPES.STAGING
+            }
             autoCapitalize="none"
             autoCorrect={false}
             keyboardType="url"
