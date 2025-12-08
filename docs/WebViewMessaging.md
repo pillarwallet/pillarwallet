@@ -62,7 +62,21 @@ Where `payload` is a JSON-serializable object with at minimum:
     ```
   - Response: none (the native app navigates to Settings)
 
-#### 2) Signing Requests
+#### 2) Navigation Requests
+
+- Open External URL
+  - Request:
+    ```json
+    {
+      "type": "pillarXNavigationRequest",
+      "value": "openExternalUrl",
+      "data": { "url": "https://example.com" }
+    }
+    ```
+  - Response: none (the native app opens the URL in the system browser)
+  - Description: Opens a URL in the native browser (Safari on iOS, Chrome on Android) outside of the WebView. This is useful for links that need to open in the host operating system's native browser, such as payment checkout pages or external authentication flows.
+
+#### 3) Signing Requests
 
 Send signing requests with:
 
@@ -203,6 +217,18 @@ window.addEventListener('message', onNativeMessage);
     JSON.stringify({
       type: 'pillarXAuthRequest',
       value: 'settings',
+    }),
+  );
+  ```
+
+- Open External URL
+
+  ```js
+  window.ReactNativeWebView?.postMessage(
+    JSON.stringify({
+      type: 'pillarXNavigationRequest',
+      value: 'openExternalUrl',
+      data: { url: 'https://example.com' },
     }),
   );
   ```
