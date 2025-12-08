@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { BackHandler, PermissionsAndroid, Platform, Animated, Easing, TouchableOpacity } from 'react-native';
+import { BackHandler, PermissionsAndroid, Platform, Animated, Easing, TouchableOpacity, Linking } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 
@@ -297,6 +297,21 @@ function Home() {
     if (data?.type === 'pillarXAuthRequest' && data?.value === 'settings') {
       // Open Menu
       navigation.navigate(MENU_FLOW);
+    }
+
+    /** Navigation Requests */
+    if (data?.type === 'pillarXNavigationRequest' && data?.value === 'openExternalUrl') {
+      const url = data?.data?.url;
+      if (url) {
+        logBreadcrumb('Home', 'Opening external URL', { url });
+        Linking.openURL(url).catch((error) => {
+          logBreadcrumb('Home', 'Failed to open external URL', { error: error.message, url });
+          reportLog('Home: Failed to open external URL', error);
+        });
+      } else {
+        logBreadcrumb('Home', 'Invalid navigation request: missing URL');
+        reportLog('Home: Invalid navigation request - missing URL', null);
+      }
     }
 
     /** Signing Requests */
