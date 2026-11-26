@@ -42,6 +42,7 @@ import {
 } from 'utils/getNotification';
 import { getKeychainDataObject } from 'utils/keychain';
 import { getHomeScreenUrlOverride, PRESET_URLS } from 'utils/homeScreenUrl';
+import { resolveWebViewBaseUrl, isAllowedWebViewUrl } from 'utils/pillarxEndpoint';
 
 // Translations
 import t from 'translations/translate';
@@ -412,13 +413,11 @@ function Home() {
     return customUrl;
   }, [customUrl, isLoadingUrl]);
 
-  // eslint-disable-next-line i18next/no-literal-string
-  const baseUrl = React.useMemo(() => {
-    if (!pillarXEndpoint) {
-      return '';
-    }
-    return /^https?:\/\//i.test(pillarXEndpoint) ? pillarXEndpoint : `https://${pillarXEndpoint}`;
-  }, [pillarXEndpoint]);
+  // Resolve the endpoint against a hardcoded host allowlist so that a
+  // tampered Remote Config value or stored override cannot repoint the
+  // signing-bridge WebView at an attacker-controlled host (production only;
+  // custom hosts remain available in __DEV__).
+  const baseUrl = React.useMemo(() => resolveWebViewBaseUrl(pillarXEndpoint), [pillarXEndpoint]);
   const devicePlatform = encodeURIComponent(Platform.OS);
   const eoaAddress = React.useMemo(() => {
     if (!pk) return '';
@@ -513,9 +512,14 @@ function Home() {
           scalesPageToFit={false}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
-          // Allow self-signed certificates in development only
-          onShouldStartLoadWithRequest={() => {
-            return true;
+          // Restrict top-frame navigation to allowlisted hosts in production
+          // so the WebView cannot be driven to an attacker origin that would
+          // inherit the native signing bridge. Sub-frames and development
+          // builds are left unrestricted.
+          onShouldStartLoadWithRequest={(request) => {
+            if (__DEV__) return true;
+            if (request?.isTopFrame === false) return true;
+            return isAllowedWebViewUrl(request?.url);
           }}
           // eslint-disable-next-line i18next/no-literal-string
           injectedJavaScript={`
