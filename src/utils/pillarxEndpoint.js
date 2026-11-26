@@ -24,10 +24,10 @@ import { PRESET_URLS } from './homeScreenUrl';
  *
  * The Home WebView exposes a native signing bridge (see
  * docs/WebViewMessaging.md): any page it loads can request message,
- * transaction, typed-data and EIP-7702 signatures. The URL it loads comes
- * from Firebase Remote Config (`pillarx_endpoint`) or a stored override,
- * neither of which is trusted. If either is tampered with, an attacker
- * could repoint the WebView at a host they control and drive the bridge.
+ * transaction, typed-data and EIP-7702 signatures. The URL is hardcoded
+ * per environment in configs/envConfig.js, but a stored override (hidden
+ * Home Screen URL setting) can replace it. That override is not trusted,
+ * so it must not be able to point the WebView at an arbitrary host.
  *
  * In production the resolved endpoint MUST match this allowlist exactly
  * (host comparison, https only); anything else falls back to the pinned

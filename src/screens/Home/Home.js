@@ -49,10 +49,9 @@ import t from 'translations/translate';
 
 // Constants
 import { MENU_FLOW } from 'constants/navigationConstants';
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
-// Services
-import { firebaseRemoteConfig } from 'services/firebase';
+// Config
+import { getEnv } from 'configs/envConfig';
 
 function FadeInOut({ isVisible, children, onHidden }) {
   // Render immediately on first mount if visible, so there's no blank screen before the text appears.
@@ -401,22 +400,20 @@ function Home() {
   );
 
   const pillarXEndpoint = React.useMemo(() => {
-    // If we haven't loaded the custom URL yet, use Firebase Remote Config as fallback
-    if (isLoadingUrl || customUrl === null) {
-      return firebaseRemoteConfig.getString(REMOTE_CONFIG.PILLARX_ENDPOINT);
+    // The endpoint is hardcoded per environment in configs/envConfig.js
+    // (https://pillarx.app in production). It is deliberately NOT read from
+    // Firebase Remote Config: this WebView exposes the native signing
+    // bridge, so its URL must not be changeable without shipping a build.
+    if (isLoadingUrl || !customUrl) {
+      return getEnv().PILLARX_ENDPOINT;
     }
-    // If customUrl is an empty string, it means "use default" (Firebase Remote Config)
-    if (customUrl === '') {
-      return firebaseRemoteConfig.getString(REMOTE_CONFIG.PILLARX_ENDPOINT);
-    }
-    // Otherwise, use the custom URL
+    // Stored override from the hidden Home Screen URL setting
     return customUrl;
   }, [customUrl, isLoadingUrl]);
 
-  // Resolve the endpoint against a hardcoded host allowlist so that a
-  // tampered Remote Config value or stored override cannot repoint the
-  // signing-bridge WebView at an attacker-controlled host (production only;
-  // custom hosts remain available in __DEV__).
+  // Final gate: resolve against the hardcoded host allowlist so a stored
+  // override cannot point the signing-bridge WebView at another host in
+  // production builds (custom hosts remain available in __DEV__).
   const baseUrl = React.useMemo(() => resolveWebViewBaseUrl(pillarXEndpoint), [pillarXEndpoint]);
   const devicePlatform = encodeURIComponent(Platform.OS);
   const eoaAddress = React.useMemo(() => {
