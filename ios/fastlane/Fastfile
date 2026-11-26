@@ -9,7 +9,7 @@ platform :ios do
 
   desc "Release to production TestFlight"
   lane :deploy_prod do |options|
-    xcversion(version: "16.4.0")
+    xcversion(version: "26.6.0")
     sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion #{options[:APP_BUILD_NUMBER]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
     sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleShortVersionString #{options[:build_number]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
     sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleDisplayName #{options[:APP_NAME]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
@@ -65,7 +65,7 @@ platform :ios do
   desc "Release to adhoc TestFlight"
   lane :deploy_ios_appcenter do |options|
 
-    xcversion(version: "16.4.0")
+    xcversion(version: "26.6.0")
     MY_APP_ID = "com.pillarproject.wallet.staging"
     MY_PROFILE = "match AdHoc com.pillarproject.wallet.staging"
 
@@ -139,7 +139,7 @@ platform :ios do
 
   desc "Release to staging TestFlight"
   lane :deploy_staging do |options|
-    xcversion(version: "16.4.0")
+    xcversion(version: "26.6.0")
 
     # insert circleCI's build number as our build number
     sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion #{options[:APP_BUILD_NUMBER]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
