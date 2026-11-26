@@ -46,14 +46,16 @@ const DEFAULT_WEBVIEW_URL: string = PRESET_URLS.PRODUCTION; // https://pillarx.a
  * Returns null when no host can be determined. Correctly isolates the host
  * from userinfo and port so that values such as
  * `https://pillarx.app@evil.com` or `https://pillarx.app.evil.com` do not
- * masquerade as an allowed host.
+ * masquerade as an allowed host. A backslash ends the authority, as it does
+ * in browsers for https URLs, so `https://evil.com\@pillarx.app` resolves
+ * to `evil.com` here too.
  */
 export const extractHost = (candidate: ?string): ?string => {
   if (!candidate || typeof candidate !== 'string') return null;
   const trimmed = candidate.trim();
   if (!trimmed) return null;
   const withScheme = /^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
-  const match = withScheme.match(/^https?:\/\/([^/?#]+)/i);
+  const match = withScheme.match(/^https?:\/\/([^/\\?#]+)/i);
   if (!match) return null;
   let host = match[1];
   const at = host.lastIndexOf('@');

@@ -21,6 +21,11 @@ describe('pillarxEndpoint', () => {
       expect(extractHost('https://staging.pillarx.app:8443/x')).toBe('staging.pillarx.app');
     });
 
+    it('ends the authority at a backslash, as browsers do', () => {
+      expect(extractHost('https://evil.com\\@pillarx.app')).toBe('evil.com');
+      expect(extractHost('https://evil.com\\.pillarx.app')).toBe('evil.com');
+    });
+
     it('returns null for empty or non-string values', () => {
       expect(extractHost(undefined)).toBeNull();
       expect(extractHost(null)).toBeNull();
@@ -43,6 +48,14 @@ describe('pillarxEndpoint', () => {
       expect(isAllowedWebViewUrl('https://pillarx.app@evil.com')).toBe(false);
       expect(isAllowedWebViewUrl('https://evilpillarx.app')).toBe(false);
       expect(isAllowedWebViewUrl('https://notpillarx.app')).toBe(false);
+    });
+
+    it('rejects backslash-based host confusion', () => {
+      // Browsers load evil.com for these; the allowlist must agree.
+      expect(isAllowedWebViewUrl('https://evil.com\\@pillarx.app')).toBe(false);
+      expect(isAllowedWebViewUrl('https://evil.com\\@staging.pillarx.app/app')).toBe(false);
+      expect(isAllowedWebViewUrl('https:\\\\evil.com\\@pillarx.app')).toBe(false);
+      expect(isAllowedWebViewUrl('evil.com\\@pillarx.app')).toBe(false);
     });
 
     it('rejects non-https schemes', () => {
@@ -68,6 +81,8 @@ describe('pillarxEndpoint', () => {
       expect(resolveWebViewBaseUrl('https://evil.com', false)).toBe(PROD);
       expect(resolveWebViewBaseUrl('https://pillarx.app.evil.com', false)).toBe(PROD);
       expect(resolveWebViewBaseUrl('http://pillarx.app', false)).toBe(PROD);
+      expect(resolveWebViewBaseUrl('https://evil.com\\@pillarx.app', false)).toBe(PROD);
+      expect(resolveWebViewBaseUrl('https:\\\\evil.com\\@pillarx.app', false)).toBe(PROD);
       // eslint-disable-next-line no-script-url
       expect(resolveWebViewBaseUrl('javascript:alert(1)', false)).toBe(PROD);
     });
