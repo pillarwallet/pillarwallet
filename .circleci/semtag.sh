@@ -10,6 +10,7 @@ case "$SEMVER_TAG" in
 		bash semtag final -s $SEMVER_TAG -f
 		;;
 	*)
-		exit 1
+		echo "No valid semver tag (#patch/#minor/#major) found in commit message. Defaulting to patch bump."
+		bash semtag final -s patch -f
 		;;
 esac
