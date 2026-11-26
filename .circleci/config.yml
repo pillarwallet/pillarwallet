@@ -10,8 +10,8 @@ executors:
   ios-executor:
     working_directory: ~/pillarwallet
     macos:
-      xcode: '16.2.0'
-    resource_class: macos.m1.medium.gen1
+      xcode: '26.6.0'
+    resource_class: m4pro.medium
     environment:
       NODE_OPTIONS: '--max-old-space-size=4096'
       FL_OUTPUT_DIR: output
