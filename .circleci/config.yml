@@ -74,7 +74,7 @@ aliases:
     run:
       name: Create Vendor/bundle for gem dependencies
       command: |
-        cd ios && bundle check || bundle install --path vendor/bundle
+        cd ios && bundle config set --local path 'vendor/bundle' && (bundle check || bundle install)
       environment:
         BUNDLE_JOBS: 4
         BUNDLE_RETRY: 3
