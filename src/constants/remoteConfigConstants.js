@@ -94,7 +94,6 @@ export const REMOTE_CONFIG = {
   APP_MIGRATION_BANNER_CONTENT: 'app_migration_banner_content',
   APP_MIGRATION_BANNER_CTA_NAME: 'app_migration_banner_cta_name',
   APP_MIGRATION_BANNER_CTA_HREF: 'app_migration_banner_cta_href',
-  PILLARX_ENDPOINT: 'pillarx_endpoint',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values
@@ -154,5 +153,4 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.APP_MIGRATION_BANNER_CONTENT]: '',
   [REMOTE_CONFIG.APP_MIGRATION_BANNER_CTA_NAME]: '',
   [REMOTE_CONFIG.APP_MIGRATION_BANNER_CTA_HREF]: '',
-  [REMOTE_CONFIG.PILLARX_ENDPOINT]: 'http://pillarx.app',
 };
