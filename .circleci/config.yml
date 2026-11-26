@@ -212,7 +212,9 @@ aliases:
       command: |
         if ! command -v aws &> /dev/null; then
           echo "AWS CLI not found, installing..."
-          brew install awscli
+          curl -fsSL "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o /tmp/AWSCLIV2.pkg
+          sudo installer -pkg /tmp/AWSCLIV2.pkg -target /
+          aws --version
         else
           echo "AWS CLI is already installed."
         fi
