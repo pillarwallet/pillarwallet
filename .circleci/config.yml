@@ -205,7 +205,13 @@ aliases:
     run:
       name: Install coureutils
       command: |
-        brew install coreutils
+        # The macOS image ships ca-certificates already linked, and Homebrew
+        # fails to link the copy it pours as a coreutils dependency
+        # ("Cannot link ca-certificates"). Unlink it first, and retry once.
+        brew unlink ca-certificates || true
+        brew install coreutils || { brew link --overwrite ca-certificates; brew install coreutils; }
+        # coreutils is only needed for gshuf (Slack messages); fail here if it is missing.
+        gshuf --version | head -1
   - &awscli_install
     run:
       name: Install AWS CLI
