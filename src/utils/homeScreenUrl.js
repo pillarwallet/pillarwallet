@@ -25,7 +25,7 @@ const HOME_SCREEN_URL_KEY = 'homeScreenUrlOverride';
 export const PRESET_URLS = {
   PRODUCTION: 'https://pillarx.app',
   STAGING: 'https://staging.pillarx.app',
-  DEFAULT: null, // null means use Firebase Remote Config
+  DEFAULT: null, // null means use the hardcoded endpoint from configs/envConfig.js
   CUSTOM: 'CUSTOM', // Special value to indicate custom URL is set
 };
 
