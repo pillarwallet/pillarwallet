@@ -31,28 +31,35 @@ platform :ios do
           readonly: false,
           git_branch: "master",
           app_identifier: "com.pillarproject.wallet",
-          team_id: "J9DEY3FGPD"
+          team_id: "J9DEY3FGPD",
+          renew_expired_certs: true,
+          # Temporary: regenerate the App Store profile so it lists the renewed
+          # certificate. Remove once a release has gone through.
+          force: true
         )
+
+    # match sets this to the name of the profile it installed. A regenerated
+    # profile gets a timestamp suffix when the old name is still taken on the
+    # Developer Portal, so do not assume the default name.
+    prod_profile = ENV["sigh_#{MY_APP_ID}_appstore_profile-name"] || MY_PROFILE
 
     gym(
       workspace: "pillarwallet.xcworkspace",
       configuration: "Release",
       scheme: "pillarwallet",
-      xcargs: "BUNDLE_IDENTIFIER='com.pillarproject.wallet' PROVISIONING_PROFILE_SPECIFIER='match AppStore com.pillarproject.wallet' DEVELOPMENT_TEAM='J9DEY3FGPD'",
+      xcargs: "BUNDLE_IDENTIFIER='com.pillarproject.wallet' PROVISIONING_PROFILE_SPECIFIER='#{prod_profile}' DEVELOPMENT_TEAM='J9DEY3FGPD'",
       export_method: "app-store",
       export_options: {
         provisioningProfiles: {
-            MY_APP_ID => MY_PROFILE
+            MY_APP_ID => prod_profile
         }
       },
       clean: true,
       derived_data_path: "build",
     )
 
-    # xcargs arguments, especially PROVISIONING_PROFILE_SPECIFIER need to be checked when the current Distribution cert. & prov. profile expire. Steps that should be done:
-    # 1. Delete the expired prov. profile.
-    # 2. Run match with readonly set to false in order for match to create a new Distribution certificate and a new provisioning profile.
-    # When the new one is created, using match, it should be created with the same name, so we should expect no changes/problems to occure in the gym stage.
+    # When the Distribution cert. & prov. profile expire, match (readonly: false) creates new ones.
+    # gym takes the profile name from match (prod_profile above), so a renamed profile needs no changes here.
 
     commit = last_git_commit
     upload_to_testflight(
