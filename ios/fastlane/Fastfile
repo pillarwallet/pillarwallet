@@ -32,7 +32,10 @@ platform :ios do
           git_branch: "master",
           app_identifier: "com.pillarproject.wallet",
           team_id: "J9DEY3FGPD",
-          renew_expired_certs: true
+          renew_expired_certs: true,
+          # Temporary: regenerate the App Store profile so it lists the renewed
+          # certificate. Remove once a release has gone through.
+          force: true
         )
 
     gym(
